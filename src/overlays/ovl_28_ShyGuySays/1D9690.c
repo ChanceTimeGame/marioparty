@@ -1,5 +1,6 @@
 #include "common.h"
 #include "ShyGuySays.h"
+int abs(int);
 
 typedef struct unkStruct_ShyGuySays_06 {
     /* 0x00 */ s16 unk0;
@@ -18,9 +19,15 @@ extern s32 D_800FDC34_ShyGuySays;
 extern s16 D_800FD5C6_ShyGuySays;
 extern s16 D_800FD5C8_ShyGuySays;
 extern s16 D_800FD5CA_ShyGuySays;
-extern void* D_800FD9B4_ShyGuySays;
+typedef struct ShyGuyGridCell {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+} ShyGuyGridCell; /* sizeof 6 */
+
+extern ShyGuyGridCell* D_800FD9B4_ShyGuySays;
 extern s16 D_800FD9B0_ShyGuySays;
-extern u16 D_800FD9B8_ShyGuySays;
+extern u16 D_800FD9B8_ShyGuySays[2];
 extern omObjData* D_800FD9AC_ShyGuySays;
 extern s16 D_800FDC68_ShyGuySays[];
 extern s16 D_800FDC6C_ShyGuySays;
@@ -45,6 +52,7 @@ void func_800FB840_ShyGuySays(omObjData*);
 void func_800F8818_ShyGuySays(omObjData*);
 void func_800F9D80_ShyGuySays(unkShyGuySaysStruct*, u16);
 void func_800F9C50_ShyGuySays(u16*);
+void func_800F7680_ShyGuySays(s16*, u16);
 void func_800F702C_ShyGuySays(omObjData*, f32);
 /* retail calls func_80064EF4 unprototyped in func_800FA77C (int result narrowed to s16) */
 #ifdef TARGET_PC
@@ -1293,24 +1301,86 @@ void func_800F9F60_ShyGuySays(omObjData* arg0, s16* arg1, u16 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FA308_ShyGuySays);
+void func_800FA308_ShyGuySays(omObjData* arg0, s16* arg1, u16 arg2) {
+    f32 sp18[3];
+    unkStruct_ShyGuySays_01* p;
+    f32 sway;
+    f32 t;
+    u16 i;
 
+    sway = 0.0f;
+    p = &D_800FD9C0_ShyGuySays[arg0->work[0]];
+    if (D_800FDC20_ShyGuySays == NULL) {
+        p->unk_44.y = -90.0f;
+    } else {
+        p->unk_44.y = D_800FDC20_ShyGuySays->trans.y - 90.0;
+    }
+    if (p->unk_04 & 0x200) {
+        for (i = 0; i < arg2; i++) {
+            func_800258EC(arg1[i], 4, 4);
+        }
+    }
+    switch (arg0->work[0]) {
+    case 0:
+        sway = func_800AEAC0(p->unk_80) * 20.0f * 0.5;
+        if (sway > 0.0f) {
+            sway = 0.0f;
+        }
+        break;
+    case 1:
+    case 2:
+        sway = func_800AEAC0(p->unk_80) * 20.0f * 0.5;
+        break;
+    case 3:
+        sway = func_800AEAC0(p->unk_80) * 20.0f * 0.5;
+        if (sway < 0.0f) {
+            sway = 0.0f;
+        }
+        break;
+    }
+    p->unk_50.x = p->unk_44.x + (p->unk_2C.x - p->unk_44.x) * 0.5 - sway;
+    switch (arg0->work[0]) {
+    case 0:
+    case 3:
+        p->unk_50.y = p->unk_2C.y + 40.0;
+        p->unk_38.y *= 0.8;
+        p->unk_38.x *= 0.9;
+        break;
+    case 1:
+    case 2:
+        p->unk_50.y = p->unk_2C.y + 28.0;
+        break;
+    }
+    p->unk_50.z = p->unk_44.z + 15.0;
+    for (i = 0; i < arg2; i++) {
+        t = (f32)i * D_800FDC64_ShyGuySays->unk_00[arg2];
+        func_800F7780_ShyGuySays(t, &p->unk_44, &p->unk_50, &p->unk_38, &p->unk_68);
+        func_800F7874_ShyGuySays(t, &p->unk_44, &p->unk_50, &p->unk_38, &p->unk_74);
+        func_80025798(arg1[i], p->unk_68.x, p->unk_68.y, p->unk_68.z);
+        sp18[0] = func_800F7608_ShyGuySays(p->unk_74.y, -p->unk_74.z);
+        sp18[1] = func_800F7608_ShyGuySays(-p->unk_74.x, -p->unk_74.z);
+        sp18[2] = 0.0f;
+        func_800257E4(arg1[i], sp18[0], sp18[1], sp18[2]);
+        func_80025830(arg1[i], 1.0f, 1.0f, 0.5f);
+    }
+}
 void func_800FA77C_ShyGuySays(omObjData* arg0) {
-    s32 sprite;
+    s32 ret;
+    s16 sprite;
 
     arg0->func_ptr = NULL;
     D_800FD9AC_ShyGuySays = omAddObj(1, 1, 0, -1, &func_800FA8F4_ShyGuySays);
     omSetStatBit(D_800FD9AC_ShyGuySays, 0xA0);
     D_800FDC68_ShyGuySays[0] = func_800FB2C8_ShyGuySays(0x350013);
-    sprite = func_80064EF4_s32(1, 0);
+    sprite = ret = func_80064EF4_s32(1, 0);
     func_80067208(sprite, 0, D_800FDC68_ShyGuySays[0], 0);
     func_800674BC(sprite, 0, 0x4000);
     func_80066DC4(sprite, 0, D_800FDC64_ShyGuySays->unk_00[2] * 320.0f, 0x3C);
     func_80067354(sprite, 0, 2.0f, 2.0f);
     func_800674BC(sprite, 0, 0x503C);
     func_80067384(sprite, 0, 0xFFFF);
-    arg0->work[0] = (sprite & 0xFF00) >> 8;
-    arg0->work[1] = sprite & 0xFF;
+    arg0->work[0] = (u32)(ret << 16) >> 24;
+    arg0->work[1] = ret;
     SetFadeInTypeAndTime(0, 0x10);
 }
 void func_800FA8D4_ShyGuySays(void) {
@@ -1336,7 +1406,81 @@ void func_800FA960_ShyGuySays(omObjData* arg0) {
     }
     func_800FAED8_ShyGuySays(arg0->model[0], D_800FD5D0_ShyGuySays);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FAA80_ShyGuySays);
+void func_800FAA80_ShyGuySays(s16 arg0) {
+    s16 xs[32];
+    s16 zs[32];
+    unk2C0C0StructC0* m;
+    unk2C0C0StructE0* v;
+    s16 nx;
+    s16 nz;
+    s16 n;
+    s16 i;
+    s16 j;
+
+    m = D_800F2B7C[arg0].unk_6C;
+    v = m->unk_04;
+    nz = 0;
+    nx = 0;
+    n = m->unk_72;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk_00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            xs[nx] = v->unk_00;
+            nx++;
+        }
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk_04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            zs[nz] = v->unk_04;
+            nz++;
+        }
+    }
+    func_800F7680_ShyGuySays(xs, nx);
+    func_800F7680_ShyGuySays(zs, nz);
+    D_800FD9B4_ShyGuySays = HuMemDirectMalloc(n * sizeof(ShyGuyGridCell));
+    for (i = 0; i < n; i++) {
+        D_800FD9B4_ShyGuySays[i].unk_00 = 1;
+    }
+    v = m->unk_04;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk_00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            j = nx - 1;
+        }
+        D_800FD9B4_ShyGuySays[i].unk_02 = j;
+        if (j == 0 || j == nx - 1) {
+            D_800FD9B4_ShyGuySays[i].unk_00 = 0;
+        }
+    }
+    v = m->unk_04;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk_04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            j = nz - 1;
+        }
+        D_800FD9B4_ShyGuySays[i].unk_04 = j;
+        if (j == 0 || j == nz - 1) {
+            D_800FD9B4_ShyGuySays[i].unk_00 = 0;
+        }
+    }
+    D_800FD9B8_ShyGuySays[0] = abs(xs[0] - xs[1]);
+    D_800FD9B8_ShyGuySays[1] = abs(zs[0] - zs[1]);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FAED8_ShyGuySays);
 
@@ -1353,7 +1497,7 @@ f32 func_800FB190_ShyGuySays(f32 arg0, f32 arg1) {
     for (i = 0; i < n; i++, v++) {
         dx = fabsf(v->unk_00 - arg0);
         dz = fabsf(v->unk_04 - arg1);
-        if (dx < D_800FD9B8_ShyGuySays * 1.5 && dz < D_800FD9B8_ShyGuySays * 1.5) {
+        if (dx < D_800FD9B8_ShyGuySays[0] * 1.5 && dz < D_800FD9B8_ShyGuySays[0] * 1.5) {
             sum += v->unk_02;
             cnt++;
             if (cnt >= 10) {
