@@ -101,7 +101,8 @@ typedef struct unkGlobalStruct_00 {
     /* 0x38 */ f32 unk_38;
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
-    /* 0x44 */ char unk_44[8];
+    /* 0x44 */ char unk_44[4];
+    /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ s16 unk_50;
     /* 0x52 */ s8 unk_52;
