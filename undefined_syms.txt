@@ -364,3 +364,5 @@ D_800FD364_StaffScene = D_800FD360_StaffScene + 0x4;
 D_800FD37C_StaffScene = D_800FD378_StaffScene + 0x4;
 D_800FD398_StaffScene = D_800FD394_StaffScene + 0x4;
 D_800FD9B8_StaffScene = D_800FD9B4_StaffScene + 0x4;
+D_800FA93A_TeeteringTowers = D_800FA938_TeeteringTowers + 0x2;
+D_800FADDC_TeeteringTowers = D_800FADD4_TeeteringTowers + 0x8;

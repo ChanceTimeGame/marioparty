@@ -223,6 +223,8 @@ build/src/overlays/ovl_16_SkateBoardSkamper/15EAF0.c.o: CFLAGS = -G0 -mips3 -mgp
 # ovl_41 26BA10.c and 2643A0.c: nop between mul.s in func_80102380, func_800FB1E4
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/26BA10.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2643A0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_19 176130.c: nop between mul.s in func_800F99F4
+build/src/overlays/ovl_19_TeeteringTowers/176130.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # -O3 static inlines
 build/src/7CD60.c.o: OPTFLAGS = -O3

@@ -1076,8 +1076,8 @@ segments:
     subsegments:
       - [0x1738E0, c]
       - [0x176130, c]
-      - [0x177C30, data, 1738E0]
-      - [0x1780D0, data, 176130]
+      - [0x177C30, .data, 1738E0]
+      - [0x1780D0, .data, 176130]
       - [0x1782E0, .rodata, 1738E0]
       - {0x1784E0, type: bss, vram: 0x800FB1E0, name: ovl_19_bss}
   - type: code
