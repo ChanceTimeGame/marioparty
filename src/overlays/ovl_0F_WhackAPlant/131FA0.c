@@ -515,7 +515,7 @@ void func_800F8134_WhackAPlant(omObjData* arg0) {
     func_800257E4(arg0->model[4], 0.0f, 90.0f, 0.0f);
     arg0->func_ptr = func_800F82B4_WhackAPlant;
 }
-// NON_MATCHING: residue under review
+// NON_MATCHING: register allocation in the first clamp loop (masked 0)
 #ifdef NON_MATCHING
 void func_800F82B4_WhackAPlant(omObjData* arg0) {
     WAPFence* w;
@@ -693,7 +693,7 @@ omObjData* func_800F8A58_WhackAPlant(omObjData* arg0, u16 arg1, void* arg2) {
     p->unk2 = mdl;
     return obj;
 }
-// NON_MATCHING: residue under review
+// NON_MATCHING: register allocation; the rise-end model id is sign-extended once per branch in retail (masked 26, 559/558)
 #ifdef NON_MATCHING
 void func_800F8BE8_WhackAPlant(omObjData* arg0) {
     WAPPlantWork* w;
@@ -792,7 +792,7 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F8BE8_WhackAPlant);
 #endif
-// NON_MATCHING: residue under review
+// NON_MATCHING: register allocation and beql/bc1fl vs beq/bc1f on the early returns (masked 7)
 #ifdef NON_MATCHING
 s32 func_800F92FC_WhackAPlant(omObjData* arg0, omObjData* arg1) {
     WAPPlayerWork* w;
@@ -1232,7 +1232,7 @@ void func_800FA6AC_WhackAPlant(s16 arg0, f32 arg1) {
         v++;
     }
 }
-// NON_MATCHING: residue under review
+// NON_MATCHING: w/cpu in swapped saved registers, one load/store order (masked 2)
 #ifdef NON_MATCHING
 void func_800FA760_WhackAPlant(omObjData* arg0) {
     f32 dist;
@@ -1356,7 +1356,7 @@ void func_800FA760_WhackAPlant(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800FA760_WhackAPlant);
 #endif
-// NON_MATCHING: residue under review
+// NON_MATCHING: register allocation: found/pots in swapped saved registers (masked 0)
 #ifdef NON_MATCHING
 f32 func_800FAF34_WhackAPlant(f32 arg0, f32 arg1, u16 arg2, f32* arg3, u16* arg4) {
     omObjData** objs;
