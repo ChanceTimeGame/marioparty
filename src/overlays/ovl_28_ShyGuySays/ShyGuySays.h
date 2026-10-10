@@ -195,7 +195,7 @@ void func_800F6930_ShyGuySays(omObjData*);
 void func_800FA77C_ShyGuySays(omObjData*);
 void func_800FB6E0_ShyGuySays(omObjData*);
 void func_800FBAE4_ShyGuySays(omObjData*);
-void func_800FCA8C_ShyGuySays(void*, u16);
+void func_800FCA8C_ShyGuySays(omObjData*, u16);
 s16 func_800FD124_ShyGuySays(omObjData*);
 void func_800FD274_ShyGuySays(s16, s16, f32, u16*, u16*);
 void func_800F71F4_ShyGuySays(void);
