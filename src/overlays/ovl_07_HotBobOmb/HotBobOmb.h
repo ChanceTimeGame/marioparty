@@ -45,7 +45,7 @@ void func_800F66F8_HotBobOmb(omObjData* obj);
 void func_800F6730_HotBobOmb(omObjData* obj);
 void func_800F67C8_HotBobOmb(omObjData* obj);
 void func_800F6800_HotBobOmb(s32 seed);
-u32 func_800F680C_HotBobOmb(void);
+s32 func_800F680C_HotBobOmb(void);
 
 /* 10CF70 */
 void func_800F6840_HotBobOmb(omObjData* obj);

@@ -21,10 +21,12 @@ void func_800F8FA0_HotBobOmb(void) {
     func_80018C90(D_800FA9B6_HotBobOmb);
 }
 
-// masked
+// one extra move after the coins load and an 8-byte larger frame (masked residue only from those)
 #ifdef NON_MATCHING
 void func_800F902C_HotBobOmb(void) {
     s32 i;
+    s16 coins;
+    s32 gain;
 
     switch (D_800FA8CC_HotBobOmb) {
     case 0:
@@ -44,9 +46,7 @@ void func_800F902C_HotBobOmb(void) {
         break;
     case 2:
         if (GMesStatAllGet() == 2) {
-            if (_CheckFlag(0x2B) != 0) {
-                D_800FA8CC_HotBobOmb = 5;
-            } else {
+            if (_CheckFlag(0x2B) == 0) {
                 func_80060128(0x34);
                 func_80025BB8(D_800FA8D8_HotBobOmb[D_800FA8B0_HotBobOmb]->model[0],
                               D_800FA8D8_HotBobOmb[D_800FA8B0_HotBobOmb]->motion[7]);
@@ -57,6 +57,8 @@ void func_800F902C_HotBobOmb(void) {
                 func_80025BB8(D_800FA8D8_HotBobOmb[(D_800FA8B0_HotBobOmb + 3) % 4]->model[0],
                               D_800FA8D8_HotBobOmb[(D_800FA8B0_HotBobOmb + 3) % 4]->motion[5]);
                 D_800FA8CC_HotBobOmb++;
+            } else {
+                D_800FA8CC_HotBobOmb = 5;
             }
         }
         break;
@@ -73,21 +75,23 @@ void func_800F902C_HotBobOmb(void) {
             GMesCreate(5, GwPlayer[D_800FA8B0_HotBobOmb].character);
             PlaySound(GwPlayer[D_800FA8B0_HotBobOmb].character + 0x44A);
         }
-        if (GwPlayer[D_800FA8B0_HotBobOmb].coins < 15) {
-            GwPlayer[D_800FA8B0_HotBobOmb].coins_mg = -GwPlayer[D_800FA8B0_HotBobOmb].coins;
+        gain = 5;
+        coins = GwPlayer[D_800FA8B0_HotBobOmb].coins;
+        if (coins < 15) {
+            GwPlayer[D_800FA8B0_HotBobOmb].coins_mg = -coins;
         } else {
             GwPlayer[D_800FA8B0_HotBobOmb].coins_mg = -15;
         }
         for (i = 0; i < 4; i++) {
             if (i != D_800FA8B0_HotBobOmb) {
-                GwPlayer[i].coins_mg += 5;
+                GwPlayer[i].coins_mg += gain;
             }
         }
         D_800FA920_HotBobOmb = 0x70;
-        if (_CheckFlag(0x2B) != 0) {
-            D_800FA8CC_HotBobOmb = 8;
-        } else {
+        if (_CheckFlag(0x2B) == 0) {
             D_800FA8CC_HotBobOmb++;
+        } else {
+            D_800FA8CC_HotBobOmb = 8;
         }
         break;
     case 6:
@@ -116,7 +120,7 @@ void func_800F902C_HotBobOmb(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F902C_HotBobOmb);
 #endif
 
-// masked
+// register allocation around r + 390 (masked 0)
 #ifdef NON_MATCHING
 void func_800F94AC_HotBobOmb(void) {
     s32 r;
@@ -153,7 +157,7 @@ void func_800F94AC_HotBobOmb(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F94AC_HotBobOmb);
 #endif
 
-// masked
+// register allocation, one extra move (masked 1)
 #ifdef NON_MATCHING
 s32 func_800F9610_HotBobOmb(s32 player) {
     s32 n;
@@ -161,11 +165,12 @@ s32 func_800F9610_HotBobOmb(s32 player) {
 
     n = D_800FA8A0_HotBobOmb[player];
     if (n <= 0 && D_800FA924_HotBobOmb <= 0) {
-        return 1;
-    }
-    ret = 0;
-    if (D_800FA8D0_HotBobOmb == 0) {
-        ret = D_800FA3C0_HotBobOmb[D_800FA994_HotBobOmb][n] != 0;
+        ret = 1;
+    } else {
+        ret = 0;
+        if (D_800FA8D0_HotBobOmb == 0) {
+            ret = D_800FA3C0_HotBobOmb[D_800FA994_HotBobOmb][n] != 0;
+        }
     }
     return ret;
 }
@@ -173,8 +178,6 @@ s32 func_800F9610_HotBobOmb(s32 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F9610_HotBobOmb);
 #endif
 
-// masked
-#ifdef NON_MATCHING
 void func_800F9690_HotBobOmb(void) {
     s32 i;
 
@@ -210,12 +213,7 @@ void func_800F9690_HotBobOmb(void) {
         D_800FA8D0_HotBobOmb = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F9690_HotBobOmb);
-#endif
 
-// masked
-#ifdef NON_MATCHING
 void func_800F9814_HotBobOmb(s32 port) {
     s32 d;
 
@@ -233,8 +231,7 @@ void func_800F9814_HotBobOmb(s32 port) {
         d = 3;
         break;
     }
-    d *= 2;
-    if (rand8() % d == 0 || D_800FA5B4_HotBobOmb[port] == d) {
+    if (rand8() % (d * 2) == 0 || D_800FA5B4_HotBobOmb[port] == d * 2) {
         ContBtn[port] |= 0x8000;
         ContBtnTrg[port] |= 0x8000;
         D_800FA5B4_HotBobOmb[port] = 0;
@@ -243,9 +240,6 @@ void func_800F9814_HotBobOmb(s32 port) {
     ContStkY[port] = ((u8)(rand8() % 3) - 1) * 50;
     D_800FA5B4_HotBobOmb[port]++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F9814_HotBobOmb);
-#endif
 
 // masked
 #ifdef NON_MATCHING
@@ -302,8 +296,6 @@ s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F99F4_HotBobOmb);
 #endif
 
-// masked
-#ifdef NON_MATCHING
 void func_800F9AB8_HotBobOmb(s32 player) {
     s32 passA[4] = { 0x4000, 0x8000, 0x8000, 0x4000 };
     s32 passB[4] = { 0x8000, 0x4000, 0x4000, 0x8000 };
@@ -324,7 +316,13 @@ void func_800F9AB8_HotBobOmb(s32 player) {
 
     r = func_800F9610_HotBobOmb(player);
     D_800FA89C_HotBobOmb = r;
-    if (D_800FA8C8_HotBobOmb == 3 && D_800FA99C_HotBobOmb == player && r == 1) {
+    if (D_800FA8C8_HotBobOmb != 3) {
+        return;
+    }
+    if (D_800FA99C_HotBobOmb != player) {
+        return;
+    }
+    if (r == 1) {
         if (GwPlayer[player].flags & 1) {
             func_800F9814_HotBobOmb(D_800FA880_HotBobOmb[player]);
         }
@@ -345,23 +343,6 @@ void func_800F9AB8_HotBobOmb(s32 player) {
         D_800FA8E8_HotBobOmb--;
     }
 }
-#else
-const s32 D_800FA764_HotBobOmb[4] __attribute__((section(".rodata"))) = { 0x4000, 0x8000, 0x8000, 0x4000 };
-const s32 D_800FA774_HotBobOmb[4] __attribute__((section(".rodata"))) = { 0x8000, 0x4000, 0x4000, 0x8000 };
-const s32 D_800FA784_HotBobOmb[4][9] __attribute__((section(".rodata"))) = {
-    { 3, 3, 2, 3, 2, 1, 3, 1, 1 },
-    { 3, 3, 2, 0, 3, 2, 0, 0, 2 },
-    { 3, 3, 3, 3, 0, 1, 0, 1, 1 },
-    { 2, 2, 2, 0, 1, 2, 0, 0, 1 },
-};
-const s32 D_800FA814_HotBobOmb[4][4] __attribute__((section(".rodata"))) = {
-    { -1, 0, 2, 1 },
-    { 1, -1, 0, 2 },
-    { 2, 1, -1, 0 },
-    { 0, 2, 1, -1 },
-};
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F9AB8_HotBobOmb);
-#endif
 
 /* Zero tail of .rodata: retail pads the unit to 16 bytes here. */
 const s32 D_800FA858_HotBobOmb[2] = { 0, 0 };

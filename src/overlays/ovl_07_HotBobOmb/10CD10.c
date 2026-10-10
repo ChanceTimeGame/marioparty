@@ -65,7 +65,7 @@ void func_800F6800_HotBobOmb(s32 seed) {
 
 // masked
 #ifdef NON_MATCHING
-u32 func_800F680C_HotBobOmb(void) {
+s32 func_800F680C_HotBobOmb(void) {
     u32 t = D_800F9D30_HotBobOmb * 4 + 2;
 
     return D_800F9D30_HotBobOmb = (t * (t + 1)) >> 2;
