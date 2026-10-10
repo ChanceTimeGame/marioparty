@@ -148,9 +148,7 @@ extern const ShyGuyMotTbl D_800FD6C8_ShyGuySays;
 extern Vec3f D_800FD980_ShyGuySays;
 extern Vec3f D_800FD98C_ShyGuySays;
 extern omObjData* D_800FDC20_ShyGuySays;
-extern s32 D_800FDC30_ShyGuySays;
 extern s16 D_800FDC50_ShyGuySays[2];
-extern s16 D_800FDC52_ShyGuySays;
 extern u16 D_800FD5DC_ShyGuySays[2];
 extern f64 D_800FD818_ShyGuySays; //BSS
 extern f64 D_800FD820_ShyGuySays; //BSS

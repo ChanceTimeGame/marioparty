@@ -2,6 +2,24 @@
 #include "ShyGuySays.h"
 int abs(int);
 
+/* .data (0x1E0670) */
+u32 D_800FD5C0_ShyGuySays = 0x19971204; /* random seed */
+u16 D_800FD5C4_ShyGuySays = 0;
+s16 D_800FD5C6_ShyGuySays = 0;
+s16 D_800FD5C8_ShyGuySays = 0;
+s16 D_800FD5CA_ShyGuySays = 0;
+s16 D_800FD5CC_ShyGuySays = 0;
+s16 D_800FD5CE_ShyGuySays = 0;
+f32 D_800FD5D0_ShyGuySays = 0.0f;
+f32 D_800FD5D4_ShyGuySays = 0.0f;
+f32 D_800FD5D8_ShyGuySays = 0.0f;
+u16 D_800FD5DC_ShyGuySays[2] = { 0, 180 };
+u32 D_800FD5E0_ShyGuySays = 180;
+u32 D_800FD5E4_ShyGuySays = 0;
+s16 D_800FD5E8_ShyGuySays = 0;
+u16 D_800FD5EA_ShyGuySays = 0;
+f32 D_800FD5EC_ShyGuySays = 60.0f;
+
 typedef struct unkStruct_ShyGuySays_06 {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
@@ -18,7 +36,6 @@ extern u32 D_800FDC28_ShyGuySays[4];
 extern unkStructShyGuySays_03 D_800FDC38_ShyGuySays[5];
 f32 func_80025D40(s16);
 void func_800FBE60_ShyGuySays(omObjData*);
-extern s32 D_800FDC34_ShyGuySays;
 extern s16 D_800FD5C6_ShyGuySays;
 extern s16 D_800FD5C8_ShyGuySays;
 extern s16 D_800FD5CA_ShyGuySays;
@@ -1812,7 +1829,7 @@ void func_800FBE60_ShyGuySays(omObjData* arg0) {
     func_800FD274_ShyGuySays(arg0->model[0], D_800FDC50_ShyGuySays[0], func_800AEAC0(var_f12), sp18.unk_00, sp1C.unk_00.unk_00);
 
     var_f12 = D_800FD5E4_ShyGuySays;
-    func_800FD274_ShyGuySays(arg0->model[0], D_800FDC52_ShyGuySays, func_800AEFD0(var_f12), sp18.unk_00, sp1C.unk_00.unk_00);
+    func_800FD274_ShyGuySays(arg0->model[0], D_800FDC50_ShyGuySays[1], func_800AEFD0(var_f12), sp18.unk_00, sp1C.unk_00.unk_00);
 
     if (func_8005FD5C() + D_800F64F8 != 0) {
         return;
@@ -1934,7 +1951,7 @@ void func_800FBE60_ShyGuySays(omObjData* arg0) {
                     if (func_800F9A7C_ShyGuySays(i, D_800FD5E8_ShyGuySays) != 0) {
                         continue;
                     }
-                    if (D_800FDC30_ShyGuySays == 2) {
+                    if (D_800FDC28_ShyGuySays[2] == 2) {
                         if (i == 0) {
                             var_f12_2 = 325.0f;
                         } else if (i == 1) {
@@ -1966,7 +1983,7 @@ void func_800FBE60_ShyGuySays(omObjData* arg0) {
                     i = 5;
                 }
                 if (i == 4) {
-                    if (D_800FDC30_ShyGuySays == 1) {
+                    if (D_800FDC28_ShyGuySays[2] == 1) {
                         D_800FD99C_ShyGuySays = 0;
                         D_800FDC4C_ShyGuySays = 0;
                     } else if (arg0->rot.y == 180.0) {
@@ -2171,7 +2188,7 @@ s16 func_800FD124_ShyGuySays(omObjData* arg0) {
     unk_ovl_2D_struct* b = &D_800F2B7C[arg0->model[3]];
     unk_ovl_2D_struct* c = &D_800F2B7C[arg0->model[4]];
 
-    if (D_800FDC34_ShyGuySays == 0 && a->unk_48 == a->unk_50 && b->unk_48 == b->unk_50 && c->unk_48 == c->unk_50) {
+    if (D_800FDC28_ShyGuySays[3] == 0 && a->unk_48 == a->unk_50 && b->unk_48 == b->unk_50 && c->unk_48 == c->unk_50) {
         return 1;
     }
     return 0;
