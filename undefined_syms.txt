@@ -378,3 +378,5 @@ D_800FA17F_HotBobOmb = D_800FA17C_HotBobOmb + 0x3;
 D_800FA1D0_HotBobOmb = D_800FA1C8_HotBobOmb + 0x8;
 D_800FA1E4_HotBobOmb = D_800FA1C8_HotBobOmb + 0x1C;
 D_800FB584_WhackAPlant = D_800FB580_WhackAPlant + 0x4;
+D_800FA93A_TeeteringTowers = D_800FA938_TeeteringTowers + 0x2;
+D_800FADDC_TeeteringTowers = D_800FADD4_TeeteringTowers + 0x8;

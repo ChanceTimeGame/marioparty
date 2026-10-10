@@ -231,6 +231,8 @@ build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2643A0.c.o: CFLAGS = -
 build/src/overlays/ovl_12_GroundPound/146B60.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_12 148840.c: nop between mul.s in func_800F9314, func_800F9A24
 build/src/overlays/ovl_12_GroundPound/148840.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_19 176130.c: nop between mul.s in func_800F99F4
+build/src/overlays/ovl_19_TeeteringTowers/176130.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # -O3 static inlines
 build/src/7CD60.c.o: OPTFLAGS = -O3
