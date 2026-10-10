@@ -188,6 +188,8 @@ build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80.c.o: CFLAGS = -
 build/src/engine/math.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_63 2A9CA0.c (staff credits) also has the mul fix on: nop between back-to-back mul.s (func_800F9F70)
 build/src/overlays/ovl_63_StaffScene/2A9CA0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_09 113DC0.c (Pipe Maze) also has the mul fix on: nop between back-to-back mul.s (func_800F6DD8)
+build/src/overlays/ovl_09_PipeMaze/113DC0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # mul nops included in the following *.c (Maybe only one func uses --vr4300mul-off)
 build/src/3AC60.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
