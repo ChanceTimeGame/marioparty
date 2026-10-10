@@ -44,7 +44,10 @@ typedef struct WAPPlayerWork {
     /* 0x56 */ s8 unk56; /* controller port */
     /* 0x57 */ char unk57;
     /* 0x58 */ u8 unk58;
-    /* 0x59 */ char unk59[0x83];
+    /* 0x59 */ char unk59[0x5F];
+    /* 0xB8 */ omObjData* unkB8; /* MgWork's held item: a pointer, so the host offsets agree */
+    /* 0xBC */ char unkBC[0x1C];
+    /* 0xD8 */ void* unkD8; /* MgWork's motion pair table */
     /* 0xDC */ void* unkDC; /* collision callback */
     /* 0xE0 */ char unkE0[4];
     /* 0xE4 */ WAPCpu* unkE4;
