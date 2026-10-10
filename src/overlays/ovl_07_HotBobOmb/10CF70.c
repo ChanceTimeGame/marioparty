@@ -195,13 +195,11 @@ void func_800F6DB4_HotBobOmb(omObjData* obj) {
     func_800F6DD0_HotBobOmb(obj, 3);
 }
 
-// masked
-#ifdef NON_MATCHING
 void func_800F6DD0_HotBobOmb(omObjData* obj, s32 player) {
     s32 chr;
     s32 dir;
 
-    chr = GwPlayer[player].character;
+    chr = (s8)GwPlayer[player].character;
     dir = D_800C59AC[chr].unk_00;
     obj->model[0] = LoadFormFile(dir | D_800C59AC[chr].unk_04, 0x699);
     obj->model[1] = func_800174F4(6, 0x699);
@@ -253,9 +251,6 @@ void func_800F6DD0_HotBobOmb(omObjData* obj, s32 player) {
     func_80025EB4(obj->model[0], 1, 1);
     obj->func_ptr = func_800F724C_HotBobOmb;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10CF70", func_800F6DD0_HotBobOmb);
-#endif
 
 // masked
 #ifdef NON_MATCHING
@@ -285,13 +280,12 @@ void func_800F724C_HotBobOmb(omObjData* obj) {
             if (D_800FA988_HotBobOmb == 0) {
                 p->t = 0.0f;
                 func_80025BB8(obj->model[0], obj->motion[1]);
+            } else if (D_800FA988_HotBobOmb == 1) {
+                p->t = 0.0f;
+                func_80025BB8(obj->model[0], obj->motion[3]);
             } else {
                 p->t = 0.0f;
-                if (D_800FA988_HotBobOmb == 1) {
-                    func_80025BB8(obj->model[0], obj->motion[3]);
-                } else {
-                    func_80025BB8(obj->model[0], obj->motion[2]);
-                }
+                func_80025BB8(obj->model[0], obj->motion[2]);
             }
             func_80025EB4(obj->model[0], 4, 0);
         }
@@ -300,15 +294,14 @@ void func_800F724C_HotBobOmb(omObjData* obj) {
             if (D_800FA988_HotBobOmb == 0) {
                 p->t = 0.0f;
                 func_80025BB8(obj->model[0], obj->motion[3]);
+            } else if (D_800FA988_HotBobOmb == 1) {
+                p->t = 0.0f;
+                func_80025BB8(obj->model[0], obj->motion[1]);
             } else {
                 p->t = 0.0f;
-                if (D_800FA988_HotBobOmb == 1) {
-                    func_80025BB8(obj->model[0], obj->motion[1]);
-                } else {
-                    func_80025BB8(obj->model[0], obj->motion[2]);
-                }
+                func_80025BB8(obj->model[0], obj->motion[2]);
             }
-            D_800FA174_HotBobOmb = PlaySound(0x206);
+            D_800FA174_HotBobOmb = (s16)PlaySound(0x206);
             D_800FA17C_HotBobOmb = D_800FA180_HotBobOmb[idx];
             func_8001249C((s16)D_800FA174_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
             func_8001249C((s16)D_800FA178_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
@@ -333,7 +326,7 @@ void func_800F724C_HotBobOmb(omObjData* obj) {
     }
     if (D_800FA1A4_HotBobOmb == idx) {
         if (--D_800FA1A0_HotBobOmb == 0) {
-            D_800FA174_HotBobOmb = PlaySound(0x204);
+            D_800FA174_HotBobOmb = (s16)PlaySound(0x204);
             D_800FA17C_HotBobOmb = D_800FA180_HotBobOmb[idx];
             func_8001249C((s16)D_800FA174_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
             func_8001249C((s16)D_800FA178_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
@@ -540,7 +533,7 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
                 i = 15;
             }
             func_80060F04((s16)D_800FA99C_HotBobOmb, 5, 0, 5);
-            D_800FA178_HotBobOmb = PlaySound((s16)D_800FA134_HotBobOmb[i]);
+            D_800FA178_HotBobOmb = (s16)PlaySound((s16)D_800FA134_HotBobOmb[i]);
             D_800FA190_HotBobOmb = i + 1;
             if (D_800FA9BC_HotBobOmb < 450) {
                 D_800FA860_HotBobOmb = (f32)(450 - D_800FA9BC_HotBobOmb) / 450.0f + 0.1f;
