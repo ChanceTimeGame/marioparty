@@ -909,7 +909,7 @@ segments:
     subsegments:
       - [0x131FA0, c]
       - [0x136C10, c]
-      - [0x136F40, data, 131FA0]
+      - [0x136F40, .data, 131FA0]
       - [0x136FF0, .rodata, 131FA0]
       - {0x137050, type: bss, vram: 0x800FB690, name: ovl_0F_bss}
   - type: code
