@@ -40,8 +40,8 @@ typedef struct GPHoleRef {
 s32 func_800184A8(unkGlobalStruct_00*, s32);
 void func_800F9870_GroundPound(omObjData*);
 void func_800F9B18_GroundPound(omObjData*);
-extern s16 ContBtn[];
-extern u8 ContStkY[];
+extern u16 ContBtn[4];
+extern s8 ContStkY[4];
 extern s32 D_800FA2D0_GroundPound;
 extern s32 D_800FA2E0_GroundPound;
 
@@ -93,11 +93,30 @@ extern u8 D_800FA378_GroundPound[7];
 extern omObjData* D_800FA3F0_GroundPound[16];
 extern omObjData* D_800FA430_GroundPound[3];
 extern s16 D_800FA450_GroundPound;
-extern s32 D_800FA2F0_GroundPound;
+extern unkStructGroundPound_00* D_800FA2F0_GroundPound; /* the CPU's target hole (a pointer: 8 bytes on the host) */
 extern s32 D_800FA2F8_GroundPound;
 extern s32 D_800FA2FC_GroundPound;
 extern s32 D_800FA2F4_GroundPound;
-extern s32 D_800FA1D0_GroundPound;
+extern u32 D_800FA1D0_GroundPound;
+extern u16 D_800FA2D4_GroundPound;
+extern u8 D_800FA2D6_GroundPound;
+extern f32 D_800FA2E4_GroundPound;
+extern f32 D_800FA2EC_GroundPound;
+extern s32 D_800FA300_GroundPound;
+void func_800F9094_GroundPound(omObjData* obj);
+s32 func_800F9314_GroundPound(omObjData* obj);
+void func_800F95D4_GroundPound(omObjData* obj);
+void func_800F9908_GroundPound(omObjData* obj);
+unkStructGroundPound_00* func_800F9950_GroundPound(omObjData* obj);
+s32 func_800F9A24_GroundPound(omObjData* obj, f32 angle);
+s32 func_800F9F18_GroundPound(u32 seed);
+f32 func_80025E70(s16);
+void func_800090C4(omObjData* obj, u8 idx, u8 val);
+#ifdef TARGET_PC
+void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
+#else
+void func_80060F04(s16, s32, s32, s32);
+#endif
 extern s32 D_800FA2D8_GroundPound;
 extern f32 D_800FA2DC_GroundPound;
 extern u8 D_800C5982;
