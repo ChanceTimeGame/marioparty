@@ -1,4 +1,4 @@
-#include "common.h"
+#include "GroundPound.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_GroundPound/148840", func_800F8C20_GroundPound);
 
