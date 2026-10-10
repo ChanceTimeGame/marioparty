@@ -14,7 +14,14 @@ typedef struct unkStruct_ShyGuySays_06 {
 
 extern unkStruct_ShyGuySays_06 D_800FDC70_ShyGuySays[6];
 extern s16 D_800FDC5C_ShyGuySays[3];
-extern s32 D_800FDC28_ShyGuySays[2];
+extern s32 D_800FDC28_ShyGuySays[4];
+typedef struct ShyGuyFlagAnim {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+} ShyGuyFlagAnim;
+extern ShyGuyFlagAnim D_800FDC38_ShyGuySays[5];
+f32 func_80025D40(s16);
+void func_800FBE60_ShyGuySays(omObjData*);
 extern s32 D_800FDC34_ShyGuySays;
 extern s16 D_800FD5C6_ShyGuySays;
 extern s16 D_800FD5C8_ShyGuySays;
@@ -38,6 +45,7 @@ extern omObjData* D_800F3FB0[];
 
 s16 func_8001755C(s32);
 f32 func_80025D40(s16);
+void func_800FBE60_ShyGuySays(omObjData*);
 s16 func_80023FC8(s16);
 u16 func_800FB2C8_ShyGuySays(s32);
 void func_800FAA80_ShyGuySays(s16);
@@ -1705,13 +1713,60 @@ void func_800FB840_ShyGuySays(omObjData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FBAE4_ShyGuySays);
+void func_800FBAE4_ShyGuySays(omObjData* arg0) {
+    unk2C0C0StructC0* m;
+    u16 i;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", D_800FD850_ShyGuySays);
+    arg0->func_ptr = &func_800FBE60_ShyGuySays;
+    arg0->model[0] = func_800174C0(0x3C0006, 0x499);
+    arg0->model[1] = func_800174C0(0x3C0007, 0x499);
+    arg0->model[2] = func_800174C0(0x3C0008, 0x499);
+    arg0->model[3] = func_800174C0(0x3C0009, 0x499);
+    arg0->model[4] = func_800174C0(0x3C000A, 0x499);
+    func_800258EC(arg0->model[1], 4, 4);
+    func_800258EC(arg0->model[2], 4, 4);
+    func_800258EC(arg0->model[3], 4, 4);
+    func_800258EC(arg0->model[4], 4, 4);
+    arg0->model[5] = func_800174C0(6, 0x499);
+    arg0->model[6] = func_800174C0(0x3C0001, 0x499);
+    func_80026040(arg0->model[0]);
+    for (i = 0; i < 5; i++) {
+        D_800F2B7C[arg0->model[i]].unk_4C = 0.0f;
+        D_800FDC38_ShyGuySays[i].unk_00 = func_80025E48(arg0->model[i]);
+        D_800FDC38_ShyGuySays[i].unk_02 = func_80025D40(arg0->model[i]);
+    }
+    D_800F2B7C[arg0->model[3]].unk_48 = D_800FDC38_ShyGuySays[3].unk_02;
+    D_800F2B7C[arg0->model[3]].unk_50 = D_800FDC38_ShyGuySays[3].unk_02;
+    D_800F2B7C[arg0->model[4]].unk_48 = D_800FDC38_ShyGuySays[4].unk_02;
+    D_800F2B7C[arg0->model[4]].unk_50 = D_800FDC38_ShyGuySays[4].unk_02;
+    D_800FDC28_ShyGuySays[0] = 1;
+    D_800FDC28_ShyGuySays[1] = 1;
+    D_800FDC28_ShyGuySays[2] = 1;
+    D_800FDC28_ShyGuySays[3] = 0;
+    arg0->trans.x = 0.0f;
+    arg0->trans.z = arg0->trans.y = 100.0f;
+    arg0->scale.x = arg0->scale.y = arg0->scale.z = 0.8f;
+    arg0->rot.y = 180.0f;
+    D_800FDC4C_ShyGuySays = 0;
+    D_800FDC54_ShyGuySays = 30.0f;
+    arg0->work[0] = 3;
+    arg0->work[1] = 4;
+    arg0->work[2] = 5;
+    arg0->work[3] = 6;
+    m = D_800F2B7C[arg0->model[0]].unk_6C;
+    D_800FDC50_ShyGuySays[0] = func_80033718(m, "sentyo_r2-hata_r");
+    D_800FDC50_ShyGuySays[1] = func_80033718(m, "sentyo_r2-hata_w");
+}
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", D_800FD858_ShyGuySays);
+const UnknownBlock8 D_800FD850_ShyGuySays = { { 9, 10, 16, 19 } };
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", D_800FD860_ShyGuySays);
+const UnknownBlock8 D_800FD858_ShyGuySays = { { 8, 11, 17, 18 } };
+
+/* func_80060268 ids for rounds 1-15 */
+const UnknownBlock36 D_800FD860_ShyGuySays = { {
+    0x88, 0x8C, 0x90, 0x94, 0x98, 0x9C, 0xA0, 0xA4, 0xA8,
+    0xAC, 0xB0, 0xB4, 0xB8, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB,
+} };
 
 void func_800FBE60_ShyGuySays(omObjData* arg0) {
     UnknownBlock8 sp18;
@@ -1736,7 +1791,7 @@ void func_800FBE60_ShyGuySays(omObjData* arg0) {
     }
 
     var_f12 = D_800FD5E4_ShyGuySays;
-    func_800FD274_ShyGuySays(arg0->model[0], D_800FDC50_ShyGuySays, func_800AEAC0(var_f12), sp18.unk_00, sp1C.unk_00.unk_00);
+    func_800FD274_ShyGuySays(arg0->model[0], D_800FDC50_ShyGuySays[0], func_800AEAC0(var_f12), sp18.unk_00, sp1C.unk_00.unk_00);
 
     var_f12 = D_800FD5E4_ShyGuySays;
     func_800FD274_ShyGuySays(arg0->model[0], D_800FDC52_ShyGuySays, func_800AEFD0(var_f12), sp18.unk_00, sp1C.unk_00.unk_00);
@@ -1780,7 +1835,7 @@ void func_800FBE60_ShyGuySays(omObjData* arg0) {
                         }
                     }
                     if (D_800FD9A8_ShyGuySays < 16) {
-                        func_80060268(sp18.unk_00[D_800FD9A8_ShyGuySays + 7]);
+                        func_80060268(sp1C.unk_08.unk_00[D_800FD9A8_ShyGuySays - 1]);
                     }
                     PlaySound(0x2FC);
                     switch (var_s3) {

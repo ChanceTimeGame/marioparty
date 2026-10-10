@@ -86,7 +86,7 @@ typedef struct UnknownBlock8 {
 } UnknownBlock8;
 
 typedef struct UnknownBlock36 {
-    /* 0x00 */ char unk_00[36];
+    /* 0x00 */ u16 unk_00[18];
 } UnknownBlock36;
 
 typedef struct UnknownBlockCombo48 {
@@ -149,14 +149,14 @@ extern Vec3f D_800FD980_ShyGuySays;
 extern Vec3f D_800FD98C_ShyGuySays;
 extern omObjData* D_800FDC20_ShyGuySays;
 extern s32 D_800FDC30_ShyGuySays;
-extern s16 D_800FDC50_ShyGuySays;
+extern s16 D_800FDC50_ShyGuySays[2];
 extern s16 D_800FDC52_ShyGuySays;
 extern u16 D_800FD5DC_ShyGuySays[2];
 extern f64 D_800FD818_ShyGuySays; //BSS
 extern f64 D_800FD820_ShyGuySays; //BSS
-extern UnknownBlock8 D_800FD850_ShyGuySays;
-extern UnknownBlock8 D_800FD858_ShyGuySays;
-extern UnknownBlock36 D_800FD860_ShyGuySays;
+extern const UnknownBlock8 D_800FD850_ShyGuySays;
+extern const UnknownBlock8 D_800FD858_ShyGuySays;
+extern const UnknownBlock36 D_800FD860_ShyGuySays;
 extern f64 func_800FD658_ShyGuySays; //BSS
 
 void func_800FB424_ShyGuySays(void);
