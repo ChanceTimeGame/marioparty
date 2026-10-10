@@ -189,7 +189,8 @@ void func_800F7DD4_PedalPower(omObjData* arg0) {
             func_80060440(D_800F9EF4_PedalPower, 600);
             break;
         }
-        func_80023504(3, zero, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero = 0.0f);
+        zero = 0.0f; /* retail: assigned in the last argument, evaluated first by GCC */
+        func_80023504(3, zero, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero);
         func_80025EB4(D_800F9EF6_PedalPower, 2, 2);
         func_80025EB4(D_800F9EF8_PedalPower, 2, 2);
         omSetStatBit(arg0, 0x20);
@@ -210,7 +211,8 @@ void func_800F7DD4_PedalPower(omObjData* arg0) {
             if ((D_800F9E24_PedalPower & 3) == 0 && D_800FA738_PedalPower > 0) {
                 D_800FA738_PedalPower--;
             }
-            func_80023504(3, zero, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero = 0.0f);
+            zero = 0.0f; /* retail: assigned in the last argument, evaluated first by GCC */
+            func_80023504(3, zero, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero);
             func_80060758(0x22C);
             func_80025EB4(D_800F9EF6_PedalPower, 2, 1);
             func_80025EB4(D_800F9EF8_PedalPower, 2, 1);
