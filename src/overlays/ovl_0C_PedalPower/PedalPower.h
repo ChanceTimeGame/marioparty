@@ -23,7 +23,7 @@ typedef struct PPWork {
 } PPWork; /* size = 0xEC */
 
 
-void func_800F7DD4_PedalPower(void);
+void func_800F7DD4_PedalPower(omObjData*);
 void func_800F6944_PedalPower(void);
 void func_800F6ED0_PedalPower(void);
 void func_800F6D2C_PedalPower(omObjData*);
@@ -52,13 +52,18 @@ extern u8 D_800F9E52_PedalPower;
 extern s32 D_800F9E90_PedalPower;
 
 /* .bss */
+extern s8 D_800F9EF0_PedalPower;
+extern s8 D_800F9EF1_PedalPower;
+extern s16 D_800F9EF2_PedalPower;
+extern s16 D_800F9EF4_PedalPower;
+extern u8 D_800F9F10_PedalPower[0x800];
 extern s8 ContStkY[];
 extern u16 D_800F9EF6_PedalPower;
 extern u16 D_800F9EF8_PedalPower;
 extern u16 D_800F9EFA_PedalPower;
 extern u16 D_800F9EFC_PedalPower;
-extern s16 D_800F9EFE_PedalPower;
-extern s32 D_800F9F04_PedalPower;
+extern u16 D_800F9EFE_PedalPower[]; /* "15mt001_DEF" (func_80039C48) */
+extern f32 D_800F9F04_PedalPower; /* belt scroll */
 extern u8 D_800FA710_PedalPower;
 extern f32 D_800FA720_PedalPower;
 extern u16 D_800FA724_PedalPower;
