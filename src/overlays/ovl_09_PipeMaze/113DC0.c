@@ -239,7 +239,7 @@ void func_800F7100_PipeMaze(void) {
     omObjData* temp_v0;
 
     D_800EE984 = 0;
-    D_800F9B80_PipeMaze = func_8006B8A4(1, 0x289, 0x289, 0x289, 1);
+    D_800F9B80_PipeMaze = (omObjData*)func_8006B8A4(1, 0x289, 0x289, 0x289, 1);
     func_8006B870();
     temp_v0 = omAddObj(1, 8, 0, -1, &func_800F7194_PipeMaze);
     D_800EDE70[D_800EE984++] = temp_v0;
