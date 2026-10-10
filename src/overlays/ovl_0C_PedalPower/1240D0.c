@@ -206,7 +206,7 @@ void func_800F9728_PedalPower(omObjData* arg0) {
             }
         }
     } else {
-        stick = func_80009E4C(D_800FA72A_PedalPower, 0x20, ContStkX[GwPlayer[D_800FA728_PedalPower].port],
+        stick = func_80009E4C((s16)D_800FA728_PedalPower, 0x20, ContStkX[GwPlayer[D_800FA728_PedalPower].port],
                               ContStkY[GwPlayer[D_800FA728_PedalPower].port]);
         if ((stick == -2) | (stick == 2)) {
         pedal:

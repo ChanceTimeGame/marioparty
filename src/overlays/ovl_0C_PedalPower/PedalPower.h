@@ -24,8 +24,8 @@ typedef struct PPWork {
 
 
 void func_800F7DD4_PedalPower(omObjData*);
-void func_800F6944_PedalPower(void);
-void func_800F6ED0_PedalPower(void);
+void func_800F6944_PedalPower(omObjData*);
+void func_800F6ED0_PedalPower(omObjData*);
 void func_800F6D2C_PedalPower(omObjData*);
 void func_800F67AC_PedalPower(void);
 void func_800F6870_PedalPower(void);
@@ -34,6 +34,11 @@ void func_800F79B0_PedalPower(void);
 void func_800F8EE0_PedalPower(void);
 
 /* Main-code helpers (prototypes as in the linked minigames). */
+void func_8006073C(void);
+void func_8006035C(s16, s8);
+void func_80060440(s16, s16);
+s16 func_80060758(s16);
+void func_80060F04(s16, s16, s16, s16);
 void func_800090C4(omObjData* obj, u8 idx, u8 val);
 void func_8000A6F4(omObjData* obj);
 s16 func_80009E4C(s16 player, s16 limit, s8 x, s8 y);
@@ -52,6 +57,10 @@ extern u8 D_800F9E52_PedalPower;
 extern s32 D_800F9E90_PedalPower;
 
 /* .bss */
+extern s8 D_800F9EE0_PedalPower;
+extern s8 D_800F9EE1_PedalPower;
+extern f32 D_800F9EE4_PedalPower;
+extern s32 D_800F9EE8_PedalPower;
 extern s8 D_800F9EF0_PedalPower;
 extern s8 D_800F9EF1_PedalPower;
 extern s16 D_800F9EF2_PedalPower;
@@ -67,8 +76,7 @@ extern f32 D_800F9F04_PedalPower; /* belt scroll */
 extern u8 D_800FA710_PedalPower;
 extern f32 D_800FA720_PedalPower;
 extern u16 D_800FA724_PedalPower;
-extern s32 D_800FA728_PedalPower;
-extern s16 D_800FA72A_PedalPower;
+extern s32 D_800FA728_PedalPower; /* player index; splat's D_800FA72A is its low half: (s16)D_800FA728 */
 extern s8 D_800FA72C_PedalPower;
 extern s8 D_800FA72D_PedalPower;
 extern Vec2f D_800FA730_PedalPower;

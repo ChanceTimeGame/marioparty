@@ -14,9 +14,6 @@ f32 D_800F9E38_PedalPower[3] = { -480.0f, -300.0f, -120.0f };
 extern omObjData* D_800F2AF8[];
 extern unk2C0C0Struct70* D_800F37AC;
 extern u8 D_800F64F8;
-void func_8006035C(s16, s8);
-void func_80060440(s16, s16);
-s16 func_80060758(s16);
 f32 func_80025D18(s16);
 void func_80027E48(s16 arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4, char* arg5, u8 arg6);
 
