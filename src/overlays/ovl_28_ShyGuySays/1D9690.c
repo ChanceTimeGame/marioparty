@@ -1482,7 +1482,57 @@ void func_800FAA80_ShyGuySays(s16 arg0) {
     D_800FD9B8_ShyGuySays[1] = abs(zs[0] - zs[1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FAED8_ShyGuySays);
+void func_800FAED8_ShyGuySays(s16 arg0, s32 arg1) {
+    unk2C0C0StructC0* m = D_800F2B7C[arg0].unk_6C;
+    ShyGuyGridCell* cell = D_800FD9B4_ShyGuySays;
+    unk2C0C0StructE0* src = m->unk_04;
+    unk2C0C0StructE0* dst = m->unk_08[D_800F37F0];
+    u16 n = m->unk_72;
+    s16 first = 0;
+    f32 s1;
+    f32 s2;
+    f32 ax;
+    f32 az;
+    u16 i;
+
+    s1 = func_800AEAC0(arg1);
+    s2 = func_800AEAC0(arg1 * 2);
+    ax = D_800FD9B8_ShyGuySays[0] * D_800FDC64_ShyGuySays->unk_00[6] * D_800F2B7C[arg0].unk_3C;
+    az = D_800FD9B8_ShyGuySays[0] * D_800FDC64_ShyGuySays->unk_00[9] * D_800F2B7C[arg0].unk_40;
+    if (arg1 == 0) {
+        first = 1 - first; /* == 1; spelled so GCC keeps the branch */
+    }
+    for (i = 0; i < n; src++, dst++, i++, cell++) {
+        if (cell->unk_00 != 0) {
+            if (cell->unk_04 & 1) {
+                dst->unk_00 = src->unk_00 + s1 * ax;
+            } else {
+                dst->unk_00 = src->unk_00 - s1 * ax;
+            }
+            if (first) {
+                if ((cell->unk_02 & 1) && (cell->unk_04 & 1)) {
+                    dst->unk_02 = src->unk_02 + s2 * az;
+                } else if ((cell->unk_02 + cell->unk_04) & 1) {
+                    dst->unk_02 = src->unk_02 - s2 * az;
+                } else {
+                    dst->unk_02 = src->unk_02;
+                }
+            } else {
+                if (!(cell->unk_02 & 1) && !(cell->unk_04 & 1)) {
+                    dst->unk_02 = src->unk_02 + s2 * az;
+                } else if ((cell->unk_02 & 1) && (cell->unk_04 & 1)) {
+                    dst->unk_02 = src->unk_02 - s2 * az;
+                } else {
+                    dst->unk_02 = src->unk_02;
+                }
+            }
+        } else {
+            dst->unk_00 = src->unk_00;
+            dst->unk_02 = src->unk_02;
+            dst->unk_04 = src->unk_04;
+        }
+    }
+}
 
 f32 func_800FB190_ShyGuySays(f32 arg0, f32 arg1) {
     unk2C0C0StructC0* m = D_800F2B7C[D_800FD9B0_ShyGuySays].unk_6C;
