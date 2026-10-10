@@ -24,8 +24,6 @@ s16 D_800FB622_WhackAPlant = 0;
 s16 D_800FB624_WhackAPlant = 0;
 
 
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F65E0_WhackAPlant(void) {
     omObjData* obj;
     WAPPlantWork* w;
@@ -116,9 +114,6 @@ void func_800F65E0_WhackAPlant(void) {
     SetFadeInTypeAndTime(0, 0x10);
     D_800FB710_WhackAPlant = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F65E0_WhackAPlant);
-#endif
 void func_800F6B8C_WhackAPlant(void) {
     s32 i = 0;
     
@@ -213,8 +208,6 @@ void func_800F6FE4_WhackAPlant(omObjData* arg0) {
     arg0->func_ptr = NULL;
 }
 
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F70AC_WhackAPlant(omObjData* arg0) {
     WAPPlayerWork* w;
     WAPCpu* cpu;
@@ -283,9 +276,6 @@ void func_800F70AC_WhackAPlant(omObjData* arg0) {
     omSetTra(arg0, 0.0f, -160.0f, 0.0f);
     arg0->func_ptr = func_800F7570_WhackAPlant;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F70AC_WhackAPlant);
-#endif
 void func_800F7570_WhackAPlant(omObjData* arg0) {
     unkGlobalStruct_00* temp_s1 = arg0->unk_50;
 
@@ -543,11 +533,7 @@ void func_800F82B4_WhackAPlant(omObjData* arg0) {
         for (i = 0; i < 2; i++) {
             d = D_800FB700_WhackAPlant->trans.x - w->unk0[i];
             if (fabs(d) > 20.0) {
-                if (d > 0.0f) {
-                    d = 20.0f;
-                } else {
-                    d = -20.0f;
-                }
+                d = (d > 0.0f) ? 20.0f : -20.0f;
             }
             w->unk0[i] += d;
         }
@@ -559,11 +545,7 @@ void func_800F82B4_WhackAPlant(omObjData* arg0) {
                 d = -280.0f - w->unk10[i];
             }
             if (fabs(d) > 20.0) {
-                if (d > 0.0f) {
-                    d = 20.0f;
-                } else {
-                    d = -20.0f;
-                }
+                d = (d > 0.0f) ? 20.0f : -20.0f;
             }
             w->unk10[i] += d;
         }
@@ -590,8 +572,6 @@ void func_800F82B4_WhackAPlant(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F82B4_WhackAPlant);
 #endif
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F8614_WhackAPlant(omObjData* arg0) {
     WAPPots* w;
     s32 i;
@@ -633,11 +613,6 @@ void func_800F8614_WhackAPlant(omObjData* arg0) {
     arg0->func_ptr = func_800F87EC_WhackAPlant;
     omSetStatBit(arg0, 0xA0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F8614_WhackAPlant);
-#endif
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F87EC_WhackAPlant(omObjData* arg0) {
     WAPPots* w;
     WAPCpu* cpu;
@@ -673,9 +648,11 @@ void func_800F87EC_WhackAPlant(omObjData* arg0) {
             n = D_800FB5C8_WhackAPlant[D_800FB69A_WhackAPlant].count;
             for (i = 0; i < n; i++) {
                 pot = rand8() % 9;
-                while (w->unk2[pot] != 0) {
-                    pot++;
-                    if (pot >= 9) {
+                while (1) {
+                    if (w->unk2[pot] == 0) {
+                        break;
+                    }
+                    if (++pot >= 9) {
                         pot -= 9;
                     }
                 }
@@ -689,9 +666,6 @@ void func_800F87EC_WhackAPlant(omObjData* arg0) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F87EC_WhackAPlant);
-#endif
 omObjData* func_800F8A58_WhackAPlant(omObjData* arg0, u16 arg1, void* arg2) {
     omObjData* obj;
     WAPPlantWork* w;
@@ -729,8 +703,7 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
     WAPPots* pots;
     f32 y;
     f32 a;
-    f32 t;
-    s16 mot;
+    s16 m;
 
     w = arg0->unk_50;
     p = w->unk68;
@@ -748,20 +721,19 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
             func_800FB378_WhackAPlant(D_800FB6FC_WhackAPlant, pot, 0.0f, a, 0.0f);
             omSetRot(arg0, 0.0f, a, 0.0f);
         }
-        w->unk48 = w->unk34 = (((f32)p->unk8 - p->unk6) / p->unk8) * 55.0f;
-        t = (f32)(p->unk8 - p->unk6) / p->unk8;
-        func_80025830(D_800FB6F8_WhackAPlant->model[pot + 10], t, 0.7f, t);
+        w->unk34 = w->unk48 = (((f32)p->unk8 - p->unk6) / p->unk8) * 55.0f;
+        func_80025830(D_800FB6F8_WhackAPlant->model[pot + 10], (f32)(p->unk8 - p->unk6) / p->unk8, 0.7f, (f32)(p->unk8 - p->unk6) / p->unk8);
         pots->unk1C[pot] = ((f32)(p->unk8 - p->unk6) / p->unk8) * 0.5f + 0.5f;
         if (p->unk6 == 0) {
             p->unk6 = p->unkA;
             p->unk0 = 1;
+            m = mdl;
             if (rand8() & 1) {
-                mot = D_800FB6FC_WhackAPlant->motion[1];
+                func_80025BB8(m, (s16)D_800FB6FC_WhackAPlant->motion[1]);
             } else {
-                mot = D_800FB6FC_WhackAPlant->motion[0];
+                func_80025BB8(m, (s16)D_800FB6FC_WhackAPlant->motion[0]);
             }
-            func_80025BB8(mdl, mot);
-            func_80025EB4(mdl, 2, 2);
+            func_80025EB4(m, 2, 2);
         }
         break;
     case 1:
@@ -784,8 +756,7 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
         y = (170.0f / p->unkC) * p->unk6;
         func_800FB308_WhackAPlant(D_800FB6FC_WhackAPlant, pot, D_800FB580_WhackAPlant[pot][0], y, D_800FB580_WhackAPlant[pot][1]);
         omSetTra(arg0, D_800FB580_WhackAPlant[pot][0], y, D_800FB580_WhackAPlant[pot][1]);
-        t = (f32)p->unk6 / p->unkC;
-        func_80025830(D_800FB6F8_WhackAPlant->model[pot + 10], t, 0.7f, t);
+        func_80025830(D_800FB6F8_WhackAPlant->model[pot + 10], (f32)p->unk6 / p->unkC, 0.7f, (f32)p->unk6 / p->unkC);
         pots->unk1C[pot] = ((f32)p->unk6 / p->unkC) * 0.5f + 0.5f;
         if (p->unk6 == 0) {
             func_800258EC(D_800FB6FC_WhackAPlant->model[pot], 4, 4);
@@ -793,16 +764,17 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
             pots->unk2[p->unk4] = 0;
             D_800FB6FC_WhackAPlant->work[1]--;
             if (D_800FB6FC_WhackAPlant->work[1] == 0) {
-                if (D_800ED618[1].num != 0) {
-                    func_8005DB84(1, 1);
-                } else {
+                if (D_800ED618[1].num == 0) {
                     func_8005DC18(D_800FB6FC_WhackAPlant, 1);
+                } else {
+                    func_8005DB84(1, 1);
                 }
             }
             omSetTra(arg0, 1000.0f, 1000.0f, 1000.0f);
             arg0->func_ptr = NULL;
             if (p->unk0 != 3) {
-                if (--D_800FB6F4_WhackAPlant == 0 && D_800FB69A_WhackAPlant == 8) {
+                D_800FB6F4_WhackAPlant--;
+                if (D_800FB6F4_WhackAPlant == 0 && D_800FB69A_WhackAPlant == 8) {
                     func_800601D4(0x28);
                     D_800FB740_WhackAPlant = 2;
                     D_800FB730_WhackAPlant = 0;
@@ -812,7 +784,7 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
                 }
             }
         } else {
-            w->unk48 = w->unk34 = (p->unk6 * 55.0f) / p->unkC;
+            w->unk34 = w->unk48 = (p->unk6 * 55.0f) / p->unkC;
         }
         break;
     }
@@ -827,22 +799,24 @@ s32 func_800F92FC_WhackAPlant(omObjData* arg0, omObjData* arg1) {
     WAPCpu* cpu;
     WAPPlant* p;
     s16 mdl;
-    s16 st;
+    s32 state;
 
     w = arg0->unk_50;
     cpu = w->unkE4;
     p = ((WAPPlantWork*)arg1->unk_50)->unk68;
     mdl = D_800FB6FC_WhackAPlant->model[p->unk4];
-    if (p->unk0 == 3) {
+    state = p->unk0;
+    if (state == 3) {
         return 1;
     }
     if (w->unk38 >= 0.0f && w->unk38 < 1000.0f) {
-        if (p->unk0 != 2) {
+        if (state != 2) {
             func_80025BB8(mdl, D_800FB6FC_WhackAPlant->motion[2]);
             func_80025EB4(mdl, 2, 0);
         }
-        if (p->unk0 < 2 || p->unk0 == 2) {
-            if (--D_800FB6F4_WhackAPlant == 0 && D_800FB69A_WhackAPlant == 8) {
+        if (p->unk0 == 0 || p->unk0 == 1 || p->unk0 == 2) {
+            D_800FB6F4_WhackAPlant--;
+            if (D_800FB6F4_WhackAPlant == 0 && D_800FB69A_WhackAPlant == 8) {
                 func_800601D4(0x28);
                 D_800FB740_WhackAPlant = 2;
                 D_800FB730_WhackAPlant = 0;
@@ -866,14 +840,13 @@ s32 func_800F92FC_WhackAPlant(omObjData* arg0, omObjData* arg1) {
             D_800B896C = 3.0f;
             D_800B8968 = 0.13f;
             w->unk38 = -1.35f;
-            st = 2;
+            cpu->unk0 = 2;
         } else {
             D_800B896C = 4.0f;
             w->unk38 = -1.2f;
             D_800B8968 = 0.14f;
-            st = 1;
+            cpu->unk0 = 1;
         }
-        cpu->unk0 = st;
         cpu->unk6++;
         func_800F968C_WhackAPlant(8, cpu->unk6 * 0.5f + 0.5f, arg1->trans.x, arg0->trans.y, arg1->trans.z);
         func_80060540(cpu->unk6 + 0x241, 0);
@@ -885,20 +858,19 @@ s32 func_800F92FC_WhackAPlant(omObjData* arg0, omObjData* arg1) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F92FC_WhackAPlant);
 #endif
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F968C_WhackAPlant(s16 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     omObjData* obj;
     WAPRing* r;
     s16* mdl;
-    s16 i;
+    s32 i;
+    WAPPots* pots;
     s16 slot;
-    s32 j;
 
+    pots = D_800FB6FC_WhackAPlant->unk_50;
     for (i = 0; i < 3; i++) {
-        if (((WAPPots*)D_800FB6FC_WhackAPlant->unk_50)->unk16[i] == 0) {
+        if (pots->unk16[i] == 0) {
             slot = i;
-            ((WAPPots*)D_800FB6FC_WhackAPlant->unk_50)->unk16[i] = 1;
+            pots->unk16[i] = 1;
             break;
         }
     }
@@ -915,23 +887,20 @@ void func_800F968C_WhackAPlant(s16 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4)
         r->unk14 = 1.72f;
         r->unk18 = arg0;
         mdl = &D_800FB6FC_WhackAPlant->model[(u16)slot * 8 + 9];
-        for (j = 0; j < 8; j++) {
+        for (i = 0; i < 8; i++) {
             func_800258EC(*mdl, 4, 0);
             mdl++;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F968C_WhackAPlant);
-#endif
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F97F8_WhackAPlant(omObjData* arg0) {
     WAPRing* r;
     s16* mdl;
     WAPPots* pots;
     s32 i;
     f32 a;
+    f32 x;
+    f32 z;
 
     r = arg0->unk_50;
     mdl = &D_800FB6FC_WhackAPlant->model[r->unk0 * 8 + 9];
@@ -939,8 +908,7 @@ void func_800F97F8_WhackAPlant(omObjData* arg0) {
     i = 0;
     if (--r->unk8 == 0) {
         for (i = 0; i < 8; i++) {
-            func_800258EC(*mdl, 4, 4);
-            mdl++;
+            func_800258EC(*mdl++, 4, 4);
         }
         pots->unk16[r->unk0] = 0;
         omDelObj(arg0);
@@ -950,21 +918,17 @@ void func_800F97F8_WhackAPlant(omObjData* arg0) {
     r->unk10 *= r->unk14;
     for (i = 0; i < 8; i++) {
         a = i * 45.0f;
-        func_80025798(*mdl, func_800AEFD0(a) * r->unk4 + arg0->trans.x, arg0->trans.y, func_800AEAC0(a) * r->unk4 + arg0->trans.z);
+        x = func_800AEFD0(a) * r->unk4;
+        z = func_800AEAC0(a) * r->unk4;
+        func_80025798(*mdl, x + arg0->trans.x, arg0->trans.y, z + arg0->trans.z);
         func_80025830(*mdl, r->unkC, r->unkC, r->unkC);
         mdl++;
     }
     r->unk4 += 25.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F97F8_WhackAPlant);
-#endif
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F998C_WhackAPlant(u16 arg0) {
     omObjData* obj;
     WAPCoin* c;
-    s16* spr;
     s32 i;
     u16 mdl;
 
@@ -984,17 +948,12 @@ void func_800F998C_WhackAPlant(u16 arg0) {
         c->unk8 = 0;
         c->unk0 = i;
         D_800FB6EA_WhackAPlant[i] = 1;
-        spr = &D_800FB6C0_WhackAPlant[i];
-        mdl = D_800ECDE0[*spr].unk_00;
-        obj->model[0] = mdl;
+        obj->model[0] = mdl = D_800ECDE0[D_800FB6C0_WhackAPlant[i]].unk_00;
         func_800258EC(mdl, 4, 0);
-        func_8001E268(*spr, 3, 0);
-        func_8001E2A8(*spr, 0);
+        func_8001E268(D_800FB6C0_WhackAPlant[i], 3, 0);
+        func_8001E2A8(D_800FB6C0_WhackAPlant[i], 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F998C_WhackAPlant);
-#endif
 void func_800F9AF4_WhackAPlant(omObjData* arg0) {
     WAPCoin* c;
     s32 bits;
@@ -1039,8 +998,6 @@ void func_800F9AF4_WhackAPlant(omObjData* arg0) {
         break;
     }
 }
-// NON_MATCHING: residue under review
-#ifdef NON_MATCHING
 void func_800F9D38_WhackAPlant(omObjData* arg0) {
     D_800FB6A4_WhackAPlant = func_80019060(D_800FB6A2_WhackAPlant, 0, 1);
     func_80018D84(D_800FB6A4_WhackAPlant, 0x8000);
@@ -1058,9 +1015,6 @@ void func_800F9D38_WhackAPlant(omObjData* arg0) {
     arg0->scale.y = 1.0f;
     arg0->func_ptr = &func_800F9E44_WhackAPlant;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F9D38_WhackAPlant);
-#endif
 
 void func_800F9E44_WhackAPlant(omObjData* arg0) {
     s32 temp_v1;
@@ -1285,23 +1239,25 @@ void func_800FA760_WhackAPlant(omObjData* arg0) {
     u16 pot;
     f32 dist2;
     u16 pot2;
-    WAPPlayerWork* w;
     WAPCpu* cpu;
+    WAPPlayerWork* w;
     f32 x;
     f32 z;
     f32 angle;
-    u8 diff;
+    u16 diff;
     u16 r;
     u16 inside;
     s32 mot;
     omObjData* plant;
+    s32 port;
 
     w = arg0->unk_50;
     cpu = w->unkE4;
     x = arg0->trans.x;
     z = arg0->trans.z;
-    ContBtnTrg[w->unk56] = 0;
-    ContStkX[w->unk56] = ContStkY[w->unk56] = 0;
+    port = w->unk56;
+    ContBtnTrg[port] = 0;
+    ContStkX[port] = ContStkY[port] = 0;
     diff = GwPlayer[D_800FB720_WhackAPlant].cpu_difficulty;
     inside = 0;
     switch (diff) {
@@ -1353,7 +1309,7 @@ void func_800FA760_WhackAPlant(omObjData* arg0) {
         }
     }
     if (dist < 150.0f) {
-        if (cpu->unk2 != pot || (plant = func_8005DB5C(0, cpu->unk2), ((WAPPlantWork*)plant->unk_50)->unk68->unk0 != 0) || plant->trans.y > 70.0f) {
+        if (cpu->unk2 != pot || (plant = func_8005DB5C_s16(0, cpu->unk2), ((WAPPlantWork*)plant->unk_50)->unk68->unk0 != 0) || plant->trans.y > 70.0f) {
             ContBtnTrg[w->unk56] |= 0x8000;
         }
     }
@@ -1403,7 +1359,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800FA760
 // NON_MATCHING: residue under review
 #ifdef NON_MATCHING
 f32 func_800FAF34_WhackAPlant(f32 arg0, f32 arg1, u16 arg2, f32* arg3, u16* arg4) {
-    WAPPots* pots;
     omObjData** objs;
     f32 dx;
     f32 dz;
@@ -1411,6 +1366,7 @@ f32 func_800FAF34_WhackAPlant(f32 arg0, f32 arg1, u16 arg2, f32* arg3, u16* arg4
     s32 i;
     u16 j;
     u16 found;
+    WAPPots* pots;
 
     pots = D_800FB6FC_WhackAPlant->unk_50;
     *arg4 = 9;

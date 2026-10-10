@@ -26,7 +26,7 @@ typedef struct WAPCpu {
     /* 0x18 */ f32 unk18; /* CPU target angle */
     /* 0x1C */ f32 unk1C; /* CPU target distance */
     /* 0x20 */ f32 unk20; /* CPU target pot */
-    /* 0x24 */ s16 unk24; /* bounced off a plant */
+    /* 0x24 */ u16 unk24; /* bounced off a plant */
     /* 0x26 */ char unk26[2];
 } WAPCpu; /* size = 0x28 */
 
@@ -54,7 +54,7 @@ typedef struct WAPPlayerWork {
 typedef struct WAPPlant {
     /* 0x00 */ u16 unk0; /* 0 rising, 1 snapping, 2 sinking, 3 stomped */
     /* 0x02 */ s16 unk2; /* model */
-    /* 0x04 */ s16 unk4; /* pot */
+    /* 0x04 */ u16 unk4; /* pot */
     /* 0x06 */ u16 unk6; /* frames left in the state */
     /* 0x08 */ u16 unk8; /* rise time */
     /* 0x0A */ u16 unkA; /* snap time */
@@ -188,6 +188,12 @@ void func_80060F04(s16, s16, s16, s16);
 s32 func_80017A60(omObjData* obj);
 void func_80025BB8(s16, s16);
 omObjData* func_8005DB5C(s16 grp, u16 idx);
+/* Retail calls it with an s16 pot index (no zero-extension of the lh); same value on the host. */
+#ifdef TARGET_PC
+#define func_8005DB5C_s16(grp, idx) func_8005DB5C((grp), (idx))
+#else
+#define func_8005DB5C_s16(grp, idx) ((omObjData* (*)(s16, s16))func_8005DB5C)((grp), (idx))
+#endif
 void func_8005DB84(s16 grp, s32 bit);
 void func_8001E268(s16, u8, u8);
 void func_8001E2A8(s16, u16);
