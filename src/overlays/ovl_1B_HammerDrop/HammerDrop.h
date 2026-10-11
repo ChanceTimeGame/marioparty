@@ -6,6 +6,15 @@ typedef struct unkHammerDropStruct {
     f32 unk_3C;
 } unkHammerDropStruct;
 
+typedef struct HammerDropPlayerState {
+    char unk_00[0x24];
+    s32 unk_24;
+    char unk_28[0x28];
+    volatile s32 unk_50;
+    f32 unk_54;
+    s32 unk_58;
+} HammerDropPlayerState;
+
 void func_8000A534(omObjData*, s32);
 void func_80017C0C(omObjData*, s32, f32, f32, f32, s32, f32);
 void func_80018450(omObjData*, s32);
@@ -28,6 +37,20 @@ void func_800F6814_HammerDrop(void);
 void func_800F690C_HammerDrop(omObjData* arg0);
 void func_800F6A54_HammerDrop(omObjData* arg0);
 void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1);
+void func_800F7D64_HammerDrop(void);
+void func_800F7DEC_HammerDrop(void);
+void func_800F7E28_HammerDrop(void);
+void func_800F7EF4_HammerDrop(void);
+void func_800F7F58_HammerDrop(omObjData* arg0);
+void func_800F7F90_HammerDrop(void);
+void func_800F7FFC_HammerDrop(omObjData* arg0);
+void func_800F8080_HammerDrop(void);
+void func_800F813C_HammerDrop(omObjData* arg0);
+void func_800F82E0_HammerDrop(void);
+void func_800F8394_HammerDrop(omObjData* arg0);
+void func_800F84A0_HammerDrop(omObjData* arg0);
+s32 func_800F9E68_HammerDrop(s32 arg0, s32 arg1);
+void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2);
 
 extern f32 D_800B8964;
 extern f32 D_800B8980;
@@ -42,7 +65,7 @@ extern s32 D_800EDEC0;
 extern s16 D_800EE984;
 extern u16 D_800F370C;
 extern f32 D_800F5254;
-extern s32 D_800FB5C0_HammerDrop;
+extern u8 D_800FB5C0_HammerDrop[];
 extern s32 D_800FB6A4_HammerDrop;
 extern s32 D_800FB6C4_HammerDrop;
 extern s32 D_800FB6C8_HammerDrop;
@@ -51,3 +74,6 @@ extern s32 D_800FB98C_HammerDrop;
 extern u16 D_800F5144;
 extern f32 D_800FB6CC_HammerDrop;
 extern omObjData* D_800F2AF8[];
+extern u16 D_800FB6A8_HammerDrop;
+extern u16 D_800FB6AA_HammerDrop;
+extern s32 D_800FB980_HammerDrop;

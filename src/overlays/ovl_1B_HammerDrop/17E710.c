@@ -18,7 +18,7 @@ void func_800F65E0_HammerDrop(void) {
     omAddObj(4, 0xA, 0x32, -1, &func_800F74A4_HammerDrop);
     omAddObj(4, 0xA, 0x32, -1, &func_800F74C0_HammerDrop);
     omAddObj(4, 0xA, 0x32, -1, &func_800F74DC_HammerDrop);
-    func_8007B168(&D_800FB5C0_HammerDrop, 1);
+    func_8007B168(D_800FB5C0_HammerDrop, 1);
     func_800F7D28_HammerDrop();
     func_800F9350_HammerDrop();
     func_800F8508_HammerDrop();
@@ -90,7 +90,30 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6AF8_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6F9C_HammerDrop);
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F736C_HammerDrop(omObjData* arg0) {
+    unkGlobalStruct_00* work = arg0->unk_50;
+    HammerDropPlayerState* state = (HammerDropPlayerState*) work->unk_E4;
+    f32 angle;
+
+    ContStkX[work->unk_56] = (s8) (s32) (func_800AEAC0(state->unk_54) * 60.0f);
+    ContStkY[work->unk_56] = (s8) (s32) (func_800AEFD0(state->unk_54) * -60.0f);
+    state->unk_58--;
+    if (state->unk_58 == 0) {
+        angle = state->unk_54 + 30.0f;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        } else if (angle < 0.0f) {
+            angle += 360.0f;
+        }
+        state->unk_54 = angle;
+        state->unk_58 = 30;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F736C_HammerDrop);
+#endif
 
 void func_800F7488_HammerDrop(omObjData* arg0) {
     func_800F6AF8_HammerDrop(arg0, 0);
@@ -116,7 +139,7 @@ void func_800F7AD4_HammerDrop(omObjData *arg0) {
     f32 temp_f22;
     f32 temp;
     unkGlobalStruct_00* temp_s0 = arg0->unk_50;
-    unk_Struct01* test2 = temp_s0->unk_E4;
+    HammerDropPlayerState* test2 = (HammerDropPlayerState*) temp_s0->unk_E4;
     temp_f22 = temp_s0->unk_3C;
     (void) test2->unk_50;
     if (test2->unk_50 && temp_s0->unk_E4) {}
@@ -148,11 +171,11 @@ s32 func_800F7BFC_HammerDrop(omObjData* arg0, f32 arg1) {
     f32 temp_f0, temp_f12, temp_f4, phi_f20;
     s32 phi_v0, phi_v1;
     s32 i;
-    unk_Struct01* temp;
+    HammerDropPlayerState* temp;
 
     D_800FB6A0_HammerDrop = -1;
     phi_f20 = 50000.0f;
-    temp = ((unkGlobalStruct_00*) arg0->unk_50)->unk_E4;
+    temp = (HammerDropPlayerState*) ((unkGlobalStruct_00*) arg0->unk_50)->unk_E4;
     
     for (i = 0; i < 4; i++) {
          if (i != temp->unk_24) {
@@ -182,31 +205,226 @@ s32 func_800F7BFC_HammerDrop(omObjData* arg0, f32 arg1) {
     return D_800FB6A0_HammerDrop;
 }
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7D28_HammerDrop(void) {
+    omAddObj(0, 0, 0, -1, func_800F7D64_HammerDrop);
+    D_800FB980_HammerDrop = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7D28_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7D64_HammerDrop(void) {
+    switch (D_800FB980_HammerDrop) {
+        case 0:
+            func_800F7EF4_HammerDrop();
+            D_800ED430 = 0;
+            break;
+        case 1:
+            func_800F7F90_HammerDrop();
+            break;
+        case 2:
+            func_800F7E28_HammerDrop();
+            break;
+        case 3:
+            func_800F8080_HammerDrop();
+            break;
+        case 4:
+            func_800F82E0_HammerDrop();
+            break;
+        case 5:
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7D64_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7DEC_HammerDrop(void) {
+    D_800FB6A8_HammerDrop = 30;
+    D_800FB6AA_HammerDrop = 30;
+    GMesCreate(8, 30, 160, 32);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7DEC_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7E28_HammerDrop(void) {
+    D_800FB6AA_HammerDrop--;
+    if (D_800FB6AA_HammerDrop == 0) {
+        D_800FB6AA_HammerDrop = 30;
+        D_800FB6A8_HammerDrop--;
+    }
+    if ((D_800FB6A8_HammerDrop == 0) && (D_800FB980_HammerDrop == 2)) {
+        if (D_800FB6C4_HammerDrop != 0) {
+            func_800790C0();
+            D_800FB980_HammerDrop = 3;
+        } else {
+            D_800FB980_HammerDrop = 4;
+        }
+    } else if ((D_800FB6C4_HammerDrop == 0) && (D_800FB980_HammerDrop == 2)) {
+        D_800FB980_HammerDrop = 4;
+    }
+    func_80079078((s16) D_800FB6A8_HammerDrop);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7E28_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7EF4_HammerDrop(void) {
+    omObjData* obj = omAddObj(16, 0, 0, -1, func_800F7F58_HammerDrop);
+    s32* timer = func_80023684(sizeof(s32), 0x7918);
+
+    obj->unk_50 = timer;
+    *timer = 60;
+    D_800FB980_HammerDrop = -1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7EF4_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7F58_HammerDrop(omObjData* arg0) {
+    s32* timer = arg0->unk_50;
+
+    (*timer)--;
+    if (*timer == 0) {
+        D_800FB980_HammerDrop = 1;
+        omDelObj(arg0);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7F58_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7F90_HammerDrop(void) {
+    omObjData* obj;
+    s32* timer;
+
+    GMesCreate(0);
+    obj = omAddObj(16, 0, 0, -1, func_800F7FFC_HammerDrop);
+    timer = func_80023684(sizeof(s32), 0x7918);
+    obj->unk_50 = timer;
+    *timer = 30;
+    D_800FB980_HammerDrop = -1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7F90_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F7FFC_HammerDrop(omObjData* arg0) {
+    s32* timer = arg0->unk_50;
+
+    if ((GMesStatAllGet() == 0) || (GMesStatAllGet() & 2)) {
+        (*timer)--;
+        if (*timer == 0) {
+            func_800F7DEC_HammerDrop();
+            D_800FB980_HammerDrop = 2;
+            D_800ED430 = 1;
+            omDelObj(arg0);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F7FFC_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8080_HammerDrop);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F813C_HammerDrop);
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F82E0_HammerDrop(void) {
+    omObjData* obj = omAddObj(16, 0, 0, -1, func_800F8394_HammerDrop);
+    s32* timer = func_80023684(sizeof(s32), 0x7918);
+
+    obj->unk_50 = timer;
+    if ((D_800FB6C4_HammerDrop == 0) && (D_800FB988_HammerDrop == 0)) {
+        *timer = 60;
+        GMesCreate(14);
+        func_800601D4(40);
+    } else {
+        if (D_800FB98C_HammerDrop == 0) {
+            *timer = 84;
+        } else {
+            *timer = 105;
+        }
+    }
+    D_800FB980_HammerDrop = -1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F82E0_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F8394_HammerDrop(omObjData* arg0) {
+    s32* timer = arg0->unk_50;
+    s32 total;
+    s16 i;
+
+    if (*timer > 0) {
+        (*timer)--;
+        if (*timer == 0) {
+            if (D_800FB6C4_HammerDrop == 0) {
+                total = 0;
+                for (i = 0; i < 4; i++) {
+                    total += GwPlayer[i].coins_mg;
+                }
+                if ((total << 16) != 0) {
+                    func_80060128(0x35);
+                } else {
+                    func_80060128(0x34);
+                }
+            } else {
+                func_800726AC(0, 20);
+                *timer = 2;
+                arg0->func_ptr = func_800F84A0_HammerDrop;
+            }
+        }
+    }
+    if (GMesWait() == 0) {
+        func_800726AC(0, 20);
+        *timer = 2;
+        arg0->func_ptr = func_800F84A0_HammerDrop;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8394_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F84A0_HammerDrop(omObjData* arg0) {
+    s32* timer = arg0->unk_50;
+
+    if (*timer > 0) {
+        (*timer)--;
+    }
+    if ((*timer == 0) && (func_80072718() == 0)) {
+        func_800601D4(40);
+        omDelObj(arg0);
+        omOvlReturnEx(1);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F84A0_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8508_HammerDrop);
 
@@ -223,14 +441,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9794_
 s32 func_800F9C1C_HammerDrop(omObjData* arg0, omObjData* arg1) {
     unkGlobalStruct_00* temp_s0;
     unkHammerDropStruct* temp_s2;
-    unk_Struct01* temp_a1;
+    HammerDropPlayerState* temp_a1;
     f32 temp_f20;
     f32 temp_f22;
     f32 temp_f24;
 
     D_800FB6A4_HammerDrop = 0;
     temp_s0 = arg0->unk_50;
-    temp_a1 = temp_s0->unk_E4;
+    temp_a1 = (HammerDropPlayerState*) temp_s0->unk_E4;
     temp_s2 = (unkHammerDropStruct*) ((unkGlobalStruct_00*) arg1->unk_50)->unk_68; // probably not an unkGlobalStruct_00*
 
     if (temp_s0->unkAE != 0) {
@@ -280,9 +498,27 @@ s32 func_800F9C1C_HammerDrop(omObjData* arg0, omObjData* arg1) {
     return D_800FB6A4_HammerDrop;
 }
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+s32 func_800F9E68_HammerDrop(s32 arg0, s32 arg1) {
+    return (arg0 & arg1) != 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E68_HammerDrop);
+#endif
 
+// Unmeasured: the sandbox cannot execute the bundled 32-bit KMC compiler.
+#ifdef NON_MATCHING
+void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
+    if (arg2 == 0) {
+        *arg0 &= ~arg1;
+    } else {
+        *arg0 |= arg1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E74_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E98_HammerDrop);
 
