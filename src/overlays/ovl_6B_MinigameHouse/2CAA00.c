@@ -2,6 +2,15 @@
 
 #include "engine/esprite.h"
 
+s16 func_80059400(s16);
+s16 func_8005949C(s16);
+char* func_800F9D64_MinigameHouse(s32);
+s16 func_8006D93C(u8*);
+extern char D_80100410_MinigameHouse[0x20];
+extern u16 D_80100100_MinigameHouse[];
+extern u16 D_80100632_MinigameHouse;
+
+
 void func_800F6F94_MinigameHouse(omObjData* arg0);
 s32 func_8005A22C(s32);
 void func_80027E48(s16 arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4, char* arg5, u8 arg6);
@@ -694,14 +703,114 @@ void func_800F8514_MinigameHouse(void) {
     func_80064D38(D_80100630_MinigameHouse);
     func_80067704(D_8010062E_MinigameHouse);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F8540_MinigameHouse);
+void func_800F8540_MinigameHouse(s16 arg0) {
+    s16 sec;
+    s16 hund;
 
+    func_80067480(D_80100630_MinigameHouse, 0, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 0, arg0 / 1800, 0);
+    func_800672B0(D_80100630_MinigameHouse, 0, 1);
+    arg0 %= 1800;
+    func_80067480(D_80100630_MinigameHouse, 1, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 1, 10, 0);
+    func_800672B0(D_80100630_MinigameHouse, 1, 1);
+    func_80067480(D_80100630_MinigameHouse, 2, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 2, arg0 / 300, 0);
+    func_800672B0(D_80100630_MinigameHouse, 2, 1);
+    arg0 %= 300;
+    sec = arg0 / 30;
+    func_80067480(D_80100630_MinigameHouse, 3, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 3, sec, 0);
+    func_800672B0(D_80100630_MinigameHouse, 3, 1);
+    hund = (arg0 * 100) / 30 - sec * 100;
+    func_80067480(D_80100630_MinigameHouse, 4, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 4, 11, 0);
+    func_800672B0(D_80100630_MinigameHouse, 4, 1);
+    func_80067480(D_80100630_MinigameHouse, 5, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 5, hund / 10, 0);
+    func_800672B0(D_80100630_MinigameHouse, 5, 1);
+    hund %= 10;
+    func_80067480(D_80100630_MinigameHouse, 6, 0x8000);
+    func_800672DC(D_80100630_MinigameHouse, 6, hund, 0);
+    func_800672B0(D_80100630_MinigameHouse, 6, 1);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F8860_MinigameHouse);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002BC_MinigameHouse);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F9D64_MinigameHouse);
+// register allocation; retail hoists the buffer base out of three fill loops (masked 37)
+#ifdef NON_MATCHING
+char* func_800F9D64_MinigameHouse(s32 arg0) {
+    u8* str;
+    char* p;
+    s32 len;
+    s32 width;
+    s32 n;
+    s32 digits;
+    s32 i;
+    u16 score;
 
+    str = func_8005B7E8(arg0 + 0x325);
+    p = (char*)str;
+#ifdef TARGET_PC
+    len = func_8006D93C(str);
+#else
+    len = (s16)((s32 (*)(u8*))func_8006D93C)(str); /* retail: called as returning int */
+#endif
+    if (func_80059400(arg0) != 0 || func_8005949C(arg0) != 0) {
+        n = 0;
+        while (*p != 0) {
+            if (*p != '\n') {
+                *(n + D_80100410_MinigameHouse) = *p;
+                n++;
+            }
+            p++;
+        }
+#ifdef TARGET_PC
+        width = func_8006D99C(str, 0);
+#else
+        width = (s16)((s32 (*)(u8*, s16))func_8006D99C)(str, 0); /* retail: called as returning int */
+#endif
+    } else {
+        for (n = 0; n < len; n++) {
+            D_80100410_MinigameHouse[n] = 0xC3;
+        }
+        width = len * 6;
+    }
+    len = (0x83 - width) / 12;
+    func_8005B838(str);
+    if (D_80100632_MinigameHouse == 0 && func_8005949C(arg0) == 0) {
+        score = D_80100100_MinigameHouse[arg0];
+        if (len < 0) {
+            len = 0;
+        }
+        for (i = 0; i < len; i++) {
+            *(n + D_80100410_MinigameHouse) = 0xE;
+            n++;
+        }
+        if (func_80059400(arg0) != 0) {
+            sprintf((char*)&D_80100410_MinigameHouse[n], "%4d", score);
+            return D_80100410_MinigameHouse;
+        }
+        digits = 1;
+        if (score >= 10) {
+            digits = (score >= 100) ? 3 : 2;
+        }
+        for (i = 0; i < 4 - digits; i++) {
+            *(n + D_80100410_MinigameHouse) = ' ';
+            n++;
+        }
+        for (i = 0; i < digits; i++) {
+            *(n + D_80100410_MinigameHouse) = 0xC3;
+            n++;
+        }
+    }
+    D_80100410_MinigameHouse[n] = 0;
+    return D_80100410_MinigameHouse;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F9D64_MinigameHouse);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F9FF4_MinigameHouse);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FA2E4_MinigameHouse);
