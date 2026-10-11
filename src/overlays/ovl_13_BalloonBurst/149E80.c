@@ -98,6 +98,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F95F
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800FA8A4_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800FA9C4_BalloonBurst);
+void func_800FA9C4_BalloonBurst(f32 arg0, Vec3f *arg1) {
+    f32 angle = arg0 * 2.0f;
+
+    if (angle >= 360.0f) {
+        angle -= 360.0f;
+    }
+    arg1->x = func_800AEAC0(arg0) * 160.0f;
+    arg1->z = func_800AEFD0(arg0) * 160.0f;
+    arg1->y = func_800AEAC0(angle) * 50.0f;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800FAA6C_BalloonBurst);
