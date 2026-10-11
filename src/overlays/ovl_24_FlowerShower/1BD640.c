@@ -22,9 +22,13 @@ FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData*, s32, f32, f32, s32,
 f32 func_800051D4(omObjData*, f32, f32, f32, Vec3f*);
 f32 func_800FA5B8_FlowerShower(omObjData*);
 f32 func_800FA92C_FlowerShower(omObjData*);
+void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 
 extern f32 D_800FAE50_FlowerShower;
 extern f32 D_800FAE54_FlowerShower;
+extern u16 D_800FAE60_FlowerShower[];
+extern f32 D_800FADCC_FlowerShower;
+extern u8 D_800F64F8;
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
 
@@ -130,7 +134,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA17
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA2B0_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA4EC_FlowerShower);
+void func_800FA4EC_FlowerShower(omObjData* arg0) {
+    if (((func_8005FD5C() & 0xFFFF) + D_800F64F8) == 0) {
+        D_800FADCC_FlowerShower += 0.2f;
+    }
+    func_80027E48(arg0->model[0], D_800FADCC_FlowerShower, 0.0f, D_800FAE60_FlowerShower[0],
+                  D_800FAE60_FlowerShower[1], "No47happy-47m_002", 1);
+}
 
 void func_800FA58C_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2) {
     arg0->rot.x += arg1;
