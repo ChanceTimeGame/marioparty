@@ -203,7 +203,60 @@ done:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F74F8_HammerDrop);
 #endif
 
+// Logic-equivalent CPU movement/attack controller; local-vector scheduling differs.
+#ifdef NON_MATCHING
+void func_800F77E4_HammerDrop(omObjData* arg0) {
+    unkGlobalStruct_00* work = arg0->unk_50;
+    HammerDropPlayerState* state = (HammerDropPlayerState*) work->unk_E4;
+    Vec start;
+    Vec target;
+    Vec direction;
+    s16 offsetX;
+    s16 offsetZ;
+    s32 range;
+    s32 player;
+
+    func_800F74F8_HammerDrop(arg0);
+    if (state->unk_4C == -1) {
+        return;
+    }
+    start = arg0->trans;
+    range = state->unk_50 + 1;
+    offsetX = (((rand8() & 0xFF) % range) * 30) - (range * 15);
+    range = state->unk_50 + 1;
+    offsetZ = (((rand8() & 0xFF) % range) * 30) - (range * 15);
+    target.x = D_800EDE70[state->unk_4C]->trans.x + offsetX;
+    target.y = start.y;
+    target.z = D_800EDE70[state->unk_4C]->trans.z + offsetZ;
+    func_800F9E98_HammerDrop(&start, &target, &direction);
+    if ((D_800EDE70[state->unk_4C]->trans.y < 600.0f) ||
+        (direction.x >= 150.0f) || (rand8() & 0xF)) {
+        if (work->unk_38 == 1000.0f) {
+            state->unk_2C--;
+            if (state->unk_2C != 0) {
+                direction.z = state->unk_54;
+            } else {
+                state->unk_2C = D_800FB590_HammerDrop[state->unk_50];
+            }
+            work->unk_3C = direction.z;
+            func_800F7AD4_HammerDrop(arg0);
+            state->unk_54 = direction.z;
+        }
+    } else {
+        func_800F7B6C_HammerDrop(arg0);
+    }
+    if (work->unk_38 != 1000.0f) {
+        player = func_800F7BFC_HammerDrop(arg0, 100.0f);
+        if ((player != -1) &&
+            (D_800FB998_HammerDrop[player]->trans.y < arg0->trans.y) &&
+            !(rand8() & 0x7F)) {
+            func_800F7BB4_HammerDrop(arg0);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F77E4_HammerDrop);
+#endif
 
 void func_800F7AD4_HammerDrop(omObjData *arg0) {
     f32 temp_f22;
