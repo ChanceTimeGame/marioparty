@@ -809,7 +809,146 @@ void func_800F8508_HammerDrop(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8508_HammerDrop);
 #endif
 
+// Logic-equivalent hammer movement/strike state machine; angle-wrap scheduling differs.
+#ifdef NON_MATCHING
+void func_800F896C_HammerDrop(omObjData* arg0) {
+    HammerDropTargetState* state = (HammerDropTargetState*) HAMMER_ITEM_WORK(arg0)->item;
+    HammerDropItemState* item;
+    f32 angle;
+    f32 animationTime;
+    f32 scale;
+    s32 speed;
+    s32 randomAngle;
+
+    if (func_800F9E68_HammerDrop(D_800FB6C0_HammerDrop, 2) != 0) {
+        arg0->trans.y += state->unk_30;
+        state->unk_30 += 1.0f;
+        omSetTra(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
+        func_80025798(arg0->model[1], arg0->trans.x - 50.0f,
+            arg0->trans.y + 50.0f, arg0->trans.z + 100.0f);
+        func_80025798(arg0->model[2], arg0->trans.x, 0.0f, arg0->trans.z);
+        if (state->unk_30 == 0.0f) {
+            func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 2, 0);
+            func_80060128(0x1D);
+        }
+        goto update_shadow;
+    }
+    if (func_800F9E68_HammerDrop(D_800FB6C0_HammerDrop, 4) != 0) {
+        arg0->trans.y += state->unk_30;
+        state->unk_30 += 1.0f;
+        omSetTra(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
+        func_80025798(arg0->model[1], arg0->trans.x - 50.0f,
+            arg0->trans.y + 50.0f, arg0->trans.z + 100.0f);
+        func_80025798(arg0->model[2], arg0->trans.x, 0.0f, arg0->trans.z);
+        if (state->unk_30 == 70.0f) {
+            func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 4, 0);
+            omDelObj(arg0);
+            return;
+        }
+        goto update_shadow;
+    }
+    if (D_800ED430 == 1) {
+        angle = arg0->rot.y + state->unk_08;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        } else if (angle < 0.0f) {
+            angle += 360.0f;
+        }
+        arg0->rot.y = angle;
+        if (angle == state->unk_04) {
+            angle += 180.0f;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            } else if (angle < 0.0f) {
+                angle += 360.0f;
+            }
+            state->unk_04 = angle;
+            state->unk_08 = 12.0f;
+            if (rand8() & 1) {
+                state->unk_08 = -12.0f;
+            }
+        }
+    }
+    angle = state->unk_24 + state->unk_1C;
+    if (angle >= 360.0f) {
+        angle -= 360.0f;
+    } else if (angle < 0.0f) {
+        angle += 360.0f;
+    }
+    state->unk_24 = angle;
+    speed = (s32) state->unk_1C;
+    if (speed < 0) {
+        speed = -speed;
+    }
+    state->unk_28 -= speed;
+    if (state->unk_28 <= 0.0f) {
+        randomAngle = ((((rand8() & 0xFF) % 72) & 0xFF) * 5) & 0xFF;
+        angle = (f32) randomAngle;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        } else if (angle < 0.0f) {
+            angle += 360.0f;
+        }
+        state->unk_20 = angle;
+        state->unk_28 = angle + 180.0f;
+        state->unk_1C = 5.0f;
+        if (state->unk_20 < state->unk_24) {
+            state->unk_1C = -5.0f;
+        }
+    }
+    state->unk_0C += state->unk_10;
+    if (((state->unk_10 > 0.0f) && (state->unk_14 <= state->unk_0C)) ||
+        ((state->unk_10 < 0.0f) && (state->unk_0C <= state->unk_14))) {
+        state->unk_14 = (f32) ((((rand8() & 0xFF) * 2) % 350) & 0xFF);
+        if (state->unk_0C <= state->unk_14) {
+            state->unk_10 = 1.0f;
+        } else {
+            state->unk_10 = -1.0f;
+        }
+    }
+    arg0->trans.x = func_800AEAC0(state->unk_24) * state->unk_0C;
+    arg0->trans.z = func_800AEFD0(state->unk_24) * state->unk_0C;
+    omSetTra(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    omSetRot(arg0, 0.0f, arg0->rot.y, 0.0f);
+    func_80025798(arg0->model[1], arg0->trans.x - 50.0f,
+        arg0->trans.y + 50.0f, arg0->trans.z + 100.0f);
+    func_80025798(arg0->model[2], arg0->trans.x, 0.0f, arg0->trans.z);
+    if (D_800ED430 == 1) {
+        func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 1, 1);
+    }
+    if (func_800F9E68_HammerDrop(D_800FB6C0_HammerDrop, 1) != 0) {
+        if (state->unk_00 == 0) {
+            func_80025BB8(arg0->model[0], arg0->motion[2]);
+            state->unk_00 = 2;
+            func_800F9228_HammerDrop();
+        } else if ((func_80025D18(arg0->model[0]) == 40.0f) ||
+                   (func_80025D18(arg0->model[0]) == 41.0f)) {
+            item = HAMMER_ITEM_WORK(D_800EDE70[state->itemIndex])->item;
+            func_800F9E74_HammerDrop(&item->unk_44, 2, 0);
+            PlaySound(0x295);
+        } else {
+            animationTime = func_80025D18(arg0->model[0]);
+            if (func_80025D40(arg0->model[0]) <= animationTime) {
+                func_80025BB8(arg0->model[0], arg0->motion[0]);
+                func_80025EB4(arg0->model[0], 2, 2);
+                func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 1, 0);
+                state->unk_00 = 0;
+                if (D_800ED430 == 2) {
+                    func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 4, 1);
+                }
+            }
+        }
+    }
+update_shadow:
+    scale = 0.0f;
+    if (arg0->trans.y < 2330.0f) {
+        scale = (2330.0f - arg0->trans.y) / 915.0f;
+    }
+    func_80025830(arg0->model[2], scale, scale, scale);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F896C_HammerDrop);
+#endif
 
 // Two register/scheduling differences; the retry count increment moves before the second test (masked 2).
 #ifdef NON_MATCHING
