@@ -2,6 +2,23 @@
 
 #include "engine/esprite.h"
 
+/* A minigame group shown in the house: its title message, the minigame list (1-based ids) and the
+   range of that list to show. */
+typedef struct HouseMgGroup {
+    /* 0x00 */ s32 msg;
+    /* 0x04 */ u8* list;
+    /* 0x08 */ u8 start;
+    /* 0x09 */ u8 end;
+} HouseMgGroup; /* 0x0C on the N64 */
+
+void func_8009B960(void*, void*);
+void func_8006DA5C(s16, void*, s8);
+void func_80071788(s32, s16);
+extern HouseMgGroup D_80100170_MinigameHouse[7];
+extern char D_80100430_MinigameHouse[10][30];
+extern s16 D_80100634_MinigameHouse;
+
+
 s16 func_80059400(s16);
 s16 func_8005949C(s16);
 char* func_800F9D64_MinigameHouse(s32);
@@ -811,14 +828,111 @@ char* func_800F9D64_MinigameHouse(s32 arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F9D64_MinigameHouse);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F9FF4_MinigameHouse);
+s32 func_800F9FF4_MinigameHouse(s16 win, s32 grp, char* out) {
+    char buf[0x58];
+    s32 n;
+    s32 cnt;
+    s32 i;
+    s32 j;
+    char* name;
+    void* title;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FA2E4_MinigameHouse);
+    n = 0;
+    cnt = 0;
+    for (i = D_80100170_MinigameHouse[grp].start; i < D_80100170_MinigameHouse[grp].end; i++) {
+        D_80100624_MinigameHouse[n] = D_80100170_MinigameHouse[grp].list[i];
+        func_8009B960(name = D_80100430_MinigameHouse[n], func_800F9D64_MinigameHouse(D_80100624_MinigameHouse[n] - 1));
+        if (*name != (char)0xC3) {
+            cnt++;
+        } else {
+            D_80100624_MinigameHouse[n] = 0;
+        }
+        func_8006DA5C(win, D_80100430_MinigameHouse[n], n);
+        n++;
+    }
+    for (i = n; i < 10; i++) {
+        D_80100624_MinigameHouse[i] = 0;
+    }
+    j = 0;
+    for (i = 0; i < n; i++) {
+        buf[j++] = 10;
+        if (D_80100624_MinigameHouse[i] != 0) {
+            if (func_8005949C(D_80100624_MinigameHouse[i] - 1) != 0) {
+                buf[j++] = 5;
+                buf[j++] = 0x3B;
+                buf[j++] = 14;
+                buf[j++] = 8;
+            } else {
+                buf[j++] = 14;
+                buf[j++] = 8;
+            }
+        } else {
+            buf[j++] = 14;
+            buf[j++] = 7;
+        }
+        buf[j++] = 12;
+        buf[j++] = i + 0x11;
+        buf[j++] = 13;
+    }
+    buf[j++] = 8;
+    buf[j] = 0;
+    title = func_8005B7E8(D_80100170_MinigameHouse[grp].msg);
+    sprintf(out, "\x08%s\n%s", title, buf);
+    func_8005B838(title);
+    return cnt;
+}
+void func_800FA2E4_MinigameHouse(void) {
+    TextWindow* w;
+    s16 spr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FA3B0_MinigameHouse);
+    D_80100634_MinigameHouse = func_8006D010(0x82, 0x20, 0xD9, 0xB0, 0, 0);
+    func_8007155C(D_80100634_MinigameHouse, (s16)(1 << GwPlayer[0].port));
+    func_8006E0A4(D_80100634_MinigameHouse, -1);
+    w = func_8006DD60(D_80100634_MinigameHouse);
+    w->unk_04 = 0;
+    w->unk_03 = 0;
+    w->unk_09 = 0;
+    spr = w->unk_44;
+    func_800674BC(spr, 0, 0x8000);
+    func_800674F4(spr, 8, 0, 0, 0);
+    func_800674F4(spr, 7, 0, 0, 0);
+}
+void func_800FA3B0_MinigameHouse(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FA470_MinigameHouse);
+    for (i = 0; i < 10; i++) {
+        if (D_80100624_MinigameHouse[i] == 0 ||
+            (D_80100632_MinigameHouse == 0 &&
+             (func_8005949C(D_80100624_MinigameHouse[i] - 1) != 0 ||
+              (s32)GwCommon.coinNum < D_80100100_MinigameHouse[D_80100624_MinigameHouse[i] - 1]))) {
+            func_80071788(D_80100634_MinigameHouse, i);
+        }
+    }
+}
+void func_800FA470_MinigameHouse(omObjData* obj) {
+    TextWindow* w;
+    s32 i;
 
+    w = func_8006DD60(D_80100634_MinigameHouse);
+    func_80066DC4(w->unk_44, 0, w->unk_14, w->unk_16);
+    for (i = 0; i < 0x100; i += 0x20) {
+        D_80100618_MinigameHouse->rot.z = 270.0f - (i * 90.0f) / 256.0f;
+        func_8006752C(w->unk_44, 5, i);
+        func_8006752C(w->unk_44, 8, i / 2);
+        func_8006752C(w->unk_44, 7, i / 4);
+        if (obj != NULL) {
+            func_800211BC(obj->model[0], (i * 90) / 256);
+        }
+        HuPrcVSleep();
+    }
+    D_80100618_MinigameHouse->rot.z = 180.0f;
+    func_8006752C(w->unk_44, 5, 0xFF);
+    func_8006752C(w->unk_44, 8, 0x7F);
+    func_8006752C(w->unk_44, 7, 0x3F);
+    if (obj != NULL) {
+        func_800211BC(obj->model[0], 90);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FA600_MinigameHouse);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FA7C0_MinigameHouse);
@@ -855,7 +969,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC1
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC204_MinigameHouse);
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002C4_MinigameHouse);
+
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002CC_MinigameHouse);
 
