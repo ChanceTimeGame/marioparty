@@ -1530,4 +1530,93 @@ void func_800FAA30_HammerDrop(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FAA30_HammerDrop);
 #endif
 
+// Logic-equivalent animated mesh update; loop/register allocation differs.
+#ifdef NON_MATCHING
+void func_800FB050_HammerDrop(void) {
+    HammerDropAnglePair* left;
+    HammerDropAnglePair* right;
+    Vtx* vertices;
+    Vtx* copy;
+    Vtx* v0;
+    Vtx* v1;
+    Vtx* v2;
+    Vtx* v3;
+    Vec3f normal;
+    f32 angle;
+    s32 row;
+    s32 column;
+    s32 component;
+    s32 i;
+
+    *D_800F2B7C[D_800FB978_HammerDrop].unk_6C->unk_00 =
+        D_800FB918_HammerDrop[D_800F37F0];
+    vertices = D_800FB938_HammerDrop[D_800F37F0];
+    for (row = 0; row < 6; row++) {
+        left = &D_800FB6D0_HammerDrop[row * 12];
+        right = left + 6;
+        for (column = 0; column < 6; column++) {
+            v0 = &vertices[(row * 24) + (column * 2)];
+            v1 = v0 + 1;
+            v2 = &vertices[(row * 24) + 12 + (column * 2)];
+            v3 = v2 + 1;
+            angle = left[column].first + 4.0f;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+            left[column].first = angle;
+            v0->v.ob[1] = (func_800AEAC0(angle) * 40.0f) - 1000.0f;
+            v0->v.tc[0] = D_800FB5A0_HammerDrop;
+            v0->v.tc[1] = D_800FB5A4_HammerDrop;
+            angle = left[column].second + 4.0f;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+            left[column].second = angle;
+            v1->v.ob[1] = (func_800AEAC0(angle) * 40.0f) - 1000.0f;
+            v1->v.tc[0] = D_800FB5A8_HammerDrop;
+            v1->v.tc[1] = D_800FB5A4_HammerDrop;
+            angle = right[column].first + 4.0f;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+            right[column].first = angle;
+            v2->v.ob[1] = (func_800AEAC0(angle) * 40.0f) - 1000.0f;
+            v2->v.tc[0] = D_800FB5A0_HammerDrop;
+            v2->v.tc[1] = D_800FB5AC_HammerDrop;
+            angle = right[column].second + 4.0f;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+            right[column].second = angle;
+            v3->v.ob[1] = (func_800AEAC0(angle) * 40.0f) - 1000.0f;
+            v3->v.tc[0] = D_800FB5A8_HammerDrop;
+            v3->v.tc[1] = D_800FB5AC_HammerDrop;
+            func_800295FC(v0, v1, v2, &normal);
+            for (component = 0; component < 3; component++) {
+                v0->v.cn[component] = ((f32*) &normal)[component] * 127.0f;
+                v1->v.cn[component] = ((f32*) &normal)[component] * 127.0f;
+                v2->v.cn[component] = ((f32*) &normal)[component] * 127.0f;
+                v3->v.cn[component] = ((f32*) &normal)[component] * 127.0f;
+            }
+        }
+    }
+    D_800FB5A0_HammerDrop += D_800FB5B0_HammerDrop;
+    D_800FB5A4_HammerDrop += D_800FB5B4_HammerDrop[0];
+    D_800FB5A0_HammerDrop = (f32) func_8009B618((f64) D_800FB5A0_HammerDrop,
+        D_800FB690_HammerDrop);
+    D_800FB5A4_HammerDrop = (f32) func_8009B618((f64) D_800FB5A4_HammerDrop,
+        D_800FB698_HammerDrop);
+    D_800FB5A8_HammerDrop = D_800FB5A0_HammerDrop + 1024.0f;
+    D_800FB5AC_HammerDrop = D_800FB5A4_HammerDrop + 1024.0f;
+    vertices = D_800FB938_HammerDrop[D_800F37F0];
+    copy = D_800FB958_HammerDrop[D_800F37F0];
+    for (i = 0; i < 144; i++) {
+        copy[i].v.ob[1] = (u16) vertices[i].v.ob[1];
+        copy[i].v.cn[0] = vertices[i].v.cn[0];
+        copy[i].v.cn[1] = vertices[i].v.cn[1];
+        copy[i].v.cn[2] = vertices[i].v.cn[2];
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FB050_HammerDrop);
+#endif

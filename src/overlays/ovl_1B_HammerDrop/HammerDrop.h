@@ -96,6 +96,8 @@ void func_80060F04(s16, s32, s32, s32);
 void func_800091BC(omObjData*, s32, s32, s32);
 void func_800370D4(s16);
 void func_80025BB8(s16, s16);
+void func_800295FC(void*, void*, void*, Vec3f*);
+f64 func_8009B618(f64, f64);
 s32 func_80024198(u32, Gfx*, s32);
 s32 func_8009B850(const void*, const void*);
 
