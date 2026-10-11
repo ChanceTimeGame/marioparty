@@ -2,6 +2,9 @@
 
 #include "engine/esprite.h"
 
+void func_8003A060(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
+
+
 /* Menu choice: target point, camera index, message. */
 typedef struct HouseMenuEntry {
     /* 0x00 */ s8 pos;
@@ -351,8 +354,127 @@ void func_800F7218_MinigameHouse(s16 arg0) {
     func_8007F54C(data, D_80100610_MinigameHouse, 0xA0, D_80100590_MinigameHouse);
     DataClose(data);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7274_MinigameHouse);
+// loop-invariant hoisting as in ovl_6F's twin func_800F94E8: retail hoists 32.0f/255 only to the inner loop and keeps 2^31 inline (masked 62)
+#ifdef NON_MATCHING
+void func_800F7274_MinigameHouse(s16 model, s16 idx) {
+    Gfx* gfx;
+    void* data;
+    unk2C0C0StructC0* mdl;
+    unk2C0C0Struct30* mesh;
+    Vtx* vtx;
+    Vtx* vtxStart;
+    s16 i;
+    s16 j;
+    s16 k;
+    s16 h;
+    s32 w;
+    f32 minX;
+    f32 maxX;
+    f32 minY;
+    f32 maxY;
+    f32 rangeX;
+    f32 rangeY;
+    f32 baseX;
+    f32 baseY;
+    f32 x;
+    f32 y;
+    f32 sLo;
+    f32 sHi;
+    f32 tLo;
+    f32 tHi;
 
+    data = DataRead(D_8010001C_MinigameHouse[idx]);
+    w = 160;
+    h = 128;
+    D_80100610_MinigameHouse = func_80023684(0xA000, 0x7918);
+    func_8007F54C(data, D_80100610_MinigameHouse, 160, D_80100590_MinigameHouse);
+    DataClose(data);
+    mdl = D_800F2B7C[model].unk_6C;
+    mesh = mdl->unk_80;
+    vtx = func_80023684(0x500, 0x7918);
+    mdl->unk_00[0] = gfx = func_80023684(0x200 * sizeof(Gfx), 0x7918); /* 0x1000 on N64; host Gfx is 16 bytes */
+    gDPSetCombineMode(gfx++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetRenderMode(gfx++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+    gSPClearGeometryMode(gfx++, G_LIGHTING);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+
+    maxY = maxX = -100000.0f;
+    minY = minX = 100000.0f;
+    for (i = 0; i < (s16) mesh->unk_04; i++) {
+        for (j = 0; j < mesh->unk_34[i].unk_00; j++) {
+            k = mesh->unk_34[i].unk_04[j];
+            x = mdl->unk_78[k].unk_00;
+            if (x < minX) {
+                minX = x;
+            }
+            x = mdl->unk_78[k].unk_00;
+            if (maxX < x) {
+                maxX = x;
+            }
+            y = mdl->unk_78[k].unk_02;
+            if (y < minY) {
+                minY = y;
+            }
+            y = mdl->unk_78[k].unk_02;
+            if (maxY < y) {
+                maxY = y;
+            }
+        }
+    }
+    rangeX = maxX - minX;
+    rangeY = maxY - minY;
+    baseX = minX;
+    baseY = minY;
+    vtxStart = vtx;
+    for (i = 0; i < (s16) mesh->unk_04; i++) {
+        maxY = maxX = -100000.0f;
+        minY = minX = 100000.0f;
+        for (j = 0; j < mesh->unk_34[i].unk_00; j++) {
+            k = mesh->unk_34[i].unk_04[j];
+            x = (vtx->v.ob[0] = mdl->unk_78[k].unk_00);
+            y = (vtx->v.ob[1] = mdl->unk_78[k].unk_02);
+            vtx->v.ob[2] = mdl->unk_78[k].unk_04;
+            if (x < minX) {
+                minX = x;
+            }
+            if (maxX < x) {
+                maxX = x;
+            }
+            if (y < minY) {
+                minY = y;
+            }
+            if (maxY < y) {
+                maxY = y;
+            }
+            vtx->v.cn[0] = vtx->v.cn[1] = vtx->v.cn[2] = -1;
+            x = w * ((x - baseX) / rangeX);
+            y = h * ((-y - baseY) / rangeY);
+            vtx->v.tc[0] = x * 32.0f;
+            vtx->v.tc[1] = y * 32.0f;
+            vtx->v.cn[3] = 0xFF;
+            vtx++;
+        }
+        sLo = ((minX - baseX) / rangeX) * w;
+        sHi = ((maxX - baseX) / rangeX) * w;
+        tLo = h - ((minY - baseY) / rangeY) * h;
+        tHi = h - ((maxY - baseY) / rangeY) * h;
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        func_8003A060(&gfx, (PB_PTR32) D_80100610_MinigameHouse, G_IM_FMT_RGBA, G_IM_SIZ_16b, w, h, (u32) sLo, (u32) tHi,
+                      (u32) sHi, (u32) tLo, 0, 2, 2, 0, 0, 0, 0);
+        gSPVertex(gfx++, vtxStart, mesh->unk_34[i].unk_00, 0);
+        if (mesh->unk_34[i].unk_00 == 3) {
+            gSP1Triangle(gfx++, 0, 1, 2, 0);
+        } else {
+            gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
+        }
+        vtxStart = vtx;
+    }
+    gSPEndDisplayList(gfx++);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7274_MinigameHouse);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7B00_MinigameHouse);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7BA0_MinigameHouse);
