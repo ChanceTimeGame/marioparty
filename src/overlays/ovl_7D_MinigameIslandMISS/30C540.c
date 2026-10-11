@@ -110,8 +110,14 @@ extern s32 D_800F926C_MinigameIslandMISS;
 extern s32 D_800F9270_MinigameIslandMISS;
 extern s32 D_800F9278_MinigameIslandMISS;
 extern s32 D_800F927C_MinigameIslandMISS;
+#ifdef TARGET_PC
+/* func_800F8E30 frees D_800F9284[0..2]: retail's [2] is the next label, D_800F928C. */
+extern s32 D_800F9284_MinigameIslandMISS[3];
+#define D_800F928C_MinigameIslandMISS (D_800F9284_MinigameIslandMISS[2])
+#else
 extern s32 D_800F9284_MinigameIslandMISS[2];
 extern s32 D_800F928C_MinigameIslandMISS;
+#endif
 extern s32 D_800F9290_MinigameIslandMISS[2];
 extern s32 D_800F9298_MinigameIslandMISS[2][3];
 extern s32 D_800F92B0_MinigameIslandMISS[3]; /* [2] is splat's D_800F92B8 */
