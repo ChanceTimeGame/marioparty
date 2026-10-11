@@ -76,7 +76,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA2B
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA4EC_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA58C_FlowerShower);
+void func_800FA58C_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2) {
+    arg0->rot.x += arg1;
+    arg0->rot.z += arg2;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA5B8_FlowerShower);
 
