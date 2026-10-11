@@ -13,7 +13,19 @@ typedef struct BumperBallMazeCameraWork {
 
 void func_800F9890_BumperBallMaze(omObjData*);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F96B0_BumperBallMaze);
+void func_800F96B0_BumperBallMaze(f32 cameraValue, f32 zoom, f32 rotX, f32 rotY, f32 rotZ,
+                                 f32 centerX, f32 centerY, f32 centerZ) {
+    func_800178A0(1);
+    func_800178E8();
+    CZoom = zoom;
+    CRot.x = rotX;
+    CRot.y = rotY;
+    CRot.z = rotZ;
+    Center.x = centerX;
+    Center.y = centerY;
+    Center.z = centerZ;
+    D_800C3110->unk_40 = cameraValue;
+}
 
 void func_800F9768_BumperBallMaze(void) {
     D_800FB1C8_BumperBallMaze = omAddObj(0x3C, 0, 0, -1, NULL);
