@@ -1,12 +1,24 @@
 #include "common.h"
 
 void func_800F6DB8_BalloonBurst(omObjData *, s32, s32);
+void func_800F7298_BalloonBurst(omObjData *);
 
 extern Gfx **D_800FB0F8_BalloonBurst[];
 extern s16 D_800F3778;
 extern s16 D_800FB10C_BalloonBurst;
 extern u16 D_800FB10E_BalloonBurst;
 extern u16 D_800FC386_BalloonBurst;
+extern f32 D_800FC380_BalloonBurst;
+extern s16 D_800FC384_BalloonBurst;
+extern s16 D_800FC388_BalloonBurst;
+extern s16 D_800FC38A_BalloonBurst;
+extern s16 D_800FC38C_BalloonBurst;
+extern s16 D_800FC38E_BalloonBurst;
+extern s16 D_800FC3A0_BalloonBurst;
+extern volatile f32 D_800FC3A8_BalloonBurst;
+extern volatile f32 D_800FC3AC_BalloonBurst;
+extern s32 D_800FC3B0_BalloonBurst;
+extern s32 D_800FC3B4_BalloonBurst;
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
@@ -73,7 +85,26 @@ void func_800F7160_BalloonBurst(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F71D8_BalloonBurst);
+void func_800F71D8_BalloonBurst(omObjData *arg0) {
+    f32 zero;
+
+    D_800FB10C_BalloonBurst = 0;
+    D_800FB10E_BalloonBurst = 0;
+    D_800FC384_BalloonBurst = 0;
+    D_800FC380_BalloonBurst = 2200.0725f;
+    D_800FC386_BalloonBurst = 0x1E;
+    D_800FC388_BalloonBurst = 0x1E;
+    zero = 0.0f;
+    D_800FC3AC_BalloonBurst = zero;
+    D_800FC3A8_BalloonBurst = zero;
+    D_800FC38A_BalloonBurst = 0;
+    D_800FC38C_BalloonBurst = 0;
+    D_800FC38E_BalloonBurst = -1;
+    D_800FC3B4_BalloonBurst = 0;
+    D_800FC3B0_BalloonBurst = 0;
+    D_800FC3A0_BalloonBurst = InitSprite(0x25000A);
+    arg0->func_ptr = func_800F7298_BalloonBurst;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7298_BalloonBurst);
 
