@@ -17,7 +17,7 @@ void func_800F993C_BumperBallMaze(void) {
     }
 }
 
-void func_800F9974_BumperBallMaze(void) {
+void func_800F9974_BumperBallMaze(s32 arg0) {
     omOvlReturnEx(1);
 }
 

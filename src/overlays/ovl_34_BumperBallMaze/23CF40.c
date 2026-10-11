@@ -21,8 +21,10 @@ typedef struct BumperBallMazeHitProbe {
 
 extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
+extern u16 D_800FACC0_BumperBallMaze;
 
 void func_800FA620_BumperBallMaze(void);
+void func_800F9974_BumperBallMaze(s32);
 void func_800F6C7C_BumperBallMaze(s32);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
 void func_800F928C_BumperBallMaze(u16);
@@ -78,7 +80,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8468_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8AB8_BumperBallMaze);
+void func_800F8AB8_BumperBallMaze(void) {
+    if (D_800FACC0_BumperBallMaze != 0 || D_800F5144 != 0) {
+        func_800F9974_BumperBallMaze(0x83);
+        func_800601D4(0x28);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8AFC_BumperBallMaze);
 
