@@ -74,7 +74,17 @@ extern s16 D_800D84AA;
 extern s16 D_800F3750;
 extern s16 D_800F329A;
 extern s16 D_800D85D4;
+#ifdef TARGET_PC
+/* splat labels for unk_14 of the font objects below (+0x14 on the N64; the void* before it moves
+   it on hosts), and D_800D85EC: D_800D85D8's unk_14 with D_800D8640 at +0x54. Views on hosts. */
+#define D_800D8654 (D_800D8640[0].unk_14[0])
+#define D_800D85EC_unk_00 (D_800D85D8[0].unk_14[0])
+#define D_800D85EC_unk_54 (D_800D8640[0])
+#else
 extern s16 D_800D8654;
+#define D_800D85EC_unk_00 (D_800D85EC.unk_00)
+#define D_800D85EC_unk_54 (D_800D85EC.unk_54)
+#endif
 extern s16 D_800D84E4;
 extern s16 D_800D855C;
 extern unkStruct3 D_800D85EC;
@@ -90,13 +100,21 @@ extern s16 D_800D84E8;
 extern s16 D_800D84EA;
 extern unkCommonStruct0 D_800D84F0[];
 extern Process* D_800D8558;
+#ifdef TARGET_PC
+#define D_800D8504 (D_800D84F0[0].unk_14[0])
+#else
 extern s16 D_800D8504;
+#endif
 extern s16 D_800D855C;
 extern s16 D_800D855E;
 extern s16 D_800D8560;
 extern s16 D_800D8562;
 extern unkCommonStruct0 D_800D8568[];
+#ifdef TARGET_PC
+#define D_800D857C (D_800D8568[0].unk_14[0])
+#else
 extern s16 D_800D857C;
+#endif
 extern Process* D_800D85D0;
 void func_800543D8(s32);
 void func_8005456C(s32);
@@ -912,7 +930,7 @@ void func_80055B9C(void) {
             func_800674BC(D_800D85D4, 1, 0x8000);
             
             for (i = 0; i < 5; i++) {
-                func_800674BC(D_800D85EC.unk_00, i + 1, 0x8000);
+                func_800674BC(D_800D85EC_unk_00, i + 1, 0x8000);
             }
             
             func_800674BC(D_800D8654, 1, 0x8000);
@@ -920,7 +938,7 @@ void func_80055B9C(void) {
             func_80067480(D_800D85D4, 0, 0x8000);
             func_80067480(D_800D85D4, 1, 0x8000);
             for (i = 0; i < 5; i++) {
-                func_80067480(D_800D85EC.unk_00, i + 1, 0x8000);
+                func_80067480(D_800D85EC_unk_00, i + 1, 0x8000);
             }
             func_80067480(D_800D8654, 1, 0x8000);
             func_800672B0(D_800D85D4, 0, 1);
@@ -979,9 +997,9 @@ void func_80055EE8(void) {
     s32 i;
 
     GMesFontMesCreate(D_800D85D8, "WORLD", 0, -1, -1);
-    func_80066DC4(D_800D85EC.unk_00, 0, 0xA0, 0x18);
-    GMesFontMesCreate(&D_800D85EC.unk_54, "=", 0, -1, -1);
-    func_80066DC4(D_800D85EC.unk_54.unk_14[0], 0, 0xA0, 0x28);
+    func_80066DC4(D_800D85EC_unk_00, 0, 0xA0, 0x18);
+    GMesFontMesCreate(&D_800D85EC_unk_54, "=", 0, -1, -1);
+    func_80066DC4(D_800D85EC_unk_54.unk_14[0], 0, 0xA0, 0x28);
     file = DataRead(0x7C);
     D_800D85D6 = func_800678A4(file);
     DataClose(file);

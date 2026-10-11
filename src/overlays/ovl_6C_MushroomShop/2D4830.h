@@ -97,7 +97,13 @@ extern ShopItem D_800F8A50_MushroomShop[16];
 extern s16 D_800F8D70_MushroomShop; /* the message window */
 extern Process* D_800F8D74_MushroomShop;
 extern unkCommonStruct0 D_800F8D78_MushroomShop[];
+/* splat labels for fields of the font objects (unk_14 at +0x14, unk_34 at +0x34 on the N64). On
+   hosts the void* before them moves both, so they are views of the one object there. */
+#ifdef TARGET_PC
+#define D_800F8D8C_MushroomShop (D_800F8D78_MushroomShop[0].unk_14)
+#else
 extern s16 D_800F8D8C_MushroomShop[];
+#endif
 extern s16 D_800F8DE0_MushroomShop;
 extern s16 D_800F8DE2_MushroomShop;
 extern u16 D_800F8DE4_MushroomShop;
@@ -107,7 +113,12 @@ extern s16 D_800F8DF0_MushroomShop[4];     /* tile-animation ids of the last she
 extern s16 D_800F8DF8_MushroomShop[2];     /* description lines: font ids */
 extern s16 D_800F8DFC_MushroomShop[2];     /* description lines: widths */
 extern unkCommonStruct0 D_800F8E00_MushroomShop;
+#ifdef TARGET_PC
+#define D_800F8E14_MushroomShop (D_800F8E00_MushroomShop.unk_14)
+#define D_800F8E34_MushroomShop (D_800F8E00_MushroomShop.unk_34)
+#else
 extern s16 D_800F8E14_MushroomShop[16];
 extern s16 D_800F8E34_MushroomShop[16];
+#endif
 
 #endif
