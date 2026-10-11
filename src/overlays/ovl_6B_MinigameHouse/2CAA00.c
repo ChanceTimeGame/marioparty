@@ -2,6 +2,20 @@
 
 #include "engine/esprite.h"
 
+void func_8005B648(s8 vol, s16 time);
+s16 func_80009E4C(s16 player, s16 limit, s8 x, s8 y);
+void func_80060F04(s16, s16, s16, s16);
+void func_80060440(s16, s16);
+void func_8006035C(s16, s8);
+void func_800594E4(s16, u16);
+extern s8 ContStkY[];
+#define HOUSE_ABS(x) ((x) < 0 ? -(x) : (x))
+f32 func_80059E28(f32 a, f32 b);
+void func_800F8324_MinigameHouse(void);
+void func_800F8514_MinigameHouse(void);
+void func_800F8540_MinigameHouse(s16);
+
+
 void func_800191F8(u16);
 void GMesSprKill(unkCommonStruct0*);
 void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s32 row, s32 mode);
@@ -134,6 +148,7 @@ void func_8006E288(s16, u8);
 void func_8007F54C(void* code, u16* outbuf, u32 outbufWidth, u16* workbuf);
 
 void func_800F6AD0_MinigameHouse(void);
+void func_800F7274_MinigameHouse(s16, s16);
 void func_800F7C6C_MinigameHouse(omObjData*);
 void func_800F7DE0_MinigameHouse(omObjData*);
 s16 func_800F8364_MinigameHouse(s32, s16);
@@ -895,8 +910,401 @@ void func_800F8540_MinigameHouse(s16 arg0) {
     func_800672DC(D_80100630_MinigameHouse, 6, hund, 0);
     func_800672B0(D_80100630_MinigameHouse, 6, 1);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F8860_MinigameHouse);
+// first C draft (masked 349): retail caches the pad port, ladders the result message with jumps, and allocates floats differently; call/constant sequence checked against the asm
+#ifdef NON_MATCHING
+void func_800F8860_MinigameHouse(void) {
+    Vec3f rotv;
+    char buf[8];
+    char buf2[8];
+    s16 sprA;
+    u16 a;
+    s16 sprB;
+    s32 b;
+    s32 win;
+    s32 w2;
+    TextWindow* tw;
+    s32 rec;
+    s32 i;
+    s32 t;
+    s32 x;
+    s32 y;
+    s16 dir;
+    s16 r;
+    s32 timer;
+    s32 snd;
+    s32 snd2;
+    s32 turns;
+    s32 vol;
+    s32 pitch;
+    f32 startAng;
+    f32 curAng;
+    f32 diff;
+    f32 s;
+    f32 sway;
+    f32 spd;
+    f32 bob;
+    f32 ang;
+    f32 fall;
+    f32 spin;
+    f32 radius;
+    f32 px;
+    f32 pz;
+    s32 msg;
 
+    snd = -1;
+    func_800F6970_MinigameHouse(6);
+    win = func_8006D010(0xC8, 0x4C, 0x60, 0x5A, 0, 0);
+    func_8006E070(win, 0);
+    rec = func_800594FC(4);
+    sprintf(buf, "0\\%02d[%02d", rec / 30, ((rec % 30) * 100) / 30);
+    func_8006DA5C(win, buf, 0);
+    t = rec - 10;
+    if (t < 0) {
+        t = 0;
+    }
+    sprintf(buf2, "%2d", t / 4);
+    func_8006DA5C(win, buf2, 1);
+    LoadStringIntoWindow(win, (void*)0x73, -1, -1);
+    if (func_80059CE8((void*)0x71, D_8010055C_MinigameHouse) == 0) {
+        func_80070D90(win);
+        return;
+    }
+    func_80070D90(win);
+    func_8005B648(0x5A, 0x12);
+    func_8006EB40(D_8010055C_MinigameHouse);
+    LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x72, -1, -1);
+    for (i = 0; i < 10; i++) {
+        D_80100620_MinigameHouse->rot.x += 2.0f;
+        HuPrcVSleep();
+    }
+    while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+        HuPrcVSleep();
+    }
+    GMesCreate(0);
+    while (GMesStatAllGet() != 0) {
+        HuPrcVSleep();
+    }
+    GMesCreate(8, 0xA, 0x80, 0x20);
+
+    /* wait for the stick to start turning, then count quarter turns for 300 frames */
+    turns = 0;
+    while ((dir = func_80009E4C(GwPlayer[0].port, 1, ContStkX[GwPlayer[0].port], ContStkY[GwPlayer[0].port])) == 0) {
+        HuPrcVSleep();
+    }
+    startAng = func_800B0CD8(ContStkY[GwPlayer[0].port], ContStkX[GwPlayer[0].port]);
+    if (HOUSE_ABS(dir) == 1) {
+        dir *= 2;
+    }
+    func_80025EB4(D_80100620_MinigameHouse->model[0], 2, 2);
+    timer = 0;
+    func_800603F0(0x7F);
+    for (i = 0; i < 300; i++) {
+        r = func_80009E4C(GwPlayer[0].port, 8, ContStkX[GwPlayer[0].port], ContStkY[GwPlayer[0].port]);
+        curAng = func_800B0CD8(ContStkY[GwPlayer[0].port], ContStkX[GwPlayer[0].port]);
+        if (HOUSE_ABS(r) == 2) {
+            if (dir == r) {
+                turns += 4;
+                func_80060F04(0, 5, 0, 5);
+                timer = 16;
+                snd = PlaySound(0x28);
+                func_80025EB4(D_80100620_MinigameHouse->model[0], 1, 2);
+            }
+            dir = r;
+        }
+        timer--;
+        D_80100620_MinigameHouse->trans.y = (turns & 1) * 0.5f + 73.0f;
+        if (timer < 0) {
+            func_80025EB4(D_80100620_MinigameHouse->model[0], 1, 1);
+            if ((s16)snd != -1) {
+                func_8006071C(snd);
+                snd = -1;
+            }
+        }
+        func_80079078(10 - i / 30);
+        HuPrcVSleep();
+    }
+    if (dir <= 0) {
+        diff = startAng - curAng;
+    } else {
+        diff = curAng - startAng;
+    }
+    while (diff < 0.0f) {
+        diff += 360.0f;
+    }
+    turns += (s32)(diff / 90.0f);
+    if ((s16)snd != -1) {
+        func_8006071C(snd);
+    }
+    func_80025EB4(D_80100620_MinigameHouse->model[0], 1, 1);
+    func_80079078(0);
+    func_800790C0();
+    func_80070D90(D_8010055C_MinigameHouse);
+
+    /* the scale bounce */
+    s = D_80100620_MinigameHouse->scale.x;
+    for (i = 0; i < 10; i++) {
+        D_80100620_MinigameHouse->rot.x -= 2.0f;
+        if (i >= 5) {
+            s -= 0.025f;
+        } else {
+            s += 0.025f;
+        }
+        D_80100620_MinigameHouse->scale.x = D_80100620_MinigameHouse->scale.y = D_80100620_MinigameHouse->scale.z = s;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 8; i++) {
+        if (i < 4) {
+            s += 0.015f;
+        } else {
+            s -= 0.015f;
+        }
+        D_80100620_MinigameHouse->scale.x = D_80100620_MinigameHouse->scale.y = D_80100620_MinigameHouse->scale.z = s;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 6; i++) {
+        if (i < 3) {
+            s += 0.01f;
+        } else {
+            s -= 0.01f;
+        }
+        D_80100620_MinigameHouse->scale.x = D_80100620_MinigameHouse->scale.y = D_80100620_MinigameHouse->scale.z = s;
+        HuPrcVSleep();
+    }
+    D_80100620_MinigameHouse->scale.x = D_80100620_MinigameHouse->scale.y = D_80100620_MinigameHouse->scale.z = 0.3f;
+    func_800F8324_MinigameHouse();
+    func_800F8364_MinigameHouse(0xF0, 0x20);
+    func_800F8540_MinigameHouse(0);
+    for (i = 0; i < 20; i++) {
+        D_80100620_MinigameHouse->trans.y = (i & 1) * 0.5f + 73.0f;
+        HuPrcVSleep();
+    }
+
+    /* the spin: one frame per counted quarter turn (plus 11) */
+    snd2 = PlaySound(0x29);
+    func_80025C20(D_80100620_MinigameHouse->model[0], D_80100620_MinigameHouse->motion[1], 0, 10, 2);
+    sway = -8.0f;
+    spd = 10.0f;
+    bob = 0.0f;
+    ang = 295.0f;
+    for (i = 0; i < turns + 11; i++) {
+        if (i & 0x10) {
+            sway -= 1.0f;
+        } else {
+            sway += 1.0f;
+        }
+        spd -= 0.6f;
+        if (spd < 10.0f) {
+            spd = 48.4f;
+        }
+        D_80100620_MinigameHouse->rot.x = (spd - D_80100620_MinigameHouse->rot.x) / 10.0f + D_80100620_MinigameHouse->rot.x;
+        D_80100620_MinigameHouse->rot.y = func_80059E28(ang + 90.0f + sway / 2.0f, D_80100620_MinigameHouse->rot.y) / 10.0f + D_80100620_MinigameHouse->rot.y;
+        D_80100620_MinigameHouse->rot.z = (sway - D_80100620_MinigameHouse->rot.z) / 10.0f + D_80100620_MinigameHouse->rot.z;
+        bob += 0.3f;
+        if (bob > 19.2f) {
+            bob = 0.0f;
+        }
+        func_80060440(snd2, (s32)(bob * 31.25f) - 600);
+        radius = sway + 100.0f;
+        px = func_800AEAC0(ang) * radius;
+        pz = func_800AEFD0(ang) * radius + 130.0f;
+        D_80100620_MinigameHouse->trans.x = (px - D_80100620_MinigameHouse->trans.x) / 12.0f + D_80100620_MinigameHouse->trans.x;
+        D_80100620_MinigameHouse->trans.y = (bob + 73.0f - D_80100620_MinigameHouse->trans.y) / 5.0f + D_80100620_MinigameHouse->trans.y;
+        ang += 1.0f;
+        D_80100620_MinigameHouse->trans.z = (pz - D_80100620_MinigameHouse->trans.z) / 12.0f + D_80100620_MinigameHouse->trans.z;
+        if (ang > 360.0f) {
+            ang -= 360.0f;
+        }
+        rotv.x = 0.0f;
+        rotv.y = ang + 8.0f;
+        rotv.z = 0.0f;
+        D_800ED610 = &D_800FFEC0_MinigameHouse[5];
+        D_800ED72C = &rotv;
+        func_800F8540_MinigameHouse(i);
+        HuPrcVSleep();
+    }
+
+    /* the fall */
+    func_80025EB4(D_80100620_MinigameHouse->model[0], 2, 1);
+    fall = 0.0f;
+    spin = 0.0f;
+    vol = 0x7F;
+    pitch = 0;
+    while (1) {
+        i++;
+        if (i & 0x10) {
+            sway -= 1.0f;
+        } else {
+            sway += 1.0f;
+        }
+        fall -= 1.0f;
+        spin += 8.0f;
+        D_80100620_MinigameHouse->rot.x = (0.0f - D_80100620_MinigameHouse->rot.x) / 15.0f + D_80100620_MinigameHouse->rot.x;
+        D_80100620_MinigameHouse->rot.y = ang + 90.0f + spin + sway;
+        D_80100620_MinigameHouse->rot.z = (0.0f - D_80100620_MinigameHouse->rot.z) / 15.0f + D_80100620_MinigameHouse->rot.z;
+        D_80100620_MinigameHouse->trans.y = fall + D_80100620_MinigameHouse->trans.y;
+        if (D_80100620_MinigameHouse->trans.y < 5.0f) {
+            break;
+        }
+        radius = sway + 100.0f;
+        px = func_800AEAC0(ang) * radius;
+        pz = func_800AEFD0(ang) * radius + 130.0f;
+        D_80100620_MinigameHouse->trans.x = (px - D_80100620_MinigameHouse->trans.x) / 12.0f + D_80100620_MinigameHouse->trans.x;
+        ang += 1.0f;
+        D_80100620_MinigameHouse->trans.z = (pz - D_80100620_MinigameHouse->trans.z) / 12.0f + D_80100620_MinigameHouse->trans.z;
+        if (ang > 360.0f) {
+            ang -= 360.0f;
+        }
+        rotv.x = -func_800B0CD8(D_80100620_MinigameHouse->trans.y + 15.0f - D_800FFEC0_MinigameHouse[5].y, sway + 100.0f);
+        D_800ED610 = &D_800FFEC0_MinigameHouse[5];
+        D_800ED72C = &rotv;
+        vol -= 10;
+        if (vol < 0) {
+            vol = 0;
+        }
+        pitch -= 0x3E;
+        if (pitch < -800) {
+            pitch = -800;
+        }
+        func_8006035C(snd2, vol);
+        func_80060440(snd2, pitch);
+        HuPrcVSleep();
+    }
+    D_80100620_MinigameHouse->trans.y = 5.0f;
+    func_8006071C(snd2);
+    PlaySound(0x2A);
+    for (i = 0; i < 20; i++) {
+        D_80100620_MinigameHouse->rot.x -= 5.0f;
+        D_80100620_MinigameHouse->rot.y += 4.0f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 10; i++) {
+        if (i & 1) {
+            D_80100620_MinigameHouse->rot.x = D_80100620_MinigameHouse->rot.x + 1.0f;
+        } else {
+            D_80100620_MinigameHouse->rot.x = D_80100620_MinigameHouse->rot.x - 1.0f;
+        }
+        HuPrcVSleep();
+    }
+
+    /* the result */
+    func_800F8514_MinigameHouse();
+    sprA = InitSprite(0x9004C);
+    a = func_80019060(sprA, 0, 1);
+    func_80018D84(a, 0xFFF0);
+    sprB = InitSprite(0x9004D);
+    b = func_80019060(sprB, 0, 1);
+    func_80018D84((u16)b, 0xFFF0);
+    func_800674F4(D_800ED60C[(s16)b].unk_04, 0, 0xFF, 0xD3, 0x4F);
+    PlaySound(0x2B);
+    for (i = 0; i < 100; i += 10) {
+        x = i / 5 + 0x8C;
+        y = 0x6E - (i * 0x23) / 100;
+        SetBasicSpritePos(a, x, y);
+        s = i / 100.0f;
+        SetBasicSpriteSize(a, s, s);
+        SetBasicSpritePos((u16)b, x, y);
+        SetBasicSpriteSize((u16)b, s, s);
+        HuPrcVSleep();
+    }
+    SetBasicSpriteSize(a, 1.0f, 1.0f);
+    SetBasicSpriteSize((u16)b, 1.0f, 1.0f);
+    w2 = func_8006D010(0x4E, 0x32, 0xA2, 0x30, 0, 0);
+    func_8006E070(w2, 0);
+    func_8006E2B8(w2, 0xA0, 0xA0, 0xA0);
+    tw = func_8006DD60(w2);
+    func_800674F4(tw->unk_44, 8, 0x20, 0xE, 0x71);
+    func_800674BC(tw->unk_44, 0, 0x8000);
+    sprintf(buf, "0\\%02d[%02d", (turns + 10) / 30, (((turns + 10) % 30) * 100) / 30);
+    func_8006DA5C(w2, buf, 0);
+    LoadStringIntoWindow(w2, (void*)0x74, -1, -1);
+    while (func_8006FCC0(w2) != 0) {
+        HuPrcVSleep();
+    }
+    if ((u16)func_800594FC(4) < turns + 10) {
+        func_800594E4(4, turns + 10);
+        func_8006EB40(w2);
+        LoadStringIntoWindow(w2, (void*)0x76, -1, -1);
+        while (func_8006FCC0(w2) != 0) {
+            HuPrcVSleep();
+        }
+    }
+    func_8006EB40(w2);
+    sprintf(buf, D_801002BC_MinigameHouse, turns / 4);
+    func_8006DA5C(w2, buf, 0);
+    LoadStringIntoWindow(w2, (void*)0x75, -1, -1);
+    while (func_8006FCC0(w2) != 0) {
+        HuPrcVSleep();
+    }
+    func_8006EB40(w2);
+    if (turns < 8) {
+        msg = 0x77;
+    } else if (turns < 0x54) {
+        msg = 0x78;
+    } else if (turns < 0x90) {
+        msg = 0x79;
+    } else if (turns < 0xB4) {
+        msg = 0x7A;
+    } else if (turns < 0xC8) {
+        msg = 0x7B;
+    } else if (turns < 0xD8) {
+        msg = 0x7C;
+    } else if (turns < 0xE8) {
+        msg = 0x7D;
+    } else if (turns < 0xF4) {
+        msg = 0x7E;
+    } else if (turns < 0xFC) {
+        msg = 0x7F;
+    } else if (turns < 0x104) {
+        msg = 0x80;
+    } else {
+        msg = 0x81;
+    }
+    LoadStringIntoWindow(w2, (void*)(PB_PTR32)msg, -1, -1);
+    while (func_8006FCC0(w2) != 0) {
+        HuPrcVSleep();
+    }
+    func_80070D90(w2);
+    for (i = 100; i > 0; i -= 10) {
+        x = i / 5 + 0x8C;
+        y = 0x6E - (i * 0x23) / 100;
+        SetBasicSpritePos(a, x, y);
+        s = i / 100.0f;
+        SetBasicSpriteSize(a, s, s);
+        SetBasicSpritePos((u16)b, x, y);
+        SetBasicSpriteSize((u16)b, s, s);
+        HuPrcVSleep();
+    }
+    func_800191F8(a);
+    func_80067704(sprA);
+    func_800191F8((u16)b);
+    func_80067704(sprB);
+    func_80072724(0, 0, 0);
+    func_800726AC(1, 0x14);
+    while (func_80072718() != 0) {
+        HuPrcVSleep();
+    }
+    D_80100620_MinigameHouse->trans.x = -170.0f;
+    D_80100620_MinigameHouse->trans.y = 73.0f;
+    D_80100620_MinigameHouse->trans.z = 200.0f;
+    D_80100620_MinigameHouse->rot.x = 0.0f;
+    D_80100620_MinigameHouse->rot.y = 90.0f;
+    D_80100620_MinigameHouse->rot.z = 0.0f;
+    D_8010055C_MinigameHouse = func_80059C28();
+    func_8002888C(D_80100620_MinigameHouse->model[0], D_80100620_MinigameHouse->motion[0]);
+    func_80025EB4(D_80100620_MinigameHouse->model[0], 1, 1);
+    func_800F6970_MinigameHouse(5);
+    ClearBoardFeatureFlag(0x30);
+    func_8005B244();
+    HuPrcSleep(0x14);
+    func_8005B648(0x7F, 0x12);
+    SetFadeInTypeAndTime(0xFF, 0xA);
+    while (func_80072718() != 0) {
+        HuPrcVSleep();
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F8860_MinigameHouse);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002BC_MinigameHouse);
 
 // register allocation; retail hoists the buffer base out of three fill loops (masked 37)
