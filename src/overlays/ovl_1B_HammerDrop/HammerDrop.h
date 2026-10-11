@@ -15,7 +15,8 @@ typedef struct HammerDropPlayerState {
     s32 unk_24;
     f32 unk_28;
     s32 unk_2C;
-    char unk_30[0x14];
+    char unk_30[0x10];
+    f32 unk_40;
     s32 unk_44;
     char unk_48[0x4];
     s32 unk_4C;
@@ -40,7 +41,8 @@ typedef struct HammerDropItemState {
 } HammerDropItemState;
 
 typedef struct HammerDropTargetState {
-    /* 0x00 */ s32 unk_00;
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ char unk_02[2];
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
     /* 0x0C */ f32 unk_0C;
@@ -54,6 +56,11 @@ typedef struct HammerDropTargetState {
     /* 0x2C */ s32 itemIndex;
     /* 0x30 */ f32 unk_30;
 } HammerDropTargetState;
+
+/* Retail copies these four-entry tables to the stack before indexing them. */
+typedef struct HammerDropF32x4 {
+    f32 v[4];
+} HammerDropF32x4;
 
 typedef struct HammerDropAnglePair {
     f32 first;
@@ -152,7 +159,7 @@ extern s16 ContBtn[];
 extern s8 ContStkY[];
 extern f32 D_800ED6B8;
 extern s32 D_800EDEC0;
-extern s16 D_800EE984;
+extern u16 D_800EE984;
 extern u16 D_800F370C;
 extern f32 D_800F5254;
 extern u8 D_800FB5C0_HammerDrop[];
@@ -206,3 +213,15 @@ extern s32 D_800FB978_HammerDrop;
 
 void func_800F7BB4_HammerDrop(omObjData* arg0);
 s32 func_800F7BFC_HammerDrop(omObjData* arg0, f32 arg1); /* f32: an unprototyped call passes a double */
+
+/* Callees the unit used unprototyped (two take or return floats). */
+void func_80008FE8(omObjData* obj, f32 arg1);
+void func_800090C4(omObjData* obj, u8 idx, u8 val);
+s32 func_80017A60(omObjData* obj);
+f32 func_80025D18(s16);
+f32 func_80025D40(s16);
+void func_800F736C_HammerDrop(omObjData* arg0);
+void func_800F77E4_HammerDrop(omObjData* arg0);
+void func_800F7AD4_HammerDrop(omObjData* arg0);
+void func_800F7B6C_HammerDrop(omObjData* arg0);
+void func_800F9228_HammerDrop(void);
