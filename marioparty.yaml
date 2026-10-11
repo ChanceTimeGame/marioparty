@@ -2496,7 +2496,7 @@ segments:
       - [0x2FA120, c]
       - [0x2FA150, c]
       - [0x2FA760, .data, 2FA120]
-      - [0x2FA780, data, 2FA150]
+      - [0x2FA780, .data, 2FA150]
       - {0x2FA8A0, type: bss, vram: 0x800F6D60, name: ovl_75_bss}
   - type: code
     start: 0x2FA8A0
@@ -2510,7 +2510,7 @@ segments:
       - [0x2FA8A0, c]
       - [0x2FA8D0, c]
       - [0x2FAC80, .data, 2FA8A0]
-      - [0x2FACA0, data, 2FA8D0]
+      - [0x2FACA0, .data, 2FA8D0]
   - type: code
     start: 0x2FADB0
     vram: 0x800F65E0

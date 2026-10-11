@@ -18,19 +18,82 @@ void func_8005C3FC(s32, s32);
 void func_8005B860(s32);
 void func_800F67BC_name_75(void);
 void func_800F682C_name_75(void);
-extern s32 D_800F6C5C_name_75;
 extern Object* D_800F6D60_name_75;
-extern testStruct2 D_800F6C40_name_75;
-extern EventTableEntry D_800F6D04_name_75;
 void func_800F6934_name_75(void);
 void func_800F69F4_name_75(void);
 s32 func_8005B984(s32);
 s32 func_8005BAB0(s32);
 void func_8005CD7C(s32, s32, s32, s32);
 void func_8005BD10(s32);
+void func_800F6A14_name_75(void);
+void func_800F6A38_name_75(void);
+void func_800F6AB0_name_75(void);
+void func_800F6AD8_name_75(void);
+void func_800F6AF4_name_75(void);
+void func_800F6B10_name_75(void);
+void func_800F6B2C_name_75(void);
+void func_800F6B48_name_75(void);
+void func_800F6B64_name_75(void);
+void func_800F6B80_name_75(void);
+void func_800F6BA4_name_75(void);
+
+testStruct2 D_800F6C40_name_75[] = {
+    { 2, 0x27 }, { 3, 0x28 }, { 4, 0x29 }, { 5, 0x2A }, { 6, 0x2B }, { 7, 0x2C }, { -1, 0xFFFF },
+};
+s32 D_800F6C5C_name_75[] = { 1, 0x4A };
+EventListEntry D_800F6C64_name_75[] = {
+    { 1, 1, func_800F6A14_name_75 },
+    { 3, 2, func_800F6A38_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6C7C_name_75[] = {
+    { 1, 1, func_800F6AB0_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6C8C_name_75[] = {
+    { 1, 1, func_800F6AD8_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6C9C_name_75[] = {
+    { 1, 1, func_800F6AF4_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6CAC_name_75[] = {
+    { 1, 1, func_800F6B10_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6CBC_name_75[] = {
+    { 1, 1, func_800F6B2C_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6CCC_name_75[] = {
+    { 1, 1, func_800F6B48_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6CDC_name_75[] = {
+    { 1, 1, func_800F6B64_name_75 },
+    { 0, 0, NULL },
+};
+EventListEntry D_800F6CEC_name_75[] = {
+    { 1, 1, func_800F6B80_name_75 },
+    { 3, 2, func_800F6BA4_name_75 },
+    { 0, 0, NULL },
+};
+EventTableEntry D_800F6D04_name_75[] = {
+    { 8, D_800F6C64_name_75 },
+    { 1, D_800F6C7C_name_75 },
+    { 2, D_800F6C8C_name_75 },
+    { 3, D_800F6C9C_name_75 },
+    { 4, D_800F6CAC_name_75 },
+    { 5, D_800F6CBC_name_75 },
+    { 6, D_800F6CCC_name_75 },
+    { 7, D_800F6CDC_name_75 },
+    { 9, D_800F6CEC_name_75 },
+    { -1, NULL },
+};
 
 void func_800F6610_name_75(void) {
-    testStruct2* temp = &D_800F6C40_name_75;
+    testStruct2* temp = D_800F6C40_name_75;
 
     for (; temp->unk_00 >= 0; temp++) {
         if (func_8005CE48(temp->unk_02) != 0) {
@@ -56,7 +119,7 @@ void func_800F666C_name_75(void) {
     func_8003E174(player->player_obj);
     player->player_obj->unk_0A |= 2;
     func_800F69F4_name_75();
-    EventTableHydrate(&D_800F6D04_name_75);
+    EventTableHydrate(D_800F6D04_name_75);
     func_800F6610_name_75();
     func_8005CC3C();
     func_80060128(0x46);
@@ -124,7 +187,7 @@ void func_800F6934_name_75(void) {
     Object* temp_v0;
 
     if (D_800F6D60_name_75 == NULL) {
-        temp_v0 = MBModelCreate(0xC, &D_800F6C5C_name_75);
+        temp_v0 = MBModelCreate(0xC, D_800F6C5C_name_75);
         func_8003E174(temp_v0);
         D_800F6D60_name_75 = temp_v0;
         temp_v0->unk_0A |= 2;
