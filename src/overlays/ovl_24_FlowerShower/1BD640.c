@@ -2,7 +2,11 @@
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F6A64_FlowerShower);
+void func_800F6A64_FlowerShower(void) {
+    if (func_80072718() == 0) {
+        omOvlReturnEx(1);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F6A90_FlowerShower);
 
