@@ -2450,8 +2450,8 @@ segments:
     subsegments:
       - [0x2F7080, c]
       - [0x2F70B0, c]
-      - [0x2F8B50, data, 2F7080]
-      - [0x2F8B90, data, 2F70B0]
+      - [0x2F8B50, .data, 2F7080]
+      - [0x2F8B90, .data, 2F70B0]
       - {0x2F9040, type: bss, vram: 0x800F85A0, name: ovl_72_bss}
   - type: code
     start: 0x2F9040
