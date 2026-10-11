@@ -662,7 +662,61 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
     }
 }
 
+// Logic-equivalent spherical displacement conversion; stack/register allocation differs.
+#ifdef NON_MATCHING
+void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
+    Vec fromCopy;
+    Vec toCopy;
+    Vec delta;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    f32 length;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromCopy = *from;
+    toCopy = *to;
+    delta.x = toCopy.x - fromCopy.x;
+    delta.y = toCopy.y - fromCopy.y;
+    delta.z = toCopy.z - fromCopy.z;
+    horizontal = sqrtf((delta.x * delta.x) + (delta.z * delta.z));
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        horizontal = 0.0f;
+        pitch = 180.0f;
+        yaw = 0.0f;
+        if (!(delta.y > 0.0001f) && (delta.y < 0.0001f)) {
+            pitch = 0.0f;
+        }
+    } else {
+        yaw = (f32) ((f64) func_800FA1AC_HammerDrop(delta.x / delta.z) * D_800FB650_HammerDrop);
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        pitch = (f32) ((f64) func_800FA1AC_HammerDrop(delta.y / horizontal) * D_800FB658_HammerDrop);
+        if (yaw >= 360.0f) {
+            yaw -= 360.0f;
+        } else if (yaw < 0.0f) {
+            yaw += 360.0f;
+        }
+        pitch += 90.0f;
+        if (pitch >= 360.0f) {
+            pitch -= 360.0f;
+        } else if (pitch < 0.0f) {
+            pitch += 360.0f;
+        }
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    length = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
+    out->z = yaw;
+    out->x = length;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E98_HammerDrop);
+#endif
 
 // Logic-equivalent arctangent continued fraction; register allocation remains.
 #ifdef NON_MATCHING
