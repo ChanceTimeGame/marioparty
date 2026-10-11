@@ -1,5 +1,15 @@
 #include "CastAways.h"
 
+typedef struct CastAwaysPlayerWork {
+    char unk_00[0x13C];
+    omObjData* unk_13C;
+} CastAwaysPlayerWork;
+
+typedef struct CastAwaysLureWork {
+    char unk_00[8];
+    f32 unk_08;
+} CastAwaysLureWork;
+
 void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);
     CZoom = arg1;
@@ -60,6 +70,16 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB668_C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB778_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB858_CastAways);
+f32 func_800FB858_CastAways(omObjData* arg0) {
+    omObjData* lureObj = ((CastAwaysPlayerWork*)arg0->unk_50)->unk_13C;
+    f32 result;
+
+    if (lureObj != NULL) {
+        result = ((CastAwaysLureWork*)lureObj->unk_50)->unk_08;
+    } else {
+        result = -1.0f;
+    }
+    return result;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB884_CastAways);
