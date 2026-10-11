@@ -3,6 +3,7 @@
 void func_800F6DB8_BalloonBurst(omObjData *, s32, s32);
 
 extern Gfx **D_800FB0F8_BalloonBurst[];
+extern s16 D_800F3778;
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
@@ -48,7 +49,17 @@ void func_800F7140_BalloonBurst(omObjData *arg0) {
     func_800F6DB8_BalloonBurst(arg0, 3, 3);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7160_BalloonBurst);
+void func_800F7160_BalloonBurst(void) {
+    s32 i;
+
+    for (i = 0; i < D_800F3778; i++) {
+        if (D_800F5144 == 1) {
+            D_800F5144 = 0;
+            func_800601D4(0x28);
+            omOvlReturnEx(1);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F71D8_BalloonBurst);
 
