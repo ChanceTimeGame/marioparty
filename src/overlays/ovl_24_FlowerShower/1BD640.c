@@ -120,7 +120,23 @@ void func_800F7CE0_FlowerShower(omObjData* arg0) {
     D_800FAD4C_FlowerShower++;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7DF0_FlowerShower);
+void func_800F7DF0_FlowerShower(omObjData* arg0) {
+    f32 angle;
+    f32 x;
+    s32 dir;
+    s32 file;
+
+    file = D_800C59AC[GwPlayer[2].character].unk_04;
+    dir = D_800C59AC[GwPlayer[2].character].unk_00;
+    if (GwPlayer[2].group == 0) {
+        func_800F7348_FlowerShower(arg0, dir, file, 2);
+        return;
+    }
+    angle = D_800FAD50_FlowerShower[D_800FAD4C_FlowerShower];
+    x = func_800AEAC0(angle) * 550.0f;
+    func_800F761C_FlowerShower(arg0, dir, file, 2, x, 0.0f, func_800AEFD0(angle) * 550.0f);
+    D_800FAD4C_FlowerShower++;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7F00_FlowerShower);
 
