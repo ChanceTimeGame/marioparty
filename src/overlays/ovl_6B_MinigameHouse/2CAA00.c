@@ -2,6 +2,11 @@
 
 #include "engine/esprite.h"
 
+void func_800191F8(u16);
+void GMesSprKill(unkCommonStruct0*);
+void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s32 row, s32 mode);
+
+
 void func_80021240(s16);
 extern u8 D_800C5728[];
 extern char D_80100658_MinigameHouse[7][0x18];
@@ -1732,8 +1737,144 @@ void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s3
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC204_MinigameHouse);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC410_MinigameHouse);
+// register allocation of the arrow sprite's s16 extension (masked 1)
+#ifdef NON_MATCHING
+s32 func_800FC410_MinigameHouse(void) {
+    unkCommonStruct0 font;
+    char buf[8];
+    u16 sprs[4];
+    s16 chrSpr[4];
+    s16 ids[4];
+    s16 arrowSpr;
+    s32 arrow;
+    s32 mode;
+    TextWindow* w;
+    s32 i;
+    s32 j;
+    s32 t;
+    s32 sel;
+    u32 btn;
 
+    LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x4A, -1, -1);
+    arrow = func_80019060(arrowSpr = InitSprite(0xA0021), 0, 1);
+    SetBasicSpritePos((u16)arrow, 0xE8, 0x78);
+    func_80018C90((u16)arrow);
+    for (i = 0; i < 16; i++) {
+        font.unk_14[i] = -1;
+        font.unk_34[i] = -1;
+    }
+    for (i = 0; i < 4; i++) {
+        sprintf(buf, "%dP", i + 1);
+        ids[i] = GMesFontCreate(&font, buf, 0, -1, -1);
+        chrSpr[i] = InitSprite((GwPlayer[i].character + 0x37) | 0xA0000);
+        sprs[i] = func_80019060(chrSpr[i], 0, 1);
+        func_80018C90(sprs[i]);
+        func_800674BC(font.unk_14[ids[i]], 1, 0x8000);
+        func_800674BC(font.unk_14[ids[i]], 2, 0x8000);
+    }
+    mode = D_800C5720 != 2;
+    func_800FC204_MinigameHouse(&font, ids, sprs, 0, mode);
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+    PlaySound(0x27);
+    for (i = 0; i < 0x100; i += 0x20) {
+        D_80100618_MinigameHouse->rot.z = 360.0f - (i * 90.0f) / 256.0f;
+        HuPrcVSleep();
+    }
+    w = func_8006DD60(D_80100634_MinigameHouse);
+    func_80066DC4(w->unk_44, 0, w->unk_14, w->unk_16);
+    ShowBasicSprite((u16)arrow);
+    for (i = 0; i < 4; i++) {
+        ShowBasicSprite(sprs[i]);
+        func_80067480(font.unk_14[ids[i]], 1, 0x8000);
+        func_80067480(font.unk_14[ids[i]], 2, 0x8000);
+    }
+    for (t = 0; t < 0x100; t += 0x20) {
+        for (j = 0; j < 4; j++) {
+            func_8006752C(font.unk_14[ids[j]], 1, t);
+            func_8006752C(font.unk_14[ids[j]], 2, t);
+            func_80018CF8(sprs[j], (s16)t);
+        }
+        func_80018CF8((u16)arrow, (s16)t);
+        D_80100618_MinigameHouse->rot.z = 270.0f - (t * 90.0f) / 256.0f;
+        func_8006752C(w->unk_44, 8, t / 2);
+        HuPrcVSleep();
+    }
+    D_80100618_MinigameHouse->rot.z = 180.0f;
+    func_8006752C(w->unk_44, 8, 0x7F);
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+    sel = 0;
+    while (1) {
+        btn = func_80059CB8();
+        if (btn & 0x100) {
+            PlaySound(0xF5);
+            sel++;
+            if ((mode + 2) < sel) {
+                sel = 0;
+            }
+        }
+        if (btn & 0x200) {
+            PlaySound(0xF5);
+            sel--;
+            if (sel < 0) {
+                sel = mode + 2;
+            }
+        }
+        func_800FC204_MinigameHouse(&font, ids, sprs, sel, mode);
+        if (btn & 0x4000) {
+            break;
+        }
+        if (btn & 0x8000) {
+            D_800C5723 = sel;
+            PlaySound(0xF6);
+            D_8010055C_MinigameHouse = func_80059C28();
+            if (func_80059CE8((void*)0x4B, D_8010055C_MinigameHouse) != 0) {
+                func_80070D90(D_8010055C_MinigameHouse);
+                for (i = 0; i < 4; i++) {
+                    func_800191F8(sprs[i]);
+                    func_80067704(chrSpr[i]);
+                }
+                GMesSprKill(&font);
+                func_800191F8((u16)arrow);
+                func_80067704(arrowSpr);
+                func_8006EB40(D_80100634_MinigameHouse);
+                return 0;
+            }
+            func_80070D90(D_8010055C_MinigameHouse);
+        }
+        HuPrcVSleep();
+    }
+    PlaySound(0xF8);
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+    PlaySound(0x27);
+    for (t = 0; t < 0x100; t += 0x20) {
+        for (j = 0; j < 4; j++) {
+            func_8006752C(font.unk_14[ids[j]], 1, (s16)(0xFF - t));
+            func_8006752C(font.unk_14[ids[j]], 2, (s16)(0xFF - t));
+            func_80018CF8(sprs[j], (s16)(0xFF - t));
+        }
+        j = 0xFF - t;
+        func_80018CF8((u16)arrow, (s16)j);
+        D_80100618_MinigameHouse->rot.z = (t * 90.0f) / 256.0f + 180.0f;
+        func_8006752C(w->unk_44, 8, j / 2);
+        HuPrcVSleep();
+    }
+    D_80100618_MinigameHouse->rot.z = 270.0f;
+    for (i = 0; i < 4; i++) {
+        func_800191F8(sprs[i]);
+        func_80067704(chrSpr[i]);
+    }
+    GMesSprKill(&font);
+    func_800191F8((u16)arrow);
+    func_80067704(arrowSpr);
+    func_80066DC4(w->unk_44, 0, 0x140, w->unk_16);
+    func_8006752C(w->unk_44, 8, 0);
+    func_8006EB40(D_80100634_MinigameHouse);
+    HuPrcVSleep();
+    return 1;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC410_MinigameHouse);
+#endif
 omObjData* func_800FCB78_MinigameHouse(void) {
     omObjData* obj;
 
