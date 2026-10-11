@@ -29,12 +29,12 @@ typedef struct PlayerRes {
     /* 0x18 */ Vec3f unk_18;
     /* 0x24 */ s16 model;
     /* 0x26 */ s16 model2;
-    /* 0x28 */ s16 sprPlus;
-    /* 0x2A */ s16 sprMinus;
-    /* 0x2C */ s16 digPlus[4];
-    /* 0x34 */ s16 digMinus[4];
+    /* 0x28 */ u16 sprPlus;
+    /* 0x2A */ u16 sprMinus;
+    /* 0x2C */ u16 digPlus[4];
+    /* 0x34 */ u16 digMinus[4];
     /* 0x3C */ s16 digits[4]; /* sign glyph, then the minigame coins' digits */
-    /* 0x44 */ s16 sprTotal[3];
+    /* 0x44 */ u16 sprTotal[3];
     /* 0x4A */ s16 digTotal[3];
     /* 0x50 */ s16 mot[5];
     /* 0x5A */ char unk_5A[0x16];
@@ -107,7 +107,7 @@ extern s16 D_800FB23A_MinigameStadiumMinigameResultsScreen;
 extern BgWork* D_800FB240_MinigameStadiumMinigameResultsScreen;
 extern ResMain* D_800FB244_MinigameStadiumMinigameResultsScreen;
 extern PlayerRes* D_800FB248_MinigameStadiumMinigameResultsScreen[4];
-extern s16 D_800FB258_MinigameStadiumMinigameResultsScreen;
+extern u16 D_800FB258_MinigameStadiumMinigameResultsScreen;
 extern PlayerRes* D_800FB260_MinigameStadiumMinigameResultsScreen[4];
 extern u8 D_800FB270_MinigameStadiumMinigameResultsScreen;
 extern s16 D_800FB280_MinigameStadiumMinigameResultsScreen;
