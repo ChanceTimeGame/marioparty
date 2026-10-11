@@ -80,7 +80,9 @@ void func_800F81E8_FlowerShower(omObjData* arg0) {
     *func_800F7A28_FlowerShower(arg0, 0x22, 3.0f, 90.0f, 0, 0xB4, 4, 7)->unk_68 = 6;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F8234_FlowerShower);
+void func_800F8234_FlowerShower(omObjData* arg0) {
+    *func_800F7A28_FlowerShower(arg0, 0x23, 2.0f, 180.0f, 0, 0xB4, 5, 8)->unk_68 = 7;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F8280_FlowerShower);
 
