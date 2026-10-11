@@ -6,11 +6,25 @@ typedef struct BumperBallMazeModelState {
     u16 unk_1C;
 } BumperBallMazeModelState;
 
+typedef struct BumperBallMazeColVtx {
+    s16 x;
+    s16 y;
+    s16 z;
+} BumperBallMazeColVtx;
+
+typedef struct BumperBallMazeHitProbe {
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 radius;
+} BumperBallMazeHitProbe;
+
 extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
 
 void func_800FA620_BumperBallMaze(void);
 void func_800F6C7C_BumperBallMaze(s32);
+s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F65E0_BumperBallMaze);
 
@@ -67,7 +81,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8AFC_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8DFC_BumperBallMaze);
+s32 func_800F8DFC_BumperBallMaze(s32 arg0, u16* polygon, BumperBallMazeColVtx* vertices,
+                                BumperBallMazeHitProbe* probe) {
+    return func_800F8E1C_BumperBallMaze(probe, polygon - 1, vertices);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8E1C_BumperBallMaze);
 
