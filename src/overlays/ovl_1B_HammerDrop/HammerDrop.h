@@ -55,6 +55,11 @@ typedef struct HammerDropTargetState {
     /* 0x30 */ f32 unk_30;
 } HammerDropTargetState;
 
+typedef struct HammerDropAnglePair {
+    f32 first;
+    f32 second;
+} HammerDropAnglePair;
+
 /* Work for the six collision-list items. The fields through 0x64 are the main-code PlayerWork
  * layout; the overlay-owned extension at 0x68 is a pointer and therefore widens on the host. */
 typedef struct HammerDropItemWork {
@@ -91,6 +96,8 @@ void func_80060F04(s16, s32, s32, s32);
 void func_800091BC(omObjData*, s32, s32, s32);
 void func_800370D4(s16);
 void func_80025BB8(s16, s16);
+s32 func_80024198(u32, Gfx*, s32);
+s32 func_8009B850(const void*, const void*);
 
 void func_800F67BC_HammerDrop(void);
 void func_800F7D28_HammerDrop(void);
@@ -103,6 +110,7 @@ void func_800F74C0_HammerDrop(omObjData* arg0);
 void func_800F74DC_HammerDrop(omObjData* arg0);
 void func_800FA2D8_HammerDrop(void);
 void func_800FA2E0_HammerDrop(void);
+void func_800FAA30_HammerDrop(void);
 void func_800F6ADC_HammerDrop(void);
 void func_800FB050_HammerDrop(void);
 void func_800F6848_HammerDrop(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
@@ -162,6 +170,7 @@ extern s32 D_800FB980_HammerDrop;
 extern s32 D_800FB6B0_HammerDrop[4];
 extern omObjData* D_800FB990_HammerDrop;
 extern omObjData* D_800EDE70[];
+extern unk2C0C0Struct70* D_800F37AC;
 extern char D_800FB620_HammerDrop[];
 extern s32 D_800FB590_HammerDrop[4];
 extern f32 D_800FB5A0_HammerDrop;
@@ -185,3 +194,10 @@ extern char D_800FB670_HammerDrop[];
 extern char D_800FB67C_HammerDrop[20];
 extern f64 D_800FB690_HammerDrop;
 extern f64 D_800FB698_HammerDrop;
+extern HammerDropAnglePair D_800FB6D0_HammerDrop[];
+extern unk2C0C0Struct70* D_800FB910_HammerDrop;
+extern unk2C0C0Struct70* D_800FB914_HammerDrop;
+extern Gfx* D_800FB918_HammerDrop[8];
+extern Vtx* D_800FB938_HammerDrop[8];
+extern Vtx* D_800FB958_HammerDrop[8];
+extern s32 D_800FB978_HammerDrop;

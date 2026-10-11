@@ -1351,7 +1351,143 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA1AC_
 void func_800FA2D8_HammerDrop(void) {
 }
 
+// Logic-equivalent background mesh/buffer construction; loop register allocation differs.
+#ifdef NON_MATCHING
+void func_800FA2E0_HammerDrop(void) {
+    HammerDropAnglePair* left;
+    HammerDropAnglePair* right;
+    unk2C0C0Struct70* texture;
+    Vtx* source;
+    Vtx* v0;
+    Vtx* v1;
+    Vtx* v2;
+    Vtx* v3;
+    f32 angle;
+    f32 rowAngle;
+    s32 textureId;
+    s32 screen;
+    s32 row;
+    s32 column;
+    s32 i;
+
+    for (screen = 0; screen < D_800F37DA; screen++) {
+        D_800FB938_HammerDrop[screen] = func_80023684(144 * sizeof(Vtx), 0x7918);
+        D_800FB958_HammerDrop[screen] = func_80023684(144 * sizeof(Vtx), 0x7918);
+        D_800FB918_HammerDrop[screen] = func_80023684(0x800 * sizeof(Gfx), 0x7918);
+    }
+    rowAngle = 0.0f;
+    for (row = 0; row < 6; row++) {
+        angle = rowAngle;
+        left = &D_800FB6D0_HammerDrop[row * 12];
+        right = left + 6;
+        for (column = 0; column < 6; column++) {
+            left[column].first = angle;
+            left[column].second = angle + 90.0f;
+            if (left[column].second >= 360.0f) {
+                left[column].second -= 360.0f;
+            }
+            right[column].first = angle + 90.0f;
+            if (right[column].first >= 360.0f) {
+                right[column].first -= 360.0f;
+            }
+            right[column].second = angle + 180.0f;
+            if (right[column].second >= 360.0f) {
+                right[column].second -= 360.0f;
+            }
+            angle += 90.0f;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+        }
+        rowAngle += 90.0f;
+        if (rowAngle >= 360.0f) {
+            rowAngle -= 360.0f;
+        }
+    }
+    source = D_800FB938_HammerDrop[D_800F37F0];
+    for (row = 0; row < 6; row++) {
+        left = &D_800FB6D0_HammerDrop[row * 12];
+        right = left + 6;
+        for (column = 0; column < 6; column++) {
+            v0 = &source[(row * 24) + (column * 2)];
+            v1 = v0 + 1;
+            v2 = &source[(row * 24) + 12 + (column * 2)];
+            v3 = v2 + 1;
+            v0->v.ob[0] = (column * 800.0f) - 2400.0f;
+            v0->v.ob[1] = func_800AEAC0(left[column].first) * 40.0f;
+            v0->v.ob[2] = (row * 820.0f) - 2460.0f - 1600.0f;
+            v0->v.tc[0] = 0x400;
+            v0->v.tc[1] = 0;
+            v0->v.cn[0] = 0;
+            v0->v.cn[1] = 0x80;
+            v0->v.cn[2] = 0;
+            v0->v.cn[3] = 0x90;
+            v1->v.ob[0] = ((column + 1) * 800.0f) - 2400.0f;
+            v1->v.ob[1] = func_800AEAC0(left[column].second) * 40.0f;
+            v1->v.ob[2] = v0->v.ob[2];
+            v1->v.tc[0] = 0;
+            v1->v.tc[1] = 0;
+            v1->v.cn[0] = 0;
+            v1->v.cn[1] = 0x80;
+            v1->v.cn[2] = 0;
+            v1->v.cn[3] = 0x90;
+            v2->v.ob[0] = v0->v.ob[0];
+            v2->v.ob[1] = func_800AEAC0(right[column].first) * 40.0f;
+            v2->v.ob[2] = ((row + 1) * 820.0f) - 2460.0f - 1600.0f;
+            v2->v.tc[0] = 0x400;
+            v2->v.tc[1] = 0x400;
+            v2->v.cn[0] = 0;
+            v2->v.cn[1] = 0x80;
+            v2->v.cn[2] = 0;
+            v2->v.cn[3] = 0x90;
+            v3->v.ob[0] = v1->v.ob[0];
+            v3->v.ob[1] = func_800AEAC0(right[column].second) * 40.0f;
+            v3->v.ob[2] = v2->v.ob[2];
+            v3->v.tc[0] = 0;
+            v3->v.tc[1] = 0x400;
+            v3->v.cn[0] = 0;
+            v3->v.cn[1] = 0x80;
+            v3->v.cn[2] = 0;
+            v3->v.cn[3] = 0x90;
+        }
+    }
+    for (screen = 0; screen < D_800F37DA; screen++) {
+        if (screen != D_800F37F0) {
+            for (i = 0; i < 144; i++) {
+                D_800FB938_HammerDrop[screen][i] = source[i];
+            }
+        }
+    }
+    for (screen = 0; screen < D_800F37DA; screen++) {
+        for (i = 0; i < 144; i++) {
+            D_800FB958_HammerDrop[screen][i] = source[i];
+        }
+    }
+    textureId = func_8001CD00((u8*) D_800FB670_HammerDrop) & 0xFFFF;
+    for (i = 0; i < 0x80; i++) {
+        texture = &D_800F37AC[i];
+        if ((texture->unk_20 == textureId) &&
+            (func_8009B850(texture, D_800FB670_HammerDrop) == 0)) {
+            break;
+        }
+    }
+    D_800FB910_HammerDrop = &D_800F37AC[i];
+    textureId = func_8001CD00((u8*) D_800FB67C_HammerDrop) & 0xFFFF;
+    for (i = 0; i < 0x80; i++) {
+        texture = &D_800F37AC[i];
+        if ((texture->unk_20 == textureId) &&
+            (func_8009B850(texture, D_800FB67C_HammerDrop) == 0)) {
+            break;
+        }
+    }
+    D_800FB914_HammerDrop = &D_800F37AC[i];
+    func_800FAA30_HammerDrop();
+    D_800FB978_HammerDrop = func_80024198(0x681,
+        D_800FB918_HammerDrop[D_800F37F0], 4);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA2E0_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FAA30_HammerDrop);
 
