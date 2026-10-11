@@ -1,10 +1,14 @@
 #include "common.h"
 
 extern s16 D_800F3778;
+extern omObjData* D_800FB1C8_BumperBallMaze;
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F96B0_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F9768_BumperBallMaze);
+void func_800F9768_BumperBallMaze(void) {
+    D_800FB1C8_BumperBallMaze = omAddObj(0x3C, 0, 0, -1, NULL);
+    D_800FB1C8_BumperBallMaze->unk_50 = func_80023684(0x20, 0x7918);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F97B4_BumperBallMaze);
 
