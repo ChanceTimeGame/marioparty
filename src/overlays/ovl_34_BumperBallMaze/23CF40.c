@@ -7,6 +7,8 @@ typedef struct BumperBallMazeModelState {
 
 extern omObjData* D_800FAE14_BumperBallMaze;
 
+void func_800FA620_BumperBallMaze(void);
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F65E0_BumperBallMaze);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6994_BumperBallMaze);
@@ -15,7 +17,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6BB8_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6C28_BumperBallMaze);
+void func_800F6C28_BumperBallMaze(void) {
+    func_800FA620_BumperBallMaze();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6C44_BumperBallMaze);
 
