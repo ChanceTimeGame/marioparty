@@ -206,6 +206,8 @@ build/src/1B800.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/2C0C0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/99E0.c.o:  CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_7C_UnknownResultsScreen/308A50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_7D 30C540.c (func_800F8898: nop before mult) has the mul fix on
+build/src/overlays/ovl_7D_MinigameIslandMISS/30C540.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_14_CoinBlockBlitz/14E940.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_03 E8F60.c (nop before mult, func_800F7164) and EB0E0.c (func_800F8D1C, func_800FA90C) have the mul fix on
 build/src/overlays/ovl_03_BuriedTreasure/E8F60.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
