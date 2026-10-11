@@ -10,6 +10,7 @@ extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
 
 void func_800FA620_BumperBallMaze(void);
+void func_800F6C7C_BumperBallMaze(s32);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F65E0_BumperBallMaze);
 
@@ -23,7 +24,10 @@ void func_800F6C28_BumperBallMaze(void) {
     func_800FA620_BumperBallMaze();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6C44_BumperBallMaze);
+void func_800F6C44_BumperBallMaze(s32 arg0) {
+    LoadFormFile(0x310002, 0x69D);
+    func_800F6C7C_BumperBallMaze(arg0);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FACE0_BumperBallMaze);
 
