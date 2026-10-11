@@ -1,5 +1,7 @@
 #include "common.h"
 
+extern s32 D_800FB104_GrabBag[4];
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F7680_GrabBag);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F776C_GrabBag);
@@ -50,7 +52,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAED8_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAFA0_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FB064_GrabBag);
+void func_800FB064_GrabBag(s32 arg0, s32 arg1) {
+    arg1 = arg1 < 0 ? 0 : arg1;
+    if (arg1 >= 1000) {
+        arg1 = 999;
+    }
+    D_800FB104_GrabBag[arg0] = arg1;
+}
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", D_800FB1F8_GrabBag);
 
