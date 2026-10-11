@@ -1489,6 +1489,45 @@ void func_800FA2E0_HammerDrop(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA2E0_HammerDrop);
 #endif
 
+// Logic-equivalent per-screen display-list construction using host-width-safe GBI macros.
+#ifdef NON_MATCHING
+void func_800FAA30_HammerDrop(void) {
+    Gfx* gfx;
+    s32 screen;
+    s32 row;
+    s32 column;
+
+    for (screen = 0; screen < D_800F37DA; screen++) {
+        gfx = D_800FB918_HammerDrop[screen];
+        gDPPipeSync(gfx++);
+        gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x552230);
+        gSPClearGeometryMode(gfx++, G_LIGHTING);
+        gDPSetTexturePersp(gfx++, G_TP_PERSP);
+        gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 0xB2, 0xB2, 0xB2, 0xA0);
+        gDPSetCombineLERP(gfx++, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0,
+            TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0);
+        gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+        gDPLoadTLUT_pal256(gfx++, D_800FB910_HammerDrop->unk_2C->unk_24);
+        gDPLoadTextureBlock(gfx++, D_800FB910_HammerDrop->unk_24,
+            D_800FB910_HammerDrop->unk_18, G_IM_SIZ_8b,
+            D_800FB910_HammerDrop->unk_1A, D_800FB910_HammerDrop->unk_1B, 0,
+            G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+            G_TX_NOLOD, G_TX_NOLOD);
+        for (row = 0; row < 6; row++) {
+            gSPVertex(gfx++, D_800FB938_HammerDrop[screen] + (row * 24), 24, 0);
+            for (column = 0; column < 6; column++) {
+                gSP2Triangles(gfx++, column * 2, column * 2 + 1, column * 2 + 12, 0,
+                    column * 2 + 1, column * 2 + 13, column * 2 + 12, 0);
+            }
+        }
+        gDPPipeSync(gfx++);
+        gSPEndDisplayList(gfx++);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FAA30_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FB050_HammerDrop);
