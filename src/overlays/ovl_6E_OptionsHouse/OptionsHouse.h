@@ -2,9 +2,8 @@
 
 void func_8000B13C();
 s32 func_8000B198();
-void* func_8000B2BC();
+file_1ACF0_struct* func_8000B2BC(void);
 void func_8000B364(s32);
-void func_8000BE98(s32, s32, s32, s32, s32);
 s32 func_800115C8(s16);
 void func_8002888C(s16, s16);
 s32 func_80059CB8();
