@@ -22,6 +22,11 @@ typedef struct BumperBallMazeHitProbe {
     f32 radius;
 } BumperBallMazeHitProbe;
 
+typedef struct BumperBallMazeFallingWork {
+    char unk_00[0x44];
+    f32 angle;
+} BumperBallMazeFallingWork;
+
 extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
 extern u16 D_800FACC0_BumperBallMaze;
@@ -98,7 +103,17 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7BB8_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7ED0_BumperBallMaze);
+void func_800F7ED0_BumperBallMaze(omObjData* object) {
+    BumperBallMazeFallingWork* work = object->unk_50;
+
+    omSetTra(object, object->trans.x,
+             func_800AEAC0(work->angle) * 2.0f + object->trans.y,
+             object->trans.z);
+    work->angle += 8.0f;
+    if (work->angle >= 360.0f) {
+        work->angle -= 360.0f;
+    }
+}
 
 void func_800F7F60_BumperBallMaze(omObjData* object) {
     omSetTra(object, object->trans.x, object->trans.y - 20.0f, object->trans.z);
