@@ -12,6 +12,7 @@ typedef struct GrabBagGroundWork {
 void func_800F738C_GrabBag(omObjData*);
 void func_800F7470_GrabBag(omObjData*);
 void func_800F7538_GrabBag(omObjData*);
+void func_800F69D4_GrabBag(omObjData*);
 
 void func_800F7260_GrabBag(void) {
     omObjData* obj;
@@ -39,7 +40,26 @@ void func_800F72E8_GrabBag(omObjData* arg0) {
     func_80009028(arg0, 0, -475.0f, -2000.0f, 475.0f, 2000.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184450", func_800F738C_GrabBag);
+void func_800F738C_GrabBag(omObjData* arg0) {
+    f32 zero;
+    GrabBagGroundWork* work;
+
+    arg0->model[0] = func_800174C0(0x2F000C, 0x299);
+    arg0->model[1] = func_800174C0(0x190004, 0x299);
+    arg0->model[2] = func_800174C0(0x190003, 0x299);
+    zero = 0.0f;
+    arg0->trans.z = zero;
+    arg0->trans.y = zero;
+    arg0->trans.x = zero;
+    func_80025798(arg0->model[0], 0.0f, arg0->trans.y, arg0->trans.z);
+    work = func_80023684(sizeof(GrabBagGroundWork), 0x7918);
+    arg0->unk_50 = work;
+    func_8009B770(work, 0, sizeof(GrabBagGroundWork));
+    work->unk_04 = 1;
+    work->unk_05 = 0;
+    func_80008FB8(arg0, 0.5f);
+    arg0->func_ptr = func_800F69D4_GrabBag;
+}
 
 void func_800F7470_GrabBag(omObjData* arg0) {
     f32 zero;
