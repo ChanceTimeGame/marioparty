@@ -7,6 +7,18 @@ typedef struct CastAwaysItemSet {
     u8 slots[3][8];
 } CastAwaysItemSet;
 
+typedef struct CastAwaysTrail {
+    char unk_00[0x14];
+    u16 sampleCount;
+    char unk_16[0x22];
+    Vec samples[1];
+} CastAwaysTrail;
+
+typedef struct CastAwaysTrailTimer {
+    char unk_00[0x12];
+    u16 timer;
+} CastAwaysTrailTimer;
+
 void func_800F65E0_CastAways(void) {
     s32 i;
     void* filePtr;
@@ -192,7 +204,18 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F92FC_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9E2C_CastAways);
+void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysTrail* arg1, CastAwaysTrailTimer* arg2) {
+    u16 timer = arg2->timer - 1;
+
+    arg2->timer = timer;
+    if (!(timer & 0xFFFF)) {
+        arg2->timer = 3;
+        arg1->sampleCount++;
+    }
+    arg1->samples[arg1->sampleCount].x = arg0->trans.x;
+    arg1->samples[arg1->sampleCount].y = arg0->trans.y;
+    arg1->samples[arg1->sampleCount].z = arg0->trans.z;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9EAC_CastAways);
 
