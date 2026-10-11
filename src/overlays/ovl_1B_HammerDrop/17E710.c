@@ -1179,7 +1179,7 @@ s32 func_800F9C1C_HammerDrop(omObjData* arg0, omObjData* arg1) {
     D_800FB6A4_HammerDrop = 0;
     temp_s0 = arg0->unk_50;
     temp_a1 = (HammerDropPlayerState*) temp_s0->unk_E4;
-    temp_s2 = (unkHammerDropStruct*) ((unkGlobalStruct_00*) arg1->unk_50)->unk_68; // probably not an unkGlobalStruct_00*
+    temp_s2 = (unkHammerDropStruct*) HAMMER_ITEM_WORK(arg1)->item; /* item work +0x68: a pointer (not unkGlobalStruct_00's u32) */
 
     if (temp_s0->unkAE != 0) {
         return 0;
