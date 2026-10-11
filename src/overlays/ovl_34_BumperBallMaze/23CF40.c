@@ -5,6 +5,8 @@ typedef struct BumperBallMazeModelState {
     char unk_02[0x1A];
     u16 unk_1C;
     u16 unk_1E;
+    char unk_20[0x20];
+    u8 unk_40[4];
 } BumperBallMazeModelState;
 
 typedef struct BumperBallMazeColVtx {
@@ -35,6 +37,8 @@ void func_800F6C7C_BumperBallMaze(s32);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
 void func_800F928C_BumperBallMaze(u16);
 void func_800594E4(s16, u16);
+f32 func_80025D18(s16);
+f32 func_80025D40(s16);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F65E0_BumperBallMaze);
 
@@ -82,7 +86,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7FE0_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8108_BumperBallMaze);
+void func_800F8108_BumperBallMaze(omObjData* object) {
+    f32 time = func_80025D18(object->work[0]);
+
+    if (func_80025D40(object->work[0]) <= time) {
+        ((BumperBallMazeModelState*) D_800FAE10_BumperBallMaze->unk_50)->unk_40[object->work[2]] = 0;
+        func_800258EC(object->work[0], 4, 4);
+        omDelObj(object);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8184_BumperBallMaze);
 
