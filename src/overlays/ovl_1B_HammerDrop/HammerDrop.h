@@ -76,6 +76,7 @@ typedef struct HammerDropItemWork {
 void func_8000A534(omObjData*, s32);
 void func_80017C0C(omObjData*, s32, f32, f32, f32, s32, f32);
 void func_80018450(omObjData*, s32);
+s32 func_800185A4(omObjData*, u16);
 void func_80060F04(s16, s32, s32, s32);
 void func_800091BC(omObjData*, s32, s32, s32);
 void func_800370D4(s16);
@@ -121,6 +122,7 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2);
 extern f32 D_800B8964;
 extern f32 D_800B8980;
 extern s32 D_800B8988;
+extern f32 D_800B8990;
 extern omObjData* D_800FB998_HammerDrop[];
 extern s32 D_800FB6A0_HammerDrop;
 extern s16 ContBtn[];

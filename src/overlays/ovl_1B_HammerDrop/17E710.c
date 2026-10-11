@@ -182,7 +182,72 @@ void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6AF8_HammerDrop);
 #endif
 
+// Logic-equivalent player update state machine; register allocation differs.
+#ifdef NON_MATCHING
+void func_800F6F9C_HammerDrop(omObjData* arg0) {
+    unkGlobalStruct_00* work = arg0->unk_50;
+    HammerDropPlayerState* state = (HammerDropPlayerState*) work->unk_E4;
+    s32* flags = &D_800FB6B0_HammerDrop[state->unk_24];
+    f32 animationTime;
+
+    state->unk_28 = work->unk_38;
+    func_80017A60(arg0);
+    if ((func_800F9E68_HammerDrop(*flags, 1) != 0) ||
+        (func_800F9E68_HammerDrop(*flags, 2) != 0)) {
+        return;
+    }
+    if (GwPlayer[state->unk_24].flags & 1) {
+        ContStkX[work->unk_56] = 0;
+        ContStkY[work->unk_56] = 0;
+        ContBtn[work->unk_56] = 0;
+        ContBtnTrg[work->unk_56] = 0;
+        func_800F77E4_HammerDrop(arg0);
+    }
+    if ((work->unk_38 != 1000.0f) &&
+        ((func_800F9E68_HammerDrop(*flags, 0x400) != 0) ||
+         (func_800F9E68_HammerDrop(*flags, 0x1000) != 0))) {
+        func_800F736C_HammerDrop(arg0);
+    }
+    func_80005A28(arg0);
+    if ((arg0->trans.y < -500.0f) && (state->unk_5C == 0)) {
+        func_80060618(0x45F, (s16) state->unk_24);
+        state->unk_5C++;
+    }
+    if (arg0->trans.y < -2000.0f) {
+        func_800F9E74_HammerDrop(flags, 1, 1);
+        D_800FB6C4_HammerDrop--;
+        PlaySound(0x294);
+        if ((D_800FB6C8_HammerDrop != 0) && (state->unk_24 == 0) &&
+            (D_800FB980_HammerDrop == 2)) {
+            D_800FB980_HammerDrop = 3;
+        }
+    }
+    if (work->unk_38 == 1000.0f) {
+        if (func_800F9E68_HammerDrop(*flags, 0x200) != 0) {
+            work->unk_3C = 0.0f;
+            animationTime = func_80025D18(arg0->model[0]);
+            if (func_80025D40(arg0->model[0]) <= animationTime) {
+                func_800F9E74_HammerDrop(flags, 0x200, 0);
+                func_800F9E74_HammerDrop(flags, 2, 1);
+            }
+        } else if (func_800F9E68_HammerDrop(*flags, 0x400) != 0) {
+            work->unk_40 = D_800B8990;
+            if (GwPlayer[state->unk_24].coins_mg != 0) {
+                func_800185A4(arg0, 0xD);
+            } else {
+                func_800185A4(arg0, 0xE);
+            }
+            func_800F9E74_HammerDrop(flags, 0x400, 0);
+            func_800F9E74_HammerDrop(flags, 0x200, 1);
+        }
+    }
+    if (D_800ED430 == 2) {
+        work->unk_50 |= 0x200;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6F9C_HammerDrop);
+#endif
 
 void func_800F736C_HammerDrop(omObjData* arg0) {
     unkGlobalStruct_00* work = arg0->unk_50;
