@@ -86,7 +86,101 @@ void func_800F6ADC_HammerDrop(void) {
     func_800FB050_HammerDrop();
 }
 
+// Logic-equivalent player construction; retail copies three position tables to the stack.
+#ifdef NON_MATCHING
+void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
+    unkGlobalStruct_00* work;
+    HammerDropPlayerState* state;
+    s32 characterBase;
+    s32 animation;
+
+    D_800FB994_HammerDrop = GwPlayer[arg1].character;
+    D_800FB6B0_HammerDrop[arg1] = 0;
+    characterBase = D_800C59AC[D_800FB994_HammerDrop].unk_00;
+    func_8000979C(arg0, characterBase,
+        D_800C59AC[D_800FB994_HammerDrop].unk_04, arg1, 0x699, 0x699);
+    work = arg0->unk_50;
+    state = func_80023684(sizeof(HammerDropPlayerState), 0x7918);
+    work->unk_E4 = (unk_Struct01*) state;
+    state->unk_44 = work->unk_56;
+    arg0->model[3] = LoadFormFile(0x19, 0x68D);
+    arg0->model[4] = LoadFormFile(0x1A, 0x68D);
+    func_800187D0(arg0, 0, characterBase, 1, 0);
+    func_800187D0(arg0, 1, characterBase | 1, 1, 0);
+    func_800187D0(arg0, 2, characterBase | 3, 1, 0);
+    func_800187D0(arg0, 6, characterBase | 5, 1, 0x13);
+    func_800187D0(arg0, 8, characterBase | 9, 1, 0x1D);
+    if (rand8() & 1) {
+        animation = characterBase | 0xF;
+    } else {
+        animation = characterBase | 0x38;
+    }
+    func_800187D0(arg0, 0xD, animation, 1, 0x78);
+    if (rand8() & 1) {
+        animation = characterBase | 0x10;
+    } else {
+        animation = characterBase | 0x3C;
+    }
+    func_800187D0(arg0, 0xE, animation, 1, 0x78);
+    func_800187D0(arg0, 0x12, characterBase | 0x1C, 2, 0);
+    func_800187D0(arg0, 0x13, characterBase | 0x1D, 2, 0);
+    func_800187D0(arg0, 0x15, characterBase | 0x62, 0, 0);
+    func_800187D0(arg0, 0x20, characterBase | 0x67, 0, 0);
+    func_800187D0(arg0, 0x21, characterBase | 0x68, 2, 0);
+    func_800187D0(arg0, 0x22, characterBase | 0x69, 2, 0);
+    arg0->trans.x = D_800FB5C8_HammerDrop[arg1];
+    arg0->trans.y = 0.0f;
+    arg0->trans.z = D_800FB5D8_HammerDrop[arg1];
+    work->unk_48 = 50.0f;
+    work->unk_38 = 1000.0f;
+    work->unk_50 = 0;
+#ifdef TARGET_PC
+    /* Retail treats the low big-endian byte of unk_B0 as the byte at offset 0xB1. */
+    work->unk_B0 = (work->unk_B0 & 0x00FF) | 0xFF00;
+#else
+    ((s8*) &work->unk_B0)[1] = -1;
+#endif
+    work->unk_DC = func_800F9C1C_HammerDrop;
+    work->unk_3C = D_800FB5E8_HammerDrop[arg1];
+    func_80008FE8(arg0, 25.0f);
+    state->unk_24 = arg1;
+    state->unk_28 = 1000.0f;
+    state->unk_0C = 0;
+    state->unk_10 = 0;
+    state->unk_14 = 0;
+    state->unk_4C = -1;
+    state->unk_54 = 0.0f;
+    state->unk_58 = 30;
+    state->unk_2C = 1;
+    state->unk_5C = 0;
+    if (!(GwPlayer[arg1].flags & 1)) {
+        state->unk_50 = 1;
+    } else {
+        switch (GwPlayer[arg1].cpu_difficulty) {
+            case 0:
+                state->unk_50 = 0;
+                break;
+            case 1:
+                state->unk_50 = 1;
+                break;
+            case 2:
+                state->unk_50 = 2;
+                break;
+            case 3:
+                state->unk_50 = 3;
+                break;
+        }
+    }
+    D_800FB998_HammerDrop[arg1] = arg0;
+    func_800090C4(arg0, 0, 2);
+    D_800F3FB0[D_800F2BC0++] = arg0;
+    func_800184BC(arg0, 0);
+    D_800ED430 = 0;
+    arg0->func_ptr = func_800F6F9C_HammerDrop;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6AF8_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6F9C_HammerDrop);
 
