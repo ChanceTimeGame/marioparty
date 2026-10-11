@@ -11,6 +11,8 @@ typedef struct BumperBallMazeCameraWork {
     Vec3f centerStep;
 } BumperBallMazeCameraWork;
 
+void func_800F9890_BumperBallMaze(omObjData*);
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F96B0_BumperBallMaze);
 
 void func_800F9768_BumperBallMaze(void) {
@@ -18,7 +20,21 @@ void func_800F9768_BumperBallMaze(void) {
     D_800FB1C8_BumperBallMaze->unk_50 = func_80023684(0x20, 0x7918);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F97B4_BumperBallMaze);
+void func_800F97B4_BumperBallMaze(s16 frames, f32 zoom, f32 rotX, f32 rotY, f32 rotZ,
+                                 f32 centerX, f32 centerY, f32 centerZ) {
+    BumperBallMazeCameraWork* work = D_800FB1C8_BumperBallMaze->unk_50;
+    f32 duration;
+
+    work->frames = frames;
+    work->zoomStep = (zoom - CZoom) / (duration = (u16) frames);
+    work->rotStep.x = (rotX - CRot.x) / duration;
+    work->rotStep.y = (rotY - CRot.y) / duration;
+    work->rotStep.z = (rotZ - CRot.z) / duration;
+    work->centerStep.x = (centerX - Center.x) / duration;
+    work->centerStep.y = (centerY - Center.y) / duration;
+    work->centerStep.z = (centerZ - Center.z) / duration;
+    D_800FB1C8_BumperBallMaze->func_ptr = func_800F9890_BumperBallMaze;
+}
 
 void func_800F9890_BumperBallMaze(omObjData* object) {
     BumperBallMazeCameraWork* work = object->unk_50;
