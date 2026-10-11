@@ -29,6 +29,7 @@ extern f32 D_800FAE54_FlowerShower;
 extern u16 D_800FAE60_FlowerShower[];
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
+extern s32 D_800FAD64_FlowerShower;
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
 
@@ -100,7 +101,28 @@ void func_800F8620_FlowerShower(void) {
     GMesCreate(8, 0x1E, 0xA0, 0x18);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F8648_FlowerShower);
+void func_800F8648_FlowerShower(omObjData* arg0, u8 arg1, u32 arg2) {
+    switch (arg1) {
+        case 0:
+            if (arg2 == 0) {
+                GMesCreate(0);
+            }
+            break;
+        case 1:
+            func_80079078(arg2 / 60);
+            break;
+        case 2:
+            if (arg2 == 0) {
+                if (_CheckFlag(0x2B) == 0 && D_800FAD64_FlowerShower != 0) {
+                    GMesCreate(0xE);
+                } else {
+                    GMesCreate(2);
+                }
+                func_800790C0();
+            }
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F870C_FlowerShower);
 
