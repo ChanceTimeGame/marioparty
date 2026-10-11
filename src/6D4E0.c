@@ -1847,6 +1847,28 @@ void func_80071788(s32 arg0, s16 arg1) {
     textWindow->unk_F4[arg1].unk0 = 2;
 }
 
+#ifdef TARGET_PC
+/* mp1host --autoplay: is controller 1 driving a choice whose cursor rests on a disabled entry?
+   A is refused there and a player would move the cursor first (Peach's Flower Lottery starts on
+   seed 1 even when it is taken), so autoplay presses Down instead. */
+s32 pb_window_choice_blocked(void) {
+    TextWindow* tw;
+    s16 i;
+
+    if (D_800ED4B0 == NULL) {
+        return 0;
+    }
+    for (i = 0; i < 14; i++) {
+        tw = &D_800ED4B0[i];
+        if (tw->unk_00 == 6 && (tw->unk_6E == 1 || tw->unk_6E == 2) && (tw->unk_01 & 1) && !(tw->unk_06 & 2) &&
+            tw->unk_11 >= 0 && tw->unk_11 < tw->unk_10 && tw->unk_F4[(s32)tw->unk_11].unk0 == 2) {
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif
+
 void func_800717C0(s32 arg0) {
     TextWindow* tw = &D_800ED4B0[arg0];
     s16 sprId = tw->unk_44;
