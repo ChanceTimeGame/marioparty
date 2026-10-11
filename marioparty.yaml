@@ -2535,7 +2535,8 @@ segments:
     bss_size: 0xE0
     subsegments:
       - [0x2FD940, c]
-      - [0x300430, data, 2FD940]
+      - [0x300430, .data, 2FD940]
+      - [0x300570, .rodata, 2FD940]
       - {0x3005B0, type: bss, vram: 0x800F9250, name: ovl_78_bss}
   - type: code
     start: 0x3005B0
