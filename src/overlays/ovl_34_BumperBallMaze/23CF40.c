@@ -25,6 +25,7 @@ extern omObjData* D_800FAE14_BumperBallMaze;
 void func_800FA620_BumperBallMaze(void);
 void func_800F6C7C_BumperBallMaze(s32);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
+void func_800F928C_BumperBallMaze(u16);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F65E0_BumperBallMaze);
 
@@ -94,7 +95,14 @@ s32 func_800F9034_BumperBallMaze(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F9050_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F923C_BumperBallMaze);
+void func_800F923C_BumperBallMaze(omObjData* object) {
+    BumperBallMazeModelState* state = object->unk_50;
+
+    if (object->work[0] == 1) {
+        state->unk_1C += 2;
+        func_800F928C_BumperBallMaze(state->unk_1C);
+    }
+}
 
 u16 func_800F9278_BumperBallMaze(void) {
     return ((BumperBallMazeModelState*) D_800FAE14_BumperBallMaze->unk_50)->unk_1C;
