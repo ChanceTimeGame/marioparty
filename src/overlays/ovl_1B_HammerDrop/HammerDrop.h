@@ -203,3 +203,6 @@ extern Gfx* D_800FB918_HammerDrop[8];
 extern Vtx* D_800FB938_HammerDrop[8];
 extern Vtx* D_800FB958_HammerDrop[8];
 extern s32 D_800FB978_HammerDrop;
+
+void func_800F7BB4_HammerDrop(omObjData* arg0);
+s32 func_800F7BFC_HammerDrop(omObjData* arg0, f32 arg1); /* f32: an unprototyped call passes a double */
