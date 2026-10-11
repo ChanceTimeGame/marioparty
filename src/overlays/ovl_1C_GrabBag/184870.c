@@ -1,8 +1,32 @@
 #include "common.h"
 
 extern s32 D_800FB104_GrabBag[4];
+extern s32 D_800FB254_GrabBag;
+extern f32 D_800B8960;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F7680_GrabBag);
+void func_800F776C_GrabBag(omObjData*);
+void func_800FA8F4_GrabBag(omObjData*);
+
+void func_800F7680_GrabBag(void) {
+    omObjData* obj;
+    s32 i;
+    u16 index;
+
+    D_800FB254_GrabBag = rand8() & 3;
+    i = 0;
+    func_80009500();
+    D_800B8960 = 0.2f;
+    D_800F2BC0 = 0;
+    do {
+        obj = omAddObj(2, 11, 50, -1, func_800F776C_GrabBag);
+        index = D_800F2BC0;
+        D_800F2BC0 = index + 1;
+        D_800F3FB0[index] = obj;
+        omSetStatBit(D_800F3FB0[i], 0xA0);
+        i++;
+    } while (i < 4);
+    omAddObj(2, 0, 0, -1, func_800FA8F4_GrabBag);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F776C_GrabBag);
 
