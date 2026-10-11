@@ -25,6 +25,20 @@ extern u8 D_800F64F8;
 extern u16 D_800FB54E_BalloonBurst[];
 extern u16 D_800FB550_BalloonBurst[];
 
+typedef struct BalloonBurstObstacle {
+    char unk_00[0x3E];
+    s16 model;
+    char unk_40[2];
+    s16 secondary_model;
+    char unk_44[0x64];
+} BalloonBurstObstacle;
+
+typedef struct BalloonBurstPlayer {
+    BalloonBurstObstacle obstacles[7];
+} BalloonBurstPlayer;
+
+extern BalloonBurstPlayer D_800FB120_BalloonBurst[];
+
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFAC_BalloonBurst);
@@ -121,7 +135,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F729
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F77D0_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7D9C_BalloonBurst);
+void func_800F7D9C_BalloonBurst(u16 arg0) {
+    BalloonBurstPlayer *player = &D_800FB120_BalloonBurst[arg0];
+    s32 i;
+
+    for (i = 0; i < 7; i++) {
+        func_800258EC(((BalloonBurstObstacle *)(i * sizeof(BalloonBurstObstacle) + (u8 *)player))->model, 4, 4);
+    }
+    func_800258EC(player->obstacles[6].secondary_model, 4, 4);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7E38_BalloonBurst);
 
