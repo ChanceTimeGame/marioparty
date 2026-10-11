@@ -34,7 +34,9 @@ void func_800F70E0_BalloonBurst(omObjData *arg0) {
     func_800F6DB8_BalloonBurst(arg0, 0, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7100_BalloonBurst);
+void func_800F7100_BalloonBurst(omObjData *arg0) {
+    func_800F6DB8_BalloonBurst(arg0, 1, 1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7120_BalloonBurst);
 
