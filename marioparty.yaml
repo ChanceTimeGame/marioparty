@@ -2387,7 +2387,7 @@ segments:
     bss_size: 0x20
     subsegments:
       - [0x2D9570, c]
-      - [0x2DAE30, data, 2D9570]
+      - [0x2DAE30, .data, 2D9570]
       - [0x2DB270, .rodata, 2D9570]
       - {0x2DB2A0, type: bss, vram: 0x800F8310, name: ovl_6E_bss}
   - type: code
@@ -2580,7 +2580,9 @@ segments:
       - [0x303E70, c]
       - [0x306290, c]
       - [0x306BA0, c]
-      - [0x308890, data, 303E70]
+      - [0x308890, .data, 303E70]
+      - [0x308960, .data, 306290]
+      - [0x308970, .data, 306BA0]
       - [0x3089A0, .rodata, 303E70]
       - {0x308A50, type: bss, vram: 0x800FB1C0, name: ovl_7B_bss}
   - type: code
@@ -2638,7 +2640,7 @@ segments:
       - [0x311E90, c]
       - [0x311EC0, c]
       - [0x3127C0, .data, 311E90]
-      - [0x3127F0, data, 311EC0]
+      - [0x3127F0, .data, 311EC0]
       - [0x3127F0, .rodata, 311EC0]
       - {0x312850, type: bss, vram: 0x800F6FA0, name: ovl_7F_bss}
   - type: code
@@ -2652,7 +2654,7 @@ segments:
     bss_size: 0x80
     subsegments:
       - [0x312850, c]
-      - [0x314730, data, 312850]
+      - [0x314730, .data, 312850]
       - [0x3148C0, .rodata, 312850]
       - {0x314950, type: bss, vram: 0x800F86E0, name: ovl_80_bss}
   - type: code
@@ -2679,7 +2681,7 @@ segments:
     symbol_name_format: $VRAM_$SEG
     subsegments:
       - [0x316440, c]
-      - [0x3177A0, data, 316440]
+      - [0x3177A0, .data, 316440]
       - [0x317960, .rodata, 316440]
   - type: bin
     start: 0x317980
