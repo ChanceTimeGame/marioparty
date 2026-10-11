@@ -2465,8 +2465,8 @@ segments:
     subsegments:
       - [0x2F9040, c]
       - [0x2F9070, c]
-      - [0x2F95F0, data, 2F9040]
-      - [0x2F9610, data, 2F9070]
+      - [0x2F95F0, .data, 2F9040]
+      - [0x2F9610, .data, 2F9070]
       - {0x2F96E0, type: bss, vram: 0x800F6C80, name: ovl_73_bss}
   - type: code
     start: 0x2F96E0
@@ -2481,7 +2481,7 @@ segments:
       - [0x2F96E0, c]
       - [0x2F9710, c]
       - [0x2F9FE0, .data, 2F96E0]
-      - [0x2FA000, data, 2F9710]
+      - [0x2FA000, .data, 2F9710]
       - {0x2FA120, type: bss, vram: 0x800F7020, name: ovl_74_bss}
   - type: code
     start: 0x2FA120

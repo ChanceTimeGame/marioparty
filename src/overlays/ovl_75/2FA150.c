@@ -7,12 +7,6 @@ s16 unk_00;
 u16 unk_02;
 } testStruct2;
 
-typedef struct unkUserData {
-char unk_00[0x0C];
-Vec3f vec1;
-Vec3f vec2;
-} unkUserData;
-
 void func_8005CC3C(void);
 void func_8005C3FC(s32, s32);
 void func_8005B860(s32);
@@ -140,13 +134,13 @@ void func_800F6790_name_75(void) {
 }
 
 void func_800F67BC_name_75(void) {
-    unkUserData* temp_s1 = HuPrcCurrentGet()->user_data;
+    Object* temp_s1 = HuPrcCurrentGet()->user_data;
     GW_PLAYER* temp_s2 = GetPlayerStruct(-1);
-    Vec3f* vec = &temp_s1->vec2;
+    Vec3f* vec = &temp_s1->unk_18;
 
     while (1) {
         HuPrcVSleep();
-        func_800A0E80(vec, &temp_s2->player_obj->coords, &temp_s1->vec1);
+        func_800A0E80(vec, &temp_s2->player_obj->coords, &temp_s1->coords);
         func_8003D408(vec);        
     }
 }
