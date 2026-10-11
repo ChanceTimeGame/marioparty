@@ -875,7 +875,7 @@ s32 func_8005AE88(void) {
     return used;
 }
 
-void func_8005AF60(void) {
+s32 func_8005AF60(void) {
     omObjData* obj;
 
     omSysPauseEnableFlag = 1;
@@ -883,7 +883,7 @@ void func_8005AF60(void) {
     omSetStatBit(obj, 0xA0);
     obj->work[0] = 0;
     func_8005B5D8();
-    func_8005AE88();
+    return func_8005AE88();
 }
 
 u16 func_8005AFC8(void) {

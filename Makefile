@@ -237,6 +237,8 @@ build/src/overlays/ovl_12_GroundPound/148840.c.o: CFLAGS = -G0 -mips3 -mgp32 -mf
 build/src/overlays/ovl_19_TeeteringTowers/176130.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_28 1D9690.c: nop between mul.s in func_800F9F60 and func_800F7720 (mul fix on)
 build/src/overlays/ovl_28_ShyGuySays/1D9690.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_6B 2CAA00.c: nop between mul.s in func_800F7274 (mul fix on)
+build/src/overlays/ovl_6B_MinigameHouse/2CAA00.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # -O3 static inlines
 build/src/7CD60.c.o: OPTFLAGS = -O3
@@ -335,6 +337,15 @@ $(BUILD_DIR)/src/1130.c.o $(BUILD_DIR)/src/34D80.c.o $(BUILD_DIR)/src/1B800.c.o 
 # ovl_41 2721F0.c too (func_8010B0E4: mul fix on, mul.s right after sinf/cosf's return); own rule
 # so the five ovl_41 branches do not all edit the list above.
 $(BUILD_DIR)/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2721F0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_6B 2CAA00.c: the same blank-line-stripped assembly (mul fix on; mult right after a call's
+# return in func_800F6AD0 has no nop). A separate rule so the shared target list is not edited.
+$(BUILD_DIR)/src/overlays/ovl_6B_MinigameHouse/2CAA00.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
