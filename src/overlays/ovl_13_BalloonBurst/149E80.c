@@ -1,5 +1,7 @@
 #include "common.h"
 
+void func_800F6DB8_BalloonBurst(omObjData *, s32, s32);
+
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFAC_BalloonBurst);
@@ -28,7 +30,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6D1
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6DB8_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F70E0_BalloonBurst);
+void func_800F70E0_BalloonBurst(omObjData *arg0) {
+    func_800F6DB8_BalloonBurst(arg0, 0, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7100_BalloonBurst);
 
