@@ -2450,8 +2450,8 @@ segments:
     subsegments:
       - [0x2F7080, c]
       - [0x2F70B0, c]
-      - [0x2F8B50, data, 2F7080]
-      - [0x2F8B90, data, 2F70B0]
+      - [0x2F8B50, .data, 2F7080]
+      - [0x2F8B90, .data, 2F70B0]
       - {0x2F9040, type: bss, vram: 0x800F85A0, name: ovl_72_bss}
   - type: code
     start: 0x2F9040
@@ -2465,8 +2465,8 @@ segments:
     subsegments:
       - [0x2F9040, c]
       - [0x2F9070, c]
-      - [0x2F95F0, data, 2F9040]
-      - [0x2F9610, data, 2F9070]
+      - [0x2F95F0, .data, 2F9040]
+      - [0x2F9610, .data, 2F9070]
       - {0x2F96E0, type: bss, vram: 0x800F6C80, name: ovl_73_bss}
   - type: code
     start: 0x2F96E0
@@ -2481,7 +2481,7 @@ segments:
       - [0x2F96E0, c]
       - [0x2F9710, c]
       - [0x2F9FE0, .data, 2F96E0]
-      - [0x2FA000, data, 2F9710]
+      - [0x2FA000, .data, 2F9710]
       - {0x2FA120, type: bss, vram: 0x800F7020, name: ovl_74_bss}
   - type: code
     start: 0x2FA120
@@ -2496,7 +2496,7 @@ segments:
       - [0x2FA120, c]
       - [0x2FA150, c]
       - [0x2FA760, .data, 2FA120]
-      - [0x2FA780, data, 2FA150]
+      - [0x2FA780, .data, 2FA150]
       - {0x2FA8A0, type: bss, vram: 0x800F6D60, name: ovl_75_bss}
   - type: code
     start: 0x2FA8A0
@@ -2510,7 +2510,7 @@ segments:
       - [0x2FA8A0, c]
       - [0x2FA8D0, c]
       - [0x2FAC80, .data, 2FA8A0]
-      - [0x2FACA0, data, 2FA8D0]
+      - [0x2FACA0, .data, 2FA8D0]
   - type: code
     start: 0x2FADB0
     vram: 0x800F65E0
@@ -2522,7 +2522,8 @@ segments:
     bss_size: 0xA0
     subsegments:
       - [0x2FADB0, c]
-      - [0x2FD7E0, data, 2FADB0]
+      - [0x2FD7E0, .data, 2FADB0]
+      - [0x2FD920, .rodata, 2FADB0]
       - {0x2FD940, type: bss, vram: 0x800F9170, name: ovl_77_bss}
   - type: code
     start: 0x2FD940
@@ -2535,7 +2536,8 @@ segments:
     bss_size: 0xE0
     subsegments:
       - [0x2FD940, c]
-      - [0x300430, data, 2FD940]
+      - [0x300430, .data, 2FD940]
+      - [0x300570, .rodata, 2FD940]
       - {0x3005B0, type: bss, vram: 0x800F9250, name: ovl_78_bss}
   - type: code
     start: 0x3005B0
@@ -2548,7 +2550,7 @@ segments:
     bss_size: 0x20
     subsegments:
       - [0x3005B0, c]
-      - [0x301410, data, 3005B0]
+      - [0x301410, .data, 3005B0]
       - [0x3014B0, .rodata, 3005B0]
       - {0x3014C0, type: bss, vram: 0x800F74F0, name: ovl_79_bss}
   - type: code
