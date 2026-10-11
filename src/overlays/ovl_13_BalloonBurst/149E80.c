@@ -22,6 +22,8 @@ extern s32 D_800FC3B0_BalloonBurst;
 extern s32 D_800FC3B4_BalloonBurst;
 extern u16 D_800FC3A2_BalloonBurst[];
 extern u8 D_800F64F8;
+extern u16 D_800FB54E_BalloonBurst[];
+extern u16 D_800FB550_BalloonBurst[];
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
@@ -159,7 +161,20 @@ void func_800F9520_BalloonBurst(omObjData *arg0) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F95F8_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800FA8A4_BalloonBurst);
+void func_800FA8A4_BalloonBurst(s32 arg0) {
+    s32 offset = (arg0 & 0xFFFF) * 0x498;
+    u16 model = *(u16 *)((u8 *)D_800FB54E_BalloonBurst + offset);
+    u16 copy = *(u16 *)((u8 *)D_800FB550_BalloonBurst + offset);
+    unk_ovl_2D_struct *src = &D_800F2B7C[model];
+
+    func_800258EC((s16)model, 4, 4);
+    func_80025798((s16)copy, src->unk_24, src->unk_28, src->unk_2C);
+    func_800257E4((s16)copy, src->unk_30, src->unk_34, src->unk_38);
+    func_80025830((s16)copy, src->unk_3C, src->unk_40, src->unk_44);
+    D_800F2B7C[copy].unk_48 = src->unk_48;
+    func_800258EC((s16)copy, 4, 0);
+    func_80025830((s16)copy, 1.5f, 1.5f, 1.5f);
+}
 
 void func_800FA9C4_BalloonBurst(f32 arg0, Vec3f *arg1) {
     f32 angle = arg0 * 2.0f;
