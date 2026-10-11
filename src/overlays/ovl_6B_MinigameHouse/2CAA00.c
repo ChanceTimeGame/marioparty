@@ -1443,7 +1443,7 @@ s32 func_800F9FF4_MinigameHouse(s16 win, s32 grp, char* out) {
     buf[j++] = 8;
     buf[j] = 0;
     title = func_8005B7E8(D_80100170_MinigameHouse[grp].msg);
-    sprintf(out, "\x08%s\n%s", title, buf);
+    sprintf(out, "\x08%s\n%s", (char*)title, buf);
     func_8005B838(title);
     return cnt;
 }
@@ -2085,7 +2085,7 @@ void func_800FC090_MinigameHouse(char* out) {
     s32 len;
 
     str = func_8005B7E8(0x48);
-    len = strlen(str) - 0x1C;
+    len = (s32)strlen(str) - 0x1C;
     sprintf(out, D_801002D4_MinigameHouse, str);
     func_8005B838(str);
     out[D_80100594_MinigameHouse * 7 + len] = 0;
