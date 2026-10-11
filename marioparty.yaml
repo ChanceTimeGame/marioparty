@@ -2677,7 +2677,7 @@ segments:
     symbol_name_format: $VRAM_$SEG
     subsegments:
       - [0x316440, c]
-      - [0x3177A0, data, 316440]
+      - [0x3177A0, .data, 316440]
       - [0x317960, .rodata, 316440]
   - type: bin
     start: 0x317980
