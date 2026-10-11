@@ -31,6 +31,8 @@ f32 func_800FA5B8_FlowerShower(omObjData*);
 f32 func_800FA92C_FlowerShower(omObjData*);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 void func_800FACA0_FlowerShower(omObjData*);
+void func_800F7348_FlowerShower(omObjData*, s32, s32, s32);
+void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
 
 extern f32 D_800FAE50_FlowerShower;
 extern f32 D_800FAE54_FlowerShower;
@@ -38,6 +40,8 @@ extern u16 D_800FAE60_FlowerShower[];
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
 extern s32 D_800FAD64_FlowerShower;
+extern s32 D_800FAD4C_FlowerShower;
+extern f32 D_800FAD50_FlowerShower[];
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
 
@@ -80,7 +84,23 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F761
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7A28_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7BD0_FlowerShower);
+void func_800F7BD0_FlowerShower(omObjData* arg0) {
+    f32 angle;
+    f32 x;
+    s32 dir;
+    s32 file;
+
+    file = D_800C59AC[GwPlayer[0].character].unk_04;
+    dir = D_800C59AC[GwPlayer[0].character].unk_00;
+    if (GwPlayer[0].group == 0) {
+        func_800F7348_FlowerShower(arg0, dir, file, 0);
+        return;
+    }
+    angle = D_800FAD50_FlowerShower[D_800FAD4C_FlowerShower];
+    x = func_800AEAC0(angle) * 550.0f;
+    func_800F761C_FlowerShower(arg0, dir, file, 0, x, 0.0f, func_800AEFD0(angle) * 550.0f);
+    D_800FAD4C_FlowerShower++;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7CE0_FlowerShower);
 
