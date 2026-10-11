@@ -2,6 +2,11 @@
 
 #include "engine/esprite.h"
 
+void func_80021240(s16);
+extern u8 D_800C5728[];
+extern char D_80100658_MinigameHouse[7][0x18];
+
+
 extern u8 D_800C5723;
 extern u8 D_80100260_MinigameHouse[3][4];
 extern u8 D_8010026C_MinigameHouse[5][4];
@@ -1648,22 +1653,127 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC2
 #endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC410_MinigameHouse);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FCB78_MinigameHouse);
+omObjData* func_800FCB78_MinigameHouse(void) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FCC38_MinigameHouse);
+    obj = omAddObj(1, 1, 0, -1, NULL);
+    obj->model[0] = func_800174C0(0x90044, 0x6A9);
+    obj->trans.x = 36.0f;
+    obj->trans.y = 75.6f;
+    obj->trans.z = -77.1f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    func_80021240(obj->model[0]);
+    func_800211BC(obj->model[0], 0);
+    return obj;
+}
+void func_800FCC38_MinigameHouse(s16 win, s32 kind) {
+    switch (kind) {
+    case 0:
+        LoadStringIntoWindow(win, (void*)(PB_PTR32)((D_800C5722 & 0xF) + 0x5E), -1, -1);
+        break;
+    case 1:
+        LoadStringIntoWindow(win, (void*)(PB_PTR32)((D_800C5722 & 0x10) ? 0x63 : 0x62), -1, -1);
+        break;
+    default:
+        LoadStringIntoWindow(win, (void*)(PB_PTR32)((D_800C5722 & (8 << kind)) ? 0x65 : 0x64), -1, -1);
+        break;
+    }
+}
+omObjData* func_800FCCD8_MinigameHouse(void) {
+    omObjData* obj;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FCCD8_MinigameHouse);
+    for (i = 0; i < 6; i++) {
+        func_800258EC(D_80100568_MinigameHouse[i]->model[0], 4, 4);
+    }
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+    PlaySound(0x27);
+    func_800FA600_MinigameHouse(NULL);
+    LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x49, -1, -1);
+    for (i = 0x20; i < 0x100; i += 0x20) {
+        D_80100618_MinigameHouse->rot.z = (i * 90.0f) / 256.0f + 270.0f;
+        HuPrcVSleep();
+    }
+    func_8006DD60(D_80100634_MinigameHouse)->unk_14 = 0x82;
+    for (i = 0; i < 6; i++) {
+        func_800258EC(D_80100568_MinigameHouse[i]->model[0], 4, 0);
+        D_80100568_MinigameHouse[i]->work[0] = 0;
+    }
+    obj = func_800FCB78_MinigameHouse();
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+    func_800FA470_MinigameHouse(obj);
+    return obj;
+}
+void func_800FCE7C_MinigameHouse(omObjData* obj) {
+    TextWindow* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FCE7C_MinigameHouse);
+    w = func_8006DD60(D_80100634_MinigameHouse);
+    if (w != NULL) {
+        if (w->unk_11 != (s8)obj->work[0]) {
+            func_8006EB40(D_8010055C_MinigameHouse);
+            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)(PB_PTR32)(w->unk_11 + 0x59), -1, -1);
+        }
+        obj->work[0] = w->unk_11;
+    }
+}
+const char D_801002DC_MinigameHouse[] = "";
+const char D_801002E0_MinigameHouse[] = "\x11\n\x12\n\x13\n\x14\n\x15\n\x16\n\x17"; /* also used by func_800FD2D0 */
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FCEFC_MinigameHouse);
+void func_800FCEFC_MinigameHouse(s16 win, s32 n) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FD078_MinigameHouse);
+    if (func_8005949C(D_800C5728[n] - 1) == 0) {
+        GwCommon.coinNum += 10;
+    }
+    for (i = 0; i < n; i++) {
+        sprintf(D_80100658_MinigameHouse[i], D_801002D4_MinigameHouse, func_800F9D64_MinigameHouse(D_800C5728[i] - 1));
+        func_8006DA5C(win, D_80100658_MinigameHouse[i], i);
+    }
+    func_8006DA5C(win, D_801002DC_MinigameHouse, n);
+    D_800C5728[n] = 0;
+    func_8006DA5C(win, D_801002DC_MinigameHouse, n);
+    func_8006EB40(win);
+    LoadStringIntoWindow(win, D_801002E0_MinigameHouse, -1, -1);
+    while (func_8006FCC0(win) != 0) {
+        HuPrcVSleep();
+    }
+}
+void func_800FD078_MinigameHouse(void) {
+    char num[8];
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002DC_MinigameHouse);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002E0_MinigameHouse);
-
+    func_800F6970_MinigameHouse(2);
+    D_8010055C_MinigameHouse = func_80059C28();
+    func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[1], 0, 10, 2);
+    LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x6C, -1, -1);
+    while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+        HuPrcVSleep();
+    }
+    if ((s32)GwCommon.coinNum >= D_80100100_MinigameHouse[GwSystem.unk_1E]) {
+        func_8006EB40(D_8010055C_MinigameHouse);
+        func_8006DA5C(D_8010055C_MinigameHouse, func_800F9D64_MinigameHouse(GwSystem.unk_1E), 0);
+        sprintf(num, D_801002BC_MinigameHouse, D_80100100_MinigameHouse[GwSystem.unk_1E]);
+        func_8006DA5C(D_8010055C_MinigameHouse, num, 1);
+        LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x6D, -1, -1);
+        while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+            HuPrcVSleep();
+        }
+        func_8007155C(D_8010055C_MinigameHouse, (s16)(1 << GwPlayer[0].port));
+        if (func_8006FCF0(D_8010055C_MinigameHouse, 1, 0) == 0) {
+            GwCommon.coinNum -= D_80100100_MinigameHouse[GwSystem.unk_1E];
+            func_80059B74(GwSystem.unk_1E);
+            func_8006EB40(D_8010055C_MinigameHouse);
+            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x6E, -1, -1);
+            goto wait;
+        }
+    }
+    func_8006EB40(D_8010055C_MinigameHouse);
+    LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x6F, -1, -1);
+wait:
+    while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+        HuPrcVSleep();
+    }
+    func_80070D90(D_8010055C_MinigameHouse);
+}
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002F0_MinigameHouse);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002FC_MinigameHouse);
