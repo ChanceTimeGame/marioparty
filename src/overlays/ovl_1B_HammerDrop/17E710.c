@@ -1083,7 +1083,93 @@ void func_800F95E8_HammerDrop(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F95E8_HammerDrop);
 #endif
 
+// Logic-equivalent falling-item physics and pickup animation; scheduling differs.
+#ifdef NON_MATCHING
+void func_800F9794_HammerDrop(omObjData* arg0) {
+    HammerDropItemWork* work = HAMMER_ITEM_WORK(arg0);
+    HammerDropItemState* item = work->item;
+    f32 distance;
+    f32 angle;
+    s32 fell;
+
+    if (func_800F9E68_HammerDrop(item->unk_44, 1) == 0) {
+        return;
+    }
+    omSetTra(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    omSetRot(arg0, arg0->rot.x, arg0->rot.y, arg0->rot.z);
+    if (func_800F9E68_HammerDrop(item->unk_44, 2) != 0) {
+        arg0->trans.x = (func_800AEAC0(D_800FB990_HammerDrop->rot.y - 45.0f) * 100.0f) +
+            D_800FB990_HammerDrop->trans.x;
+        arg0->trans.y = D_800FB990_HammerDrop->trans.y + 50.0f +
+            (func_800AEAC0((f32) item->unk_50 * 4.0f) * 100.0f);
+        arg0->trans.z = (func_800AEFD0(D_800FB990_HammerDrop->rot.y - 30.0f) * 100.0f) +
+            D_800FB990_HammerDrop->trans.z;
+        func_80025798(arg0->model[2], arg0->trans.x, 0.0f, arg0->trans.z);
+        item->unk_50++;
+        return;
+    }
+    if (item->unk_38 == 2) {
+        angle = arg0->rot.x + 30.0f;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        } else if (angle < 0.0f) {
+            angle += 360.0f;
+        }
+        arg0->rot.x = angle;
+        arg0->rot.y = work->unk_3C;
+    }
+    item->unk_40 = 0;
+    arg0->trans.x += func_800AEAC0(work->unk_3C) * work->unk_40;
+    item->unk_2C -= item->unk_34;
+    arg0->trans.y += item->unk_2C;
+    distance = sqrtf((arg0->trans.x * arg0->trans.x) +
+        (arg0->trans.z * arg0->trans.z));
+    if (distance < 450.0f) {
+        if (arg0->trans.y < item->unk_3C) {
+            arg0->trans.y = item->unk_3C;
+            if (item->unk_48 < 3) {
+                if (item->unk_38 == 0) {
+                    PlaySound(0x108);
+                } else if (item->unk_38 == 1) {
+                    PlaySound(0x10A);
+                }
+            }
+            if (item->unk_38 != 2) {
+                item->unk_30 *= 0.9f;
+            }
+            if (item->unk_30 < 0.1f) {
+                item->unk_30 = 0.0f;
+            }
+            item->unk_2C = item->unk_30;
+            item->unk_48++;
+            if (item->unk_38 != 2) {
+                if (item->unk_48 == 2) {
+                    item->unk_30 = 0.0f;
+                }
+            } else {
+                work->unk_40 = 10.0f;
+            }
+        }
+        func_80025798(arg0->model[2], arg0->trans.x, 0.0f, arg0->trans.z);
+    } else if (arg0->trans.y < 0.0f) {
+        func_800258EC(arg0->model[2], 4, 4);
+    }
+    arg0->trans.z += func_800AEFD0(work->unk_3C) * work->unk_40;
+    fell = arg0->trans.y <= -1600.0f;
+    if (fell || (work->unk_54 == 0)) {
+        func_800F9E74_HammerDrop(&item->unk_44, 1, 0);
+        fell = arg0->trans.y <= -1600.0f;
+    }
+    if (fell && (D_800ED430 == 1)) {
+        PlaySound(0x293);
+        if (item->unk_38 != 2) {
+            D_800FB98C_HammerDrop++;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9794_HammerDrop);
+#endif
 
 s32 func_800F9C1C_HammerDrop(omObjData* arg0, omObjData* arg1) {
     unkGlobalStruct_00* temp_s0;
