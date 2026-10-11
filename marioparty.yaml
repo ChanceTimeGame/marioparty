@@ -2620,7 +2620,7 @@ segments:
     bss_size: 0x320
     subsegments:
       - [0x30F1B0, c]
-      - [0x310CA0, data, 30F1B0]
+      - [0x310CA0, .data, 30F1B0]
       - [0x311820, .rodata, 30F1B0]
       - {0x311E90, type: bss, vram: 0x800F92C0, name: ovl_7E_bss}
   - type: code
