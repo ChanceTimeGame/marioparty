@@ -194,6 +194,11 @@ void func_800F6610_GameModeOverworld(void) {
     if (D_800FA204_GameModeOverworld != 0) {
         D_800FA1E2_GameModeOverworld = 1;
     }
+#ifdef TARGET_PC
+    if (pb_dev_overworld() >= 0) {
+        D_800FA1E2_GameModeOverworld = pb_dev_overworld(); /* mp1host --dev-overworld */
+    }
+#endif
     ClearBoardFeatureFlag(0);
     ClearBoardFeatureFlag(0x29);
     ClearBoardFeatureFlag(0x2B);
