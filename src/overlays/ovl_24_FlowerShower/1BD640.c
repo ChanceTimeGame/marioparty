@@ -53,7 +53,29 @@ void func_800F6A64_FlowerShower(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F6A90_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F6FF4_FlowerShower);
+void func_800F6FF4_FlowerShower(omObjData* arg0) {
+    FlowerShowerModelWork* work;
+
+    arg0->model[0] = func_800174C0(0x380001, 0x99);
+    arg0->trans.x = arg0->trans.y = arg0->trans.z = 0.0f;
+    func_80025798(arg0->model[0], 0.0f, arg0->trans.y, arg0->trans.z);
+    work = func_80023684(sizeof(FlowerShowerModelWork), 0x7918);
+    arg0->unk_50 = work;
+    func_8009B770(work, 0, sizeof(FlowerShowerModelWork));
+    arg0->func_ptr = NULL;
+    work->unk_04 = 1;
+    Center.x = 8.0f;
+    Center.y = 310.0f;
+    Center.z = 23.0f;
+    CRot.x = 322.9f;
+    CRot.y = 0.0f;
+    CRot.z = 0.0f;
+    CZoom = 1000.0f;
+    func_80008FB8(arg0, 2.0f);
+    func_80008FC4(arg0, 20.0f);
+    work->unk_05 = 0;
+    SetFadeInTypeAndTime(0, 0x10);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", D_800FADD0_FlowerShower);
 
