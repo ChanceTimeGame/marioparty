@@ -74,7 +74,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8184_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8220_BumperBallMaze);
+void func_800F8220_BumperBallMaze(omObjData* object) {
+    omSetRot(object, 0.0f,
+             func_800B0CD8(D_800FAE10_BumperBallMaze->trans.x - object->trans.x,
+                           D_800FAE10_BumperBallMaze->trans.z - object->trans.z),
+             0.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F827C_BumperBallMaze);
 
