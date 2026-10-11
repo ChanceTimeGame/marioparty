@@ -1,10 +1,12 @@
 #include "common.h"
 
 typedef struct BumperBallMazeModelState {
-    char unk_00[0x1C];
+    u16 unk_00;
+    char unk_02[0x1A];
     u16 unk_1C;
 } BumperBallMazeModelState;
 
+extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
 
 void func_800FA620_BumperBallMaze(void);
@@ -65,7 +67,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8E1C_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F9034_BumperBallMaze);
+s32 func_800F9034_BumperBallMaze(void) {
+    return ((BumperBallMazeModelState*) D_800FAE10_BumperBallMaze->unk_50)->unk_00 != 3;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F9050_BumperBallMaze);
 
