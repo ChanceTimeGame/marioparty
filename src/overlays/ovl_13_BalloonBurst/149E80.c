@@ -2,6 +2,7 @@
 
 void func_800F6DB8_BalloonBurst(omObjData *, s32, s32);
 void func_800F7298_BalloonBurst(omObjData *);
+void func_80027E48(s16, f32, f32, u16, u16, char *, u8);
 
 extern Gfx **D_800FB0F8_BalloonBurst[];
 extern s16 D_800F3778;
@@ -19,6 +20,8 @@ extern volatile f32 D_800FC3A8_BalloonBurst;
 extern volatile f32 D_800FC3AC_BalloonBurst;
 extern s32 D_800FC3B0_BalloonBurst;
 extern s32 D_800FC3B4_BalloonBurst;
+extern u16 D_800FC3A2_BalloonBurst[];
+extern u8 D_800F64F8;
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
@@ -53,7 +56,13 @@ void func_800F6BAC_BalloonBurst(f32 zoom, f32 rotX, f32 rotY, f32 rotZ, f32 cent
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6C44_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6D14_BalloonBurst);
+void func_800F6D14_BalloonBurst(omObjData *arg0) {
+    if ((func_8005FD5C() & 0xFFFF) + D_800F64F8 == 0) {
+        D_800FC3A8_BalloonBurst -= 0.1f;
+    }
+    func_80027E48(arg0->model[0], D_800FC3A8_BalloonBurst, D_800FC3AC_BalloonBurst,
+                 D_800FC3A2_BalloonBurst[0], D_800FC3A2_BalloonBurst[1], "24m_000A-grid2", 1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6DB8_BalloonBurst);
 
