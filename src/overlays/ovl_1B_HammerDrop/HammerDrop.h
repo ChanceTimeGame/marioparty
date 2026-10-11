@@ -9,7 +9,10 @@ typedef struct unkHammerDropStruct {
 typedef struct HammerDropPlayerState {
     char unk_00[0x24];
     s32 unk_24;
-    char unk_28[0x28];
+    char unk_28[0x4];
+    s32 unk_2C;
+    char unk_30[0x1C];
+    s32 unk_4C;
     volatile s32 unk_50;
     f32 unk_54;
     s32 unk_58;

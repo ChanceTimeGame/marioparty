@@ -131,7 +131,77 @@ void func_800F74DC_HammerDrop(omObjData* arg0) {
     func_800F6AF8_HammerDrop(arg0, 3);
 }
 
+// Logic-equivalent CPU target selection; retail copies the height table to the stack.
+#ifdef NON_MATCHING
+void func_800F74F8_HammerDrop(omObjData* arg0) {
+    HammerDropPlayerState* state = (HammerDropPlayerState*) ((unkGlobalStruct_00*) arg0->unk_50)->unk_E4;
+    HammerDropItemState* item;
+    omObjData* candidate;
+    f32 distance;
+    s32 activeCount = 0;
+    s32 findTarget = 0;
+    s32 target = -1;
+    s32 i;
+
+    if (D_800ED430 == 1) {
+        if (state->unk_4C == -1) {
+            distance = 0.0f;
+            findTarget = 1;
+        } else {
+            candidate = D_800EDE70[state->unk_4C];
+            distance = sqrtf((candidate->trans.x * candidate->trans.x) +
+                (candidate->trans.z * candidate->trans.z));
+            item = HAMMER_ITEM_WORK(candidate)->item;
+            if ((distance >= 400.0f) ||
+                (func_800F9E68_HammerDrop(item->unk_44, 1) == 0)) {
+                findTarget = 1;
+            }
+        }
+        if (findTarget != 1) {
+            goto done;
+        }
+        for (i = 0; i < 6; i++) {
+            item = HAMMER_ITEM_WORK(D_800EDE70[i])->item;
+            if (distance < 400.0f) {
+                activeCount += func_800F9E68_HammerDrop(item->unk_44, 1);
+            } else {
+                func_800F9E68_HammerDrop(item->unk_44, 1);
+            }
+        }
+        if (activeCount == 0) {
+            goto store_target;
+        } else {
+            target = ((rand8() & 0xFF) % 6) & 0xFF;
+            candidate = D_800EDE70[target];
+            item = HAMMER_ITEM_WORK(candidate)->item;
+            if (D_800FB5F8_HammerDrop[state->unk_50] < candidate->trans.y) {
+                target = -1;
+            }
+            if ((item->unk_38 == 2) &&
+                ((rand8() & 3) < (state->unk_50 + 1))) {
+                target = -1;
+            }
+            if ((target == -1) ||
+                (func_800F9E68_HammerDrop(item->unk_44, 1) == 0)) {
+                target = -1;
+            } else {
+                candidate = D_800EDE70[target];
+                distance = sqrtf((candidate->trans.x * candidate->trans.x) +
+                    (candidate->trans.z * candidate->trans.z));
+                if (distance >= 400.0f) {
+                    target = -1;
+                }
+            }
+        }
+    }
+store_target:
+    state->unk_4C = target;
+done:
+    return;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F74F8_HammerDrop);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F77E4_HammerDrop);
 
