@@ -19,6 +19,7 @@ typedef struct FlowerShowerBodyWork {
 } FlowerShowerBodyWork;
 
 FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData*, s32, f32, f32, s32, s32, s32, s32);
+f32 func_800051D4(omObjData*, f32, f32, f32, Vec3f*);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
 
@@ -94,7 +95,21 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F864
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F870C_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F8918_FlowerShower);
+f32 func_800F8918_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2, f32 arg3, Vec3f* arg4) {
+    Vec4f sp18;
+    f32 temp_f0;
+    f32 var_f20 = -10000.0f;
+
+    sp18.x = arg1;
+    sp18.y = arg2;
+    sp18.z = arg3;
+    sp18.w = 10.0f;
+    temp_f0 = func_800051D4(arg0, arg1, arg2, arg3, arg4);
+    if (temp_f0 > -10000.0f) {
+        var_f20 = temp_f0;
+    }
+    return var_f20;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F898C_FlowerShower);
 
