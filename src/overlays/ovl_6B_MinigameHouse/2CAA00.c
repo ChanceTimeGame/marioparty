@@ -43,7 +43,7 @@ s32 func_800FAF5C_MinigameHouse(s16);
 s32 func_800FB108_MinigameHouse(s16);
 void func_800FB238_MinigameHouse(void);
 s32 func_800FA92C_MinigameHouse(s32*);
-extern char D_801002BC_MinigameHouse[]; /* "%d"; also used by func_800F8860 */
+extern const char D_801002BC_MinigameHouse[]; /* "%d"; also used by func_800F8860 and func_800FD2D0 */
 #ifdef TARGET_PC
 #define D010 func_8006D010
 #else
@@ -161,6 +161,20 @@ void func_800F8860_MinigameHouse(void);
 void func_800FB2DC_MinigameHouse(void);
 void func_800FB96C_MinigameHouse(omObjData*);
 void func_800FD2D0_MinigameHouse(void);
+void AdjustPlayerCoins(s32, s32);
+void func_80018E0C(u16, s16);
+s32 func_800115C8(s16);
+void func_80042B10(void*);
+void func_80043460(void);
+void func_800434E4(void);
+void func_80043544(void);
+void func_800760E4(s16);
+void GMesMaxWaitSet(s16);
+extern u8 D_800C5724[];
+void func_800FBB28_MinigameHouse(s32 port, s32 p, s16 spr);
+s32 func_800FAE94_MinigameHouse(s32 cat);
+s32 func_800FC410_MinigameHouse(void);
+extern u16 ContBtn[];
 
 extern s8 D_800C5721;
 extern u8 D_800C5722;
@@ -1305,7 +1319,7 @@ void func_800F8860_MinigameHouse(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F8860_MinigameHouse);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002BC_MinigameHouse);
+const char D_801002BC_MinigameHouse[] __attribute__((section(".rodata"))) = "%d";
 
 // register allocation; retail hoists the buffer base out of three fill loops (masked 37)
 #ifdef NON_MATCHING
@@ -2404,10 +2418,901 @@ wait:
     }
     func_80070D90(D_8010055C_MinigameHouse);
 }
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002F0_MinigameHouse);
+const char D_801002F0_MinigameHouse[] = "\x11\n\n\x12\n\x13\n\x14";
+const char D_801002FC_MinigameHouse[] = "Will you buy\x05 5\x08 more of\nthis kind of game\xC3\xFF";
+const char D_8010032C_MinigameHouse[] = "Will you buy\x05 3\x08 more of\nthis kind of game\xC3\xFF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_801002FC_MinigameHouse);
+// register allocation (the menu-arrow object takes a spill slot; frame 8 bytes smaller) and
+// float-constant hoisting (masked 38)
+#ifdef NON_MATCHING
+void func_800FD2D0_MinigameHouse(void) {
+    unkCommonStruct0 font;
+    char buf[0x68];
+    char num[8];
+    s32 ready[4];
+    s16 wins[8];
+    s16 ids[8];
+    s32 sel;
+    s32 rows;
+    s16 listWin;
+    s32 humans;
+    s32 i;
+    s32 j;
+    s32 cur;
+    s32 n;
+    s32 count;
+    s32 mg;
+    s32 btn;
+    s32 spr;
+    s32 mes;
+    s16 snd;
+    s16 win;
+    omObjData* arrow;
+    omObjData* obj;
+    TextWindow* w;
+    char* str;
+    char* msg;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", D_8010032C_MinigameHouse);
+    D_80100632_MinigameHouse = 0xFF;
 
+    humans = 4;
+    if (D_800C5721 != 0) {
+        for (i = 0; i < 4; i++) {
+            humans -= GwPlayer[i].flags & 1;
+        }
+        if (humans == 0) {
+            humans = 1;
+        }
+        for (i = 0; i < 4; i++) {
+            if (_CheckFlag(0x29) != 0) {
+                AdjustPlayerCoins(i, GwPlayer[i].coins_mg);
+            }
+            GwPlayer[i].coins_mg = 0;
+        }
+        if (func_8005949C(GwSystem.unk_1E) == 0 && D_800C5721 != 1) {
+            func_800FD078_MinigameHouse();
+        }
+        func_800F6970_MinigameHouse(4);
+        HuPrcSleep(0x1E);
+        if (D_800C5721 == 1) {
+            goto next;
+        }
+        count = func_800FAD28_MinigameHouse(ids, 0x6E);
+        spr = InitSprite(0xA0125);
+        for (i = 0; i < count; i++) {
+            ids[i] = func_80019060((s16)spr, 0, 1);
+            SetBasicSpritePos((u16)ids[i], (i * 2 - count) * 40 + 200, 0x8E);
+            func_80018D84(ids[i], 0x5000);
+        }
+        win = func_8006D010(0x70, 0x28, 0x60, 0x22, 0, 0);
+        func_8006E070(win, 0);
+        sprintf(num, D_801002BC_MinigameHouse, (D_800C5722 & 0xF) * 2 + 1);
+        func_8006DA5C(win, num, 0);
+        sprintf(buf, D_801002BC_MinigameHouse, (D_800C5722 & 0xF) * 2 - (n = D_800C5721 - 3));
+        func_8006DA5C(win, buf, 1);
+        LoadStringIntoWindow(win, (void*)0x67, -1, -1);
+        while (func_8006FCC0(win) != 0) {
+            HuPrcVSleep();
+        }
+        goto next;
+    }
+menu:
+    func_800F6970_MinigameHouse(2);
+    func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[1], 0, 0xA, 2);
+    func_8006EB40(D_8010055C_MinigameHouse);
+    if (func_80059CE8((void*)0x69, D_8010055C_MinigameHouse) == 0) {
+        func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[0], 0, 0xA, 2);
+        return;
+    }
+    func_800FA2E4_MinigameHouse();
+    for (sel = 0; sel < 7; sel++) {
+        if (func_800F9FF4_MinigameHouse(D_80100634_MinigameHouse, sel, buf) != 0) {
+            break;
+        }
+    }
+    if (sel == 7) {
+        func_8006EB40(D_8010055C_MinigameHouse);
+        LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x3F, -1, -1);
+        while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+            HuPrcVSleep();
+        }
+        func_80070D90(D_80100634_MinigameHouse);
+        func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[0], 0, 0xA, 2);
+        return;
+    }
+    func_800FB238_MinigameHouse();
+    func_800F6970_MinigameHouse(3);
+    w = func_8006DD60(D_80100634_MinigameHouse);
+    func_80066DC4(w->unk_44, 0, 0x140, w->unk_16);
+    func_80070D90(D_8010055C_MinigameHouse);
+    func_800FC090_MinigameHouse(buf);
+    LoadStringIntoWindow(D_80100634_MinigameHouse, buf, -1, -1);
+    HuPrcSleep(0x1E);
+    while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+        HuPrcVSleep();
+    }
+    func_8006752C(w->unk_44, 1, 0);
+choose:
+    func_800FA470_MinigameHouse(NULL);
+    D_8010055C_MinigameHouse = func_80059C28();
+    obj = omAddObj(1, 0, 0, -1, func_800FCE7C_MinigameHouse);
+    obj->work[0] = 0xFF;
+    for (i = 0; i < 4; i++) {
+        GwPlayer[i].coins = 5;
+    }
+    humans = func_8006FCF0(D_80100634_MinigameHouse, 0, 0) + 1;
+    if (humans != 0) {
+        goto players;
+    }
+    func_80070D90(D_80100634_MinigameHouse);
+    omDelObj(obj);
+    func_8006EB40(D_8010055C_MinigameHouse);
+    func_80025EB4(D_8010060C_MinigameHouse->model[1], 0, 4);
+    goto menu;
+cpu_ok:
+    PlaySound(0xF6);
+    goto cpu_done;
+rules_ok:
+    PlaySound(0xF6);
+    goto rules_done;
+players:
+    omDelObj(obj);
+    i = 0;
+    func_80070D90(D_8010055C_MinigameHouse);
+    func_800FA600_MinigameHouse(NULL);
+    LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x49, -1, -1);
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+    arrow = func_800FCB78_MinigameHouse();
+    PlaySound(0x27);
+    do {
+        if (i == 0x20) {
+            /* retail reuses the angle counter here: it continues from 6 */
+            for (i = 0; i < 6; i++) {
+                func_800258EC(D_80100568_MinigameHouse[i]->model[0], 4, 0);
+            }
+        }
+        D_80100618_MinigameHouse->rot.z = 360.0f - (i * 90.0f) / 256.0f;
+        HuPrcVSleep();
+        i += 0x20;
+    } while (i < 0x100);
+    while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+        HuPrcVSleep();
+    }
+    func_800FA470_MinigameHouse(arrow);
+    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+assign:
+    for (i = 0; i < humans; i++) {
+        func_80018E0C(D_80100588_MinigameHouse[i], GwPlayer[i].port);
+        func_80018C90(D_80100588_MinigameHouse[i]);
+        GwPlayer[i].flags = 0;
+        D_80100648_MinigameHouse[i] = i;
+    }
+    for (; i < 4; i++) {
+        func_80018E0C(D_80100588_MinigameHouse[i], GwPlayer[0].port);
+        func_80018C90(D_80100588_MinigameHouse[i]);
+        GwPlayer[i].flags = 1;
+        D_80100648_MinigameHouse[i] = -1;
+    }
+pick:
+    for (i = 0; i < humans; i++) {
+        func_800FBFA4_MinigameHouse(i, (s16)D_80100588_MinigameHouse[i]);
+        ShowBasicSprite(D_80100588_MinigameHouse[i]);
+        ready[i] = 0;
+    }
+    msg = buf;
+    while (1) {
+        for (i = 0; i < humans; i++) {
+            btn = ContDStkTrg[GwPlayer[i].port];
+            if (ready[i] != 0) {
+                if (btn & 0x4000) {
+                    ShowBasicSprite(D_80100588_MinigameHouse[i]);
+                    ready[i] = 0;
+                    D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[0] = 0;
+                }
+                continue;
+            }
+            func_800FBB28_MinigameHouse(GwPlayer[i].port, i, D_80100588_MinigameHouse[i]);
+            if (btn & 0x8000) {
+                PlaySound(0xF6);
+                func_80018C90(D_80100588_MinigameHouse[i]);
+                ready[i] = 1;
+                D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[0] = 1;
+                for (n = 0, j = 0; j < humans; j++) {
+                    n += ready[j] != 0;
+                }
+                if (n == humans) {
+                    goto all_ready;
+                }
+            }
+            if (btn & 0x4000) {
+                PlaySound(0xF8);
+                for (n = 0, j = 0; j < humans; j++) {
+                    n += ready[j] == 0;
+                }
+                if (n == humans) {
+                    for (j = 0; j < humans; j++) {
+                        func_80018C90(D_80100588_MinigameHouse[j]);
+                    }
+                    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+                    PlaySound(0x27);
+                    func_800FA600_MinigameHouse(arrow);
+                    func_800FC090_MinigameHouse(msg);
+                    LoadStringIntoWindow(D_80100634_MinigameHouse, msg, -1, -1);
+
+                    for (j = 0x20; j < 0x100; j += 0x20) {
+                        D_80100618_MinigameHouse->rot.z = (j * 90.0f) / 256.0f + 270.0f;
+                        HuPrcVSleep();
+                    }
+                    for (i = 0; i < 6; i++) {
+                        func_800258EC(D_80100568_MinigameHouse[i]->model[0], 4, 4);
+                    }
+                    func_8002456C(arrow->model[0]);
+                    omDelObj(arrow);
+                    func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+                    while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+                        HuPrcVSleep();
+                    }
+                    goto choose;
+                }
+            }
+        }
+        HuPrcVSleep();
+    }
+all_ready:
+    func_8006EB40(D_80100634_MinigameHouse);
+    LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x47, -1, -1);
+    while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+        HuPrcVSleep();
+    }
+    for (i = 0; i < humans; i++) {
+        D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[0] = 2;
+        D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[2] = i;
+    }
+    for (i = humans; i < 4; i++) {
+        D_80100648_MinigameHouse[i] = 0;
+        for (j = 0; j < 6; j++) {
+            if (func_800FBAC0_MinigameHouse(i) != 0) {
+                break;
+            }
+            D_80100648_MinigameHouse[i]++;
+        }
+        func_800FBFA4_MinigameHouse(i, (s16)D_80100588_MinigameHouse[i]);
+        ShowBasicSprite(D_80100588_MinigameHouse[i]);
+        while (1) {
+            btn = func_80059CB8();
+            func_800FBB28_MinigameHouse(GwPlayer[0].port, i, D_80100588_MinigameHouse[i]);
+            if (btn & 0x8000) {
+                PlaySound(0xF6);
+                D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[0] = 1;
+                func_80018C90(D_80100588_MinigameHouse[i]);
+                break;
+            }
+            if (btn & 0x4000) {
+                PlaySound(0xF8);
+                func_80018C90(D_80100588_MinigameHouse[i]);
+                D_80100648_MinigameHouse[i] = -1;
+                if (i == humans) {
+                    for (j = 0; j < 6; j++) {
+                        D_80100568_MinigameHouse[j]->work[0] = 0;
+                    }
+                    func_8006EB40(D_80100634_MinigameHouse);
+                    LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x49, -1, -1);
+                    while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+                        HuPrcVSleep();
+                    }
+                    goto pick;
+                }
+                D_80100568_MinigameHouse[D_80100648_MinigameHouse[i - 1]]->work[0] = 0;
+                i -= 2;
+                break;
+            }
+            HuPrcVSleep();
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        GwPlayer[i].character = D_80100648_MinigameHouse[i];
+    }
+    for (i = humans; i < 4; i++) {
+        D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[0] = 2;
+        D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[2] = i;
+    }
+    for (i = 0; i < 4; i++) {
+        func_80018C90(D_80100588_MinigameHouse[i]);
+    }
+    func_800FA600_MinigameHouse(arrow);
+    for (i = 0; i < 6; i++) {
+        if (D_80100568_MinigameHouse[i]->work[0] != 2) {
+            func_800258EC(D_80100568_MinigameHouse[i]->model[0], 4, 4);
+        }
+    }
+    w = func_8006DD60(D_80100634_MinigameHouse);
+    func_80066DC4(w->unk_44, 0, 0x140, w->unk_16);
+    func_8002456C(arrow->model[0]);
+    omDelObj(arrow);
+    if (humans == 4) {
+        goto rules;
+    }
+    sprintf(buf, D_801002F0_MinigameHouse);
+    buf[(5 - humans) * 2] = 0;
+    func_8006DA5C(D_80100634_MinigameHouse, (void*)0x4C, 0);
+    for (i = humans, j = 1; i < 4; i++, j++) {
+        func_8006DA5C(D_80100634_MinigameHouse, (void*)(PB_PTR32)(GwPlayer[i].character + 0x4D), j);
+    }
+    func_800FA7C0_MinigameHouse(buf);
+cpu:
+    for (i = humans, j = 0; i < 4; i++, j++) {
+        win = func_8006D010(0xBD, j * 14 + 0x3C, 0x4A, 0x14, 0, 0);
+        wins[j] = win;
+        w = func_8006DD60(win);
+        w->unk_04 = 0;
+        w->unk_03 = 0;
+        func_80066DC4(w->unk_44, 0, 0x140, w->unk_16);
+        func_800674BC(w->unk_44, 0, 0x8000);
+        func_800674F4(w->unk_44, 2, 0, 0x6D, 0xB7);
+        func_800674F4(w->unk_44, 5, 0x1E, 0x87, 0x1A);
+        func_800674F4(w->unk_44, 3, 0xE3, 0x64, 0);
+        func_800674F4(w->unk_44, 4, 0xD7, 0x2E, 0x42);
+        ids[j] = D_800C5724[i];
+        LoadStringIntoWindow(wins[j], (void*)(PB_PTR32)(ids[j] + 0x53), -1, -1);
+
+        while (func_8006FCC0(wins[j]) != 0) {
+            HuPrcVSleep();
+        }
+        func_8006752C(w->unk_44, 1, 0);
+    }
+    for (i = humans, j = 0; i < 4; i++, j++) {
+        w = func_8006DD60(wins[j]);
+        func_80066DC4(w->unk_44, 0, w->unk_14, w->unk_16);
+    }
+    cur = 0;
+    func_800F69A8_MinigameHouse();
+    while (1) {
+        btn = func_80059CB8();
+        if (btn & 0x8000) {
+            goto cpu_ok;
+        }
+        if (btn & 0x4000) {
+            PlaySound(0xF8);
+            func_800F69DC_MinigameHouse();
+            for (i = humans, j = 0; i < 4; i++, j++) {
+                func_80070D90(wins[j]);
+            }
+            arrow = func_800FCCD8_MinigameHouse();
+            goto assign;
+        }
+        if (btn & 0x800) {
+            PlaySound(0xF5);
+            cur--;
+            if (cur < 0) {
+                cur = 0;
+            }
+        }
+        if (btn & 0x400) {
+            PlaySound(0xF5);
+            cur++;
+            if (cur + humans >= 4) {
+                cur = 3 - humans;
+            }
+        }
+        if (btn & 0x200) {
+            if (D_800C5724[cur + humans] != 0) {
+                D_800C5724[cur + humans]--;
+            } else {
+                D_800C5724[cur + humans] = 3;
+            }
+        }
+        if (btn & 0x100) {
+            D_800C5724[cur + humans]++;
+            if (D_800C5724[cur + humans] >= 4) {
+                D_800C5724[cur + humans] = 0;
+            }
+        }
+        if (ids[cur] != D_800C5724[cur + humans]) {
+            PlaySound(0xF5);
+            func_8006EB40(wins[cur]);
+            LoadStringIntoWindow(wins[cur], (void*)(PB_PTR32)(D_800C5724[cur + humans] + 0x53), -1, -1);
+        }
+        ids[cur] = D_800C5724[cur + humans];
+        func_800F6A10_MinigameHouse(6, 0xC1, cur * 14 + 0x45);
+        HuPrcVSleep();
+    }
+cpu_done:
+    func_800F69DC_MinigameHouse();
+    for (i = humans, j = 0; i < 4; i++, j++) {
+        GwPlayer[i].cpu_difficulty = D_800C5724[i];
+        func_80070D90(wins[j]);
+    }
+    func_800FA600_MinigameHouse(NULL);
+rules:
+    func_800FA7C0_MinigameHouse((char*)0x5D);
+rules2:
+    for (i = 0; i < 4; i++) {
+        func_800258EC(D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->model[0], 4, 0);
+    }
+    for (i = 0; i < 5; i++) {
+        win = func_8006D010(0x8C, i * 28 + 0x2E, 0x64, 0x14, 0, 0);
+        wins[i] = win;
+        w = func_8006DD60(win);
+        w->unk_04 = 0;
+        w->unk_03 = 0;
+        func_80066DC4(w->unk_44, 0, 0x140, w->unk_16);
+        func_800674BC(w->unk_44, 0, 0x8000);
+        func_800674F4(w->unk_44, 8, 0x58, 0x38, 0xC2);
+        func_800FCC38_MinigameHouse(wins[i], i);
+        while (func_8006FCC0(wins[i]) != 0) {
+            HuPrcVSleep();
+        }
+        func_8006752C(w->unk_44, 1, 0);
+    }
+    for (i = 0; i < 5; i++) {
+        w = func_8006DD60(wins[i]);
+        func_80066DC4(w->unk_44, 0, w->unk_14, w->unk_16);
+    }
+    cur = 0;
+    func_800F69A8_MinigameHouse();
+    n = D_800C5722;
+    while (1) {
+        btn = func_80059CB8();
+        if (btn & 0x8000) {
+            goto rules_ok;
+        }
+        if (btn & 0x4000) {
+            PlaySound(0xF8);
+            func_800F69DC_MinigameHouse();
+            for (i = 0; i < 5; i++) {
+                func_80070D90(wins[i]);
+            }
+            if (humans == 4) {
+                arrow = func_800FCCD8_MinigameHouse();
+                goto assign;
+            }
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+            PlaySound(0x27);
+            func_800FA600_MinigameHouse(NULL);
+            sprintf(buf, D_801002F0_MinigameHouse);
+            buf[(5 - humans) * 2] = 0;
+            func_8006DA5C(D_80100634_MinigameHouse, (void*)0x4C, 0);
+            for (i = humans, j = 1; i < 4; i++, j++) {
+                func_8006DA5C(D_80100634_MinigameHouse, (void*)(PB_PTR32)(GwPlayer[i].character + 0x4D), j);
+            }
+            LoadStringIntoWindow(D_80100634_MinigameHouse, buf, -1, -1);
+            for (j = 0x20; j < 0x100; j += 0x20) {
+                D_80100618_MinigameHouse->rot.z = (j * 90.0f) / 256.0f + 270.0f;
+                HuPrcVSleep();
+            }
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+            while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+                HuPrcVSleep();
+            }
+            func_800FA470_MinigameHouse(NULL);
+            goto cpu;
+        }
+        if (btn & 0x800) {
+            PlaySound(0xF5);
+            cur--;
+            if (cur < 0) {
+                cur = 0;
+            }
+        }
+        if (btn & 0x400) {
+            PlaySound(0xF5);
+            cur++;
+            if (cur >= 5) {
+                cur = 4;
+            }
+        }
+        if (btn & 0x200) {
+            if (cur != 0) {
+                D_800C5722 ^= 8 << cur;
+            } else if (D_800C5722 & 0xF) {
+                D_800C5722--;
+            } else {
+                D_800C5722 = (D_800C5722 & 0xF0) | 3;
+            }
+        }
+        if (btn & 0x100) {
+            if (cur != 0) {
+                D_800C5722 ^= 8 << cur;
+            } else if ((D_800C5722 & 0xF) < 3) {
+                D_800C5722++;
+            } else {
+                D_800C5722 &= 0xF0;
+            }
+        }
+        if (n != D_800C5722) {
+            PlaySound(0xF5);
+            func_8006EB40(wins[cur]);
+            func_800FCC38_MinigameHouse(wins[cur], cur);
+        }
+        n = D_800C5722;
+        if (cur == 0) {
+            j = 4;
+        } else if (cur == 1) {
+            j = 9;
+        } else {
+            j = 2;
+        }
+        func_800F6A10_MinigameHouse(j, 0x90, cur * 28 + 0x37);
+        HuPrcVSleep();
+    }
+rules_done:
+    func_800F69DC_MinigameHouse();
+    for (i = 0; i < 5; i++) {
+        func_80070D90(wins[i]);
+    }
+    func_800FA600_MinigameHouse(NULL);
+    func_800FA7C0_MinigameHouse((char*)0x66);
+mode:
+    {
+        D_800C5720 = func_8006FCF0(D_80100634_MinigameHouse, 0, 0);
+        if (D_800C5720 < 0) {
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+            PlaySound(0x27);
+            func_800FA600_MinigameHouse(NULL);
+            LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x5D, -1, -1);
+            for (j = 0x20; j < 0x100; j += 0x20) {
+                D_80100618_MinigameHouse->rot.z = (j * 90.0f) / 256.0f + 270.0f;
+                HuPrcVSleep();
+            }
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+            while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+                HuPrcVSleep();
+            }
+            goto again;
+        }
+        if (D_800C5722 & 0x10) {
+            if (func_800FAE94_MinigameHouse(D_800C5720) != 0) {
+                PlaySound(0xF9);
+                sprintf(buf, (D_800C5720 == 0 || D_800C5720 == 3) ? D_801002FC_MinigameHouse : D_8010032C_MinigameHouse);
+                D_8010055C_MinigameHouse = func_80059C28();
+                LoadStringIntoWindow(D_8010055C_MinigameHouse, buf, -1, -1);
+                while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+                    HuPrcVSleep();
+                }
+                func_80070D90(D_8010055C_MinigameHouse);
+                goto mode;
+            }
+            if (D_800C5722 & 0x10) {
+                goto order_done;
+            }
+        }
+        func_800FA600_MinigameHouse(NULL);
+        func_800F6970_MinigameHouse(9);
+        HuPrcSleep(0xA);
+        n = 0;
+        func_8006DD60(D_80100634_MinigameHouse)->unk_14 = 0xA2;
+        rows = D_800C5722 & 0xF;
+        rows = rows * 2 + 1;
+        listWin = func_8006D010(0x18, 0x28, 0x81, rows * 14 + 6, 0, 0);
+        func_8006E070(listWin, 0);
+        sel = func_800FA8D0_MinigameHouse();
+        func_800F9FF4_MinigameHouse(D_80100634_MinigameHouse, sel, buf);
+        func_800FA7C0_MinigameHouse(buf);
+        if (rows == 0) {
+            goto order_done;
+        }
+    order:
+        func_800258EC(D_8010061C_MinigameHouse->model[1], 4, 4);
+        mg = func_800FA92C_MinigameHouse(&sel);
+        if (mg == 0) {
+            if (n != 0) {
+                n--;
+                func_800FCEFC_MinigameHouse(listWin, n);
+                n--;
+                goto order_next;
+            }
+            func_80070D90(listWin);
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 0);
+            PlaySound(0x27);
+            func_800FA600_MinigameHouse(NULL);
+            func_800F6970_MinigameHouse(3);
+            HuPrcSleep(0xA);
+            func_8006DD60(D_80100634_MinigameHouse)->unk_14 = 0x82;
+            LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x66, -1, -1);
+            for (j = 0x20; j < 0x100; j += 0x20) {
+                D_80100618_MinigameHouse->rot.z = (j * 90.0f) / 256.0f + 270.0f;
+                HuPrcVSleep();
+            }
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+            while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+                HuPrcVSleep();
+            }
+            goto resume;
+        }
+        w = func_8006DD60(D_80100634_MinigameHouse);
+        if (func_8005949C(mg - 1) == 0) {
+            D_8010055C_MinigameHouse = func_80059C28();
+            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x6A, -1, -1);
+            while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+                HuPrcVSleep();
+            }
+            if ((s32)GwCommon.coinNum < 10) {
+                func_80070D90(D_8010055C_MinigameHouse);
+                w->unk_6E = 0;
+                goto order;
+            }
+            if (func_80059CE8((void*)0x6B, D_8010055C_MinigameHouse) != 0) {
+                func_80070D90(D_8010055C_MinigameHouse);
+                GwCommon.coinNum -= 10;
+                goto add;
+            }
+            func_80070D90(D_8010055C_MinigameHouse);
+            w->unk_6E = 0;
+            HuPrcVSleep();
+            goto order;
+        } else if ((ContBtn[GwPlayer[0].port] & 0x1000) && n < rows - 1) {
+            for (; n < rows - 1; n++) {
+                D_800C5728[n] = mg;
+                sprintf(D_80100658_MinigameHouse[n], D_801002D4_MinigameHouse, func_800F9D64_MinigameHouse(mg - 1));
+                func_8006DA5C(listWin, D_80100658_MinigameHouse[n], n);
+            }
+        }
+    add:
+        w->unk_6E = 0;
+        D_800C5728[n] = mg;
+        sprintf(D_80100658_MinigameHouse[n], D_801002D4_MinigameHouse, func_800F9D64_MinigameHouse(mg - 1));
+        func_8006DA5C(listWin, D_80100658_MinigameHouse[n], n);
+        func_8006EB40(listWin);
+        LoadStringIntoWindow(listWin, (void*)D_801002E0_MinigameHouse, -1, -1);
+        while (func_8006FCC0(listWin) != 0) {
+            HuPrcVSleep();
+        }
+    order_next:
+        n++;
+        if (n < rows) {
+            goto order;
+        }
+    order_done:
+        if (D_800C5720 == 1 || D_800C5720 == 2) {
+            func_800FA600_MinigameHouse(NULL);
+            if (D_800C5722 & 0x10) {
+                func_800F6970_MinigameHouse(9);
+                HuPrcSleep(0xA);
+                func_8006DD60(D_80100634_MinigameHouse)->unk_14 = 0xA2;
+            }
+            if (func_800FC410_MinigameHouse() == 0) {
+                goto start;
+            }
+            if (D_800C5722 & 0x10) {
+                LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x66, -1, -1);
+                for (i = 0x20; i < 0x100; i += 0x20) {
+                    D_80100618_MinigameHouse->rot.z = (i * 90.0f) / 256.0f + 270.0f;
+                    HuPrcVSleep();
+                }
+                func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+                func_800F6970_MinigameHouse(3);
+                HuPrcSleep(0xF);
+                func_8006DD60(D_80100634_MinigameHouse)->unk_14 = 0x82;
+            resume:
+                func_800FA470_MinigameHouse(NULL);
+                goto mode;
+            }
+            func_800F9FF4_MinigameHouse(D_80100634_MinigameHouse, sel, buf);
+            LoadStringIntoWindow(D_80100634_MinigameHouse, buf, -1, -1);
+            for (i = 0x20; i < 0x100; i += 0x20) {
+                D_80100618_MinigameHouse->rot.z = (i * 90.0f) / 256.0f + 270.0f;
+                HuPrcVSleep();
+            }
+            func_800258EC(D_80100618_MinigameHouse->model[0], 4, 4);
+            func_800FA470_MinigameHouse(NULL);
+            goto reorder;
+        }
+        for (i = 0; i < 4; i++) {
+            GwPlayer[i].group = i;
+        }
+        D_8010055C_MinigameHouse = func_80059C28();
+        if (func_80059CE8((void*)0x4B, D_8010055C_MinigameHouse) != 0) {
+            goto close;
+        }
+        func_80070D90(D_8010055C_MinigameHouse);
+        HuPrcVSleep();
+        func_8006DD60(D_80100634_MinigameHouse)->unk_6E = 0;
+        if (D_800C5722 & 0x10) {
+            goto mode;
+        }
+    reorder:
+        func_80070D90(listWin);
+        listWin = func_8006D010(0x18, 0x28, 0x81, rows * 14 + 6, 0, 0);
+        func_8006E070(listWin, 0);
+        n = rows - 1;
+        func_800FCEFC_MinigameHouse(listWin, n);
+        goto order;
+    }
+close:
+    func_80070D90(D_8010055C_MinigameHouse);
+start:
+    func_80070D90(D_80100634_MinigameHouse);
+    if (!(D_800C5722 & 0x10)) {
+        func_80070D90(listWin);
+    }
+    D_800C5721 = (D_800C5722 & 0xF) * 2 + 2;
+    if (D_800C5722 & 0x20) {
+        GwSystem.minigameExplanation = 1;
+    } else {
+        GwSystem.minigameExplanation = 0;
+    }
+    if (D_800C5722 & 0x40) {
+        SetBoardFeatureFlag(0x29);
+    } else {
+        ClearBoardFeatureFlag(0x29);
+    }
+    func_80043460();
+    for (i = 0; i < 4; i++) {
+        GwPlayer[i].stars = 0;
+        GwPlayer[i].coins_mg = 0;
+        GwPlayer[i].coins = 0;
+    }
+    for (i = 0; i < 6; i++) {
+        func_800258EC(D_80100568_MinigameHouse[i]->model[0], 4, 4);
+        D_80100568_MinigameHouse[i]->work[0] = 0;
+    }
+    func_800F6970_MinigameHouse(4);
+    HuPrcSleep(0x1E);
+    win = func_8006D010(0x70, 0x28, 0x60, 0x14, 0, 0);
+    func_8006E070(win, 0);
+    sprintf(num, D_801002BC_MinigameHouse, (D_800C5722 & 0xF) * 2 + 1);
+    func_8006DA5C(win, num, 0);
+    str = func_8005B7E8(0x67);
+    sprintf(buf, D_801002D4_MinigameHouse, str);
+    func_8005B838(str);
+    buf[10] = 0;
+    LoadStringIntoWindow(win, buf, -1, -1);
+    while (func_8006FCC0(win) != 0) {
+        HuPrcVSleep();
+    }
+next:
+    func_800FC110_MinigameHouse();
+    if (--D_800C5721 == 0) {
+        if (!(D_800C5722 & 0x80)) {
+            count = func_800FAD28_MinigameHouse(ids, 0x50);
+            switch (count) {
+            case 1:
+                mes = GMesCreate(4, ids[0]);
+                break;
+            case 2:
+                mes = GMesCreate(0xF, ids[0], ids[1]);
+                break;
+            case 3:
+                mes = GMesCreate(0x13, ids[0], ids[1], ids[2]);
+                break;
+            default:
+                mes = GMesCreate(0x11);
+                break;
+            }
+            for (i = 0; i < count; i++) {
+                D_80100638_MinigameHouse[i]->flags &= ~2;
+                snd = PlaySound((s16)(ids[i] + 0x426));
+
+                while (func_800115C8(snd) != 0) {
+                    HuPrcVSleep();
+                }
+            }
+            if (count != 0) {
+                PlaySound(0x41F);
+            }
+            GMesMaxWaitSet(0x78);
+            while (GMesWait() != 0) {
+                HuPrcVSleep();
+            }
+            for (i = 0; i < count; i++) {
+                func_80042B10(D_80100638_MinigameHouse[i]);
+            }
+            func_800760E4(mes);
+            func_80072724(0, 0, 0);
+            func_800726AC(1, 0x14);
+            func_800601D4(0x3C);
+            while (func_80072718() != 0) {
+                HuPrcVSleep();
+            }
+            func_800F6970_MinigameHouse(2);
+            HuPrcSleep(0x14);
+            func_80060128(7);
+            SetFadeInTypeAndTime(0xFF, 0xA);
+            while (func_80072718() != 0) {
+                HuPrcVSleep();
+            }
+        }
+        if (func_8005949C(GwSystem.unk_1E) == 0) {
+            func_800FD078_MinigameHouse();
+        }
+        if (_CheckFlag(0x38) != 0 && _CheckFlag(0x39) != 0 && func_8005949C(0x35) == 0) {
+            if (D_800C5722 & 0x80) {
+                func_800F6970_MinigameHouse(2);
+                HuPrcSleep(0x14);
+            }
+            func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[1], 0, 0xA, 2);
+            D_8010055C_MinigameHouse = func_80059C28();
+            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)0x84, -1, -1);
+            while (func_8006FCC0(D_8010055C_MinigameHouse) != 0) {
+                HuPrcVSleep();
+            }
+            func_80059B74(0x35);
+            func_80070D90(D_8010055C_MinigameHouse);
+        }
+        func_800258EC(D_8010061C_MinigameHouse->model[1], 4, 4);
+        func_800FB238_MinigameHouse();
+        func_800F6970_MinigameHouse(3);
+        for (i = 0; i < 4; i++) {
+            D_80100648_MinigameHouse[i] = GwPlayer[i].character;
+            D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[0] = 2;
+            D_80100568_MinigameHouse[D_80100648_MinigameHouse[i]]->work[2] = i;
+        }
+        func_800FA2E4_MinigameHouse();
+        HuPrcSleep(0x1E);
+        w = func_8006DD60(D_80100634_MinigameHouse);
+        func_80066DC4(w->unk_44, 0, 0x140, w->unk_16);
+        LoadStringIntoWindow(D_80100634_MinigameHouse, (void*)0x5D, -1, -1);
+        while (func_8006FCC0(D_80100634_MinigameHouse) != 0) {
+            HuPrcVSleep();
+        }
+        func_8006752C(w->unk_44, 1, 0);
+    again:
+        func_800FA470_MinigameHouse(NULL);
+        goto rules2;
+
+    }
+    if (D_800C5722 & 0x10) {
+        func_800434E4();
+        func_8004501C(D_800C5720);
+        while (GwSystem.unk_1E == -1) {
+            HuPrcVSleep();
+        }
+        func_80043544();
+    } else {
+        func_80059348(D_800C5728[(D_800C5722 & 0xF) * 2 - (n = D_800C5721 - 1)] - 1);
+
+
+    }
+    switch (GwSystem.unk_1E) {
+    case 0x1C:
+    case 0x34:
+        for (i = 0; i < 4; i++) {
+            GwPlayer[i].coins += 5;
+        }
+        break;
+    case 0x23:
+        for (i = 0; i < 4; i++) {
+            if (GwPlayer[i].group != 0) {
+                GwPlayer[i].coins += 45;
+            } else {
+                GwPlayer[i].coins += 35;
+            }
+        }
+        break;
+    case 0x11:
+        for (i = 0; i < 4; i++) {
+            if (GwPlayer[i].group != 0) {
+                GwPlayer[i].coins += 5;
+            }
+        }
+        break;
+    case 0x10:
+        for (i = 0; i < 4; i++) {
+            if (GwPlayer[i].group == 0) {
+                GwPlayer[i].coins += 20;
+            }
+        }
+        break;
+    case 0x1F:
+    case 0x32:
+    case 0x33:
+        for (i = 0; i < 4; i++) {
+            GwPlayer[i].coins += 15;
+        }
+        break;
+    }
+    func_800F7218_MinigameHouse(GwSystem.unk_1E);
+    func_800258EC(D_8010061C_MinigameHouse->model[1], 4, 0);
+    func_80066DC4(font.unk_14[GMesFontCreate(&font, "PRESS ANY BUTTON", 0, -1, -1)], 0, 0xA0, 0xC4);
+    while (!(func_80059CB8() & 0xD000)) {
+        HuPrcVSleep();
+    }
+    D_80100014_MinigameHouse = 1;
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FD2D0_MinigameHouse);
+#endif
