@@ -2,6 +2,13 @@
 
 extern omObjData* D_800F2AF8[];
 
+typedef struct GrabBagGroundWork {
+    char unk_00[4];
+    s8 unk_04;
+    s8 unk_05;
+    char unk_06[0x26];
+} GrabBagGroundWork;
+
 void func_800F738C_GrabBag(omObjData*);
 void func_800F7470_GrabBag(omObjData*);
 
@@ -18,7 +25,18 @@ void func_800F7260_GrabBag(void) {
     omAddObj(1, 2, 0, -1, func_800F7470_GrabBag);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184450", func_800F72E8_GrabBag);
+void func_800F72E8_GrabBag(omObjData* arg0) {
+    GrabBagGroundWork* work;
+
+    work = func_80023684(sizeof(GrabBagGroundWork), 0x7918);
+    arg0->unk_50 = work;
+    func_8009B770(work, 0, sizeof(GrabBagGroundWork));
+    work->unk_04 = 1;
+    work->unk_05 = 1;
+    arg0->model[0] = -1;
+    arg0->func_ptr = NULL;
+    func_80009028(arg0, 0, -475.0f, -2000.0f, 475.0f, 2000.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184450", func_800F738C_GrabBag);
 
