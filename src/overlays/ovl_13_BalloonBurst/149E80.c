@@ -25,7 +25,16 @@ INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FB00
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F65E0_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6BAC_BalloonBurst);
+void func_800F6BAC_BalloonBurst(f32 zoom, f32 rotX, f32 rotY, f32 rotZ, f32 centerX, f32 centerY, f32 centerZ) {
+    func_800178A0(1);
+    CZoom = zoom;
+    CRot.x = rotX;
+    CRot.y = rotY;
+    CRot.z = rotZ;
+    Center.x = centerX;
+    Center.y = centerY;
+    Center.z = centerZ;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6C44_BalloonBurst);
 
