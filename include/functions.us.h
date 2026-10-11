@@ -215,7 +215,7 @@ void func_80070D90(s16);
 s16 func_8006D010(s16, s16, s16, s16, s32, s16);
 void func_800F86EC(void);
 void func_80027C1C(s16, f32, f32, s32, s32);
-void func_8005AF60(void);
+s32 func_8005AF60(void);
 void func_80026B8C(s16, f32, f32, s32);
 void func_80059348(s16);
 s32 omOvlCallEx(s32 arg0, s16 arg1, u16 arg2);
