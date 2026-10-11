@@ -2,6 +2,12 @@
 
 #include "engine/esprite.h"
 
+extern Vec3f D_801001E4_MinigameHouse[6];
+extern Vec3f D_8010022C_MinigameHouse[4];
+extern s32 D_8010025C_MinigameHouse;
+extern s32 D_80100648_MinigameHouse[4];
+
+
 void func_80059B74(s16);
 s32 func_800FAF5C_MinigameHouse(s16);
 s32 func_800FB108_MinigameHouse(s16);
@@ -1375,12 +1381,60 @@ cancel:
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FB2DC_MinigameHouse);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FB7E0_MinigameHouse);
+void func_800FB7E0_MinigameHouse(omObjData* obj) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FB96C_MinigameHouse);
+    if (obj->work[0] != 0) {
+        if ((obj->scale.z *= 1.5f) > 0.08f) {
+            obj->scale.z = 0.08f;
+        }
+        if ((obj->trans.y += 0.5f) > 78.0f) {
+            obj->trans.y = 78.0f;
+        }
+        func_80025EB4(obj->model[0], 1, 2);
+    } else {
+        i = obj->work[1];
+        obj->trans.x = D_801001E4_MinigameHouse[i].x;
+        obj->trans.y = 75.1f;
+        obj->trans.z = D_801001E4_MinigameHouse[i].z;
+        obj->scale.z = 0.005f;
+        func_80025EB4(obj->model[0], 1, 1);
+    }
+    if (obj->work[0] == 2) {
+        i = obj->work[2];
+        obj->trans.x = (D_8010022C_MinigameHouse[i].x - obj->trans.x) / 10.0f + obj->trans.x;
+        obj->trans.z = (D_8010022C_MinigameHouse[i].z - obj->trans.z) / 10.0f + obj->trans.z;
+    }
+}
+void func_800FB96C_MinigameHouse(omObjData* obj) {
+    obj->model[0] = LoadFormFile(D_800C59AC[D_8010025C_MinigameHouse].unk_00 | D_800C59AC[D_8010025C_MinigameHouse].unk_04, 0x202B9);
+    obj->trans.x = D_801001E4_MinigameHouse[D_8010025C_MinigameHouse].x;
+    obj->trans.y = D_801001E4_MinigameHouse[D_8010025C_MinigameHouse].y;
+    obj->trans.z = D_801001E4_MinigameHouse[D_8010025C_MinigameHouse].z;
+    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800258EC(obj->model[0], 4, 4);
+    obj->scale.z = 0.005f;
+    obj->scale.x = obj->scale.y = 0.08f;
+    obj->rot.x = 270.0f;
+    obj->rot.y = obj->rot.z = 0.0f;
+    obj->work[0] = 0;
+    obj->work[1] = (u8)D_8010025C_MinigameHouse;
+    obj->func_ptr = &func_800FB7E0_MinigameHouse;
+    D_8010025C_MinigameHouse++;
+}
+s32 func_800FBAC0_MinigameHouse(s32 idx) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FBAC0_MinigameHouse);
-
+    for (i = 0; i < 4; i++) {
+        if ((i == idx) | (i == -1)) {
+            continue;
+        }
+        if (D_80100648_MinigameHouse[i] == D_80100648_MinigameHouse[idx]) {
+            return 0;
+        }
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FBB28_MinigameHouse);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FBFA4_MinigameHouse);
