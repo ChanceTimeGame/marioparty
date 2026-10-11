@@ -2,6 +2,8 @@
 
 void func_800F6DB8_BalloonBurst(omObjData *, s32, s32);
 
+extern Gfx **D_800FB0F8_BalloonBurst[];
+
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFAC_BalloonBurst);
@@ -66,7 +68,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F8D6
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F9368_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F94E0_BalloonBurst);
+void func_800F94E0_BalloonBurst(s16 arg0, s16 arg1) {
+    D_800F2B7C[arg0].unk_6C->unk_00 = D_800FB0F8_BalloonBurst[arg1];
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F9520_BalloonBurst);
 
