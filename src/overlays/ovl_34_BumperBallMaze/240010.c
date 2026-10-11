@@ -3,6 +3,14 @@
 extern s16 D_800F3778;
 extern omObjData* D_800FB1C8_BumperBallMaze;
 
+typedef struct BumperBallMazeCameraWork {
+    u16 frames;
+    u16 pad_02;
+    f32 zoomStep;
+    Vec3f rotStep;
+    Vec3f centerStep;
+} BumperBallMazeCameraWork;
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F96B0_BumperBallMaze);
 
 void func_800F9768_BumperBallMaze(void) {
@@ -12,7 +20,20 @@ void func_800F9768_BumperBallMaze(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F97B4_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F9890_BumperBallMaze);
+void func_800F9890_BumperBallMaze(omObjData* object) {
+    BumperBallMazeCameraWork* work = object->unk_50;
+
+    CZoom += work->zoomStep;
+    CRot.x += work->rotStep.x;
+    CRot.y += work->rotStep.y;
+    CRot.z += work->rotStep.z;
+    Center.x += work->centerStep.x;
+    Center.y += work->centerStep.y;
+    Center.z += work->centerStep.z;
+    if (--work->frames == 0) {
+        object->func_ptr = NULL;
+    }
+}
 
 void func_800F993C_BumperBallMaze(void) {
     s32 i;
