@@ -19,9 +19,9 @@ typedef struct ResMain {
 /* one player */
 typedef struct PlayerRes {
     /* 0x00 */ s8 index;
-    /* 0x01 */ u8 rank;
+    /* 0x01 */ s8 rank;
     /* 0x02 */ u16 flags;
-    /* 0x04 */ s16 unk_04;
+    /* 0x04 */ s8 unk_04;   /* the jump finished */
     /* 0x06 */ s16 coins;   /* before the minigame */
     /* 0x08 */ s16 coinsMg; /* won in it (clamped) */
     /* 0x0A */ s16 total;
@@ -109,7 +109,7 @@ extern ResMain* D_800FB244_MinigameStadiumMinigameResultsScreen;
 extern PlayerRes* D_800FB248_MinigameStadiumMinigameResultsScreen[4];
 extern u16 D_800FB258_MinigameStadiumMinigameResultsScreen;
 extern PlayerRes* D_800FB260_MinigameStadiumMinigameResultsScreen[4];
-extern u8 D_800FB270_MinigameStadiumMinigameResultsScreen;
+extern u32 D_800FB270_MinigameStadiumMinigameResultsScreen;
 extern s16 D_800FB280_MinigameStadiumMinigameResultsScreen;
 extern s16 D_800FB282_MinigameStadiumMinigameResultsScreen;
 extern s16 D_800FB284_MinigameStadiumMinigameResultsScreen;
@@ -122,7 +122,7 @@ extern s32 D_800FB298_MinigameStadiumMinigameResultsScreen;
 extern s8 D_800FB29C_MinigameStadiumMinigameResultsScreen;
 extern s16 D_800FB29E_MinigameStadiumMinigameResultsScreen;
 extern s8 D_800FB2A0_MinigameStadiumMinigameResultsScreen;
-extern u8 D_800FB2A1_MinigameStadiumMinigameResultsScreen;
+extern s8 D_800FB2A1_MinigameStadiumMinigameResultsScreen;
 extern s16 D_800FB2A2_MinigameStadiumMinigameResultsScreen;
 extern s32 D_800FB2A4_MinigameStadiumMinigameResultsScreen;
 
@@ -179,7 +179,7 @@ void func_800FA020_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800FA1C0_MinigameStadiumMinigameResultsScreen(PlayerRes* res, ColWork* col);
 void func_800FA35C_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
-void func_800FAD74_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
+void func_800FAD74_MinigameStadiumMinigameResultsScreen(PlayerRes* unused);
 void func_800FADE8_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800FAE64_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800FAEE0_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
