@@ -25,8 +25,11 @@ extern omObjData* D_800FAE14_BumperBallMaze;
 extern u16 D_800FACC0_BumperBallMaze;
 extern s16 D_800FADF6_BumperBallMaze;
 extern u16 D_800FADF8_BumperBallMaze;
+extern s32 D_800FAB00_BumperBallMaze[];
 
 void func_800FA620_BumperBallMaze(void);
+void func_800F9990_BumperBallMaze(void);
+void func_800F6C28_BumperBallMaze(void);
 void func_800F9974_BumperBallMaze(s32);
 void func_800F6C7C_BumperBallMaze(s32);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
@@ -39,7 +42,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F69F4_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6BB8_BumperBallMaze);
+void func_800F6BB8_BumperBallMaze(omObjData* object) {
+    object->model[0] = LoadFormFile(D_800FAB00_BumperBallMaze[D_800FADF8_BumperBallMaze], 0x289);
+    object->model[1] = LoadFormFile(0x380003, 0x48D);
+    func_800F9990_BumperBallMaze();
+    object->func_ptr = func_800F6C28_BumperBallMaze;
+}
 
 void func_800F6C28_BumperBallMaze(void) {
     func_800FA620_BumperBallMaze();
