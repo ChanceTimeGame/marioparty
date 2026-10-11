@@ -12,13 +12,33 @@ typedef struct UnkList53 {
 extern UnkList53* D_800D8390;
 extern u16 D_800D8394;
 
+/* The board camera's scissor (D_800C54C0) insets a black frame for TV overscan, and the
+   functions below animate it as a vertical wipe. In host widescreen the 3D view is wider than
+   4:3 and the inset became side bars: map the family onto the full screen (x 0..320, y 12..228
+   to 0..240) so the wipe still runs and the frame is gone. 4:3 keeps retail's frame. */
+#ifdef TARGET_PC
+static void BoardScissorSet(void) {
+    Vec4f v = D_800C54C0;
+    if (pb_widescreen()) {
+        v.x = 0.0f;
+        v.z = 320.0f;
+        v.y = (v.y - 12.0f) * (120.0f / 108.0f);
+        v.w = 240.0f - (228.0f - v.w) * (120.0f / 108.0f);
+    }
+    func_8001D4D4(0, &v);
+}
+#define BOARD_SCISSOR_SET() BoardScissorSet()
+#else
+#define BOARD_SCISSOR_SET() func_8001D4D4(0, &D_800C54C0)
+#endif
+
 
 void func_80053080(void) {
     D_800C54C0.x = 16.0f;
     D_800C54C0.y = 12.0f;
     D_800C54C0.z = 304.0f;
     D_800C54C0.w = 228.0f;
-    func_8001D4D4(0, &D_800C54C0);
+    BOARD_SCISSOR_SET();
 }
 
 void func_800530E4(void) {
@@ -26,7 +46,7 @@ void func_800530E4(void) {
     D_800C54C0.y = 120.0f;
     D_800C54C0.z = 304.0f;
     D_800C54C0.w = 120.0f;
-    func_8001D4D4(0, &D_800C54C0);
+    BOARD_SCISSOR_SET();
 }
 
 void func_8005313C(void) {
@@ -38,7 +58,7 @@ void func_8005313C(void) {
         HuPrcVSleep();
         D_800C54C0.y += 12.0f;
         D_800C54C0.w -= 12.0f;
-        func_8001D4D4(0, &D_800C54C0);
+        BOARD_SCISSOR_SET();
     }
     EndProcess(NULL);
 }
@@ -56,7 +76,7 @@ void func_80053214(void) {
         HuPrcVSleep();
         D_800C54C0.y -= 12.0f;
         D_800C54C0.w += 12.0f;
-        func_8001D4D4(0, &D_800C54C0);
+        BOARD_SCISSOR_SET();
     }
     EndProcess(NULL);
 }
