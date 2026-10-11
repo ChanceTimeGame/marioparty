@@ -380,3 +380,6 @@ D_800FA1E4_HotBobOmb = D_800FA1C8_HotBobOmb + 0x1C;
 D_800FB584_WhackAPlant = D_800FB580_WhackAPlant + 0x4;
 D_800FA93A_TeeteringTowers = D_800FA938_TeeteringTowers + 0x2;
 D_800FADDC_TeeteringTowers = D_800FADD4_TeeteringTowers + 0x8;
+D_800FFEFC_MinigameHouse = D_800FFEC0_MinigameHouse + 0x3C;
+D_800FFF00_MinigameHouse = D_800FFEC0_MinigameHouse + 0x40;
+D_801001C8_MinigameHouse = D_801001C4_MinigameHouse + 0x4;
