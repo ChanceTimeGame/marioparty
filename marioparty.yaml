@@ -2578,7 +2578,9 @@ segments:
       - [0x303E70, c]
       - [0x306290, c]
       - [0x306BA0, c]
-      - [0x308890, data, 303E70]
+      - [0x308890, .data, 303E70]
+      - [0x308960, data, 306290]
+      - [0x308970, data, 306BA0]
       - [0x3089A0, .rodata, 303E70]
       - {0x308A50, type: bss, vram: 0x800FB1C0, name: ovl_7B_bss}
   - type: code
