@@ -1,5 +1,12 @@
 #include "CastAways.h"
 
+typedef struct CastAwaysItemSet {
+    char unk_00[4];
+    u16 count;
+    char unk_06[0x60];
+    u8 slots[3][8];
+} CastAwaysItemSet;
+
 void func_800F65E0_CastAways(void) {
     s32 i;
     void* filePtr;
@@ -130,7 +137,19 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F7308_C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F73AC_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F75BC_CastAways);
+s32 func_800F75BC_CastAways(CastAwaysItemSet* arg0, s32 arg1) {
+    s32 slotIndex;
+    s32 pad[1]; // Original function has an otherwise-unused 8-byte stack frame.
+
+    for (slotIndex = 0; slotIndex < arg0->count; slotIndex++) {
+        u8* slots = (u8*)(((arg1 & 0xFF) * 8) + (PB_UPTR32)arg0 + 0x66);
+        if (slots[slotIndex] == 0) {
+            slots[slotIndex] = 1;
+            return (s16)slotIndex;
+        }
+    }
+    return -1;
+}
 
 void func_800F761C_CastAways(omObjData* arg0) {
     func_800F73AC_CastAways(arg0, 0);
