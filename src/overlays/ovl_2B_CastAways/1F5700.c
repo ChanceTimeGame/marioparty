@@ -10,6 +10,18 @@ typedef struct CastAwaysLureWork {
     f32 unk_08;
 } CastAwaysLureWork;
 
+typedef struct CastAwaysSpriteData {
+    s16 model;
+    s8 unk_02;
+    s8 unk_03;
+    s8 unk_04;
+    char unk_05[3];
+    void* buffersA[8];
+    void* buffersB[8];
+} CastAwaysSpriteData;
+
+void func_80023888(void*);
+
 void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);
     CZoom = arg1;
@@ -26,7 +38,19 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FAFF0_C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB0C8_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB374_CastAways);
+void func_800FB374_CastAways(CastAwaysSpriteData* arg0) {
+    s16 i = 0;
+
+    func_8002456C(arg0->model);
+    if (D_800F37DA != 0) {
+        do {
+            func_80023888(arg0->buffersA[i]);
+            func_80023888(arg0->buffersB[i]);
+            i++;
+        } while (i < D_800F37DA);
+    }
+    func_80023888(arg0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB404_CastAways);
 
