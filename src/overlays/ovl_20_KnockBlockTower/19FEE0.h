@@ -194,7 +194,7 @@ void func_800F9EA0_KnockBlockTower(omObjData*);
 void func_800FA010_KnockBlockTower(omObjData*);
 void func_800FA0C4_KnockBlockTower(omObjData*);
 void func_800FA560_KnockBlockTower(omObjData*);
-void func_800FA5F4_KnockBlockTower(omObjData* obj, s32 arg1, s32 arg2, u8 player, Vec3f* pos);
+void func_800FA5F4_KnockBlockTower(omObjData* obj, s32 arg1, s32 arg2, u16 player, Vec3f* pos);
 void func_800FA92C_KnockBlockTower(omObjData*);
 /* 1A42B0 */
 void func_800FA9B0_KnockBlockTower(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16 rows, f32 sx, f32 sy);
