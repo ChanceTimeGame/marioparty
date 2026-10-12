@@ -64,12 +64,12 @@ typedef struct GrabBagPlayerWork {
     /* 0xE0 */ char unk_E0[4];
     /* 0xE4 */ void* unk_E4;
     /* 0xE8 */ s8 unk_E8; /* -1: CPU player */
-    /* 0xE9 */ u8 unk_E9;
+    /* 0xE9 */ s8 unk_E9;
     /* 0xEA */ s8 unk_EA;
     /* 0xEB */ u8 unk_EB;
     /* 0xEC */ u8 unk_EC;
     /* 0xED */ u8 unk_ED;
-    /* 0xEE */ u8 button_press_count;
+    /* 0xEE */ s8 button_press_count;
     /* 0xEF */ u8 unk_EF;
     /* 0xF0 */ u8 unk_F0;
     /* 0xF1 */ u8 unk_F1;

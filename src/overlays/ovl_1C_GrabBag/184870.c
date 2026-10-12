@@ -1,5 +1,8 @@
 #include "GrabBag.h"
 
+f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+
+
 extern s32 D_800FB290_GrabBag;
 
 
@@ -160,10 +163,91 @@ void func_800F97E8_GrabBag(omObjData* arg0, omObjData* arg1) {
     func_800B1750((temp_f12 * temp_f12) + (temp_f2 * temp_f2) + (temp_f4 * temp_f4));
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F98A4_GrabBag);
+f32 func_800F98A4_GrabBag(omObjData* arg0) {
+    f32 targetX;
+    f32 targetZ;
+    f32 angle;
+    f32 diff;
+    GrabBagPlayerWork* self;
+    u8 best;
+    s32 i;
+    omObjData* obj;
+    GrabBagPlayerWork* work;
 
+    targetZ = 0.0f;
+    targetX = 0.0f;
+    self = GB_PLAYER(arg0);
+    best = 0;
+    for (i = 0; i < 4; i++) {
+        obj = D_800F3FB0[i];
+        work = GB_PLAYER(obj);
+        if (arg0 == obj) {
+            continue;
+        }
+        if (work->unk_E9 != 0) {
+            continue;
+        }
+        if (best < work->items_taken) {
+            best = work->items_taken;
+            targetX = obj->trans.x - func_800AEAC0(work->angle) * 60.0f;
+            targetZ = obj->trans.z - func_800AEFD0(work->angle) * 60.0f;
+        }
+    }
+    angle = func_800FA780_GrabBag(self->angle, targetX - arg0->trans.x, targetZ - arg0->trans.z, 15.0f);
+    diff = angle - work->angle;
+    if (diff > 150.0f) {
+        if (diff < 210.0f) {
+            angle += 45.0f;
+        }
+    }
+    return angle;
+}
+// register allocation: float temporaries (masked 0)
+#ifdef NON_MATCHING
+f32 func_800F9A1C_GrabBag(omObjData* arg0) {
+    f32 targetZ;
+    f32 targetX;
+    f32 best;
+    f32 dist;
+    f32 dz;
+    f32 dx;
+    f32 angle;
+    f32 diff;
+    GrabBagPlayerWork* self;
+    s32 i;
+    omObjData* obj;
+    GrabBagPlayerWork* work;
+
+    targetZ = 0.0f;
+    targetX = 0.0f;
+    self = GB_PLAYER(arg0);
+    best = 128000.0f;
+    for (i = 0; i < 4; i++) {
+        obj = D_800F3FB0[i];
+        work = GB_PLAYER(obj);
+        if (arg0 != obj && work->unk_E9 == 0) {
+            dx = arg0->trans.x - obj->trans.x;
+            dz = arg0->trans.z - obj->trans.z;
+            dist = dx * dx + dz * dz;
+            if (dist < best) {
+                best = dist;
+                targetX = obj->trans.x - func_800AEAC0(work->angle) * 60.0f;
+                targetZ = obj->trans.z - func_800AEFD0(work->angle) * 60.0f;
+            }
+        }
+    }
+    angle = func_800FA780_GrabBag(self->angle, targetX - arg0->trans.x, targetZ - arg0->trans.z, 15.0f);
+    diff = angle - work->angle;
+    if (diff > 150.0f) {
+        if (diff < 210.0f) {
+            angle += 45.0f;
+        }
+    }
+    return -angle;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9A1C_GrabBag);
-
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9BC4_GrabBag);
 
 void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
@@ -195,8 +279,52 @@ void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA184_GrabBag);
+// control flow: GCC if-converts the ±1 returns (masked 39)
+#ifdef NON_MATCHING
+s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
+    GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
 
+    work0 = GB_PLAYER(arg0);
+    work1 = GB_PLAYER(arg1);
+    if (work1->items_taken <= 0) {
+        return -1;
+    }
+    if (work0->unk_E8 == -1) {
+        if (GwPlayer[work0->player].cpu_difficulty == 0) {
+            if (rand8() >> 6) {
+                return -1;
+            }
+            return 1;
+        }
+        if (GwPlayer[work0->player].cpu_difficulty == 1) {
+            if (rand8() >> 7) {
+                return -1;
+            }
+            return 1;
+        }
+        if (GwPlayer[work0->player].cpu_difficulty == 2) {
+            if ((u32)(rand8() * 5) >> 7 < 8) {
+                return 1;
+            }
+            return -1;
+        }
+        if (GwPlayer[work0->player].cpu_difficulty == 3) {
+            if ((rand8() * 255) >> 8 < 0xFE) {
+                return 1;
+            }
+            return -1;
+        }
+    }
+    /* Retail returns 1 either way. */
+    if (work0->button_press_count < work1->button_press_count) {
+        return 1;
+    }
+    return 1;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA184_GrabBag);
+#endif
 // register allocation: bag/model-table base registers (masked 6)
 #ifdef NON_MATCHING
 u8 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
@@ -234,8 +362,34 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA424_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA658_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA780_GrabBag);
+// float register allocation at the shared return (masked 3)
+#ifdef NON_MATCHING
+f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
+    f32 target;
+    f32 diff;
 
+    target = func_800B0CD8(arg1, arg2);
+    diff = target - arg0;
+    if ((-arg3 < diff) & (diff < arg3)) {
+        return target;
+    }
+    if (diff <= -180.0f) {
+        return arg0 + arg3;
+    }
+    if ((diff <= 180.0f) & (diff >= 0.0f)) {
+        return arg0 + arg3;
+    }
+    if (diff > 180.0f) {
+        return arg0 - arg3;
+    }
+    if ((diff > -180.0f) & (diff < 0.0f)) {
+        return arg0 - arg3;
+    }
+    return target;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA780_GrabBag);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA8F4_GrabBag);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAC0C_GrabBag);
