@@ -53,6 +53,14 @@ typedef struct BalloonBurstObjectWork {
     char unk_04[8];
     f32 unk_0C;
     f32 unk_10;
+    char unk_14[2];
+    u16 unk_16;
+    u16 unk_18;
+    u16 unk_1A;
+    u16 unk_1C;
+    u16 unk_1E;
+    u16 unk_20;
+    u16 unk_22;
 } BalloonBurstObjectWork;
 
 extern BalloonBurstPlayer D_800FB120_BalloonBurst[];
@@ -254,4 +262,61 @@ void func_800FA9C4_BalloonBurst(f32 arg0, Vec3f *arg1) {
     arg1->y = func_800AEAC0(angle) * 50.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800FAA6C_BalloonBurst);
+void func_800FAA6C_BalloonBurst(omObjData *arg0, u16 *arg1, s16 *arg2) {
+    u16 temp_v1;
+    u16 temp_v1_2;
+    u16 temp_v1_3;
+    u16 var_v0;
+    BalloonBurstObjectWork *temp_s0;
+
+    temp_s0 = arg0->unk_50;
+    *arg1 = 0;
+    *arg2 = 0;
+    if (temp_s0->unk_1E == 0) {
+        temp_s0->unk_1E = temp_s0->unk_16 + ((s32)(rand8() & 0xFF) % (s32)temp_s0->unk_18);
+    }
+    temp_v1 = temp_s0->unk_1C;
+    if (temp_v1 & 4) {
+        if (temp_s0->unk_22 == 0) {
+            temp_s0->unk_1C = temp_v1 & 0xFFFB;
+            return;
+        }
+        temp_s0->unk_22--;
+        return;
+    }
+    if ((temp_s0->unk_20 < temp_s0->unk_1E) && !(temp_s0->unk_1C & 1)) {
+        *arg1 |= 0x2000;
+        temp_s0->unk_1C |= 2;
+        var_v0 = temp_s0->unk_20 + 1;
+        goto block_20;
+    }
+    if (temp_s0->unk_20 == temp_s0->unk_1E) {
+        temp_v1_2 = temp_s0->unk_1C;
+        if (temp_v1_2 & 2) {
+            temp_s0->unk_1C = (temp_v1_2 & 0xFFFD) | 1;
+            goto block_15;
+        }
+    }
+    if (temp_s0->unk_20 == 0) {
+        temp_v1_3 = temp_s0->unk_1C;
+        if (temp_v1_3 & 1) {
+            temp_s0->unk_1C = temp_v1_3 & 0xFFFE;
+            temp_s0->unk_1E = temp_s0->unk_16 + ((s32)(rand8() & 0xFF) % (s32)temp_s0->unk_18);
+block_15:
+            if (temp_s0->unk_1A >= 2U) {
+                temp_s0->unk_22 = (s32)(rand8() & 0xFF) % (s32)temp_s0->unk_1A;
+                temp_s0->unk_1C |= 4;
+            }
+        } else if (temp_s0->unk_20 != 0) {
+            goto block_18;
+        }
+    } else {
+block_18:
+        if (temp_s0->unk_1C & 1) {
+            *arg1 |= 0x8000;
+            var_v0 = temp_s0->unk_20 - 1;
+block_20:
+            temp_s0->unk_20 = var_v0;
+        }
+    }
+}
