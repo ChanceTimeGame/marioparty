@@ -58,7 +58,11 @@ void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
 void func_800F8280_FlowerShower(omObjData*);
 void func_800F870C_FlowerShower(Matrix4f, Vec3f*, omObjData*);
 void func_800F898C_FlowerShower(omObjData*, u16*);
+void func_800F6A90_FlowerShower(omObjData*);
+void func_800F90AC_FlowerShower(omObjData*);
+void func_800F95F4_FlowerShower(omObjData*);
 void func_800F9ACC_FlowerShower(omObjData*);
+void func_800FA178_FlowerShower(omObjData*);
 void func_800FA2B0_FlowerShower(omObjData*, f32);
 void func_800FA4EC_FlowerShower(omObjData*);
 
@@ -69,12 +73,14 @@ extern u16 ContBtn[];
 extern s8 ContStkY[];
 extern omObjData* D_800EDE70[];
 extern u16 D_800EE984;
+extern omObjData* D_800F2AF8[];
 extern f32 D_800B8964;
 extern f32 D_800B8984;
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
 extern s32 D_800FAD64_FlowerShower;
 extern s32 D_800FAD4C_FlowerShower;
+extern s32 D_800FAD5C_FlowerShower;
 extern s32 D_800FAD60_FlowerShower;
 extern f32 D_800FAD50_FlowerShower[];
 
@@ -333,7 +339,118 @@ void func_800F8234_FlowerShower(omObjData* arg0) {
     *func_800F7A28_FlowerShower(arg0, 0x23, 2.0f, 180.0f, 0, 0xB4, 5, 8)->unk_68 = 7;
 }
 
+// register allocation (masked 5)
+#ifdef NON_MATCHING
+void func_800F8280_FlowerShower(omObjData* arg0) {
+    f32 temp_f0;
+    f32 temp_f0_2;
+    omObjData* temp_a0;
+    s32 count;
+    s32 var_a1;
+    s32 var_a1_2;
+    s32 controller;
+    s32 saved_stick_x;
+    s32 saved_stick_y;
+    s32 stick_x;
+    volatile s32 pad[4]; /* retail reserves 16 otherwise-unused stack bytes */
+    u8 temp_v0;
+    u16* button_trg;
+    u16 saved_button;
+    u16 saved_button_trg;
+    FlowerShowerBodyWork* temp_s1;
+
+    temp_s1 = arg0->unk_50;
+    controller = temp_s1->unk_56;
+    temp_v0 = ((volatile u8*)ContStkX)[controller];
+    saved_stick_x = (s8)temp_v0;
+    temp_v0 = ((volatile u8*)ContStkY)[controller];
+    saved_stick_y = (s8)temp_v0;
+    saved_button = ContBtn[controller];
+    saved_button_trg = ContBtnTrg[controller];
+    if (D_800FAD5C_FlowerShower < 90) {
+        temp_f0 = Center.y * 0.97f;
+        Center.y = temp_f0;
+        if (temp_f0 < 110.0f) {
+            Center.y = 110.0f;
+        }
+        temp_f0_2 = CZoom * 1.02f;
+        CZoom = temp_f0_2;
+        if (temp_f0_2 > 2256.0f) {
+            CZoom = 2256.0f;
+        }
+    } else if (D_800FAD5C_FlowerShower == 90) {
+        D_800ED430 = 1;
+    } else if (D_800FAD5C_FlowerShower >= 91) {
+        ContBtn[controller] = 0;
+        ContStkY[controller] = 0;
+        ContStkX[controller] = 0;
+        button_trg = &ContBtnTrg[controller];
+        *button_trg &= 0x1000;
+        if (D_800FAD5C_FlowerShower >= 171) {
+            stick_x = -48;
+            if (D_800FAD5C_FlowerShower >= 271) {
+                if (D_800FAD5C_FlowerShower >= 311) {
+                    ContStkX[controller] = 30;
+                    ContStkY[controller] = -18;
+                } else {
+                    stick_x = 46;
+                    if (D_800FAD5C_FlowerShower >= 291) {
+                        stick_x = 36;
+                    }
+                    goto set_stick_x;
+                }
+            } else {
+set_stick_x:
+                ContStkX[controller] = stick_x;
+            }
+            if (D_800FAD5C_FlowerShower == 240) {
+                func_80060128(0x1D);
+            }
+        }
+        func_80005A28(arg0);
+        if (D_800FAD5C_FlowerShower == 320) {
+            D_800F2AF8[0]->func_ptr = func_800F6A90_FlowerShower;
+            arg0->func_ptr = func_800F90AC_FlowerShower;
+            arg0->rot.y = 0.0f;
+            temp_s1->unk_3C = 0.0f;
+            func_80009E20(arg0);
+            count = D_800EE984;
+            if (count > 0) {
+                var_a1 = 0;
+                do {
+                    temp_a0 = D_800EDE70[var_a1];
+                    var_a1++;
+                    temp_a0->func_ptr = func_800FA178_FlowerShower;
+                } while (var_a1 < count);
+            }
+            var_a1_2 = 0;
+            count = D_800F2BC0;
+            if (count > 0) {
+                do {
+                    temp_a0 = D_800F3FB0[var_a1_2];
+                    temp_s1 = temp_a0->unk_50;
+                    if (GwPlayer[temp_s1->unk_58].group != 0) {
+                        temp_a0->func_ptr = func_800F95F4_FlowerShower;
+                    }
+                    var_a1_2++;
+                } while (var_a1_2 < (s32)D_800F2BC0);
+            }
+            func_8000942C();
+        }
+    }
+    D_800FAD5C_FlowerShower += 2;
+    if (D_800F5144 == 1) {
+        omOvlReturnEx(1);
+        func_800601D4(0x28);
+    }
+    ContStkX[controller] = saved_stick_x;
+    ContStkY[controller] = saved_stick_y;
+    ContBtn[controller] = saved_button;
+    ContBtnTrg[controller] = saved_button_trg;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F8280_FlowerShower);
+#endif
 
 void func_800F8620_FlowerShower(void) {
     GMesCreate(8, 0x1E, 0xA0, 0x18);
