@@ -765,7 +765,6 @@ void func_800F8FDC_CrazyCutter(CrazyCutterPlayer* st, s16* cur) {
         }
     }
 }
-#ifdef NON_MATCHING
 void func_800F90E4_CrazyCutter(omObjData* obj) {
     s32 motions[3] = { 0x16, 0x17, 0x18 };
     s32 sprites[3] = { 0x13, 0x14, 0x15 };
@@ -781,8 +780,8 @@ void func_800F90E4_CrazyCutter(omObjData* obj) {
             func_800FAACC_CrazyCutter(st->player, 2, 0);
         }
         if (D_800FD554_CrazyCutter == 0) {
-            count = 0;
             if (func_800FAAB0_CrazyCutter(st->player, 4) != 0) {
+                count = 0;
                 for (i = 0; i < 4; i++) {
                     count += func_800FAAB0_CrazyCutter(i, 0x80);
                 }
@@ -830,13 +829,6 @@ void func_800F90E4_CrazyCutter(omObjData* obj) {
         omDelObj(obj);
     }
 }
-#else
-/* GCC cannot see the previous INCLUDE_ASM switch to .text */
-__asm__(".section .rodata");
-const s32 D_800FD06C_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x16, 0x17, 0x18 };
-const s32 D_800FD078_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x13, 0x14, 0x15 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F90E4_CrazyCutter);
-#endif
 void func_800F94C0_CrazyCutter(omObjData* arg0) {
     func_800F731C_CrazyCutter(arg0, 0);
 }
@@ -1098,7 +1090,6 @@ __asm__(".section .rodata");
 const s32 D_800FD0C8_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x10, 0x11, 0x12 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F9D98_CrazyCutter);
 #endif
-#ifdef NON_MATCHING
 s32 func_800FA38C_CrazyCutter(s32 player) {
     s32 sprites[3] = { 0xC, 0xD, 0xE };
     s8 sprite;
@@ -1118,7 +1109,7 @@ s32 func_800FA38C_CrazyCutter(s32 player) {
     D_800FD13C_CrazyCutter = 0;
     for (y = 0; y < D_800FD49C_CrazyCutter; y++) {
         for (x = 0; x < D_800FD498_CrazyCutter; x++) {
-            if (D_800FD4A0_CrazyCutter[player][y * D_800FD498_CrazyCutter + x] != 0) {
+            if (*(D_800FD4A0_CrazyCutter[player] + y * D_800FD498_CrazyCutter + x) != 0) {
                 D_800FD13C_CrazyCutter++;
             }
         }
@@ -1126,12 +1117,6 @@ s32 func_800FA38C_CrazyCutter(s32 player) {
     func_80064D38(grp);
     return D_800FD13C_CrazyCutter;
 }
-#else
-/* GCC cannot see the previous INCLUDE_ASM switch to .text */
-__asm__(".section .rodata");
-const s32 D_800FD0D4_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0xC, 0xD, 0xE };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FA38C_CrazyCutter);
-#endif
 void func_800FA56C_CrazyCutter(omObjData* obj) {
     s32 i;
     s32 total;
