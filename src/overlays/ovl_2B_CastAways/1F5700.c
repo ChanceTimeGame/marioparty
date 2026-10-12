@@ -25,8 +25,27 @@ typedef struct CastAwaysPlayerWork {
     s16 unk_140;
 } CastAwaysPlayerWork;
 
+typedef struct CastAwaysCameraView {
+    f32 rot;
+    f32 x;
+    f32 z;
+    f32 fov;
+    f32 far;
+    f32 near;
+} CastAwaysCameraView;
+
+typedef struct CastAwaysCameraViewFromX {
+    f32 x;
+    f32 z;
+    f32 fov;
+    f32 far;
+    f32 near;
+} CastAwaysCameraViewFromX;
+
 void func_80023888(void*);
 void func_80020CC4(void*);
+extern CastAwaysCameraView D_800EE738;
+extern CastAwaysCameraViewFromX D_800EE73C;
 
 void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);
@@ -129,4 +148,26 @@ f32 func_800FB858_CastAways(omObjData* arg0) {
     return result;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB884_CastAways);
+void func_800FB884_CastAways(void) {
+#ifdef TARGET_PC
+    f32* view = &D_800EE738.x;
+
+    view[0] = 0.0f;
+    view[1] = 900.0f;
+    view[-1] = 0.0f;
+    D_800C3110->unk_40 = 45.0f;
+    view[2] = 45.0f;
+    view[3] = 20000.0f;
+    view[4] = 10000.0f;
+#else
+    D_800EE73C.x = 0.0f;
+    D_800EE73C.z = 900.0f;
+    ((f32*)&D_800EE73C)[-1] = 0.0f;
+    D_800C3110->unk_40 = 45.0f;
+    D_800EE73C.fov = 45.0f;
+    D_800EE73C.far = 20000.0f;
+    D_800EE73C.near = 10000.0f;
+#endif
+    func_8001D420(0, &D_800FBB80_ovl2B, &D_800FBB70_ovl2B, D_800FBB9C_ovl2B);
+    func_8001D57C(0);
+}
