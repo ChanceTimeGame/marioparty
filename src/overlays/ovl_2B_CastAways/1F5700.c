@@ -60,7 +60,7 @@ CastAwaysSpriteData* func_800FAFF0_CastAways(s8 arg0, s8 arg1, s8 arg2) {
     if (D_800F37DA != 0) {
         do {
             data->buffersA[i] = func_80023668(0x150);
-            data->buffersB[i] = func_80023668(0x150);
+            data->buffersB[i] = func_80023668(0x2A * sizeof(Gfx)); /* 0x150 on N64; host Gfx is 16 bytes */
             i++;
         } while (i < D_800F37DA);
     }
