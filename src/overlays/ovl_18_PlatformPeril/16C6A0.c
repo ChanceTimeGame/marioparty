@@ -332,7 +332,7 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
     obj->trans.z = D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].pos.z;
     obj->func_ptr = D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].func;
     obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
-    obj->model[1] = -1;
+    obj->model[0] = -1;
     D_800FE1D8_PlatformPeril[D_800FE1D4_PlatformPeril++] = obj;
     w = obj->unk_50 = func_80023684(sizeof(PPPlatWork), 0x7918);
     func_8009B770(w, 0, sizeof(PPPlatWork));
