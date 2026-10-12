@@ -32,7 +32,7 @@ void func_800F9768_BumperBallMaze(void) {
     D_800FB1C8_BumperBallMaze->unk_50 = func_80023684(0x20, 0x7918);
 }
 
-void func_800F97B4_BumperBallMaze(s16 frames, f32 zoom, f32 rotX, f32 rotY, f32 rotZ,
+void func_800F97B4_BumperBallMaze(u16 frames, f32 zoom, f32 rotX, f32 rotY, f32 rotZ,
                                  f32 centerX, f32 centerY, f32 centerZ) {
     BumperBallMazeCameraWork* work = D_800FB1C8_BumperBallMaze->unk_50;
     f32 duration;

@@ -81,13 +81,24 @@ typedef struct BumperBallMazeCameraPreset {
 } BumperBallMazeCameraPreset;
 
 extern BumperBallMazeCameraPreset D_800FAB5C_BumperBallMaze[];
+extern BumperBallMazeCameraPreset D_800FABBC_BumperBallMaze[];
+/* Intro countdowns (.data word 0x0004002D): D_800FACB8 delays the music, the halfword after it
+   (D_800FACBA, an undefined_syms.txt alias for retail's separate %lo(D_800FACB8+2) accesses) is
+   the frames until the start message. */
+extern u16 D_800FACB8_BumperBallMaze;
+#ifdef TARGET_PC
+#define D_800FACBA_BumperBallMaze (((u16*) &D_800FACB8_BumperBallMaze)[1])
+#else
+extern u16 D_800FACBA_BumperBallMaze;
+#endif
+extern u16 D_800FACBC_BumperBallMaze;
 extern u8 D_800FAD28_BumperBallMaze[];
 extern s16 D_800FADFC_BumperBallMaze;
 extern s16 D_800FADFE_BumperBallMaze;
 extern s16 D_800FAE00_BumperBallMaze;
 extern s16 D_800FAE02_BumperBallMaze;
 extern omObjData* D_800FAE04_BumperBallMaze;
-extern s16 D_800FB1C4_BumperBallMaze;
+extern u16 D_800FB1C4_BumperBallMaze;
 extern s8 ContStkY[];
 extern u16 D_800FAB3C_BumperBallMaze[];
 extern u16 D_800FADFA_BumperBallMaze;
@@ -121,6 +132,7 @@ void func_800594E4(s16, u16);
 void func_8001897C(s16, f32, f32, f32);
 void func_800F96B0_BumperBallMaze(f32, f32, f32, f32, f32, f32, f32, f32);
 void func_800F9768_BumperBallMaze(void);
+void func_800F97B4_BumperBallMaze(u16, f32, f32, f32, f32, f32, f32, f32);
 void func_800F6994_BumperBallMaze(omObjData*);
 void func_800F6BB8_BumperBallMaze(omObjData*);
 void func_800F6C44_BumperBallMaze(s32);
@@ -649,7 +661,42 @@ void func_800F8220_BumperBallMaze(omObjData* object) {
              0.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F827C_BumperBallMaze);
+void func_800F827C_BumperBallMaze(omObjData* object) {
+    BumperBallMazeCameraPreset* cam;
+
+    switch (D_800FB1C4_BumperBallMaze) {
+    case 0:
+        D_800FACBA_BumperBallMaze = D_800FACBA_BumperBallMaze - 1;
+        D_800FB1C4_BumperBallMaze = 1;
+        break;
+    case 1:
+        if (D_800FACB8_BumperBallMaze != 0) {
+            if (--D_800FACB8_BumperBallMaze == 0) {
+                func_80060128(0x26);
+            }
+        }
+        if (D_800FACBC_BumperBallMaze != 0) {
+            if (--D_800FACBC_BumperBallMaze == 0) {
+                cam = &D_800FABBC_BumperBallMaze[D_800FADF8_BumperBallMaze];
+                func_800F97B4_BumperBallMaze(cam->cameraValue, cam->zoom, cam->rot.x, cam->rot.y, cam->rot.z,
+                                             cam->center.x, cam->center.y, cam->center.z);
+            }
+        }
+        if (--D_800FACBA_BumperBallMaze == 0) {
+            GMesCreate(0xD);
+            D_800FB1C4_BumperBallMaze = 2;
+        }
+        break;
+    case 2:
+        if (GMesStatAllGet() == 0) {
+            D_800FB1C0_BumperBallMaze = 1;
+            omDelObj(object);
+            D_800FAE08_BumperBallMaze = NULL;
+            D_800FAE14_BumperBallMaze->work[0] = 1;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8468_BumperBallMaze);
 
