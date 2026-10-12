@@ -1,7 +1,10 @@
 #include "GrabBag.h"
 
-extern s16 D_800FB0D0_GrabBag;
-extern s32 D_800FB0D4_GrabBag[4];
+extern u8 D_800FB0E4_GrabBag[16]; /* start slot of each player, 4 per layout (D_800FB254) */
+void func_800F7EDC_GrabBag(omObjData*, u32, s32, u16, u16);
+void func_800F8484_GrabBag(omObjData*);
+
+
 
 
 extern u8 D_800FB0C0_GrabBag;
@@ -19,6 +22,8 @@ void func_80018E0C(u16, s16);
 
 
 extern u16 D_800B89A4[][14];
+extern s16 D_800FB0D0_GrabBag;
+extern s32 D_800FB0D4_GrabBag[4];
 extern s32 D_800FB104_GrabBag[4];
 extern f32 D_800FB250_GrabBag;
 extern s32 D_800FB254_GrabBag;
@@ -77,9 +82,135 @@ void func_800F7680_GrabBag(void) {
     omAddObj(2, 0, 0, -1, func_800FA8F4_GrabBag);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F776C_GrabBag);
+void func_800F776C_GrabBag(omObjData* arg0) {
+    s32 dir;
+    s8 chr;
+    s32 file;
+    s32 flags;
 
-void func_800F7EDC_GrabBag(omObjData* arg0, u32 dir, s32 file, s8 player, u16 flags) {
+    arg0->trans.x = D_800FB0E4_GrabBag[D_800FB254_GrabBag * 4 + D_800FB0D0_GrabBag] * 256.0f + 450.0f;
+    arg0->trans.y = 0.0f;
+    arg0->trans.z = -450.0f - D_800FB0E4_GrabBag[D_800FB254_GrabBag * 4 + D_800FB0D0_GrabBag] * 256.0f;
+    chr = GwPlayer[D_800FB0D4_GrabBag[D_800FB0D0_GrabBag]].character;
+    dir = D_800C59AC[chr].unk_00;
+    file = D_800C59AC[chr].unk_04;
+    func_800F7EDC_GrabBag(arg0, dir, file, D_800FB0D4_GrabBag[D_800FB0D0_GrabBag], 0x2D9);
+    arg0->model[3] = LoadFormFile(0x19, 0x2CD);
+    arg0->model[4] = LoadFormFile(0x1A, 0x2CD);
+    arg0->model[6] = LoadFormFile(0x1B, 0x2CD);
+    arg0->model[5] = LoadFormFile(0x1C, 0x2CD);
+    arg0->model[7] = LoadFormFile(0x1E, 0x2CD);
+    arg0->model[8] = LoadFormFile(0x1D, 0x2CD);
+    flags = 0x2D9;
+    switch ((u32)dir >> 16) {
+    case 1:
+        arg0->model[9] = LoadFormFile(0x2F0000, (u16)flags);
+        arg0->model[10] = LoadFormFile(0x2F0001, flags | 4);
+        break;
+    case 2:
+        arg0->model[9] = LoadFormFile(0x2F0002, (u16)flags);
+        arg0->model[10] = LoadFormFile(0x2F0003, flags | 4);
+        break;
+    case 6:
+        arg0->model[9] = LoadFormFile(0x2F0004, (u16)flags);
+        arg0->model[10] = LoadFormFile(0x2F0005, flags | 4);
+        break;
+    case 3:
+        arg0->model[9] = LoadFormFile(0x2F0006, (u16)flags);
+        arg0->model[10] = LoadFormFile(0x2F0007, flags | 4);
+        break;
+    case 4:
+        arg0->model[9] = LoadFormFile(0x2F0008, (u16)flags);
+        arg0->model[10] = LoadFormFile(0x2F0009, flags | 4);
+        break;
+    case 5:
+        arg0->model[9] = LoadFormFile(0x2F000A, (u16)flags);
+        arg0->model[10] = LoadFormFile(0x2F000B, flags | 4);
+        break;
+    }
+    func_80026040(arg0->model[9]);
+    func_800258EC(arg0->model[9], 0x4000, 0x4000);
+    func_800258EC(arg0->model[10], 0x4000, 0x4000);
+    switch ((u32)dir >> 16) {
+    case 1:
+        func_8002859C(arg0->model[9], arg0->model[0], "karada_2_1_1_1");
+        func_8002859C(arg0->model[10], arg0->model[0], "karada_2_1_1_1");
+        break;
+    case 2:
+        func_8002859C(arg0->model[9], arg0->model[0], "Luigi1-karada_1_2_1");
+        func_8002859C(arg0->model[10], arg0->model[0], "Luigi1-karada_1_2_1");
+        break;
+    case 6:
+        func_8002859C(arg0->model[9], arg0->model[0], "C002_000b-cone7_1_1_1_1");
+        func_8002859C(arg0->model[10], arg0->model[0], "C002_000b-cone7_1_1_1_1");
+        break;
+    case 3:
+        func_8002859C(arg0->model[9], arg0->model[0], "c003_000-yoshi_body_2");
+        func_8002859C(arg0->model[10], arg0->model[0], "c003_000-yoshi_body_2");
+        break;
+    case 4:
+        func_8002859C(arg0->model[9], arg0->model[0], "Luigi1-karada_2_1_1");
+        func_8002859C(arg0->model[10], arg0->model[0], "Luigi1-karada_2_1_1");
+        break;
+    case 5:
+        func_8002859C(arg0->model[9], arg0->model[0], "c005_000-cyl1_1_3");
+        func_8002859C(arg0->model[10], arg0->model[0], "c005_000-cyl1_1_3");
+        break;
+    }
+    arg0->func_ptr = func_800F8484_GrabBag;
+    func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_800257E4(arg0->model[0], arg0->rot.x, arg0->rot.y, arg0->rot.z);
+    func_80025830(arg0->model[0], arg0->scale.x, arg0->scale.y, arg0->scale.z);
+    func_800090C4(arg0, 0, 2);
+    func_800090C4(arg0, 1, 2);
+    func_800187D0(arg0, 0, dir, 1, 0);
+    func_800187D0(arg0, 1, dir | 1, 1, 0);
+    func_800187D0(arg0, 2, dir | 3, 1, 0);
+    func_800187D0(arg0, 5, dir | 4, 0, 0);
+    func_800187D0(arg0, 6, dir | 5, 1, 0x13);
+    func_800187D0(arg0, 0x11, dir | 0x18, 0, 0);
+    func_800187D0(arg0, 0x15, dir | 0x62, 0, 0);
+    func_8001874C(arg0, 3, dir | 0x60, 1, 0);
+    func_8001874C(arg0, 4, dir | 0x61, 1, 0);
+    func_8001874C(arg0, 0x1E, dir | 0x63, 0, 0);
+    func_8001874C(arg0, 0x1F, dir | 0x64, 0, 0);
+    func_8001874C(arg0, 0x20, dir | 0x67, 0, 0);
+    if ((rand8() >> 7) == 0) {
+        func_800187D0(arg0, 0xD, dir | 0xF, 1, 0x78);
+    } else {
+        func_800187D0(arg0, 0xD, dir | 0x38, 1, 0x78);
+    }
+    func_800187D0(arg0, 0xE, dir | 0x10, 1, 0x78);
+    switch ((u32)dir >> 16) {
+    case 1:
+        func_800187D0(arg0, 9, dir | 0x32, 0, 0);
+        func_800187D0(arg0, 0xC, dir | 0x3E, 0, 0);
+        break;
+    case 2:
+        func_800187D0(arg0, 9, dir | 0x3B, 0, 0);
+        func_800187D0(arg0, 0xC, dir | 0x3F, 0, 0);
+        break;
+    case 6:
+        func_800187D0(arg0, 9, dir | 0x32, 0, 0);
+        func_800187D0(arg0, 0xC, dir | 0x3E, 0, 0);
+        break;
+    case 3:
+        func_800187D0(arg0, 9, dir | 0x3A, 0, 0);
+        func_800187D0(arg0, 0xC, dir | 0x3E, 0, 0);
+        break;
+    case 4:
+    case 5:
+        func_800187D0(arg0, 9, dir | 0x32, 0, 0);
+        func_800187D0(arg0, 0xC, dir | 0x3F, 0, 0);
+        break;
+    }
+    func_800187D0(arg0, 0x17, dir | 0x78, 1, 0);
+    func_800187D0(arg0, 0x1D, dir | 0x55, 1, 0);
+    func_800184BC(arg0, 0);
+    D_800FB0D0_GrabBag++;
+}
+void func_800F7EDC_GrabBag(omObjData* arg0, u32 dir, s32 file, u16 player, u16 flags) {
     GrabBagPlayerWork* work;
     s32 i;
     s16 coins;

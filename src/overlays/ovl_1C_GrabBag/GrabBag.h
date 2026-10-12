@@ -133,3 +133,5 @@ void func_80008FA0(omObjData* obj, f32 arg1);
 void func_80008FDC(omObjData* obj, f32 arg1);
 void func_80008FE8(omObjData* obj, f32 arg1);
 void func_800370D4(s16);
+void func_8002859C(s16 arg0, s16 arg1, char* arg2);
+void func_800090C4(omObjData* obj, u8 idx, u8 val);
