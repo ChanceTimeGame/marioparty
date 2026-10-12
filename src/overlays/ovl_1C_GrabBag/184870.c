@@ -1,5 +1,12 @@
 #include "GrabBag.h"
 
+void func_800F975C_GrabBag(GrabBagPlayerWork*, s32);
+void func_800F9BC4_GrabBag(omObjData*, omObjData*);
+void func_800F9DF0_GrabBag(omObjData*, omObjData*);
+void func_800F9ED0_GrabBag(omObjData*, omObjData*);
+void func_800FA658_GrabBag(omObjData*);
+
+
 extern u8 D_800FB0E4_GrabBag[16]; /* start slot of each player, 4 per layout (D_800FB254) */
 void func_800F7EDC_GrabBag(omObjData*, u32, s32, u16, u16);
 void func_800F8484_GrabBag(omObjData*);
@@ -543,8 +550,154 @@ void func_800F8BDC_GrabBag(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_GrabBag);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
+// register allocation (s7/s8, f22/f24); retail tests unk_EF == 1 through a set-compare (2 instructions, masked 26)
+#ifdef NON_MATCHING
+void func_800F903C_GrabBag(omObjData* arg0) {
+    GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
+    GrabBagPlayerWork* grabber;
+    GrabBagPlayerWork* grabbed;
+    omObjData* other;
+    s32 i;
+    f32 dist;
+    f32 diff;
+    f32 angle;
 
+    work0 = GB_PLAYER(arg0);
+    for (i = 0; i < 4; i++) {
+        other = D_800F3FB0[i];
+        work1 = GB_PLAYER(other);
+        if (work0 == work1) {
+            continue;
+        }
+        if (work0->unk_E8 == -1) {
+            ContBtnTrg[work0->port] &= 0x7FFF;
+            ContBtnTrg[work0->port] &= 0xFFDF;
+            dist = func_800F97E8_GrabBag(arg0, other);
+            diff = work0->angle - work1->angle;
+            if (dist < work1->radius + work1->radius_offset + 25.0f && arg0->trans.y <= 3.0f &&
+                other->trans.y <= 3.0f) {
+                if (diff < 0.0f) {
+                    if (-diff < 150.0f) {
+                        goto press;
+                    }
+                    goto release;
+                }
+                if (diff < 150.0f) {
+                press:
+                    ContBtnTrg[work0->port] |= 0x4000;
+                } else {
+                    goto release;
+                }
+            } else {
+            release:
+                ContBtnTrg[work0->port] &= 0xBFFF;
+            }
+        }
+        func_800F9BC4_GrabBag(arg0, other);
+        if (work0->unk_ED == 1) {
+            ContBtnTrg[work0->port] &= 0x7FFF;
+        }
+        if (work1->unk_ED == 1) {
+            ContBtnTrg[work1->port] &= 0x7FFF;
+        }
+        if (work0->unk_E9 == 1 && work1->unk_E9 == 2) {
+            grabber = work0;
+            grabbed = work1;
+            if (work1->unk_EF < 60 || work0->unk_EF < 60) {
+                func_800FA658_GrabBag(arg0);
+                func_800FA658_GrabBag(other);
+            }
+        } else if (work0->unk_E9 == 2 && work1->unk_E9 == 1) {
+            if (work0->unk_ED == 1 && work1->unk_ED == work0->unk_ED &&
+                (work0->unk_EF < 60 || work1->unk_EF < 60)) {
+                func_800FA658_GrabBag(arg0);
+                func_800FA658_GrabBag(other);
+            }
+            continue;
+        } else if (work0->unk_E8 == -1 && work0->unk_E9 == 0 && work1->unk_E9 == 0) {
+            if (work0->unk_FE > 60) {
+                angle = func_800F9A1C_GrabBag(arg0);
+            } else {
+                angle = func_800F98A4_GrabBag(arg0);
+            }
+            if (256.0f < func_800F97E8_GrabBag(arg0, other)) {
+                ContStkX[work0->port] = func_800AEAC0(angle) * 60.0f;
+                ContStkY[work0->port] = -func_800AEFD0(angle) * 60.0f;
+            } else {
+                ContStkX[work0->port] = func_800AEAC0(angle) * 32.0f;
+                ContStkY[work0->port] = -func_800AEFD0(angle) * 32.0f;
+            }
+            continue;
+        } else {
+            continue;
+        }
+        if (work0->unk_EF == work1->unk_EF && work0->unk_ED == 1 && work1->unk_ED == work0->unk_ED &&
+            work0->unk_EA == work1->player) {
+            if (grabbed->unk_EF < 60 || grabber->unk_EF < 60) {
+                func_800FA658_GrabBag(arg0);
+                func_800FA658_GrabBag(other);
+            }
+            if ((grabber->unk_EF < 30 || grabbed->unk_EF < 30) && (u8)(grabber->unk_EF % 10) == 0) {
+                if (grabber == work0) {
+                    func_80060F04(work0->player, 2, 3, 10);
+                } else if (grabber == work1) {
+                    func_80060F04(work1->player, 2, 3, 10);
+                }
+            }
+            if (work0->unk_EF == 1) {
+                if (grabber == work0) {
+                    work0->speed = 0.0f;
+                    func_80025798(arg0->model[0], arg0->trans.x, 3.0f, arg0->trans.z);
+                    func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+                    func_800184BC(arg0, 0x17);
+                    func_80017DB0(arg0);
+                }
+                if (grabbed == work1) {
+                    work1->speed = 0.0f;
+                    /* Retail places the grabber's model here again, not the other player's. */
+                    func_80025798(arg0->model[0], arg0->trans.x, 3.0f, arg0->trans.z);
+                    func_80025798(other->model[1], other->trans.x, other->trans.y, other->trans.z);
+                    func_800184BC(other, 0x1D);
+                    func_80017DB0(other);
+                }
+                func_80017C0C(arg0, 7, (arg0->trans.x + other->trans.x) / 2.0f, arg0->trans.y,
+                              (arg0->trans.z + other->trans.z) / 2.0f, 0.0f, 0.0f);
+                func_8006035C(PlaySound(0x297), 0x7F);
+            }
+            if (work0->unk_EF != 0 && work1->unk_EF != 0) {
+                if (work0->unk_EF < 30) {
+                    func_800F9DF0_GrabBag(arg0, other);
+                }
+                if (grabbed->unk_EF == 30) {
+                    func_800F9ED0_GrabBag(arg0, other);
+                } else {
+                    func_800F975C_GrabBag(grabber, 0x4000);
+                    func_800F975C_GrabBag(grabbed, 0x4000);
+                }
+            }
+            if (grabbed->unk_EF >= 75 || grabber->unk_EF >= 75) {
+                grabber->unk_EF = grabbed->unk_EF = 0;
+                grabber->unk_ED = grabbed->unk_ED = 0;
+                grabber->unk_EB = grabbed->unk_EB = 0;
+                grabber->unk_EC = grabbed->unk_EC = 0;
+                work0->unk_EA = work1->unk_EA = -1;
+                work0->unk_50 &= ~0x200;
+                work1->unk_50 &= ~0x200;
+            } else {
+                work0->unk_EF++;
+                work1->unk_EF++;
+            }
+        }
+    }
+    func_80005A28(arg0);
+    if (arg0->trans.y < 3.0f) {
+        arg0->trans.y = 3.0f;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
+#endif
 void func_800F975C_GrabBag(GrabBagPlayerWork* arg0, s32 arg1) {
     s32 first_offset;
     s32 second_offset;
