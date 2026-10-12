@@ -616,7 +616,69 @@ done:
     return result;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA92C_FlowerShower);
+f32 func_800FA92C_FlowerShower(omObjData* arg0) {
+    Matrix4f matrix;
+    Vec3f pos;
+    FlowerShowerModelWork* model_work;
+    FlowerShowerBodyWork* body_work;
+    omObjData* obj;
+    f32 result = 0.0f;
+    f32 original_rot;
+    f32 dx;
+    f32 dz;
+    f32 distance;
+    f32 angle;
+    s16 i;
+    u8 team;
+
+    model_work = arg0->unk_50;
+    team = model_work->unk_05;
+    original_rot = arg0->rot.z;
+    i = 0;
+    if (D_800F2BC0 != 0) {
+        do {
+            obj = D_800F3FB0[i];
+            body_work = obj->unk_50;
+            if (body_work->unk_53 == team) {
+                pos.x = arg0->trans.x;
+                pos.y = 310.0f;
+                pos.z = arg0->trans.z;
+                func_800F870C_FlowerShower(matrix, &pos, arg0);
+                dx = pos.x - obj->trans.x;
+                dz = pos.z - obj->trans.z;
+                distance = func_800B1750(dx * dx + dz * dz);
+                if (distance != 0.0f) {
+                    angle = func_800B0CD8(obj->trans.x, -obj->trans.z);
+                    if (distance > 360.0f) {
+                        body_work->unk_38 = -D_800B8964 * 0.5f;
+                        body_work->unk_3C = func_800B0CD8(obj->trans.x, obj->trans.z);
+                        func_800184BC(obj, 6);
+                        body_work->unk_40 = D_800B8984;
+                        body_work->unk_50 |= 0x10;
+                    }
+                    if ((angle < 150.0f) & (angle > 30.0f)) {
+                        result += -distance / 400.0f;
+                        break;
+                    }
+                    if ((angle > -150.0f) & (angle < -30.0f)) {
+                        result += distance / 400.0f;
+                        break;
+                    }
+                }
+            }
+            i++;
+        } while (i < D_800F2BC0);
+    }
+    if ((fabs((f64)original_rot) > 20.0) & (result != 0.0f)) {
+        result = 0.0f;
+        goto done;
+    }
+    if ((original_rot != 0.0f) & (result == 0.0f)) {
+        result = -original_rot / 20.0f;
+    }
+done:
+    return result;
+}
 
 void func_800FACA0_FlowerShower(omObjData* arg0) {
     f32 temp_f0;
