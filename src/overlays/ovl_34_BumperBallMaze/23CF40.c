@@ -57,10 +57,6 @@ typedef struct BumperBallMazeFloorProbe {
     /* 0x38 */ Vec3f pos;
 } BumperBallMazeFloorProbe; /* size = 0x44 */
 
-typedef struct BumperBallMazeFallingWork {
-    char unk_00[0x44];
-    f32 angle;
-} BumperBallMazeFallingWork;
 
 extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
@@ -147,6 +143,9 @@ u16 func_800F8AFC_BumperBallMaze(BumperBallMazeFloorProbe*);
 void func_800F94A0_BumperBallMaze(omObjData*);
 void func_800F7BB8_BumperBallMaze(omObjData*);
 void func_800F7FE0_BumperBallMaze(omObjData*);
+void func_800F7ED0_BumperBallMaze(omObjData*);
+void func_800F7F60_BumperBallMaze(omObjData*);
+void func_80060F04(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
 f32 func_80025D18(s16);
@@ -534,17 +533,56 @@ void func_800F7240_BumperBallMaze(omObjData* object) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7240_BumperBallMaze);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7BB8_BumperBallMaze);
+void func_800F7BB8_BumperBallMaze(omObjData* object) {
+    BumperBallMazeBallWork* work = object->unk_50;
+    omObjData* obj;
+    s16 model;
+
+    if (D_800FB1C0_BumperBallMaze != 1) {
+        return;
+    }
+    object->trans.y += work->unk_28;
+    work->unk_28 = work->unk_28 - (fabs(work->unk_28 / 100.0f) + 5.0);
+    omSetTra(object, object->trans.x + work->unk_24, object->trans.y, object->trans.z + work->unk_2C);
+    func_80025798(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08,
+                  object->trans.z);
+    func_80025798(object->model[1], object->trans.x, 125.0f, object->trans.z);
+    func_800257E4(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    func_800F94A0_BumperBallMaze(object);
+    if (object->trans.y < -120.0f && work->unk_3E == 0) {
+        work->unk_3E = 1;
+        model = D_800ECDE0[object->model[4]].unk_00;
+        func_80025798(model, object->trans.x, 0.0f, object->trans.z + 90.0f);
+        func_80025830(model, 5.0f, 5.0f, 5.0f);
+        func_800258EC(model, 4, 0);
+        func_80060F04(work->player, 0x14, 0, 0x14);
+    }
+    if (object->trans.y < -180.0f) {
+        omSetTra(object, object->trans.x, -180.0f, object->trans.z);
+        model = D_800ECDE0[object->model[3]].unk_00;
+        func_80025798(model, object->trans.x, -60.0f, object->trans.z + 180.0f);
+        func_80025830(model, 10.0f, 10.0f, 10.0f);
+        func_800258EC(model, 4, 0);
+        obj = omAddObj(0x14, 1, 0, -1, func_800F7F60_BumperBallMaze);
+        obj->model[0] = object->model[2];
+        omSetTra(obj, object->trans.x, object->trans.y + -50.0f + work->unk_08, object->trans.z);
+        omSetRot(obj, work->unk_30, work->unk_34, work->unk_30);
+        work->unk_00 = 4;
+        work->unk_44 = 0.0f;
+        PlaySound(0x2A8);
+        object->func_ptr = func_800F7ED0_BumperBallMaze;
+    }
+}
 
 void func_800F7ED0_BumperBallMaze(omObjData* object) {
-    BumperBallMazeFallingWork* work = object->unk_50;
+    BumperBallMazeBallWork* work = object->unk_50;
 
     omSetTra(object, object->trans.x,
-             func_800AEAC0(work->angle) * 2.0f + object->trans.y,
+             func_800AEAC0(work->unk_44) * 2.0f + object->trans.y,
              object->trans.z);
-    work->angle += 8.0f;
-    if (work->angle >= 360.0f) {
-        work->angle -= 360.0f;
+    work->unk_44 += 8.0f;
+    if (work->unk_44 >= 360.0f) {
+        work->unk_44 -= 360.0f;
     }
 }
 
