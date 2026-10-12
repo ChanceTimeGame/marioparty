@@ -206,8 +206,26 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F867
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F8D6C_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F9368_BalloonBurst);
+void func_800F9368_BalloonBurst(f32 radius, Vec start, s16 count, f32 scale, Vec *out) {
+    f32 dy;
+    f32 dx;
+    f32 stepY;
+    f32 dx2;
+    f32 r2;
+    f32 t;
+    f32 len;
+    s16 i;
 
+    dy = (start.y - out->y) / count;
+    dx = (out->x - start.x) / count;
+    for (i = 1; i < count; i++) {
+        t = (dy * scale) * i;
+        len = func_800B1750(dx * dx + t * t + radius * radius);
+        out[i].x = (dx / len) * radius + out[i - 1].x;
+        out[i].y = (t / len) * radius + out[i - 1].y;
+        out[i].z = out[i - 1].z - (radius / len) * radius;
+    }
+}
 void func_800F94E0_BalloonBurst(s16 arg0, s16 arg1) {
     D_800F2B7C[arg0].unk_6C->unk_00 = D_800FB0F8_BalloonBurst[arg1];
 }
