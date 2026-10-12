@@ -92,6 +92,7 @@ extern s16 D_800FAE00_BumperBallMaze;
 extern s16 D_800FAE02_BumperBallMaze;
 extern omObjData* D_800FAE04_BumperBallMaze;
 extern s16 D_800FB1C4_BumperBallMaze;
+extern s8 ContStkY[];
 extern u16 D_800FAB3C_BumperBallMaze[];
 extern u16 D_800FADFA_BumperBallMaze;
 extern u16 D_800FB1C2_BumperBallMaze;
@@ -143,6 +144,9 @@ void func_8002AE24(s16, s32*, void*, void*);
 u16* func_8002B3A8(s32*);
 s32 func_800F8DFC_BumperBallMaze(s32, u16*, BumperBallMazeColVtx*, BumperBallMazeHitProbe*);
 u16 func_800F8AFC_BumperBallMaze(BumperBallMazeFloorProbe*);
+void func_800F94A0_BumperBallMaze(omObjData*);
+void func_800F7BB8_BumperBallMaze(omObjData*);
+void func_800F7FE0_BumperBallMaze(omObjData*);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
 f32 func_80025D18(s16);
@@ -379,7 +383,156 @@ void func_800F6C7C_BumperBallMaze(omObjData* object) {
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FAD28_BumperBallMaze);
 
+// float register allocation of the turn-step clamp (step kept apart from the 30.0f compare)
+#ifdef NON_MATCHING
+void func_800F7240_BumperBallMaze(omObjData* object) {
+    BumperBallMazeFloorProbe probe;
+    BumperBallMazeBallWork* work;
+    s8 stickX;
+    s8 stickY;
+    u8 port;
+    f32 diff;
+    f32 speed;
+    f32 dx;
+    f32 dz;
+    u16 misses;
+
+    work = object->unk_50;
+    if (D_800FB1C0_BumperBallMaze != 1) {
+        return;
+    }
+    port = GwPlayer[work->player].port;
+    stickX = ContStkX[port];
+    stickY = ContStkY[port];
+    if ((stickX != 0) | (stickY != 0)) {
+        diff = func_800B0CD8(stickX, -stickY);
+        if (diff < 0.0f) {
+            diff += 360.0f;
+        }
+        work->unk_14 = diff;
+    }
+    if (work->unk_0C != work->unk_14) {
+        diff = work->unk_14 - work->unk_0C;
+        if (diff < 0.0f) {
+            diff += 360.0f;
+        }
+        if (diff < 180.0f) {
+            work->unk_0C = (diff > 30.0f) ? work->unk_0C + 30.0f : diff + work->unk_0C;
+        } else {
+            f32 step;
+
+            if (360.0f - diff > 30.0f) {
+                step = 30.0f;
+            } else {
+                step = 360.0f - diff;
+            }
+            work->unk_0C = work->unk_0C - step;
+        }
+        if (work->unk_0C < 0.0f) {
+            work->unk_0C += 360.0f;
+        }
+        if (work->unk_0C >= 360.0f) {
+            work->unk_0C -= 360.0f;
+        }
+        omSetRot(object, object->rot.x, work->unk_0C, object->rot.z);
+        work->unk_34 = work->unk_0C;
+        func_800257E4(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    }
+    speed = func_800B1750(stickX * stickX + stickY * stickY) / 100.0f;
+    work->unk_24 = func_800AEAC0(work->unk_0C) * speed + work->unk_24;
+    work->unk_2C = func_800AEFD0(work->unk_0C) * speed + work->unk_2C;
+    work->unk_24 *= D_800FAE18_BumperBallMaze;
+    if (fabs(work->unk_24) < 0.01f) {
+        work->unk_24 = 0.0f;
+    }
+    work->unk_2C *= D_800FAE18_BumperBallMaze;
+    if (fabs(work->unk_2C) < 0.01f) {
+        work->unk_2C = 0.0f;
+    }
+    probe.pos.x = object->trans.x;
+    probe.pos.y = object->trans.y + -100.0f;
+    probe.pos.z = object->trans.z;
+    misses = func_800F8AFC_BumperBallMaze(&probe);
+    if (misses >= 6 && probe.centerHeight == -10000.0f) {
+        work->unk_00 = 3;
+        if (func_800B1750(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C) < 15.0f) {
+            diff = func_800B0CD8(object->trans.x, object->trans.z);
+            work->unk_24 = func_800AEAC0(diff) * 9.0f + work->unk_24;
+            work->unk_2C = func_800AEFD0(diff) * 9.0f + work->unk_2C;
+        }
+        work->unk_28 = -10.0f;
+        D_800FADF2_BumperBallMaze--;
+        func_800258EC(object->model[1], 4, 4);
+        func_80025C20(object->model[0], func_80025E48(object->motion[4]), 0, 0x1E, 2);
+        func_800F94A0_BumperBallMaze(object);
+        func_80060618(0x45F, (s16) work->player);
+        object->func_ptr = func_800F7BB8_BumperBallMaze;
+        return;
+    }
+    if (misses >= 6 && probe.centerHeight < object->trans.y + -100.0f) {
+        object->trans.y = object->trans.y - 10.0f;
+    } else if (probe.centerAttr == 0x1200) {
+        D_800FADF4_BumperBallMaze = 1;
+    }
+    if (object->trans.y + -100.0f < probe.centerHeight) {
+        object->trans.y = probe.centerHeight - -100.0f;
+    }
+    if (work->unk_2C != 0.0f || work->unk_24 != 0.0f) {
+        work->unk_30 = work->unk_30
+            - (f32) (func_800B1750(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C) / -50.0f
+                     / 3.141592653589793 * 180.0);
+        if (work->unk_30 >= 360.0f) {
+            work->unk_30 -= 360.0f;
+        }
+        if (work->unk_30 < 0.0f) {
+            work->unk_30 += 360.0f;
+        }
+    }
+    if (fabs(work->unk_2C) + fabs(work->unk_24) > 8.0) {
+        if (work->unk_00 != 2) {
+            work->unk_00 = 2;
+            func_80025C20(object->model[0], func_80025E48(object->motion[2]), 0, 0xA, 2);
+            func_80025EB4(object->model[0], 6, 6);
+        }
+    } else if (fabs(work->unk_2C) + fabs(work->unk_24) > 1.0 || ((stickX != 0) | (stickY != 0))) {
+        if (work->unk_00 != 1) {
+            work->unk_00 = 1;
+            func_80025C20(object->model[0], func_80025E48(object->motion[1]), 0, 0xA, 2);
+            func_80025EB4(object->model[0], 6, 6);
+        }
+    } else if (work->unk_00 == 1 || work->unk_00 == 2) {
+        work->unk_00 = 0;
+        func_80025C20(object->model[0], func_80025E48(object->motion[0]), 0, 0x1E, 2);
+    }
+    if (work->unk_3C == 0) {
+        if (fabs(work->unk_2C) + fabs(work->unk_24) > 8.0) {
+            func_800F7FE0_BumperBallMaze(object);
+            work->unk_3C = 3;
+        }
+    } else {
+        work->unk_3C--;
+    }
+    if (fabs(work->unk_14 - work->unk_10) > 90.0) {
+        dx = func_800AEAC0(work->unk_10) * 18.0f;
+        dz = func_800AEFD0(work->unk_10) * 18.0f;
+        func_800258EC(object->model[5], 4, 0);
+        func_80025798(object->model[5], dx + object->trans.x, 125.0f, dz + object->trans.z);
+        func_800257E4(object->model[5], object->rot.x, object->rot.y, 0.0f);
+        if (D_800F2B7C[object->model[5]].unk_6C->unk_B8 != NULL) {
+            D_800F2B7C[object->model[5]].unk_6C->unk_B8->unk_08 = 0;
+        }
+        func_80025CA8(object->model[5], 0.0f);
+    }
+    omSetTra(object, object->trans.x + work->unk_24, object->trans.y, object->trans.z + work->unk_2C);
+    func_80025798(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08,
+                  object->trans.z);
+    func_800257E4(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    func_80025798(object->model[1], object->trans.x, 125.0f, object->trans.z);
+    work->unk_10 = work->unk_0C;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7240_BumperBallMaze);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7BB8_BumperBallMaze);
 
