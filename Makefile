@@ -249,6 +249,8 @@ build/src/overlays/ovl_12_GroundPound/146B60.c.o: CFLAGS = -G0 -mips3 -mgp32 -mf
 build/src/overlays/ovl_12_GroundPound/148840.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_19 176130.c: nop between mul.s in func_800F99F4
 build/src/overlays/ovl_19_TeeteringTowers/176130.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_0E 12BC20.c: nop between mul.s in func_800F7444_FaceLift
+build/src/overlays/ovl_0E_FaceLift/12BC20.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_28 1D9690.c: nop between mul.s in func_800F9F60 and func_800F7720 (mul fix on)
 build/src/overlays/ovl_28_ShyGuySays/1D9690.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_6B 2CAA00.c: nop between mul.s in func_800F7274 (mul fix on)
@@ -370,12 +372,15 @@ $(BUILD_DIR)/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2721F0.c.o: $(B
 
 
 # ovl_0B 11C810.c too (func_800F7D1C: mul fix on, mul.s right after func_800AEAC0's return); own rule.
-$(BUILD_DIR)/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+# ovl_0E 12BC20.c: mul fix on, blank lines stripped (mul.s right after sinf/cosf's return in
+# func_800F9EE4_FaceLift); own rule so parallel branches do not edit a shared list.
+$(BUILD_DIR)/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o $(BUILD_DIR)/src/overlays/ovl_0E_FaceLift/12BC20.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
+
 # ovl_24 1BD640.c: keep the mul-fix nop between adjacent mul.s, but strip blank lines so the
 # assembler does not add extra hazard nops after calls.
 # ovl_1C 184870.c: mul fix on, with blank lines stripped so mul.s immediately after trig calls
