@@ -1265,7 +1265,7 @@ segments:
     bss_size: 0x20
     subsegments:
       - [0x1BD640, c]
-      - [0x1C1D90, data, 1BD640]
+      - [0x1C1D90, .data, 1BD640]
       - [0x1C1E30, .rodata, 1BD640]
       - {0x1C1EB0, type: bss, vram: 0x800FAE50, name: ovl_24_bss}
   - type: code

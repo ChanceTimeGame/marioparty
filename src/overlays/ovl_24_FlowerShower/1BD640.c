@@ -145,22 +145,24 @@ extern f32 D_800B8990;
 extern f32 D_800ED6B8;
 extern f32 D_800F5254;
 extern f32 D_800B8984;
-extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
-extern s32 D_800FAD64_FlowerShower;
-extern s32 D_800FAD30_FlowerShower;
-extern u32 D_800FAD34_FlowerShower;
-extern u32 D_800FAD38_FlowerShower;
-extern u32 D_800FAD3C_FlowerShower;
-extern s32 D_800FAD40_FlowerShower;
-extern s32 D_800FAD44_FlowerShower;
-extern s32 D_800FAD48_FlowerShower;
-extern s32 D_800FAD68_FlowerShower;
-extern Vec3f D_800FAD6C_FlowerShower[]; /* per-flower drift, indexed by *unk_68 */
-extern s32 D_800FAD4C_FlowerShower;
-extern s32 D_800FAD5C_FlowerShower;
-extern s32 D_800FAD60_FlowerShower;
-extern f32 D_800FAD50_FlowerShower[];
+
+/* .data (800FAD30), in address order */
+s32 D_800FAD30_FlowerShower = 0;
+u32 D_800FAD34_FlowerShower = 0;
+u32 D_800FAD38_FlowerShower = 0x744;
+u32 D_800FAD3C_FlowerShower = 0;
+s32 D_800FAD40_FlowerShower = 0;
+s32 D_800FAD44_FlowerShower = 0;
+s32 D_800FAD48_FlowerShower = 0;
+s32 D_800FAD4C_FlowerShower = 0;
+f32 D_800FAD50_FlowerShower[3] = { 30.0f, 120.0f, -60.0f };
+s32 D_800FAD5C_FlowerShower = 0;
+s32 D_800FAD60_FlowerShower = 0; /* splat's D_800FAD62 half has no users */
+s32 D_800FAD64_FlowerShower = 0;
+s32 D_800FAD68_FlowerShower = 0;
+Vec3f D_800FAD6C_FlowerShower[8] = { 0 }; /* per-flower drift, indexed by *unk_68 */
+f32 D_800FADCC_FlowerShower = 0.0f;
 
 void func_800F65E0_FlowerShower(void) {
     u8 cam;
