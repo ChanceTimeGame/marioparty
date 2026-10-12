@@ -1,6 +1,24 @@
 #include "MusicalMushroom.h"
 
-//800FB4D0 state of game (4 means players can move)
+/* .data (0x1216F0) */
+s32 D_800FB4C0_MusicalMushroom = 150; /* frames the bell waits for everyone to land */
+s32 D_800FB4C4_MusicalMushroom[3] = { 0, 0, 0 }; /* unreferenced */
+u32 D_800FB4D0_MusicalMushroom = 0; /* intro state */
+s32 D_800FB4D4_MusicalMushroom = 0; /* mushrooms fade in */
+u32 D_800FB4D8_MusicalMushroom = 0;
+u32 D_800FB4DC_MusicalMushroom = 121;
+u32 D_800FB4E0_MusicalMushroom = 0;
+s32 D_800FB4E4_MusicalMushroom = 0;
+u32 D_800FB4E8_MusicalMushroom = 929; /* timer, frames */
+s32 D_800FB4EC_MusicalMushroom = 0;
+s32 D_800FB4F0_MusicalMushroom = 0;
+u32 D_800FB4F4_MusicalMushroom = 0;
+s32 D_800FB4F8_MusicalMushroom = 150;
+s32 D_800FB4FC_MusicalMushroom = 0x80; /* shared model ids (s16 kept in a word); 0x80 until loaded */
+s32 D_800FB500_MusicalMushroom = 0x80;
+s32 D_800FB504_MusicalMushroom = 0x80;
+s32 D_800FB508_MusicalMushroom = 0x80;
+f32 D_800FB50C_MusicalMushroom[5] = { 0.0f, 90.0f, 180.0f, 270.0f, 0.0f }; /* player start angles */
 
 void func_800F65E0_MusicalMushroom(void) {
     u8 temp_s0;
@@ -227,7 +245,6 @@ void func_800F7508_MusicalMushroom(omObjData* arg0, f32* arg1) {
     *arg1 += 0.975f; //increment timer
 }
 
-extern u32 D_800FB4D0_MusicalMushroom;
 void func_800F75D8_MusicalMushroom(omObjData* arg0) { //matches but needs rodata support
     //line 1 was: unkGlobalStruct_00* temp_s1 = arg0->unk_50; but i think global struct 00 and 01 are the same struct
     unkGlobalStruct_00* temp_s1 = arg0->unk_50;
@@ -334,6 +351,8 @@ void func_800F78A8_MusicalMushroom(omObjData* obj, MMCpu* cpu) {
     }
 }
 
+// loop back-edge is bnez where retail has bnezl (masked 1)
+#ifdef NON_MATCHING
 s32 func_800F79FC_MusicalMushroom(omObjData* obj, MMPlayerWork* work) {
     Vec3f v;
     Vec3f* p = &v;
@@ -354,7 +373,12 @@ s32 func_800F79FC_MusicalMushroom(omObjData* obj, MMPlayerWork* work) {
     p->z -= obj->trans.z;
     return func_800A1200(p) < work->unk_48 + 300.0f;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F79FC_MusicalMushroom);
+#endif
 
+// float register allocation: zero/step in f28/f24 swapped (masked 0)
+#ifdef NON_MATCHING
 f32 func_800F7B84_MusicalMushroom(omObjData* obj, f32 x1, f32 z1, f32 x2, f32 z2, f32 step) {
     Vec3f v;
     Vec3f* p = &v;
@@ -381,6 +405,9 @@ f32 func_800F7B84_MusicalMushroom(omObjData* obj, f32 x1, f32 z1, f32 x2, f32 z2
     }
     return zero + step;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F7B84_MusicalMushroom);
+#endif
 
 void func_800F7D1C_MusicalMushroom(omObjData* obj) {
     Vec3f v;
@@ -523,6 +550,8 @@ void func_800F7D1C_MusicalMushroom(omObjData* obj) {
         ContStkY[GwPlayer[player].port] = -cpu->unk16;
     }
 }
+// register allocation and scheduling of the D_800FB5C8 index (masked 4)
+#ifdef NON_MATCHING
 void func_800F83BC_MusicalMushroom(omObjData* obj) {
     Vec3f v;
     Vec3f* p = &v;
@@ -609,6 +638,9 @@ void func_800F83BC_MusicalMushroom(omObjData* obj) {
         ContStkY[GwPlayer[player].port] = -cpu->unk16;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F83BC_MusicalMushroom);
+#endif
 u8 func_800F8830_MusicalMushroom(u16 i) {
     omObjData* pobj = D_800F3FB0[i];
     MMPlayerWork* work = pobj->unk_50;
@@ -616,6 +648,8 @@ u8 func_800F8830_MusicalMushroom(u16 i) {
 
     return work->unk_38 == 1000.0f && (flags & 6);
 }
+// result kept in v1 instead of v0 (masked 4)
+#ifdef NON_MATCHING
 s32 func_800F8898_MusicalMushroom(u16 i, s32 bell) {
     omObjData* pobj = D_800F3FB0[i];
     MMPlayerWork* work = pobj->unk_50;
@@ -627,6 +661,9 @@ s32 func_800F8898_MusicalMushroom(u16 i, s32 bell) {
     }
     return ret;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F8898_MusicalMushroom);
+#endif
 
 void func_800F8910_MusicalMushroom(omObjData* obj) {
     Vec3f v;
@@ -656,6 +693,8 @@ void func_800F8910_MusicalMushroom(omObjData* obj) {
     }
 }
 
+// register allocation: obj/cpu in s1/s0 swapped (masked 0)
+#ifdef NON_MATCHING
 void func_800F8AC4_MusicalMushroom(omObjData* obj) {
     void (*cpuFuncs[2])(omObjData*) = { func_800F7D1C_MusicalMushroom, func_800F83BC_MusicalMushroom };
     MMCpu* cpu;
@@ -698,6 +737,11 @@ void func_800F8AC4_MusicalMushroom(omObjData* obj) {
         break;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F8AC4_MusicalMushroom);
+#endif
+// register allocation: work/&v in s2/s1 swapped (masked 0)
+#ifdef NON_MATCHING
 s32 func_800F8D20_MusicalMushroom(s32 i) {
     Vec3f v;
     Vec3f* p = &v;
@@ -743,6 +787,9 @@ s32 func_800F8D20_MusicalMushroom(s32 i) {
     func_80017DB0(pobj);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F8D20_MusicalMushroom);
+#endif
 
 void func_800F8EE0_MusicalMushroom(omObjData* obj) {
     Vec3f d;
