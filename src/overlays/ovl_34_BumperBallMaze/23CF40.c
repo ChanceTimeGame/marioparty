@@ -569,7 +569,38 @@ void func_800F943C_BumperBallMaze(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F94A0_BumperBallMaze);
+void func_800F94A0_BumperBallMaze(omObjData* object) {
+    BumperBallMazeFloorProbe probe;
+    f32 angle;
+    f32 dx;
+    f32 dz;
+    u16 i;
+    u16 misses;
+    u16 tries;
+
+    tries = 0;
+    do {
+        probe.pos.x = object->trans.x;
+        probe.pos.y = object->trans.y + -100.0f;
+        probe.pos.z = object->trans.z;
+        func_800F8AFC_BumperBallMaze(&probe);
+        misses = 0;
+        for (i = 0; i < 8; i++) {
+            if (probe.height[i] == -10000.0f) {
+                misses++;
+                continue;
+            }
+            angle = ((u16) (i + 4) & 7) * 45.0f;
+            dx = func_800AEAC0(angle) * 5.0f;
+            dz = func_800AEFD0(angle) * 5.0f;
+            object->trans.x = dx + object->trans.x;
+            object->trans.z = dz + object->trans.z;
+        }
+        if (misses == 8) {
+            break;
+        }
+    } while (++tries < 4);
+}
 
 void func_800F9610_BumperBallMaze(s32 player) {
     u16 remaining = 0xE10 - func_800F9278_BumperBallMaze();
