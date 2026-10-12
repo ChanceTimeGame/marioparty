@@ -94,8 +94,6 @@ void func_800F69EC_CrazyCutter(omObjData* arg0) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD010_CrazyCutter);
-
 #ifdef NON_MATCHING
 void func_800F6B04_CrazyCutter(omObjData* obj) {
     s32 kinds[3] = { 9, 10, 11 };
@@ -152,6 +150,9 @@ void func_800F6B04_CrazyCutter(omObjData* obj) {
     obj->func_ptr = &func_800F6F00_CrazyCutter;
 }
 #else
+/* GCC cannot see the previous INCLUDE_ASM switch to .text */
+__asm__(".section .rodata");
+const s32 D_800FD010_CrazyCutter[3] __attribute__((section(".rodata"))) = { 9, 10, 11 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F6B04_CrazyCutter);
 #endif
 #ifdef NON_MATCHING
@@ -236,12 +237,6 @@ void func_800F7180_CrazyCutter(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F7180_CrazyCutter);
 #endif
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD028_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD040_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD050_CrazyCutter);
 
 #ifdef NON_MATCHING
 void func_800F731C_CrazyCutter(omObjData* obj, s32 player) {
@@ -499,6 +494,11 @@ void func_800F731C_CrazyCutter(omObjData* obj, s32 player) {
     obj->func_ptr = &func_800F8144_CrazyCutter;
 }
 #else
+/* GCC cannot see the previous INCLUDE_ASM switch to .text */
+__asm__(".section .rodata");
+const s32 D_800FD028_CrazyCutter[6] __attribute__((section(".rodata"))) = { 0x54, 0x54, 0x54, 0x54, 0x54, 0x54 };
+const s32 D_800FD040_CrazyCutter[4] __attribute__((section(".rodata"))) = { 10, 7, 4, 1 };
+const s32 D_800FD050_CrazyCutter[4] __attribute__((section(".rodata"))) = { 4, 3, 2, 1 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F731C_CrazyCutter);
 #endif
 #ifdef NON_MATCHING
@@ -831,6 +831,10 @@ void func_800F90E4_CrazyCutter(omObjData* obj) {
     }
 }
 #else
+/* GCC cannot see the previous INCLUDE_ASM switch to .text */
+__asm__(".section .rodata");
+const s32 D_800FD06C_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x16, 0x17, 0x18 };
+const s32 D_800FD078_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x13, 0x14, 0x15 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F90E4_CrazyCutter);
 #endif
 void func_800F94C0_CrazyCutter(omObjData* arg0) {
@@ -849,21 +853,18 @@ void func_800F9514_CrazyCutter(omObjData* arg0) {
     func_800F731C_CrazyCutter(arg0, 3);
 }
 
-#ifdef NON_MATCHING
 f32 func_800F9530_CrazyCutter(CrazyCutterPlayer* st) {
     Vec3f pos;
     s16 cur[2];
     s16 next[2];
-    s32 i;
 
     pos.x = D_800FCCF0_CrazyCutter[st->player] + st->x - 8.0f;
     pos.y = st->y + 10.0f;
     pos.z = D_800FCD00_CrazyCutter[st->player] + st->z - 8.0f;
     func_800F9694_CrazyCutter(&pos, cur, st->player);
-    i = st->target;
-    if (cur[0] == st->pathX[i] && cur[1] == st->pathY[i]) {
-        st->target = i + 1;
-        if (st->pathX[i + 1] == -2) {
+    if (cur[0] == st->pathX[st->target] && cur[1] == st->pathY[st->target]) {
+        st->target++;
+        if (st->pathX[st->target] == -2) {
             st->target = 0;
         }
     }
@@ -872,9 +873,6 @@ f32 func_800F9530_CrazyCutter(CrazyCutterPlayer* st) {
     D_800FD138_CrazyCutter = func_800FAC38_CrazyCutter(cur, next, 0);
     return D_800FD138_CrazyCutter;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F9530_CrazyCutter);
-#endif
 void func_800F9654_CrazyCutter(omObjData* arg0) {
     if (D_800F5144 != 0) {
         func_8006071C(D_800FD5C6_CrazyCutter);
@@ -998,6 +996,13 @@ void func_800F9968_CrazyCutter(omObjData* parent, s32 player) {
     D_800FD4E8_CrazyCutter[st->player].unk8 = 0.0f;
 }
 #else
+/* GCC cannot see the previous INCLUDE_ASM switch to .text */
+__asm__(".section .rodata");
+const f32 D_800FD084_CrazyCutter[4] __attribute__((section(".rodata"))) = { -400.0f, 400.0f, -400.0f, 400.0f };
+const f32 D_800FD094_CrazyCutter[4] __attribute__((section(".rodata"))) = { -250.0f, -250.0f, 350.0f, 350.0f };
+const f32 D_800FD0A4_CrazyCutter[3] __attribute__((section(".rodata"))) = { 2.2f, 4.0f, 4.5f };
+const f32 D_800FD0B0_CrazyCutter[3] __attribute__((section(".rodata"))) = { -30.0f, 50.0f, 0.0f };
+const s32 D_800FD0BC_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x1E0007, 0x1F0005, 0x1F0004 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F9968_CrazyCutter);
 #endif
 #ifdef NON_MATCHING
@@ -1088,6 +1093,9 @@ void func_800F9D98_CrazyCutter(omObjData* obj) {
     }
 }
 #else
+/* GCC cannot see the previous INCLUDE_ASM switch to .text */
+__asm__(".section .rodata");
+const s32 D_800FD0C8_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x10, 0x11, 0x12 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F9D98_CrazyCutter);
 #endif
 #ifdef NON_MATCHING
@@ -1119,6 +1127,9 @@ s32 func_800FA38C_CrazyCutter(s32 player) {
     return D_800FD13C_CrazyCutter;
 }
 #else
+/* GCC cannot see the previous INCLUDE_ASM switch to .text */
+__asm__(".section .rodata");
+const s32 D_800FD0D4_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0xC, 0xD, 0xE };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FA38C_CrazyCutter);
 #endif
 void func_800FA56C_CrazyCutter(omObjData* obj) {
@@ -1173,42 +1184,19 @@ void func_800FA808_CrazyCutter(omObjData* arg0) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD06C_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD078_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD084_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD094_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD0A4_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD0B0_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD0BC_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD0C8_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD0D4_CrazyCutter);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", D_800FD0E0_CrazyCutter);
-
-#ifdef NON_MATCHING
 void func_800FA880_CrazyCutter(omObjData* obj) {
-    s32 count;
     s32 i;
-    s32 x;
-    s32 y;
+    s32 j;
 
-    count = 0;
+    j = 0;
     for (i = 0; i < 4; i++) {
-        count += func_800FAAB0_CrazyCutter(i, 0x20);
+        j += func_800FAAB0_CrazyCutter(i, 0x20);
     }
-    if (count == 4 && D_800FD544_CrazyCutter != 0) {
-        for (y = 0; y < 2; y++) {
-            for (x = 0; x < 2; x++) {
-                if (func_800FAAB0_CrazyCutter(y * 2 + x, 0x4000) != 0) {
-                    GMesCreate(6, "\x82\x6C\x82\x68\x82\x72\x82\x72\x81\x49", x * 160 + 80, y * 120 + 60, 1.0, 1.0, 0);
+    if (j == 4 && D_800FD544_CrazyCutter != 0) {
+        for (i = 0; i < 2; i++) {
+            for (j = 0; j < 2; j++) {
+                if (func_800FAAB0_CrazyCutter(i * 2 + j, 0x4000) != 0) {
+                    GMesCreate(6, "\x82\x6C\x82\x68\x82\x72\x82\x72\x81\x49", j * 160 + 80, i * 120 + 60, 1.0, 1.0, 0);
                 }
             }
         }
@@ -1220,9 +1208,6 @@ void func_800FA880_CrazyCutter(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FA880_CrazyCutter);
-#endif
 void func_800FA9D8_CrazyCutter(omObjData* obj) {
     if (GMesWait() == 0) {
         func_800726AC(0, 20);
@@ -1697,7 +1682,8 @@ void func_800FC240_CrazyCutter(s16 arg0) {
 
 #ifdef NON_MATCHING
 void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
-    s32 hundreds;
+    s16 hundreds;
+    s16 tens;
 
     hundreds = 0;
     if (value >= 100) {
@@ -1711,7 +1697,8 @@ void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
     }
     if (hundreds != 0 || (s16)(value / 10) != 0) {
         func_80067480(grp, 1, 0x8000);
-        func_800672DC(grp, 1, value / 10, 0);
+        tens = value / 10;
+        func_800672DC(grp, 1, tens, 0);
         func_800672B0(grp, 1, 1);
         value %= 10;
     } else {
