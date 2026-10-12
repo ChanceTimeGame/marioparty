@@ -77,6 +77,18 @@ void func_800091BC(omObjData*, s32, s32, s32);
 void func_800093FC(omObjData*, f32, f32, f32);
 void func_80060F04(s16, s16, s16, s16);
 void func_800FACA0_FlowerShower(omObjData*);
+void func_800F6FF4_FlowerShower(omObjData*);
+void func_800F712C_FlowerShower(omObjData*);
+void func_800F726C_FlowerShower(omObjData*);
+void func_800F7BD0_FlowerShower(omObjData*);
+void func_800F7CE0_FlowerShower(omObjData*);
+void func_800F7DF0_FlowerShower(omObjData*);
+void func_800F7F00_FlowerShower(omObjData*);
+void func_800F8010_FlowerShower(omObjData*);
+void func_800F8058_FlowerShower(omObjData*);
+void func_800F80A8_FlowerShower(omObjData*);
+void func_800F80F4_FlowerShower(omObjData*);
+void func_800F8148_FlowerShower(omObjData*);
 void func_800F7348_FlowerShower(omObjData*, s32, s32, s32);
 void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
 void func_800F8280_FlowerShower(omObjData*);
@@ -108,8 +120,40 @@ extern s32 D_800FAD5C_FlowerShower;
 extern s32 D_800FAD60_FlowerShower;
 extern f32 D_800FAD50_FlowerShower[];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
+void func_800F65E0_FlowerShower(void) {
+    u8 cam;
 
+    func_80029090(0x32);
+    func_8002ADF0(&D_800EDEC0, 0x40);
+    func_8001DE70(0x20);
+    omInitObjMan(0x32, 0);
+    func_80060088();
+    func_800178A0(1);
+    cam = func_800178E8();
+    func_80017660(cam, 0.0f, 0.0f, 320.0f, 240.0f);
+    func_800176C4(cam, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    func_8001D494(0, 25.0f, 80.0f, 8000.0f);
+    func_80009500();
+    D_800EE984 = 0;
+    D_800F2BC0 = 0;
+    D_800ED440 = 0;
+    func_800090B8(0);
+    D_800F2AF8[D_800ED440++] = omAddObj(1, 1, 0, -1, func_800F6FF4_FlowerShower);
+    D_800F2AF8[D_800ED440++] = omAddObj(1, 1, 0, -1, func_800F712C_FlowerShower);
+    D_800F2AF8[D_800ED440++] = omAddObj(1, 1, 0, -1, func_800F726C_FlowerShower);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(2, 9, 0x32, -1, func_800F7BD0_FlowerShower);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(2, 9, 0x32, -1, func_800F7CE0_FlowerShower);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(2, 9, 0x32, -1, func_800F7DF0_FlowerShower);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(2, 9, 0x32, -1, func_800F7F00_FlowerShower);
+    D_800EDE70[D_800EE984++] = omAddObj(3, 5, 0, -1, func_800F8010_FlowerShower);
+    D_800EDE70[D_800EE984++] = omAddObj(3, 5, 0, -1, func_800F8058_FlowerShower);
+    D_800EDE70[D_800EE984++] = omAddObj(3, 5, 0, -1, func_800F80A8_FlowerShower);
+    D_800EDE70[D_800EE984++] = omAddObj(3, 5, 0, -1, func_800F80F4_FlowerShower);
+    D_800EDE70[D_800EE984++] = omAddObj(3, 5, 0, -1, func_800F8148_FlowerShower);
+    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, omOutView), 0xA0);
+    func_8007B168((u8*)"\x82\x72\x82\x73\x82\x60\x82\x71\x82\x73\x82\x6C\x82\x68\x82\x65\x82\x68\x82\x6D\x82\x67\x81\x49", 1);
+    PlaySound(0x1BF);
+}
 void func_800F6A64_FlowerShower(void) {
     if (func_80072718() == 0) {
         omOvlReturnEx(1);
@@ -141,8 +185,6 @@ void func_800F6FF4_FlowerShower(omObjData* arg0) {
     work->unk_05 = 0;
     SetFadeInTypeAndTime(0, 0x10);
 }
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", D_800FADD0_FlowerShower);
 
 void func_800F712C_FlowerShower(omObjData* arg0) {
     FlowerShowerModelWork* work;
