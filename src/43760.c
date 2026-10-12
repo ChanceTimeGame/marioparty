@@ -353,6 +353,14 @@ void func_8004388C(s32 arg0) {
                     }
                 }
             }
+            /* ...and that type's teams (func_80054868's encoding): the space colours set them for
+               the type they implied, and a 2v2 game with lopsided teams leaves a slot empty */
+            for (k = 0; k < 4; k++) {
+                GwPlayer[k].group = sel == 2 ? k >> 1 : sel == 1 ? k != 0 : k;
+            }
+            if (sel == 1) {
+                D_800ECE10 = 0;
+            }
         }
     }
 #endif
