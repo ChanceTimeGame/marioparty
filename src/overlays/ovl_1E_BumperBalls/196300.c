@@ -40,7 +40,7 @@ void func_800FB298_BumperBalls(void) {
     for (i = 0; i < D_800F3778; i++) {}
 }
 
-void func_800FB2D0_BumperBalls(void) {
+void func_800FB2D0_BumperBalls(s32 arg0) {
     omOvlReturnEx(1);
 }
 
