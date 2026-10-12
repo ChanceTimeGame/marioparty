@@ -591,27 +591,25 @@ s32 func_800F86CC_GhostGuess(omObjData* arg0, omObjData* arg1) {
     if (D_800FB670_GhostGuess != 4) {
         return (g->unk_06 == 5) | (g->unk_06 == 9);
     }
-    {
-        D_800FB670_GhostGuess = 5;
-        func_800601D4(0x5A);
-        if ((work->unk_5C & 0x320) && work->unk_38 >= 0.0) {
-            func_800184BC(arg0, 6);
-            work->unk_38 = -1.323f;
-            work->unk_3C = func_800B0CD8(arg0->trans.x, arg0->trans.z);
-            work->unk_40 = -(func_800B1750(arg0->trans.x * arg0->trans.x + arg0->trans.z * arg0->trans.z) / 20.0f);
-            func_80017C0C(arg0, 7, arg0->trans.x, arg0->trans.y, arg0->trans.z, 0.0f, 0.0f);
-            func_80060540(0x146, 0);
-            D_800FB6A0_GhostGuess = g->unk_05;
-            g->unk_06 = 5;
-            return 1;
-        }
-        func_80060540(0x21E, 0);
+    D_800FB670_GhostGuess = 5;
+    func_800601D4(0x5A);
+    if ((work->unk_5C & 0x320) && work->unk_38 >= 0.0) {
+        func_800184BC(arg0, 6);
+        work->unk_38 = -1.323f;
+        work->unk_3C = func_800B0CD8(arg0->trans.x, arg0->trans.z);
+        work->unk_40 = -(func_800B1750(arg0->trans.x * arg0->trans.x + arg0->trans.z * arg0->trans.z) / 20.0f);
+        func_80017C0C(arg0, 7, arg0->trans.x, arg0->trans.y, arg0->trans.z, 0.0f, 0.0f);
+        func_80060540(0x146, 0);
         D_800FB6A0_GhostGuess = g->unk_05;
-        g->unk_06 = 1;
-        g->scale.x = g->scale.y = g->scale.z = 1.0f;
-        g->rot.y = func_800B0CD8(arg0->trans.x - g->pos.x, arg0->trans.z - g->pos.z);
-        return 0;
+        g->unk_06 = 5;
+        return 1;
     }
+    func_80060540(0x21E, 0);
+    D_800FB6A0_GhostGuess = g->unk_05;
+    g->unk_06 = 1;
+    g->scale.x = g->scale.y = g->scale.z = 1.0f;
+    g->rot.y = func_800B0CD8(arg0->trans.x - g->pos.x, arg0->trans.z - g->pos.z);
+    return 0;
 }
 void func_800F8888_GhostGuess(omObjData* arg0) {
     Vec o;
