@@ -316,6 +316,8 @@ build/src/overlays/ovl_21_TipsyTourney/1A4EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -m
 # ovl_18 PlatformPeril 170470.c, 16C6A0.c: nop between back-to-back mul.s (func_800FB680; func_800F7070, func_800F8220, func_800F979C)
 build/src/overlays/ovl_18_PlatformPeril/170470.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_18_PlatformPeril/16C6A0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_27 1D6E30.c (DesertDash): nop between back-to-back mul.s in func_800FB750
+build/src/overlays/ovl_27_DesertDash/1D6E30.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
 
