@@ -1,13 +1,38 @@
 #include "common.h"
 
-typedef struct BumperBallMazeModelState {
-    u16 unk_00;
-    char unk_02[0x1A];
-    u16 unk_1C;
-    u16 unk_1E;
-    char unk_20[0x20];
-    u8 unk_40[4];
-} BumperBallMazeModelState;
+/* D_800FAE10's work (func_800F6C7C, 0x48 bytes): the player's ball. */
+typedef struct BumperBallMazeBallWork {
+    /* 0x00 */ u16 unk_00; /* state */
+    /* 0x02 */ s16 character;
+    /* 0x04 */ u16 player;
+    /* 0x06 */ char pad_06[2];
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ f32 unk_0C;
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ f32 unk_14;
+    /* 0x18 */ f32 unk_18;
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ f32 unk_20;
+    /* 0x24 */ f32 unk_24;
+    /* 0x28 */ f32 unk_28;
+    /* 0x2C */ f32 unk_2C;
+    /* 0x30 */ f32 unk_30;
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ u16 unk_3C;
+    /* 0x3E */ u16 unk_3E;
+    /* 0x40 */ u8 unk_40[2];
+    /* 0x42 */ char pad_42[2];
+    /* 0x44 */ f32 unk_44;
+} BumperBallMazeBallWork; /* size = 0x48 */
+
+/* D_800FAE14's work (func_800F9050, 0x20 bytes): the timer display. */
+typedef struct BumperBallMazeTimerWork {
+    /* 0x00 */ s16 digits[7];
+    /* 0x0E */ s16 bestDigits[7];
+    /* 0x1C */ u16 time;
+    /* 0x1E */ u16 best;
+} BumperBallMazeTimerWork; /* size = 0x20 */
 
 typedef struct BumperBallMazeColVtx {
     s16 x;
@@ -68,7 +93,7 @@ void func_800F69F4_BumperBallMaze(omObjData*);
 void func_800F9974_BumperBallMaze(s32);
 void func_800F6C7C_BumperBallMaze(s32);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
-void func_800F928C_BumperBallMaze(u16);
+void func_800F928C_BumperBallMaze(u16, s16*);
 void func_800F8220_BumperBallMaze(omObjData*);
 void func_800594E4(s16, u16);
 void func_8001897C(s16, f32, f32, f32);
@@ -160,7 +185,7 @@ void func_800F6994_BumperBallMaze(omObjData* object) {
 }
 
 void func_800F69F4_BumperBallMaze(omObjData* object) {
-    BumperBallMazeModelState* state;
+    BumperBallMazeBallWork* state;
 
     switch (D_800FB1C0_BumperBallMaze) {
     case 0:
@@ -259,7 +284,7 @@ void func_800F8108_BumperBallMaze(omObjData* object) {
     f32 time = func_80025D18(object->work[0]);
 
     if (func_80025D40(object->work[0]) <= time) {
-        ((BumperBallMazeModelState*) D_800FAE10_BumperBallMaze->unk_50)->unk_40[object->work[2]] = 0;
+        ((BumperBallMazeBallWork*) D_800FAE10_BumperBallMaze->unk_50)->unk_40[object->work[2]] = 0;
         func_800258EC(object->work[0], 4, 4);
         omDelObj(object);
     }
@@ -303,32 +328,32 @@ s32 func_800F8DFC_BumperBallMaze(s32 arg0, u16* polygon, BumperBallMazeColVtx* v
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8E1C_BumperBallMaze);
 
 s32 func_800F9034_BumperBallMaze(void) {
-    return ((BumperBallMazeModelState*) D_800FAE10_BumperBallMaze->unk_50)->unk_00 != 3;
+    return ((BumperBallMazeBallWork*) D_800FAE10_BumperBallMaze->unk_50)->unk_00 != 3;
 }
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F9050_BumperBallMaze);
 
 void func_800F923C_BumperBallMaze(omObjData* object) {
-    BumperBallMazeModelState* state = object->unk_50;
+    BumperBallMazeTimerWork* state = object->unk_50;
 
     if (object->work[0] == 1) {
-        state->unk_1C += 2;
-        func_800F928C_BumperBallMaze(state->unk_1C);
+        state->time += 2;
+        func_800F928C_BumperBallMaze(state->time, state->digits);
     }
 }
 
 u16 func_800F9278_BumperBallMaze(void) {
-    return ((BumperBallMazeModelState*) D_800FAE14_BumperBallMaze->unk_50)->unk_1C;
+    return ((BumperBallMazeTimerWork*) D_800FAE14_BumperBallMaze->unk_50)->time;
 }
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F928C_BumperBallMaze);
 
 void func_800F943C_BumperBallMaze(void) {
-    BumperBallMazeModelState* state = D_800FAE14_BumperBallMaze->unk_50;
+    BumperBallMazeTimerWork* state = D_800FAE14_BumperBallMaze->unk_50;
 
-    if (state->unk_1E > state->unk_1C) {
-        state->unk_1E = state->unk_1C;
-        func_800594E4(D_800FADF8_BumperBallMaze + 5, state->unk_1E);
+    if (state->best > state->time) {
+        state->best = state->time;
+        func_800594E4(D_800FADF8_BumperBallMaze + 5, state->best);
         D_800FADF6_BumperBallMaze = 1;
     }
 }
