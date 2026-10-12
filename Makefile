@@ -123,6 +123,8 @@ build/src/overlays/ovl_61_OpeningScene/29B410.c.o: CFLAGS = -G0 -mips3 -mgp32 -m
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2721F0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_0A 117210.c (Ghost Guess): mul fix on, nop between back-to-back mul.s (func_800F7FD8)
 build/src/overlays/ovl_0A_GhostGuess/117210.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_20 19FEE0.c (KnockBlockTower): nop between back-to-back mul.s in func_800F7D0C
+build/src/overlays/ovl_20_KnockBlockTower/19FEE0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # 69010.c (sprite draw) was built with the assembler VR4300 mul fix on: a nop after each mul.s pair
 build/src/69010.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # 24740.c (model entries) also has the mul fix on: nop between dependent mul.s (func_80027100)
@@ -347,7 +349,8 @@ $(BUILD_DIR)/src/1130.c.o $(BUILD_DIR)/src/34D80.c.o $(BUILD_DIR)/src/1B800.c.o 
 	@$(STRIP) $@ -N dummy-symbol-name
 
 # ovl_0A 117210.c (Ghost Guess): blank-line strip as for 1130.c (func_800F9400: mul.s right after func_800AEAC0's return).
-$(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+# ovl_20 KnockBlockTower units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
+$(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o $(BUILD_DIR)/src/overlays/ovl_20_KnockBlockTower/19FEE0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
