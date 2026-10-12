@@ -265,3 +265,8 @@ extern s16 D_800FBB04_CastAways;
 extern s16 D_800FBB06_CastAways;
 extern s16 D_800FBB54_CastAways;
 f64 func_8009B618(f64, f64); /* fmod */
+extern char* D_800FB9D4_CastAways;
+extern char* D_800FB9D8_CastAways;
+extern u8 D_800FBA00_CastAways[4];
+extern u8 D_800FBA04_CastAways;
+void func_80020958(s16, CastAwaysAnimData*, s16);

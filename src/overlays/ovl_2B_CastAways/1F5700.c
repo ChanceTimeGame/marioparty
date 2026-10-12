@@ -28,7 +28,6 @@ typedef struct CastAwaysCameraViewFromX {
 void func_80023888(void*);
 void func_80020CC4(void*);
 s16 func_80024198(u32, Gfx*, s32);
-void func_80020958(s16, CastAwaysAnimData*, s16);
 extern CastAwaysCameraView D_800EE738;
 extern CastAwaysCameraViewFromX D_800EE73C;
 void func_800FB778_CastAways(omObjData*);

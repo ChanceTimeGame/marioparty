@@ -1,5 +1,11 @@
 #include "CastAways.h"
 
+extern Vec D_800FB930_CastAways[4];
+extern char D_800FBA80_CastAways[];
+
+/* Player object setup: seat, models, rod object, line sprites, motions, CPU tuning. */
+
+
 /* Fish/item object: swims across the screen, then is hooked and flies to the player. */
 
 
@@ -559,8 +565,169 @@ void func_800F7A38_CastAways(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F7A38_CastAways);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8194_CastAways);
+// register allocation
+#ifdef NON_MATCHING
+void func_800F8194_CastAways(omObjData* arg0, s32 arg1) {
+    omObjData** players;
+    CastAwaysPlayerWork* work;
+    CastAwaysRodWork* rodWork;
+    omObjData* rod;
+    u8 seat;
+    s32 i;
+    s32 dir;
+    s8 chr;
+    s16 id;
 
+    players = func_8005DB44(4);
+    if (D_800FBA04_CastAways == 3) {
+        for (i = 0; i < 4; i++) {
+            if (D_800FBA00_CastAways[i] == 0) {
+                seat = i;
+                break;
+            }
+        }
+    } else {
+        do {
+            seat = rand8() & 3;
+        } while (D_800FBA00_CastAways[seat] != 0);
+    }
+    D_800FBA00_CastAways[seat] = 1;
+    work = func_80023684(sizeof(CastAwaysPlayerWork), 0x7918);
+    arg0->unk_50 = work;
+    work->seat = seat;
+    work->playerNo = arg1;
+    work->state = 1;
+    work->power = 0;
+    work->lastPower = 0;
+    work->repeat = 0;
+    work->catches = 0;
+    work->unk_140 = 0;
+    work->lureObj = NULL;
+    work->fishType = -1;
+    work->unk_14C = 0;
+    work->unk_14E = 0;
+    for (i = 0; i < 4; i++) {
+        arg0->work[i] = 0;
+    }
+    work->flags = 0;
+    chr = GwPlayer[arg1].character;
+    dir = D_800C59AC[chr].unk_00;
+    arg0->model[0] = LoadFormFile(dir | D_800C59AC[chr].unk_04, 0x20699);
+    omSetTra(arg0, D_800FB930_CastAways[seat].x, D_800FB930_CastAways[seat].y, D_800FB930_CastAways[seat].z);
+    omSetRot(arg0, 0.0f, 180.0f, 0.0f);
+    func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    arg0->model[2] = LoadFormFile(0x3F0003, 0x499);
+    arg0->model[3] = LoadFormFile(0x3F0004, 0x499);
+    func_800258EC(arg0->model[2], 4, 4);
+    func_8002859C(arg0->model[2], arg0->model[0], D_800FBA80_CastAways);
+    arg0->motion[0xB] = arg0->model[3];
+    func_8001775C(arg0, 8, 0x3F0005);
+    func_8001775C(arg0, 9, 0x3F0006);
+    func_8001775C(arg0, 0xA, 0x3F0007);
+    work->savedSpeed[0] = D_800F2B7C[arg0->motion[8]].unk_08;
+    work->savedSpeed[1] = D_800F2B7C[arg0->motion[9]].unk_08;
+    work->savedSpeed[2] = D_800F2B7C[arg0->motion[0xA]].unk_08;
+    work->savedSpeed[3] = D_800F2B7C[arg0->motion[0xB]].unk_08;
+    func_800257E4(arg0->model[3], 0.0f, 180.0f, 0.0f);
+    func_80025798(arg0->model[3], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025EB4(arg0->model[3], 1, 1);
+    func_8001775C(arg0, 0, dir | 1);
+    func_8001775C(arg0, 6, dir | 0x32);
+    func_8001775C(arg0, 7, dir | 0x34);
+    func_8001775C(arg0, 0xC, dir | 0xF);
+    func_8001775C(arg0, 0xD, dir | 0x10);
+    arg0->motion[0xE] = func_80028784(DataRead(dir), 0x18);
+
+    rod = omAddObj(0xA, 1, 0, -1, &func_800F92FC_CastAways);
+    rodWork = func_80023684(sizeof(CastAwaysRodWork), 0x7918);
+    rod->unk_50 = rodWork;
+    rodWork->playerObj = arg0;
+    rodWork->playerNo = arg1;
+    rodWork->fishObj = NULL;
+    rodWork->state = 0;
+    if (arg1 == 0) {
+        rod->model[0] = LoadFormFile(0x3F0008, 0x899);
+    } else {
+        rod->model[0] = func_80023FC8(((CastAwaysPlayerWork*)players[0]->unk_50)->rodObj->model[0]);
+    }
+    func_8002859C(rod->model[0], arg0->model[3], D_800FB9D8_CastAways);
+    func_800258EC(rod->model[0], 0x4000, 0x4000);
+    omSetTra(rod, arg0->trans.x, arg0->trans.y + 145.0f, arg0->trans.z);
+    omSetRot(rod, 45.0f, 180.0f, 0.0f);
+    work->rodObj = rod;
+    work->sampleCount = 1;
+    work->spriteData = func_800FAFF0_CastAways(0xFF, 0xFF, 0xFF);
+    for (i = 0; i < work->sampleCount + 1; i++) {
+        work->samples[i].x = arg0->trans.x;
+        work->samples[i].y = arg0->trans.y + 145.0f;
+        work->samples[i].z = arg0->trans.z;
+    }
+
+    arg0->model[1] = func_800174F4(6, 0x689);
+    func_800370D4(arg0->model[1]);
+    func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025930(arg0->model[1], 0x80000000, 0);
+    func_80025AD4(arg0->model[1]);
+    func_80025B34(arg0->model[1]);
+
+    id = func_8001E00C((void*)-1, 0x1A8D, 8);
+    D_800ECDE0[id].unk_02 = D_800FBB40_ovl2B;
+    func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
+    D_800FBB10_CastAways[arg1].model = D_800ECDE0[id].unk_00;
+    D_800FBB10_CastAways[arg1].id = id;
+    func_8001E268(id, 4, 4);
+    func_8001E2F8(id, 0xFF);
+    func_8001E360(id, 0xFF, 0xFF, 0xBE);
+
+    id = func_8001E00C((void*)-1, 0x1A8D, 8);
+    D_800ECDE0[id].unk_02 = D_800FBB42_ovl2B;
+    func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
+    D_800FBB20_CastAways[arg1].model = D_800ECDE0[id].unk_00;
+    D_800FBB20_CastAways[arg1].id = id;
+    func_8001E268(id, 4, 4);
+
+    id = func_8001E00C((void*)-1, 0x1A8D, 8);
+    D_800ECDE0[id].unk_02 = D_800FBB44_ovl2B;
+    func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
+    D_800FBB30_CastAways[arg1].model = D_800ECDE0[id].unk_00;
+    D_800FBB30_CastAways[arg1].id = id;
+    func_8001E268(id, 4, 4);
+
+    func_8001775C(arg0, 1, dir | 0x30);
+    func_8001775C(arg0, 2, dir | 0x9C);
+    func_8001775C(arg0, 3, dir | 0x9B);
+    func_8001775C(arg0, 4, dir | 0x9A);
+    func_8001775C(arg0, 5, dir | 0x31);
+    func_80025BB8(arg0->model[0], arg0->motion[1]);
+    work->animDataA = func_800202E8(arg0->model[0], 2);
+    func_80025BB8(arg0->model[0], arg0->motion[5]);
+    work->animDataB = func_800202E8(arg0->model[0], 2);
+    func_80020958(arg0->model[0], work->animDataA, 0);
+    func_8002456C(arg0->motion[1]);
+    func_8002456C(arg0->motion[5]);
+    switch (GwPlayer[arg1].cpu_difficulty) {
+    case 0:
+        work->unk_150 = 10.0f;
+        work->unk_154 = 30.0f;
+        break;
+    case 1:
+        work->unk_150 = 6.0f;
+        work->unk_154 = 20.0f;
+        break;
+    case 2:
+        work->unk_150 = 4.0f;
+        work->unk_154 = 10.0f;
+        break;
+    case 3:
+        work->unk_150 = 0.0f;
+        work->unk_154 = 5.0f;
+        break;
+    }
+    arg0->func_ptr = &func_800F8B1C_CastAways;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8194_CastAways);
+#endif
 void func_800F8AAC_CastAways(omObjData* arg0) {
     func_800F8194_CastAways(arg0, 0);
 }
