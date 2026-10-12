@@ -794,8 +794,8 @@ void func_800F8EE0_MusicalMushroom(omObjData* obj) {
     if (obj->work[3] == 0) {
         PlaySound(0xFC);
         func_800258EC(obj->model[3], 4, 0);
-        func_8001E2A8(work->unk_24, 0);
-        func_8001E268(work->unk_24, 4, 4);
+        func_8001E2A8(work->unk_21[3], 0);
+        func_8001E268(work->unk_21[3], 4, 4);
         func_80025798(obj->model[3], target->trans.x, target->trans.y, target->trans.z);
         func_80025830(obj->model[3], 5.0f, 5.0f, 5.0f);
         work->unk_54 = 0;
