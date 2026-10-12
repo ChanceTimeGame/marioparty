@@ -58,3 +58,28 @@ extern omObjData** D_800FCD30_BumperBalls;
 extern s16 D_800FCFF0_BumperBalls;
 
 extern u16 D_800FCD14_BumperBalls;
+
+/* Water mesh (196300.c). */
+typedef struct BumperBallsAnglePair {
+    f32 first;
+    f32 second;
+} BumperBallsAnglePair;
+
+/* Wave phases of the 6 x 6 water mesh (bss): per row, the near edge's 6 pairs then the far
+   edge's 6. Retail indexes it both as rows of 12 pairs and as half-rows of 6 (BB_WAVE_HALF, far
+   edge of row r = half-row 2r + 1); its splat label D_800FCD70 is D_800FCD40 + 0x30. */
+extern BumperBallsAnglePair D_800FCD40_BumperBalls[6][12];
+#ifdef TARGET_PC
+#define D_800FCD70_BumperBalls ((BumperBallsAnglePair(*)[6]) &D_800FCD40_BumperBalls[0][6])
+#else
+extern BumperBallsAnglePair D_800FCD70_BumperBalls[][6];
+#endif
+#define BB_WAVE_FAR ((BumperBallsAnglePair(*)[12]) &D_800FCD40_BumperBalls[0][6])
+extern unk2C0C0Struct70* D_800FCF80_BumperBalls; /* 47mt003_DEF (water) */
+extern unk2C0C0Struct70* D_800FCF84_BumperBalls; /* 47mt002_IA44 (under-layer) */
+extern Gfx* D_800FCF88_BumperBalls[8];           /* per-screen display lists */
+extern Vtx* D_800FCFA8_BumperBalls[8];           /* per-screen water vertices (6 x 24) */
+extern Vtx* D_800FCFC8_BumperBalls[8];           /* per-screen under-layer vertices */
+extern s32 D_800FCFE8_BumperBalls;
+
+extern u16 D_800FCBC0_BumperBalls;

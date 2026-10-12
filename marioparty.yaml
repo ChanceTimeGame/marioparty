@@ -1157,7 +1157,7 @@ segments:
       - [0x191700, c]
       - [0x196300, c]
       - [0x197C50, data, 191700]
-      - [0x197CE0, data, 196300]
+      - [0x197CE0, .data, 196300]
       - [0x197D00, .rodata, 191700]
       - [0x197DF0, .rodata, 196300]
       - {0x197E20, type: bss, vram: 0x800FCD00, name: ovl_1E_bss}
