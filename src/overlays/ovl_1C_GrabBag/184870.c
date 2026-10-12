@@ -3,6 +3,16 @@
 extern s32 D_800FB104_GrabBag[4];
 extern s32 D_800FB254_GrabBag;
 extern f32 D_800B8960;
+extern u16 D_800FB11C_GrabBag[4];
+extern u16 D_800FB244_GrabBag[4];
+extern u16 ContBtn[4];
+
+typedef struct GrabBagInputWork {
+    char unk_00[0x56];
+    s8 player_index;
+    char unk_57[0x97];
+    u8 button_press_count;
+} GrabBagInputWork;
 
 void func_800F776C_GrabBag(omObjData*);
 void func_800FA8F4_GrabBag(omObjData*);
@@ -44,7 +54,20 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F975C_GrabBag);
+void func_800F975C_GrabBag(GrabBagInputWork* arg0, s32 arg1) {
+    s32 first_offset;
+    s32 second_offset;
+    s32 pad[6];
+
+    first_offset = arg0->player_index * 2;
+    *(u16*)((u8*)D_800FB244_GrabBag + first_offset) =
+        *(u16*)((u8*)ContBtn + first_offset) & ~*(u16*)((u8*)D_800FB11C_GrabBag + first_offset);
+    second_offset = arg0->player_index * 2;
+    *(u16*)((u8*)D_800FB11C_GrabBag + second_offset) = *(u16*)((u8*)ContBtn + second_offset);
+    if (*(u16*)((u8*)D_800FB244_GrabBag + (arg0->player_index * 2)) & arg1) {
+        arg0->button_press_count++;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F97E8_GrabBag);
 
