@@ -44,6 +44,7 @@ typedef struct CastAwaysCameraViewFromX {
 
 void func_80023888(void*);
 void func_80020CC4(void*);
+s16 func_80024198(u32, Gfx*, s32);
 extern CastAwaysCameraView D_800EE738;
 extern CastAwaysCameraViewFromX D_800EE73C;
 
@@ -59,7 +60,24 @@ void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f
     D_800C3110->unk_40 = arg0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FAFF0_CastAways);
+CastAwaysSpriteData* func_800FAFF0_CastAways(s8 arg0, s8 arg1, s8 arg2) {
+    CastAwaysSpriteData* data = func_80023668(sizeof(*data));
+    s16 i;
+
+    data->model = func_80024198(0x1080, NULL, 4);
+    i = 0;
+    if (D_800F37DA != 0) {
+        do {
+            data->buffersA[i] = func_80023668(0x150);
+            data->buffersB[i] = func_80023668(0x150);
+            i++;
+        } while (i < D_800F37DA);
+    }
+    data->unk_02 = arg0;
+    data->unk_03 = arg1;
+    data->unk_04 = arg2;
+    return data;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB0C8_CastAways);
 
