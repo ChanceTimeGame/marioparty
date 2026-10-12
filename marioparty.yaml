@@ -1519,7 +1519,7 @@ segments:
     subsegments:
       - [0x23CF40, c]
       - [0x240010, c]
-      - [0x241460, data, 23CF40]
+      - [0x241460, .data, 23CF40]
       - [0x241640, .rodata, 23CF40]
       - [0x241720, .rodata, 240010]
       - {0x241740, type: bss, vram: 0x800FADE0, name: ovl_34_bss}
