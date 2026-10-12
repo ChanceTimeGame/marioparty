@@ -232,6 +232,10 @@ build/src/overlays/ovl_17_BoxMountainMayhem/168CA0.c.o: CFLAGS = -G0 -mips3 -mgp
 build/src/overlays/ovl_40_ResultsScene/259EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_64 2B1670.c: ovl_40 twin (same mul-fix nop)
 build/src/overlays/ovl_64_ResultsEternalStar2/2B1670.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_00 CDA50.c: nop between mul.d in func_800F9178 (mul fix on)
+build/src/overlays/ovl_00_MemoryMatch/CDA50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_00 D27D0.c: nop between mul.s in func_800FD6A0 (mul fix on)
+build/src/overlays/ovl_00_MemoryMatch/D27D0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_2D 1FF1E0.c: nop between mul.s in func_800F7A0C
 build/src/overlays/ovl_2D_RunningOfTheBulb/1FF1E0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_22 1AA2A0.c: nop between mul.s in func_800FA4B4 (mul fix on; blank-line strip rule below too)
@@ -386,6 +390,15 @@ $(BUILD_DIR)/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o $(BUILD_DIR)/src/ove
 # ovl_1C 184870.c: mul fix on, with blank lines stripped so mul.s immediately after trig calls
 # does not gain an extra nop. Kept separate from the shared target list for branch merges.
 $(BUILD_DIR)/src/overlays/ovl_24_FlowerShower/1BD640.c.o $(BUILD_DIR)/src/overlays/ovl_1C_GrabBag/184870.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_00 CDA50.c: mul fix on (CFLAGS line above) with blank lines stripped: mul.s right after
+# func_800AEAC0's return in func_800FA400. A separate rule so the shared target list is not edited.
+$(BUILD_DIR)/src/overlays/ovl_00_MemoryMatch/CDA50.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
