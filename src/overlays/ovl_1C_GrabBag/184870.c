@@ -4,6 +4,7 @@ extern s32 D_800FB104_GrabBag[4];
 extern s32 D_800FB254_GrabBag;
 extern f32 D_800B8960;
 extern f32 D_800B8984;
+extern u8 D_800F64F8;
 extern u16 D_800FB11C_GrabBag[4];
 extern u16 D_800FB244_GrabBag[4];
 extern u16 D_800FB258_GrabBag[];
@@ -32,8 +33,28 @@ typedef struct GrabBagMotionWork {
     f32 radius_offset;
 } GrabBagMotionWork;
 
+typedef struct GrabBagControlWork {
+    char unk_00[0x40];
+    f32 unk_40;
+    char unk_44[0x12];
+    s8 player_index;
+    char unk_57;
+    s8 score_index;
+    char unk_59[0x99];
+    s16 score;
+} GrabBagControlWork;
+
 void func_800F776C_GrabBag(omObjData*);
+void func_800F859C_GrabBag(omObjData*);
+void func_800F8984_GrabBag(void);
+void func_800F8A18_GrabBag(omObjData*);
+void func_800F8BDC_GrabBag(void);
+void func_800F903C_GrabBag(omObjData*);
+void func_800FA424_GrabBag(void);
+void func_800FAED8_GrabBag(void);
+void func_800FAFA0_GrabBag(void);
 void func_800FA8F4_GrabBag(omObjData*);
+void func_800FB064_GrabBag(s32, s32);
 
 void func_800F7680_GrabBag(void) {
     omObjData* obj;
@@ -60,7 +81,37 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F776C_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F7EDC_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8484_GrabBag);
+void func_800F8484_GrabBag(omObjData* arg0) {
+    GrabBagControlWork* work;
+
+    work = arg0->unk_50;
+    func_800FA424_GrabBag();
+    if (func_8005FD5C() + D_800F64F8 == 0) {
+        if (D_800ED430 == 0) {
+            func_800FAFA0_GrabBag();
+            func_800F859C_GrabBag(arg0);
+            return;
+        }
+        if ((u32)(D_800ED430 - 2) < 2U) {
+            func_800FAFA0_GrabBag();
+            func_800F8984_GrabBag();
+            if ((GMesStatAllGet() == 0) || (GMesStatAllGet() & 2)) {
+                func_800F8A18_GrabBag(arg0);
+            }
+            work->unk_40 = 0.0f;
+            func_80005A28(arg0);
+            return;
+        }
+        if (D_800ED430 == 1) {
+            func_800FB064_GrabBag(work->score_index, work->score);
+            func_800FAED8_GrabBag();
+            func_800F903C_GrabBag(arg0);
+            if (work->player_index == 3) {
+                func_800F8BDC_GrabBag();
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F859C_GrabBag);
 
