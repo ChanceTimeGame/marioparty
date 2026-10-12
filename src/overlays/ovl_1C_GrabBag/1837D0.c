@@ -2,14 +2,17 @@
 
 extern f32 D_800B8988;
 extern u8 D_800F64F8;
-extern u8 D_800FB090_GrabBag;
-extern u32 D_800FB094_GrabBag;
-extern u32 D_800FB098_GrabBag;
-extern u32 D_800FB09C_GrabBag;
-extern s32 D_800FB0A0_GrabBag;
-extern s32 D_800FB0A4_GrabBag;
-extern u8 D_800FB0A8_GrabBag[];
-extern s32 D_800FB0B0_GrabBag;
+
+/* .data */
+u8 D_800FB090_GrabBag = 0;  /* result jingle played */
+u32 D_800FB094_GrabBag = 0; /* frame counters of the D_800ED430 stages */
+u32 D_800FB098_GrabBag = 0;
+u32 D_800FB09C_GrabBag = 0;
+s32 D_800FB0A0_GrabBag = 0;
+s32 D_800FB0A4_GrabBag = 0;
+u8 D_800FB0A8_GrabBag[6] = { 0x21, 0x37, 0x23, 0x21, 0x37, 0x23 }; /* bag image per bag */
+s32 D_800FB0B0_GrabBag = 0; /* bags set up */
+
 extern GrabBagBagWork* D_800FB220_GrabBag;
 extern s32 D_800FB290_GrabBag;
 

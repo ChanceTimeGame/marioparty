@@ -1,7 +1,8 @@
 #include "GrabBag.h"
 
-extern u8 D_800FB0C0_GrabBag;
-extern u16 D_800FB0C2_GrabBag;
+/* .data */
+u8 D_800FB0C0_GrabBag = 0;
+u16 D_800FB0C2_GrabBag = 0;
 extern u16 D_800FB230_GrabBag;
 
 

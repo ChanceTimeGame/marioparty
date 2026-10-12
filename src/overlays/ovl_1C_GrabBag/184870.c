@@ -8,16 +8,18 @@ extern u8 D_800F64F8;
 extern u16 ContBtn[4];
 extern s8 ContStkY[4];
 
-extern s16 D_800FB0D0_GrabBag;     /* player being set up */
-extern s32 D_800FB0D4_GrabBag[4];  /* player order */
-extern u8 D_800FB0E4_GrabBag[16];  /* start slot of each player, 4 per layout (D_800FB254) */
-extern GrabBagPos D_800FB0F4_GrabBag[4];
-extern s32 D_800FB104_GrabBag[4];  /* displayed scores */
+/* .data */
+s16 D_800FB0D0_GrabBag = 0; /* player being set up */
+s32 D_800FB0D4_GrabBag[4] = { 0, 1, 2, 3 }; /* player order */
+u8 D_800FB0E4_GrabBag[16] = { 0, 1, 2, 3, 1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2 }; /* start slot of each player, 4 per layout (D_800FB254) */
+GrabBagPos D_800FB0F4_GrabBag[4] = { { 56, 38 }, { 264, 38 }, { 56, 216 }, { 264, 216 } }; /* score positions */
+s32 D_800FB104_GrabBag[4] = { 0, 0, 0, 0 }; /* displayed scores */
+s8 D_800FB114_GrabBag = 0;
+s8 D_800FB115_GrabBag = 0;
+s8 D_800FB118_GrabBag[4] = { 0, 0, 0, 0 };
+u16 D_800FB11C_GrabBag[4] = { 0, 0, 0, 0 }; /* last frame's buttons */
+
 extern u8 D_800FB0C0_GrabBag;
-extern s8 D_800FB114_GrabBag;
-extern s8 D_800FB115_GrabBag;
-extern s8 D_800FB118_GrabBag[4];
-extern u16 D_800FB11C_GrabBag[4];  /* last frame's buttons */
 extern u32 D_800FB240_GrabBag;
 extern u16 D_800FB244_GrabBag[4];  /* newly pressed buttons */
 extern GrabBagBagWork* D_800FB24C_GrabBag;
