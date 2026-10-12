@@ -134,10 +134,10 @@ void func_800F858C_BumperBalls(omObjData* arg0);
 void func_800F85A8_BumperBalls(omObjData*, s32);
 void func_800F87F4_BumperBalls(omObjData*);
 void func_800F8D68_BumperBalls(omObjData*);
-void func_800F8E40_BumperBalls(void);
+void func_800F8E40_BumperBalls(omObjData*);
 void func_800F9588_BumperBalls(void);
 u16 func_800F95CC_BumperBalls(omObjData*);
-void func_800F98CC_BumperBalls(f32, s16);
+void func_800F98CC_BumperBalls(f32, u16);
 f32 func_800F9A7C_BumperBalls(f32, f32, f32);
 u16 func_800F9B70_BumperBalls(omObjData*);
 s32 func_800F9CA8_BumperBalls(s32, u16*, BumperBallsColVtx*, BumperBallsHitProbe*);
@@ -154,6 +154,7 @@ void func_800FAE60_BumperBalls(omObjData*, s8*, s8*);
 
 /* main-code helpers (prototypes as the twins ovl_34 declare them) */
 void func_8001E268(s16, u8, u8);
+void func_800370D4(s16);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
 f32 func_80025D18(s16);
@@ -173,8 +174,9 @@ typedef struct BumperBallsAnglePair {
 } BumperBallsAnglePair;
 
 /* Wave phases of the 6 x 6 water mesh (bss): per row, the near edge's 6 pairs then the far
-   edge's 6. Retail indexes it both as rows of 12 pairs and as half-rows of 6 (BB_WAVE_HALF, far
-   edge of row r = half-row 2r + 1); its splat label D_800FCD70 is D_800FCD40 + 0x30. */
+   edge's 6. func_800FB2EC indexes the far pairs as half-rows of 6 from the splat label D_800FCD70
+   (= D_800FCD40 + 0x30; far edge of row r = D_800FCD70[2r]), which on the host is a view of
+   D_800FCD40; func_800FC618 uses BB_WAVE_FAR (rows of 12 from the same address). */
 extern BumperBallsAnglePair D_800FCD40_BumperBalls[6][12];
 #ifdef TARGET_PC
 #define D_800FCD70_BumperBalls ((BumperBallsAnglePair(*)[6]) &D_800FCD40_BumperBalls[0][6])

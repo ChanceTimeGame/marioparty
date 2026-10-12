@@ -152,7 +152,7 @@ void func_800F6AB4_BumperBalls(omObjData* arg0) {
         break;
     case 2:
         if (D_800FCD28_BumperBalls == NULL) {
-            D_800FCD28_BumperBalls = omAddObj(4, 0, 0, -1, (void*) func_800F8E40_BumperBalls);
+            D_800FCD28_BumperBalls = omAddObj(4, 0, 0, -1, func_800F8E40_BumperBalls);
         }
         break;
     }
@@ -191,7 +191,6 @@ void func_800F6EBC_BumperBalls(omObjData* object, s32 player) {
     BumperBallsWork* work;
     s32 i;
     s32 chrBase;
-    s32 motion;
     u8 pos;
     s8 chr;
     f32 zero;
@@ -232,14 +231,14 @@ void func_800F6EBC_BumperBalls(omObjData* object, s32 player) {
     chrBase = D_800C59AC[chr].unk_00;
     object->model[0] = LoadFormFile(chrBase | D_800C59A8[chr].file0, 0x20699);
     omSetTra(object, D_800FCB30_BumperBalls[pos].x, D_800FCB30_BumperBalls[pos].y, D_800FCB30_BumperBalls[pos].z);
-    if (D_800C59A8[chr].index != 5) {
-        work->unk_08 = 0.0f;
-        omSetSca(object, 1.0f, 1.0f, 1.0f);
-    } else {
+    if ((u16) D_800C59A8[chr].index == 5) {
         work->unk_08 = 10.0f;
         omSetSca(object, 0.95f, 0.95f, 0.95f);
         omSetTra(object, D_800FCB30_BumperBalls[pos].x, D_800FCB30_BumperBalls[pos].y - 10.0f,
                  D_800FCB30_BumperBalls[pos].z);
+    } else {
+        work->unk_08 = 0.0f;
+        omSetSca(object, 1.0f, 1.0f, 1.0f);
     }
     object->model[1] = func_800174F4(0x20, 0x689);
     func_800370D4(object->model[1]);
@@ -257,11 +256,10 @@ void func_800F6EBC_BumperBalls(omObjData* object, s32 player) {
     func_8001775C(object, 1, chrBase | 1);
     func_8001775C(object, 2, chrBase | 3);
     if (rand8() & 1) {
-        motion = chrBase | 0xF;
+        func_8001775C(object, 3, chrBase | 0xF);
     } else {
-        motion = chrBase | 0x38;
+        func_8001775C(object, 3, chrBase | 0x38);
     }
-    func_8001775C(object, 3, motion);
     func_8001775C(object, 4, chrBase | 0x17);
     func_8001775C(object, 5, chrBase | 0x11);
     func_8001775C(object, 6, chrBase | 0x10);
@@ -290,11 +288,13 @@ void func_800F6EBC_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = func_800F74E8_BumperBalls;
 }
 
+// float register allocation of the turn-step clamp and the port copy (masked ~6, one instruction short)
+#ifdef NON_MATCHING
 void func_800F74E8_BumperBalls(omObjData* object) {
     BumperBallsWork* work;
     s8 stickX;
     s8 stickY;
-    u8 port;
+    s32 port;
     f32 diff;
     f32 speed;
     f32 height;
@@ -379,6 +379,7 @@ void func_800F74E8_BumperBalls(omObjData* object) {
             D_800FCD1E_BumperBalls--;
         }
         object->func_ptr = func_800F7EC4_BumperBalls;
+        return;
     }
     if (height < object->trans.y + -100.0f) {
         object->trans.y = object->trans.y - 10.0f;
@@ -442,6 +443,9 @@ void func_800F74E8_BumperBalls(omObjData* object) {
     func_80025798(object->model[1], object->trans.x, 120.0f, object->trans.z);
     work->unk_10 = work->unk_0C;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800F74E8_BumperBalls);
+#endif
 
 void func_800F7EC4_BumperBalls(omObjData* object) {
     BumperBallsWork* work = object->unk_50;
@@ -607,13 +611,13 @@ void func_800F85A8_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = func_800F87F4_BumperBalls;
 }
 
+// delay-slot scheduling around the ball omSetTra calls (8 instructions long; logic-equivalent)
+#ifdef NON_MATCHING
 void func_800F87F4_BumperBalls(omObjData* object) {
     BumperBallsBoatWork* work = object->unk_50;
     omObjData* ball = D_800FCD2C_BumperBalls[work->player];
     BumperBallsWork* ballWork = ball->unk_50;
     f32 x;
-    f32 dx;
-    f32 dz;
 
     if (ballWork->unk_00 != 4 && ballWork->unk_00 != 5) {
         return;
@@ -646,9 +650,8 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         break;
     case 1:
         object->trans.x = func_800AEAC0(work->angle) * 4.0f + work->dx + object->trans.x;
-        dx = ball->trans.x - object->trans.x;
-        dz = ball->trans.z - object->trans.z;
-        if (func_800B1750(dx * dx + dz * dz) <= 80.0f) {
+        if (func_800B1750((ball->trans.x - object->trans.x) * (ball->trans.x - object->trans.x)
+                          + (ball->trans.z - object->trans.z) * (ball->trans.z - object->trans.z)) <= 80.0f) {
             work->state = 3;
             if (work->side == 1) {
                 work->model2 = 3;
@@ -662,21 +665,17 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         }
         break;
     case 3:
-        if (work->side == 1) {
-            x = object->trans.x + 80.0f;
-        } else {
-            x = object->trans.x - 80.0f;
-        }
-        omSetTra(ball, x, object->trans.y + work->dy, object->trans.z);
+        omSetTra(ball, (work->side == 1) ? object->trans.x + 80.0f : object->trans.x - 80.0f,
+                 object->trans.y + work->dy, object->trans.z);
         if (work->angle + work->speed >= 90.0f) {
             work->state = 2;
             func_800258EC(object->model[work->model], 4, 4);
-            if (work->side != 1) {
-                work->model = 5;
-                work->model2 = 6;
-            } else {
+            if (work->side == 1) {
                 work->model = 3;
                 work->model2 = 4;
+            } else {
+                work->model = 5;
+                work->model2 = 6;
             }
             work->angle = 0.0f;
             work->speed = 15.0f;
@@ -686,26 +685,25 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         break;
     case 2:
         work->state = 4;
-        if (work->side == 1) {
-            x = object->trans.x + 80.0f;
-        } else {
-            x = object->trans.x - 80.0f;
-        }
-        omSetTra(ball, x, object->trans.y, object->trans.z);
+        omSetTra(ball, (work->side == 1) ? object->trans.x + 80.0f : object->trans.x - 80.0f,
+                 object->trans.y, object->trans.z);
         break;
     case 4:
         object->trans.x = object->trans.x - (func_800AEAC0(work->angle) * 4.0f + work->dx);
+        omSetTra(ball, (work->side == 1) ? object->trans.x + 80.0f : object->trans.x - 80.0f,
+                 object->trans.y, object->trans.z);
         if (work->side == 1) {
-            x = object->trans.x + 80.0f;
-        } else {
-            x = object->trans.x - 80.0f;
-        }
-        omSetTra(ball, x, object->trans.y, object->trans.z);
-        if ((work->side == 1) ? (object->trans.x < work->endX) : (work->endX < object->trans.x)) {
+            if (object->trans.x < work->endX) {
+                goto arrived;
+            }
+        } else if (object->trans.x > work->endX) {
+        arrived:
             func_800258EC(object->model[work->model], 4, 4);
             work->state = 5;
         }
         break;
+    case 5:
+        return;
     }
     func_80026174(object->model[work->model], object->model[work->model2], func_800AEAC0(work->angle));
     func_80025798(object->model[work->model], object->trans.x, object->trans.y, object->trans.z);
@@ -714,6 +712,9 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         work->angle -= 360.0f;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800F87F4_BumperBalls);
+#endif
 
 void func_800F8D68_BumperBalls(omObjData* arg0) {
     switch (D_800FCFF0_BumperBalls) {
@@ -738,7 +739,7 @@ void func_800F8D68_BumperBalls(omObjData* arg0) {
     }
 }
 
-void func_800F8E40_BumperBalls(void) {
+void func_800F8E40_BumperBalls(omObjData* arg0) {
     BumperBallsWork* work;
     s32 i;
 
@@ -811,11 +812,11 @@ void func_800F8E40_BumperBalls(void) {
         if (D_800FCD04_BumperBalls < 0.0f) {
             if (work->unk_0C <= 0.0f) {
                 work->unk_0C = 0.0f;
-                goto stop;
+                func_80025C20(D_800FCD08_BumperBalls->model[0], func_80025E48(D_800FCD08_BumperBalls->motion[0]), 0, 0x14, 2);
+                D_800FCFF2_BumperBalls = 11;
             }
         } else if (work->unk_0C >= 0.0f) {
             work->unk_0C = 0.0f;
-        stop:
             func_80025C20(D_800FCD08_BumperBalls->model[0], func_80025E48(D_800FCD08_BumperBalls->motion[0]), 0, 0x14, 2);
             D_800FCFF2_BumperBalls = 11;
         }
@@ -912,13 +913,11 @@ u16 func_800F95CC_BumperBalls(omObjData* object) {
     omObjData* other;
     f32 x;
     f32 z;
-    f32 dx;
-    f32 dz;
     f32 dist;
-    f32 speed;
     f32 otherSpeed;
-    f32 vx;
-    f32 vz;
+    f32 len;
+    f32 nx;
+    f32 nz;
     s32 i;
 
     x = object->trans.x + work->unk_24;
@@ -932,48 +931,49 @@ u16 func_800F95CC_BumperBalls(omObjData* object) {
         if (otherWork->unk_00 != 1 && otherWork->unk_00 != 2) {
             continue;
         }
-        dx = other->trans.x - x;
-        dz = other->trans.z - z;
-        dist = func_800B1750(dx * dx + dz * dz);
-        speed = work->unk_20 + otherWork->unk_20;
-        if (!(dist <= func_800B1750(speed * speed))) {
+        dist = func_800B1750((other->trans.x - x) * (other->trans.x - x) + (other->trans.z - z) * (other->trans.z - z));
+        if (!(dist <= func_800B1750((work->unk_20 + otherWork->unk_20) * (work->unk_20 + otherWork->unk_20)))) {
             continue;
         }
-        speed = func_800B1750(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C);
+        dist = func_800B1750(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C);
         otherSpeed = func_800B1750(otherWork->unk_24 * otherWork->unk_24 + otherWork->unk_2C * otherWork->unk_2C);
-        if (otherSpeed <= speed) {
-            func_800F98CC_BumperBalls(speed, work->player);
+        if (otherSpeed <= dist) {
+            func_800F98CC_BumperBalls(dist, work->player);
         } else {
             func_800F98CC_BumperBalls(otherSpeed, otherWork->player);
         }
         func_80060F04(work->player, 0xA, 0, 0xA);
         func_80060F04(otherWork->player, 0xA, 0, 0xA);
-        vx = otherWork->unk_24;
-        vz = otherWork->unk_2C;
-        otherWork->unk_24 = work->unk_24 * 1.1f - vx * 0.4f;
+        x = otherWork->unk_24;
+        z = otherWork->unk_2C;
+        otherWork->unk_24 = work->unk_24 * 1.1f - x * 0.4f;
         otherWork->unk_2C = work->unk_2C * 1.1f - otherWork->unk_2C * 0.4f;
-        work->unk_24 = vx * 1.1f - work->unk_24 * 0.4f;
-        work->unk_2C = vz * 1.1f - work->unk_2C * 0.4f;
+        work->unk_24 = x * 1.1f - work->unk_24 * 0.4f;
+        work->unk_2C = z * 1.1f - work->unk_2C * 0.4f;
         if (D_800FCD1E_BumperBalls == 0) {
             otherWork->unk_24 *= 1.01f;
             otherWork->unk_2C *= 1.01f;
         }
-        speed = func_800B1750(otherWork->unk_24 * otherWork->unk_24 + otherWork->unk_2C * otherWork->unk_2C);
-        if (speed > 22.0f) {
-            otherWork->unk_24 = otherWork->unk_24 / speed * 22.0f;
-            otherWork->unk_2C = otherWork->unk_2C / speed * 22.0f;
+        len = func_800B1750(otherWork->unk_24 * otherWork->unk_24 + otherWork->unk_2C * otherWork->unk_2C);
+        if (len > 22.0f) {
+            nx = otherWork->unk_24 / len;
+            nz = otherWork->unk_2C / len;
+            otherWork->unk_24 = nx * 22.0f;
+            otherWork->unk_2C = nz * 22.0f;
         }
-        speed = func_800B1750(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C);
-        if (speed > 22.0f) {
-            work->unk_24 = work->unk_24 / speed * 22.0f;
-            work->unk_2C = work->unk_2C / speed * 22.0f;
+        len = func_800B1750(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C);
+        if (len > 22.0f) {
+            nx = work->unk_24 / len;
+            nz = work->unk_2C / len;
+            work->unk_24 = nx * 22.0f;
+            work->unk_2C = nz * 22.0f;
         }
         return 1;
     }
     return 0;
 }
 
-void func_800F98CC_BumperBalls(f32 speed, s16 player) {
+void func_800F98CC_BumperBalls(f32 speed, u16 player) {
     s16 sound;
     s16 pitch;
     s16 volume;
@@ -1112,10 +1112,12 @@ u16 func_800F9EE0_BumperBalls(void) {
     return (phi_a0_2 < 4) ^ 1;
 }
 
+// register allocation (work/table in s0/s1 swapped; masked ~0 beyond the bss shift)
+#ifdef NON_MATCHING
 void func_800F9F30_BumperBalls(omObjData* object) {
+    u16* table;
     BumperBallsWork* work = object->unk_50;
     u16 candidates[4];
-    u16* table;
     s32 bias;
     u16 count;
     s32 i;
@@ -1151,6 +1153,9 @@ void func_800F9F30_BumperBalls(omObjData* object) {
             bias = 3;
             break;
         case 2:
+            table = D_800FCBA8_BumperBalls;
+            bias = 2;
+            break;
         case 3:
             table = D_800FCBA8_BumperBalls;
             bias = 2;
@@ -1183,13 +1188,16 @@ void func_800F9F30_BumperBalls(omObjData* object) {
             work->unk_48 = ((u8) (rand8() % 180) + 180) >> 1;
             for (i = 0; i < 4; i++) {
                 omObjData* other = D_800FCD2C_BumperBalls[i];
-                u16 state;
+                BumperBallsWork* otherWork;
 
                 if (object == other) {
                     continue;
                 }
-                state = ((BumperBallsWork*) other->unk_50)->unk_00;
-                if (state == 3 || state == 4 || state == 5 || state == 6) {
+                otherWork = other->unk_50;
+                if (otherWork->unk_00 == 3 || otherWork->unk_00 == 4) {
+                    continue;
+                }
+                if (otherWork->unk_00 == 5 || otherWork->unk_00 == 6) {
                     continue;
                 }
                 candidates[count++] = i;
@@ -1210,6 +1218,9 @@ void func_800F9F30_BumperBalls(omObjData* object) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800F9F30_BumperBalls);
+#endif
 
 u16 func_800FA36C_BumperBalls(omObjData* arg0) {
     BumperBallsWork* temp_v1 = arg0->unk_50;
@@ -1397,6 +1408,8 @@ void func_800FAB54_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
     *stickY = -func_800AEAC0(work->unk_50) * 80.0f;
 }
 
+// loop-counter register/scheduling in the dodge search (one instruction short)
+#ifdef NON_MATCHING
 void func_800FAE60_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
     BumperBallsWork* work = object->unk_50;
     omObjData* other;
@@ -1449,3 +1462,6 @@ void func_800FAE60_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
     *stickX = func_800AEFD0(work->unk_50) * 80.0f;
     *stickY = -func_800AEAC0(work->unk_50) * 80.0f;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800FAE60_BumperBalls);
+#endif
