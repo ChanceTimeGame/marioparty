@@ -11,6 +11,18 @@ void func_800F6610_MinigameInstructions(void) {
     func_80060088();
     func_8006CEA0();
     omSysPauseEnableFlag = 1;
+#ifdef TARGET_PC
+    /* --dev-minigame: routes other than the roulette (Mini-Game Island, board events) play the
+       forced minigame too, so a 1P overlay the roulette never offers can be tested. */
+    if (pb_dev_minigame_forced() && !pb_dev_minigame_allowed(GwSystem.unk_1E)) {
+        for (i = 0; i < 56; i++) {
+            if (pb_dev_minigame_allowed(i)) {
+                GwSystem.unk_1E = i;
+                break;
+            }
+        }
+    }
+#endif
     D_8010F766_MinigameInstructions = GwSystem.unk_1E;
     D_8010F760_MinigameInstructions = D_8010E4F0_MinigameInstructions[GwSystem.unk_1E].unk_04;
     if (_CheckFlag(0x2B) != 0) {
