@@ -79,7 +79,7 @@ void func_800F65E0_MushroomMixup(void) {
 }
 
 void func_800F6CA8_MushroomMixup(omObjData* arg0) {
-    switch((D_800F5144 ^ 1) < 1) {
+    switch ((s32)((D_800F5144 ^ 1) < 1)) {
         case 0:
             break;
         default:
