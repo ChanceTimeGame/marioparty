@@ -1,5 +1,17 @@
 #include "GrabBag.h"
 
+extern u32 D_800FB094_GrabBag;
+extern u32 D_800FB098_GrabBag;
+extern u32 D_800FB09C_GrabBag;
+extern s32 D_800FB0A0_GrabBag;
+extern s32 D_800FB0A4_GrabBag;
+
+
+extern u8 D_800F64F8;
+extern u8 D_800FB090_GrabBag;
+extern s32 D_800FB290_GrabBag;
+
+
 void func_800F65E0_GrabBag(void) {
     func_80029090(0x10);
     func_8002ADF0(&D_800EDEC0, 0x40);
@@ -40,11 +52,101 @@ void func_800F67BC_GrabBag(void) {
 }
 
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/1837D0", func_800F67C4_GrabBag);
+void func_800F67C4_GrabBag(omObjData* arg0, u32 arg1) {
+    u32 time;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/1837D0", func_800F69D4_GrabBag);
-
-
+    time = 1800;
+    switch (D_800ED430) {
+    case 0:
+        if (arg1 == 240) {
+            GMesCreate(0);
+            if (GMesStatAllGet() == 0 || GMesStatAllGet() & 2) {
+            }
+        } else if (arg1 >= 360) {
+            func_80009458();
+        }
+        break;
+    case 1:
+        if (arg1 == 0) {
+            GMesCreate(8, 60, 160, 32);
+            if (GMesStatAllGet() == 0 || GMesStatAllGet() & 2) {
+            }
+        }
+        if (func_8005FD5C() + D_800F64F8 == 0) {
+            time = 1800 - arg1;
+        }
+        if (time == 0) {
+            func_800790C0();
+            func_800601D4(40);
+            func_80009438();
+        } else {
+            func_80079078(time / 30);
+        }
+        break;
+    case 2:
+        if (arg1 == 0) {
+            func_80009730();
+            func_800790C0();
+            GMesCreate(2);
+        } else if ((GMesStatAllGet() == 0 || GMesStatAllGet() & 2) && D_800FB090_GrabBag == 0 &&
+                   _CheckFlag(0x2B) == 0) {
+            switch (D_800FB290_GrabBag) {
+            case 0:
+                func_80060128(0x32);
+                break;
+            case 1:
+                func_80060128(0x3C);
+                break;
+            case 2:
+                func_80060128(0x35);
+                break;
+            }
+            D_800FB090_GrabBag = 1;
+        }
+        break;
+    }
+}
+void func_800F69D4_GrabBag(omObjData* arg0) {
+    func_80009468();
+    switch (D_800ED430) {
+    case 0:
+        if (D_800FB094_GrabBag > 360) {
+            func_80009458();
+        }
+        func_800F67C4_GrabBag(arg0, D_800FB094_GrabBag);
+        D_800FB094_GrabBag += 2;
+        break;
+    case 1:
+        func_800F67C4_GrabBag(arg0, D_800FB09C_GrabBag);
+        if (func_8005FD5C() + D_800F64F8 == 0) {
+            D_800FB09C_GrabBag++;
+        }
+        break;
+    case 2:
+        if (GMesStatAllGet() == 0 || GMesStatAllGet() & 2) {
+            D_800FB0A4_GrabBag++;
+        }
+        if (D_800FB0A4_GrabBag == 30 && _CheckFlag(0x2B) != 0) {
+            func_800726AC(0, 20);
+            func_80009448();
+        }
+        if ((D_800FB0A4_GrabBag == 105 && D_800FB290_GrabBag == 0) ||
+            (D_800FB0A4_GrabBag == 120 && D_800FB290_GrabBag == 1) ||
+            (D_800FB0A4_GrabBag == 90 && D_800FB290_GrabBag == 2)) {
+            func_800726AC(0, 20);
+            func_80009448();
+        }
+        func_800F67C4_GrabBag(arg0, D_800FB098_GrabBag);
+        D_800FB098_GrabBag += 2;
+        break;
+    case 3:
+        if (func_80072718() == 0) {
+            omOvlReturnEx(1);
+        }
+        D_800FB0A0_GrabBag += 2;
+        break;
+    }
+}
 void func_800F6C08_GrabBag(void) {
     s32 i;
 
