@@ -1,5 +1,13 @@
 #include "CastAways.h"
 
+#define CASTAWAYS_RM_LINE                                                              \
+    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_WRAP | CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA
+#define CASTAWAYS_RM_LINE1 CASTAWAYS_RM_LINE | GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define CASTAWAYS_RM_LINE2 CASTAWAYS_RM_LINE | GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+/* Draws the fishing line through count points as a strip of 3D lines. */
+
+
 typedef struct CastAwaysCameraView {
     f32 rot;
     f32 x;
@@ -56,8 +64,48 @@ CastAwaysSpriteData* func_800FAFF0_CastAways(s8 arg0, s8 arg1, s8 arg2) {
     return data;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB0C8_CastAways);
+void func_800FB0C8_CastAways(CastAwaysSpriteData* arg0, Vec* points, u16 count) {
+    Vtx* vtx;
+    Gfx* gfx;
+    s16 i;
 
+    if (arg0 != NULL) {
+        vtx = arg0->buffersA[D_800F37F0];
+        gfx = arg0->buffersB[D_800F37F0];
+        *D_800F2B7C[arg0->model].unk_6C->unk_00 = gfx;
+        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        gDPSetCombineMode(gfx++, G_CC_SHADE, G_CC_SHADE);
+        gDPSetRenderMode(gfx++, CASTAWAYS_RM_LINE1, CASTAWAYS_RM_LINE2);
+        gSPVertex(gfx++, osVirtualToPhysical(vtx), count + 1, 0);
+        vtx->v.ob[0] = points->x;
+        vtx->v.ob[1] = points->y;
+        vtx->v.ob[2] = points->z;
+        vtx->v.cn[0] = arg0->unk_02;
+        vtx->v.cn[1] = arg0->unk_03;
+        vtx->v.cn[2] = arg0->unk_04;
+        vtx->v.tc[1] = 0;
+        vtx->v.tc[0] = 0;
+        vtx->v.cn[3] = 0xFF;
+        vtx++;
+        points++;
+        for (i = 1; i < count; i++) {
+            gSPLine3D(gfx++, i - 1, i, 0);
+            vtx->v.ob[0] = points->x;
+            vtx->v.ob[1] = points->y;
+            vtx->v.ob[2] = points->z;
+            vtx->v.cn[0] = arg0->unk_02;
+            vtx->v.cn[1] = arg0->unk_03;
+            vtx->v.cn[2] = arg0->unk_04;
+            vtx->v.tc[1] = 0;
+            vtx->v.tc[0] = 0;
+            vtx->v.cn[3] = 0xFF;
+            vtx++;
+            points++;
+        }
+        gDPSetScissor(D_800F37DC++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        gSPEndDisplayList(gfx++);
+    }
+}
 void func_800FB374_CastAways(CastAwaysSpriteData* arg0) {
     s16 i = 0;
 
