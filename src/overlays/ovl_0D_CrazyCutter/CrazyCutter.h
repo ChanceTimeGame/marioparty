@@ -87,7 +87,6 @@ typedef struct CrazyCutterRing {
 } CrazyCutterRing;
 
 extern u8 D_800F64F8;
-f32 sqrtf(f32);
 extern s8 ContStkX[];
 extern s8 ContStkY[];
 void func_80025BB8(s16, s16);

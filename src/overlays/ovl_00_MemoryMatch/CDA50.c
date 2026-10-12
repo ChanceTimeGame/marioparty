@@ -264,7 +264,7 @@ void func_800F7318_MemoryMatch(omObjData* arg0) {
 
 void func_800F7350_MemoryMatch(void) {
     D_800C3110->unk_40 = 45.0f;
-    osViBlack(NULL);
+    osViBlack(FALSE);
     func_80060198();
     func_800F94E0_MemoryMatch();
     func_800F830C_MemoryMatch();
