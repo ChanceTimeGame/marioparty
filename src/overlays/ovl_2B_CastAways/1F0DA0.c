@@ -1,5 +1,8 @@
 #include "CastAways.h"
 
+/* Lets the fishing line sag: lowers every sample by drop and clamps it to the water or rod line. */
+
+
 extern u16 D_800FBA06_CastAways;
 extern u16 D_800FBA08_CastAways;
 
@@ -321,8 +324,72 @@ void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwa
     arg1->samples[arg1->sampleCount].z = arg0->trans.z;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9EAC_CastAways);
+// float register allocation only
+#ifdef NON_MATCHING
+void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
+    f32 k = 0.6f;
+    s32 i;
+    s32 clamped;
+    u16 j;
+    f32 surface;
+    f32 limit;
+    f32 slope;
 
+    clamped = 0;
+    for (i = 1; i < arg0->sampleCount; i++) {
+        arg0->samples[i].y -= drop;
+        if (i == 4) {
+            if (arg0->samples[4].y < 0.0f) {
+                arg0->samples[4].y = 0.0f;
+                clamped++;
+            }
+        } else if (i >= 5) {
+            surface = arg0->samples[4].y;
+            if (0.0f < surface) {
+                surface = 0.0f;
+            }
+            if ((arg0->samples[arg0->sampleCount].y == 0.0f) & (surface == 0.0f)) {
+                limit = 0.0f;
+            } else {
+                slope = (surface - arg0->samples[arg0->sampleCount].y)
+                      / (arg0->samples[arg0->sampleCount].z - arg0->samples[4].z);
+                limit = fabs(arg0->samples[4].z - arg0->samples[i].z) * slope;
+            }
+            if (arg0->samples[i].y <= limit && arg0->samples[i].y <= 0.0f) {
+                arg0->samples[i].y = limit;
+                clamped++;
+            }
+        } else {
+            j = 3;
+            if (arg0->sampleCount < 3) {
+                j = arg0->sampleCount;
+            }
+            if (i > 0) {
+                if (arg0->sampleCount >= 4) {
+                    limit = k * arg0->samples[0].y;
+                    k -= 0.25f - (f32)i * 0.01f;
+                    if (arg0->samples[i].y < limit) {
+                        arg0->samples[i].y = limit;
+                        clamped++;
+                    }
+                } else {
+                    slope = (arg0->samples[0].y - arg0->samples[j].y) / (arg0->samples[0].z - arg0->samples[j].z);
+                    k -= 0.25f - (f32)i * 0.01f;
+                    if (arg0->samples[i].y < slope * arg0->samples[i].z) {
+                        arg0->samples[i].y = slope * (arg0->samples[i].z - arg0->samples[0].z) + arg0->samples[0].y;
+                        clamped++;
+                    }
+                }
+            }
+        }
+    }
+    if ((u16)clamped == arg0->sampleCount - 1 && arg0->sampleCount != 1) {
+        arg0->castState = 4;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9EAC_CastAways);
+#endif
 // rodata order (C floats) and register allocation
 #ifdef NON_MATCHING
 void func_800FA198_CastAways(void) {

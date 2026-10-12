@@ -91,7 +91,8 @@ typedef struct CastAwaysPlayerWork {
     /* 0x00C */ u16 lastPower;
     /* 0x00E */ u16 repeat;
     /* 0x010 */ s16 motionIdx;
-    /* 0x012 */ s16 castState;
+    /* 0x012 */ u8 castState;
+    /* 0x013 */ char unk_13;
     /* 0x014 */ u16 sampleCount;
     /* 0x016 */ char unk_16[0x10];
     /* 0x026 */ u16 savedSpeed[4];
@@ -244,6 +245,8 @@ CastAwaysSpriteData* func_800FAFF0_CastAways(s8, s8, s8);
 s32 func_800FB4D4_CastAways(f32, f32, f32, u16, f32, f32, f32);
 s32 func_800FB53C_CastAways(f32, f32, f32, u16, f32, f32, f32);
 void func_800F9E2C_CastAways(omObjData*, CastAwaysPlayerWork*, CastAwaysRodWork*);
+void func_800F9EAC_CastAways(CastAwaysPlayerWork*, f32);
+void func_800FB0C8_CastAways(CastAwaysSpriteData*, Vec*, u16);
 
 extern s16 D_800FBB00_CastAways;
 extern s16 D_800FBB04_CastAways;
