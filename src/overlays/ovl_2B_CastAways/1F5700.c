@@ -77,7 +77,30 @@ void func_800FB374_CastAways(CastAwaysSpriteData* arg0) {
     func_80023888(arg0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB404_CastAways);
+s16 func_800FB404_CastAways(s8 arg0, s8 arg1) {
+    f32 x;
+    f32 y;
+    f32 angle;
+    f32 first;
+    s32 result;
+    s16 ret;
+
+    if (arg0 == 0) {
+        s8 temp = arg1;
+        arg1 = arg0;
+        arg0 = temp;
+    }
+    x = arg0;
+    y = arg1;
+    angle = func_800B0CD8(y, x);
+    first = fabsf(x * func_800AEFD0(angle));
+    result = (s32)(first + fabsf(y * func_800AEAC0(angle)));
+    ret = result;
+    if ((s16)result >= 0x51) {
+        ret = 0x50;
+    }
+    return ret;
+}
 
 s32 func_800FB4D4_CastAways(f32 arg0, f32 arg1, f32 arg2, u16 arg3, f32 arg4, f32 arg5, f32 arg6) {
     f32 temp_f0, temp_f2, temp_f12;
