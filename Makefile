@@ -109,6 +109,8 @@ DEPENDS := $(OBJECTS:=.d)
 build/src/overlays/ovl_23_CraneGame/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1C 184870.c: nop between back-to-back mul.s in func_800F97E8
 build/src/overlays/ovl_1C_GrabBag/184870.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_1C 1837D0.c: nop between back-to-back mul.s in func_800F6E90
+build/src/overlays/ovl_1C_GrabBag/1837D0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_25 SlotCarDerby too: nop between back-to-back mul.s (func_800F9B60)
 build/src/overlays/ovl_25_SlotCarDerby/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_61 29B410.c (opening scene) also has the mul fix on: nop between back-to-back mul.s (func_800F86D0, func_800FB670)

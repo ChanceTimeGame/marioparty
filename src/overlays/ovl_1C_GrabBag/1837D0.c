@@ -1,5 +1,9 @@
 #include "GrabBag.h"
 
+extern GrabBagBagWork* D_800FB220_GrabBag;
+void func_8001E2A8(s16, u16);
+
+
 extern f32 D_800B8988;
 extern u8 D_800FB0A8_GrabBag[];
 extern s32 D_800FB0B0_GrabBag;
@@ -194,4 +198,79 @@ void func_800F6C98_GrabBag(omObjData* arg0) {
     func_80025830(arg0->model[1], 4.0f, 4.0f, 4.0f);
     func_8001E360(work->unk_22, 0xFF, 0xFF, 0xBE);
 }
+// register allocation: work in a1, model-table base loaded early (masked 4)
+#ifdef NON_MATCHING
+void func_800F6E90_GrabBag(omObjData* arg0) {
+    GrabBagBagWork* work;
+    omObjData* player;
+    f32 dx;
+    f32 dz;
+    f32 tilt;
+
+    D_800FB220_GrabBag = work = arg0->unk_50;
+    if (D_800F2B7C[arg0->model[0]].unk_20 & 4) {
+        work->unk_5C = 0;
+        work->unk_3C = 0.0f;
+        work->unk_44 = 0.1f;
+        work->unk_48 = 30.0f;
+        work->unk_34 = 500.0f;
+        work->unk_40 = D_800B8988;
+        work->unk_38 = 0.0f;
+        work->unk_4C = 0.5f;
+        work->unk_50 = 0;
+        work->unk_58 = 0.5f;
+        work->unk_6C = work->unk_6D = -1;
+        D_800FB220_GrabBag->unk_6E = -1;
+        return;
+    }
+    if (D_800F3FB0[D_800FB220_GrabBag->unk_6D] == NULL) {
+        return;
+    }
+    D_800FB220_GrabBag->unk_5C++;
+    func_8001E2A8(D_800FB220_GrabBag->unk_22, D_800FB220_GrabBag->unk_5C % 8);
+    player = D_800F3FB0[D_800FB220_GrabBag->unk_6D];
+    dx = arg0->trans.x - player->trans.x;
+    dz = arg0->trans.z - player->trans.z;
+    if (D_800B8988 < dx) {
+        arg0->trans.x -= D_800B8988;
+    } else if (dx < -D_800B8988) {
+        arg0->trans.x += D_800B8988;
+    }
+    if (D_800B8988 < dz) {
+        arg0->trans.z -= D_800B8988;
+    } else if (dz < -D_800B8988) {
+        arg0->trans.z += D_800B8988;
+    }
+    tilt = D_800FB220_GrabBag->unk_38;
+    if (tilt > 0.9f) {
+        tilt = 0.9f;
+    } else if (tilt < -0.9f) {
+        tilt = -0.9f;
+    }
+    if (D_800FB220_GrabBag->unk_5C < 15) {
+        arg0->trans.y += tilt * tilt * 35.0f;
+        D_800FB220_GrabBag->unk_38 += 0.3f;
+    } else {
+        arg0->trans.y -= tilt * tilt * 35.0f;
+        D_800FB220_GrabBag->unk_38 -= 0.1f;
+        if (arg0->trans.y < 20.0f) {
+            arg0->trans.y = 20.0f;
+        }
+    }
+    if (D_800FB220_GrabBag->unk_5C >= 21) {
+        if (D_800FB220_GrabBag->unk_6E == 0) {
+            PlaySound(0xFC);
+        } else if (D_800FB220_GrabBag->unk_6E == 1) {
+            PlaySound(0x109);
+        }
+        func_800258EC(arg0->model[0], 4, 4);
+        D_800FB220_GrabBag->unk_5C = 0;
+        D_800FB220_GrabBag->unk_6C = D_800FB220_GrabBag->unk_6D = -1;
+        D_800FB220_GrabBag->unk_6E = -1;
+    }
+    func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y + 24.0f, arg0->trans.z);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/1837D0", func_800F6E90_GrabBag);
+#endif
