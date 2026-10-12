@@ -96,7 +96,12 @@ extern f32 D_800B8994;
 extern f32 D_800ED6B8;
 extern f32 D_800F5254;
 extern u8 D_800F64F8;
+#ifdef TARGET_PC
+/* low byte of the s32 D_800ED430 (split label) */
+#define D_800ED433 ((u8)D_800ED430)
+#else
 extern u8 D_800ED433;
+#endif
 extern Vec3f CenterM[];
 extern Vec3f CRotM[];
 extern f32 CZoomM[];
