@@ -1,5 +1,8 @@
 #include "CastAways.h"
 
+/* Fish/item object: swims across the screen, then is hooked and flies to the player. */
+
+
 extern u16 D_800FB99C_CastAways[];
 extern f32 D_800FB9F4_CastAways[];
 extern u8 D_800FB9E8_CastAways[][3];
@@ -389,8 +392,173 @@ void func_800F76B8_CastAways(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F76B8_CastAways);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F7A38_CastAways);
+// register allocation and block order
+#ifdef NON_MATCHING
+void func_800F7A38_CastAways(omObjData* arg0) {
+    Vec3f pos;
+    Vec2f scr;
+    CastAwaysFishWork* work;
+    CastAwaysItemSet* set;
+    CastAwaysRodWork* rod;
+    CastAwaysPlayerWork* player;
+    omObjData* playerObj;
+    s32 event;
+    u8 offscreen;
+    f32 angle;
+    f32 dx, dy, dz;
+    s16 model;
+    s16 sound;
 
+    offscreen = 0;
+    if (D_800FBB7C_ovl2B == 2) {
+        return;
+    }
+    work = arg0->unk_50;
+    set = work->set;
+    event = arg0->unk_10;
+    if (event != 0) {
+        arg0->unk_10 = 0;
+        switch (event) {
+        case 1:
+            rod = work->rodObj->unk_50;
+            work->state = 1;
+            switch (work->type) {
+            case 0:
+                func_8001E268(set->spriteIds[work->slot], 1, 1);
+                func_8001E2A8(set->spriteIds[work->slot], 0);
+                break;
+            case 1:
+                func_8001E268(set->spriteIds[work->slot], 1, 1);
+                func_8001E2A8(set->spriteIds[work->slot], 0);
+                func_80060F04(rod->playerNo, 2, 3, 10);
+                break;
+            case 2:
+                func_80060F04(rod->playerNo, 20, 0, 20);
+                break;
+            }
+            break;
+        case 2:
+            playerObj = ((CastAwaysRodWork*)work->rodObj->unk_50)->playerObj;
+            player = playerObj->unk_50;
+            work->state = 2;
+            work->unk_10 = 0;
+            dx = playerObj->trans.x - arg0->trans.x;
+            dy = playerObj->trans.y - arg0->trans.y;
+            dz = playerObj->trans.z - arg0->trans.z;
+            work->dist = func_800B1750(dx * dx + dy * dy + dz * dz);
+            work->start.x = arg0->trans.x;
+            work->start.y = arg0->trans.y;
+            work->start.z = arg0->trans.z;
+            work->step.x = (playerObj->trans.x - arg0->trans.x) / 5.0f;
+            if (work->type != 2) {
+                work->step.y = ((playerObj->trans.y + 250.0f) - arg0->trans.y) / 5.0f;
+            } else {
+                work->step.y = ((playerObj->trans.y + 350.0f) - arg0->trans.y) / 5.0f;
+            }
+            work->step.z = (playerObj->trans.z - arg0->trans.z) / 5.0f;
+            work->steps = 5;
+            work->timer = 25;
+            if (work->type != 2) {
+                func_8001E268(set->spriteIds[work->slot], 1, 0);
+            }
+            switch (work->type) {
+            case 1:
+                GwPlayer[player->playerNo].coins_mg += 5;
+                break;
+            case 2:
+                GwPlayer[player->playerNo].coins_mg += 10;
+                break;
+            default:
+                GwPlayer[player->playerNo].coins_mg += 1;
+                break;
+            }
+            break;
+        }
+    }
+    switch (work->state) {
+    case 0:
+        angle = work->angle + 20.0f;
+        work->angle = angle;
+        if (angle >= 360.0f) {
+            work->angle = angle - 360.0f;
+        }
+        pos.x = arg0->trans.x;
+        pos.y = arg0->trans.y;
+        pos.z = arg0->trans.z;
+        pos.x += work->speed;
+        pos.y += func_800AEAC0(work->angle);
+        Convert3DTo2D(0, &pos, &scr);
+        if (work->speed >= 0.0f ? scr.x >= 340.0f : scr.x <= -20.0f) {
+            offscreen = 1;
+        }
+        if (!offscreen) {
+            omSetTra(arg0, pos.x, pos.y, pos.z);
+            return;
+        }
+        set->spawned--;
+        func_800258EC(arg0->model[0], 4, 4);
+        switch (work->type) {
+        case 0:
+        case 1:
+            set->slots[0][work->slot] = 0;
+            break;
+        case 2:
+            set->slots[2][work->slot] = 0;
+            break;
+        }
+        omDelObj(arg0);
+        break;
+    case 1:
+        playerObj = work->rodObj;
+        if (work->type != 2) {
+            omSetTra(arg0, arg0->trans.x, playerObj->trans.y, playerObj->trans.z - 40.0f);
+            return;
+        }
+        omSetTra(arg0, arg0->trans.x, playerObj->trans.y, (playerObj->trans.z - 40.0f) + -150.0f);
+        return;
+    case 2:
+        rod = work->rodObj->unk_50;
+        player = rod->playerObj->unk_50;
+        if (work->steps != 0) {
+            omSetTra(arg0, arg0->trans.x + work->step.x, arg0->trans.y + work->step.y, arg0->trans.z + work->step.z);
+            work->steps--;
+        }
+        if (--work->timer == 0) {
+            set->spawned--;
+            func_800258EC(arg0->model[0], 4, 4);
+            switch (work->type) {
+            case 0:
+            case 1:
+                set->slots[0][work->slot] = 0;
+                break;
+            case 2:
+                set->slots[2][work->slot] = 0;
+                break;
+            }
+            model = D_800FBB10_CastAways[rod->playerNo].model;
+            func_80025798(model, arg0->trans.x, (work->type != 2) ? arg0->trans.y : arg0->trans.y - 100.0f,
+                          arg0->trans.z);
+            func_80025830(model, 8.0f, 8.0f, 8.0f);
+            func_800258EC(model, 4, 0);
+            func_8001E2A8(D_800FBB10_CastAways[rod->playerNo].id, 0);
+            D_800FBB54_CastAways = 1;
+            if (work->type == 1) {
+                sound = 0x109;
+            } else {
+                sound = 0xFC;
+                if (work->type == 2) {
+                    sound = 0x196;
+                }
+            }
+            player->sound = func_80060540(sound, player->playerNo);
+            omDelObj(arg0);
+        }
+        break;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F7A38_CastAways);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8194_CastAways);
 
 void func_800F8AAC_CastAways(omObjData* arg0) {

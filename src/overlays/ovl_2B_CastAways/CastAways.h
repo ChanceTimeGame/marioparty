@@ -120,7 +120,7 @@ typedef struct CastAwaysPlayerWork {
 typedef struct CastAwaysRodWork {
     /* 0x00 */ omObjData* playerObj;
     /* 0x04 */ omObjData* fishObj;
-    /* 0x08 */ s16 playerNo;
+    /* 0x08 */ u16 playerNo;
     /* 0x0A */ s16 state;
     /* 0x0C */ u16 group;
     /* 0x0E */ u16 steps;
@@ -143,7 +143,7 @@ typedef struct CastAwaysFishWork {
     /* 0x04 */ u16 state;
     /* 0x08 */ f32 speed;
     /* 0x0C */ f32 angle;
-    /* 0x10 */ s16 unk_10;
+    /* 0x10 */ s32 unk_10;
     /* 0x14 */ f32 dist;
     /* 0x18 */ Vec start;
     /* 0x24 */ Vec step;
