@@ -49,6 +49,7 @@ extern omObjData *D_800FC398_BalloonBurst;
 extern omObjData **D_800FC39C_BalloonBurst;
 extern u16 D_800FAF8C_BalloonBurst[];
 extern u16 D_800FAF94_BalloonBurst;
+extern u16 D_800FAF96_BalloonBurst;
 extern u8 D_800FAF7F_BalloonBurst[];
 extern s16 D_800FACCE_BalloonBurst[];
 extern Vec D_800FAEE0_BalloonBurst[];
@@ -84,7 +85,9 @@ typedef struct BalloonBurstObstacle {
     f32 unk_7C;
     f32 unk_80;
     f32 unk_84;
-    char unk_88[0xC];
+    f32 unk_88;
+    f32 unk_8C;
+    f32 unk_90;
     f32 unk_94;
     f32 unk_98;
     f32 unk_9C;
@@ -146,9 +149,55 @@ extern s16 D_800FACC8_BalloonBurst[];
 extern u16 D_800FACD8_BalloonBurst[];
 void func_800F8D6C_BalloonBurst(u8, f32);
 void func_8005DB84(s16, s32);
+void func_80018F68(u16, u8, u8, u8);
+void func_80018E0C(u16, s16);
+void func_80060234(s8);
+void func_80060F04(s16, s16, s16, s16);
+
+typedef struct BalloonBurstSpark {
+    u16 sprite;
+    u16 unk_02;
+    f32 frame;
+    f32 angle;
+    f32 speed;
+    f32 x;
+    f32 y;
+    f32 vx;
+    f32 vy;
+    f32 w;
+    f32 h;
+    f32 dw;
+    f32 dh;
+    f32 div;
+    s16 alpha;
+    u8 done;
+    u8 unk_37;
+} BalloonBurstSpark; // sizeof 0x38
+
+extern BalloonBurstSpark D_800FACE8_BalloonBurst[];
+extern u16 D_800FAF98_BalloonBurst;
+extern f32 D_800FB0A0_BalloonBurst;
+extern f32 D_800FB0A4_BalloonBurst;
+extern f32 D_800FB0A8_BalloonBurst;
+extern f32 D_800FB0AC_BalloonBurst;
+extern f32 D_800FB0B0_BalloonBurst;
+extern f32 D_800FB0B4_BalloonBurst;
+extern f32 D_800FB0B8_BalloonBurst;
+extern f32 D_800FB0BC_BalloonBurst;
+extern f32 D_800FB0C0_BalloonBurst;
+extern f32 D_800FB0C4_BalloonBurst;
+extern f32 D_800FB0C8_BalloonBurst;
+extern u16 D_800FB0CC_BalloonBurst;
+extern f32 D_800FB0D0_BalloonBurst;
+extern f32 D_800FB0D4_BalloonBurst;
+extern f32 D_800FB0D8_BalloonBurst;
+extern f32 D_800FB0DC_BalloonBurst;
+extern u16 D_800FB0E0_BalloonBurst;
 extern u8 D_800FAF89_BalloonBurst[];
 void func_800F9368_BalloonBurst(f32, Vec, s16, f32, Vec *);
 void func_800FA9C4_BalloonBurst(f32, Vec3f *);
+void func_800FA8A4_BalloonBurst(s32);
+void func_800F7D9C_BalloonBurst(u16);
 void func_80027AC8(s16, char *, char *);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
@@ -998,8 +1047,323 @@ void func_800F9520_BalloonBurst(omObjData *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F95F8_BalloonBurst);
+// register allocation (masked 2: the motion-index temp lands in a1, retail v0)
+#ifdef NON_MATCHING
+void func_800F95F8_BalloonBurst(omObjData *arg0) {
+    Vec2f screen;
+    Vec pos;
+    BalloonBurstObstacle *p;
+    BalloonBurstObjectWork *work;
+    f32 a;
+    s32 i;
+    s32 j;
+    s32 m;
 
+    if ((func_8005FD5C() & 0xFFFF) + D_800F64F8 != 0 && D_800FB110_BalloonBurst != 2) {
+        return;
+    }
+    switch (D_800FB110_BalloonBurst) {
+        case 0:
+            if (--D_800FAF98_BalloonBurst == 0) {
+                D_800FB110_BalloonBurst = 1;
+            }
+            break;
+        case 1:
+            func_800FA8A4_BalloonBurst((u16)D_800FC38E_BalloonBurst);
+            p = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles;
+            D_800C34A4 = 0.0f;
+            p[6].unk_88 = 0.2f;
+            p[6].unk_8C = 1.0f;
+            p[6].unk_90 = 0.0f;
+            pos.x = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[6].unk_30.x;
+            pos.y = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[6].unk_30.y;
+            pos.z = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[6].unk_30.z;
+            Convert3DTo2D(0, (Vec3f *)&pos, &screen);
+            for (i = 0; i < 9; i++) {
+                D_800FACE8_BalloonBurst[i].sprite = func_80019060(D_800FC3A0_BalloonBurst, 1, 0);
+                ShowBasicSprite(D_800FACE8_BalloonBurst[i].sprite);
+                D_800FACE8_BalloonBurst[i].x = screen.x;
+                D_800FACE8_BalloonBurst[i].y = screen.y;
+                if (i != 0) {
+                    D_800FACE8_BalloonBurst[i].x = func_800AEFD0(D_800FACE8_BalloonBurst[i].angle) * 16.0f + D_800FACE8_BalloonBurst[i].x;
+                    D_800FACE8_BalloonBurst[i].y = func_800AEAC0(D_800FACE8_BalloonBurst[i].angle) * 16.0f + D_800FACE8_BalloonBurst[i].y;
+                }
+                D_800FACE8_BalloonBurst[i].vx = func_800AEFD0(D_800FACE8_BalloonBurst[i].angle) * D_800FACE8_BalloonBurst[i].speed;
+                D_800FACE8_BalloonBurst[i].vy = func_800AEAC0(D_800FACE8_BalloonBurst[i].angle) * D_800FACE8_BalloonBurst[i].speed;
+                func_80018F68(D_800FACE8_BalloonBurst[i].sprite, 0xF5, 0xF5, 0xFF);
+            }
+            PlaySound(0x26D);
+            for (i = 0; i < 4; i++) {
+                if (i == D_800FC38E_BalloonBurst) {
+                    func_80060F04(i, 10, 0, 10);
+                } else {
+                    func_80060F04(i, 2, 2, 20);
+                }
+            }
+            D_800FB110_BalloonBurst = 2;
+            func_800601D4(0x28);
+            break;
+        case 2:
+            p = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles;
+            if ((func_8005FD5C() & 0xFFFF) + D_800F64F8 != 0) {
+                func_80026B8C(p[6].unk_40, p[6].unk_90, p[6].unk_8C, 1);
+                break;
+            }
+            for (i = 0; i < 9; i++) {
+                func_80018E0C(D_800FACE8_BalloonBurst[i].sprite, D_800FACE8_BalloonBurst[i].frame);
+                SetBasicSpriteSize(D_800FACE8_BalloonBurst[i].sprite, (s16)D_800FACE8_BalloonBurst[i].w, (s16)D_800FACE8_BalloonBurst[i].h);
+                SetBasicSpritePos(D_800FACE8_BalloonBurst[i].sprite, D_800FACE8_BalloonBurst[i].x, D_800FACE8_BalloonBurst[i].y);
+                func_80018CF8(D_800FACE8_BalloonBurst[i].sprite, D_800FACE8_BalloonBurst[i].alpha);
+                if (D_800FACE8_BalloonBurst[i].frame <= 7.0f) {
+                    D_800FACE8_BalloonBurst[i].w += D_800FACE8_BalloonBurst[i].dw;
+                    D_800FACE8_BalloonBurst[i].h += D_800FACE8_BalloonBurst[i].dh;
+                } else if (i == 0 && D_800FACE8_BalloonBurst[0].done == 0) {
+                    for (j = 0; j < 4; j++) {
+                        func_800F7D9C_BalloonBurst(j);
+                    }
+                    D_800FC38A_BalloonBurst = 1;
+                    for (j = 0; j < 4; j++) {
+                        m = (j != D_800FC38E_BalloonBurst) ? 0x2F : 0xF;
+                        func_80025BB8(D_800FC39C_BalloonBurst[j]->model[0], D_800FC39C_BalloonBurst[j]->motion[m]);
+                        func_80025EB4(D_800FC39C_BalloonBurst[j]->model[0], 2, 2);
+                        if (j == D_800FC38E_BalloonBurst) {
+                            func_80025EB4(D_800FC39C_BalloonBurst[j]->model[0], 1, 1);
+                        }
+                    }
+                    D_800FACE8_BalloonBurst[i].done = 1;
+                }
+                D_800FACE8_BalloonBurst[i].x += D_800FACE8_BalloonBurst[i].vx;
+                D_800FACE8_BalloonBurst[i].y += D_800FACE8_BalloonBurst[i].vy;
+                D_800FACE8_BalloonBurst[i].frame = 11.0f / D_800FACE8_BalloonBurst[i].div + D_800FACE8_BalloonBurst[i].frame;
+                if (D_800FACE8_BalloonBurst[i].frame >= 11.0f) {
+                    D_800FACE8_BalloonBurst[i].frame = 11.0f;
+                    D_800FACE8_BalloonBurst[i].alpha -= 4;
+                    if (D_800FACE8_BalloonBurst[i].alpha < 0) {
+                        D_800FACE8_BalloonBurst[i].alpha = 0;
+                    }
+                }
+            }
+            D_800C34A4 += 24.0f;
+            if (D_800C34A4 >= 360.0f) {
+                D_800C34A4 -= 360.0f;
+            }
+            if (p[6].unk_90 <= 1.0f) {
+                p[6].unk_90 += 0.1f;
+                p[6].unk_88 -= 0.002f;
+                p[6].unk_8C += p[6].unk_88;
+                func_80026B8C(p[6].unk_40, p[6].unk_90, p[6].unk_8C, 2);
+                p[6].unk_84 += 0.1f;
+                if (D_800FC38A_BalloonBurst == 0) {
+                    a = p[6].unk_54 - p[6].unk_90 * 150.0f;
+                    if (a < 0.0f) {
+                        a = 0.0f;
+                    }
+                    func_800F8D6C_BalloonBurst((u8)D_800FC38E_BalloonBurst, func_800AEAC0(a) * 300.0f / 90.0f);
+                }
+            } else {
+                D_800FB110_BalloonBurst = 4;
+            }
+            break;
+        case 4:
+            if (D_800FAF96_BalloonBurst == 1) {
+                func_8002456C(D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[6].unk_40);
+                for (i = 0; i < 9; i++) {
+                    func_80018C90(D_800FACE8_BalloonBurst[i].sprite);
+                }
+                for (i = 0; i < 5; i++) {
+                    func_8002456C(D_800FB0EA_BalloonBurst[i]);
+                }
+            }
+            if (--D_800FAF96_BalloonBurst == 0) {
+                D_800FB110_BalloonBurst = 3;
+            }
+            break;
+        case 3:
+            D_800FB0B0_BalloonBurst = CRot.x;
+            D_800FB0A0_BalloonBurst = 359.0f - CRot.x;
+            D_800FB0C0_BalloonBurst = 90.0f;
+            D_800FB0B4_BalloonBurst = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[0].pos.x;
+            D_800FB0A4_BalloonBurst = (D_800FB0B4_BalloonBurst + Center.x) / 15.0f;
+            D_800FB0B8_BalloonBurst = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[0].pos.y + 50.0f;
+            D_800FB0A8_BalloonBurst = 3.3333333f;
+            D_800FB0BC_BalloonBurst = D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[0].pos.z - 2302.5f;
+            D_800FB0AC_BalloonBurst = (D_800FB0BC_BalloonBurst - Center.z) / 15.0f;
+            D_800FB0C8_BalloonBurst = 17.0f;
+            D_800FB0C4_BalloonBurst = 0.0f;
+            D_800FB110_BalloonBurst = 5;
+            break;
+        case 5:
+            CRot.x = func_800B1750(8100.0f - D_800FB0C0_BalloonBurst * D_800FB0C0_BalloonBurst) * 0.011111111f * D_800FB0A0_BalloonBurst + D_800FB0B0_BalloonBurst;
+            if (D_800FB0C0_BalloonBurst > 0.0f) {
+                D_800FB0C0_BalloonBurst -= 6.0f;
+            } else {
+                D_800FB0C0_BalloonBurst = 0.0f;
+            }
+            if (Center.x != D_800FB0B4_BalloonBurst) {
+                Center.x += D_800FB0A4_BalloonBurst;
+                if (D_800FB0A4_BalloonBurst < 0.0f) {
+                    if (Center.x < D_800FB0B4_BalloonBurst) {
+                        Center.x = D_800FB0B4_BalloonBurst;
+                    }
+                } else if (Center.x > D_800FB0B4_BalloonBurst) {
+                    Center.x = D_800FB0B4_BalloonBurst;
+                }
+            }
+            if (Center.y != D_800FB0B8_BalloonBurst) {
+                Center.y += D_800FB0A8_BalloonBurst;
+                if (D_800FB0A8_BalloonBurst < 0.0f) {
+                    if (Center.y < D_800FB0B8_BalloonBurst) {
+                        Center.y = D_800FB0B8_BalloonBurst;
+                    }
+                } else if (Center.y > D_800FB0B8_BalloonBurst) {
+                    Center.y = D_800FB0B8_BalloonBurst;
+                }
+            }
+            if (Center.z != D_800FB0BC_BalloonBurst) {
+                Center.z += D_800FB0AC_BalloonBurst;
+                if (D_800FB0AC_BalloonBurst < 0.0f) {
+                    if (Center.z < D_800FB0BC_BalloonBurst) {
+                        Center.z = D_800FB0BC_BalloonBurst;
+                    }
+                } else if (Center.z > D_800FB0BC_BalloonBurst) {
+                    Center.z = D_800FB0BC_BalloonBurst;
+                }
+            }
+            D_800FB0C4_BalloonBurst += D_800FB0C8_BalloonBurst;
+            if (Center.x == D_800FB0B4_BalloonBurst && Center.z == D_800FB0BC_BalloonBurst && CRot.x == 359.0f) {
+                D_800FB110_BalloonBurst = 7;
+                D_800FB0E0_BalloonBurst = 5;
+                D_800FB0D4_BalloonBurst = Center.z + -52.5f;
+                D_800FB0D8_BalloonBurst = Center.z + 200.0f;
+                D_800FB0DC_BalloonBurst = Center.z + 75.0f;
+                D_800FB0D0_BalloonBurst = (D_800FB0D8_BalloonBurst - D_800FB0D4_BalloonBurst) / 2.0f;
+            }
+            break;
+        case 6:
+            D_800FB110_BalloonBurst = 7;
+            D_800FB0E0_BalloonBurst = 5;
+            D_800FB0D4_BalloonBurst = Center.z + -52.5f;
+            D_800FB0D8_BalloonBurst = Center.z + 200.0f;
+            D_800FB0DC_BalloonBurst = Center.z + 75.0f;
+            D_800FB0D0_BalloonBurst = (D_800FB0D8_BalloonBurst - D_800FB0D4_BalloonBurst) / 2.0f;
+            func_80060128(0x33);
+            func_80060234(0x7F);
+            break;
+        case 7:
+            if (D_800FB0D0_BalloonBurst < 0.0f) {
+                Center.z += D_800FB0D0_BalloonBurst;
+                if (Center.z <= D_800FB0D4_BalloonBurst) {
+                    D_800FB0D0_BalloonBurst = -D_800FB0D0_BalloonBurst;
+                    Center.z = D_800FB0D4_BalloonBurst;
+                    D_800FB0E0_BalloonBurst--;
+                }
+                if (D_800FB0E0_BalloonBurst == 0 && Center.z <= D_800FB0DC_BalloonBurst) {
+                    Center.z = D_800FB0DC_BalloonBurst;
+                    D_800FB110_BalloonBurst = 8;
+                }
+            } else {
+                Center.z += D_800FB0D0_BalloonBurst;
+                if (D_800FB0D8_BalloonBurst <= Center.z) {
+                    D_800FB0D0_BalloonBurst = -D_800FB0D0_BalloonBurst;
+                    Center.z = D_800FB0D8_BalloonBurst;
+                    D_800FB0E0_BalloonBurst--;
+                }
+                if (D_800FB0E0_BalloonBurst == 0 && Center.z >= D_800FB0DC_BalloonBurst) {
+                    Center.z = D_800FB0DC_BalloonBurst;
+                    D_800FB110_BalloonBurst = 8;
+                }
+            }
+            break;
+        case 8:
+            GMesCreate(2);
+            func_800790C0();
+            if (D_800FC392_BalloonBurst != 0) {
+                D_800FB110_BalloonBurst = 0x11;
+            } else {
+                D_800FB110_BalloonBurst = 9;
+            }
+            break;
+        case 9:
+            if (GMesStatAllGet() & 2) {
+                func_80025EB4(D_800FC39C_BalloonBurst[D_800FC38E_BalloonBurst]->model[0], 3, 0);
+                D_800FB0CC_BalloonBurst = 0x24;
+                func_80060128(0x33);
+                D_800FB110_BalloonBurst = 10;
+            }
+            break;
+        case 10:
+            if (--D_800FB0CC_BalloonBurst == 0) {
+                if (D_800FC390_BalloonBurst == 0) {
+                    GMesCreate(4, GwPlayer[D_800FC38E_BalloonBurst].character);
+                }
+                D_800FB110_BalloonBurst = 0xE;
+                D_800FB0CC_BalloonBurst = 0x48;
+                func_80060618(0x451, D_800FC38E_BalloonBurst);
+            }
+            break;
+        case 11:
+            if (D_800FC392_BalloonBurst == 0) {
+                GMesCreate(0x10);
+                D_800FB110_BalloonBurst = 0xC;
+            } else {
+                GMesCreate(2);
+                func_800790C0();
+                D_800FB110_BalloonBurst = 0x11;
+            }
+            break;
+        case 12:
+            if (GMesStatAllGet() & 2) {
+                for (i = 0; i < 4; i++) {
+                    work = D_800FC39C_BalloonBurst[i]->unk_50;
+                    func_80025BB8(D_800FC39C_BalloonBurst[i]->model[0], D_800FC39C_BalloonBurst[i]->motion[46]);
+                    D_800F2B7C[D_800FC39C_BalloonBurst[i]->model[0]].unk_48 = work->unk_0C;
+                    func_80025C20(D_800FC39C_BalloonBurst[i]->model[0], func_80025E48(D_800FC39C_BalloonBurst[i]->motion[39]), 0, 30, 2);
+                }
+                func_80060128(0x34);
+                D_800FB0CC_BalloonBurst = 0x12;
+                D_800FB110_BalloonBurst = 0xD;
+            }
+            break;
+        case 13:
+            if (--D_800FB0CC_BalloonBurst == 0) {
+                if (D_800FC392_BalloonBurst == 0) {
+                    GMesCreate(0x11);
+                    D_800FB0CC_BalloonBurst = 0x4D;
+                    D_800FB110_BalloonBurst = 0xE;
+                } else {
+                    D_800FB110_BalloonBurst = 0x11;
+                }
+            }
+            break;
+        case 14:
+            if (--D_800FB0CC_BalloonBurst == 0) {
+                D_800FB110_BalloonBurst = 0xF;
+            }
+            break;
+        case 15:
+            func_800726AC(0, 0x14);
+            D_800FB110_BalloonBurst = 0x10;
+            break;
+        case 16:
+            if (func_80072718() == 0) {
+                func_800601D4(0x28);
+                omDelObj(arg0);
+                omOvlReturnEx(1);
+            }
+            break;
+        case 17:
+            if (GMesWait() != 1) {
+                D_800FB110_BalloonBurst = 0xF;
+            }
+            break;
+    }
+}
+
+// unreferenced; pads the unit's .rodata after the jump table above (the asm path carries it)
+const u32 D_800FB098_BalloonBurst[2] = { 0, 0 };
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F95F8_BalloonBurst);
+#endif
 void func_800FA8A4_BalloonBurst(s32 arg0) {
     s32 offset = (arg0 & 0xFFFF) * 0x498;
     u16 model = *(u16 *)((u8 *)D_800FB54E_BalloonBurst + offset);
