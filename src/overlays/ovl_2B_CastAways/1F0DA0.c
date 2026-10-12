@@ -1,5 +1,12 @@
 #include "CastAways.h"
 
+extern u16 D_800FB99C_CastAways[];
+extern f32 D_800FB9F4_CastAways[];
+extern u8 D_800FB9E8_CastAways[][3];
+
+/* CPU input: picks a spawner whose next item the cast would reach, then waits and reels. */
+
+
 /* Lets the fishing line sag: lowers every sample by drop and clamps it to the water or rod line. */
 
 
@@ -83,8 +90,103 @@ void func_800F65E0_CastAways(void) {
     D_800FBB98_ovl2B = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F6A24_CastAways);
+// register allocation and loop layout
+#ifdef NON_MATCHING
+void func_800F6A24_CastAways(omObjData* arg0, s8* stickX, s8* stickY, s8* button) {
+    CastAwaysPlayerWork* work;
+    omObjData* rodObj;
+    omObjData** fish;
+    CastAwaysFishWork* fishWork;
+    u16 set;
+    s32 tries;
+    s32 i;
+    f32 reach;
+    f32 fishY;
+    f32 fishZ;
 
+    work = arg0->unk_50;
+    switch (work->state) {
+    case 1:
+        rodObj = work->rodObj;
+        *stickY = 0;
+        *stickX = 0;
+        set = rand8() % 3;
+        if (!(work->unk_150 < 2.0f)) {
+            func_8009B618((f32)rand8(), work->unk_150 + 1.0f);
+        }
+        for (tries = 0; tries < 3; tries++) {
+            reach = ((f32)D_800FB99C_CastAways[set] + (D_800FB9F4_CastAways[set] + 5.0f + 0.0f))
+                  * D_800FB960_CastAways[set].speed;
+            fish = func_8005DB44(set);
+            *stickY = 0;
+            *stickX = 0;
+            for (i = 0; i < D_800ED618[set].max; i++) {
+                if (fish[i] == NULL) {
+                    continue;
+                }
+                fishWork = fish[i]->unk_50;
+                if (fishWork->state != 0) {
+                    continue;
+                }
+                if (fishWork->type != 2) {
+                    fishY = fish[i]->trans.y;
+                    fishZ = fish[i]->trans.z;
+                } else {
+                    fishY = fish[i]->trans.y - 30.0f;
+                    fishZ = fish[i]->trans.z - -150.0f;
+                }
+                if ((u16)func_800FB53C_CastAways(rodObj->trans.x, 0.0f, D_800FB960_CastAways[set].z, fishWork->type,
+                                                 fish[i]->trans.x + reach, fishY, fishZ) == 1) {
+                    if ((u8)(rand8() % 100) < D_800FB9E8_CastAways[GwPlayer[work->playerNo].cpu_difficulty][fishWork->type]) {
+                        return;
+                    }
+                    *stickY = (f32)D_800FB960_CastAways[set].stickY - 5.0f;
+                    work->targetSet = set;
+                    work->unk_148 = 0;
+                    return;
+                }
+                if ((f32)(u8)(rand8() % 20) < work->unk_150) {
+                    *stickY = (f32)D_800FB960_CastAways[set].stickY - 5.0f;
+                    work->targetSet = set;
+                    work->unk_148 = 0;
+                    return;
+                }
+            }
+            set++;
+            if (set >= 3) {
+                set = 0;
+            }
+        }
+        break;
+    case 2:
+        if (work->unk_154 <= (f32)(u8)(rand8() % 100)) {
+            *stickY = 0;
+            *stickX = 0;
+            arg0->work[3] = rand8() % 12 + 4;
+            work->unk_148 = arg0->work[3];
+            if (arg0->work[3] - 4 > 0 && (work->flags & 2)) {
+                func_8006071C(work->sound);
+                work->flags &= ~2;
+            }
+        } else {
+            *stickX = 0;
+            *stickY = (f32)D_800FB960_CastAways[work->targetSet].stickY - 5.0f;
+        }
+        break;
+    case 4:
+    case 8:
+        *stickY = 0;
+        *stickX = 0;
+        if (--arg0->work[3] == 0) {
+            *button = 1;
+            arg0->work[3] = rand8() % 18 + 2;
+        }
+        break;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F6A24_CastAways);
+#endif
 void func_800F7014_CastAways(void) {
     s32 i;
     for (i = 0; i < D_800F3778_ovl2B; i++) {}

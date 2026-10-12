@@ -44,7 +44,7 @@ typedef struct CastAwaysItemSetDef {
     /* 0x04 */ f32 speed;
     /* 0x08 */ f32 x;
     /* 0x0C */ f32 z;
-    /* 0x10 */ u8 unk_10;
+    /* 0x10 */ s8 stickY; /* CPU stick value that casts to this spawner (+5) */
     /* 0x11 */ char unk_11[3];
 } CastAwaysItemSetDef; /* sizeof 0x14 */
 
@@ -84,7 +84,7 @@ typedef struct CastAwaysSpriteData {
 /* Work of the four player objects (func_800F8194_CastAways). */
 typedef struct CastAwaysPlayerWork {
     /* 0x000 */ s16 seat;
-    /* 0x002 */ s16 playerNo;
+    /* 0x002 */ u16 playerNo;
     /* 0x004 */ s16 power;
     /* 0x006 */ u16 state;
     /* 0x008 */ omObjData* rodObj;
@@ -112,7 +112,8 @@ typedef struct CastAwaysPlayerWork {
     /* 0x14E */ u16 unk_14E;
     /* 0x150 */ f32 unk_150;
     /* 0x154 */ f32 unk_154;
-    /* 0x158 */ char unk_158[4];
+    /* 0x158 */ u16 targetSet;
+    /* 0x15A */ char unk_15A[2];
 } CastAwaysPlayerWork; /* sizeof 0x15C */
 
 /* Work of the rod/hook objects (func_800F92FC_CastAways). */
@@ -153,6 +154,17 @@ typedef struct CastAwaysFishWork {
     /* 0x38 */ char unk_38[4];
     /* 0x3C */ omObjData* rodObj;
 } CastAwaysFishWork; /* sizeof 0x40 */
+
+/* objmain.c's omGrpData (D_800ED618: one per object group). */
+typedef struct CastAwaysGrpData {
+    /* 0x00 */ u16 next;
+    /* 0x02 */ u16 max;
+    /* 0x04 */ u16 num;
+    /* 0x08 */ u16* nextIdx;
+    /* 0x0C */ omObjData** obj;
+} CastAwaysGrpData; /* sizeof 0x10 */
+
+extern CastAwaysGrpData D_800ED618[];
 
 /* D_800FBB10/20/30_CastAways[4]: one sprite per player. */
 typedef struct CastAwaysPlayerSprite {
@@ -252,3 +264,4 @@ extern s16 D_800FBB00_CastAways;
 extern s16 D_800FBB04_CastAways;
 extern s16 D_800FBB06_CastAways;
 extern s16 D_800FBB54_CastAways;
+f64 func_8009B618(f64, f64); /* fmod */
