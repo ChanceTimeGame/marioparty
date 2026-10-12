@@ -13,7 +13,7 @@ typedef struct FlowerShowerBodyWork {
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50;
-    /* 0x52 */ s8 unk_52;
+    /* 0x52 */ u8 unk_52;
     /* 0x53 */ s8 unk_53;
     /* 0x54 */ u8 unk_54;
     /* 0x55 */ char unk_55;
@@ -30,15 +30,22 @@ typedef struct FlowerShowerBodyWork {
 /* A player object's work (func_8000979C / func_800F761C allocate it, 0xE8): MgWork's layout
  * (src/99E0.c), with every pointer member where MgWork has one so the host offsets agree. */
 typedef struct FlowerShowerPlayerWork {
-    /* 0x00 */ char unk_00[0x50];
+    /* 0x00 */ char unk_00[0x3C];
+    /* 0x3C */ f32 unk_3C; /* facing */
+    /* 0x40 */ f32 unk_40; /* speed */
+    /* 0x44 */ char unk_44[0xC];
     /* 0x50 */ u16 unk_50; /* flags */
-    /* 0x52 */ char unk_52[4];
+    /* 0x52 */ char unk_52;
+    /* 0x53 */ u8 unk_53; /* platform it stands on */
+    /* 0x54 */ char unk_54[2];
     /* 0x56 */ s8 unk_56; /* controller port */
     /* 0x57 */ char unk_57;
     /* 0x58 */ s8 unk_58; /* player */
     /* 0x59 */ char unk_59[0x47];
     /* 0xA0 */ f32 unk_A0;
-    /* 0xA4 */ char unk_A4[0x14];
+    /* 0xA4 */ char unk_A4[0xA];
+    /* 0xAE */ u16 unk_AE;
+    /* 0xB0 */ char unk_B0[8];
     /* 0xB8 */ omObjData* unk_B8; /* MgWork's held item */
     /* 0xBC */ char unk_BC[0x1C];
     /* 0xD8 */ s16 (*unk_D8)[2]; /* one pair per motion */
@@ -98,6 +105,7 @@ void func_800F6A90_FlowerShower(omObjData*);
 void func_800F90AC_FlowerShower(omObjData*);
 void func_800F95F4_FlowerShower(omObjData*);
 void func_800F9ACC_FlowerShower(omObjData*);
+void func_8002956C(Vec3f*);
 void func_800FA178_FlowerShower(omObjData*);
 void func_800FA2B0_FlowerShower(omObjData*, f32);
 void func_800FA4EC_FlowerShower(omObjData*);
@@ -701,7 +709,85 @@ void func_800F90AC_FlowerShower(omObjData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F9224_FlowerShower);
+void func_800F9224_FlowerShower(omObjData* arg0, s16* stickX, s16* stickY, s32* buttons) {
+    Vec3f dir;
+    FlowerShowerPlayerWork* work;
+    FlowerShowerBodyWork* flower;
+    omObjData* obj;
+    omObjData* target;
+    f32 skill;
+    f32 best;
+    f32 dist;
+    f32 dx;
+    f32 dz;
+    f32 angle;
+    f32 radius;
+    s32 i;
+
+    work = arg0->unk_50;
+    switch (GwPlayer[work->unk_58].cpu_difficulty) {
+        case 0:
+            skill = 0.75f;
+            break;
+        case 1:
+            skill = 0.8f;
+            break;
+        case 2:
+            skill = 0.9f;
+            break;
+        default:
+            skill = 1.0f;
+            break;
+    }
+    best = skill * 500.0f;
+    target = NULL;
+    for (i = 0; i < D_800EE984; i++) {
+        obj = D_800EDE70[i];
+        flower = obj->unk_50;
+        if (flower->unk_52 == 7) {
+            continue;
+        }
+        if (obj->trans.y < -40.0f) {
+            continue;
+        }
+        if (flower->unk_54 == 0) {
+            continue;
+        }
+        if (!(func_800B1750(obj->trans.x * obj->trans.x + obj->trans.z * obj->trans.z) > 420.0f)) {
+            continue;
+        }
+        dx = obj->trans.x - arg0->trans.x;
+        dz = obj->trans.z - arg0->trans.z;
+        dist = func_800B1750(dx * dx + dz * dz);
+        if (dist < best) {
+            target = obj;
+            best = dist;
+        }
+    }
+    if (target != NULL) {
+        dir.x = target->trans.x - arg0->trans.x;
+        dir.y = 0.0f;
+        dir.z = target->trans.z - arg0->trans.z;
+        if (func_800B1750(dir.x * dir.x + dir.z * dir.z) < 500.0) {
+            func_8002956C(&dir);
+            *stickX = skill * 60.0f * dir.x;
+            *stickY = -(skill * 60.0f * dir.z);
+            return;
+        }
+    }
+    if (work->unk_40 < skill * 10.0f) {
+        angle = func_800B0CD8(arg0->trans.x, arg0->trans.z) - 15.0f;
+        dir.x = func_800AEAC0(angle) * (radius = skill * 600.0f) - arg0->trans.x;
+        dir.z = func_800AEFD0(angle) * radius - arg0->trans.z;
+        dir.y = 0.0f;
+        func_8002956C(&dir);
+        *stickX = dir.x * 60.0f * (skill * 0.8f);
+        *stickY = -dir.z * 60.0f * (skill * 0.8f);
+        return;
+    }
+    *stickX = 0;
+    *stickY = 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F95F4_FlowerShower);
 
