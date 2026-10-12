@@ -62,6 +62,8 @@ void pb_gfx_forget(const void *p);
    game's turn count (-1: the game's own). */
 int pb_dev_minigame_allowed(s32 mg);
 int pb_dev_minigame_forced(void); /* --dev-minigame: one minigame overlay only */
+s32 pb_dev_minigame_type(s32 mg); /* 1 = 1v3, 2 = 2v2, 0 = other (src/43760.c) */
+void pb_dev_minigame_teams(s32 type); /* teams of that shape for a forced minigame */
 s32 pb_dev_turns(void);
 s32 pb_dev_board(void); /* --dev-board N: the board a new game uses (GwSystem.curBoardIndex), or -1 */
 s32 pb_dev_overworld(void); /* --dev-overworld N: the overworld's first selection (0 Adventure ... 5 Mini-Game Island), or -1 */

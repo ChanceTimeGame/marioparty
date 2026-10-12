@@ -22,6 +22,9 @@ void func_800F6610_MinigameInstructions(void) {
             }
         }
     }
+    if (pb_dev_minigame_forced()) {
+        pb_dev_minigame_teams(pb_dev_minigame_type(GwSystem.unk_1E));
+    }
 #endif
     D_8010F766_MinigameInstructions = GwSystem.unk_1E;
     D_8010F760_MinigameInstructions = D_8010E4F0_MinigameInstructions[GwSystem.unk_1E].unk_04;

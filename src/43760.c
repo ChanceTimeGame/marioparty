@@ -309,6 +309,53 @@ void func_800437B8(void) {
     }
 }
 
+#ifdef TARGET_PC
+/* --dev-minigame: a forced minigame's type (1 = 1v3, 2 = 2v2, 0 = other) from the roulette lists,
+   and teams of that shape. The space colours set the teams for the type they implied
+   (func_80054868), so a forced 2v2 game could get lopsided teams and leave a slot empty. Teams
+   that already have the shape are kept. */
+s32 pb_dev_minigame_type(s32 mg) {
+    s32 i;
+
+    for (i = 0; i < (s32)sizeof(D_800C4D1C); i++) {
+        if (D_800C4D1C[i] == mg + 1) {
+            return 2;
+        }
+    }
+    for (i = 0; i < (s32)sizeof(D_800C4D00); i++) {
+        if (D_800C4D00[i] == mg + 1) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void pb_dev_minigame_teams(s32 type) {
+    s32 n0 = 0;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        n0 += GwPlayer[i].group == 0;
+        if (GwPlayer[i].group > 1) {
+            n0 = -1;
+            break;
+        }
+    }
+    if ((type == 2 && n0 != 2) || (type == 1 && n0 != 1)) {
+        for (i = 0; i < 4; i++) {
+            GwPlayer[i].group = type == 2 ? i >> 1 : i != 0;
+        }
+    }
+    if (type == 1) {
+        for (i = 0; i < 4; i++) {
+            if (GwPlayer[i].group == 0) {
+                D_800ECE10 = i;
+            }
+        }
+    }
+}
+#endif
+
 // register allocation and hoisting of sel*5 around the exclusion test (masked 13)
 #ifdef NON_MATCHING
 void func_8004388C(s32 arg0) {
@@ -353,14 +400,7 @@ void func_8004388C(s32 arg0) {
                     }
                 }
             }
-            /* ...and that type's teams (func_80054868's encoding): the space colours set them for
-               the type they implied, and a 2v2 game with lopsided teams leaves a slot empty */
-            for (k = 0; k < 4; k++) {
-                GwPlayer[k].group = sel == 2 ? k >> 1 : sel == 1 ? k != 0 : k;
-            }
-            if (sel == 1) {
-                D_800ECE10 = 0;
-            }
+            pb_dev_minigame_teams(sel);
         }
     }
 #endif
