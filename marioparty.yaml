@@ -1095,8 +1095,8 @@ segments:
     subsegments:
       - [0x1784E0, c]
       - [0x17BDC0, c]
-      - [0x17E600, data, 1784E0]
-      - [0x17E620, data, 17BDC0]
+      - [0x17E600, .data, 1784E0]
+      - [0x17E620, .data, 17BDC0]
       - {0x17E710, type: bss, vram: 0x800FC810, name: ovl_1A_bss}
   - type: code
     start: 0x17E710
