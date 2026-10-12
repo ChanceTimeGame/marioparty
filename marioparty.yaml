@@ -1195,7 +1195,7 @@ segments:
       - [0x19FEE0, c]
       - [0x1A2E40, c]
       - [0x1A42B0, c]
-      - [0x1A4E00, data, 19FEE0]
+      - [0x1A4E00, .data, 19FEE0]
       - [0x1A4E10, data, 1A2E40]
       - [0x1A4E40, data, 1A42B0]
       - [0x1A4E50, .rodata, 19FEE0]
