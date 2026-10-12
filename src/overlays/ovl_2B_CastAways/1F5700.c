@@ -278,6 +278,6 @@ void func_800FB884_CastAways(void) {
     D_800EE73C.far = 20000.0f;
     D_800EE73C.near = 10000.0f;
 #endif
-    func_8001D420(0, &D_800FBB80_ovl2B, &D_800FBB70_ovl2B, D_800FBB9C_ovl2B);
+    func_8001D420(0, &D_800FBB80_CastAways, &D_800FBB70_CastAways, D_800FBB9C_CastAways);
     func_8001D57C(0);
 }

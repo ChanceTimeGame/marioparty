@@ -56,15 +56,15 @@ void func_800F65E0_CastAways(void) {
     func_8001DE70(0x64);
     func_8002890C(0x21, 0x42, 0xD6);
     func_800178A0(1);
-    D_800FBB80_ovl2B.x = 0;
-    D_800FBB80_ovl2B.y = 3072.0f;
-    D_800FBB80_ovl2B.z = -200.0f;
-    D_800FBB70_ovl2B.x = 0;
-    D_800FBB70_ovl2B.y = 0;
-    D_800FBB70_ovl2B.z = -300.0f;
-    D_800FBB9C_ovl2B[0].x = 0;
-    D_800FBB9C_ovl2B[0].y = 1.0f;
-    D_800FBB9C_ovl2B[0].z = 0;
+    D_800FBB80_CastAways.x = 0;
+    D_800FBB80_CastAways.y = 3072.0f;
+    D_800FBB80_CastAways.z = -200.0f;
+    D_800FBB70_CastAways.x = 0;
+    D_800FBB70_CastAways.y = 0;
+    D_800FBB70_CastAways.z = -300.0f;
+    D_800FBB9C_CastAways[0].x = 0;
+    D_800FBB9C_CastAways[0].y = 1.0f;
+    D_800FBB9C_CastAways[0].z = 0;
     omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, &func_800FB884_CastAways), 0xA0);
     func_80023448(3);
     func_800234B8(0, 0x78, 0x78, 0x78);
@@ -81,9 +81,9 @@ void func_800F65E0_CastAways(void) {
     omAddObj(0x64, 0, 0, -1, &func_800F7014_CastAways);
     omAddObj(0, 0, 0, -1, &func_800F704C_CastAways);
     omSetStatBit(omAddObj(4, 4, 0, -1, &func_800F71AC_CastAways), 0xA0);
-    D_800FBB48_ovl2B[0] = omAddObj(6, 0, 0, -1, &func_800F761C_CastAways);
-    D_800FBB48_ovl2B[1] = omAddObj(6, 0, 0, -1, &func_800F7650_CastAways);
-    D_800FBB48_ovl2B[2] = omAddObj(6, 0, 0, -1, &func_800F7684_CastAways);
+    D_800FBB48_CastAways[0] = omAddObj(6, 0, 0, -1, &func_800F761C_CastAways);
+    D_800FBB48_CastAways[1] = omAddObj(6, 0, 0, -1, &func_800F7650_CastAways);
+    D_800FBB48_CastAways[2] = omAddObj(6, 0, 0, -1, &func_800F7684_CastAways);
     omAddObj(8, 5, 0xF, 4, &func_800F8AAC_CastAways);
     omAddObj(8, 5, 0xF, 4, &func_800F8AC8_CastAways);
     omAddObj(8, 5, 0xF, 4, &func_800F8AE4_CastAways);
@@ -91,24 +91,24 @@ void func_800F65E0_CastAways(void) {
     omAddObj(0x2710, 0, 0, -1, &func_800FACA8_CastAways);
 
     for (i = 0; i < 2; i++) {
-        filePtr = DataRead(D_800FB9A4_ovl2B[i]);
-        D_800FBB04_ovl2B[i] = func_80039084(filePtr);
+        filePtr = DataRead(D_800FB9A4_CastAways[i]);
+        D_800FBB04_CastAways[i] = func_80039084(filePtr);
         HuMemDirectFree(filePtr);
     }
 
-    D_800FBB46_ovl2B = LoadFormFile(0x35, 0x2009D);
+    D_800FBB46_CastAways = LoadFormFile(0x35, 0x2009D);
     filePtr = DataRead(0x2A);
-    D_800FBB40_ovl2B = func_80039084(filePtr);
+    D_800FBB40_CastAways = func_80039084(filePtr);
     HuMemDirectFree(filePtr);
     filePtr = DataRead(0x25);
-    D_800FBB42_ovl2B = func_80039084(filePtr);
+    D_800FBB42_CastAways = func_80039084(filePtr);
     HuMemDirectFree(filePtr);
     filePtr = DataRead(0x24);
-    D_800FBB44_ovl2B = func_80039084(filePtr);
+    D_800FBB44_CastAways = func_80039084(filePtr);
     HuMemDirectFree(filePtr);
-    D_800FBB50_ovl2B[3] = _CheckFlag(0x2B);
+    D_800FBB56_CastAways = _CheckFlag(0x2B);
     SetFadeInTypeAndTime(0, 0x10);
-    D_800FBB98_ovl2B = 0;
+    D_800FBB98_CastAways = 0;
 }
 
 // register allocation and loop layout
@@ -210,34 +210,34 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F6A24_C
 #endif
 void func_800F7014_CastAways(void) {
     s32 i;
-    for (i = 0; i < D_800F3778_ovl2B; i++) {}
+    for (i = 0; i < D_800F3778; i++) {}
 }
 
 void func_800F704C_CastAways(omObjData* arg0) {
-    D_800FBB78_ovl2B[2] = 0;
-    D_800FBB58_ovl2B = 60;
-    D_800FBB5A_ovl2B = 30;
-    D_800FBB64_ovl2B = D_800FBB68_ovl2B = 0.0f;
-    D_800FBB50_ovl2B[2] = 0;
-    D_800FBB6C_ovl2B = PlaySound(0x1AA);
+    D_800FBB7C_CastAways = 0;
+    D_800FBB58_CastAways = 60;
+    D_800FBB5A_CastAways = 30;
+    D_800FBB64_CastAways = D_800FBB68_CastAways = 0.0f;
+    D_800FBB54_CastAways = 0;
+    D_800FBB6C_CastAways = PlaySound(0x1AA);
     arg0->func_ptr = &func_800F70C4_CastAways;
 }
 
 void func_800F70C4_CastAways(void) {
-    func_80079078(D_800FBB58_ovl2B);
-    switch (D_800FBB78_ovl2B[2]) {
+    func_80079078(D_800FBB58_CastAways);
+    switch (D_800FBB7C_CastAways) {
     case 0:
         func_800FA198_CastAways();
         return;
     case 1:
-        D_800FBB5A_ovl2B--;
-        if (D_800FBB5A_ovl2B == 0) {
-            D_800FBB58_ovl2B--;
-            D_800FBB5A_ovl2B = 30;
+        D_800FBB5A_CastAways--;
+        if (D_800FBB5A_CastAways == 0) {
+            D_800FBB58_CastAways--;
+            D_800FBB5A_CastAways = 30;
         }
-        if (D_800FBB58_ovl2B == 0) {
-            D_800FBB78_ovl2B[2] = 2;
-            D_800FBB8C_ovl2B = 0;
+        if (D_800FBB58_CastAways == 0) {
+            D_800FBB7C_CastAways = 2;
+            D_800FBB8C_CastAways = 0;
             func_800601D4(40);
             return;
         }
@@ -252,12 +252,12 @@ void func_800F71AC_CastAways(omObjData* arg0) {
     s16 sprite;
 
     sprite = InitSprite(0x3F0002);
-    D_800FBB5C_ovl2B = sprite;
-    D_800FBB5E_ovl2B = func_80019060(sprite, 0, 1);
-    func_80018D44(D_800FBB5E_ovl2B, 0x4008);
-    SetBasicSpritePos(D_800FBB5E_ovl2B, 0xA0, 0x82);
-    ShowBasicSprite(D_800FBB5E_ovl2B);
-    SetBasicSpriteSize(D_800FBB5E_ovl2B, 2.0f, 2.0f);
+    D_800FBB5C_CastAways = sprite;
+    D_800FBB5E_CastAways = func_80019060(sprite, 0, 1);
+    func_80018D44(D_800FBB5E_CastAways, 0x4008);
+    SetBasicSpritePos(D_800FBB5E_CastAways, 0xA0, 0x82);
+    ShowBasicSprite(D_800FBB5E_CastAways);
+    SetBasicSpriteSize(D_800FBB5E_CastAways, 2.0f, 2.0f);
     func_80017660(0, 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT);
     func_800176C4(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
     arg0->model[0] = LoadFormFile(0x3F0000, 0x499);
@@ -269,9 +269,9 @@ void func_800F71AC_CastAways(omObjData* arg0) {
 
 void func_800F7308_CastAways(omObjData* arg0) {
     if (((func_8005FD5C() & 0xFFFF) + D_800F64F8) == 0) {
-        D_800FBB64_ovl2B += 0.4f;
+        D_800FBB64_CastAways += 0.4f;
     }
-    func_80027E48(arg0->model[3], D_800FBB64_ovl2B, D_800FBB68_ovl2B,
+    func_80027E48(arg0->model[3], D_800FBB64_CastAways, D_800FBB68_CastAways,
         D_800FBB60_CastAways.unk_00, D_800FBB60_CastAways.unk_02,
         D_800FBA70_CastAways, 1);
 }
@@ -298,14 +298,14 @@ void func_800F73AC_CastAways(omObjData* arg0, s32 arg1) {
     for (i = 0; i < set->count; i++) {
         id = func_8001E00C((void*)-1, 0x68D, 8);
         sprite = D_800ECDE0 + id;
-        sprite->unk_02 = D_800FBB04_ovl2B[0];
+        sprite->unk_02 = D_800FBB04_CastAways[0];
         func_80025930(sprite->unk_00, 0x40000000, 0x40000000);
         set->models[0][i] = D_800ECDE0[id].unk_00;
         set->spriteIds[i] = id;
         set->slots[0][i] = 0;
     }
     for (i = 0; i < set->count; i++) {
-        set->models[2][i] = func_80023FC8(D_800FBB46_ovl2B);
+        set->models[2][i] = func_80023FC8(D_800FBB46_CastAways);
         set->slots[2][i] = 0;
         func_80025830(set->models[2][i], 1.5f, 1.5f, 1.5f);
         func_80025EB4(set->models[2][i], 1, 1);
@@ -353,7 +353,7 @@ void func_800F76B8_CastAways(omObjData* arg0) {
     s16 slot;
     f32 angle;
 
-    if (D_800FBB7C_ovl2B != 2) {
+    if (D_800FBB7C_CastAways != 2) {
         set = arg0->unk_50;
         if (set->timer == 0) {
             if (set->spawned != set->count) {
@@ -428,7 +428,7 @@ void func_800F7A38_CastAways(omObjData* arg0) {
     s16 sound;
 
     offscreen = 0;
-    if (D_800FBB7C_ovl2B == 2) {
+    if (D_800FBB7C_CastAways == 2) {
         return;
     }
     work = arg0->unk_50;
@@ -683,7 +683,7 @@ void func_800F8194_CastAways(omObjData* arg0, s32 arg1) {
     func_80025B34(arg0->model[1]);
 
     id = func_8001E00C((void*)-1, 0x1A8D, 8);
-    D_800ECDE0[id].unk_02 = D_800FBB40_ovl2B;
+    D_800ECDE0[id].unk_02 = D_800FBB40_CastAways;
     func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
     D_800FBB10_CastAways[arg1].model = D_800ECDE0[id].unk_00;
     D_800FBB10_CastAways[arg1].id = id;
@@ -692,14 +692,14 @@ void func_800F8194_CastAways(omObjData* arg0, s32 arg1) {
     func_8001E360(id, 0xFF, 0xFF, 0xBE);
 
     id = func_8001E00C((void*)-1, 0x1A8D, 8);
-    D_800ECDE0[id].unk_02 = D_800FBB42_ovl2B;
+    D_800ECDE0[id].unk_02 = D_800FBB42_CastAways;
     func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
     D_800FBB20_CastAways[arg1].model = D_800ECDE0[id].unk_00;
     D_800FBB20_CastAways[arg1].id = id;
     func_8001E268(id, 4, 4);
 
     id = func_8001E00C((void*)-1, 0x1A8D, 8);
-    D_800ECDE0[id].unk_02 = D_800FBB44_ovl2B;
+    D_800ECDE0[id].unk_02 = D_800FBB44_CastAways;
     func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
     D_800FBB30_CastAways[arg1].model = D_800ECDE0[id].unk_00;
     D_800FBB30_CastAways[arg1].id = id;
@@ -770,7 +770,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
     f32 frame;
 
     button = 0;
-    if (D_800FBB7C_ovl2B != 1) {
+    if (D_800FBB7C_CastAways != 1) {
         return;
     }
     work = arg0->unk_50;
@@ -779,7 +779,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
     event = arg0->unk_10;
     if (event != 0) {
         arg0->unk_10 = 0;
-        if (event == D_800FBB7C_ovl2B) {
+        if (event == D_800FBB7C_CastAways) {
             work->state = 0x10;
             work->motionIdx = 7;
             work->flags &= ~1;
@@ -946,7 +946,7 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     u16 n;
 
     reel = 0;
-    if (D_800FBB7C_ovl2B != 1) {
+    if (D_800FBB7C_CastAways != 1) {
         return;
     }
     rod = arg0->unk_50;
@@ -954,7 +954,7 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     event = arg0->unk_10;
     if (event != 0) {
         arg0->unk_10 = 0;
-        if (event == D_800FBB7C_ovl2B) {
+        if (event == D_800FBB7C_CastAways) {
             if (rod->state == 0) {
                 rod->state = 1;
                 rod->counter = 0;
@@ -1238,39 +1238,39 @@ void func_800FA198_CastAways(void) {
     Vec3f pos;
     Vec2f scr;
 
-    switch (D_800FBB98_ovl2B) {
+    switch (D_800FBB98_CastAways) {
     case 0:
         pos.x = 0;
         pos.y = 0;
         pos.z = -2300.0f;
         Convert3DTo2D(0, &pos, &scr);
-        SetBasicSpritePos(D_800FBB5E_ovl2B, 0xA0, (s32)((scr.y + 120.0f + 10.0f) - 68.0f));
+        SetBasicSpritePos(D_800FBB5E_CastAways, 0xA0, (s32)((scr.y + 120.0f + 10.0f) - 68.0f));
         if (D_800FBA06_CastAways >= 0x1F) {
-            D_800FBB80_ovl2B.z += 44.533333f;
-            D_800FBB70_ovl2B.z += 19.88889f;
+            D_800FBB80_CastAways.z += 44.533333f;
+            D_800FBB70_CastAways.z += 19.88889f;
         } else {
-            D_800FBB80_ovl2B.x += 0.0f;
-            D_800FBB80_ovl2B.y += -81.7f;
-            D_800FBB80_ovl2B.z += -6.6666665f;
-            D_800FBB70_ovl2B.x += 0.0f;
-            D_800FBB70_ovl2B.y += 0.0f;
-            D_800FBB70_ovl2B.z += -6.6666665f;
+            D_800FBB80_CastAways.x += 0.0f;
+            D_800FBB80_CastAways.y += -81.7f;
+            D_800FBB80_CastAways.z += -6.6666665f;
+            D_800FBB70_CastAways.x += 0.0f;
+            D_800FBB70_CastAways.y += 0.0f;
+            D_800FBB70_CastAways.z += -6.6666665f;
         }
         if (--D_800FBA06_CastAways == 0) {
-            D_800FBB98_ovl2B = 2;
-            func_8006071C(D_800FBB6C_ovl2B);
+            D_800FBB98_CastAways = 2;
+            func_8006071C(D_800FBB6C_CastAways);
         }
         break;
     case 2:
         if (func_80072718() == 0) {
-            D_800FBB98_ovl2B = 3;
+            D_800FBB98_CastAways = 3;
             GMesCreate(0);
         }
         break;
     case 3:
         if (GMesStatAllGet() == 0) {
-            D_800FBB7C_ovl2B = 1;
-            GMesCreate(8, D_800FBB58_ovl2B, 0xA0, 0x20);
+            D_800FBB7C_CastAways = 1;
+            GMesCreate(8, D_800FBB58_CastAways, 0xA0, 0x20);
         }
         break;
     }
@@ -1481,7 +1481,7 @@ s16 func_800FABE4_CastAways(u16 arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FABE4_CastAways);
 #endif
 void func_800FACA8_CastAways(void) {
-    if ((D_800FB9E0_CastAways[2] != 0) || (D_800F5144 != 0)) {
+    if ((D_800FB9E4_CastAways != 0) || (D_800F5144 != 0)) {
         func_800FB5B4_CastAways(131);
         func_800601D4(40);
     }
