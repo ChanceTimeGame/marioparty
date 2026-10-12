@@ -58,52 +58,24 @@ typedef struct BumperBallMazeFloorProbe {
 } BumperBallMazeFloorProbe; /* size = 0x44 */
 
 
-extern omObjData* D_800FAE10_BumperBallMaze;
-extern omObjData* D_800FAE14_BumperBallMaze;
-extern u16 D_800FACC0_BumperBallMaze;
-extern u16 D_800FADF6_BumperBallMaze;
-extern u16 D_800FADF8_BumperBallMaze;
-extern s32 D_800FAB00_BumperBallMaze[];
-extern u16 D_800FB1C0_BumperBallMaze;
-extern omObjData* D_800FAE08_BumperBallMaze;
-extern omObjData* D_800FAE0C_BumperBallMaze;
-extern u16 D_800FADF0_BumperBallMaze;
-extern u16 D_800FADF2_BumperBallMaze;
-extern u16 D_800FADF4_BumperBallMaze;
-extern f32 D_800FAE18_BumperBallMaze;
-extern Vec3f D_800FAC7C_BumperBallMaze[];
-
 typedef struct BumperBallMazeCameraPreset {
-    f32 cameraValue;
+    f32 cameraValue; /* func_800F96B0's first argument; the frame count for func_800F97B4 */
     f32 zoom;
     Vec3f rot;
     Vec3f center;
 } BumperBallMazeCameraPreset;
 
-extern BumperBallMazeCameraPreset D_800FAB5C_BumperBallMaze[];
-extern BumperBallMazeCameraPreset D_800FABBC_BumperBallMaze[];
-/* Intro countdowns (.data word 0x0004002D): D_800FACB8 delays the music, the halfword after it
-   (D_800FACBA, an undefined_syms.txt alias for retail's separate %lo(D_800FACB8+2) accesses) is
-   the frames until the start message. */
-extern u16 D_800FACB8_BumperBallMaze;
-#ifdef TARGET_PC
-#define D_800FACBA_BumperBallMaze (((u16*) &D_800FACB8_BumperBallMaze)[1])
-#else
-extern u16 D_800FACBA_BumperBallMaze;
-#endif
-extern u16 D_800FACBC_BumperBallMaze;
-extern BumperBallMazeCameraPreset D_800FAC1C_BumperBallMaze[];
 typedef struct BumperBallMazeScreenPos {
     /* 0x00 */ s16 x;
     /* 0x02 */ s16 y;
 } BumperBallMazeScreenPos;
-extern BumperBallMazeScreenPos D_800FAB44_BumperBallMaze[]; /* best-time digits, per maze */
-extern BumperBallMazeScreenPos D_800FAB50_BumperBallMaze[]; /* current-time digits, per maze */
+
+/* .bss */
 extern s16 D_800FADE0_BumperBallMaze;
 extern u16 D_800FADE2_BumperBallMaze; /* the player whose result is shown */
 extern f32 D_800FADE4_BumperBallMaze; /* per-frame turn back to 0 degrees */
 extern omObjData* D_800FADE8_BumperBallMaze;
-/* Ending waits (bss, 4 bytes): D_800FADEC counts down, D_800FADEE (an undefined_syms.txt alias for
+/* Ending waits (4 bytes): D_800FADEC counts down, D_800FADEE (an undefined_syms.txt alias for
    retail's separate %lo(D_800FADEC+2) accesses) is the wait that follows. */
 extern u16 D_800FADEC_BumperBallMaze;
 #ifdef TARGET_PC
@@ -111,20 +83,89 @@ extern u16 D_800FADEC_BumperBallMaze;
 #else
 extern u16 D_800FADEE_BumperBallMaze;
 #endif
-extern const u8 D_800FAD28_BumperBallMaze[];
+extern u16 D_800FADF0_BumperBallMaze;
+extern u16 D_800FADF2_BumperBallMaze;
+extern u16 D_800FADF4_BumperBallMaze;
+extern u16 D_800FADF6_BumperBallMaze;
+extern u16 D_800FADF8_BumperBallMaze; /* maze 0-2 */
+extern u16 D_800FADFA_BumperBallMaze;
 extern s16 D_800FADFC_BumperBallMaze;
 extern s16 D_800FADFE_BumperBallMaze;
 extern s16 D_800FAE00_BumperBallMaze;
 extern s16 D_800FAE02_BumperBallMaze;
-extern omObjData* D_800FAE04_BumperBallMaze;
-extern u16 D_800FB1C4_BumperBallMaze;
-extern s8 ContStkY[];
-extern u16 D_800FAB3C_BumperBallMaze[];
-extern u16 D_800FADFA_BumperBallMaze;
+extern omObjData* D_800FAE04_BumperBallMaze; /* the maze */
+extern omObjData* D_800FAE08_BumperBallMaze;
+extern omObjData* D_800FAE0C_BumperBallMaze;
+extern omObjData* D_800FAE10_BumperBallMaze; /* the ball */
+extern omObjData* D_800FAE14_BumperBallMaze; /* the timer */
+extern f32 D_800FAE18_BumperBallMaze;
+extern u16 D_800FB1C0_BumperBallMaze;
 extern u16 D_800FB1C2_BumperBallMaze;
-extern Vec3f D_800FAB0C_BumperBallMaze[];
-extern f32 D_800FAB30_BumperBallMaze[];
-extern u8* D_800FACA0_BumperBallMaze[];
+extern u16 D_800FB1C4_BumperBallMaze;
+
+extern s8 ContStkY[];
+
+extern const char D_800FACE0_BumperBallMaze[];
+extern const char D_800FACEC_BumperBallMaze[];
+extern const char D_800FACF8_BumperBallMaze[];
+extern const char D_800FAD04_BumperBallMaze[];
+extern const char D_800FAD10_BumperBallMaze[];
+extern const char D_800FAD1C_BumperBallMaze[];
+extern const u8 D_800FAD28_BumperBallMaze[];
+
+/* .data */
+s32 D_800FAB00_BumperBallMaze[3] = { 0x00480000, 0x00480001, 0x00480002 }; /* maze models */
+Vec3f D_800FAB0C_BumperBallMaze[3] = { /* ball start */
+    { -1150.0f, 220.0f, 730.0f },
+    { -1150.0f, 220.0f, 730.0f },
+    { -1150.0f, 220.0f, 730.0f },
+};
+f32 D_800FAB30_BumperBallMaze[3] = { 90.0f, 90.0f, 135.0f }; /* ball start heading */
+u16 D_800FAB3C_BumperBallMaze[4] = { 3600, 3600, 3600, 0 }; /* time limit (frames) */
+BumperBallMazeScreenPos D_800FAB44_BumperBallMaze[3] = { /* best-time digits */
+    { 0x2F, 0x18 }, { 0x2F, 0x18 }, { 0x2F, 0x18 },
+};
+BumperBallMazeScreenPos D_800FAB50_BumperBallMaze[3] = { /* current-time digits */
+    { 0xCF, 0x18 }, { 0xCF, 0x18 }, { 0xCF, 0x18 },
+};
+BumperBallMazeCameraPreset D_800FAB5C_BumperBallMaze[3] = { /* play camera */
+    { 45.0f, 1480.0f, { 319.0f, 0.0f, 0.0f }, { -965.0f, 0.0f, 375.0f } },
+    { 45.0f, 1480.0f, { 319.0f, 0.0f, 0.0f }, { -965.0f, 0.0f, 375.0f } },
+    { 45.0f, 1480.0f, { 319.0f, 0.0f, 0.0f }, { -965.0f, 0.0f, 375.0f } },
+};
+BumperBallMazeCameraPreset D_800FABBC_BumperBallMaze[3] = { /* intro camera tween */
+    { 20.0f, 3400.0f, { 301.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -35.0f } },
+    { 20.0f, 3400.0f, { 301.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -35.0f } },
+    { 20.0f, 3400.0f, { 301.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -35.0f } },
+};
+BumperBallMazeCameraPreset D_800FAC1C_BumperBallMaze[3] = { /* goal camera tween */
+    { 20.0f, 1600.0f, { 308.0f, 0.0f, 0.0f }, { 1140.0f, 0.0f, -710.0f } },
+    { 20.0f, 1600.0f, { 308.0f, 0.0f, 0.0f }, { 1140.0f, 0.0f, -710.0f } },
+    { 20.0f, 1600.0f, { 308.0f, 0.0f, 0.0f }, { 1140.0f, 0.0f, -710.0f } },
+};
+Vec3f D_800FAC7C_BumperBallMaze[3] = { /* goal marker */
+    { 1070.0f, 130.0f, -900.0f },
+    { 1320.0f, 130.0f, -900.0f },
+    { 1070.0f, 130.0f, -900.0f },
+};
+u8* D_800FACA0_BumperBallMaze[6] = { /* ball texture per character */
+    (u8*) D_800FAD1C_BumperBallMaze, (u8*) D_800FAD10_BumperBallMaze, (u8*) D_800FAD04_BumperBallMaze,
+    (u8*) D_800FACF8_BumperBallMaze, (u8*) D_800FACEC_BumperBallMaze, (u8*) D_800FACE0_BumperBallMaze,
+};
+/* Intro countdowns (func_800F827C): frames until the music, then until the start message. */
+u16 D_800FACB8_BumperBallMaze = 4;
+u16 D_800FACBA_BumperBallMaze = 0x2D;
+u16 D_800FACBC_BumperBallMaze = 0x19; /* frames until the intro camera tween */
+u16 D_800FACBE_BumperBallMaze = 0;    /* unreferenced filler */
+u16 D_800FACC0_BumperBallMaze = 0;    /* set when the minigame ends */
+u16 D_800FACC2_BumperBallMaze = 0;    /* unreferenced filler */
+/* Water texture scroll (240010.c): s/t of the near edge, of the far edge (+1024), per-frame steps. */
+f32 D_800FACC4_BumperBallMaze = 0.0f;
+f32 D_800FACC8_BumperBallMaze = 0.0f;
+f32 D_800FACCC_BumperBallMaze = 1024.0f;
+f32 D_800FACD0_BumperBallMaze = 1024.0f;
+f32 D_800FACD4_BumperBallMaze = 12.8f;
+f32 D_800FACD8_BumperBallMaze = 12.8f;
 
 /* objmain.c's objmainChr (D_800C59A8[6]); the (chr << 16 | unk06) word is D_800C59AC[c].unk_00. */
 typedef struct BumperBallMazeChr {
