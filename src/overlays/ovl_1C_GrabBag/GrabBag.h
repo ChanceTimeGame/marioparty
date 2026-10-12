@@ -67,7 +67,7 @@ typedef struct GrabBagPlayerWork {
     /* 0xE9 */ s8 unk_E9;
     /* 0xEA */ s8 unk_EA;
     /* 0xEB */ u8 unk_EB;
-    /* 0xEC */ u8 unk_EC;
+    /* 0xEC */ s8 unk_EC;
     /* 0xED */ s8 unk_ED;
     /* 0xEE */ s8 button_press_count;
     /* 0xEF */ u8 unk_EF;

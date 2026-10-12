@@ -1,5 +1,8 @@
 #include "GrabBag.h"
 
+extern f32 D_800FB250_GrabBag;
+
+
 extern s32 D_800FB294_GrabBag;
 
 
@@ -30,7 +33,7 @@ void func_800F8984_GrabBag(void);
 void func_800F8A18_GrabBag(omObjData*);
 void func_800F8BDC_GrabBag(void);
 void func_800F903C_GrabBag(omObjData*);
-void func_800FA424_GrabBag(void);
+void func_800FA424_GrabBag(omObjData*);
 void func_800FAED8_GrabBag(void);
 void func_800FAFA0_GrabBag(void);
 void func_800FA8F4_GrabBag(omObjData*);
@@ -65,7 +68,7 @@ void func_800F8484_GrabBag(omObjData* arg0) {
     GrabBagPlayerWork* work;
 
     work = arg0->unk_50;
-    func_800FA424_GrabBag();
+    func_800FA424_GrabBag(arg0);
     if (func_8005FD5C() + D_800F64F8 == 0) {
         if (D_800ED430 == 0) {
             func_800FAFA0_GrabBag();
@@ -455,8 +458,38 @@ u8 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA304_GrabBag);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA424_GrabBag);
+void func_800FA424_GrabBag(omObjData* arg0) {
+    GrabBagPlayerWork* work;
 
+    work = GB_PLAYER(arg0);
+    if (work->unk_EC == 1 && D_800ED430 == work->unk_EC && work->unk_EF != 0 &&
+        (work->total == 0 || work->total == 1 || work->total == 4 || work->total == 8 || work->total == 12 ||
+         work->total == 16 || work->total == 20)) {
+        if (func_8005FD5C() + D_800F64F8 == 0) {
+            D_800FB250_GrabBag = func_800AEAC0(work->unk_EF * 10);
+        }
+        if (D_800FB250_GrabBag < 0.0f) {
+            D_800FB250_GrabBag = -D_800FB250_GrabBag;
+        }
+    } else if (work->total <= 0) {
+        D_800FB250_GrabBag = 1.0f;
+    } else if (work->total >= 20) {
+        D_800FB250_GrabBag = 0.0f;
+    } else if (work->total >= 16) {
+        D_800FB250_GrabBag = 0.2f;
+    } else if (work->total >= 12) {
+        D_800FB250_GrabBag = 0.4f;
+    } else if (work->total >= 8) {
+        D_800FB250_GrabBag = 0.6f;
+    } else if (work->total >= 4) {
+        D_800FB250_GrabBag = 0.7f;
+    } else if (work->total >= 2) {
+        D_800FB250_GrabBag = 0.8f;
+    } else if (work->total == 1) {
+        D_800FB250_GrabBag = 0.9f;
+    }
+    func_80026174(arg0->model[9], arg0->model[10], D_800FB250_GrabBag);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA658_GrabBag);
 
 // float register allocation at the shared return (masked 3)
