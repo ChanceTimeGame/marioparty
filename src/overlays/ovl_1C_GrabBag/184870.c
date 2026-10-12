@@ -1,5 +1,8 @@
 #include "GrabBag.h"
 
+void func_800FAC0C_GrabBag(omObjData*);
+
+
 extern s32 D_800FB104_GrabBag[4];
 extern f32 D_800FB250_GrabBag;
 extern s32 D_800FB254_GrabBag;
@@ -10,11 +13,10 @@ extern f32 D_800B8984;
 extern u8 D_800F64F8;
 extern u16 D_800FB11C_GrabBag[4];
 extern u16 D_800FB244_GrabBag[4];
-extern u16 D_800FB258_GrabBag[];
-extern u16 D_800FB25A_GrabBag[];
-extern u16 D_800FB25C_GrabBag[];
-extern u8 D_800FB270_GrabBag[];
-extern u8 D_800FB278_GrabBag[];
+extern u16 D_800FB258_GrabBag[4][3]; /* score digit sprites per player */
+extern u16 D_800FB270_GrabBag[4];    /* character face sprites */
+extern u16 D_800FB278_GrabBag[4];    /* bag icon sprites */
+extern GrabBagPos D_800FB0F4_GrabBag[4];
 extern omObjData* D_800FB280_GrabBag;
 extern u16 ContBtn[4];
 extern s8 ContStkY[4];
@@ -535,57 +537,59 @@ f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA780_GrabBag);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA8F4_GrabBag);
+void func_800FA8F4_GrabBag(omObjData* arg0) {
+    GrabBagPos facePos[4] = { { 56, 24 }, { 264, 24 }, { 56, 202 }, { 264, 202 } };
+    GrabBagPos bagPos[4] = { { 39, 38 }, { 247, 38 }, { 39, 216 }, { 247, 216 } };
+    s16 i;
+    s16 sprite;
 
+    for (i = 0; i < 4; i++) {
+        D_800FB270_GrabBag[i] = func_80019060((s16)InitSprite(GwPlayer[i].character + 0x6E), 0, 1);
+        SetBasicSpritePos(D_800FB270_GrabBag[i], facePos[i].x, facePos[i].y);
+    }
+    sprite = InitSprite(0x74);
+    for (i = 0; i < 4; i++) {
+        D_800FB278_GrabBag[i] = func_80019060(sprite, 0, 1);
+        SetBasicSpritePos(D_800FB278_GrabBag[i], bagPos[i].x, bagPos[i].y);
+    }
+    sprite = InitSprite(0x87);
+    for (i = 0; i < 4; i++) {
+        D_800FB258_GrabBag[i][0] = func_80019060(sprite, 0, 1);
+        SetBasicSpritePos(D_800FB258_GrabBag[i][0], D_800FB0F4_GrabBag[i].x, D_800FB0F4_GrabBag[i].y);
+        D_800FB258_GrabBag[i][1] = func_80019060(sprite, 0, 1);
+        SetBasicSpritePos(D_800FB258_GrabBag[i][1], D_800FB0F4_GrabBag[i].x + 12, D_800FB0F4_GrabBag[i].y);
+        D_800FB258_GrabBag[i][2] = func_80019060(sprite, 0, 1);
+        SetBasicSpritePos(D_800FB258_GrabBag[i][2], D_800FB0F4_GrabBag[i].x + 24, D_800FB0F4_GrabBag[i].y);
+    }
+    D_800FB280_GrabBag = arg0;
+    arg0->work[1] = 0;
+    arg0->func_ptr = func_800FAC0C_GrabBag;
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAC0C_GrabBag);
 
 void func_800FAED8_GrabBag(void) {
-    s32 sprite_offset;
-    PB_PTR32 player_offset;
     s32 i;
-    u16 sprite;
-    u8* fourth_sprites;
-    u8* fifth_sprites;
 
     D_800FB280_GrabBag->work[1] = 1;
-    i = 0;
-    fourth_sprites = D_800FB270_GrabBag;
-    fifth_sprites = D_800FB278_GrabBag;
-    for (; i < 4; i++) {
-        player_offset = i << 1;
-        sprite_offset = (player_offset + i) * 2;
-        sprite = *(u16*)((u8*)D_800FB258_GrabBag + sprite_offset);
-        ShowBasicSprite(sprite);
-        ShowBasicSprite(*(u16*)((u8*)D_800FB25A_GrabBag + sprite_offset));
-        ShowBasicSprite(*(u16*)((u8*)D_800FB25C_GrabBag + sprite_offset));
-        ShowBasicSprite(*(u16*)(player_offset + (PB_PTR32)fourth_sprites));
-        player_offset += (PB_PTR32)fifth_sprites;
-        ShowBasicSprite(*(u16*)player_offset);
+    for (i = 0; i < 4; i++) {
+        ShowBasicSprite(D_800FB258_GrabBag[i][0]);
+        ShowBasicSprite(D_800FB258_GrabBag[i][1]);
+        ShowBasicSprite(D_800FB258_GrabBag[i][2]);
+        ShowBasicSprite(D_800FB270_GrabBag[i]);
+        ShowBasicSprite(D_800FB278_GrabBag[i]);
     }
 }
 
 void func_800FAFA0_GrabBag(void) {
-    s32 sprite_offset;
-    PB_PTR32 player_offset;
     s32 i;
-    u16 sprite;
-    u8* fourth_sprites;
-    u8* fifth_sprites;
 
     D_800FB280_GrabBag->work[1] = 0;
-    i = 0;
-    fourth_sprites = D_800FB270_GrabBag;
-    fifth_sprites = D_800FB278_GrabBag;
-    for (; i < 4; i++) {
-        player_offset = i << 1;
-        sprite_offset = (player_offset + i) * 2;
-        sprite = *(u16*)((u8*)D_800FB258_GrabBag + sprite_offset);
-        func_80018C90(sprite);
-        func_80018C90(*(u16*)((u8*)D_800FB25A_GrabBag + sprite_offset));
-        func_80018C90(*(u16*)((u8*)D_800FB25C_GrabBag + sprite_offset));
-        func_80018C90(*(u16*)(player_offset + (PB_PTR32)fourth_sprites));
-        player_offset += (PB_PTR32)fifth_sprites;
-        func_80018C90(*(u16*)player_offset);
+    for (i = 0; i < 4; i++) {
+        func_80018C90(D_800FB258_GrabBag[i][0]);
+        func_80018C90(D_800FB258_GrabBag[i][1]);
+        func_80018C90(D_800FB258_GrabBag[i][2]);
+        func_80018C90(D_800FB270_GrabBag[i]);
+        func_80018C90(D_800FB278_GrabBag[i]);
     }
 }
 
@@ -597,6 +601,4 @@ void func_800FB064_GrabBag(s32 arg0, s32 arg1) {
     D_800FB104_GrabBag[arg0] = arg1;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", D_800FB1F8_GrabBag);
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", D_800FB208_GrabBag);

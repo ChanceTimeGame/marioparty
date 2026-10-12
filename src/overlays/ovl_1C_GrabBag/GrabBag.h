@@ -82,6 +82,11 @@ typedef struct GrabBagPlayerWork {
     /* 0xFE */ s16 unk_FE;
 } GrabBagPlayerWork; /* size = 0x100 on the N64 */
 
+typedef struct GrabBagPos {
+    s16 x;
+    s16 y;
+} GrabBagPos;
+
 #define GB_PLAYER(obj) ((GrabBagPlayerWork*)(obj)->unk_50)
 
 /* The six bags' work (D_800EDE70[i]->unk_50, 0x70 bytes from func_800F6C98). Main code's item
