@@ -14,7 +14,7 @@ typedef struct FlowerShowerBodyWork {
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50;
     /* 0x52 */ u8 unk_52;
-    /* 0x53 */ s8 unk_53;
+    /* 0x53 */ u8 unk_53;
     /* 0x54 */ u8 unk_54;
     /* 0x55 */ char unk_55;
     /* 0x56 */ s8 unk_56;
@@ -30,14 +30,16 @@ typedef struct FlowerShowerBodyWork {
 /* A player object's work (func_8000979C / func_800F761C allocate it, 0xE8): MgWork's layout
  * (src/99E0.c), with every pointer member where MgWork has one so the host offsets agree. */
 typedef struct FlowerShowerPlayerWork {
-    /* 0x00 */ char unk_00[0x38];
+    /* 0x00 */ char unk_00[0x23];
+    /* 0x23 */ u8 unk_23;
+    /* 0x24 */ char unk_24[0x14];
     /* 0x38 */ f32 unk_38; /* vertical speed, 1000 = on the ground */
     /* 0x3C */ f32 unk_3C; /* facing */
     /* 0x40 */ f32 unk_40; /* speed */
     /* 0x44 */ char unk_44[0xC];
     /* 0x50 */ u16 unk_50; /* flags */
     /* 0x52 */ char unk_52;
-    /* 0x53 */ u8 unk_53; /* platform it stands on */
+    /* 0x53 */ s8 unk_53; /* platform it stands on (FlowerShowerModelWork::unk_05) */
     /* 0x54 */ char unk_54[2];
     /* 0x56 */ s8 unk_56; /* controller port */
     /* 0x57 */ char unk_57;
@@ -108,6 +110,9 @@ void func_800F95F4_FlowerShower(omObjData*);
 void func_800F9ACC_FlowerShower(omObjData*);
 void func_8002956C(Vec3f*);
 void func_8001E2A8(s16, u16);
+s32 func_8000947C(s32);
+void func_80037178(s16, Vec3f*);
+f32 func_800F8918_FlowerShower(omObjData*, f32, f32, f32, Vec3f*);
 void func_8001E268(s16, u8, u8);
 void func_800F6A64_FlowerShower(void);
 void func_800F8620_FlowerShower(void);
@@ -146,6 +151,7 @@ extern s32 D_800FAD40_FlowerShower;
 extern s32 D_800FAD44_FlowerShower;
 extern s32 D_800FAD48_FlowerShower;
 extern s32 D_800FAD68_FlowerShower;
+extern Vec3f D_800FAD6C_FlowerShower[]; /* per-flower drift, indexed by *unk_68 */
 extern s32 D_800FAD4C_FlowerShower;
 extern s32 D_800FAD5C_FlowerShower;
 extern s32 D_800FAD60_FlowerShower;
@@ -388,7 +394,7 @@ void func_800F726C_FlowerShower(omObjData* arg0) {
 }
 
 void func_800F7348_FlowerShower(omObjData* arg0, s32 arg1, s32 arg2, s32 arg3) {
-    FlowerShowerBodyWork* work;
+    FlowerShowerPlayerWork* work;
     s32 motion;
     s32 temp_v0;
     s32 temp_v1;
@@ -827,7 +833,7 @@ void func_800F90AC_FlowerShower(omObjData* arg0) {
     u16* temp_v0;
     u16 temp_s5;
     u16 temp_s6;
-    FlowerShowerBodyWork* temp_s2;
+    FlowerShowerPlayerWork* temp_s2;
 
     temp_s2 = arg0->unk_50;
     temp_s0 = temp_s2->unk_56;
@@ -1043,8 +1049,136 @@ void func_800F95F4_FlowerShower(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F95F4_FlowerShower);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F9ACC_FlowerShower);
+void func_800F9ACC_FlowerShower(omObjData* arg0) {
+    Vec3f normal;
+    Vec3f dir;
+    FlowerShowerBodyWork* work;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 ground;
+    f32 vy;
+    f32 angle;
+    f32 speed;
+    f32 g;
+    f32 d;
+    s32 idx;
+    u8 light;
+    u8 model;
 
+    work = arg0->unk_50;
+    idx = *work->unk_68;
+    if (work->unk_54 == 0) {
+        return;
+    }
+    x = arg0->trans.x;
+    y = arg0->trans.y;
+    z = arg0->trans.z;
+    ground = -10000.0f;
+    vy = work->unk_38;
+    angle = work->unk_3C;
+    speed = work->unk_40;
+    if (vy < 1000.0f) {
+        if (y > 0.0f) {
+            if (vy > 1.0f) {
+                vy = 1.0f;
+            }
+            y += vy * vy * ((vy >= 0.0f) ? -35.0f : 35.0f);
+            vy += 0.04f;
+            x += func_800AEAC0(angle) * speed;
+            z += func_800AEFD0(angle) * speed;
+            g = func_800F8918_FlowerShower(arg0, x, y, z, &normal);
+            if (g != -65536.0f) {
+                ground = g;
+                if (y < g) {
+                    y = ground;
+                    if (fabs(vy) < 0.6) {
+                        vy = 1000.0f;
+                    } else {
+                        vy = -vy * 0.2f;
+                    }
+                    speed -= work->unk_44;
+                } else {
+                    work->unk_53 = 0xFF;
+                }
+                if (work->unk_53 == 2) {
+                    PlaySound(0x108);
+                }
+            } else {
+                work->unk_53 = 0xFF;
+            }
+        } else if (y <= 2.0f) {
+            light = work->unk_23;
+            model = arg0->model[2];
+            if (y == 0.0f) {
+                work->unk_5C = 0;
+                func_800258EC(arg0->model[1], 4, 4);
+                work->unk_53 = func_8000947C(2);
+                func_800258EC(model, 4, 0);
+                func_8001E2A8(light, 0);
+                func_8001E268(light, 4, 4);
+                func_80025798(model, x, -64.0f, z);
+                func_80025830(model, 6.0f, 6.0f, 6.0f);
+                y -= 5.0f;
+                PlaySound(0x2CF);
+                work->unk_53 = 1;
+            } else if (work->unk_5C < 720) {
+                y = func_800AEAC0(work->unk_5C) * 10.0f - 20.0f;
+                work->unk_5C += 8;
+                work->unk_53 = 1;
+                func_80025798(model, x, -64.0f, z);
+            } else {
+                y -= 15.0f;
+            }
+        }
+    } else {
+        x += func_800AEAC0(angle) * speed + D_800FAD6C_FlowerShower[idx].x * 30.0f;
+        z += func_800AEFD0(angle) * speed + D_800FAD6C_FlowerShower[idx].z * 30.0f;
+        g = func_800F8918_FlowerShower(arg0, x, y, z, &normal);
+        if (g != -65536.0f) {
+            if (y < g + 35.0f) {
+                y = g;
+            } else {
+                vy = normal.y * 0.3f;
+                work->unk_53 = 0xFF;
+                D_800FAD68_FlowerShower++;
+            }
+        } else {
+            vy = normal.y * 0.3f;
+        }
+        ground = y;
+        speed += normal.y * 0.1f;
+        D_800FAD6C_FlowerShower[idx].x = normal.x;
+        D_800FAD6C_FlowerShower[idx].z = normal.z;
+        angle = func_80029518(func_800B0CD8(x, z));
+        func_800B1750(x * x + z * z);
+    }
+    if (y < -400.0f) {
+        work->unk_54 = 0;
+        func_800090D8(arg0, 0, 0);
+        func_800090D8(arg0, 1, 0);
+    }
+    d = func_800B1750(x * x + z * z);
+    dir.x = x;
+    dir.y = y;
+    dir.z = z;
+    func_8002956C(&dir);
+    if (d > 600.0f) {
+        x = dir.x * 620.0f;
+        z = dir.z * 620.0f;
+    }
+    arg0->trans.x = x;
+    arg0->trans.y = y;
+    arg0->trans.z = z;
+    work->unk_38 = vy;
+    work->unk_3C = angle;
+    work->unk_40 = speed;
+    if ((arg0->model[1] != 0) & (ground != -10000.0f)) {
+        func_80025798(arg0->model[1], x, ground + 5.0f, z);
+        func_80025830(arg0->model[1], 0.7f, 0.7f, 0.7f);
+        func_80037178(arg0->model[1], &normal);
+    }
+}
 void func_800FA178_FlowerShower(omObjData* arg0) {
     FlowerShowerBodyWork* work = arg0->unk_50;
     f32 speed;
@@ -1080,7 +1214,7 @@ void func_800FA178_FlowerShower(omObjData* arg0) {
 
 void func_800FA2B0_FlowerShower(omObjData* arg0, f32 arg1) {
     FlowerShowerModelWork* model_work = arg0->unk_50;
-    FlowerShowerBodyWork* body_work;
+    FlowerShowerPlayerWork* body_work;
     FlowerShowerNpcWork* npc_work;
     omObjData* obj;
     f32 dx;
@@ -1147,7 +1281,7 @@ f32 func_800FA5B8_FlowerShower(omObjData* arg0) {
     Matrix4f matrix;
     Vec3f pos;
     FlowerShowerModelWork* model_work;
-    FlowerShowerBodyWork* body_work;
+    FlowerShowerPlayerWork* body_work;
     omObjData* obj;
     f32 result = 0.0f;
     f32 original_rot;
@@ -1211,7 +1345,7 @@ f32 func_800FA92C_FlowerShower(omObjData* arg0) {
     Matrix4f matrix;
     Vec3f pos;
     FlowerShowerModelWork* model_work;
-    FlowerShowerBodyWork* body_work;
+    FlowerShowerPlayerWork* body_work;
     omObjData* obj;
     f32 result = 0.0f;
     f32 original_rot;
