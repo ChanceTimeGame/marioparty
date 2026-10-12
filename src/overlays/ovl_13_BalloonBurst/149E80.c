@@ -84,7 +84,8 @@ typedef struct BalloonBurstObstacle {
     f32 unk_7C;
     f32 unk_80;
     f32 unk_84;
-    char unk_88[0x1C];
+    char unk_88[0x1A];
+    u16 unk_A2;
     u16 unk_A4;
     s16 unk_A6;
 } BalloonBurstObstacle; // sizeof 0xA8
@@ -131,6 +132,8 @@ extern s16 D_800FC392_BalloonBurst;
 void func_800F77D0_BalloonBurst(u8, s16, f32, f32, f32, f32, f32, f32);
 void func_800F8670_BalloonBurst(omObjData *);
 void func_80039644(s16, u8, u8);
+void func_800F9368_BalloonBurst(f32, Vec, s16, f32, Vec *);
+void func_800FA9C4_BalloonBurst(f32, Vec3f *);
 void func_80027AC8(s16, char *, char *);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
@@ -574,8 +577,119 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7F9
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F8670_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F8D6C_BalloonBurst);
+// loop-tail branch layout (masked 7: retail beql exit / j top, this gives bne top / j exit)
+#ifdef NON_MATCHING
+void func_800F8D6C_BalloonBurst(u8 arg0, f32 arg1) {
+    Vec pts[6];
+    Vec target;
+    Vec ofs;
+    Vec ofs0;
+    BalloonBurstObstacle *p;
+    f32 angle;
+    s16 hit;
+    s32 i;
+    f32 zero;
 
+    zero = 0.0f;
+    p = D_800FB120_BalloonBurst[arg0].obstacles;
+    p[6].unk_A2 = 0;
+    ofs.x = ofs.y = ofs.z = zero;
+    if (D_800FB10C_BalloonBurst != 2 || D_800FC38C_BalloonBurst == 1) {
+        if (p[6].unk_54 >= 5.0f) {
+            angle = p[6].unk_60;
+            angle += p[6].unk_64;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+            if (angle < 0.0f) {
+                angle += 360.0f;
+            }
+            p[6].unk_60 = angle;
+            func_800FA9C4_BalloonBurst(angle, (Vec3f *)&ofs);
+        }
+        ofs0 = ofs;
+        pts[0] = p[1].pos;
+        while (1) {
+            if (p[6].unk_A6 == -1) {
+                break;
+            }
+            target.x = p[6].pos.x + ofs.x;
+            target.y = p[6].pos.y - ofs.y;
+            target.z = p[6].pos.z + ofs.z;
+            if ((p[6].unk_A4 & 0xC) == 0xC) {
+                p[6].unk_A4 |= 1;
+            }
+            func_800F9368_BalloonBurst(55.0f, target, 6, arg1, pts);
+            if (p[6].unk_54 >= 5.0f) {
+                hit = -1;
+                if ((p[6].unk_A4 & 0xD) == 0xD) {
+                    p[6].pos = p[6].unk_24;
+                    target.x = p[6].pos.x + ofs0.x;
+                    target.y = p[6].pos.y - ofs0.y;
+                    target.z = p[6].pos.z + ofs0.z;
+                    func_800F9368_BalloonBurst(55.0f, target, 6, arg1, pts);
+                }
+                if (hit == -1) {
+                    break;
+                }
+                p[6].unk_A6 = hit;
+                if (hit < arg0) {
+                    p[6].unk_A4 |= 4;
+                    D_800FB120_BalloonBurst[hit].obstacles[6].unk_A4 |= 8;
+                } else {
+                    p[6].unk_A4 |= 8;
+                    D_800FB120_BalloonBurst[hit].obstacles[6].unk_A4 |= 4;
+                }
+                p[6].unk_A2++;
+                if (p[6].unk_A4 & 8) {
+                    p[6].unk_64 = fabsf(p[6].unk_64);
+                }
+                if (p[6].unk_A4 & 4) {
+                    p[6].unk_64 = -fabs(p[6].unk_64);
+                }
+                if (D_800FB120_BalloonBurst[hit].obstacles[6].unk_A4 & 8) {
+                    D_800FB120_BalloonBurst[hit].obstacles[6].unk_64 = fabsf(D_800FB120_BalloonBurst[hit].obstacles[6].unk_64);
+                }
+                if (D_800FB120_BalloonBurst[hit].obstacles[6].unk_A4 & 4) {
+                    D_800FB120_BalloonBurst[hit].obstacles[6].unk_64 = -fabs(D_800FB120_BalloonBurst[hit].obstacles[6].unk_64);
+                }
+                angle += p[6].unk_64;
+                if (angle >= 360.0f) {
+                    angle -= 360.0f;
+                }
+                if (angle < 0.0f) {
+                    angle += 360.0f;
+                }
+                func_800FA9C4_BalloonBurst(angle, (Vec3f *)&ofs);
+            } else {
+                hit = -1;
+            }
+            if (hit == -1) {
+                break;
+            }
+        }
+    } else {
+        pts[0] = p[1].pos;
+        target.x = p[6].pos.x;
+        target.y = p[6].pos.y;
+        target.z = p[6].pos.z;
+        func_800F9368_BalloonBurst(55.0f, target, 6, arg1, pts);
+    }
+    for (i = 2; i < 6; i++) {
+        func_80025798(p[i].model, pts[i - 1].x, pts[i - 1].y, pts[i - 1].z);
+        p[i].pos.x = pts[i].x;
+        p[i].pos.y = pts[i].y;
+        p[i].pos.z = pts[i].z;
+    }
+    p[6].unk_30.x = pts[5].x;
+    p[6].unk_30.y = pts[5].y;
+    p[6].unk_30.z = pts[5].z + 50.0f;
+    func_80025798(p[6].model, pts[5].x, pts[5].y, pts[5].z + 50.0f);
+    func_80025798(p[6].secondary_model, pts[5].x, 1.0f, pts[5].z + 50.0f);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F8D6C_BalloonBurst);
+#endif
 void func_800F9368_BalloonBurst(f32 radius, Vec start, s16 count, f32 scale, Vec *out) {
     f32 dy;
     f32 dx;
