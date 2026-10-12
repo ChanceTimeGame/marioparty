@@ -1,5 +1,9 @@
 #include "CastAways.h"
 
+extern u16 D_800FBA06_CastAways;
+extern u16 D_800FBA08_CastAways;
+
+
 extern u8 D_800FBA0C_CastAways[][3];
 extern u8 D_800FBA18_CastAways[][3];
 
@@ -319,8 +323,57 @@ void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwa
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9EAC_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA198_CastAways);
+// rodata order (C floats) and register allocation
+#ifdef NON_MATCHING
+void func_800FA198_CastAways(void) {
+    Vec3f pos;
+    Vec2f scr;
 
+    switch (D_800FBB98_ovl2B) {
+    case 0:
+        pos.x = 0;
+        pos.y = 0;
+        pos.z = -2300.0f;
+        Convert3DTo2D(0, &pos, &scr);
+        SetBasicSpritePos(D_800FBB5E_ovl2B, 0xA0, (s32)((scr.y + 120.0f + 10.0f) - 68.0f));
+        if (D_800FBA06_CastAways >= 0x1F) {
+            D_800FBB80_ovl2B.z += 44.533333f;
+            D_800FBB70_ovl2B.z += 19.88889f;
+        } else {
+            D_800FBB80_ovl2B.x += 0.0f;
+            D_800FBB80_ovl2B.y += -81.7f;
+            D_800FBB80_ovl2B.z += -6.6666665f;
+            D_800FBB70_ovl2B.x += 0.0f;
+            D_800FBB70_ovl2B.y += 0.0f;
+            D_800FBB70_ovl2B.z += -6.6666665f;
+        }
+        if (--D_800FBA06_CastAways == 0) {
+            D_800FBB98_ovl2B = 2;
+            func_8006071C(D_800FBB6C_ovl2B);
+        }
+        break;
+    case 2:
+        if (func_80072718() == 0) {
+            D_800FBB98_ovl2B = 3;
+            GMesCreate(0);
+        }
+        break;
+    case 3:
+        if (GMesStatAllGet() == 0) {
+            D_800FBB7C_ovl2B = 1;
+            GMesCreate(8, D_800FBB58_ovl2B, 0xA0, 0x20);
+        }
+        break;
+    }
+    if (D_800FBA08_CastAways == 0) {
+        func_80060128(0x19);
+        return;
+    }
+    D_800FBA08_CastAways--;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA198_CastAways);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
 
 // register allocation: retail keeps a u16 copy of the weight (masked 2)
@@ -350,19 +403,80 @@ void func_800FACA8_CastAways(void) {
     }
 }
 
-s32 func_800FACEC_CastAways(unk_ovl_2BStruct* arg0) {
-    if (arg0->unk_04 == 0) {
+s32 func_800FACEC_CastAways(CastAwaysPlayerWork* arg0) {
+    if (arg0->power == 0) {
         return -1;
     }
-    if (arg0->unk_04 < 0x22) {
+    if (arg0->power < 0x22) {
         return 0;
     }
     
-    if (arg0->unk_04 < 0x39) {
+    if (arg0->power < 0x39) {
         return 1;
     } else {
         return 2;
     }
 }
 
+extern f32 D_800FBA24_CastAways[];
+
+// retail shares one clamp block between the two direction tests (masked 29)
+#ifdef NON_MATCHING
+void func_800FAD2C_CastAways(omObjData* arg0) {
+    CastAwaysPlayerWork* work;
+    CastAwaysLureWork* lure;
+    s16 prev;
+    s16 type;
+    s16 dir;
+    f32 frame;
+    f32 target;
+
+    work = arg0->unk_50;
+    prev = work->fishType;
+    if (prev == -1) {
+        type = func_800FACEC_CastAways(work);
+        work->fishType = type;
+        if (type != prev) {
+            func_800FB668_CastAways(arg0, arg0->model[0], work->animDataA, 0.0f, 1.0f, 2, 0xE);
+            func_80025BB8(arg0->model[3], arg0->motion[0xB]);
+            func_80025EB4(arg0->model[3], 1, 1);
+            work->unk_14C = 1;
+        }
+    } else {
+        type = func_800FACEC_CastAways(work);
+        lure = work->lureObj->unk_50;
+        if (work->fishType != type) {
+            if (D_800FBA24_CastAways[type] < lure->frame) {
+                work->unk_14C = -1;
+            } else if (lure->frame < D_800FBA24_CastAways[type]) {
+                work->unk_14C = 1;
+            } else {
+                work->unk_14C = 0;
+            }
+            work->unk_14E = 0;
+            work->fishType = type;
+        }
+        lure->frame = (f32)work->unk_14C + lure->frame;
+        dir = work->unk_14C;
+        frame = func_80025D18(arg0->model[3]) + (f32)dir;
+        if (dir > 0) {
+            target = D_800FBA24_CastAways[work->fishType];
+            if (target <= lure->frame) {
+                lure->frame = target;
+                work->unk_14C = 0;
+                work->unk_14E = 1;
+            }
+        } else {
+            target = D_800FBA24_CastAways[work->fishType];
+            if (lure->frame <= target) {
+                lure->frame = target;
+                work->unk_14C = 0;
+                work->unk_14E = 1;
+            }
+        }
+        func_80025CA8(arg0->model[3], frame);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FAD2C_CastAways);
+#endif
