@@ -42,6 +42,22 @@ extern u16 D_800FADF4_BumperBallMaze;
 extern f32 D_800FAE18_BumperBallMaze;
 extern Vec3f D_800FAC7C_BumperBallMaze[];
 
+typedef struct BumperBallMazeCameraPreset {
+    f32 cameraValue;
+    f32 zoom;
+    Vec3f rot;
+    Vec3f center;
+} BumperBallMazeCameraPreset;
+
+extern BumperBallMazeCameraPreset D_800FAB5C_BumperBallMaze[];
+extern u8 D_800FAD28_BumperBallMaze[];
+extern s16 D_800FADFC_BumperBallMaze;
+extern s16 D_800FADFE_BumperBallMaze;
+extern s16 D_800FAE00_BumperBallMaze;
+extern s16 D_800FAE02_BumperBallMaze;
+extern omObjData* D_800FAE04_BumperBallMaze;
+extern s16 D_800FB1C4_BumperBallMaze;
+
 void func_800FA620_BumperBallMaze(void);
 void func_800F9990_BumperBallMaze(void);
 void func_800F6C28_BumperBallMaze(void);
@@ -52,10 +68,76 @@ s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeCo
 void func_800F928C_BumperBallMaze(u16);
 void func_800F8220_BumperBallMaze(omObjData*);
 void func_800594E4(s16, u16);
+void func_8001897C(s16, f32, f32, f32);
+void func_800F96B0_BumperBallMaze(f32, f32, f32, f32, f32, f32, f32, f32);
+void func_800F9768_BumperBallMaze(void);
+void func_800F6994_BumperBallMaze(omObjData*);
+void func_800F6BB8_BumperBallMaze(omObjData*);
+void func_800F6C44_BumperBallMaze(s32);
+void func_800F8184_BumperBallMaze(omObjData*);
+void func_800F8AB8_BumperBallMaze(void);
+void func_800F9050_BumperBallMaze(omObjData*);
 f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F65E0_BumperBallMaze);
+void func_800F65E0_BumperBallMaze(void) {
+    BumperBallMazeCameraPreset* cam;
+    void* data;
+    s16 sprite;
+
+    omInitObjMan(0x14, 0);
+    func_80060088();
+    switch (GwSystem.unk_1E) {
+    case 0x24:
+        D_800FADF8_BumperBallMaze = 1;
+        break;
+    case 0x35:
+        D_800FADF8_BumperBallMaze = 2;
+        break;
+    case 0x23:
+    default:
+        D_800FADF8_BumperBallMaze = 0;
+        break;
+    }
+    func_80029090(2);
+    func_8001DE70(0xC);
+    func_8002ADF0(&D_800EDEC0, 0x40);
+    func_8002890C(0, 0x20, 0x80);
+    func_8002578C(1);
+    cam = &D_800FAB5C_BumperBallMaze[D_800FADF8_BumperBallMaze];
+    func_800F96B0_BumperBallMaze(cam->cameraValue, cam->zoom, cam->rot.x, cam->rot.y, cam->rot.z,
+                                 cam->center.x, cam->center.y, cam->center.z);
+    func_80017660(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    func_800176C4(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, omOutView), 0xA0);
+    func_80023448(3);
+    func_800234B8(0, 0x2C, 0x2C, 0x40);
+    func_800234B8(1, 0x60, 0x60, 0x10);
+    func_80023504(1, 100.0f, 80.0f, 100.0f);
+    func_800234B8(2, 0, 0, 0);
+    func_80023504(2, 100.0f, 80.0f, 100.0f);
+    func_800234B8(3, 0, 0, 0);
+    func_80023504(3, 100.0f, 80.0f, 100.0f);
+    D_800FAE10_BumperBallMaze = omAddObj(0x14, 9, 6, -1, func_800F6C44_BumperBallMaze);
+    omAddObj(0x28, 1, 0, -1, func_800F8184_BumperBallMaze);
+    omAddObj(0, 0, 0, -1, func_800F6994_BumperBallMaze);
+    D_800FAE04_BumperBallMaze = omAddObj(6, 2, 0, -1, func_800F6BB8_BumperBallMaze);
+    omAddObj(0x2710, 0, 0, -1, func_800F8AB8_BumperBallMaze);
+    D_800FAE14_BumperBallMaze = omAddObj(0x28, 0, 0, -1, func_800F9050_BumperBallMaze);
+    func_800F9768_BumperBallMaze();
+    data = DataRead(0x25);
+    D_800FADFC_BumperBallMaze = func_80039084(data);
+    HuMemDirectFree(data);
+    data = DataRead(0x24);
+    D_800FADFE_BumperBallMaze = func_80039084(data);
+    HuMemDirectFree(data);
+    func_8007B168(D_800FAD28_BumperBallMaze, 1);
+    D_800FAE00_BumperBallMaze = InitSprite(0x87);
+    D_800FAE02_BumperBallMaze = sprite = InitSprite(0x87);
+    func_8001897C(sprite, 0.0f, 1.0f, 0.0f);
+    D_800FB1C4_BumperBallMaze = 0;
+    SetFadeInTypeAndTime(0, 0x10);
+}
 
 void func_800F6994_BumperBallMaze(omObjData* object) {
     D_800FB1C0_BumperBallMaze = 0;
