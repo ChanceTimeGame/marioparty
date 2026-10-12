@@ -1,5 +1,8 @@
 #include "CastAways.h"
 
+/* End of the game: freeze the fish, put the rods away, turn the players round, then the result. */
+
+
 /* Player object: reads the stick (or the CPU), sets the cast power, casts and reels. */
 
 
@@ -1049,8 +1052,183 @@ void func_800FA198_CastAways(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA198_CastAways);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
+// register allocation and block order
+#ifdef NON_MATCHING
+void func_800FA410_CastAways(void) {
+    omObjData** players;
+    omObjData** fish;
+    CastAwaysItemSet* set;
+    CastAwaysFishWork* fishWork;
+    CastAwaysPlayerWork* work;
+    omObjData* obj;
+    s32 i;
+    s32 j;
+    s16 slot;
+    s16 id;
+    u16 winners;
 
+    players = func_8005DB44(4);
+    switch (D_800FBB8C_CastAways) {
+    case 0:
+        for (i = 0; i < 3; i++) {
+            set = D_800FBB48_CastAways[i]->unk_50;
+            for (j = 0; j < set->count; j++) {
+                set->slots[0][j] = 0;
+            }
+            fish = func_8005DB44(i);
+            for (j = 0; j < D_800ED618[i].max; j++) {
+                if (fish[j] == NULL) {
+                    continue;
+                }
+                fishWork = fish[j]->unk_50;
+                switch (fishWork->type) {
+                case 0:
+                    id = set->spriteIds[fishWork->slot];
+                    omSetSca(fish[j], 8.0f, 8.0f, 8.0f);
+                    break;
+                case 1:
+                    func_800258EC(fish[j]->model[0], 4, 4);
+                    slot = func_800F75BC_CastAways(set, 0);
+                    fish[j]->model[0] = set->models[0][slot];
+                    func_800258EC(fish[j]->model[0], 4, 0);
+                    id = set->spriteIds[slot];
+                    omSetSca(fish[j], 8.0f, 8.0f, 8.0f);
+                    break;
+                case 2:
+                    func_800258EC(fish[j]->model[0], 4, 4);
+                    slot = func_800F75BC_CastAways(set, 0);
+                    fish[j]->model[0] = set->models[0][slot];
+                    func_800258EC(fish[j]->model[0], 4, 0);
+                    id = set->spriteIds[slot];
+                    obj = fish[j];
+                    omSetTra(obj, obj->trans.x, obj->trans.y - 30.0f, obj->trans.z - -150.0f);
+                    omSetSca(fish[j], 8.0f, 8.0f, 8.0f);
+                    break;
+                }
+                /* Retail reuses the previous id for any other type (none exist). */
+                D_800ECDE0[id].unk_02 = D_800FBB40_CastAways;
+                D_800ECDE0[id].unk_08 = 0;
+                D_800ECDE0[id].unk_04 = 0;
+                func_8001E268(id, 6, 6);
+                func_8001E268(id, 1, 0);
+                func_8001E360(id, 0xFF, 0xFF, 0xBE);
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            obj = players[i];
+            work = obj->unk_50;
+            if (work->lureObj != NULL) {
+                omDelObj(work->lureObj);
+                work->lureObj = NULL;
+            }
+            func_8006071C(work->sound);
+            func_800258EC(obj->model[2], 4, 4);
+            func_800258EC(obj->model[3], 4, 4);
+            func_800258EC(work->spriteData->model, 4, 4);
+            func_800258EC(obj->model[2], 0x4000, 0);
+            func_800258EC(work->rodObj->model[0], 0x4000, 0);
+            func_8002456C(obj->model[2]);
+            func_8002456C(obj->model[3]);
+            func_8002456C(work->rodObj->model[0]);
+            omDelObj(work->rodObj);
+            func_80025BB8(obj->model[0], obj->motion[0]);
+            func_80025EB4(obj->model[0], 2, 2);
+            func_8002456C(obj->motion[7]);
+            func_8002456C(obj->motion[6]);
+        }
+        D_800FBB8C_CastAways = 1;
+        GMesCreate((D_800FBB56_CastAways == 0 && D_800FBB54_CastAways != 1) ? 0x10 : 2);
+        func_800790C0();
+        break;
+    case 1:
+        for (i = 0; i < 4; i++) {
+            players[i]->rot.y -= 12.0f;
+            if (players[i]->rot.y < 0.0f) {
+                players[i]->rot.y = 0.0f;
+            }
+        }
+        if (players[0]->rot.y == 0.0f) {
+            D_800FBB8C_CastAways = (D_800FBB56_CastAways != 0) ? 7 : 2;
+            for (i = 0; i < 4; i++) {
+                func_80025C20(players[i]->model[0], players[i]->motion[0xE], 0, 0xF, 2);
+            }
+        }
+        break;
+    case 2:
+        winners = 0;
+        if (GMesStatAllGet() & 2) {
+            for (i = 0; i < 4; i++) {
+                if (((CastAwaysPlayerWork*)players[i]->unk_50)->catches != 0) {
+                    winners++;
+                    func_80025BB8(players[i]->model[0], players[i]->motion[0xC]);
+                } else {
+                    func_80025BB8(players[i]->model[0], players[i]->motion[0xD]);
+                }
+                func_80025EB4(players[i]->model[0], 2, 0);
+            }
+            if (winners == 0) {
+                func_80060128(0x34);
+                D_800FBB02_CastAways = 0x58;
+            } else if (winners == 4) {
+                func_80060128(0x36);
+                D_800FBB02_CastAways = 0x67;
+            } else {
+                func_80060128(0x3C);
+                D_800FBB02_CastAways = 0x76;
+            }
+            D_800FBB8C_CastAways = 3;
+        }
+        break;
+    case 3:
+        if (--D_800FBB02_CastAways != 0) {
+            break;
+        }
+        /* Retail reuses i for the player loop inside the spawner loop, so only spawner 0's fish
+           are removed (the objects go with the overlay). */
+        for (i = 0; i < 3; i++) {
+            fish = func_8005DB44(i);
+            set = D_800FBB48_CastAways[i]->unk_50;
+            for (j = 0; j < set->count; j++) {
+                if (fish[j] != NULL) {
+                    omDelObj(fish[j]);
+                }
+                func_8002019C(set->spriteIds[j]);
+            }
+            for (i = 0; i < 4; i++) {
+                work = players[i]->unk_50;
+                func_80020CC4(work->animDataA);
+                func_80020CC4(work->animDataB);
+                work->animDataB = NULL;
+                work->animDataA = NULL;
+            }
+        }
+        D_800FBB8C_CastAways = 4;
+        for (i = 0; i < 3; i++) {
+            omDelObj(D_800FBB48_CastAways[i]);
+        }
+        break;
+    case 4:
+        D_800FBB8C_CastAways = 5;
+        break;
+    case 6:
+        if (func_80072718() == 0) {
+            D_800FB9E4_CastAways = 1;
+        }
+        break;
+    case 7:
+        if (GMesWait() == 1) {
+            break;
+        }
+        /* fallthrough */
+    case 5:
+        D_800FBB8C_CastAways = 6;
+        func_800726AC(0, 20);
+        break;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
+#endif
 // register allocation: retail keeps a u16 copy of the weight (masked 2)
 #ifdef NON_MATCHING
 s16 func_800FABE4_CastAways(u16 arg0) {
