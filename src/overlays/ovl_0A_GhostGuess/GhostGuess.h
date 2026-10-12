@@ -10,7 +10,7 @@ typedef struct GGGhost {
 /* 0x00 */ omObjData* obj;
 /* 0x04 */ u8 unk_04; /* 1: the ghost to find */
 /* 0x05 */ u8 unk_05; /* index */
-/* 0x06 */ s16 unk_06;
+/* 0x06 */ u16 unk_06; /* state */
 /* 0x08 */ s16 unk_08;
 /* 0x0A */ s16 unk_0A;
 /* 0x0C */ s16 unk_0C;
@@ -107,6 +107,7 @@ void func_8006035C(s16, s8);
 extern s32 D_800FB678_GhostGuess;
 extern f32 D_800FB674_GhostGuess;
 extern s32 D_800FB69C_GhostGuess; /* the ghost to find */
+extern s32 D_800FB6A0_GhostGuess; /* the ghost the player touched */
 extern s32 D_800FB6AC_GhostGuess;
 f64 func_8009B618(f64, f64);
 extern s16 D_800FB6D8_GhostGuess[2];
@@ -179,7 +180,8 @@ void func_800F789C_GhostGuess(omObjData* arg0);
 void func_800F79D4_GhostGuess(omObjData* arg0);
 void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s16 arg3);
 void func_800F80E4_GhostGuess(omObjData* arg0);
-void func_800F86CC_GhostGuess(omObjData* arg0);
+s32 func_800F86CC_GhostGuess(omObjData* arg0, omObjData* arg1);
+void func_80017C0C(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 void func_800F8888_GhostGuess(omObjData* arg0);
 void func_800F948C_GhostGuess(omObjData* arg0);
 void func_800FA764_GhostGuess(omObjData* arg0);
