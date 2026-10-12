@@ -1,5 +1,8 @@
 #include "GrabBag.h"
 
+extern s32 D_800FB290_GrabBag;
+
+
 extern s32 D_800FB104_GrabBag[4];
 extern s32 D_800FB254_GrabBag;
 extern f32 D_800B8960;
@@ -86,8 +89,35 @@ void func_800F8484_GrabBag(omObjData* arg0) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F859C_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8984_GrabBag);
+// register allocation (masked 0)
+#ifdef NON_MATCHING
+void func_800F8984_GrabBag(void) {
+    s32 i;
+    s32 gained;
+    s32 even;
+    GrabBagPlayerWork* work;
 
+    gained = 0;
+    even = 0;
+    for (i = 0; i < 4; i++) {
+        work = GB_PLAYER(D_800F3FB0[i]);
+        if (work->score - work->start_score > 0) {
+            gained++;
+        } else {
+            even += work->score == work->start_score;
+        }
+    }
+    if (gained == 1) {
+        D_800FB290_GrabBag = 0;
+    } else if (even == 4) {
+        D_800FB290_GrabBag = 2;
+    } else {
+        D_800FB290_GrabBag = 1;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8984_GrabBag);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8A18_GrabBag);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_GrabBag);
@@ -167,8 +197,39 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA184_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA304_GrabBag);
+// register allocation: bag/model-table base registers (masked 6)
+#ifdef NON_MATCHING
+u8 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
+    GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
+    u8 kind;
+    s32 amount;
 
+    work0 = GB_PLAYER(arg0);
+    work1 = GB_PLAYER(arg1);
+    kind = 0;
+    if (work1->items_taken >= 5) {
+        if ((u8)(rand8() % 10) < 4) {
+            amount = 1;
+        } else {
+            kind = 1;
+            amount = 5;
+        }
+    } else {
+        amount = 1;
+    }
+    work0->score = amount + work0->score;
+    work1->score -= amount;
+    work0->items_taken = amount + work0->items_taken;
+    work1->items_taken -= amount;
+    if (!(D_800F2B7C[D_800EDE70[kind]->model[0]].unk_20 & 4) || GB_BAG(D_800EDE70[kind])->unk_5C != 0) {
+        kind += 3;
+    }
+    return kind;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA304_GrabBag);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA424_GrabBag);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA658_GrabBag);

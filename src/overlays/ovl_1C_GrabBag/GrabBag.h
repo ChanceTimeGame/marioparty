@@ -84,6 +84,37 @@ typedef struct GrabBagPlayerWork {
 
 #define GB_PLAYER(obj) ((GrabBagPlayerWork*)(obj)->unk_50)
 
+/* The six bags' work (D_800EDE70[i]->unk_50, 0x70 bytes from func_800F6C98). Main code's item
+   collision (src/1130.c) reads it through its PlayerWork view below 0x60; no pointers, so the
+   host layout is the N64 one. */
+typedef struct GrabBagBagWork {
+    /* 0x00 */ char unk_00[0x22];
+    /* 0x22 */ u8 unk_22; /* image of model 1 (func_80009340) */
+    /* 0x23 */ char unk_23[0x11];
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ f32 unk_3C;
+    /* 0x40 */ f32 unk_40;
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ f32 unk_4C;
+    /* 0x50 */ u16 unk_50;
+    /* 0x52 */ s8 unk_52;
+    /* 0x53 */ char unk_53;
+    /* 0x54 */ u8 unk_54;
+    /* 0x55 */ char unk_55[3];
+    /* 0x58 */ f32 unk_58;
+    /* 0x5C */ s32 unk_5C; /* frames since grabbed; nonzero: not available */
+    /* 0x60 */ s32 unk_60;
+    /* 0x64 */ char unk_64[8];
+    /* 0x6C */ s8 unk_6C;
+    /* 0x6D */ s8 unk_6D; /* grabbing player (D_800F3FB0 index), -1 none */
+    /* 0x6E */ s8 unk_6E;
+    /* 0x6F */ char unk_6F;
+} GrabBagBagWork; /* size = 0x70 */
+
+#define GB_BAG(obj) ((GrabBagBagWork*)(obj)->unk_50)
+
 void func_800F6C98_GrabBag(void);
 void func_800F66F8_GrabBag(void);
 void func_800F67BC_GrabBag(void);
