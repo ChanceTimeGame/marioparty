@@ -1,5 +1,10 @@
 #include "GrabBag.h"
 
+extern u8 D_800FB0C0_GrabBag;
+extern u16 D_800FB0C2_GrabBag;
+extern u16 D_800FB230_GrabBag;
+
+
 extern omObjData* D_800F2AF8[];
 
 typedef struct GrabBagGroundWork {
@@ -80,4 +85,29 @@ void func_800F7470_GrabBag(omObjData* arg0) {
     arg0->func_ptr = func_800F7538_GrabBag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184450", func_800F7538_GrabBag);
+void func_800F7538_GrabBag(omObjData* arg0) {
+    if (D_800ED430 == 0) {
+        if (D_800FB230_GrabBag > 60) {
+            arg0->trans.y -= 10.0f;
+            if (arg0->trans.y < 0.0f) {
+                arg0->trans.y = 0.0f;
+            }
+            if (D_800FB230_GrabBag == 80) {
+                func_80017C0C(arg0, 1, 450.0f, 0.0f, -350.0f, 0.0f, 0.0f);
+                PlaySound(0x1A0);
+                func_80060128(0x1B);
+            } else if (D_800FB230_GrabBag == 90) {
+                D_800FB0C0_GrabBag = 1;
+            }
+            if (D_800FB230_GrabBag >= 86 && D_800FB230_GrabBag <= 96) {
+                if (D_800FB0C2_GrabBag != 0) {
+                    Center.y = -32.0f;
+                } else {
+                    Center.y = 32.0f;
+                }
+                D_800FB0C2_GrabBag ^= 1;
+            }
+        }
+        D_800FB230_GrabBag++;
+    }
+}

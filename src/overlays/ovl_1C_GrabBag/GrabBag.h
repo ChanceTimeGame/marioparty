@@ -121,3 +121,4 @@ void func_800F67BC_GrabBag(void);
 void func_800F6C08_GrabBag(void);
 void func_800F7260_GrabBag(void);
 void func_800F7680_GrabBag(void);
+void func_80017C0C(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
