@@ -12,7 +12,6 @@ extern u16 D_800FB9C4_CastAways[];
 /* Player object: reads the stick (or the CPU), sets the cast power, casts and reels. */
 
 
-extern Vec D_800FB930_CastAways[4];
 extern char D_800FBA80_CastAways[];
 
 /* Player object setup: seat, models, rod object, line sprites, motions, CPU tuning. */
@@ -42,6 +41,62 @@ extern u8 D_800FBA18_CastAways[][3];
 
 
 extern u8 D_800F64F8;
+
+/* .data (1F60F0), in address order. */
+extern char D_800FBA40_CastAways[];
+extern char D_800FBA58_CastAways[];
+
+/* Player seat positions. */
+Vec D_800FB930_CastAways[4] = {
+    { -300.0f, 77.0f, 2700.0f },
+    { -100.0f, 77.0f, 2620.0f },
+    { 100.0f, 77.0f, 2590.0f },
+    { 300.0f, 77.0f, 2590.0f },
+};
+CastAwaysItemSetDef D_800FB960_CastAways[3] = {
+    { 30, 6, -8.0f, 1700.0f, 1800.0f, 33 },
+    { 25, 8, 11.999999046325684f, -1800.0f, 1050.0f, 56 },
+    { 70, 4, -16.0f, 2000.0f, 300.0f, 80 },
+};
+u16 D_800FB99C_CastAways[4] = { 45, 45, 45, 0 };
+s32 D_800FB9A4_CastAways[3] = { 0x21, 0x37, 0x23 };
+/* Reel steps per spawner and item type. */
+u16 D_800FB9B0_CastAways[3][3] = {
+    { 4, 5, 6 },
+    { 8, 9, 11 },
+    { 11, 13, 15 },
+};
+u16 D_800FB9C4_CastAways[8] = { 4, 7, 10, 0, 0, 0, 0, 0 };
+char* D_800FB9D4_CastAways = D_800FBA58_CastAways;
+char* D_800FB9D8_CastAways[2] = { D_800FBA40_CastAways, NULL };
+s32 D_800FB9E0_CastAways = 0;
+u16 D_800FB9E4_CastAways = 0;
+/* CPU hold-off chance (percent) per difficulty and item type. */
+u8 D_800FB9E8_CastAways[4][3] = {
+    { 30, 60, 95 },
+    { 20, 50, 70 },
+    { 10, 20, 40 },
+    { 5, 10, 15 },
+};
+f32 D_800FB9F4_CastAways[3] = { 10.0f, 20.0f, 30.0f };
+u8 D_800FBA00_CastAways[4] = { 0, 0, 0, 0 };
+u8 D_800FBA04_CastAways = 0;
+u16 D_800FBA06_CastAways = 120;
+u16 D_800FBA08_CastAways = 55;
+/* Item-type weights (out of 10) and the types they select, per spawner. */
+u8 D_800FBA0C_CastAways[4][3] = {
+    { 1, 2, 7 },
+    { 2, 3, 5 },
+    { 2, 3, 5 },
+    { 0, 0, 0 },
+};
+u8 D_800FBA18_CastAways[4][3] = {
+    { 2, 1, 0 },
+    { 2, 0, 1 },
+    { 0, 1, 2 },
+    { 0, 0, 0 },
+};
+f32 D_800FBA24_CastAways[3] = { 10.0f, 20.0f, 30.0f };
 extern char D_800FBA64_CastAways[];
 extern char D_800FBA70_CastAways[];
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
@@ -365,7 +420,7 @@ void func_800F76B8_CastAways(omObjData* arg0) {
                 switch (type) {
                 case 0:
                     slot = func_800F75BC_CastAways(set, 0);
-                    D_800ECDE0[set->spriteIds[slot]].unk_02 = D_800FBB04_CastAways;
+                    D_800ECDE0[set->spriteIds[slot]].unk_02 = D_800FBB04_CastAways[0];
                     func_8001E268(set->spriteIds[slot], 1, 0);
                     func_8001E2A8(set->spriteIds[slot], 0);
                     fish->model[0] = set->models[0][slot];
@@ -662,7 +717,7 @@ void func_800F8194_CastAways(omObjData* arg0, s32 arg1) {
     } else {
         rod->model[0] = func_80023FC8(((CastAwaysPlayerWork*)players[0]->unk_50)->rodObj->model[0]);
     }
-    func_8002859C(rod->model[0], arg0->model[3], D_800FB9D8_CastAways);
+    func_8002859C(rod->model[0], arg0->model[3], D_800FB9D8_CastAways[0]);
     func_800258EC(rod->model[0], 0x4000, 0x4000);
     omSetTra(rod, arg0->trans.x, arg0->trans.y + 145.0f, arg0->trans.z);
     omSetRot(rod, 45.0f, 180.0f, 0.0f);
@@ -817,7 +872,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
             func_800258EC(arg0->model[2], 4, 4);
             func_800258EC(arg0->model[2], 0x4000, 0);
             func_800258EC(arg0->model[3], 4, 0);
-            func_8002859C(work->rodObj->model[0], arg0->model[3], D_800FB9D8_CastAways);
+            func_8002859C(work->rodObj->model[0], arg0->model[3], D_800FB9D8_CastAways[0]);
             func_80025EB4(arg0->model[3], 1, 1);
             func_80025CA8(arg0->model[3], 0.0f);
         }

@@ -31,6 +31,14 @@ extern CastAwaysCameraView D_800EE738;
 extern CastAwaysCameraViewFromX D_800EE73C;
 void func_800FB778_CastAways(omObjData*);
 
+/* .data (1F61F0), in address order. */
+f32 D_800FBA30_CastAways[4] = { 64.0f, 64.0f, 64.0f, 0.0f };
+char D_800FBA40_CastAways[] = "c000_049_long-Lure-Line";
+char D_800FBA58_CastAways[] = "Lure-Line_2";
+char D_800FBA64_CastAways[] = "57mt006_DEF";
+char D_800FBA70_CastAways[] = "57m_006-grid12";
+char D_800FBA80_CastAways[] = "item_hook";
+
 void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);
     CZoom = arg1;

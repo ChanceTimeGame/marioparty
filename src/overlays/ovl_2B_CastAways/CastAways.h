@@ -1,17 +1,5 @@
 #include "common.h"
 
-typedef struct unk_ovl_2BStruct {
-/* 0x000 */ char unk_00[4];
-/* 0x004 */ s16 unk_04;
-/* 0x006 */ char unk_06[0x146];
-/* 0x14C */ s16 unk_14C;
-} unk_ovl_2BStruct; //unknown size
-
-typedef struct unk_ovl_2BStruct2 {
-/* 0x00 */ char unk_00[0x4C];
-/* 0x4C */ s32 unk_4C;
-/* 0x50 */ char unk_50[0x70];
-} unk_ovl_2BStruct2; //unknown size
 
 typedef struct CastAwaysLightParams {
     u16 unk_00;
@@ -176,7 +164,6 @@ extern CastAwaysPlayerSprite D_800FBB10_CastAways[4];
 extern CastAwaysPlayerSprite D_800FBB20_CastAways[4];
 extern CastAwaysPlayerSprite D_800FBB30_CastAways[4];
 
-//extern unk_ovl_2BStruct2* D_800F2B7C;
 extern f32 D_800FBA30_CastAways[];
 extern s32 D_800FB9A4_CastAways[];
 extern s16 D_800F3778;
@@ -270,7 +257,7 @@ void func_800FB0C8_CastAways(CastAwaysSpriteData*, Vec*, u16);
 extern s16 D_800FBB00_CastAways;
 f64 func_8009B618(f64, f64); /* fmod */
 extern char* D_800FB9D4_CastAways;
-extern char* D_800FB9D8_CastAways;
+extern char* D_800FB9D8_CastAways[2];
 extern u8 D_800FBA00_CastAways[4];
 extern u8 D_800FBA04_CastAways;
 void func_80020958(s16, CastAwaysAnimData*, s16);

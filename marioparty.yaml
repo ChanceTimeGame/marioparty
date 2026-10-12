@@ -1373,8 +1373,8 @@ segments:
     subsegments:
       - [0x1F0DA0, c]
       - [0x1F5700, c]
-      - [0x1F60F0, data, 1F0DA0]
-      - [0x1F61F0, data, 1F5700]
+      - [0x1F60F0, .data, 1F0DA0]
+      - [0x1F61F0, .data, 1F5700]
       - [0x1F6250, .rodata, 1F0DA0]
       - {0x1F62C0, type: bss, vram: 0x800FBB00, name: ovl_2B_bss}
   - type: code
