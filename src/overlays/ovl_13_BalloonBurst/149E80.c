@@ -57,21 +57,34 @@ void func_800396B0(s16, u8);
 
 typedef struct BalloonBurstObstacle {
     Vec pos;
-    char unk_0C[0x24];
+    Vec rot;
+    Vec scale;
+    Vec unk_24;
     Vec unk_30;
-    char unk_3C[2];
+    s16 unk_3C;
     s16 model;
     s16 unk_40;
     s16 secondary_model;
     f32 unk_44;
-    char unk_48[8];
+    f32 unk_48;
+    f32 unk_4C;
     f32 unk_50;
     f32 unk_54;
-    char unk_58[0xC];
+    f32 unk_58;
+    f32 unk_5C;
+    f32 unk_60;
     f32 unk_64;
-    char unk_68[0xA];
+    f32 unk_68;
+    s16 unk_6C;
+    s16 unk_6E;
+    s16 unk_70;
     s16 unk_72;
-    char unk_74[0x30];
+    f32 unk_74;
+    f32 unk_78;
+    f32 unk_7C;
+    f32 unk_80;
+    f32 unk_84;
+    char unk_88[0x1C];
     u16 unk_A4;
     s16 unk_A6;
 } BalloonBurstObstacle; // sizeof 0xA8
@@ -115,7 +128,9 @@ extern s16 D_800FB0E2_BalloonBurst[];
 extern u16 D_800FB0EA_BalloonBurst[];
 extern s16 D_800FC390_BalloonBurst;
 extern s16 D_800FC392_BalloonBurst;
-void func_800F77D0_BalloonBurst(s32, s32, f32, f32, f32, f32, f32, f32);
+void func_800F77D0_BalloonBurst(u8, s16, f32, f32, f32, f32, f32, f32);
+void func_800F8670_BalloonBurst(omObjData *);
+void func_80039644(s16, u8, u8);
 void func_80027AC8(s16, char *, char *);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
@@ -429,8 +444,100 @@ void func_800F7298_BalloonBurst(omObjData *arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7298_BalloonBurst);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F77D0_BalloonBurst);
+void func_800F77D0_BalloonBurst(u8 arg0, s16 arg1, f32 x, f32 y, f32 z, f32 x2, f32 y2, f32 z2) {
+    BalloonBurstObstacle *p;
+    omObjData *obj;
+    unk_ovl_2D_struct *mdl;
+    void *data;
+    s16 model;
+    s16 handle;
+    f32 frame;
+    s32 i;
 
+    for (i = 0; i < 7; i++) {
+        p = &D_800FB120_BalloonBurst[arg0].obstacles[i];
+        p->pos.x = p->pos.y = p->pos.z = p->rot.x = p->rot.y = p->rot.z = 0.0f;
+        p->scale.x = p->scale.y = p->scale.z = 1.0f;
+        p->unk_44 = 0.0f;
+        p->unk_48 = 0.0f;
+        p->unk_4C = p->unk_50 = 0.0f;
+        p->unk_54 = 0.0f;
+        p->unk_58 = 0.0f;
+        p->unk_5C = 0.5f;
+        p->unk_60 = 0.0f;
+        p->unk_64 = 0.5f;
+        p->unk_6C = -1;
+        p->unk_6E = -1;
+        p->unk_70 = 0;
+        p->unk_72 = -1;
+        p->unk_68 = 0.0f;
+        p->unk_74 = p->unk_78 = p->unk_7C = p->unk_80 = 0.0f;
+        p->unk_84 = 0.0f;
+        p->unk_80 = 0.0f;
+    }
+    p = D_800FB120_BalloonBurst[arg0].obstacles;
+    obj = omAddObj(3, 1, 0, -1, func_800F8670_BalloonBurst);
+    obj->work[0] = arg0;
+    obj->model[0] = p[0].model = model = LoadFormFile(0x250002, 0x689);
+    p[0].pos.x = x;
+    p[0].pos.y = y;
+    p[0].pos.z = z;
+    D_800F2B7C[(u16)model].unk_0A |= 3;
+    frame = D_800ED554[D_800F2B7C[(u16)model].unk_08].unk_02 - 1.0f;
+    p[0].unk_44 = p[0].unk_48 = frame;
+    func_80025798(model, x, y, z);
+    omSetTra(obj, x, y, z);
+    data = DataRead(0x250009);
+    handle = func_80038A9C(D_800F2B7C[(u16)model].unk_6C, data, 0, "pump0_DEF");
+    p[0].unk_72 = handle;
+    func_80025AD4(model);
+    func_80025B34(model);
+    func_80039644(handle, 1, 1);
+    func_800396B0(handle, 4);
+    HuMemDirectFree(data);
+    for (i = 1; i < 6; i++) {
+        if (arg0 == 0 && i == 1) {
+            p[i].model = LoadFormFile(0x250003, 0x699);
+        } else {
+            p[i].model = func_80023FC8(D_800FB120_BalloonBurst[0].obstacles[1].model);
+        }
+    }
+    p[1].pos.x = x - 50.0f;
+    p[1].pos.y = y;
+    p[1].pos.z = z;
+    func_80025798(D_800FB120_BalloonBurst[arg0].obstacles[1].model, x - 50.0f, y, z);
+    p[6].unk_54 = 0.0f;
+    model = LoadFormFile(0x250001, 0x20689);
+    p[6].model = model;
+    p[6].unk_24.x = p[6].pos.x = x2;
+    p[6].unk_24.y = p[6].pos.y = y2;
+    p[6].unk_24.z = p[6].pos.z = z2;
+    D_800F2B7C[(u16)model].unk_0A |= 3;
+    func_80025798(model, x2, y2, z2);
+    mdl = &D_800F2B7C[(u16)model];
+    p[6].unk_74 = (mdl->unk_6C->unk_80->unk_4A + mdl->unk_6C->unk_80->unk_50) / 2.0f;
+    p[6].unk_78 = (mdl->unk_6C->unk_80->unk_4C + mdl->unk_6C->unk_80->unk_52) / 2.0f;
+    p[6].unk_7C = (mdl->unk_6C->unk_80->unk_4E + mdl->unk_6C->unk_80->unk_54) / 2.0f;
+    p[6].unk_74 = 10.0f;
+    p[6].unk_78 = 10.0f;
+    p[6].unk_7C = 10.0f;
+    p[6].unk_80 = 190.0f;
+    if (arg0 == 0) {
+        model = LoadFormFile(0x250001, 0x2068D);
+        p[6].unk_40 = model;
+        func_80025930(model, 0x22000, 0x20000);
+        func_80025AD4(model);
+        func_80026040(model);
+        func_80025B34(model);
+    } else {
+        model = func_80023FC8(D_800FB120_BalloonBurst[0].obstacles[6].unk_40);
+        p[6].unk_40 = model;
+    }
+    D_800F2B7C[(u16)model].unk_0A |= 3;
+    p[6].secondary_model = func_800174F4(6, 0x699);
+    func_800370D4(p[6].secondary_model);
+    p[6].unk_3C = arg1;
+}
 void func_800F7D9C_BalloonBurst(u16 arg0) {
     BalloonBurstPlayer *player = &D_800FB120_BalloonBurst[arg0];
     s32 i;
