@@ -3,6 +3,7 @@
 extern s32 D_800FB104_GrabBag[4];
 extern s32 D_800FB254_GrabBag;
 extern f32 D_800B8960;
+extern f32 D_800B8984;
 extern u16 D_800FB11C_GrabBag[4];
 extern u16 D_800FB244_GrabBag[4];
 extern u16 D_800FB258_GrabBag[];
@@ -21,9 +22,11 @@ typedef struct GrabBagInputWork {
 } GrabBagInputWork;
 
 typedef struct GrabBagMotionWork {
-    char unk_00[0x3C];
+    char unk_00[0x38];
+    f32 unk_38;
     f32 angle;
-    char unk_40[8];
+    f32 speed;
+    char unk_44[4];
     f32 radius;
     char unk_4C[0x18];
     f32 radius_offset;
@@ -111,7 +114,32 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9A1C_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9BC4_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9DF0_GrabBag);
+void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
+    f32 dx;
+    f32 dz;
+    f32 base_z;
+    f32 distance_sq;
+    f32 threshold_sq;
+    GrabBagMotionWork* work0;
+    GrabBagMotionWork* work1;
+
+    work0 = arg0->unk_50;
+    work1 = arg1->unk_50;
+    func_800AEAC0(work1->angle);
+    func_800AEFD0(work1->angle);
+    base_z = arg0->trans.z;
+    dx = arg1->trans.x - arg0->trans.x;
+    dz = arg1->trans.z - base_z;
+    distance_sq = (dx * dx) + (dz * dz);
+    threshold_sq = D_800B8984 * D_800B8984;
+    if (threshold_sq < distance_sq) {
+        work1->angle = func_800B0CD8(dx, dz);
+        work1->speed = -D_800B8984;
+    }
+    work1->unk_38 = 1000.0f;
+    work0->unk_38 = 1000.0f;
+    func_80025798(arg1->model[0], arg1->trans.x, 3.0f, arg1->trans.z);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
 
