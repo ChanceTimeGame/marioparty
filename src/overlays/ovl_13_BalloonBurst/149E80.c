@@ -4,6 +4,11 @@ void func_800F6DB8_BalloonBurst(omObjData *, s32, s32);
 void func_800F7298_BalloonBurst(omObjData *);
 void func_800F6D14_BalloonBurst(omObjData *);
 void func_80027E48(s16, f32, f32, u16, u16, char *, u8);
+void func_800F7E38_BalloonBurst(omObjData *, u8);
+void func_800F7F94_BalloonBurst(omObjData *);
+void func_800289D0(s16, s16, f32);
+void func_800370D4(s16);
+void func_80025BB8(s16, s16);
 
 extern Gfx **D_800FB0F8_BalloonBurst[];
 extern s16 D_800F3778;
@@ -27,6 +32,7 @@ extern u8 D_800F64F8;
 extern u16 D_800FB54E_BalloonBurst[];
 extern u16 D_800FB550_BalloonBurst[];
 extern unk34D80Struct80 *D_800ED554;
+extern Vec D_800FAEE0_BalloonBurst[];
 
 void func_800396B0(s16, u8);
 
@@ -35,7 +41,7 @@ typedef struct BalloonBurstObstacle {
     s16 model;
     char unk_40[2];
     s16 secondary_model;
-    s32 unk_44;
+    f32 unk_44;
     char unk_48[8];
     f32 unk_50;
     char unk_54[0x1E];
@@ -48,9 +54,12 @@ typedef struct BalloonBurstPlayer {
 } BalloonBurstPlayer;
 
 typedef struct BalloonBurstObjectWork {
-    char unk_00[3];
+    s16 player;
+    u8 port;
     s8 player_index;
-    char unk_04[8];
+    u8 unk_04;
+    char unk_05[3];
+    s32 unk_08;
     f32 unk_0C;
     f32 unk_10;
     char unk_14[2];
@@ -61,7 +70,9 @@ typedef struct BalloonBurstObjectWork {
     u16 unk_1E;
     u16 unk_20;
     u16 unk_22;
-} BalloonBurstObjectWork;
+    s16 unk_24;
+    u16 unk_26;
+} BalloonBurstObjectWork; // sizeof 0x28
 
 extern BalloonBurstPlayer D_800FB120_BalloonBurst[];
 
@@ -113,8 +124,65 @@ void func_800F6D14_BalloonBurst(omObjData *arg0) {
                  D_800FC3A2_BalloonBurst[0], D_800FC3A2_BalloonBurst[1], "24m_000A-grid2", 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F6DB8_BalloonBurst);
+void func_800F6DB8_BalloonBurst(omObjData *arg0, s32 arg1, s32 arg2) {
+    s32 base;
+    s32 file;
+    s8 character;
+    BalloonBurstObjectWork *work;
 
+    character = GwPlayer[arg1].character;
+    base = D_800C59AC[character].unk_00;
+    file = base | D_800C59AC[character].unk_04;
+    arg0->model[0] = LoadFormFile(file, 0x20699);
+    arg0->model[1] = func_800174F4(6, 0x699);
+    arg0->model[2] = LoadFormFile(file, 0x20699);
+    func_800289D0(arg0->model[0], arg0->model[2], 600.0f);
+    func_800370D4(arg0->model[1]);
+    func_8001775C(arg0, 0x2E, base | 0x2E);
+    if (rand8() & 1) {
+        func_8001775C(arg0, 0xF, base | 0xF);
+    } else {
+        func_8001775C(arg0, 0xF, base | 0x38);
+    }
+    func_8001775C(arg0, 0x27, base | 0x27);
+    func_8001775C(arg0, 0x2F, base | 0x2F);
+    omSetTra(arg0, D_800FAEE0_BalloonBurst[arg1].x, D_800FAEE0_BalloonBurst[arg1].y, D_800FAEE0_BalloonBurst[arg1].z);
+    func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    work = arg0->unk_50 = func_80023684(sizeof(BalloonBurstObjectWork), 0x7918);
+    work->player = arg1;
+    work->port = GwPlayer[arg1].port;
+    work->unk_1C = work->unk_1E = work->unk_20 = work->unk_22 = work->unk_26 = 0;
+    switch (GwPlayer[arg1].cpu_difficulty) {
+        case 0:
+            work->unk_16 = 1;
+            work->unk_18 = 8;
+            work->unk_1A = (u8)(rand8() % 6) + 2;
+            break;
+        case 1:
+            work->unk_16 = 3;
+            work->unk_18 = 5;
+            work->unk_1A = 2;
+            break;
+        case 2:
+            work->unk_16 = 4;
+            work->unk_18 = 8;
+            work->unk_1A = 1;
+            break;
+        case 3:
+            work->unk_16 = 4;
+            work->unk_18 = 7;
+            work->unk_1A = 1;
+            break;
+    }
+    work->unk_04 = 0;
+    work->unk_24 = -1;
+    func_80025BB8(arg0->model[0], arg0->motion[46]);
+    work->unk_08 = 0;
+    func_800F7E38_BalloonBurst(arg0, arg2);
+    func_80025CA8(arg0->model[0], work->unk_0C);
+    func_80025CA8(D_800FB120_BalloonBurst[(u16)arg2].obstacles[0].model, D_800FB120_BalloonBurst[(u16)arg2].obstacles[0].unk_44);
+    arg0->func_ptr = func_800F7F94_BalloonBurst;
+}
 void func_800F70E0_BalloonBurst(omObjData *arg0) {
     func_800F6DB8_BalloonBurst(arg0, 0, 0);
 }
@@ -178,7 +246,7 @@ void func_800F7D9C_BalloonBurst(u16 arg0) {
     func_800258EC(player->obstacles[6].secondary_model, 4, 4);
 }
 
-void func_800F7E38_BalloonBurst(omObjData *arg0, s8 player_index) {
+void func_800F7E38_BalloonBurst(omObjData *arg0, u8 player_index) {
     BalloonBurstObjectWork *work = arg0->unk_50;
     unk_ovl_2D_struct *model;
     BalloonBurstPlayer *player;
@@ -195,7 +263,7 @@ void func_800F7E38_BalloonBurst(omObjData *arg0, s8 player_index) {
     player = &D_800FB120_BalloonBurst[(u8)player_index];
     player->obstacles[0].unk_50 = 5.0f;
     work->unk_0C = 0.0f;
-    player->obstacles[0].unk_44 = 0;
+    player->obstacles[0].unk_44 = 0.0f;
     func_800396B0(player->obstacles[0].unk_72,
                   D_800FAF79_BalloonBurst[(s32)(player->obstacles[0].unk_50 / 1.6666666f) * 2]);
 }
