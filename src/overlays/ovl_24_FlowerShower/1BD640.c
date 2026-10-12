@@ -1,7 +1,8 @@
 #include "common.h"
 
 typedef struct FlowerShowerBodyWork {
-    /* 0x00 */ u8 unk_00[0x24];
+    /* 0x00 */ u8 unk_00[0x23];
+    /* 0x23 */ u8 unk_23;
     /* 0x24 */ u8 unk_24;
     /* 0x25 */ u8 unk_25[0xF];
     /* 0x34 */ f32 unk_34;
@@ -47,12 +48,14 @@ f32 func_800FA5B8_FlowerShower(omObjData*);
 f32 func_800FA92C_FlowerShower(omObjData*);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 void func_800090D8(omObjData*, u8, u8);
+void func_800090C4(omObjData*, u8, u8);
 void func_800091BC(omObjData*, s32, s32, s32);
 void func_800093FC(omObjData*, f32, f32, f32);
 void func_80060F04(s16, s16, s16, s16);
 void func_800FACA0_FlowerShower(omObjData*);
 void func_800F7348_FlowerShower(omObjData*, s32, s32, s32);
 void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
+void func_800F8280_FlowerShower(omObjData*);
 void func_800F870C_FlowerShower(Matrix4f, Vec3f*, omObjData*);
 void func_800F898C_FlowerShower(omObjData*, u16*);
 void func_800F9ACC_FlowerShower(omObjData*);
@@ -70,6 +73,7 @@ extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
 extern s32 D_800FAD64_FlowerShower;
 extern s32 D_800FAD4C_FlowerShower;
+extern s32 D_800FAD60_FlowerShower;
 extern f32 D_800FAD50_FlowerShower[];
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F65E0_FlowerShower);
@@ -149,7 +153,50 @@ void func_800F726C_FlowerShower(omObjData* arg0) {
     work->unk_05 = 2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7348_FlowerShower);
+void func_800F7348_FlowerShower(omObjData* arg0, s32 arg1, s32 arg2, s32 arg3) {
+    FlowerShowerBodyWork* work;
+    s32 motion;
+    s32 temp_v0;
+    s32 temp_v1;
+
+    temp_v0 = 0x699;
+    temp_v1 = 0x289;
+    func_8000979C(arg0, arg1, arg2, arg3 & 0xFFFF, temp_v0, temp_v1);
+    func_80025930(arg0->model[1], 0x80000000, 0);
+    motion = 0x38;
+    func_80025AD4(arg0->model[1]);
+    func_80025B34(arg0->model[1]);
+    func_8009EA40(D_800F2B7C[arg0->model[1]].unk7C, 0.0f, 15.0f, 0.0f);
+    func_80009340(arg0, 2, 0x25, 0x289, 0);
+    arg0->model[3] = LoadFormFile(0x19, 0x289);
+    arg0->model[4] = LoadFormFile(0x1A, 0x289);
+    if ((rand8() & 0xFF) >= 0x80U) {
+        motion = 0xF;
+    }
+    func_8001874C(arg0, 0, arg1, 1, 0);
+    func_8001874C(arg0, 1, arg1 | 1, 1, 0);
+    func_8001874C(arg0, 2, arg1 | 3, 1, 0);
+    func_8001874C(arg0, 6, arg1 | 5, 1, 0x13);
+    func_8001874C(arg0, 0x10, arg1 | 0x17, 1, 0);
+    func_8001874C(arg0, 0x11, arg1 | 0x18, 0, 0);
+    func_8001874C(arg0, 0x15, arg1 | 0x62, 0, 0);
+    func_8001874C(arg0, 3, arg1 | 0x60, 1, 0);
+    func_8001874C(arg0, 4, arg1 | 0x61, 1, 0);
+    func_8001874C(arg0, 0x20, arg1 | 0x67, 0, 0);
+    func_8001874C(arg0, 0xD, arg1 | motion, 1, 0x78);
+    arg0->func_ptr = func_800F8280_FlowerShower;
+    func_800093FC(arg0, 80.0f, 640.0f, 5.0f);
+    func_800090C4(arg0, 0, 2);
+    func_800090C4(arg0, 1, 2);
+    func_800090C4(arg0, 2, 2);
+    work = arg0->unk_50;
+    work->unk_50 |= 0x8000;
+    func_800258EC(arg0->model[3], 4, 4);
+    func_800258EC(arg0->model[4], 4, 4);
+    D_800FAD60_FlowerShower = arg3 & 0xFFFF;
+    func_8001E2F8(work->unk_23, 0xFF);
+    func_8001E360(work->unk_23, 0xFF, 0xFF, 0xFF);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F761C_FlowerShower);
 
