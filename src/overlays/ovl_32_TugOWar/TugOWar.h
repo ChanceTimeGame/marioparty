@@ -68,6 +68,7 @@ void func_80008FE8(omObjData*, f32);
 void func_800090C4(omObjData* obj, u8 idx, u8 val);
 void func_80025BB8(s16, s16);
 void func_80020EA0(s16, char*, s16, char*);
+struct unk65770Anim* func_80067310(s16 animIdx); /* src/65770.c */
 f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 s16 func_80024198(u32, Gfx*, s32); /* src/24740.c */

@@ -108,14 +108,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22C9E0", func_800F65E0_Tug
 // logic-equivalent; branch layout of the result cases differs (masked 34)
 #ifdef NON_MATCHING
 void func_800F69C0_TugOWar(omObjData* obj) {
-    TWPlayerWork* w[4];
-    TWPull* p[4];
     s16 i;
 
-    for (i = 0; i < 4; i++) {
-        w[i] = D_800F3FB0[i]->unk_50;
-        p[i] = w[i]->unk_E4;
-    }
+    /* retail first copies each player's work and pull pointers to the stack, unused */
     func_80009468();
     switch (D_800ED430) {
     case 0:

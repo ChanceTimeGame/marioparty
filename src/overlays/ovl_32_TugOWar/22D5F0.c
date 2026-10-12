@@ -833,8 +833,8 @@ void func_800F9E34_TugOWar(omObjData* obj, s32 dir, s32 file, u16 player, f32 x,
     TWPlayerWork* w;
     TWPull* p;
 
-    obj->unk_50 = func_80023684(0xE8, 0x7918);
-    func_8009B770(obj->unk_50, 0, 0xE8);
+    obj->unk_50 = func_80023684(sizeof(TWPlayerWork), 0x7918); /* 0xE8 on the N64 */
+    func_8009B770(obj->unk_50, 0, sizeof(TWPlayerWork));
     w = obj->unk_50;
     w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
     w->unk_56 = GwPlayer[player].port;
@@ -971,8 +971,8 @@ void func_800FA700_TugOWar(omObjData* obj, s32 dir, s32 file, u16 player, f32 x,
     TWPlayerWork* w;
     TWPull* p;
 
-    obj->unk_50 = func_80023684(0xE8, 0x7918);
-    func_8009B770(obj->unk_50, 0, 0xE8);
+    obj->unk_50 = func_80023684(sizeof(TWPlayerWork), 0x7918); /* 0xE8 on the N64 */
+    func_8009B770(obj->unk_50, 0, sizeof(TWPlayerWork));
     w = obj->unk_50;
     w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
     w->unk_56 = GwPlayer[player].port;
