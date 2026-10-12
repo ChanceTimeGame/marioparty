@@ -111,7 +111,7 @@ extern u16 D_800FADEC_BumperBallMaze;
 #else
 extern u16 D_800FADEE_BumperBallMaze;
 #endif
-extern u8 D_800FAD28_BumperBallMaze[];
+extern const u8 D_800FAD28_BumperBallMaze[];
 extern s16 D_800FADFC_BumperBallMaze;
 extern s16 D_800FADFE_BumperBallMaze;
 extern s16 D_800FAE00_BumperBallMaze;
@@ -237,7 +237,7 @@ void func_800F65E0_BumperBallMaze(void) {
     data = DataRead(0x24);
     D_800FADFE_BumperBallMaze = func_80039084(data);
     HuMemDirectFree(data);
-    func_8007B168(D_800FAD28_BumperBallMaze, 1);
+    func_8007B168((u8*) D_800FAD28_BumperBallMaze, 1);
     D_800FAE00_BumperBallMaze = InitSprite(0x87);
     D_800FAE02_BumperBallMaze = sprite = InitSprite(0x87);
     func_8001897C(sprite, 0.0f, 1.0f, 0.0f);
@@ -313,15 +313,15 @@ void func_800F6C44_BumperBallMaze(s32 arg0) {
     func_800F6C7C_BumperBallMaze(arg0);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FACE0_BumperBallMaze);
+const char D_800FACE0_BumperBallMaze[] = "38mt006_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FACEC_BumperBallMaze);
+const char D_800FACEC_BumperBallMaze[] = "38mt005_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FACF8_BumperBallMaze);
+const char D_800FACF8_BumperBallMaze[] = "38mt004_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FAD04_BumperBallMaze);
+const char D_800FAD04_BumperBallMaze[] = "38mt003_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FAD10_BumperBallMaze);
+const char D_800FAD10_BumperBallMaze[] = "38mt002_DEF";
 
 const char D_800FAD1C_BumperBallMaze[] = "38mt001_DEF";
 
@@ -415,7 +415,8 @@ void func_800F6C7C_BumperBallMaze(omObjData* object) {
     object->func_ptr = func_800F7240_BumperBallMaze;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FAD28_BumperBallMaze);
+/* "ＡＢＣ" (Shift-JIS) */
+const u8 D_800FAD28_BumperBallMaze[] = { 0x82, 0x60, 0x82, 0x61, 0x82, 0x62, 0x00, 0x00 };
 
 // float register allocation of the turn-step clamp (step kept apart from the 30.0f compare)
 #ifdef NON_MATCHING
