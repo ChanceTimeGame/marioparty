@@ -119,6 +119,8 @@ build/src/overlays/ovl_25_SlotCarDerby/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D
 build/src/overlays/ovl_61_OpeningScene/29B410.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_41 2721F0.c (story ending, Yoshi scene): nop between dependent mul.s (func_80109294)
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2721F0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_0A 117210.c (Ghost Guess): mul fix on, nop between back-to-back mul.s (func_800F7FD8)
+build/src/overlays/ovl_0A_GhostGuess/117210.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # 69010.c (sprite draw) was built with the assembler VR4300 mul fix on: a nop after each mul.s pair
 build/src/69010.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # 24740.c (model entries) also has the mul fix on: nop between dependent mul.s (func_80027100)

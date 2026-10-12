@@ -176,6 +176,7 @@ void func_800F6FF4_GhostGuess(omObjData* arg0);
 void func_800F73E0_GhostGuess(omObjData* arg0);
 void func_800F789C_GhostGuess(omObjData* arg0);
 void func_800F79D4_GhostGuess(omObjData* arg0);
+void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s16 arg3);
 void func_800F80E4_GhostGuess(omObjData* arg0);
 void func_800F86CC_GhostGuess(omObjData* arg0);
 void func_800F8888_GhostGuess(omObjData* arg0);

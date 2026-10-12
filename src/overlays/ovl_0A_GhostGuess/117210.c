@@ -431,8 +431,25 @@ void func_800F79D4_GhostGuess(omObjData* arg0) {
     ((void (*)(omObjData*))func_800FB514_GhostGuess)(arg0); /* retail passes the object */
 #endif
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F7FD8_GhostGuess);
+void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s16 arg3) {
+    omObjData* player = D_800FBBE4_GhostGuess;
+    f32 dx;
+    f32 dz;
 
+    D_800FBEDA_GhostGuess = 0;
+    D_800FBEE0_GhostGuess = x;
+    D_800FBEE4_GhostGuess = y + 25.0;
+    D_800FBEE8_GhostGuess = z;
+    dx = x - player->trans.x;
+    dz = z - player->trans.z;
+    D_800FBEF8_GhostGuess = player->trans.x;
+    D_800FBEFC_GhostGuess = player->trans.y;
+    D_800FBF00_GhostGuess = player->trans.z;
+    D_800FBEEC_GhostGuess = func_800B1750(dx * dx + dz * dz);
+    D_800FBEF0_GhostGuess = func_800B0CD8(dx, dz);
+    D_800FBEF4_GhostGuess = (D_800FBEEC_GhostGuess - 150.0) / 12.0;
+    D_800FBF12_GhostGuess = arg3;
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F80E4_GhostGuess);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F86CC_GhostGuess);
