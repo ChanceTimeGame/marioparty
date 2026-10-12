@@ -450,8 +450,112 @@ void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s16 arg3) {
     D_800FBEF4_GhostGuess = (D_800FBEEC_GhostGuess - 150.0) / 12.0;
     D_800FBF12_GhostGuess = arg3;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F80E4_GhostGuess);
+void func_800F80E4_GhostGuess(omObjData* arg0) {
+    GGRec* r0;
+    GGRec* r;
+    s32 i;
 
+    if (D_800FB670_GhostGuess < 7) {
+        r0 = D_800FBED0_GhostGuess;
+        switch (D_800FBED2_GhostGuess) {
+        case 0:
+            if (r0->unk_0A == 0) {
+                func_800258EC(arg0->model[0], 4, 0);
+                r0->unk_02++;
+                r0->unk_08 = 16;
+                D_800FB6F0_GhostGuess = 8;
+            }
+            break;
+        case 1:
+            if (--r0->unk_08 == 0) {
+                r0->unk_02++;
+            }
+            break;
+        case 2:
+            if ((r0->pos.y -= D_800FB6F0_GhostGuess) <= 0.0f) {
+                r0->pos.y = 0.0f;
+                if (D_800FB670_GhostGuess == 6) {
+                    r0->unk_02++;
+                    r0->unk_08 = 32;
+                    D_800F2B7C[arg0->model[0]].unk_4C = 1.0f;
+                }
+            }
+            D_800FB6F0_GhostGuess += 8;
+            break;
+        case 3:
+            if (--r0->unk_08 == 0) {
+                r0->unk_02++;
+                PlaySound(0x196);
+                r0->unk_08 = 64;
+            }
+            break;
+        case 4:
+            if (--r0->unk_08 == 0) {
+                func_800258EC(arg0->model[0], 4, 4);
+                r0->unk_02++;
+            } else if (r0->unk_08 <= 32) {
+                D_800F2B7C[arg0->model[0]].unk_20 ^= 4;
+            }
+        case 5:
+            for (i = 1; i < r0->unk_42 + 1; i++) {
+                r = &D_800FBED0_GhostGuess[i];
+                switch (r->unk_02) {
+                case 0:
+                    if (++r->unk_08 >= i * 4) {
+                        r->unk_1C = r->unk_42 = r0->unk_1C;
+                        r->unk_20 = r->unk_44 = r0->unk_20;
+                        r->unk_24 = r->unk_46 = r0->unk_24;
+                        r->unk_48 = 0;
+                        r->unk_02++;
+                        func_800258EC(r->unk_40, 4, 0);
+                    }
+                    break;
+                case 1:
+                    r->unk_1C -= r->unk_24;
+                    r->unk_20 -= 15.0f;
+                    if (r->unk_20 <= r->unk_44 - 180) {
+                        r->unk_02++;
+                        r->unk_20 = func_8009B618(r->unk_20 + 360.0f, 360.0);
+                        r->unk_24 = 4.1666665f;
+                    }
+                    break;
+                case 2:
+                    if (r->unk_20 - 15.0f < 0.0f) {
+                        r->unk_02++;
+                    }
+                    r->unk_20 = func_8009B618(r->unk_20 - 15.0f + 360.0f, 360.0);
+                    break;
+                case 3:
+                    r->unk_1C -= r->unk_24;
+                    r->unk_20 -= 15.0f;
+                    r->scale.x -= 0.08;
+                    r->scale.y -= 0.08;
+                    func_80025830(r->unk_40, r->scale.x, r->scale.y, r->scale.z);
+                    if (r->unk_20 <= -180.0f) {
+                        r->unk_02++;
+                        func_800258EC(r->unk_40, 4, 4);
+                        PlaySound(0xFC);
+                    }
+                    break;
+                case 4:
+                    if (i == r0->unk_42) {
+                        D_800FB670_GhostGuess = 7;
+                    }
+                    break;
+                }
+                r->pos.x = func_800AEAC0(r->unk_20) * r->unk_1C + r0->unk_28;
+                r->pos.y = func_800AEAC0(r->unk_48 * 3.75) * 200.0 + 75.0;
+                r->pos.z = func_800AEFD0(r->unk_20) * r->unk_1C + r0->unk_30;
+                func_80025798(r->unk_40, r->pos.x, r->pos.y, r->pos.z);
+                if (r->unk_48 < 48) {
+                    r->unk_48++;
+                }
+            }
+            break;
+        }
+        omSetTra(arg0, r0->pos.x, r0->pos.y, r0->pos.z);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F86CC_GhostGuess);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F8888_GhostGuess);

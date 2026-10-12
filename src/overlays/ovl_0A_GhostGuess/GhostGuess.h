@@ -102,6 +102,7 @@ extern s32 D_800FB6E0_GhostGuess;
 extern s32 D_800FB6E4_GhostGuess;
 extern s32 D_800FB6E8_GhostGuess;
 extern s32 D_800FB6EC_GhostGuess; /* a sound handle; read as (s16) */
+extern s32 D_800FB6F0_GhostGuess;
 void func_8006035C(s16, s8);
 extern s32 D_800FB678_GhostGuess;
 extern f32 D_800FB674_GhostGuess;
