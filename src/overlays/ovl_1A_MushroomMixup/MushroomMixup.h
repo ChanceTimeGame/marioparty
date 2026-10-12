@@ -261,13 +261,13 @@ extern f32 D_800FC89C_MushroomMixup;
 extern u16 D_800FC8A0_MushroomMixup;
 extern omObjData* D_800FC8A4_MushroomMixup[2];
 extern u16 D_800FC8AC_MushroomMixup; /* the flag bearers' busy mask */
-extern s16 D_800FC8AE_MushroomMixup[5]; /* a random order of the four players */
+extern u16 D_800FC8AE_MushroomMixup[5]; /* a random order of the four players */
 extern MMPlayerState D_800FC8B8_MushroomMixup[4];
 extern f32 D_800FC988_MushroomMixup;
 extern s32 D_800FC98C_MushroomMixup;
 extern s32 D_800FC990_MushroomMixup;
 extern u16 D_800FC994_MushroomMixup;
-extern s16 D_800FC996_MushroomMixup;
+extern u16 D_800FC996_MushroomMixup;
 extern f32 D_800FC998_MushroomMixup;
 extern f32 D_800FC99C_MushroomMixup;
 extern u16 D_800FC9A0_MushroomMixup;

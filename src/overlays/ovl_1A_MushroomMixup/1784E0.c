@@ -91,11 +91,10 @@ void func_800F6CA8_MushroomMixup(omObjData* arg0) {
 }
 
 /* A random order of the four players in D_800FC8AE. */
-#ifdef NON_MATCHING
 void func_800F6CF4_MushroomMixup(void) {
-    s16 i;
-    s16 j;
-    s16 k;
+    s32 i;
+    s32 j;
+    s32 k;
     s32 r;
 
     for (i = 0; i < 4; i++) {
@@ -120,12 +119,11 @@ void func_800F6CF4_MushroomMixup(void) {
         D_800FC8AE_MushroomMixup[i] = j;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F6CF4_MushroomMixup);
-#endif
 
-#ifdef NON_MATCHING
 void func_800F6DF4_MushroomMixup(void) {
+#ifndef TARGET_PC
+    f32 cam[3][4]; /* set and never read (retail keeps the stores) */
+#endif
     MMPlayerState* st;
     s32 i;
 
@@ -170,10 +168,18 @@ void func_800F6DF4_MushroomMixup(void) {
     Center.x = 4.0f;
     Center.y = 188.0f;
     Center.z = -219.0f;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F6DF4_MushroomMixup);
+#ifndef TARGET_PC
+    cam[0][0] = 48.0f;
+    cam[0][1] = 4002.0f;
+    cam[0][2] = 5932.0f;
+    cam[1][0] = 48.0f;
+    cam[1][1] = 376.0f;
+    cam[1][2] = -348.0f;
+    cam[2][0] = 0.0f;
+    cam[2][1] = -1.0f;
+    cam[2][2] = 0.0f;
 #endif
+}
 
 void func_800F7088_MushroomMixup(u16 arg0) {
     func_80025EB4(arg0, 1, 1);
