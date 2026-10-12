@@ -1125,9 +1125,9 @@ segments:
       - [0x1837D0, c]
       - [0x184450, c]
       - [0x184870, c]
-      - [0x188280, data, 1837D0]
-      - [0x1882B0, data, 184450]
-      - [0x1882C0, data, 184870]
+      - [0x188280, .data, 1837D0]
+      - [0x1882B0, .data, 184450]
+      - [0x1882C0, .data, 184870]
       - [0x188320, .rodata, 184870]
       - {0x188410, type: bss, vram: 0x800FB220, name: ovl_1C_bss}
   - type: code
