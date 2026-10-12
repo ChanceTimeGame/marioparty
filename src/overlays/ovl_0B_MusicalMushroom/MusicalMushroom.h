@@ -130,6 +130,7 @@ void func_8001E268(s16, u8, u8);
 void func_8001E2A8(s16, u16);
 void func_80008FDC(omObjData*, f32);
 void func_80008FE8(omObjData*, f32);
+void func_800090C4(omObjData* obj, u8 idx, u8 val);
 void func_80060F04(s16, s16, s16, s16);
 f32 func_80025D18(s16);
 f32 func_80025D40(s16);
