@@ -57,6 +57,9 @@ extern s16 D_800FAE00_BumperBallMaze;
 extern s16 D_800FAE02_BumperBallMaze;
 extern omObjData* D_800FAE04_BumperBallMaze;
 extern s16 D_800FB1C4_BumperBallMaze;
+extern u16 D_800FAB3C_BumperBallMaze[];
+extern u16 D_800FADFA_BumperBallMaze;
+extern u16 D_800FB1C2_BumperBallMaze;
 
 void func_800FA620_BumperBallMaze(void);
 void func_800F9990_BumperBallMaze(void);
@@ -77,6 +80,11 @@ void func_800F6C44_BumperBallMaze(s32);
 void func_800F8184_BumperBallMaze(omObjData*);
 void func_800F8AB8_BumperBallMaze(void);
 void func_800F9050_BumperBallMaze(omObjData*);
+void func_800F827C_BumperBallMaze(omObjData*);
+void func_800F8468_BumperBallMaze(omObjData*);
+u16 func_800F9278_BumperBallMaze(void);
+s32 func_800F9034_BumperBallMaze(void);
+void func_800F943C_BumperBallMaze(void);
 f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 
@@ -151,7 +159,45 @@ void func_800F6994_BumperBallMaze(omObjData* object) {
     object->func_ptr = func_800F69F4_BumperBallMaze;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F69F4_BumperBallMaze);
+void func_800F69F4_BumperBallMaze(omObjData* object) {
+    BumperBallMazeModelState* state;
+
+    switch (D_800FB1C0_BumperBallMaze) {
+    case 0:
+        if (D_800FAE08_BumperBallMaze == NULL) {
+            D_800FAE08_BumperBallMaze = omAddObj(4, 0, 0, -1, func_800F827C_BumperBallMaze);
+        }
+        break;
+    case 1:
+        D_800FADFA_BumperBallMaze = func_800F9278_BumperBallMaze();
+        if (D_800FADF2_BumperBallMaze == 0
+            || D_800FADFA_BumperBallMaze >= D_800FAB3C_BumperBallMaze[D_800FADF8_BumperBallMaze]
+            || D_800FADF4_BumperBallMaze == 1) {
+            func_800601D4(0x28);
+            if ((u16) func_800F9034_BumperBallMaze() == 1) {
+                D_800FB1C0_BumperBallMaze = 2;
+                D_800FB1C2_BumperBallMaze = 4;
+                D_800FAE14_BumperBallMaze->work[0] = 0;
+            }
+            if (D_800FADF4_BumperBallMaze == 1) {
+                D_800FB1C0_BumperBallMaze = 2;
+                D_800FB1C2_BumperBallMaze = 0xA;
+                func_800F943C_BumperBallMaze();
+                D_800FAE14_BumperBallMaze->work[0] = 0;
+                state = D_800FAE10_BumperBallMaze->unk_50;
+                if (state->unk_00 != 3 && state->unk_00 != 4 && state->unk_00 != 5) {
+                    state->unk_00 = 6;
+                }
+            }
+        }
+        break;
+    case 2:
+        if (D_800FAE0C_BumperBallMaze == NULL) {
+            D_800FAE0C_BumperBallMaze = omAddObj(4, 0, 0, -1, func_800F8468_BumperBallMaze);
+        }
+        break;
+    }
+}
 
 void func_800F6BB8_BumperBallMaze(omObjData* object) {
     object->model[0] = LoadFormFile(D_800FAB00_BumperBallMaze[D_800FADF8_BumperBallMaze], 0x289);
