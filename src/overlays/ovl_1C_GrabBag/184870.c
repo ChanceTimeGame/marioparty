@@ -1,6 +1,7 @@
 #include "GrabBag.h"
 
 void func_800FAC0C_GrabBag(omObjData*);
+void func_80018E0C(u16, s16);
 
 
 extern s32 D_800FB104_GrabBag[4];
@@ -565,8 +566,50 @@ void func_800FA8F4_GrabBag(omObjData* arg0) {
     arg0->work[1] = 0;
     arg0->func_ptr = func_800FAC0C_GrabBag;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAC0C_GrabBag);
+void func_800FAC0C_GrabBag(omObjData* arg0) {
+    s32 i;
+    s32 score;
+    s32 digit;
+    s32 x;
 
+    switch (arg0->work[1]) {
+    case 0:
+        break;
+    case 1:
+        for (i = 0; i < 4; i++) {
+            score = D_800FB104_GrabBag[i];
+            if (score >= 1000) {
+                score = 999;
+            }
+            x = 0;
+            ShowBasicSprite(D_800FB258_GrabBag[i][2]);
+            digit = score / 100;
+            if (digit == 0) {
+                func_80018C90(D_800FB258_GrabBag[i][2]);
+            }
+            func_80018E0C(D_800FB258_GrabBag[i][2], digit);
+            SetBasicSpritePos(D_800FB258_GrabBag[i][2], D_800FB0F4_GrabBag[i].x + x, D_800FB0F4_GrabBag[i].y);
+            if (digit != 0) {
+                x += 12;
+            }
+            ShowBasicSprite(D_800FB258_GrabBag[i][1]);
+            digit = (score % 100) / 10;
+            if (digit == 0 && score / 100 == 0) {
+                func_80018C90(D_800FB258_GrabBag[i][1]);
+            }
+            func_80018E0C(D_800FB258_GrabBag[i][1], digit);
+            SetBasicSpritePos(D_800FB258_GrabBag[i][1], D_800FB0F4_GrabBag[i].x + x, D_800FB0F4_GrabBag[i].y);
+            if (digit != 0) {
+                x += 12;
+            } else if (score / 100 != 0) {
+                x += 12;
+            }
+            func_80018E0C(D_800FB258_GrabBag[i][0], score % 10);
+            SetBasicSpritePos(D_800FB258_GrabBag[i][0], D_800FB0F4_GrabBag[i].x + x, D_800FB0F4_GrabBag[i].y);
+        }
+        break;
+    }
+}
 void func_800FAED8_GrabBag(void) {
     s32 i;
 
