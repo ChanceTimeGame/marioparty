@@ -129,7 +129,30 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA8F4_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAC0C_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAED8_GrabBag);
+void func_800FAED8_GrabBag(void) {
+    s32 sprite_offset;
+    PB_PTR32 player_offset;
+    s32 i;
+    u16 sprite;
+    u8* fourth_sprites;
+    u8* fifth_sprites;
+
+    D_800FB280_GrabBag->work[1] = 1;
+    i = 0;
+    fourth_sprites = D_800FB270_GrabBag;
+    fifth_sprites = D_800FB278_GrabBag;
+    for (; i < 4; i++) {
+        player_offset = i << 1;
+        sprite_offset = (player_offset + i) * 2;
+        sprite = *(u16*)((u8*)D_800FB258_GrabBag + sprite_offset);
+        ShowBasicSprite(sprite);
+        ShowBasicSprite(*(u16*)((u8*)D_800FB25A_GrabBag + sprite_offset));
+        ShowBasicSprite(*(u16*)((u8*)D_800FB25C_GrabBag + sprite_offset));
+        ShowBasicSprite(*(u16*)(player_offset + (PB_PTR32)fourth_sprites));
+        player_offset += (PB_PTR32)fifth_sprites;
+        ShowBasicSprite(*(u16*)player_offset);
+    }
+}
 
 void func_800FAFA0_GrabBag(void) {
     s32 sprite_offset;
