@@ -226,8 +226,7 @@ extern f32 D_800FB5B4_KnockBlockTower;
 extern f32 D_800FB5B8_KnockBlockTower;
 extern f32 D_800FB5BC_KnockBlockTower;
 extern f32 D_800FB5C0_KnockBlockTower;
-extern s16 D_800FB5D0_KnockBlockTower; /* scroll image */
-extern s16 D_800FB5D2_KnockBlockTower;
+extern s16 D_800FB5D0_KnockBlockTower[2]; /* images: [0] scrolling background, [1] title sprite */
 extern Gfx* D_800FB5D4_KnockBlockTower[3]; /* display-list buffers, one per frame buffer */
 extern s16 D_800FB5E0_KnockBlockTower;
 extern s32 D_800FB5E8_KnockBlockTower[11][2]; /* [i][0] speed, [i][1] offset */
