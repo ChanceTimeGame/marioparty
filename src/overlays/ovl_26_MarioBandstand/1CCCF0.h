@@ -74,7 +74,9 @@ typedef struct MBPlayerWork {
     /* 0x58 */ s8 unk_58; /* player index */
     /* 0x59 */ char unk_59[0x47];
     /* 0xA0 */ f32 unk_A0;
-    /* 0xA4 */ char unk_A4[0x34];
+    /* 0xA4 */ char unk_A4[0x14];
+    /* 0xB8 */ void* unk_B8; /* MgWork's pointer: keeps unk_D8 where ActorWork.table is on the host */
+    /* 0xBC */ char unk_BC[0x1C];
     /* 0xD8 */ s16 (*unk_D8)[2];
     /* 0xDC */ s32 unk_DC;
     /* 0xE0 */ char unk_E0[4];
