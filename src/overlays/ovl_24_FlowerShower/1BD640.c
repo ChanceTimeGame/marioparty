@@ -46,6 +46,7 @@ void func_80060F04(s16, s16, s16, s16);
 void func_800FACA0_FlowerShower(omObjData*);
 void func_800F7348_FlowerShower(omObjData*, s32, s32, s32);
 void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
+void func_800F870C_FlowerShower(Matrix4f, Vec3f*, omObjData*);
 void func_800F898C_FlowerShower(omObjData*, u16*);
 void func_800F9ACC_FlowerShower(omObjData*);
 void func_800FA4EC_FlowerShower(omObjData*);
@@ -302,7 +303,29 @@ void func_800F8648_FlowerShower(omObjData* arg0, u8 arg1, u32 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F870C_FlowerShower);
+void func_800F870C_FlowerShower(Matrix4f m, Vec3f* pos, omObjData* obj) {
+    f32 rx = obj->rot.x;
+    f32 ry = obj->rot.y;
+    f32 rz = obj->rot.z;
+    f32 tx = obj->trans.x;
+    f32 ty = obj->trans.y;
+    f32 tz = obj->trans.z;
+    f32 x = pos->x;
+    f32 y = pos->y;
+    f32 z = pos->z;
+
+    if (((tx != 0.0f) | (ty != 0.0f)) || tz != 0.0f) {
+        func_8009EA40(m, tx, ty, tz);
+    } else {
+        func_800A2A50(m);
+    }
+    if (((rx != 0.0f) | (ry != 0.0f)) || rz != 0.0f) {
+        MtxRotate(m, rx, ry, rz);
+    }
+    pos->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    pos->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    pos->z = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+}
 
 f32 func_800F8918_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2, f32 arg3, Vec3f* arg4) {
     Vec4f sp18;
