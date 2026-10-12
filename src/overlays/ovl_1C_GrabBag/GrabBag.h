@@ -115,7 +115,9 @@ typedef struct GrabBagBagWork {
 
 #define GB_BAG(obj) ((GrabBagBagWork*)(obj)->unk_50)
 
-void func_800F6C98_GrabBag(void);
+void func_800F6C98_GrabBag(omObjData*);
+void func_800F6E90_GrabBag(omObjData*);
+void func_800091BC(omObjData*, s32, s32, s32);
 void func_800F66F8_GrabBag(void);
 void func_800F67BC_GrabBag(void);
 void func_800F6C08_GrabBag(void);

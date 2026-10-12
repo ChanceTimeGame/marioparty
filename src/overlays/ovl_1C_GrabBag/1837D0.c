@@ -1,5 +1,10 @@
 #include "GrabBag.h"
 
+extern f32 D_800B8988;
+extern u8 D_800FB0A8_GrabBag[];
+extern s32 D_800FB0B0_GrabBag;
+
+
 extern u32 D_800FB094_GrabBag;
 extern u32 D_800FB098_GrabBag;
 extern u32 D_800FB09C_GrabBag;
@@ -157,6 +162,36 @@ void func_800F6C08_GrabBag(void) {
 }
 
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/1837D0", func_800F6C98_GrabBag);
+void func_800F6C98_GrabBag(omObjData* arg0) {
+    GrabBagBagWork* work;
 
+    arg0->trans.x = arg0->trans.y = arg0->trans.z = 0.0f;
+    arg0->scale.x = arg0->scale.y = arg0->scale.z = 2.0f;
+    arg0->func_ptr = func_800F6E90_GrabBag;
+    arg0->unk_50 = func_80023684(sizeof(GrabBagBagWork), 0x7918);
+    func_8009B770(arg0->unk_50, 0, sizeof(GrabBagBagWork));
+    work = arg0->unk_50;
+    func_800091BC(arg0, D_800FB0A8_GrabBag[D_800FB0B0_GrabBag++], 0x28D, 8);
+    func_80009340(arg0, 1, 0x2A, 0x28D, 8);
+    work->unk_60 = 0;
+    work->unk_5C = 0;
+    work->unk_3C = 0.0f;
+    work->unk_54 = 0;
+    work->unk_44 = 0.1f;
+    work->unk_48 = 30.0f;
+    work->unk_34 = 500.0f;
+    work->unk_40 = D_800B8988;
+    work->unk_38 = 0.0f;
+    work->unk_52 = D_800FB0B0_GrabBag % 3;
+    work->unk_4C = 0.5f;
+    work->unk_50 = 0;
+    work->unk_58 = 0.5f;
+    work->unk_6C = work->unk_6D = 0;
+    work->unk_6E = -1;
+    func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025830(arg0->model[0], arg0->scale.x, arg0->scale.y, arg0->scale.z);
+    func_80025830(arg0->model[1], 4.0f, 4.0f, 4.0f);
+    func_8001E360(work->unk_22, 0xFF, 0xFF, 0xBE);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/1837D0", func_800F6E90_GrabBag);
