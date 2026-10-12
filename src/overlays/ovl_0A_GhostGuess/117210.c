@@ -585,10 +585,216 @@ s32 func_800F86CC_GhostGuess(omObjData* arg0, omObjData* arg1) {
         return 0;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F8888_GhostGuess);
+void func_800F8888_GhostGuess(omObjData* arg0) {
+    Vec o;
+    s32 pad[20]; /* unused: retail's frame is 0x50 bytes larger */
+    unkGlobalStruct_00* work;
+    GGGhost* g;
+    f32 rot;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 dx;
+    f32 dz;
+    f32 ex;
+    f32 ez;
+    f32 spd;
+    f32 v;
+    f32 s;
+    s32 btn;
+    u8 port;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F9400_GhostGuess);
+    work = arg0->unk_50;
+    rot = work->unk_3C;
+    port = work->unk_56;
+    btn = func_80017A60(arg0);
+    o.x = x = arg0->trans.x;
+    o.y = y = arg0->trans.y;
+    o.z = z = arg0->trans.z;
+    switch (D_800FB670_GhostGuess) {
+    case 0:
+    case 1:
+        func_800184BC(arg0, 0x23);
+        break;
+    case 2:
+    case 3:
+        y += D_800FB6F8_GhostGuess * 20.0f;
+        D_800FB6F8_GhostGuess -= D_800B8968;
+        if (y < 0.0f) {
+            y = 0.0f;
+            if (btn & 0x400) {
+                func_80010ED4(GwPlayer[work->unk_58].character + 0x12E, 0);
+                func_800184BC(arg0, 0x21);
+                func_80060F04(work->unk_58, 10, 0, 10);
+            } else {
+                func_800184BC(arg0, 0);
+            }
+        } else {
+            func_800184BC(arg0, 9);
+        }
+        rot = 0.0f;
+        break;
+    case 4:
+        if (GwPlayer[work->unk_58].flags & 1) {
+            ContStkY[(s8)port] = 0;
+            ContStkX[(s8)port] = 0;
+            ContBtnTrg[(s8)port] = 0;
+            ContBtn[(s8)port] = 0;
+            switch (arg0->work[0]) {
+            case 0:
+                if ((arg0->work[2] >> 4) & 1) {
+                    D_800FB6F4_GhostGuess = (s32)((rand8() & 0xF) + 4) + D_800FB6F4_GhostGuess;
+                } else {
+                    D_800FB6F4_GhostGuess = D_800FB6F4_GhostGuess - (s32)((rand8() & 0xF) + 4);
+                }
+                if (D_800FB674_GhostGuess <= func_800B1750(x * x + z * z) + 90.0 + 100.0) {
+                    dx = func_800AEAC0(D_800FB6F4_GhostGuess) * 10.0;
+                    dz = func_800AEFD0(D_800FB6F4_GhostGuess) * 10.0;
+                    if (fabs(x + dx) > fabs(x) && fabs(z + dz) > fabs(z)) {
+                        D_800FB6F4_GhostGuess = func_8009B618(D_800FB6F4_GhostGuess + 180.0f, 360.0);
+                    } else if (fabs(x + dx) > fabs(x)) {
+                        if (dx * dz > 0.0f) {
+                            D_800FB6F4_GhostGuess = func_8009B618(D_800FB6F4_GhostGuess + 270.0f, 360.0);
+                        } else {
+                            D_800FB6F4_GhostGuess = func_8009B618(D_800FB6F4_GhostGuess + 90.0f, 360.0);
+                        }
+                    } else if (fabs(x + dz) > fabs(z)) { /* retail tests x + dz */
+                        if (dx * dz > 0.0f) {
+                            D_800FB6F4_GhostGuess = func_8009B618(D_800FB6F4_GhostGuess + 90.0f, 360.0);
+                        } else {
+                            D_800FB6F4_GhostGuess = func_8009B618(D_800FB6F4_GhostGuess + 270.0f, 360.0);
+                        }
+                    }
+                }
+                ContStkX[(s8)port] = func_800AEAC0(D_800FB6F4_GhostGuess) * 40.0;
+                ContStkY[(s8)port] = func_800AEFD0(D_800FB6F4_GhostGuess) * 40.0;
+                if (arg0->work[3] != 0) {
+                    arg0->work[3]--;
+                } else {
+                    rand8();
+                    rand8();
+                    rand8();
+                    if (!(rand8() & 0x3F)) {
+                        arg0->work[0]++;
+                        if ((u8)(rand8() % 5) <= D_800FB6AC_GhostGuess) {
+                            arg0->work[1] = D_800FB69F_GhostGuess;
+                        } else {
+                            arg0->work[1] = rand8() & 7;
+                        }
+                    }
+                }
+                arg0->work[2]++;
+                break;
+            case 1:
+                g = &D_800FBC18_GhostGuess[arg0->work[1]];
+                ex = g->pos.x - x;
+                ez = g->pos.z - z;
+                if (func_800B1750(ex * ex + ez * ez) < 270.0) {
+                    arg0->work[0]++;
+                    arg0->work[2] = rand8() & 1;
+                    arg0->work[3] = 8;
+                }
+                D_800FB6F4_GhostGuess = func_800B0CD8(g->pos.x - x, -(g->pos.z - z));
+                ContStkX[(s8)port] = func_800AEAC0(D_800FB6F4_GhostGuess) * 60.0;
+                ContStkY[(s8)port] = func_800AEFD0(D_800FB6F4_GhostGuess) * 60.0;
+                break;
+            case 2:
+                g = &D_800FBC18_GhostGuess[arg0->work[1]];
+                if (arg0->work[2] != 0) {
+                    ContBtn[(s8)port] = ContBtnTrg[(s8)port] |= 0x8000;
+                    D_800FB6F4_GhostGuess = func_800B0CD8(g->pos.x - x, -(g->pos.z - z));
+                    ContStkX[(s8)port] = func_800AEAC0(D_800FB6F4_GhostGuess) * 60.0;
+                    ContStkY[(s8)port] = func_800AEFD0(D_800FB6F4_GhostGuess) * 60.0;
+                } else if (arg0->work[3] != 0) {
+                    D_800FB6F4_GhostGuess = func_800B0CD8(g->pos.x - x, -(g->pos.z - z));
+                    ContStkX[(s8)port] = func_800AEAC0(D_800FB6F4_GhostGuess) * 4.0;
+                    ContStkY[(s8)port] = func_800AEFD0(D_800FB6F4_GhostGuess) * 4.0;
+                    arg0->work[3]--;
+                } else {
+                    ContBtn[(s8)port] = ContBtnTrg[(s8)port] |= 0x4000;
+                }
+                break;
+            }
+        }
+        func_80005A28(arg0);
+        func_800F9400_GhostGuess(arg0, D_800FB674_GhostGuess - 52.5);
+        return;
+    case 7:
+    case 17:
+        while (rot < 0.0) {
+            rot += 360.0f;
+        }
+        rot = func_8009B618(rot, 360.0);
+        if (fabs(rot) > 15.0) {
+            if (rot > 180.0f) {
+                rot += 10.0f;
+            } else {
+                rot -= 10.0f;
+            }
+        } else {
+            rot = 0.0f;
+        }
+        break;
+    case 14:
+        func_80010ED4(GwPlayer[work->unk_58].character + 0x45F, 0);
+        break;
+    case 15:
+        func_800258EC(arg0->model[0], 4, 4);
+        func_800258EC(arg0->model[1], 4, 4);
+        break;
+    case 18:
+        break;
+    case 5:
+        if (btn & 0x8D00) {
+            func_80005A28(arg0);
+            func_800F9400_GhostGuess(arg0, D_800FB674_GhostGuess - 52.5);
+            return;
+        }
+    default:
+        func_800258EC(arg0->model[0], 4, 0);
+        spd = work->unk_40;
+        x += func_800AEAC0(rot) * spd;
+        z += func_800AEFD0(rot) * spd;
+        if (btn & 0x20) {
+            v = work->unk_38;
+            y += v * v * (v >= 0.0f ? -35.0f : 35.0f);
+            work->unk_38 += 0.15f;
+            if (y <= 0.0) {
+                func_800184BC(arg0, 0);
+                work->unk_40 = 0.0f;
+                work->unk_38 = 0.0f;
+                y = work->unk_38;
+            }
+        } else if (btn & 0xC00) {
+            if (fabs(x) > fabs(o.x) || fabs(z) > fabs(o.z)) {
+                work->unk_40 = x = z = 0.0f;
+            }
+        } else {
+            func_800184BC(arg0, 0);
+            work->unk_40 = 0.0f;
+        }
+        break;
+    }
+    func_800F9400_GhostGuess(arg0, D_800FB674_GhostGuess - 52.5);
+    func_8009ECB0(D_800F2B7C[arg0->model[0]].unk7C, 0.0f, 0.0f, 0.0f);
+    arg0->trans.x = x;
+    arg0->trans.y = y;
+    arg0->trans.z = z;
+    arg0->rot.y = work->unk_3C = rot;
+    s = 1.0 - y / 4000.0;
+    func_80025798(arg0->model[1], x, 0.0f, z);
+    func_80025830(arg0->model[1], s, s, s);
+    func_80017DB0(arg0);
+}
+void func_800F9400_GhostGuess(omObjData* arg0, f32 max) {
+    f32 a;
 
+    if (max * max < arg0->trans.x * arg0->trans.x + arg0->trans.z * arg0->trans.z) {
+        a = func_800B0CD8(arg0->trans.x, arg0->trans.z);
+        arg0->trans.x = max * func_800AEAC0(a);
+        arg0->trans.z = max * func_800AEFD0(a);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F948C_GhostGuess);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800FA764_GhostGuess);

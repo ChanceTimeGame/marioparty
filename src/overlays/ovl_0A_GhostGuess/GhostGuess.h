@@ -4,6 +4,7 @@
 /* ovl_0A GhostGuess: declarations shared by its units (117210, 11BFE0). N64 offsets in comments. */
 
 #include "common.h"
+#include "engine/pad.h"
 
 /* A ghost (D_800FBC18[8]): its object reaches it through func_800FB224/func_800FB244. */
 typedef struct GGGhost {
@@ -103,6 +104,9 @@ extern s32 D_800FB6E4_GhostGuess;
 extern s32 D_800FB6E8_GhostGuess;
 extern s32 D_800FB6EC_GhostGuess; /* a sound handle; read as (s16) */
 extern s32 D_800FB6F0_GhostGuess;
+extern f32 D_800FB6F4_GhostGuess; /* the CPU's heading */
+extern f32 D_800FB6F8_GhostGuess;
+extern u8 D_800FB69F_GhostGuess;
 void func_8006035C(s16, s8);
 extern s32 D_800FB678_GhostGuess;
 extern f32 D_800FB674_GhostGuess;
@@ -183,6 +187,14 @@ void func_800F80E4_GhostGuess(omObjData* arg0);
 s32 func_800F86CC_GhostGuess(omObjData* arg0, omObjData* arg1);
 void func_80017C0C(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 void func_800F8888_GhostGuess(omObjData* arg0);
+void func_800F9400_GhostGuess(omObjData* arg0, f32 max);
+s32 func_80017A60(omObjData* obj);
+s16 func_80010ED4(s16 id, s16 chanOfs);
+#ifdef TARGET_PC
+void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
+#else
+void func_80060F04(s16, s32, s32, s32);
+#endif
 void func_800F948C_GhostGuess(omObjData* arg0);
 void func_800FA764_GhostGuess(omObjData* arg0);
 void func_800FB21C_GhostGuess(void);
