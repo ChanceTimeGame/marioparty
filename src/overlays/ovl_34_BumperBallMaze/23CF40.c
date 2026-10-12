@@ -85,13 +85,28 @@ extern s16 D_800FB1C4_BumperBallMaze;
 extern u16 D_800FAB3C_BumperBallMaze[];
 extern u16 D_800FADFA_BumperBallMaze;
 extern u16 D_800FB1C2_BumperBallMaze;
+extern Vec3f D_800FAB0C_BumperBallMaze[];
+extern f32 D_800FAB30_BumperBallMaze[];
+extern u8* D_800FACA0_BumperBallMaze[];
+
+/* objmain.c's objmainChr (D_800C59A8[6]); the (chr << 16 | unk06) word is D_800C59AC[c].unk_00. */
+typedef struct BumperBallMazeChr {
+    /* 0x00 */ s16 index;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ s16 chr;
+    /* 0x06 */ s16 unk06;
+    /* 0x08 */ s32 file0;
+    /* 0x0C */ s32 file1;
+    /* 0x10 */ f32 scale;
+} BumperBallMazeChr; /* size = 0x14 */
+extern BumperBallMazeChr D_800C59A8[6];
 
 void func_800FA620_BumperBallMaze(void);
 void func_800F9990_BumperBallMaze(void);
 void func_800F6C28_BumperBallMaze(void);
 void func_800F69F4_BumperBallMaze(omObjData*);
 void func_800F9974_BumperBallMaze(s32);
-void func_800F6C7C_BumperBallMaze(s32);
+void func_800F6C7C_BumperBallMaze(omObjData*);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
 void func_800F928C_BumperBallMaze(u16, s16*);
 void func_800F8220_BumperBallMaze(omObjData*);
@@ -110,6 +125,10 @@ void func_800F8468_BumperBallMaze(omObjData*);
 u16 func_800F9278_BumperBallMaze(void);
 s32 func_800F9034_BumperBallMaze(void);
 void func_800F943C_BumperBallMaze(void);
+void func_800F7240_BumperBallMaze(omObjData*);
+void func_8001E268(s16, u8, u8);
+void func_80025BB8(s16, s16);
+void func_80027AC8(s16, u8*, u8*);
 f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 
@@ -250,7 +269,97 @@ INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FA
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FAD10_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F6C7C_BumperBallMaze);
+const char D_800FAD1C_BumperBallMaze[] = "38mt001_DEF";
+
+void func_800F6C7C_BumperBallMaze(omObjData* object) {
+    BumperBallMazeBallWork* work;
+    s32 i;
+    s16 player;
+    s32 chrBase;
+    s8 chr;
+    f32 zero;
+
+    for (i = 0; i < 4; i++) {
+        if (GwPlayer[i].group == 0) {
+            break;
+        }
+    }
+    player = ((u16) i < 4) ? i : 0;
+    work = object->unk_50 = func_80023684(0x48, 0x7918);
+    work->unk_00 = 0;
+    work->player = player;
+    work->unk_20 = 50.0f;
+    work->unk_1C = 0.0f;
+    zero = work->unk_1C;
+    work->unk_30 = work->unk_34 = work->unk_38 = work->unk_24 = work->unk_2C = zero;
+    work->unk_3C = 0;
+    work->unk_44 = zero;
+    work->unk_3E = 0;
+    for (i = 0; i < 2; i++) {
+        work->unk_40[i] = 0;
+    }
+    chr = GwPlayer[(u16) player].character;
+    work->character = chr;
+    chrBase = D_800C59AC[chr].unk_00;
+    object->model[0] = LoadFormFile(chrBase | D_800C59A8[chr].file0, 0x20699);
+    omSetTra(object, D_800FAB0C_BumperBallMaze[D_800FADF8_BumperBallMaze].x,
+             D_800FAB0C_BumperBallMaze[D_800FADF8_BumperBallMaze].y,
+             D_800FAB0C_BumperBallMaze[D_800FADF8_BumperBallMaze].z);
+    if ((u16) D_800C59A8[chr].index == 5) {
+        work->unk_08 = 10.0f;
+        omSetSca(object, 0.95f, 0.95f, 0.95f);
+        omSetTra(object, D_800FAB0C_BumperBallMaze[D_800FADF8_BumperBallMaze].x,
+                 D_800FAB0C_BumperBallMaze[D_800FADF8_BumperBallMaze].y - 10.0f,
+                 D_800FAB0C_BumperBallMaze[D_800FADF8_BumperBallMaze].z);
+    } else {
+        work->unk_08 = 0.0f;
+        omSetSca(object, 1.0f, 1.0f, 1.0f);
+    }
+    object->model[1] = func_800174F4(0x20, 0x689);
+    func_80025830(object->model[1], 1.25f, 1.25f, 1.25f);
+    func_80025798(object->model[1], object->trans.x, 125.0f, object->trans.z);
+    object->model[5] = LoadFormFile(0x1A, 0x68D);
+    for (i = 0; i < 2; i++) {
+        if ((u16) player == 0 && i == 0) {
+            object->model[6 + i] = LoadFormFile(0x19, 0x68D);
+        } else {
+            object->model[6 + i] = func_80023FC8(D_800FAE10_BumperBallMaze->model[6]);
+        }
+    }
+    func_8001775C(object, 0, chrBase);
+    func_8001775C(object, 1, chrBase | 1);
+    func_8001775C(object, 2, chrBase | 3);
+    if (rand8() & 1) {
+        func_8001775C(object, 3, chrBase | 0xF);
+    } else {
+        func_8001775C(object, 3, chrBase | 0x38);
+    }
+    func_8001775C(object, 4, chrBase | 0x17);
+    func_8001775C(object, 5, chrBase | 0x10);
+    object->model[4] = func_8001E00C((void*) -1, 0x68D, 8);
+    D_800ECDE0[object->model[4]].unk_02 = D_800FADFE_BumperBallMaze;
+    func_80025930(D_800ECDE0[object->model[4]].unk_00, 0x40000000, 0x40000000);
+    func_8001E268(object->model[4], 4, 4);
+    object->model[3] = func_8001E00C((void*) -1, 0x68D, 8);
+    D_800ECDE0[object->model[3]].unk_02 = D_800FADFC_BumperBallMaze;
+    func_80025930(D_800ECDE0[object->model[3]].unk_00, 0x40000000, 0x40000000);
+    func_8001E268(object->model[3], 4, 4);
+    object->model[2] = LoadFormFile(0x310001, 0x20689);
+    func_80027AC8(object->model[2], (u8*) D_800FAD1C_BumperBallMaze, D_800FACA0_BumperBallMaze[chr]);
+    func_80025AD4(object->model[2]);
+    work->unk_0C = D_800FAB30_BumperBallMaze[D_800FADF8_BumperBallMaze];
+    if (work->unk_0C < 0.0f) {
+        work->unk_0C += 360.0f;
+    }
+    work->unk_34 = work->unk_14 = work->unk_10 = work->unk_0C;
+    omSetRot(object, 0.0f, work->unk_0C, 0.0f);
+    func_800257E4(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    func_80025798(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08,
+                  object->trans.z);
+    func_80025BB8(object->model[0], object->motion[0]);
+    func_80025EB4(object->model[0], 2, 2);
+    object->func_ptr = func_800F7240_BumperBallMaze;
+}
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", D_800FAD28_BumperBallMaze);
 
