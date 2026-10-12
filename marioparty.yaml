@@ -642,8 +642,8 @@ segments:
     subsegments:
       - [0xCDA50, c]
       - [0xD27D0, c]
-      - [0xD4C50, data, CDA50]
-      - [0xD4D30, data, D27D0]
+      - [0xD4C50, .data, CDA50]
+      - [0xD4D30, .data, D27D0]
       - [0xD4D70, .rodata, CDA50]
       - [0xD5090, .rodata, D27D0]
       - {0xD51E0, type: bss, vram: 0x800FDD70, name: ovl_00_bss}
