@@ -387,3 +387,4 @@ D_800FFF00_MinigameHouse = D_800FFEC0_MinigameHouse + 0x40;
 D_801001C8_MinigameHouse = D_801001C4_MinigameHouse + 0x4;
 D_800FB008_MinigameStadiumMinigameResultsScreen = D_800FB000_MinigameStadiumMinigameResultsScreen + 0x8;
 D_800FACBA_BumperBallMaze = D_800FACB8_BumperBallMaze + 0x2;
+D_800FADEE_BumperBallMaze = D_800FADEC_BumperBallMaze + 0x2;

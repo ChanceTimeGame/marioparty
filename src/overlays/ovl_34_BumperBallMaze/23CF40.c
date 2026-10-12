@@ -61,7 +61,7 @@ typedef struct BumperBallMazeFloorProbe {
 extern omObjData* D_800FAE10_BumperBallMaze;
 extern omObjData* D_800FAE14_BumperBallMaze;
 extern u16 D_800FACC0_BumperBallMaze;
-extern s16 D_800FADF6_BumperBallMaze;
+extern u16 D_800FADF6_BumperBallMaze;
 extern u16 D_800FADF8_BumperBallMaze;
 extern s32 D_800FAB00_BumperBallMaze[];
 extern u16 D_800FB1C0_BumperBallMaze;
@@ -92,6 +92,19 @@ extern u16 D_800FACB8_BumperBallMaze;
 extern u16 D_800FACBA_BumperBallMaze;
 #endif
 extern u16 D_800FACBC_BumperBallMaze;
+extern BumperBallMazeCameraPreset D_800FAC1C_BumperBallMaze[];
+extern s16 D_800FADE0_BumperBallMaze;
+extern u16 D_800FADE2_BumperBallMaze; /* the player whose result is shown */
+extern f32 D_800FADE4_BumperBallMaze; /* per-frame turn back to 0 degrees */
+extern omObjData* D_800FADE8_BumperBallMaze;
+/* Ending waits (bss, 4 bytes): D_800FADEC counts down, D_800FADEE (an undefined_syms.txt alias for
+   retail's separate %lo(D_800FADEC+2) accesses) is the wait that follows. */
+extern u16 D_800FADEC_BumperBallMaze;
+#ifdef TARGET_PC
+#define D_800FADEE_BumperBallMaze (((u16*) &D_800FADEC_BumperBallMaze)[1])
+#else
+extern u16 D_800FADEE_BumperBallMaze;
+#endif
 extern u8 D_800FAD28_BumperBallMaze[];
 extern s16 D_800FADFC_BumperBallMaze;
 extern s16 D_800FADFE_BumperBallMaze;
@@ -158,6 +171,7 @@ void func_800F7FE0_BumperBallMaze(omObjData*);
 void func_800F8108_BumperBallMaze(omObjData*);
 void func_800F7ED0_BumperBallMaze(omObjData*);
 void func_800F7F60_BumperBallMaze(omObjData*);
+void func_800F9610_BumperBallMaze(s32);
 void func_80060F04(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
@@ -698,7 +712,164 @@ void func_800F827C_BumperBallMaze(omObjData* object) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8468_BumperBallMaze);
+void func_800F8468_BumperBallMaze(omObjData* object) {
+    BumperBallMazeBallWork* work;
+    BumperBallMazeCameraPreset* cam;
+    s32 i;
+    f32 rot;
+    s16 mes;
+    omObjData* ball;
+
+    switch (D_800FB1C2_BumperBallMaze) {
+    case 10:
+        work = D_800FAE10_BumperBallMaze->unk_50;
+        D_800FADE2_BumperBallMaze = work->player;
+        func_800F9610_BumperBallMaze(D_800FADE2_BumperBallMaze);
+        cam = &D_800FAC1C_BumperBallMaze[D_800FADF8_BumperBallMaze];
+        func_800F97B4_BumperBallMaze(cam->cameraValue, cam->zoom, cam->rot.x, cam->rot.y, cam->rot.z,
+                                     cam->center.x, cam->center.y, cam->center.z);
+        switch (D_800FADF8_BumperBallMaze) {
+        case 0:
+            SetBoardFeatureFlag(0x38);
+            break;
+        case 1:
+            SetBoardFeatureFlag(0x39);
+            break;
+        }
+        mes = 0x12;
+        if (D_800FADF6_BumperBallMaze == 1) {
+            mes = 0xC;
+        }
+        GMesCreate(mes);
+        D_800FB1C2_BumperBallMaze = 0;
+        break;
+    case 0:
+        for (i = 0; i < 4; i++) {
+            work = D_800FAE10_BumperBallMaze->unk_50;
+            if (work->unk_00 == 6) {
+                D_800FADE8_BumperBallMaze = D_800FAE10_BumperBallMaze;
+            }
+        }
+        work = D_800FADE8_BumperBallMaze->unk_50;
+        if (work->unk_0C > 180.0f) {
+            work->unk_0C -= 360.0f;
+        }
+        if (fabs(work->unk_0C) > 7.0) {
+            if (work->unk_0C < 0.0f) {
+                D_800FADE4_BumperBallMaze = 7.0f;
+            } else {
+                D_800FADE4_BumperBallMaze = -7.0f;
+            }
+        } else {
+            D_800FADE4_BumperBallMaze = work->unk_0C;
+        }
+        D_800FB1C2_BumperBallMaze = 1;
+        func_80025C20(D_800FADE8_BumperBallMaze->model[0], func_80025E48(D_800FADE8_BumperBallMaze->motion[1]),
+                      0, 0xA, 2);
+        func_80025EB4(D_800FADE8_BumperBallMaze->model[0], 6, 6);
+        break;
+    case 1:
+        work = D_800FADE8_BumperBallMaze->unk_50;
+        rot = work->unk_0C + D_800FADE4_BumperBallMaze;
+        work->unk_0C = rot;
+        if (D_800FADE4_BumperBallMaze < 0.0f) {
+            if (rot <= 0.0f) {
+                work->unk_0C = 0.0f;
+                func_80025C20(D_800FADE8_BumperBallMaze->model[0],
+                              func_80025E48(D_800FADE8_BumperBallMaze->motion[0]), 0, 0x14, 2);
+                D_800FB1C2_BumperBallMaze = 0xB;
+            }
+        } else if (work->unk_0C >= 0.0f) {
+            work->unk_0C = 0.0f;
+            func_80025C20(D_800FADE8_BumperBallMaze->model[0],
+                          func_80025E48(D_800FADE8_BumperBallMaze->motion[0]), 0, 0x14, 2);
+            D_800FB1C2_BumperBallMaze = 0xB;
+        }
+        omSetRot(D_800FADE8_BumperBallMaze, 0.0f, work->unk_0C, 0.0f);
+        break;
+    case 11:
+        if (GMesStatAllGet() & 2) {
+            D_800FB1C2_BumperBallMaze = 2;
+        }
+        break;
+    case 2:
+        work = D_800FAE10_BumperBallMaze->unk_50;
+        if (D_800FADF4_BumperBallMaze == 1) {
+            func_80025C20(D_800FAE10_BumperBallMaze->model[0], func_80025E48(D_800FAE10_BumperBallMaze->motion[3]),
+                          0, 0x1E, 0);
+            D_800FADE2_BumperBallMaze = work->player;
+            if (D_800FADF6_BumperBallMaze == 1) {
+                func_80060128(0x37);
+                D_800FADEC_BumperBallMaze = 0x30;
+                D_800FADEE_BumperBallMaze = 0x46;
+            } else {
+                func_80060128(0x33);
+                D_800FADEC_BumperBallMaze = 0x24;
+                D_800FADEE_BumperBallMaze = 0x39;
+            }
+        } else {
+            if (work->unk_00 != 3 && work->unk_00 != 4 && work->unk_00 != 5) {
+                func_80025C20(D_800FAE10_BumperBallMaze->model[0],
+                              func_80025E48(D_800FAE10_BumperBallMaze->motion[5]), 0, 0x1E, 0);
+            }
+            func_80060128(0x34);
+            D_800FADEC_BumperBallMaze = 0x12;
+            D_800FADEE_BumperBallMaze = 0x48;
+        }
+        D_800FB1C2_BumperBallMaze = 5;
+        D_800FADE0_BumperBallMaze = 0;
+        break;
+    case 4:
+        ball = D_800FAE10_BumperBallMaze;
+        work = ball->unk_50;
+        if (work->unk_00 != 3 && work->unk_00 != 4 && work->unk_00 != 5) {
+            func_80025C20(D_800FAE10_BumperBallMaze->model[0], func_80025E48(ball->motion[0]), 0, 0x14, 2);
+            mes = 0x10;
+        } else {
+            mes = 0xE;
+        }
+        GMesCreate(mes);
+        D_800FB1C2_BumperBallMaze = 0xB;
+        break;
+    case 5:
+        if (--D_800FADEC_BumperBallMaze == 0) {
+            work = D_800FAE10_BumperBallMaze->unk_50;
+            if (D_800FADF4_BumperBallMaze == 1) {
+                func_80060618(0x451, D_800FADE2_BumperBallMaze);
+            } else {
+                func_80060618(0x44A, work->player);
+            }
+            D_800FADEC_BumperBallMaze = D_800FADEE_BumperBallMaze;
+            D_800FB1C2_BumperBallMaze = 8;
+        }
+        break;
+    case 6:
+        if (GMesStatAllGet() & 2) {
+            D_800FB1C2_BumperBallMaze = 7;
+        }
+        break;
+    case 8:
+        if (--D_800FADEC_BumperBallMaze == 0) {
+            func_800726AC(0, 0x14);
+            D_800FB1C2_BumperBallMaze = 9;
+        }
+        break;
+    case 9:
+        if (func_80072718() == 0) {
+            D_800FACC0_BumperBallMaze = 1;
+        }
+        break;
+    case 12:
+        if (GMesWait() != 1) {
+            D_800FADEC_BumperBallMaze = 1;
+            D_800FB1C2_BumperBallMaze = 8;
+        }
+        break;
+    case 7:
+        D_800FB1C2_BumperBallMaze = 8;
+        break;
+    }
+}
 
 void func_800F8AB8_BumperBallMaze(void) {
     if (D_800FACC0_BumperBallMaze != 0 || D_800F5144 != 0) {
