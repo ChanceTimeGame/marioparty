@@ -106,6 +106,11 @@ void func_800F90AC_FlowerShower(omObjData*);
 void func_800F95F4_FlowerShower(omObjData*);
 void func_800F9ACC_FlowerShower(omObjData*);
 void func_8002956C(Vec3f*);
+int abs(int);
+s32 func_80009C90(omObjData*, s16, s16);
+s32 func_80000F3C(omObjData*, f32, f32, f32);
+void func_8001802C(omObjData*);
+void func_800F9224_FlowerShower(omObjData*, s16*, s16*, s32*);
 void func_800FA178_FlowerShower(omObjData*);
 void func_800FA2B0_FlowerShower(omObjData*, f32);
 void func_800FA4EC_FlowerShower(omObjData*);
@@ -119,6 +124,10 @@ extern omObjData* D_800EDE70[];
 extern u16 D_800EE984;
 extern omObjData* D_800F2AF8[];
 extern f32 D_800B8964;
+extern f32 D_800B8960;
+extern f32 D_800B8990;
+extern f32 D_800ED6B8;
+extern f32 D_800F5254;
 extern f32 D_800B8984;
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
@@ -789,8 +798,108 @@ void func_800F9224_FlowerShower(omObjData* arg0, s16* stickX, s16* stickY, s32* 
     *stickY = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F95F4_FlowerShower);
+// multiply operand order (masked 0)
+#ifdef NON_MATCHING
+void func_800F95F4_FlowerShower(omObjData* arg0) {
+    s16 sx;
+    s16 sy;
+    s32 btn;
+    FlowerShowerPlayerWork* work;
+    f32 py;
+    f32 angle;
+    f32 px;
+    f32 pz;
+    f32 d;
+    f32 h;
+    f32 r;
+    s32 stick;
+    s16 x;
+    s16 y;
+    s8 port;
 
+    work = arg0->unk_50;
+    angle = work->unk_3C;
+    port = work->unk_56;
+    px = arg0->trans.x;
+    py = arg0->trans.y;
+    pz = arg0->trans.z;
+    D_800ED6B8 = D_800F5254 = 0.0f;
+    sx = sy = 0;
+    btn = 0;
+    if (work->unk_AE == 0) {
+        if (GwPlayer[work->unk_58].flags & 1) {
+            if (D_800ED430 == 1) {
+                func_800F9224_FlowerShower(arg0, &sx, &sy, &btn);
+            }
+        } else if (D_800ED430 == 1) {
+            sx = ContStkX[port];
+            sy = ContStkY[port];
+            if (sx >= 61) {
+                sx = 60;
+            }
+            if (sy >= 61) {
+                sy = 60;
+            }
+            if (sx < -60) {
+                sx = -60;
+            }
+            if (sy < -60) {
+                sy = -60;
+            }
+            btn = ContBtnTrg[port];
+        }
+    }
+    stick = func_80009C90(arg0, sx, sy);
+    x = stick >> 16;
+    y = stick;
+    if ((work->unk_40 += func_800B1750(x * x + y * y) / 100.0f) < 0.0f) {
+        work->unk_40 = D_800B8960 * 0.6f + work->unk_40;
+    } else {
+        work->unk_40 = work->unk_40 - D_800B8960 * 0.6f;
+    }
+    if (work->unk_40 > 10.0f) {
+        work->unk_40 = 10.0f;
+    }
+    if (work->unk_40 < D_800B8990) {
+        work->unk_40 = D_800B8990;
+    }
+    if (abs(x) >= 9 || abs(y) >= 9) {
+        angle = func_800B0CD8(x, -y);
+    }
+    if (work->unk_40 == D_800B8990) {
+        func_800184BC(arg0, 0);
+    } else if (func_800184BC(arg0, 1) == 1) {
+        func_80060540(0x2D0, work->unk_58);
+    }
+    if (func_80000F3C(arg0, px, py, pz) != 2) {
+        Vec3f v;
+
+        d = func_800B1750(px * px + pz * pz);
+        v.x = px;
+        v.y = py;
+        v.z = pz;
+        func_8002956C(&v);
+        if (d < (r = 400.0f) || (r = 560.0f) < d) {
+            px = v.x * r;
+            pz = v.z * r;
+        }
+    }
+    work->unk_53 = 1;
+    px += func_800AEAC0(angle) * work->unk_40 + D_800ED6B8;
+    pz += func_800AEFD0(angle) * work->unk_40 + D_800F5254;
+    h = D_800F2B7C[arg0->model[1]].unk_28;
+    arg0->trans.x = px;
+    arg0->trans.y = h;
+    arg0->trans.z = pz;
+    func_80025798(arg0->model[1], px, h, pz);
+    func_800257E4(arg0->model[1], 0.0f, angle, 0.0f);
+    arg0->rot.y = work->unk_3C = func_80029518(angle);
+    func_80017DB0(arg0);
+    func_8001802C(arg0);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F95F4_FlowerShower);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F9ACC_FlowerShower);
 
 void func_800FA178_FlowerShower(omObjData* arg0) {
