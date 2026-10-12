@@ -1,7 +1,9 @@
 #include "common.h"
 
 typedef struct FlowerShowerBodyWork {
-    /* 0x00 */ u8 unk_00[0x34];
+    /* 0x00 */ u8 unk_00[0x24];
+    /* 0x24 */ u8 unk_24;
+    /* 0x25 */ u8 unk_25[0xF];
     /* 0x34 */ f32 unk_34;
     /* 0x38 */ f32 unk_38;
     /* 0x3C */ f32 unk_3C;
@@ -38,6 +40,7 @@ f32 func_800FA5B8_FlowerShower(omObjData*);
 f32 func_800FA92C_FlowerShower(omObjData*);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 void func_800090D8(omObjData*, u8, u8);
+void func_800091BC(omObjData*, s32, s32, s32);
 void func_800093FC(omObjData*, f32, f32, f32);
 void func_80060F04(s16, s16, s16, s16);
 void func_800FACA0_FlowerShower(omObjData*);
@@ -139,7 +142,32 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F734
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F761C_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F7A28_FlowerShower);
+FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData* arg0, s32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
+    FlowerShowerBodyWork* work;
+
+    arg0->unk_50 = func_80023684(sizeof(FlowerShowerBodyWork), 0x7918);
+    func_8009B770(arg0->unk_50, 0, sizeof(FlowerShowerBodyWork));
+    arg0->func_ptr = NULL;
+    work = arg0->unk_50;
+    work->unk_68 = func_80023684(sizeof(s32), 0x7918);
+    func_800091BC(arg0, arg1, 0x689, 8);
+    arg0->model[1] = func_800174F4(0x20, 0x299);
+    func_80009340(arg0, 2, 0x25, 0x289, 8);
+    func_80009340(arg0, 3, 0x2A, 0x689, 8);
+    func_8001E2F8(work->unk_24, 0xF0);
+    func_8001E360(work->unk_24, 0xFF, 0xFF, 0x86);
+    arg0->trans.x = arg0->trans.y = arg0->trans.z = 0.0f;
+    work->unk_44 = 0.1f;
+    work->unk_48 = 20.0f;
+    work->unk_34 = 50.0f;
+    work->unk_3C = arg3;
+    work->unk_5C = arg4;
+    work->unk_52 = arg6;
+    work->unk_60 = arg5;
+    work->unk_50 = arg7;
+    func_8000941C(arg0, arg2, arg2, arg2);
+    return work;
+}
 
 void func_800F7BD0_FlowerShower(omObjData* arg0) {
     f32 angle;
