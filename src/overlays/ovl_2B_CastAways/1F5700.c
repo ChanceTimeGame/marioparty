@@ -1,10 +1,5 @@
 #include "CastAways.h"
 
-typedef struct CastAwaysPlayerWork {
-    char unk_00[0x13C];
-    omObjData* unk_13C;
-} CastAwaysPlayerWork;
-
 typedef struct CastAwaysLureWork {
     char unk_00[8];
     f32 unk_08;
@@ -20,7 +15,18 @@ typedef struct CastAwaysSpriteData {
     void* buffersB[8];
 } CastAwaysSpriteData;
 
+typedef struct CastAwaysPlayerWork {
+    char unk_00[0x34];
+    CastAwaysSpriteData* spriteData;
+    char unk_38[0xFC];
+    void* animDataA;
+    void* animDataB;
+    omObjData* lureObj;
+    s16 unk_140;
+} CastAwaysPlayerWork;
+
 void func_80023888(void*);
+void func_80020CC4(void*);
 
 void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);
@@ -84,7 +90,24 @@ s32 func_800FB53C_CastAways(f32 arg0, f32 arg1, f32 arg2, u16 arg3, f32 arg4, f3
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB5B4_CastAways);
+void func_800FB5B4_CastAways(s32 arg0) {
+    omObjData** players = func_8005DB44(4);
+    s32 i = 0;
+
+    do {
+        CastAwaysPlayerWork* work = players[i]->unk_50;
+
+        func_800FB374_CastAways(work->spriteData);
+        if (work->animDataA != NULL) {
+            func_80020CC4(work->animDataA);
+        }
+        if (work->animDataB != NULL) {
+            func_80020CC4(work->animDataB);
+        }
+        i++;
+    } while (i < 4);
+    omOvlReturnEx(1);
+}
 
 void func_800FB644_CastAways(u16 arg0, f32 arg1) {
     D_800F2B7C[arg0].unk_4C = arg1;
@@ -95,7 +118,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB668_C
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB778_CastAways);
 
 f32 func_800FB858_CastAways(omObjData* arg0) {
-    omObjData* lureObj = ((CastAwaysPlayerWork*)arg0->unk_50)->unk_13C;
+    omObjData* lureObj = ((CastAwaysPlayerWork*)arg0->unk_50)->lureObj;
     f32 result;
 
     if (lureObj != NULL) {
