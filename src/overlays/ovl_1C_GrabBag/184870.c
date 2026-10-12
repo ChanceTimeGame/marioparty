@@ -699,16 +699,9 @@ void func_800F903C_GrabBag(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
 #endif
 void func_800F975C_GrabBag(GrabBagPlayerWork* arg0, s32 arg1) {
-    s32 first_offset;
-    s32 second_offset;
-    s32 pad[6];
-
-    first_offset = arg0->port * 2;
-    *(u16*)((u8*)D_800FB244_GrabBag + first_offset) =
-        *(u16*)((u8*)ContBtn + first_offset) & ~*(u16*)((u8*)D_800FB11C_GrabBag + first_offset);
-    second_offset = arg0->port * 2;
-    *(u16*)((u8*)D_800FB11C_GrabBag + second_offset) = *(u16*)((u8*)ContBtn + second_offset);
-    if (*(u16*)((u8*)D_800FB244_GrabBag + (arg0->port * 2)) & arg1) {
+    D_800FB244_GrabBag[arg0->port] = ContBtn[arg0->port] & ~D_800FB11C_GrabBag[arg0->port];
+    D_800FB11C_GrabBag[arg0->port] = ContBtn[arg0->port];
+    if (D_800FB244_GrabBag[arg0->port] & arg1) {
         arg0->button_press_count++;
     }
 }
