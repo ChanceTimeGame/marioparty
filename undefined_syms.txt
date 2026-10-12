@@ -407,3 +407,6 @@ D_800FB964_CastAways = D_800FB960_CastAways + 0x4;
 D_800FB968_CastAways = D_800FB960_CastAways + 0x8;
 D_800FB96C_CastAways = D_800FB960_CastAways + 0xC;
 D_800FB970_CastAways = D_800FB960_CastAways + 0x10;
+D_800FB7E0_TipsyTourney = D_800FB7B8_TipsyTourney + 0x28;
+D_800FB884_TipsyTourney = D_800FB880_TipsyTourney + 0x4;
+D_800FB888_TipsyTourney = D_800FB880_TipsyTourney + 0x8;

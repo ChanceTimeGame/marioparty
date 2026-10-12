@@ -303,6 +303,8 @@ build/src/A27D0.c.o: OPTFLAGS = -O0
 build/src/AD5D0.c.o: OPTFLAGS = -O0
 build/src/AD940.c.o: OPTFLAGS = -O0
 build/src/A1D90.c.o: OPTFLAGS = -O0
+# ovl_21 1A4EB0.c: nop between back-to-back mul.s in func_800F8D2C, func_800F8FE0
+build/src/overlays/ovl_21_TipsyTourney/1A4EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
 
@@ -379,6 +381,15 @@ $(BUILD_DIR)/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o: $(BUILD_DIR)/src/%.
 # ovl_1C 184870.c: mul fix on, with blank lines stripped so mul.s immediately after trig calls
 # does not gain an extra nop. Kept separate from the shared target list for branch merges.
 $(BUILD_DIR)/src/overlays/ovl_24_FlowerShower/1BD640.c.o $(BUILD_DIR)/src/overlays/ovl_1C_GrabBag/184870.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_21 1A4EB0.c: the same blank-line-stripped assembly (mul fix on; mul.s right after
+# func_800B1750's return in func_800F9C48). A separate rule so the shared target list is not edited.
+$(BUILD_DIR)/src/overlays/ovl_21_TipsyTourney/1A4EB0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
