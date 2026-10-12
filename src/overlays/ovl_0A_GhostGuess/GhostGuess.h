@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include "engine/pad.h"
+#include "sprite65770.h"
 
 /* A ghost (D_800FBC18[8]): its object reaches it through func_800FB224/func_800FB244. */
 typedef struct GGGhost {
@@ -12,7 +13,7 @@ typedef struct GGGhost {
 /* 0x04 */ u8 unk_04; /* 1: the ghost to find */
 /* 0x05 */ u8 unk_05; /* index */
 /* 0x06 */ u16 unk_06; /* state */
-/* 0x08 */ s16 unk_08;
+/* 0x08 */ u16 unk_08; /* texture index */
 /* 0x0A */ s16 unk_0A;
 /* 0x0C */ s16 unk_0C;
 /* 0x0E */ s16 unk_0E;
@@ -107,6 +108,13 @@ extern s32 D_800FB6F0_GhostGuess;
 extern f32 D_800FB6F4_GhostGuess; /* the CPU's heading */
 extern f32 D_800FB6F8_GhostGuess;
 extern u8 D_800FB69F_GhostGuess;
+extern f32 D_800FB6C0_GhostGuess[4]; /* by CPU difficulty */
+extern s32 D_800FB6D4_GhostGuess;
+extern f32 D_800FB6FC_GhostGuess;
+extern f32 D_800FB700_GhostGuess;
+extern s32 D_800FB708_GhostGuess;
+void func_80066DF4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
+void func_800670C4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 void func_8006035C(s16, s8);
 extern s32 D_800FB678_GhostGuess;
 extern f32 D_800FB674_GhostGuess;
@@ -182,7 +190,7 @@ void func_800F6FF4_GhostGuess(omObjData* arg0);
 void func_800F73E0_GhostGuess(omObjData* arg0);
 void func_800F789C_GhostGuess(omObjData* arg0);
 void func_800F79D4_GhostGuess(omObjData* arg0);
-void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s16 arg3);
+void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s32 arg3);
 void func_800F80E4_GhostGuess(omObjData* arg0);
 s32 func_800F86CC_GhostGuess(omObjData* arg0, omObjData* arg1);
 void func_80017C0C(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
