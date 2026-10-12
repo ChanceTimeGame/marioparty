@@ -103,7 +103,7 @@ typedef struct BowlJump {
     /* 0x20 */ u8 unk_20; /* stick history slot */
     /* 0x21 */ s8 unk_21[8]; /* stick x history */
     /* 0x29 */ s8 unk_29[8]; /* stick y history */
-    /* 0x31 */ u8 unk_31; /* CPU: jump now */
+    /* 0x31 */ s8 unk_31; /* CPU: jump now */
     /* 0x32 */ char unk_32;
     /* 0x33 */ s8 unk_33; /* stick x */
     /* 0x34 */ s8 unk_34; /* stick y */

@@ -860,7 +860,7 @@ void func_800F8C64_BowlOver(omObjData* obj) {
             D_800FD33C_BowlOver *= 1.2f;
         }
         D_800FD348_BowlOver = 25.0f;
-        D_800FD340_BowlOver = ContStkX[PLAYER_WORK(D_800F3FB0[0])->unk_56] * 1.6;
+        D_800FD340_BowlOver = ContStkX[(s8)PLAYER_WORK(D_800F3FB0[0])->unk_56] * 1.6;
         D_800FD34C_BowlOver -= D_800FD340_BowlOver;
         turn = D_800FD34C_BowlOver / 9.0f;
         if (!(BOWL_ABS(turn) < 263.0f)) {
