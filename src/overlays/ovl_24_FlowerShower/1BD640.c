@@ -44,7 +44,9 @@ typedef struct FlowerShowerPlayerWork {
     /* 0x56 */ s8 unk_56; /* controller port */
     /* 0x57 */ char unk_57;
     /* 0x58 */ s8 unk_58; /* player */
-    /* 0x59 */ char unk_59[0x47];
+    /* 0x59 */ char unk_59[3];
+    /* 0x5C */ s32 unk_5C; /* motion flags */
+    /* 0x60 */ char unk_60[0x40];
     /* 0xA0 */ f32 unk_A0;
     /* 0xA4 */ char unk_A4[0xA];
     /* 0xAE */ u16 unk_AE;
@@ -110,6 +112,7 @@ void func_800F95F4_FlowerShower(omObjData*);
 void func_800F9ACC_FlowerShower(omObjData*);
 void func_8002956C(Vec3f*);
 void func_8001E2A8(s16, u16);
+f32 func_8000A72C(f32, f32, f32, f32);
 s32 func_8000947C(s32);
 void func_80037178(s16, Vec3f*);
 f32 func_800F8918_FlowerShower(omObjData*, f32, f32, f32, Vec3f*);
@@ -821,8 +824,145 @@ f32 func_800F8918_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2, f32 arg3, Ve
     return var_f20;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F898C_FlowerShower);
+// branch tails merged differently, register allocation (masked 28)
+#ifdef NON_MATCHING
+void func_800F898C_FlowerShower(omObjData* arg0, u16* arg1) {
+    Vec3f dir;
+    FlowerShowerPlayerWork* work;
+    FlowerShowerBodyWork* flower;
+    omObjData* obj;
+    omObjData* board;
+    omObjData* target;
+    omObjData* other;
+    f32 skill;
+    f32 best;
+    f32 bestR;
+    f32 d;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 a;
+    f32 s;
+    s32 i;
+    s32 moved;
+    s8 port;
 
+    moved = 0;
+    work = arg0->unk_50;
+    bestR = best = 10000.0f;
+    port = work->unk_56;
+    ContStkX[port] = ContStkY[port] = 0;
+    board = D_800F2AF8[2];
+    dir.y = 0.0f;
+    target = NULL;
+    other = NULL; /* never set: retail keeps the dead branch below */
+    switch (GwPlayer[work->unk_58].cpu_difficulty) {
+        case 0:
+            skill = 0.55f;
+            break;
+        case 1:
+            skill = 0.7f;
+            break;
+        case 2:
+            skill = 0.8f;
+            break;
+        default:
+            skill = 1.0f;
+            break;
+    }
+    if (D_800ED430 != 1) {
+        return;
+    }
+    for (i = 0; i < D_800EE984; i++) {
+        obj = D_800EDE70[i];
+        flower = obj->unk_50;
+        if (flower->unk_54 == 0) {
+            continue;
+        }
+        dx = arg0->trans.x - obj->trans.x;
+        dy = arg0->trans.y - obj->trans.y;
+        dz = arg0->trans.z - obj->trans.z;
+        d = func_800B1750(dx * dx + dy * dy + dz * dz);
+        if (work->unk_38 != 1000.0f) {
+            ContBtn[port] = 0x8000;
+            a = work->unk_3C;
+            dir.x = func_800AEAC0(a);
+            dir.z = func_800AEFD0(a);
+            dir.x *= 60.0f;
+            dir.z *= 60.0f;
+            ContStkX[port] = dir.x;
+            ContStkY[port] = -dir.z;
+            continue;
+        }
+        if (fabs(board->rot.x) >= 19.0 || fabs(board->rot.z) >= 19.0) {
+            if (func_8000A72C(func_800AEAC0(work->unk_3C), func_800AEFD0(work->unk_3C), arg0->trans.x,
+                              arg0->trans.z) < 0.0f &&
+                !(work->unk_5C & 0x6000)) {
+                ContBtnTrg[port] = 0x8000;
+            } else {
+                dir.x = -arg0->trans.x;
+                dir.z = -arg0->trans.z;
+                func_8002956C(&dir);
+                dir.x *= 36.0f;
+                dir.z *= 36.0f;
+                ContStkX[port] = dir.x;
+                ContStkY[port] = -dir.z;
+            }
+            moved = 1;
+            break;
+        }
+        if (d < best && flower->unk_38 == 1000.0f) {
+            target = obj;
+            best = d;
+            bestR = func_800B1750(target->trans.x * target->trans.x + target->trans.z * target->trans.z);
+        }
+    }
+    if (other != NULL) {
+        a = func_800B0CD8(arg0->trans.x, arg0->trans.z) - 90.0f;
+        a = func_8000A72C(func_800AEAC0(a), func_800AEFD0(a), other->trans.x, other->trans.z);
+        a = func_800B0CD8(arg0->trans.x, arg0->trans.z) + a * 15.0f;
+        dir.x = func_800AEAC0(a) * 220.0f - arg0->trans.x;
+        dir.z = func_800AEFD0(a) * 220.0f - arg0->trans.z;
+        func_8002956C(&dir);
+        s = skill * 45.0f;
+        dir.x = s * dir.x;
+        dir.z = s * dir.z;
+        ContStkX[port] = dir.x;
+        ContStkY[port] = -dir.z;
+    } else if ((moved == 0) & (target != NULL)) {
+        if (best < skill * 750.0f && bestR < skill * 260.0f) {
+            dir.x = target->trans.x - arg0->trans.x;
+            dir.z = target->trans.z - arg0->trans.z;
+            dir.y = 0.0f;
+            func_8002956C(&dir);
+            dir.x *= 60.0f;
+            dir.z *= 60.0f;
+            ContStkX[port] = dir.x;
+            ContStkY[port] = -dir.z;
+        } else {
+            dir.x = -arg0->trans.x;
+            dir.z = -arg0->trans.z;
+            func_8002956C(&dir);
+            dir.x *= 30.0f;
+            dir.z *= 30.0f;
+            ContStkX[port] = dir.x;
+            ContStkY[port] = -dir.z;
+        }
+    } else {
+        a = func_800B0CD8(arg0->trans.x, arg0->trans.z) + 15.0f;
+        dir.x = func_800AEAC0(a) * 150.0f - arg0->trans.x;
+        dir.z = func_800AEFD0(a) * 150.0f - arg0->trans.z;
+        func_8002956C(&dir);
+        s = skill * 48.0f;
+        dir.x = s * dir.x;
+        dir.z = s * dir.z;
+        ContStkX[port] = dir.x;
+        ContStkY[port] = -dir.z;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F898C_FlowerShower);
+#endif
 void func_800F90AC_FlowerShower(omObjData* arg0) {
     s32 temp_s0;
     s32 temp_s0_2;
