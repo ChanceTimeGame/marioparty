@@ -833,7 +833,7 @@ segments:
     subsegments:
       - [0x117210, c]
       - [0x11BFE0, c]
-      - [0x11C2A0, data, 117210]
+      - [0x11C2A0, .data, 117210]
       - [0x11C340, .rodata, 117210]
       - {0x11C810, type: bss, vram: 0x800FBBE0, name: ovl_0A_bss}
   - type: code
