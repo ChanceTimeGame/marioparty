@@ -10,6 +10,7 @@
 #endif
 
 /* Converts a sprite frame's image into a one-byte-per-pixel mask (0xFF where opaque). */
+// register allocation (masked 9)
 #ifdef NON_MATCHING
 u8* func_800FC4F0_CrazyCutter(s16 grpIdx, s16 idx, s32* width, s32* height) {
     unk65770Obj* spr;
@@ -82,6 +83,7 @@ typedef s32 (*CrazyCutterPixelFunc)(s32, s32, s32, u8*, s32);
 
 /* Writes the palette's transparent index into the sprite image wherever mask is set, at (x0, y0).
    Returns the number of pixels that changed. */
+// retail keeps h in a stack copy; loop layout (masked 38)
 #ifdef NON_MATCHING
 s32 func_800FC70C_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h, s8* mask) {
     unk65770Obj* spr;
@@ -103,10 +105,10 @@ s32 func_800FC70C_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     pixels = img->unk0;
     switch (spr->unk4C->unk18 & 0xF) {
         case 4:
-            fn = (CrazyCutterPixelFunc)func_800FC998_CrazyCutter;
+            fn = (CrazyCutterPixelFunc)(void (*)(void))func_800FC998_CrazyCutter;
             break;
         case 8:
-            fn = (CrazyCutterPixelFunc)func_800FC9F4_CrazyCutter;
+            fn = (CrazyCutterPixelFunc)(void (*)(void))func_800FC9F4_CrazyCutter;
             break;
     }
     count = 0;
@@ -179,6 +181,7 @@ s32 func_800FC9F4_CrazyCutter(s32 arg0, s32 arg1, s32 arg2, u8* arg3, u8 arg4) {
 
 /* Returns the first palette index whose alpha bit is clear; with none, clears one and returns the
    last index. Retail's fallback index is (n - 1) * n, past the palette (kept as retail). */
+// fallback return recomputed in retail (masked 3)
 #ifdef NON_MATCHING
 s32 func_800FCA20_CrazyCutter(u8* pal, u16 fmt) {
     u16 n;
@@ -202,6 +205,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/12AFE0", func_800FCA20
 
 /* As func_800FC70C_CrazyCutter, but only counts the masked pixels that differ from the
    transparent index. */
+// as func_800FC70C (masked 41)
 #ifdef NON_MATCHING
 s32 func_800FCAAC_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h, s8* mask) {
     unk65770Obj* spr;
@@ -223,10 +227,10 @@ s32 func_800FCAAC_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     pixels = img->unk0;
     switch (spr->unk4C->unk18 & 0xF) {
         case 4:
-            fn = (CrazyCutterPixelFunc)func_800FCC64_CrazyCutter;
+            fn = (CrazyCutterPixelFunc)(void (*)(void))func_800FCC64_CrazyCutter;
             break;
         case 8:
-            fn = (CrazyCutterPixelFunc)CC_FUNC_800FCCC4;
+            fn = (CrazyCutterPixelFunc)(void (*)(void))CC_FUNC_800FCCC4;
             break;
     }
     count = 0;
