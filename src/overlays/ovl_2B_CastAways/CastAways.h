@@ -13,6 +13,11 @@ typedef struct unk_ovl_2BStruct2 {
 /* 0x50 */ char unk_50[0x70];
 } unk_ovl_2BStruct2; //unknown size
 
+typedef struct CastAwaysLightParams {
+    u16 unk_00;
+    u16 unk_02;
+} CastAwaysLightParams;
+
 //extern unk_ovl_2BStruct2* D_800F2B7C;
 extern f32 D_800FBA30_CastAways[];
 extern s32 D_800FB9A4_ovl2B[];
@@ -40,12 +45,12 @@ extern u16 D_800FBB78_ovl2B[];
 extern s16 D_800FBB6C_ovl2B;
 extern s16 D_800FBB8C_ovl2B;
 extern s32 D_800FBA64_ovl2B;
-extern s16 D_800FBB60_CastAways;
+extern CastAwaysLightParams D_800FBB60_CastAways;
 extern u16 D_800FB9E0_CastAways[];
 
 void func_800FB5B4_CastAways(s32);
 void func_800F8194_CastAways(omObjData*, s32);
-void func_800F7308_CastAways(void);
+void func_800F7308_CastAways(omObjData*);
 void func_800F73AC_CastAways(omObjData*, s32);
 void func_800F76B8_CastAways(omObjData*);
 void func_800FA198_CastAways(void);

@@ -19,6 +19,11 @@ typedef struct CastAwaysTrailTimer {
     u16 timer;
 } CastAwaysTrailTimer;
 
+extern u8 D_800F64F8;
+extern char D_800FBA64_CastAways[];
+extern char D_800FBA70_CastAways[];
+void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
+
 void func_800F65E0_CastAways(void) {
     s32 i;
     void* filePtr;
@@ -140,12 +145,19 @@ void func_800F71AC_CastAways(omObjData* arg0) {
     func_800176C4(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
     arg0->model[0] = LoadFormFile(0x3F0000, 0x499);
     arg0->model[3] = func_800174C0(0x3F0001, 0x1499);
-    func_80039C48(&D_800FBA64_ovl2B, &D_800FBB60_CastAways);
+    func_80039C48(D_800FBA64_CastAways, &D_800FBB60_CastAways);
     func_80026040(arg0->model[3]);
     arg0->func_ptr = &func_800F7308_CastAways;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F7308_CastAways);
+void func_800F7308_CastAways(omObjData* arg0) {
+    if (((func_8005FD5C() & 0xFFFF) + D_800F64F8) == 0) {
+        D_800FBB64_ovl2B += 0.4f;
+    }
+    func_80027E48(arg0->model[3], D_800FBB64_ovl2B, D_800FBB68_ovl2B,
+        D_800FBB60_CastAways.unk_00, D_800FBB60_CastAways.unk_02,
+        D_800FBA70_CastAways, 1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F73AC_CastAways);
 
