@@ -1,4 +1,4 @@
-#include "common.h"
+#include "GrabBag.h"
 
 extern s32 D_800FB104_GrabBag[4];
 extern s32 D_800FB254_GrabBag;
@@ -14,35 +14,6 @@ extern u8 D_800FB270_GrabBag[];
 extern u8 D_800FB278_GrabBag[];
 extern omObjData* D_800FB280_GrabBag;
 extern u16 ContBtn[4];
-
-typedef struct GrabBagInputWork {
-    char unk_00[0x56];
-    s8 player_index;
-    char unk_57[0x97];
-    u8 button_press_count;
-} GrabBagInputWork;
-
-typedef struct GrabBagMotionWork {
-    char unk_00[0x38];
-    f32 unk_38;
-    f32 angle;
-    f32 speed;
-    char unk_44[4];
-    f32 radius;
-    char unk_4C[0x18];
-    f32 radius_offset;
-} GrabBagMotionWork;
-
-typedef struct GrabBagControlWork {
-    char unk_00[0x40];
-    f32 unk_40;
-    char unk_44[0x12];
-    s8 player_index;
-    char unk_57;
-    s8 score_index;
-    char unk_59[0x99];
-    s16 score;
-} GrabBagControlWork;
 
 void func_800F776C_GrabBag(omObjData*);
 void func_800F859C_GrabBag(omObjData*);
@@ -82,7 +53,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F776C_Gra
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F7EDC_GrabBag);
 
 void func_800F8484_GrabBag(omObjData* arg0) {
-    GrabBagControlWork* work;
+    GrabBagPlayerWork* work;
 
     work = arg0->unk_50;
     func_800FA424_GrabBag();
@@ -98,15 +69,15 @@ void func_800F8484_GrabBag(omObjData* arg0) {
             if ((GMesStatAllGet() == 0) || (GMesStatAllGet() & 2)) {
                 func_800F8A18_GrabBag(arg0);
             }
-            work->unk_40 = 0.0f;
+            work->speed = 0.0f;
             func_80005A28(arg0);
             return;
         }
         if (D_800ED430 == 1) {
-            func_800FB064_GrabBag(work->score_index, work->score);
+            func_800FB064_GrabBag(work->player, work->score);
             func_800FAED8_GrabBag();
             func_800F903C_GrabBag(arg0);
-            if (work->player_index == 3) {
+            if (work->port == 3) {
                 func_800F8BDC_GrabBag();
             }
         }
@@ -123,17 +94,17 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
 
-void func_800F975C_GrabBag(GrabBagInputWork* arg0, s32 arg1) {
+void func_800F975C_GrabBag(GrabBagPlayerWork* arg0, s32 arg1) {
     s32 first_offset;
     s32 second_offset;
     s32 pad[6];
 
-    first_offset = arg0->player_index * 2;
+    first_offset = arg0->port * 2;
     *(u16*)((u8*)D_800FB244_GrabBag + first_offset) =
         *(u16*)((u8*)ContBtn + first_offset) & ~*(u16*)((u8*)D_800FB11C_GrabBag + first_offset);
-    second_offset = arg0->player_index * 2;
+    second_offset = arg0->port * 2;
     *(u16*)((u8*)D_800FB11C_GrabBag + second_offset) = *(u16*)((u8*)ContBtn + second_offset);
-    if (*(u16*)((u8*)D_800FB244_GrabBag + (arg0->player_index * 2)) & arg1) {
+    if (*(u16*)((u8*)D_800FB244_GrabBag + (arg0->port * 2)) & arg1) {
         arg0->button_press_count++;
     }
 }
@@ -146,7 +117,7 @@ void func_800F97E8_GrabBag(omObjData* arg0, omObjData* arg1) {
     f32 temp_f2;
     f32 temp_f4;
     f32 temp_f0;
-    GrabBagMotionWork* work;
+    GrabBagPlayerWork* work;
 
     work = arg0->unk_50;
     temp_f20 = work->radius + work->radius_offset;
@@ -171,8 +142,8 @@ void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
     f32 base_z;
     f32 distance_sq;
     f32 threshold_sq;
-    GrabBagMotionWork* work0;
-    GrabBagMotionWork* work1;
+    GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
 
     work0 = arg0->unk_50;
     work1 = arg1->unk_50;

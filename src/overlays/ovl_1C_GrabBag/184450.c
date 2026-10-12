@@ -1,4 +1,4 @@
-#include "common.h"
+#include "GrabBag.h"
 
 extern omObjData* D_800F2AF8[];
 
