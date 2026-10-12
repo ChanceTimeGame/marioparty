@@ -5,6 +5,12 @@ extern s32 D_800FB254_GrabBag;
 extern f32 D_800B8960;
 extern u16 D_800FB11C_GrabBag[4];
 extern u16 D_800FB244_GrabBag[4];
+extern u16 D_800FB258_GrabBag[];
+extern u16 D_800FB25A_GrabBag[];
+extern u16 D_800FB25C_GrabBag[];
+extern u8 D_800FB270_GrabBag[];
+extern u8 D_800FB278_GrabBag[];
+extern omObjData* D_800FB280_GrabBag;
 extern u16 ContBtn[4];
 
 typedef struct GrabBagInputWork {
@@ -125,7 +131,30 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAC0C_Gra
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAED8_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FAFA0_GrabBag);
+void func_800FAFA0_GrabBag(void) {
+    s32 sprite_offset;
+    PB_PTR32 player_offset;
+    s32 i;
+    u16 sprite;
+    u8* fourth_sprites;
+    u8* fifth_sprites;
+
+    D_800FB280_GrabBag->work[1] = 0;
+    i = 0;
+    fourth_sprites = D_800FB270_GrabBag;
+    fifth_sprites = D_800FB278_GrabBag;
+    for (; i < 4; i++) {
+        player_offset = i << 1;
+        sprite_offset = (player_offset + i) * 2;
+        sprite = *(u16*)((u8*)D_800FB258_GrabBag + sprite_offset);
+        func_80018C90(sprite);
+        func_80018C90(*(u16*)((u8*)D_800FB25A_GrabBag + sprite_offset));
+        func_80018C90(*(u16*)((u8*)D_800FB25C_GrabBag + sprite_offset));
+        func_80018C90(*(u16*)(player_offset + (PB_PTR32)fourth_sprites));
+        player_offset += (PB_PTR32)fifth_sprites;
+        func_80018C90(*(u16*)player_offset);
+    }
+}
 
 void func_800FB064_GrabBag(s32 arg0, s32 arg1) {
     arg1 = arg1 < 0 ? 0 : arg1;
