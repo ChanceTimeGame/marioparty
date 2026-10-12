@@ -9,6 +9,14 @@ void func_800F7F94_BalloonBurst(omObjData *);
 void func_800F9520_BalloonBurst(omObjData *);
 void func_800F95F8_BalloonBurst(omObjData *);
 void func_800F94E0_BalloonBurst(s16, s16);
+void func_800F6BAC_BalloonBurst(f32, f32, f32, f32, f32, f32, f32);
+void func_800F7160_BalloonBurst(void);
+void func_800F6C44_BalloonBurst(omObjData *);
+void func_800F71D8_BalloonBurst(omObjData *);
+void func_800F70E0_BalloonBurst(omObjData *);
+void func_800F7100_BalloonBurst(omObjData *);
+void func_800F7120_BalloonBurst(omObjData *);
+void func_800F7140_BalloonBurst(omObjData *);
 void func_800289D0(s16, s16, f32);
 void func_800370D4(s16);
 void func_80025BB8(s16, s16);
@@ -36,9 +44,9 @@ extern u16 D_800FB54E_BalloonBurst[];
 extern u16 D_800FB550_BalloonBurst[];
 extern unk34D80Struct80 *D_800ED554;
 extern u16 D_800FB110_BalloonBurst;
-extern s32 D_800FC394_BalloonBurst;
-extern s32 D_800FC398_BalloonBurst;
-extern s32 *D_800FC39C_BalloonBurst;
+extern omObjData *D_800FC394_BalloonBurst;
+extern omObjData *D_800FC398_BalloonBurst;
+extern omObjData **D_800FC39C_BalloonBurst;
 extern u16 D_800FAF8C_BalloonBurst[];
 extern u16 D_800FAF94_BalloonBurst;
 extern u8 D_800FAF7F_BalloonBurst[];
@@ -95,6 +103,21 @@ typedef struct BalloonBurstObjectWork {
 
 extern BalloonBurstPlayer D_800FB120_BalloonBurst[];
 
+typedef struct BalloonBurstCharOffset {
+    f32 unk_00;
+    f32 unk_04;
+    u16 unk_08[4];
+} BalloonBurstCharOffset;
+
+extern BalloonBurstCharOffset D_800FAF20_BalloonBurst[];
+extern char *D_800FACA0_BalloonBurst[];
+extern s16 D_800FB0E2_BalloonBurst[];
+extern u16 D_800FB0EA_BalloonBurst[];
+extern s16 D_800FC390_BalloonBurst;
+extern s16 D_800FC392_BalloonBurst;
+void func_800F77D0_BalloonBurst(s32, s32, f32, f32, f32, f32, f32, f32);
+void func_80027AC8(s16, char *, char *);
+
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFAC_BalloonBurst);
@@ -113,8 +136,73 @@ INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFF
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FB000_BalloonBurst);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F65E0_BalloonBurst);
+void func_800F65E0_BalloonBurst(void) {
+    s32 i;
+    s8 c;
 
+    func_8001DE70(0x18);
+    omInitObjMan(0x1E, 0);
+    func_80060088();
+    func_800F6BAC_BalloonBurst(2200.0725f, 343.0f, 0.0f, 0.0f, 0.0f, 0.0f, -235.0f);
+    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, omOutView), 0xA0);
+    func_80023448(3);
+    func_800234B8(0, 0x5E, 0x5E, 0x5E);
+    func_800234B8(1, 0xFA, 0xFA, 0xFF);
+    func_80023504(1, 100.0f, 100.0f, 100.0f);
+    func_800234B8(2, 0, 0, 0);
+    func_80023504(2, 100.0f, 100.0f, 100.0f);
+    func_800234B8(3, 0, 0, 0);
+    func_80023504(3, 100.0f, 100.0f, 100.0f);
+    func_8005D98C(0, 1);
+    func_8005D98C(1, 4);
+    omAddObj(4, 0, 0, -1, func_800F7160_BalloonBurst);
+    omSetStatBit(omAddObj(1, 1, 0, -1, func_800F6C44_BalloonBurst), 0xA0);
+    omAddObj(0, 0, 0, 0, func_800F71D8_BalloonBurst);
+    omAddObj(2, 3, 0x32, 1, func_800F70E0_BalloonBurst);
+    omAddObj(2, 3, 0x32, 1, func_800F7100_BalloonBurst);
+    omAddObj(2, 3, 0x32, 1, func_800F7120_BalloonBurst);
+    omAddObj(2, 3, 0x32, 1, func_800F7140_BalloonBurst);
+    c = GwPlayer[0].character;
+    func_800F77D0_BalloonBurst(0, 1, D_800FAEE0_BalloonBurst[0].x, D_800FAEE0_BalloonBurst[0].y,
+                               D_800FAEE0_BalloonBurst[0].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[0].x - 50.0f, 0.0f,
+                               D_800FAEE0_BalloonBurst[0].z + D_800FAF20_BalloonBurst[c].unk_04);
+    c = GwPlayer[1].character;
+    func_800F77D0_BalloonBurst(1, 2, D_800FAEE0_BalloonBurst[1].x, D_800FAEE0_BalloonBurst[1].y,
+                               D_800FAEE0_BalloonBurst[1].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[1].x - 50.0f, 0.0f,
+                               D_800FAEE0_BalloonBurst[1].z + D_800FAF20_BalloonBurst[c].unk_04);
+    c = GwPlayer[2].character;
+    func_800F77D0_BalloonBurst(2, 4, D_800FAEE0_BalloonBurst[2].x, D_800FAEE0_BalloonBurst[2].y,
+                               D_800FAEE0_BalloonBurst[2].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[2].x - 50.0f, 0.0f,
+                               D_800FAEE0_BalloonBurst[2].z + D_800FAF20_BalloonBurst[c].unk_04);
+    c = GwPlayer[3].character;
+    func_800F77D0_BalloonBurst(3, 8, D_800FAEE0_BalloonBurst[3].x, D_800FAEE0_BalloonBurst[3].y,
+                               D_800FAEE0_BalloonBurst[3].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[3].x - 50.0f, 0.0f,
+                               D_800FAEE0_BalloonBurst[3].z + D_800FAF20_BalloonBurst[c].unk_04);
+    D_800FB0E2_BalloonBurst[0] = LoadFormFile(0x250004, 0x2069D);
+    D_800FB0E2_BalloonBurst[1] = LoadFormFile(0x250005, 0x2069D);
+    D_800FB0E2_BalloonBurst[2] = LoadFormFile(0x250006, 0x2069D);
+    D_800FB0E2_BalloonBurst[3] = LoadFormFile(0x250007, 0x2069D);
+    D_800FB0EA_BalloonBurst[0] = D_800FB120_BalloonBurst[0].obstacles[6].model;
+    D_800FB0F8_BalloonBurst[0] = D_800F2B7C[(u16)D_800FB120_BalloonBurst[0].obstacles[6].model].unk_6C->unk_00;
+    for (i = 1; i < 5; i++) {
+        *(D_800FB0EA_BalloonBurst + i) = LoadFormFile(0x250001, 0x2068D);
+        func_80027AC8(*(D_800FB0EA_BalloonBurst + i), "kuppa-ha_DEF", *(D_800FACA0_BalloonBurst + i * 2));
+        func_80027AC8(*(D_800FB0EA_BalloonBurst + i), "kuppa-kao_DEF", *(D_800FACA0_BalloonBurst + i * 2 + 1));
+        func_80025AD4(*(D_800FB0EA_BalloonBurst + i));
+        *(D_800FB0F8_BalloonBurst + i) = D_800F2B7C[(s16)*(D_800FB0EA_BalloonBurst + i)].unk_6C->unk_00;
+    }
+    for (i = 0; i < 4; i++) {
+        func_8002456C(D_800FB0E2_BalloonBurst[i]);
+    }
+    D_800FC39C_BalloonBurst = func_8005DB44(1);
+    SetFadeInTypeAndTime(0, 0x10);
+    D_800FC390_BalloonBurst = _CheckFlag(0x45);
+    D_800FC392_BalloonBurst = _CheckFlag(0x2B);
+}
 void func_800F6BAC_BalloonBurst(f32 zoom, f32 rotX, f32 rotY, f32 rotZ, f32 centerX, f32 centerY, f32 centerZ) {
     func_800178A0(1);
     CZoom = zoom;
@@ -293,8 +381,8 @@ void func_800F7298_BalloonBurst(omObjData *arg0) {
                 }
             }
             if (ties == 3) {
-                D_800FC394_BalloonBurst = 0;
-                D_800FC398_BalloonBurst = 0;
+                D_800FC394_BalloonBurst = NULL;
+                D_800FC398_BalloonBurst = NULL;
             }
             if (arg0->unk_10 & 0xF) {
                 D_800FB10C_BalloonBurst = 2;
