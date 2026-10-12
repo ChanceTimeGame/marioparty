@@ -1,5 +1,11 @@
 #include "CastAways.h"
 
+extern u16 D_800FB9B0_CastAways[][3];
+extern u16 D_800FB9C4_CastAways[];
+
+/* Hook object: flies out on the cast, sinks, catches a fish it touches, and is reeled back in. */
+
+
 /* End of the game: freeze the fish, put the rods away, turn the players round, then the result. */
 
 
@@ -920,8 +926,233 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_CastAways);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F92FC_CastAways);
+// register allocation and block order
+#ifdef NON_MATCHING
+void func_800F92FC_CastAways(omObjData* arg0) {
+    CastAwaysRodWork* rod;
+    CastAwaysPlayerWork* player;
+    CastAwaysFishWork* fishWork;
+    omObjData** fish;
+    s32 event;
+    u8 reel;
+    s32 i;
+    s16 model;
+    f32 half;
+    f32 y;
+    f32 z;
+    f32 fishY;
+    f32 fishZ;
+    f32 drop;
+    u16 n;
 
+    reel = 0;
+    if (D_800FBB7C_ovl2B != 1) {
+        return;
+    }
+    rod = arg0->unk_50;
+    player = rod->playerObj->unk_50;
+    event = arg0->unk_10;
+    if (event != 0) {
+        arg0->unk_10 = 0;
+        if (event == D_800FBB7C_ovl2B) {
+            if (rod->state == 0) {
+                rod->state = 1;
+                rod->counter = 0;
+                half = fabsf(arg0->trans.z - rod->targetZ) / 2.0f;
+                rod->startZ = arg0->trans.z;
+                rod->startY = arg0->trans.y;
+                rod->stepZ = fabsf((half + half) / 45.0f);
+                rod->stepY = rod->velY;
+                rod->gravity = fabsf((rod->velY + rod->velY) / 41.0f);
+                func_800258EC(player->spriteData->model, 4, 0);
+                player->sound = func_80060540(0x314, player->playerNo);
+            }
+        } else if (event == 2) {
+            reel = 1;
+        }
+    }
+    switch (rod->state) {
+    case 1:
+        z = arg0->trans.z - rod->stepZ;
+        y = arg0->trans.y - fabs(rod->stepY) * rod->stepY;
+        rod->stepY += rod->gravity;
+        if (rod->stepY >= 0.0f) {
+            player->castState = 2;
+        }
+        omSetTra(arg0, arg0->trans.x, y, z);
+        if (++rod->counter == 45) {
+            rod->state = 8;
+        }
+        func_800F9E2C_CastAways(arg0, player, rod);
+        break;
+    case 8:
+        fish = func_8005DB44(rod->group);
+        for (i = 0; i < D_800ED618[rod->group].max; i++) {
+            if (fish[i] == NULL) {
+                continue;
+            }
+            fishWork = fish[i]->unk_50;
+            if (fishWork->type != 2) {
+                fishY = fish[i]->trans.y;
+                fishZ = fish[i]->trans.z;
+            } else {
+                fishY = fish[i]->trans.y - 30.0f;
+                fishZ = fish[i]->trans.z - -150.0f;
+            }
+            if ((u16)func_800FB4D4_CastAways(arg0->trans.x, arg0->trans.y + 8.0f, arg0->trans.z, fishWork->type,
+                                             fish[i]->trans.x, fishY, fishZ) != 1) {
+                continue;
+            }
+            player->sound = func_80060540(0x315, player->playerNo);
+            func_8005DC18(fish[i], 1);
+            rod->fishObj = fish[i];
+            ((CastAwaysFishWork*)fish[i]->unk_50)->rodObj = arg0;
+            rod->state = 2;
+            fishWork = rod->fishObj->unk_50;
+            rod->steps = D_800FB9B0_CastAways[rod->group][fishWork->type];
+            rod->stepZ = ((rod->startZ - arg0->trans.z) / (f32)rod->steps) / 5.0f;
+            rod->stepY = ((rod->startY - arg0->trans.y) / (f32)rod->steps) / 5.0f;
+            rod->slope = 0.0f;
+            rod->baseZ = 0.0f;
+            arg0->work[0] = 0;
+            arg0->trans.y = 0.0f;
+            model = D_800FBB20_CastAways[rod->playerNo].model;
+            if (fishWork->type != 2) {
+                func_80025798(model, fish[i]->trans.x, -80.0f, fish[i]->trans.z + 48.0f);
+            } else {
+                func_80025798(model, fish[i]->trans.x, -80.0f, fish[i]->trans.z + 48.0f + 50.0f);
+            }
+            func_80025830(model, 8.5f, 8.5f, 8.5f);
+            func_800258EC(model, 4, 0);
+            func_8001E2A8(D_800FBB20_CastAways[rod->playerNo].id, 0);
+            break;
+        }
+        if (rod->state != 2) {
+            z = arg0->trans.z - rod->stepZ;
+            y = arg0->trans.y - fabs(rod->stepY) * rod->stepY;
+            rod->stepY += rod->gravity;
+            if (rod->stepY >= 0.0f) {
+                player->castState = 2;
+            }
+            omSetTra(arg0, arg0->trans.x, y, z);
+            rod->state = 0x10;
+        }
+        func_800F9E2C_CastAways(arg0, player, rod);
+        break;
+    case 0x10:
+        if (arg0->trans.y < 0.0f) {
+            player->sound = func_80060540(0x313, player->playerNo);
+            model = D_800FBB20_CastAways[rod->playerNo].model;
+            func_80025798(model, arg0->trans.x, -80.0f, arg0->trans.z + 32.0f);
+            func_80025830(model, 8.5f, 8.5f, 8.5f);
+            func_800258EC(model, 4, 0);
+            func_8001E2A8(D_800FBB20_CastAways[rod->playerNo].id, 0);
+            model = D_800FBB30_CastAways[rod->playerNo].model;
+            func_80025798(model, arg0->trans.x, 0.0f, arg0->trans.z);
+            func_80025830(model, 6.0f, 6.0f, 6.0f);
+            func_800258EC(model, 4, 0);
+            func_8001E2A8(D_800FBB30_CastAways[rod->playerNo].id, 0);
+        }
+        if (arg0->trans.y <= -100.0f) {
+            omSetTra(arg0, arg0->trans.x, -100.0f, arg0->trans.z);
+            player->samples[player->sampleCount].x = arg0->trans.x;
+            player->samples[player->sampleCount].y = arg0->trans.y;
+            player->samples[player->sampleCount].z = arg0->trans.z;
+            rod->state = 2;
+            rod->steps = D_800FB9C4_CastAways[rod->group];
+            rod->stepZ = ((rod->startZ - arg0->trans.z) / (f32)rod->steps) / 5.0f;
+            rod->stepY = ((rod->startY - arg0->trans.y) / (f32)rod->steps) / 5.0f;
+            arg0->work[0] = 0;
+            rod->baseZ = player->samples[4].z;
+            rod->slope = arg0->trans.y / (arg0->trans.z - rod->baseZ);
+            break;
+        }
+        z = arg0->trans.z - rod->stepZ;
+        y = arg0->trans.y - fabs(rod->stepY) * rod->stepY;
+        rod->stepY += rod->gravity;
+        if (rod->stepY >= 0.0f) {
+            player->castState = 2;
+        }
+        if (y < -100.0f) {
+            y = -100.0f;
+        }
+        omSetTra(arg0, arg0->trans.x, y, z);
+        func_800F9E2C_CastAways(arg0, player, rod);
+        break;
+    case 2:
+        rod->counter = 0;
+        rod->timer = 3;
+        if (reel) {
+            rod->state = 4;
+        }
+        break;
+    }
+    if (rod->state == 4) {
+        if (reel) {
+            func_80060440(player->sound, (0x38 - (s16)player->unk_148) * 42 - 1200);
+        }
+        if (player->castState == 4) {
+            z = arg0->trans.z + rod->stepZ;
+            if (player->sampleCount >= 4) {
+                y = (z - rod->baseZ) * rod->slope;
+            } else {
+                y = arg0->trans.y;
+            }
+            omSetTra(arg0, arg0->trans.x, y, z);
+            player->samples[player->sampleCount].x = arg0->trans.x;
+            player->samples[player->sampleCount].y = arg0->trans.y;
+            player->samples[player->sampleCount].z = arg0->trans.z;
+            n = player->sampleCount;
+            if (n >= 2 && player->samples[n - 1].z < player->samples[n].z) {
+                player->sampleCount--;
+                player->samples[player->sampleCount].x = arg0->trans.x;
+                player->samples[player->sampleCount].y = arg0->trans.y;
+                player->samples[player->sampleCount].z = arg0->trans.z;
+                if (player->sampleCount == 3) {
+                    rod->slope = 0.0f;
+                }
+            }
+            if (++rod->counter == 5) {
+                rod->state = 2;
+                if (++arg0->work[0] == rod->steps) {
+                    rod->state = 0;
+                    func_800258EC(player->spriteData->model, 4, 4);
+                    player->castState = 1;
+                    player->sampleCount = 1;
+                    player->flags &= ~2;
+                    if (rod->fishObj != NULL) {
+                        func_8005DC18(rod->fishObj, 2);
+                        rod->fishObj = NULL;
+                        func_8005DC18(rod->playerObj, 2);
+                        func_8006071C(player->sound);
+                        player->flags &= ~2;
+                        player->sound = func_80060540(0x313, player->playerNo);
+                    } else {
+                        func_8006071C(player->sound);
+                        player->flags &= ~2;
+                        func_8005DC18(rod->playerObj, 1);
+                    }
+                }
+            }
+        } else {
+            func_800F9EAC_CastAways(player, 20.0f);
+        }
+    }
+    if (rod->state != 0) {
+        if (player->castState == 2) {
+            drop = 7.0f;
+        } else if (player->castState == 1) {
+            drop = 7.0f;
+        } else {
+            drop = 1.0f;
+        }
+        func_800F9EAC_CastAways(player, drop);
+        func_800FB0C8_CastAways(player->spriteData, player->samples, player->sampleCount + 1);
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F92FC_CastAways);
+#endif
 void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwaysRodWork* arg2) {
     u16 timer = arg2->timer - 1;
 
