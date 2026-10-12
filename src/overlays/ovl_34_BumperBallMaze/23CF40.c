@@ -1035,7 +1035,28 @@ u16 func_800F9278_BumperBallMaze(void) {
     return ((BumperBallMazeTimerWork*) D_800FAE14_BumperBallMaze->unk_50)->time;
 }
 
+// register allocation (masked 0)
+#ifdef NON_MATCHING
+void func_800F928C_BumperBallMaze(u16 time, u16* digits) {
+    u16 rest;
+    u16 sec;
+    u16 frac;
+
+    func_80018E50(*digits, time / 3600, 0);
+    digits += 2;
+    rest = time % 3600;
+    sec = rest / 60;
+    func_80018E50(*digits, sec / 10, 0);
+    digits++;
+    func_80018E50(*digits, sec % 10, 0);
+    digits += 2;
+    frac = (u16) (rest % 60) * 1.6666666f;
+    func_80018E50(*digits, frac / 10, 0);
+    func_80018E50(digits[1], frac % 10, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F928C_BumperBallMaze);
+#endif
 
 void func_800F943C_BumperBallMaze(void) {
     BumperBallMazeTimerWork* state = D_800FAE14_BumperBallMaze->unk_50;
