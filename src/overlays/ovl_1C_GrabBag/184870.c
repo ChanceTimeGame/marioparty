@@ -14,6 +14,15 @@ typedef struct GrabBagInputWork {
     u8 button_press_count;
 } GrabBagInputWork;
 
+typedef struct GrabBagMotionWork {
+    char unk_00[0x3C];
+    f32 angle;
+    char unk_40[8];
+    f32 radius;
+    char unk_4C[0x18];
+    f32 radius_offset;
+} GrabBagMotionWork;
+
 void func_800F776C_GrabBag(omObjData*);
 void func_800FA8F4_GrabBag(omObjData*);
 
@@ -69,7 +78,26 @@ void func_800F975C_GrabBag(GrabBagInputWork* arg0, s32 arg1) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F97E8_GrabBag);
+void func_800F97E8_GrabBag(omObjData* arg0, omObjData* arg1) {
+    f32 temp_f12;
+    f32 temp_f20;
+    f32 temp_f22;
+    f32 temp_f24;
+    f32 temp_f2;
+    f32 temp_f4;
+    f32 temp_f0;
+    GrabBagMotionWork* work;
+
+    work = arg0->unk_50;
+    temp_f20 = work->radius + work->radius_offset;
+    temp_f22 = (func_800AEAC0(work->angle) * temp_f20) + arg0->trans.x;
+    temp_f24 = arg0->trans.y;
+    temp_f0 = (func_800AEFD0(work->angle) * temp_f20) + arg0->trans.z;
+    temp_f12 = arg1->trans.x - temp_f22;
+    temp_f2 = arg1->trans.y - temp_f24;
+    temp_f4 = arg1->trans.z - temp_f0;
+    func_800B1750((temp_f12 * temp_f12) + (temp_f2 * temp_f2) + (temp_f4 * temp_f4));
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F98A4_GrabBag);
 
