@@ -14,7 +14,7 @@
 /* One team of two (D_800FC318[2]): the pair pulls one shared sled. */
 typedef struct DDTeam {
     /* 0x00 */ omObjData* obj[2]; /* the two players' objects */
-    /* 0x08 */ u8 unk8;           /* both players' input flags (bit per member; 3 = both) */
+    /* 0x08 */ s8 unk8;           /* both players' input flags (bit per member; 3 = both) */
     /* 0x09 */ u8 player[2];      /* player index of each member */
     /* 0x0B */ u8 unkB[2];        /* character byte (D_800C59A9) of each member */
     /* 0x0E */ s16 unkE;          /* model */
@@ -123,6 +123,7 @@ extern f32 D_800FC4A8_DesertDash[4];   /* target CZoomM */
 extern s16 D_800FC4B8_DesertDash[4];   /* frames left */
 extern s16 D_800FC4C0_DesertDash[8];   /* frames total */
 extern u16 D_800FC4D0_DesertDash[8];
+extern DDObstacle D_800FC670_DesertDash[5];
 
 /* ---------------------------------------------------------------------------------------------
    Main code
@@ -166,7 +167,7 @@ void func_800F6F04_DesertDash(omObjData* obj, s32 player);
 void func_800F707C_DesertDash(omObjData* obj, s32 player);
 void func_800F7430_DesertDash(omObjData* obj);
 void func_800F7C6C_DesertDash(omObjData* obj);
-s32 func_800F8A80_DesertDash(f32 z);
+u16 func_800F8A80_DesertDash(f32 z);
 void func_800F8C34_DesertDash(omObjData* obj);
 void func_800F91C8_DesertDash(omObjData* obj, s16* stkX, s16* stkY);
 void func_800F9434_DesertDash(void);

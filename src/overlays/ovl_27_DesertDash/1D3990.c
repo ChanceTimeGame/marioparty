@@ -224,30 +224,360 @@ void func_800F707C_DesertDash(omObjData* obj, s32 player) {
     func_800184BC(obj, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F7430_DesertDash);
+void func_800F7430_DesertDash(omObjData* obj) {
+    s32 i;
+    s32 w;
+    f32 fw;
+    DDTeam* team;
+
+    D_800FC300_DesertDash = (D_800FC300_DesertDash + 1) % 3;
+    if (D_800F5144 == 1) {
+        obj->func_ptr = func_800F6E00_DesertDash;
+        func_80060198();
+    }
+    switch (D_800FC000_DesertDash) {
+        case 0:
+            func_800FAD98_DesertDash(0, CenterM[0].z);
+            func_800FAD98_DesertDash(1, CenterM[1].z);
+            func_800F9C9C_DesertDash(320);
+            if (func_80072718() != 0) {
+                return;
+            }
+            if (D_800FC008_DesertDash == 20) {
+                func_80060128(0x22);
+            }
+            if (D_800FC008_DesertDash == 0) {
+                func_800F95E8_DesertDash(0, 415.0f, 0.0f, 300.0f, -2250.0f, 0.0f, 0.0f, 0.0f, 60);
+                func_800F95E8_DesertDash(1, 415.0f, 0.0f, 300.0f, -2250.0f, 0.0f, 0.0f, 0.0f, 60);
+            } else if (D_800FC008_DesertDash == 59) {
+                func_800F95E8_DesertDash(0, 830.0f, -100.0f, 280.0f, 0.0f, -17.25f, 0.0f, 0.0f, 20);
+                func_800F95E8_DesertDash(1, 830.0f, 100.0f, 280.0f, 0.0f, -17.25f, 0.0f, 0.0f, 20);
+                D_800FC000_DesertDash = 1;
+                D_800FC008_DesertDash = 19;
+                for (i = 0; i < D_800F2BC0; i++) {
+                    func_80025F10(D_800F3FB0[i]->model[0], 3);
+                }
+            }
+            D_800FC008_DesertDash++;
+            break;
+        case 1:
+            func_800FAD98_DesertDash(0, CenterM[0].z);
+            func_800FAD98_DesertDash(1, CenterM[1].z);
+            if (D_800FC008_DesertDash == 0) {
+                D_800FC000_DesertDash = 2;
+                break;
+            }
+            w = (D_800FC008_DesertDash - 1) * 160.0 / 20.0 + 160.0;
+            fw = w;
+            func_80017660(0, 0.0f, 0.0f, fw, 240.0f);
+            func_800176C4(0, 640.0f, 480.0f, 511.0f, w * 2, 480.0f, 511.0f);
+            func_80017660(1, fw, 0.0f, 320.0f, 240.0f);
+            func_800F9C9C_DesertDash(w);
+            D_800FC008_DesertDash--;
+            break;
+        case 2:
+            if (D_800FC008_DesertDash == 0) {
+                GMesCreate(0);
+                D_800FC008_DesertDash = -1;
+            } else if (GMesStatAllGet() == 0) {
+                D_800FC000_DesertDash = 3;
+            }
+            break;
+        case 3:
+            if (--D_800FC018_DesertDash == 0) {
+                D_800FC000_DesertDash = 4;
+            }
+            break;
+        case 4:
+            if (D_800FC3D0_DesertDash == 0) {
+                func_800601D4(60);
+                GMesCreate(0x11);
+                D_800FC3D0_DesertDash++;
+                D_800FC014_DesertDash = 90;
+            } else if (GMesStatAllGet() & 2) {
+                D_800FC000_DesertDash = 7;
+                func_80060128(0x34);
+            }
+            break;
+        case 5:
+            if (D_800FC3D0_DesertDash == 0) {
+                func_800601D4(60);
+                if (D_800FC3D4_DesertDash == 0) {
+                    GMesCreate(0x12);
+                } else {
+                    GMesCreate(2);
+                }
+                for (i = 0; i < 2; i++) {
+                    team = &D_800FC318_DesertDash[i];
+                    if (team->unk14 == 11) {
+                        GwPlayer[team->player[0]].coins_mg += 10;
+                        GwPlayer[team->player[1]].coins_mg += 10;
+                    } else {
+                        if (GwPlayer[team->player[0]].coins >= 10) {
+                            GwPlayer[team->player[0]].coins_mg -= 10;
+                        } else {
+                            GwPlayer[team->player[0]].coins_mg -= GwPlayer[team->player[0]].coins;
+                        }
+                        if (GwPlayer[team->player[1]].coins >= 10) {
+                            GwPlayer[team->player[1]].coins_mg -= 10;
+                        } else {
+                            GwPlayer[team->player[1]].coins_mg -= GwPlayer[team->player[1]].coins;
+                        }
+                    }
+                }
+                D_800FC3D0_DesertDash++;
+                D_800FC014_DesertDash = 105;
+            } else if ((GMesStatAllGet() & 2) && D_800FC3D4_DesertDash == 0) {
+                D_800FC000_DesertDash = 6;
+                func_80060128(0x36);
+            }
+            if (D_800FC3D4_DesertDash != 0) {
+                if (++D_800FC3D0_DesertDash >= 60) {
+                    D_800FC000_DesertDash = 8;
+                }
+            }
+            break;
+        case 6:
+            if (D_800FC3D0_DesertDash == 8) {
+                D_800FC000_DesertDash = 7;
+            }
+            D_800FC3D0_DesertDash++;
+            break;
+        case 7:
+            for (i = 0; i < 4; i++) {
+                if (ContBtnTrg[GwPlayer[i].port] & 0x9000) {
+                    D_800FC01C_DesertDash = 1;
+                }
+            }
+            if (D_800FC01C_DesertDash != 0) {
+                D_800FC014_DesertDash = 60;
+            }
+            if (++D_800FC3D0_DesertDash >= D_800FC014_DesertDash) {
+                D_800FC000_DesertDash = 8;
+            }
+            break;
+        case 8:
+            func_800726AC(0, 20);
+            func_80060398(D_800FC3D4_DesertDash != 0 ? 40 : 90);
+            D_800FC3B0_DesertDash = -1;
+            obj->func_ptr = func_800F6E00_DesertDash;
+            break;
+    }
+    D_800FC00C_DesertDash = func_800F983C_DesertDash(obj, 2);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F7C6C_DesertDash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F8A80_DesertDash);
+/* What lies ahead of z: 0 nothing, 1 an obstacle to wait for, 2 jump now, 3 hit; -1 unknown. */
+u16 func_800F8A80_DesertDash(f32 z) {
+    s32 i;
+    DDObstacle* o;
+
+    i = 0;
+    o = NULL;
+    for (; i < D_800FC004_DesertDash; i++) {
+        o = &D_800FC670_DesertDash[i];
+        if (o->unk14 - z >= -290.0 && o->unk14 - z <= 200.0) {
+            break;
+        }
+    }
+    if (i == D_800FC004_DesertDash) {
+        return 0;
+    }
+    switch (o->unk4) {
+        case 0:
+            if (o->unk10 >= 150.0) {
+                return 1;
+            }
+            break;
+        case 1:
+            if (!(o->unk14 - z >= -114.99999999999999)) {
+                return 1;
+            }
+            if (o->unk10 >= 150.0) {
+                return 1;
+            }
+            return 3;
+        case 2:
+            break;
+        case 3:
+            return 1;
+        default:
+            return -1;
+    }
+    if (o->unk14 - z >= -135.0 && o->unk14 - z <= 0.0) {
+        return 2;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F8C34_DesertDash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F91C8_DesertDash);
+/* CPU input: push the stick when the partner does (human) or at random (CPU partner). */
+void func_800F91C8_DesertDash(omObjData* obj, s16* stkX, s16* stkY) {
+    u16 x;
+    s32 m;
+    u16 push;
+    DDTeam* team;
+    s32 diff;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F9434_DesertDash);
+    x = 0;
+    m = 0;
+    push = 0;
+    team = func_800F9470_DesertDash(obj);
+    if (team->obj[0] == obj) {
+        m = 0;
+    } else if (team->obj[1] == obj) {
+        m = 1;
+    }
+    diff = GwPlayer[team->player[m]].cpu_difficulty;
+    func_80017A60(obj);
+    if (team->unk14 == 1) {
+        push = 60;
+    } else if (team->unk14 == 4) {
+        push = -60;
+    }
+    switch (team->unk16) {
+        case 0:
+            if (!(GwPlayer[team->player[m ^ 1]].flags & 1)) {
+                goto human;
+            }
+            if ((rand8() % (6 - diff)) == 0) {
+                x = push;
+            }
+            break;
+        case 1:
+            if (!(GwPlayer[team->player[m ^ 1]].flags & 1)) {
+                goto human;
+            }
+            if ((team->unk18 & 1) && (rand8() % (4 - diff)) == 0) {
+                x = push;
+            }
+            break;
+        case 2:
+            if (!(GwPlayer[team->player[m ^ 1]].flags & 1)) {
+            human:
+                if (team->unk8 != 0) {
+                    x = push;
+                }
+            }
+            break;
+    }
+    *stkX = x;
+    *stkY = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F9450_DesertDash);
+void func_800F9434_DesertDash(void) {
+    func_800F9C68_DesertDash();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F9470_DesertDash);
+/* The player object keeps its team in work[0..3]: the pointer, big-endian, on the N64; the host
+   keeps the team index there (a pointer does not fit). */
+void func_800F9450_DesertDash(omObjData* obj, DDTeam* team) {
+#ifdef TARGET_PC
+    obj->work[0] = team - D_800FC318_DesertDash;
+#else
+    obj->work[0] = (u32)team >> 24;
+    obj->work[1] = (u32)team >> 16;
+    obj->work[2] = (u32)team >> 8;
+    obj->work[3] = (u32)team;
+#endif
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F949C_DesertDash);
+DDTeam* func_800F9470_DesertDash(omObjData* obj) {
+#ifdef TARGET_PC
+    return &D_800FC318_DesertDash[obj->work[0]];
+#else
+    return (DDTeam*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
+#endif
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F94F8_DesertDash);
+void func_800F949C_DesertDash(omObjData* obj, s32 motion, f32 speed) {
+    unk_ovl_2D_struct* m;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F95E8_DesertDash);
+    func_800184BC(obj, motion);
+    m = &D_800F2B7C[obj->model[0]];
+    m->unk_4C = speed;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F96C4_DesertDash);
+void func_800F94F8_DesertDash(s32 cam, f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz) {
+    D_800FC4C0_DesertDash[cam] = 0;
+    D_800FC4B8_DesertDash[cam] = 0;
+    CZoomM[cam] = zoom;
+    CenterM[cam].x = cx;
+    CenterM[cam].y = cy;
+    CenterM[cam].z = cz;
+    CRotM[cam].x = rx;
+    CRotM[cam].y = ry;
+    CRotM[cam].z = rz;
+    D_800FC498_DesertDash[cam] = zoom;
+    D_800FC3D8_DesertDash[cam].x = cx;
+    D_800FC3D8_DesertDash[cam].y = cy;
+    D_800FC3D8_DesertDash[cam].z = cz;
+    D_800FC438_DesertDash[cam].x = rx;
+    D_800FC438_DesertDash[cam].y = ry;
+    D_800FC438_DesertDash[cam].z = rz;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F9780_DesertDash);
+void func_800F95E8_DesertDash(s32 cam, f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz,
+                              u16 frames) {
+    D_800FC4A8_DesertDash[cam] = zoom;
+    D_800FC408_DesertDash[cam].x = cx;
+    D_800FC408_DesertDash[cam].y = cy;
+    D_800FC408_DesertDash[cam].z = cz;
+    D_800FC468_DesertDash[cam].x = rx;
+    D_800FC468_DesertDash[cam].y = ry;
+    D_800FC468_DesertDash[cam].z = rz;
+    if (D_800FC4B8_DesertDash[cam] != 0) {
+        func_800F9780_DesertDash(cam);
+    }
+    D_800FC4C0_DesertDash[cam] = frames;
+    D_800FC4B8_DesertDash[cam] = frames;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F983C_DesertDash);
+void func_800F96C4_DesertDash(s32 cam) {
+    D_800FC498_DesertDash[cam] = D_800FC4A8_DesertDash[cam];
+    D_800FC438_DesertDash[cam].x = D_800FC468_DesertDash[cam].x;
+    D_800FC438_DesertDash[cam].y = D_800FC468_DesertDash[cam].y;
+    D_800FC438_DesertDash[cam].z = D_800FC468_DesertDash[cam].z;
+    D_800FC3D8_DesertDash[cam].x = D_800FC408_DesertDash[cam].x;
+    D_800FC3D8_DesertDash[cam].y = D_800FC408_DesertDash[cam].y;
+    D_800FC3D8_DesertDash[cam].z = D_800FC408_DesertDash[cam].z;
+}
+
+void func_800F9780_DesertDash(s32 cam) {
+    D_800FC498_DesertDash[cam] = CZoomM[cam];
+    D_800FC438_DesertDash[cam].x = CRotM[cam].x;
+    D_800FC438_DesertDash[cam].y = CRotM[cam].y;
+    D_800FC438_DesertDash[cam].z = CRotM[cam].z;
+    D_800FC3D8_DesertDash[cam].x = CenterM[cam].x;
+    D_800FC3D8_DesertDash[cam].y = CenterM[cam].y;
+    D_800FC3D8_DesertDash[cam].z = CenterM[cam].z;
+}
+
+/* Steps every camera tween; returns the last camera whose tween ran. */
+s32 func_800F983C_DesertDash(omObjData* obj, s32 count) {
+    s32 i;
+    s32 last;
+    f32 t;
+
+    i = 0;
+    last = 0;
+    for (; i < count; i++) {
+        if (D_800FC4B8_DesertDash[i] != 0) {
+            last = i;
+            if (--D_800FC4B8_DesertDash[i] == 0) {
+                func_800F96C4_DesertDash(last);
+            }
+            t = (f32)(D_800FC4C0_DesertDash[i] - D_800FC4B8_DesertDash[i]) / D_800FC4C0_DesertDash[i];
+            CZoomM[i] = (D_800FC4A8_DesertDash[i] - D_800FC498_DesertDash[i]) * t + D_800FC498_DesertDash[i];
+            CRotM[i].x = (D_800FC468_DesertDash[i].x - D_800FC438_DesertDash[i].x) * t + D_800FC438_DesertDash[i].x;
+            CRotM[i].y = (D_800FC468_DesertDash[i].y - D_800FC438_DesertDash[i].y) * t + D_800FC438_DesertDash[i].y;
+            CRotM[i].z = (D_800FC468_DesertDash[i].z - D_800FC438_DesertDash[i].z) * t + D_800FC438_DesertDash[i].z;
+            CenterM[i].x = (D_800FC408_DesertDash[i].x - D_800FC3D8_DesertDash[i].x) * t + D_800FC3D8_DesertDash[i].x;
+            CenterM[i].y = (D_800FC408_DesertDash[i].y - D_800FC3D8_DesertDash[i].y) * t + D_800FC3D8_DesertDash[i].y;
+            CenterM[i].z = (D_800FC408_DesertDash[i].z - D_800FC3D8_DesertDash[i].z) * t + D_800FC3D8_DesertDash[i].z;
+        }
+    }
+    return last;
+}
