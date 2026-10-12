@@ -1,25 +1,19 @@
 #include "GrabBag.h"
 
-extern GrabBagBagWork* D_800FB220_GrabBag;
-void func_8001E2A8(s16, u16);
-
-
 extern f32 D_800B8988;
-extern u8 D_800FB0A8_GrabBag[];
-extern s32 D_800FB0B0_GrabBag;
-
-
+extern u8 D_800F64F8;
+extern u8 D_800FB090_GrabBag;
 extern u32 D_800FB094_GrabBag;
 extern u32 D_800FB098_GrabBag;
 extern u32 D_800FB09C_GrabBag;
 extern s32 D_800FB0A0_GrabBag;
 extern s32 D_800FB0A4_GrabBag;
-
-
-extern u8 D_800F64F8;
-extern u8 D_800FB090_GrabBag;
+extern u8 D_800FB0A8_GrabBag[];
+extern s32 D_800FB0B0_GrabBag;
+extern GrabBagBagWork* D_800FB220_GrabBag;
 extern s32 D_800FB290_GrabBag;
 
+void func_8001E2A8(s16, u16);
 
 void func_800F65E0_GrabBag(void) {
     func_80029090(0x10);

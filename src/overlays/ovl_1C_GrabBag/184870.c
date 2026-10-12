@@ -1,71 +1,61 @@
 #include "GrabBag.h"
 
-void func_800F975C_GrabBag(GrabBagPlayerWork*, s32);
-void func_800F9BC4_GrabBag(omObjData*, omObjData*);
-void func_800F9DF0_GrabBag(omObjData*, omObjData*);
-void func_800F9ED0_GrabBag(omObjData*, omObjData*);
-void func_800FA658_GrabBag(omObjData*);
-
-
-extern u8 D_800FB0E4_GrabBag[16]; /* start slot of each player, 4 per layout (D_800FB254) */
-void func_800F7EDC_GrabBag(omObjData*, u32, s32, u16, u16);
-void func_800F8484_GrabBag(omObjData*);
-
-
-
-
-extern u8 D_800FB0C0_GrabBag;
-extern s8 D_800FB114_GrabBag;
-extern s8 D_800FB115_GrabBag;
-extern s8 D_800FB118_GrabBag[4];
-extern u32 D_800FB240_GrabBag;
-
-
-extern GrabBagBagWork* D_800FB24C_GrabBag;
-
-
-void func_800FAC0C_GrabBag(omObjData*);
-void func_80018E0C(u16, s16);
-
-
 extern u16 D_800B89A4[][14];
-extern s16 D_800FB0D0_GrabBag;
-extern s32 D_800FB0D4_GrabBag[4];
-extern s32 D_800FB104_GrabBag[4];
-extern f32 D_800FB250_GrabBag;
-extern s32 D_800FB254_GrabBag;
-extern s32 D_800FB290_GrabBag;
-extern s32 D_800FB294_GrabBag;
 extern f32 D_800B8960;
 extern f32 D_800B8984;
 extern f32 D_800B8988;
 extern u8 D_800F64F8;
-extern u16 D_800FB11C_GrabBag[4];
-extern u16 D_800FB244_GrabBag[4];
-extern u16 D_800FB258_GrabBag[4][3]; /* score digit sprites per player */
-extern u16 D_800FB270_GrabBag[4];    /* character face sprites */
-extern u16 D_800FB278_GrabBag[4];    /* bag icon sprites */
-extern GrabBagPos D_800FB0F4_GrabBag[4];
-extern omObjData* D_800FB280_GrabBag;
 extern u16 ContBtn[4];
 extern s8 ContStkY[4];
 
+extern s16 D_800FB0D0_GrabBag;     /* player being set up */
+extern s32 D_800FB0D4_GrabBag[4];  /* player order */
+extern u8 D_800FB0E4_GrabBag[16];  /* start slot of each player, 4 per layout (D_800FB254) */
+extern GrabBagPos D_800FB0F4_GrabBag[4];
+extern s32 D_800FB104_GrabBag[4];  /* displayed scores */
+extern u8 D_800FB0C0_GrabBag;
+extern s8 D_800FB114_GrabBag;
+extern s8 D_800FB115_GrabBag;
+extern s8 D_800FB118_GrabBag[4];
+extern u16 D_800FB11C_GrabBag[4];  /* last frame's buttons */
+extern u32 D_800FB240_GrabBag;
+extern u16 D_800FB244_GrabBag[4];  /* newly pressed buttons */
+extern GrabBagBagWork* D_800FB24C_GrabBag;
+extern f32 D_800FB250_GrabBag;
+extern s32 D_800FB254_GrabBag;     /* start layout */
+extern u16 D_800FB258_GrabBag[4][3]; /* score digit sprites per player */
+extern u16 D_800FB270_GrabBag[4];    /* character face sprites */
+extern u16 D_800FB278_GrabBag[4];    /* bag icon sprites */
+extern omObjData* D_800FB280_GrabBag;
+extern s32 D_800FB290_GrabBag;
+extern s32 D_800FB294_GrabBag;
+
+void func_80018E0C(u16, s16);
+
 void func_800F776C_GrabBag(omObjData*);
+void func_800F7EDC_GrabBag(omObjData*, u32, s32, u16, u16);
+void func_800F8484_GrabBag(omObjData*);
 void func_800F859C_GrabBag(omObjData*);
 void func_800F8984_GrabBag(void);
 void func_800F8A18_GrabBag(omObjData*);
 void func_800F8BDC_GrabBag(void);
 void func_800F903C_GrabBag(omObjData*);
+void func_800F975C_GrabBag(GrabBagPlayerWork*, s32);
 f32 func_800F97E8_GrabBag(omObjData*, omObjData*);
 f32 func_800F98A4_GrabBag(omObjData*);
 f32 func_800F9A1C_GrabBag(omObjData*);
+void func_800F9BC4_GrabBag(omObjData*, omObjData*);
+void func_800F9DF0_GrabBag(omObjData*, omObjData*);
+void func_800F9ED0_GrabBag(omObjData*, omObjData*);
 s32 func_800FA184_GrabBag(omObjData*, omObjData*);
 s32 func_800FA304_GrabBag(omObjData*, omObjData*);
 void func_800FA424_GrabBag(omObjData*);
+void func_800FA658_GrabBag(omObjData*);
 f32 func_800FA780_GrabBag(f32, f32, f32, f32);
+void func_800FA8F4_GrabBag(omObjData*);
+void func_800FAC0C_GrabBag(omObjData*);
 void func_800FAED8_GrabBag(void);
 void func_800FAFA0_GrabBag(void);
-void func_800FA8F4_GrabBag(omObjData*);
 void func_800FB064_GrabBag(s32, s32);
 
 void func_800F7680_GrabBag(void) {
