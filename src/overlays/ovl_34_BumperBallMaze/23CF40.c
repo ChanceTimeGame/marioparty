@@ -207,4 +207,13 @@ void func_800F943C_BumperBallMaze(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F94A0_BumperBallMaze);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F9610_BumperBallMaze);
+void func_800F9610_BumperBallMaze(s32 player) {
+    u16 remaining = 0xE10 - func_800F9278_BumperBallMaze();
+    u16 q = remaining / 60;
+    u16 reward = q;
+
+    if ((u16) (remaining % 60) != 0) {
+        reward = q + 1;
+    }
+    GwPlayer[(u16) player].coins_mg += reward + 10;
+}
