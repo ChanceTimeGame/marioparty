@@ -30,7 +30,8 @@ typedef struct FlowerShowerBodyWork {
 /* A player object's work (func_8000979C / func_800F761C allocate it, 0xE8): MgWork's layout
  * (src/99E0.c), with every pointer member where MgWork has one so the host offsets agree. */
 typedef struct FlowerShowerPlayerWork {
-    /* 0x00 */ char unk_00[0x3C];
+    /* 0x00 */ char unk_00[0x38];
+    /* 0x38 */ f32 unk_38; /* vertical speed, 1000 = on the ground */
     /* 0x3C */ f32 unk_3C; /* facing */
     /* 0x40 */ f32 unk_40; /* speed */
     /* 0x44 */ char unk_44[0xC];
@@ -106,6 +107,11 @@ void func_800F90AC_FlowerShower(omObjData*);
 void func_800F95F4_FlowerShower(omObjData*);
 void func_800F9ACC_FlowerShower(omObjData*);
 void func_8002956C(Vec3f*);
+void func_8001E2A8(s16, u16);
+void func_8001E268(s16, u8, u8);
+void func_800F6A64_FlowerShower(void);
+void func_800F8620_FlowerShower(void);
+void func_800F8648_FlowerShower(omObjData*, u8, u32);
 int abs(int);
 s32 func_80009C90(omObjData*, s16, s16);
 s32 func_80000F3C(omObjData*, f32, f32, f32);
@@ -132,6 +138,14 @@ extern f32 D_800B8984;
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
 extern s32 D_800FAD64_FlowerShower;
+extern s32 D_800FAD30_FlowerShower;
+extern u32 D_800FAD34_FlowerShower;
+extern u32 D_800FAD38_FlowerShower;
+extern u32 D_800FAD3C_FlowerShower;
+extern s32 D_800FAD40_FlowerShower;
+extern s32 D_800FAD44_FlowerShower;
+extern s32 D_800FAD48_FlowerShower;
+extern s32 D_800FAD68_FlowerShower;
 extern s32 D_800FAD4C_FlowerShower;
 extern s32 D_800FAD5C_FlowerShower;
 extern s32 D_800FAD60_FlowerShower;
@@ -177,8 +191,137 @@ void func_800F6A64_FlowerShower(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F6A90_FlowerShower);
+void func_800F6A90_FlowerShower(omObjData* arg0) {
+    omObjData* obj;
+    omObjData* player;
+    FlowerShowerBodyWork* flower;
+    FlowerShowerPlayerWork* work;
+    s32 i;
+    u8 light;
+    u8 model;
 
+    func_80009468();
+    switch (D_800ED430) {
+        case 0:
+            if (func_80072718() != 0) {
+                return;
+            }
+            if (D_800FAD34_FlowerShower >= 121) {
+                func_800F8620_FlowerShower();
+                func_80009458();
+            }
+            func_800F8648_FlowerShower(arg0, (u8)D_800ED430, D_800FAD34_FlowerShower);
+            D_800FAD34_FlowerShower += 2;
+            break;
+        case 1:
+            if (D_800FAD38_FlowerShower == 0) {
+                func_80009438();
+            }
+            func_800F8648_FlowerShower(arg0, (u8)D_800ED430, D_800FAD38_FlowerShower);
+            D_800FAD38_FlowerShower -= 2;
+            break;
+        case 2:
+            if (D_800FAD3C_FlowerShower == 0) {
+                func_800601D4(0x28);
+                for (i = 0; i < D_800EE984; i++) {
+                    obj = D_800EDE70[i];
+                    flower = obj->unk_50;
+                    if (flower->unk_54 != 0) {
+                        light = flower->unk_24;
+                        model = obj->model[3];
+                        func_800258EC(model, 4, 0);
+                        func_8001E2A8(light, 0);
+                        func_8001E268(light, 4, 4);
+                        func_80025798(model, obj->trans.x, obj->trans.y, obj->trans.z);
+                        func_80025830(model, 5.0f, 5.0f, 5.0f);
+                        flower->unk_54 = 0;
+                        func_800090D8(obj, 0, 0);
+                        func_800090D8(obj, 1, 0);
+                    }
+                }
+            }
+            player = D_800F3FB0[D_800FAD60_FlowerShower];
+            work = player->unk_50;
+            if (work->unk_38 == 1000.0f && D_800FAD30_FlowerShower == 0) {
+                work->unk_40 = D_800B8990;
+                D_800FAD30_FlowerShower = 1;
+            }
+            func_800F8648_FlowerShower(arg0, (u8)D_800ED430, D_800FAD3C_FlowerShower);
+            if (D_800FAD44_FlowerShower == 0) {
+            if (GMesStatAllGet() == 0 || (GMesStatAllGet() & 2)) {
+                if (_CheckFlag(0x2B) != 0) {
+                    work->unk_3C *= 0.9f;
+                    if (D_800FAD48_FlowerShower >= 60) {
+                        func_80009448();
+                    }
+                    D_800FAD48_FlowerShower += 2;
+                } else if (D_800FAD64_FlowerShower == 0) {
+                    work->unk_3C = 0.0f;
+                    if (D_800FAD68_FlowerShower == 0) {
+                        func_80060128(0x37);
+                        D_800FAD44_FlowerShower = 1;
+                        func_800184BC(player, 0xD);
+                    } else if (D_800FAD68_FlowerShower < GwPlayer[D_800FAD60_FlowerShower].coins_mg) {
+                        func_80060128(0x33);
+                        D_800FAD44_FlowerShower = 2;
+                        func_800184BC(player, 0xD);
+                    } else {
+                        func_80060128(0x35);
+                        D_800FAD44_FlowerShower = 3;
+                    }
+                } else if (D_800FAD68_FlowerShower < GwPlayer[D_800FAD60_FlowerShower].coins_mg) {
+                    func_80060128(0x35);
+                    D_800FAD44_FlowerShower = 4;
+                } else {
+                    func_80060128(0x34);
+                    D_800FAD44_FlowerShower = 5;
+                }
+            }
+            } else {
+            switch (D_800FAD44_FlowerShower) {
+                case 1:
+                    if (D_800FAD48_FlowerShower == 0x60) {
+                        goto voice;
+                    }
+                    if (D_800FAD48_FlowerShower == 0x8C) {
+                        func_80009448();
+                    }
+                    D_800FAD48_FlowerShower += 2;
+                    break;
+                case 2:
+                    if (D_800FAD48_FlowerShower == 0x48) {
+                    voice:
+                        func_80060618(0x451, (s16)D_800FAD60_FlowerShower);
+                    } else if (D_800FAD48_FlowerShower == 0x72) {
+                        func_80009448();
+                    }
+                    D_800FAD48_FlowerShower += 2;
+                    break;
+                case 3:
+                default:
+                    if (D_800FAD48_FlowerShower == 0xB4) {
+                        func_80009448();
+                    }
+                    D_800FAD48_FlowerShower += 2;
+                    break;
+            }
+            }
+            D_800FAD3C_FlowerShower += 2;
+            break;
+        case 3:
+            if (GMesWait() != 1) {
+                func_800726AC(0, 0x14);
+                arg0->func_ptr = func_800F6A64_FlowerShower;
+            }
+            func_800F8648_FlowerShower(arg0, (u8)D_800ED430, D_800FAD3C_FlowerShower);
+            D_800FAD40_FlowerShower += 2;
+            break;
+    }
+    if (D_800F5144 == 1) {
+        omOvlReturnEx(1);
+        func_800601D4(0x28);
+    }
+}
 void func_800F6FF4_FlowerShower(omObjData* arg0) {
     FlowerShowerModelWork* work;
 
