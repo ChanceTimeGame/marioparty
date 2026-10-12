@@ -560,4 +560,66 @@ void func_800FB6B8_DesertDash(void) {
     }
 }
 
+/* Builds a team banner's display list into *buf: frame `frame` of sprite animation `anim` (an I4
+   image) drawn at (x, y) scaled by (sx, sy), `strips` texture loads of `rows` lines each, every
+   `band` lines a rectangle shifted sideways by sin(phase) * amp (phase advances by `step`). */
+// logic-equivalent gbi-macro rewrite (ovl_20 func_800FA9B0's shape); retail interleaves the writes
+#ifdef NON_MATCHING
+void func_800FB750_DesertDash(Gfx** buf, s16 anim, s32 frame, s32 x, s32 y, s32 phase, s32 band, f32 amp, s32 step,
+                              s32 strips, f32 sx, f32 sy) {
+    unk65770AnimC* f;
+    Gfx* gfx;
+    s32 ang;
+    s32 rows;
+    s32 x0;
+    s32 x1;
+    s32 y0;
+    s32 i;
+    s32 j;
+    s32 wave;
+    f32 top;
+    f32 h;
+
+    ang = step * phase;
+    gfx = *buf;
+    f = &func_80067310(anim)->unk0[frame];
+    rows = f->unk6 / strips;
+    x0 = x - (u16)f->unk8 * sx;
+    x1 = x0 + f->unk4 * sx;
+    y0 = y - (u16)f->unkA * sy;
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureLUT(gfx++, G_TT_NONE);
+    gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x004041C8);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gSPSetOtherMode(gfx++, G_SETOTHERMODE_H, G_MDSFT_RGBDITHER, 2, 0x40);
+    gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFDF2F9);
+    gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0x00, 0xFF);
+    for (i = 0; i < strips; i++) {
+        /* an I4 image loaded as I8 of half the width (gDPLoadTextureTile_4b) */
+        gDPSetTextureImage(gfx++, G_IM_FMT_I, G_IM_SIZ_8b, f->unk4 >> 1, f->unk0);
+        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_8b, ((f->unk4 >> 1) + 7) >> 3, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0,
+                   0);
+        gDPLoadSync(gfx++);
+        gDPLoadTile(gfx++, G_TX_LOADTILE, 0, (rows * i) << 2, (f->unk4 - 1) << 1, (rows * (i + 1) - 1) << 2);
+        gDPPipeSync(gfx++);
+        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_4b, ((f->unk4 >> 1) + 7) >> 3, 0, G_TX_RENDERTILE, 0, 0, 0, 0, 0, 0,
+                   0);
+        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, (rows * i) << 2, (f->unk4 - 1) << 2, (rows * (i + 1) - 1) << 2);
+        for (j = 0; j < rows / band; j++) {
+            wave = func_800AEAC0(ang) * amp * 4.0f * sx;
+            ang = (ang + step) % 360;
+            top = (f32)y0 + rows * sy * i;
+            h = band * sy;
+            gSPScisTextureRectangle(gfx++, x0 * 4 + wave, (s16)(s32)(top + h * j) << 2, x1 * 4 + wave,
+                                    (s32)(top + h * (j + 1)) * 4, G_TX_RENDERTILE, 0, (rows * i + band * j) << 5,
+                                    (s32)(1.0 / sx * 1024.0), (s32)(1.0 / sy * 1024.0));
+        }
+    }
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FB750_DesertDash);
+#endif
