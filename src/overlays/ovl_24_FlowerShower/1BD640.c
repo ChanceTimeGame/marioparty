@@ -27,6 +27,26 @@ typedef struct FlowerShowerBodyWork {
     /* 0x68 */ s32* unk_68;
 } FlowerShowerBodyWork;
 
+/* A player object's work (func_8000979C / func_800F761C allocate it, 0xE8): MgWork's layout
+ * (src/99E0.c), with every pointer member where MgWork has one so the host offsets agree. */
+typedef struct FlowerShowerPlayerWork {
+    /* 0x00 */ char unk_00[0x50];
+    /* 0x50 */ u16 unk_50; /* flags */
+    /* 0x52 */ char unk_52[4];
+    /* 0x56 */ s8 unk_56; /* controller port */
+    /* 0x57 */ char unk_57;
+    /* 0x58 */ s8 unk_58; /* player */
+    /* 0x59 */ char unk_59[0x47];
+    /* 0xA0 */ f32 unk_A0;
+    /* 0xA4 */ char unk_A4[0x14];
+    /* 0xB8 */ omObjData* unk_B8; /* MgWork's held item */
+    /* 0xBC */ char unk_BC[0x1C];
+    /* 0xD8 */ s16 (*unk_D8)[2]; /* one pair per motion */
+    /* 0xDC */ void* unk_DC; /* collision callback */
+    /* 0xE0 */ char unk_E0[4];
+    /* 0xE4 */ void* unk_E4;
+} FlowerShowerPlayerWork; /* size = 0xE8 (N64) */
+
 typedef struct FlowerShowerModelWork {
     /* 0x00 */ char unk_00[4];
     /* 0x04 */ u8 unk_04;
@@ -44,6 +64,10 @@ typedef struct FlowerShowerNpcWork {
 FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData*, s32, f32, f32, s32, s32, s32, s32);
 f32 func_800051D4(omObjData*, f32, f32, f32, Vec3f*);
 f32 func_80029518(f32);
+f32 func_800288D8(s16);
+void func_80008FDC(omObjData*, f32);
+void func_80008FA0(omObjData*, f32);
+void func_80008FE8(omObjData*, f32);
 f32 func_800FA5B8_FlowerShower(omObjData*);
 f32 func_800FA92C_FlowerShower(omObjData*);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
@@ -206,8 +230,78 @@ void func_800F7348_FlowerShower(omObjData* arg0, s32 arg1, s32 arg2, s32 arg3) {
     func_8001E360(work->unk_23, 0xFF, 0xFF, 0xFF);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F761C_FlowerShower);
+void func_800F761C_FlowerShower(omObjData* arg0, s32 arg1, s32 arg2, s32 arg3, f32 arg4, f32 arg5, f32 arg6) {
+    FlowerShowerPlayerWork* work;
+    f32 scale;
+    u16 i;
+    s16 motion;
+    u16 len;
 
+    scale = 1.0f;
+    arg0->unk_50 = func_80023684(sizeof(FlowerShowerPlayerWork), 0x7918);
+    func_8009B770(arg0->unk_50, 0, sizeof(FlowerShowerPlayerWork));
+    work = arg0->unk_50;
+    /* retail sizes the motion pair table by the work size (0xE8 per motion), not 4 */
+    work->unk_D8 = func_80023684(arg0->mtncnt * sizeof(FlowerShowerPlayerWork), 0x7918);
+    for (i = 0; i < arg0->mtncnt; i++) {
+        arg0->motion[i] = -1;
+        work->unk_D8[i][0] = 0;
+        work->unk_D8[i][1] = 0;
+    }
+    for (i = 0; i < arg0->mdlcnt; i++) {
+        arg0->model[i] = 0;
+    }
+    arg0->model[0] = LoadFormFile(arg1 | arg2, 0x699);
+    arg0->model[1] = func_800174F4(7, 0x699);
+    func_800370D4(arg0->model[1]);
+    func_800187D0(arg0, 0, arg1 | 0x99, 1, 0);
+    func_800187D0(arg0, 1, arg1 | 0x2D, 2, 0);
+    work = arg0->unk_50;
+    work->unk_56 = GwPlayer[arg3 & 0xFFFF].port;
+    arg0->func_ptr = NULL;
+    func_800093FC(arg0, arg4, arg5, arg6);
+    func_80008FD0(arg0, 60.0f);
+    func_80008FDC(arg0, 150.0f);
+    func_80008FA0(arg0, 1000.0f);
+    func_80008FE8(arg0, 50.0f);
+    func_800090C4(arg0, 0, 6);
+    func_800090C4(arg0, 1, 1);
+    func_800090C4(arg0, 2, 2);
+    work->unk_58 = arg3;
+    switch ((u32)arg1 >> 16) {
+        case 1:
+            work->unk_A0 = 1.0f;
+            scale = 0.56f;
+            break;
+        case 2:
+            work->unk_A0 = 1.0f;
+            scale = 0.54f;
+            break;
+        case 6:
+            work->unk_A0 = 1.0f;
+            scale = 0.6f;
+            break;
+        case 4:
+            work->unk_A0 = 0.8f;
+            scale = 0.7f;
+            break;
+        case 3:
+            work->unk_A0 = 0.9f;
+            scale = 0.45f;
+            break;
+        case 5:
+            work->unk_A0 = 0.7f;
+            scale = 0.8f;
+            break;
+    }
+    func_80025830(arg0->model[1], scale, scale, scale);
+    motion = arg0->motion[0] & 0x3FFF;
+    len = func_800288D8(motion) / 5.0f;
+    func_80025C20(arg0->model[0], motion, 0, len, 2);
+    work->unk_50 |= 0x8000;
+    func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_800257E4(arg0->model[1], 0.0f, arg0->rot.y, 0.0f);
+}
 FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData* arg0, s32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
     FlowerShowerBodyWork* work;
 
