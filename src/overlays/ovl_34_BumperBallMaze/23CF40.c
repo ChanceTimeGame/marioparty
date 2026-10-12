@@ -47,6 +47,16 @@ typedef struct BumperBallMazeHitProbe {
     f32 radius;
 } BumperBallMazeHitProbe;
 
+/* Floor heights under the ball: eight points 55 units around pos, then pos itself (func_800F8AFC). */
+typedef struct BumperBallMazeFloorProbe {
+    /* 0x00 */ f32 height[8];
+    /* 0x20 */ f32 centerHeight;
+    /* 0x24 */ u16 attr[8];
+    /* 0x34 */ u16 centerAttr;
+    /* 0x36 */ char pad_36[2];
+    /* 0x38 */ Vec3f pos;
+} BumperBallMazeFloorProbe; /* size = 0x44 */
+
 typedef struct BumperBallMazeFallingWork {
     char unk_00[0x44];
     f32 angle;
@@ -128,6 +138,11 @@ void func_800F943C_BumperBallMaze(void);
 void func_800F7240_BumperBallMaze(omObjData*);
 void func_8001E268(s16, u8, u8);
 f32 func_800296FC(f32, f32, BumperBallMazeColVtx*, BumperBallMazeColVtx*);
+f32 func_80029764(f32, f32, f32, void*, u16*);
+void func_8002AE24(s16, s32*, void*, void*);
+u16* func_8002B3A8(s32*);
+s32 func_800F8DFC_BumperBallMaze(s32, u16*, BumperBallMazeColVtx*, BumperBallMazeHitProbe*);
+u16 func_800F8AFC_BumperBallMaze(BumperBallMazeFloorProbe*);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
 f32 func_80025D18(s16);
@@ -428,7 +443,69 @@ void func_800F8AB8_BumperBallMaze(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8AFC_BumperBallMaze);
+u16 func_800F8AFC_BumperBallMaze(BumperBallMazeFloorProbe* out) {
+    BumperBallMazeHitProbe probe;
+    unk2C0C0StructA0* verts;
+    u16* tri;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 best;
+    f32 h;
+    f32 angle;
+    u16 i;
+    u16 misses;
+
+    verts = D_800F2B7C[D_800FAE04_BumperBallMaze->model[0]].unk_6C->unk_78;
+    misses = 0;
+    for (i = 0; i < 8; i++) {
+        angle = i * 45.0f;
+        x = func_800AEAC0(angle) * 55.0f + out->pos.x;
+        y = out->pos.y;
+        z = func_800AEFD0(angle) * 55.0f + out->pos.z;
+        best = out->height[i] = -10000.0f;
+        out->attr[i] = 0xFFFF;
+        probe.x = x;
+        probe.y = y;
+        probe.z = z;
+        func_8002AE24(D_800FAE04_BumperBallMaze->model[0], &D_800EDEC0, func_800F8DFC_BumperBallMaze, &probe);
+        for (tri = func_8002B3A8(&D_800EDEC0); tri != NULL; tri = func_8002B3A8(&D_800EDEC0)) {
+            h = func_80029764(x, y, z, verts, tri);
+            if (best < h) {
+                best = h;
+                out->height[i] = h;
+                out->attr[i] = *tri & 0x3FFF;
+            }
+        }
+        if (best == -10000.0f) {
+            misses++;
+        }
+    }
+    x = out->pos.x;
+    y = out->pos.y;
+    z = out->pos.z;
+    best = out->centerHeight = -10000.0f;
+    out->centerAttr = 0xFFFF;
+    probe.x = x;
+    probe.y = y;
+    probe.z = z;
+    func_8002AE24(D_800FAE04_BumperBallMaze->model[0], &D_800EDEC0, func_800F8DFC_BumperBallMaze, &probe);
+    goto next;
+    do {
+        h = func_80029764(x, y, z, verts, tri);
+        if (best < h) {
+            best = h;
+            out->centerHeight = h;
+            out->centerAttr = *tri & 0x3FFF;
+        }
+    next:
+        tri = func_8002B3A8(&D_800EDEC0);
+    } while (tri != NULL);
+    if (best == -10000.0f) {
+        misses++;
+    }
+    return misses;
+}
 
 s32 func_800F8DFC_BumperBallMaze(s32 arg0, u16* polygon, BumperBallMazeColVtx* vertices,
                                 BumperBallMazeHitProbe* probe) {
