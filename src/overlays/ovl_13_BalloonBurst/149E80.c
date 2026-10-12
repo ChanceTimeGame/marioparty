@@ -77,7 +77,7 @@ typedef struct BalloonBurstObstacle {
     f32 unk_68;
     s16 unk_6C;
     s16 unk_6E;
-    s16 unk_70;
+    u16 unk_70;
     s16 unk_72;
     f32 unk_74;
     f32 unk_78;
@@ -95,9 +95,9 @@ typedef struct BalloonBurstPlayer {
 } BalloonBurstPlayer;
 
 typedef struct BalloonBurstObjectWork {
-    s16 player;
+    u16 player;
     u8 port;
-    s8 player_index;
+    u8 player_index;
     u8 unk_04;
     char unk_05[3];
     s32 unk_08;
@@ -132,6 +132,13 @@ extern s16 D_800FC392_BalloonBurst;
 void func_800F77D0_BalloonBurst(u8, s16, f32, f32, f32, f32, f32, f32);
 void func_800F8670_BalloonBurst(omObjData *);
 void func_80039644(s16, u8, u8);
+void func_80060440(s16, s16);
+void func_800607C4(s16, s32);
+void func_800FAA6C_BalloonBurst(omObjData *, u16 *, s16 *);
+extern u8 D_800C5982;
+extern u16 ContBtn[4];
+extern s16 D_800FAF10_BalloonBurst[];
+extern u8 D_800FAF89_BalloonBurst[];
 void func_800F9368_BalloonBurst(f32, Vec, s16, f32, Vec *);
 void func_800FA9C4_BalloonBurst(f32, Vec3f *);
 void func_80027AC8(s16, char *, char *);
@@ -573,8 +580,129 @@ void func_800F7E38_BalloonBurst(omObjData *arg0, u8 player_index) {
                   D_800FAF79_BalloonBurst[(s32)(player->obstacles[0].unk_50 / 1.6666666f) * 2]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7F94_BalloonBurst);
+void func_800F7F94_BalloonBurst(omObjData *arg0) {
+    u16 btn;
+    s16 trg;
+    BalloonBurstObjectWork *work;
+    BalloonBurstObstacle *p;
+    u8 port;
+    u16 idx;
+    u16 flags;
 
+    if (D_800C5982 == 1) {
+        return;
+    }
+    work = arg0->unk_50;
+    port = work->port;
+    idx = work->player_index;
+    p = D_800FB120_BalloonBurst[idx].obstacles;
+    if (!(GwPlayer[work->player].flags & 1)) {
+        btn = ContBtn[(s8)port];
+        trg = ContBtnTrg[(s8)port];
+    } else {
+        func_800FAA6C_BalloonBurst(arg0, &btn, &trg);
+    }
+    if (D_800FB10C_BalloonBurst == 1) {
+        if (btn & 0x6000) {
+            work->unk_26 = 1;
+            flags = p[0].unk_70;
+            if (!(flags & 1)) {
+                if (!(flags & 2)) {
+                    p[0].unk_70 = flags | 2;
+                    if (p[0].unk_50 < 5.0f) {
+                        work->unk_24 = func_80060540(0x26B, idx);
+                        func_80060440(work->unk_24, (rand8() * 4 + rand8()) % 1001 - 600);
+                        func_800607C4(work->unk_24, D_800FAF10_BalloonBurst[work->player]);
+                    }
+                }
+                if (p[0].unk_50 < 5.0f) {
+                    p[0].unk_50 += 1.0f;
+                    work->unk_0C -= work->unk_10 / 5.0f;
+                    p[0].unk_44 -= p[0].unk_48 / 5.0f;
+                    func_800396B0(p[0].unk_72, D_800FAF79_BalloonBurst[(s32)(p[0].unk_50 / 1.6666666f) * 2]);
+                    if (work->unk_0C < 0.0f) {
+                        work->unk_0C = 0.0f;
+                    }
+                    if (p[0].unk_44 < 0.0f) {
+                        p[0].unk_44 = 0.0f;
+                    }
+                }
+            }
+        }
+        if (p[0].unk_50 >= 5.0f && work->unk_26 == 1) {
+            if (work->unk_04 ^= 1) {
+                func_800396B0(p[0].unk_72, D_800FAF7F_BalloonBurst[0]);
+            } else {
+                func_800396B0(p[0].unk_72, D_800FAF89_BalloonBurst[0]);
+            }
+        }
+        if (btn & 0x8000) {
+            work->unk_26 = 1;
+            flags = p[0].unk_70;
+            if (flags & 2) {
+                goto clear;
+            }
+            if (!(flags & 1)) {
+                if (p[0].unk_50 != 0.0f) {
+                    work->unk_24 = func_80060540(0x26C, idx);
+                    func_80060440(work->unk_24, (rand8() * 4 + rand8()) % 1001 - 600);
+                    func_800607C4(work->unk_24, D_800FAF10_BalloonBurst[work->player]);
+                }
+                work->unk_04 = 0;
+            }
+            p[0].unk_70 |= 1;
+            if (p[0].unk_50 > 0.0f) {
+                p[0].unk_4C += 1.0f;
+                if (p[0].unk_4C > 5.0f) {
+                    p[0].unk_4C = 5.0f;
+                }
+                p[1].unk_54 = (func_800B1750(p[0].unk_4C * p[0].unk_4C + 25.0f) * 0.2f - 1.0f) * 6.5f;
+                p[0].unk_50 -= 1.0f;
+                if (p[0].unk_50 < 0.0f) {
+                    p[0].unk_50 = 0.0f;
+                }
+                work->unk_0C = work->unk_10 / 5.0f + work->unk_0C;
+                p[0].unk_44 = p[0].unk_48 / 5.0f + p[0].unk_44;
+                func_800396B0(p[0].unk_72, D_800FAF79_BalloonBurst[(7 - (s32)(p[0].unk_50 * 1.25f / 1.6666666f)) * 2]);
+                if (work->unk_0C > work->unk_10) {
+                    work->unk_0C = work->unk_10;
+                }
+                if (p[0].unk_44 > p[0].unk_48) {
+                    p[0].unk_44 = p[0].unk_48;
+                }
+                if (p[0].unk_50 == 0.0f) {
+                    p[1].unk_70 |= 0xC;
+                    p[1].unk_68 = p[1].unk_54 / 3.0f;
+                    work->unk_0C = work->unk_10;
+                    p[0].unk_44 = p[0].unk_48;
+                    p[0].unk_4C = 0.0f;
+                }
+            }
+        }
+        if (p[0].unk_70 & 2) {
+        clear:
+            if (!(btn & 0x6000)) {
+                p[0].unk_70 &= ~2;
+            }
+        }
+        flags = p[0].unk_70;
+        if ((flags & 1) && !(btn & 0x8000)) {
+            p[0].unk_70 = flags & ~1;
+            p[1].unk_70 |= 0xC;
+            p[1].unk_68 = p[1].unk_54 / 3.0f;
+            p[0].unk_4C = 0.0f;
+        }
+    } else if (D_800FB10C_BalloonBurst == 2) {
+        if (p[1].unk_54 != 0.0f) {
+            p[1].unk_70 |= 0xC;
+            p[1].unk_68 = p[1].unk_54 / 3.0f;
+        }
+    }
+    if (D_800FB10C_BalloonBurst == 1) {
+        func_80025CA8(arg0->model[0], work->unk_0C);
+        func_80025CA8(p[0].model, p[0].unk_44);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F8670_BalloonBurst);
 
 // loop-tail branch layout (masked 7: retail beql exit / j top, this gives bne top / j exit)
