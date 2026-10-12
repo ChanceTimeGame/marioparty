@@ -121,7 +121,7 @@ typedef struct CastAwaysRodWork {
     /* 0x00 */ omObjData* playerObj;
     /* 0x04 */ omObjData* fishObj;
     /* 0x08 */ u16 playerNo;
-    /* 0x0A */ s16 state;
+    /* 0x0A */ u16 state;
     /* 0x0C */ u16 group;
     /* 0x0E */ u16 steps;
     /* 0x10 */ u16 counter;
@@ -270,3 +270,5 @@ extern char* D_800FB9D8_CastAways;
 extern u8 D_800FBA00_CastAways[4];
 extern u8 D_800FBA04_CastAways;
 void func_80020958(s16, CastAwaysAnimData*, s16);
+extern s8 ContStkY[];
+extern s16 D_800F377A[];

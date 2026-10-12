@@ -1,5 +1,8 @@
 #include "CastAways.h"
 
+/* Player object: reads the stick (or the CPU), sets the cast power, casts and reels. */
+
+
 extern Vec D_800FB930_CastAways[4];
 extern char D_800FBA80_CastAways[];
 
@@ -744,8 +747,176 @@ void func_800F8B00_CastAways(omObjData* arg0) {
     func_800F8194_CastAways(arg0, 3);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_CastAways);
+// register allocation and branch layout
+#ifdef NON_MATCHING
+void func_800F8B1C_CastAways(omObjData* arg0) {
+    s8 stick[2];
+    s8 button;
+    CastAwaysPlayerWork* work;
+    CastAwaysRodWork* rod;
+    s32 event;
+    u8 port;
+    s16 r;
+    s16 power;
+    f32 frame;
 
+    button = 0;
+    if (D_800FBB7C_ovl2B != 1) {
+        return;
+    }
+    work = arg0->unk_50;
+    rod = work->rodObj->unk_50;
+    port = GwPlayer[work->playerNo].port;
+    event = arg0->unk_10;
+    if (event != 0) {
+        arg0->unk_10 = 0;
+        if (event == D_800FBB7C_ovl2B) {
+            work->state = 0x10;
+            work->motionIdx = 7;
+            work->flags &= ~1;
+        } else if (event == 2) {
+            work->state = 0x10;
+            work->flags &= ~1;
+            work->motionIdx = 6;
+            work->catches++;
+        }
+    }
+    if (work->state == 0x10) {
+        D_800F2B7C[arg0->motion[0xB]].unk_08 = work->savedSpeed[3];
+        if (work->lureObj != NULL) {
+            omDelObj(work->lureObj);
+            work->lureObj = NULL;
+        }
+        work->state = 0x20;
+        work->repeat = 0;
+        work->lastPower = 0;
+        work->power = 0;
+        func_800258EC(arg0->model[2], 4, 0);
+        func_800258EC(arg0->model[3], 4, 4);
+        func_8002859C(work->rodObj->model[0], arg0->model[2], D_800FB9D4_CastAways);
+        func_800258EC(work->rodObj->model[0], 0x4000, 0x4000);
+        func_80025BB8(arg0->model[0], arg0->motion[work->motionIdx]);
+        func_80025EB4(arg0->model[0], 1, 0);
+        func_800258EC(arg0->model[2], 0x4000, 0x4000);
+    }
+    if (work->state == 0x20) {
+        frame = func_80025D18(arg0->model[0]);
+        if (func_80025D40(arg0->model[0]) <= frame) {
+            work->state = 1;
+            func_80020958(arg0->model[0], work->animDataA, 0);
+            func_80025EB4(arg0->model[0], 3, 3);
+            func_800258EC(arg0->model[2], 4, 4);
+            func_800258EC(arg0->model[2], 0x4000, 0);
+            func_800258EC(arg0->model[3], 4, 0);
+            func_8002859C(work->rodObj->model[0], arg0->model[3], D_800FB9D8_CastAways);
+            func_80025EB4(arg0->model[3], 1, 1);
+            func_80025CA8(arg0->model[3], 0.0f);
+        }
+    }
+    if (!(GwPlayer[work->playerNo].flags & 1)) {
+        stick[0] = ContStkX[port];
+        stick[1] = ContStkY[port];
+        r = func_80009E4C(work->playerNo, 15, ContStkX[port], ContStkY[port]);
+        if (r < 0) {
+            r = -r;
+        }
+        if (r == 2) {
+            button = 1;
+            work->unk_148 = D_800F377A[work->playerNo];
+        } else if (r == 0 && rod->state == 2 && work->state == 8 && (work->flags & 2)) {
+            func_8006071C(work->sound);
+            work->flags &= ~2;
+        }
+    } else {
+        func_800F6A24_CastAways(arg0, &stick[0], &stick[1], &button);
+    }
+    power = func_800FB404_CastAways(stick[0], stick[1]);
+    if (power != 0) {
+        if ((u16)(work->state - 1) < 2) {
+            work->state = 2;
+            if (work->power < power) {
+                work->power = power;
+            }
+            if (power != work->lastPower) {
+                work->repeat = 0;
+            } else if (++work->repeat == 2) {
+                work->repeat = 0;
+                work->power = power;
+            }
+            work->lastPower = power;
+            func_800FAD2C_CastAways(arg0);
+        }
+    } else if (work->state == 2) {
+        work->state = 4;
+    }
+    if (work->state == 4) {
+        if (work->unk_14E == 0) {
+            func_800FAD2C_CastAways(arg0);
+        } else {
+            work->state = 8;
+        }
+    }
+    if (work->state == 8) {
+        if (work->unk_14E == 1) {
+            work->unk_14E = 0;
+            work->lastPower = 0;
+            work->castState = 1;
+            rod = work->rodObj->unk_50;
+            rod->timer = 3;
+            rod->group = work->fishType;
+            switch (work->fishType) {
+            case 0:
+                rod->targetZ = 1800.0f;
+                rod->velY = -6.0f;
+                D_800FBB00_CastAways = 0x311;
+                break;
+            case 1:
+                rod->targetZ = 1050.0f;
+                rod->velY = -7.0f;
+                D_800FBB00_CastAways = 0x310;
+                break;
+            case 2:
+                rod->targetZ = 300.0f;
+                rod->velY = -8.0f;
+                D_800FBB00_CastAways = 0x30F;
+                break;
+            }
+            func_80025BB8(arg0->model[0], arg0->motion[work->fishType + 2]);
+            func_80025BB8(arg0->model[3], arg0->motion[10 - work->fishType]);
+            func_80025EB4(arg0->model[0], 1, 0);
+            omDelObj(work->lureObj);
+            work->lureObj = NULL;
+            work->fishType = -1;
+        }
+        if (func_80025D18(arg0->model[0]) >= 10.0f && rod->state == 0) {
+            if (!(work->flags & 1)) {
+                work->sound = func_80060540(D_800FBB00_CastAways, work->playerNo);
+                work->flags |= 1;
+            }
+            func_8005DC18(work->rodObj, 1);
+            func_800258EC(work->rodObj->model[0], 0x4000, 0);
+            omSetTra(work->rodObj, arg0->trans.x + 15.0f, arg0->trans.y + 145.0f, arg0->trans.z + -125.0f);
+            for (event = 0; event < 2; event++) {
+                work->samples[event].x = work->rodObj->trans.x;
+                work->samples[event].y = work->rodObj->trans.y;
+                work->samples[event].z = work->rodObj->trans.z;
+            }
+        }
+    }
+    if (button == 1) {
+        func_8005DC18(work->rodObj, 2);
+        if (rod->state == 2 && work->state == 8) {
+            func_800FB668_CastAways(arg0, arg0->model[0], work->animDataB, 0.0f, 1.0f, rod->state, 5);
+            if (!(work->flags & 2)) {
+                work->sound = func_80060540(0x312, work->playerNo);
+                work->flags |= 2;
+            }
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_CastAways);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F92FC_CastAways);
 
 void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwaysRodWork* arg2) {
