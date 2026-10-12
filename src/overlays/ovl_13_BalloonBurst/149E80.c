@@ -25,7 +25,6 @@ extern Gfx **D_800FB0F8_BalloonBurst[];
 extern s16 D_800F3778;
 extern u16 D_800FB10C_BalloonBurst;
 extern u16 D_800FB10E_BalloonBurst;
-extern u8 D_800FAF79_BalloonBurst[];
 extern u16 D_800FC386_BalloonBurst;
 extern f32 D_800FC380_BalloonBurst;
 extern u16 D_800FC384_BalloonBurst;
@@ -40,19 +39,11 @@ extern omObjData *D_800FC3B0_BalloonBurst;
 extern omObjData *D_800FC3B4_BalloonBurst;
 extern u16 D_800FC3A2_BalloonBurst[];
 extern u8 D_800F64F8;
-extern u16 D_800FB54E_BalloonBurst[];
-extern u16 D_800FB550_BalloonBurst[];
 extern unk34D80Struct80 *D_800ED554;
 extern u16 D_800FB110_BalloonBurst;
 extern omObjData *D_800FC394_BalloonBurst;
 extern omObjData *D_800FC398_BalloonBurst;
 extern omObjData **D_800FC39C_BalloonBurst;
-extern u16 D_800FAF8C_BalloonBurst[];
-extern u16 D_800FAF94_BalloonBurst;
-extern u16 D_800FAF96_BalloonBurst;
-extern u8 D_800FAF7F_BalloonBurst[];
-extern s16 D_800FACCE_BalloonBurst[];
-extern Vec D_800FAEE0_BalloonBurst[];
 
 void func_800396B0(s16, u8);
 
@@ -125,13 +116,11 @@ typedef struct BalloonBurstObjectWork {
 extern BalloonBurstPlayer D_800FB120_BalloonBurst[];
 
 typedef struct BalloonBurstCharOffset {
-    f32 unk_00;
-    f32 unk_04;
-    u16 unk_08[4];
+    u16 unk_00[4];
+    f32 unk_08;
+    f32 unk_0C;
 } BalloonBurstCharOffset;
 
-extern BalloonBurstCharOffset D_800FAF20_BalloonBurst[];
-extern char *D_800FACA0_BalloonBurst[];
 extern s16 D_800FB0E2_BalloonBurst[];
 extern u16 D_800FB0EA_BalloonBurst[];
 extern s16 D_800FC390_BalloonBurst;
@@ -144,9 +133,6 @@ void func_800607C4(s16, s32);
 void func_800FAA6C_BalloonBurst(omObjData *, u16 *, s16 *);
 extern u8 D_800C5982;
 extern u16 ContBtn[4];
-extern s16 D_800FAF10_BalloonBurst[];
-extern s16 D_800FACC8_BalloonBurst[];
-extern u16 D_800FACD8_BalloonBurst[];
 void func_800F8D6C_BalloonBurst(u8, f32);
 void func_8005DB84(s16, s32);
 void func_80018F68(u16, u8, u8, u8);
@@ -174,8 +160,6 @@ typedef struct BalloonBurstSpark {
     u8 unk_37;
 } BalloonBurstSpark; // sizeof 0x38
 
-extern BalloonBurstSpark D_800FACE8_BalloonBurst[];
-extern u16 D_800FAF98_BalloonBurst;
 extern f32 D_800FB0A0_BalloonBurst;
 extern f32 D_800FB0A4_BalloonBurst;
 extern f32 D_800FB0A8_BalloonBurst;
@@ -193,30 +177,69 @@ extern f32 D_800FB0D4_BalloonBurst;
 extern f32 D_800FB0D8_BalloonBurst;
 extern f32 D_800FB0DC_BalloonBurst;
 extern u16 D_800FB0E0_BalloonBurst;
-extern u8 D_800FAF89_BalloonBurst[];
 void func_800F9368_BalloonBurst(f32, Vec, s16, f32, Vec *);
 void func_800FA9C4_BalloonBurst(f32, Vec3f *);
 void func_800FA8A4_BalloonBurst(s32);
 void func_800F7D9C_BalloonBurst(u16);
 void func_80027AC8(s16, char *, char *);
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFA0_BalloonBurst);
+const char D_800FAFA0_BalloonBurst[] = "24mt01d_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFAC_BalloonBurst);
+const char D_800FAFAC_BalloonBurst[] = "24mt02d_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFB8_BalloonBurst);
+const char D_800FAFB8_BalloonBurst[] = "24mt01c_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFC4_BalloonBurst);
+const char D_800FAFC4_BalloonBurst[] = "24mt02c_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFD0_BalloonBurst);
+const char D_800FAFD0_BalloonBurst[] = "24mt01b_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFDC_BalloonBurst);
+const char D_800FAFDC_BalloonBurst[] = "24mt02b_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFE8_BalloonBurst);
+const char D_800FAFE8_BalloonBurst[] = "24mt01a_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FAFF4_BalloonBurst);
+const char D_800FAFF4_BalloonBurst[] = "24mt02a_DEF";
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", D_800FB000_BalloonBurst);
+const char D_800FB000_BalloonBurst[4] = "";
+
+// .data
+char *D_800FACA0_BalloonBurst[] = {
+    (char *)D_800FB000_BalloonBurst, (char *)D_800FB000_BalloonBurst, (char *)D_800FAFF4_BalloonBurst, (char *)D_800FAFE8_BalloonBurst,
+    (char *)D_800FAFDC_BalloonBurst, (char *)D_800FAFD0_BalloonBurst, (char *)D_800FAFC4_BalloonBurst, (char *)D_800FAFB8_BalloonBurst,
+    (char *)D_800FAFAC_BalloonBurst, (char *)D_800FAFA0_BalloonBurst,
+};
+s16 D_800FACC8_BalloonBurst[] = { 1, 2, 3, 4, 3, 2, 1, 0 };
+u16 D_800FACD8_BalloonBurst[] = { 1, 1, 1, 3, 1, 1, 1, 0xFFFF };
+BalloonBurstSpark D_800FACE8_BalloonBurst[] = {
+    { 0, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.5f, 1.5f, 1.125f, 0.625f, 3.5714285373687744f, 0xA3, 0, 0 },
+    { 0, 0, 1.0f, 90.0f, 7.0f, 16.0f, -16.0f, 4.0f, -2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0xB7, 0, 0 },
+    { 0, 0, 1.0f, 180.0f, 7.0f, -16.0f, 16.0f, -4.0f, 2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+    { 0, 0, 1.0f, 270.0f, 9.0f, 16.0f, 16.0f, 4.0f, 2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+    { 0, 0, 1.0f, 0.0f, 9.0f, -16.0f, -16.0f, -4.0f, -2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+    { 0, 0, 1.0f, 45.0f, 9.0f, 16.0f, -16.0f, 4.0f, -2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+    { 0, 0, 1.0f, 135.0f, 9.0f, -16.0f, 16.0f, -4.0f, 2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+    { 0, 0, 1.0f, 225.0f, 9.0f, 16.0f, 16.0f, 4.0f, 2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+    { 0, 0, 1.0f, 315.0f, 9.0f, -16.0f, -16.0f, -4.0f, -2.5f, 1.0f, 1.0f, 1.0625f, 0.6875f, 4.0f, 0x99, 0, 0 },
+};
+Vec D_800FAEE0_BalloonBurst[] = {
+    { -450.0f, 0.0f, 825.0f },
+    { -150.0f, 0.0f, 787.5f },
+    { 150.0f, 0.0f, 750.0f },
+    { 450.0f, 0.0f, 712.5f },
+};
+s16 D_800FAF10_BalloonBurst[] = { 0x20, 0x30, 0x50, 0x60 };
+BalloonBurstCharOffset D_800FAF18_BalloonBurst[] = {
+    { { 1, 0, 0, 0x9F }, 35.0f, -250.0f },
+    { { 2, 0, 0, 0x9F }, 40.0f, -250.0f },
+    { { 6, 0, 0, 0x9F }, 40.0f, -250.0f },
+    { { 3, 0, 0, 0x9F }, 50.0f, -250.0f },
+    { { 4, 0, 0, 0x9F }, 65.0f, -250.0f },
+    { { 5, 0, 0, 0x9F }, 100.0f, -250.0f },
+};
+u16 D_800FAF78_BalloonBurst[] = { 3, 2, 1, 0, 7, 6, 5, 4, 8, 0 };
+u16 D_800FAF8C_BalloonBurst[] = { 0, 0, 0, 0 };
+u16 D_800FAF94_BalloonBurst = 0;
+u16 D_800FAF96_BalloonBurst = 1;
+u16 D_800FAF98_BalloonBurst = 10;
 
 void func_800F65E0_BalloonBurst(void) {
     s32 i;
@@ -246,24 +269,24 @@ void func_800F65E0_BalloonBurst(void) {
     omAddObj(2, 3, 0x32, 1, func_800F7140_BalloonBurst);
     c = GwPlayer[0].character;
     func_800F77D0_BalloonBurst(0, 1, D_800FAEE0_BalloonBurst[0].x, D_800FAEE0_BalloonBurst[0].y,
-                               D_800FAEE0_BalloonBurst[0].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[0].z + D_800FAF18_BalloonBurst[c].unk_08,
                                D_800FAEE0_BalloonBurst[0].x - 50.0f, 0.0f,
-                               D_800FAEE0_BalloonBurst[0].z + D_800FAF20_BalloonBurst[c].unk_04);
+                               D_800FAEE0_BalloonBurst[0].z + D_800FAF18_BalloonBurst[c].unk_0C);
     c = GwPlayer[1].character;
     func_800F77D0_BalloonBurst(1, 2, D_800FAEE0_BalloonBurst[1].x, D_800FAEE0_BalloonBurst[1].y,
-                               D_800FAEE0_BalloonBurst[1].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[1].z + D_800FAF18_BalloonBurst[c].unk_08,
                                D_800FAEE0_BalloonBurst[1].x - 50.0f, 0.0f,
-                               D_800FAEE0_BalloonBurst[1].z + D_800FAF20_BalloonBurst[c].unk_04);
+                               D_800FAEE0_BalloonBurst[1].z + D_800FAF18_BalloonBurst[c].unk_0C);
     c = GwPlayer[2].character;
     func_800F77D0_BalloonBurst(2, 4, D_800FAEE0_BalloonBurst[2].x, D_800FAEE0_BalloonBurst[2].y,
-                               D_800FAEE0_BalloonBurst[2].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[2].z + D_800FAF18_BalloonBurst[c].unk_08,
                                D_800FAEE0_BalloonBurst[2].x - 50.0f, 0.0f,
-                               D_800FAEE0_BalloonBurst[2].z + D_800FAF20_BalloonBurst[c].unk_04);
+                               D_800FAEE0_BalloonBurst[2].z + D_800FAF18_BalloonBurst[c].unk_0C);
     c = GwPlayer[3].character;
     func_800F77D0_BalloonBurst(3, 8, D_800FAEE0_BalloonBurst[3].x, D_800FAEE0_BalloonBurst[3].y,
-                               D_800FAEE0_BalloonBurst[3].z + D_800FAF20_BalloonBurst[c].unk_00,
+                               D_800FAEE0_BalloonBurst[3].z + D_800FAF18_BalloonBurst[c].unk_08,
                                D_800FAEE0_BalloonBurst[3].x - 50.0f, 0.0f,
-                               D_800FAEE0_BalloonBurst[3].z + D_800FAF20_BalloonBurst[c].unk_04);
+                               D_800FAEE0_BalloonBurst[3].z + D_800FAF18_BalloonBurst[c].unk_0C);
     D_800FB0E2_BalloonBurst[0] = LoadFormFile(0x250004, 0x2069D);
     D_800FB0E2_BalloonBurst[1] = LoadFormFile(0x250005, 0x2069D);
     D_800FB0E2_BalloonBurst[2] = LoadFormFile(0x250006, 0x2069D);
@@ -480,10 +503,10 @@ void func_800F7298_BalloonBurst(omObjData *arg0) {
                     D_800FC38E_BalloonBurst = D_800FAF8C_BalloonBurst[rand8() % D_800FAF94_BalloonBurst];
                 }
                 GwPlayer[D_800FC38E_BalloonBurst].coins_mg += 10;
-                func_800F94E0_BalloonBurst(D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[6].model, D_800FACCE_BalloonBurst[0]);
+                func_800F94E0_BalloonBurst(D_800FB120_BalloonBurst[D_800FC38E_BalloonBurst].obstacles[6].model, D_800FACC8_BalloonBurst[3]);
                 for (i = 0; i < 4; i++) {
                     if (D_800FB120_BalloonBurst[i].obstacles[0].unk_50 >= 5.0f) {
-                        func_800396B0(D_800FB120_BalloonBurst[i].obstacles[0].unk_72, D_800FAF7F_BalloonBurst[0]);
+                        func_800396B0(D_800FB120_BalloonBurst[i].obstacles[0].unk_72, (u8)D_800FAF78_BalloonBurst[3]);
                     }
                 }
             } else if (D_800FC386_BalloonBurst == 0) {
@@ -495,7 +518,7 @@ void func_800F7298_BalloonBurst(omObjData *arg0) {
                 func_800790C0();
                 for (i = 0; i < 4; i++) {
                     if (D_800FB120_BalloonBurst[i].obstacles[0].unk_50 >= 5.0f) {
-                        func_800396B0(D_800FB120_BalloonBurst[i].obstacles[0].unk_72, D_800FAF7F_BalloonBurst[0]);
+                        func_800396B0(D_800FB120_BalloonBurst[i].obstacles[0].unk_72, (u8)D_800FAF78_BalloonBurst[3]);
                     }
                 }
             }
@@ -634,7 +657,7 @@ void func_800F7E38_BalloonBurst(omObjData *arg0, u8 player_index) {
     work->unk_0C = 0.0f;
     player->obstacles[0].unk_44 = 0.0f;
     func_800396B0(player->obstacles[0].unk_72,
-                  D_800FAF79_BalloonBurst[(s32)(player->obstacles[0].unk_50 / 1.6666666f) * 2]);
+                  (u8)D_800FAF78_BalloonBurst[(s32)(player->obstacles[0].unk_50 / 1.6666666f)]);
 }
 
 void func_800F7F94_BalloonBurst(omObjData *arg0) {
@@ -676,7 +699,7 @@ void func_800F7F94_BalloonBurst(omObjData *arg0) {
                     p[0].unk_50 += 1.0f;
                     work->unk_0C -= work->unk_10 / 5.0f;
                     p[0].unk_44 -= p[0].unk_48 / 5.0f;
-                    func_800396B0(p[0].unk_72, D_800FAF79_BalloonBurst[(s32)(p[0].unk_50 / 1.6666666f) * 2]);
+                    func_800396B0(p[0].unk_72, (u8)D_800FAF78_BalloonBurst[(s32)(p[0].unk_50 / 1.6666666f)]);
                     if (work->unk_0C < 0.0f) {
                         work->unk_0C = 0.0f;
                     }
@@ -688,9 +711,9 @@ void func_800F7F94_BalloonBurst(omObjData *arg0) {
         }
         if (p[0].unk_50 >= 5.0f && work->unk_26 == 1) {
             if (work->unk_04 ^= 1) {
-                func_800396B0(p[0].unk_72, D_800FAF7F_BalloonBurst[0]);
+                func_800396B0(p[0].unk_72, (u8)D_800FAF78_BalloonBurst[3]);
             } else {
-                func_800396B0(p[0].unk_72, D_800FAF89_BalloonBurst[0]);
+                func_800396B0(p[0].unk_72, (u8)D_800FAF78_BalloonBurst[8]);
             }
         }
         if (btn & 0x8000) {
@@ -720,7 +743,7 @@ void func_800F7F94_BalloonBurst(omObjData *arg0) {
                 }
                 work->unk_0C = work->unk_10 / 5.0f + work->unk_0C;
                 p[0].unk_44 = p[0].unk_48 / 5.0f + p[0].unk_44;
-                func_800396B0(p[0].unk_72, D_800FAF79_BalloonBurst[(7 - (s32)(p[0].unk_50 * 1.25f / 1.6666666f)) * 2]);
+                func_800396B0(p[0].unk_72, (u8)D_800FAF78_BalloonBurst[(7 - (s32)(p[0].unk_50 * 1.25f / 1.6666666f))]);
                 if (work->unk_0C > work->unk_10) {
                     work->unk_0C = work->unk_10;
                 }
@@ -1365,9 +1388,8 @@ const u32 D_800FB098_BalloonBurst[2] = { 0, 0 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F95F8_BalloonBurst);
 #endif
 void func_800FA8A4_BalloonBurst(s32 arg0) {
-    s32 offset = (arg0 & 0xFFFF) * 0x498;
-    u16 model = *(u16 *)((u8 *)D_800FB54E_BalloonBurst + offset);
-    u16 copy = *(u16 *)((u8 *)D_800FB550_BalloonBurst + offset);
+    u16 model = D_800FB120_BalloonBurst[(u16)arg0].obstacles[6].model;
+    u16 copy = D_800FB120_BalloonBurst[(u16)arg0].obstacles[6].unk_40;
     unk_ovl_2D_struct *src = &D_800F2B7C[model];
 
     func_800258EC((s16)model, 4, 4);
