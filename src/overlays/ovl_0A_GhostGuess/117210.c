@@ -277,8 +277,32 @@ void func_800F73E0_GhostGuess(omObjData* arg0) {
         func_80067558((s16)D_800FBEB8_GhostGuess, (s16)i, 0xFF, 0xFF, 0xFF, 0xFF);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F789C_GhostGuess);
+void func_800F789C_GhostGuess(omObjData* arg0) {
+    GGGhost* g;
+    GGGhostWork* work;
 
+    arg0->func_ptr = &func_800FA764_GhostGuess;
+    g = GG_GHOST(arg0);
+    omSetTra(arg0, g->pos.x, g->pos.y, g->pos.z);
+    omSetRot(arg0, g->rot.x, g->rot.y, g->rot.z);
+    g->obj = arg0;
+    arg0->model[0] = func_80023FC8((s16)D_800FBBF0_GhostGuess[3]);
+    arg0->model[1] = func_80023FC8((s16)D_800FBC00_GhostGuess);
+    func_800258EC(arg0->model[0], 4, 0);
+    func_800258EC(arg0->model[1], 4, 0);
+    func_80025830(arg0->model[1], 0.001f, 0.001f, 0.001f);
+    work = func_80023684(sizeof(GGGhostWork), 0x7918);
+    arg0->unk_50 = work;
+    work->unk_44 = 0.1f;
+    work->unk_48 = 90.0f;
+    work->unk_34 = 20.0f;
+    work->unk_3C = 0.0f;
+    work->unk_5C = 0;
+    work->unk_52 = 7;
+    work->unk_60 = 0.0f;
+    work->unk_50 = 0;
+    work->unk_54 = 1;
+}
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", D_800FB760_GhostGuess);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F79D4_GhostGuess);

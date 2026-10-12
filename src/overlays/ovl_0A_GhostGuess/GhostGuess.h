@@ -13,7 +13,8 @@ typedef struct GGGhost {
 /* 0x06 */ s16 unk_06;
 /* 0x08 */ s16 unk_08;
 /* 0x0A */ s16 unk_0A;
-/* 0x0C */ s32 unk_0C;
+/* 0x0C */ s16 unk_0C;
+/* 0x0E */ s16 unk_0E;
 /* 0x10 */ Vec pos;
 /* 0x1C */ Vec rot;
 /* 0x28 */ Vec scale;
@@ -24,6 +25,27 @@ typedef struct GGGhost {
 /* 0x4C */ f32 unk_4C;
 /* 0x50 */ f32 unk_50;
 } GGGhost; /* size = 0x54 on the N64 */
+
+/* A ghost object's work (func_800F789C, 0x6C bytes): the head of the player work's layout
+   (unkGlobalStruct_00), which has no pointer before 0x6C. */
+typedef struct GGGhostWork {
+/* 0x00 */ char unk_00[0x34];
+/* 0x34 */ f32 unk_34;
+/* 0x38 */ char unk_38[4];
+/* 0x3C */ f32 unk_3C;
+/* 0x40 */ char unk_40[4];
+/* 0x44 */ f32 unk_44;
+/* 0x48 */ f32 unk_48;
+/* 0x4C */ char unk_4C[4];
+/* 0x50 */ s16 unk_50;
+/* 0x52 */ s8 unk_52;
+/* 0x53 */ char unk_53[1];
+/* 0x54 */ u8 unk_54;
+/* 0x55 */ char unk_55[7];
+/* 0x5C */ s32 unk_5C;
+/* 0x60 */ f32 unk_60;
+/* 0x64 */ char unk_64[8];
+} GGGhostWork; /* size = 0x6C */
 
 /* D_800FBED0[11]: [0] is the camera/target state (its unk_0C holds the object func_800F6E78
    creates), [1..10] the sprites func_800F80E4 animates. */
