@@ -94,6 +94,15 @@ extern omObjData* D_800EDE70[];
 extern unk2C0C0Struct70* D_800F37AC;
 
 /* .data (117210.c) */
+extern s32 D_800FB670_GhostGuess; /* game state */
+extern s32 D_800FB67C_GhostGuess[8]; /* sound handles; read as (s16) */
+extern s32 D_800FB6D0_GhostGuess; /* 1: the player found the ghost */
+extern s32 D_800FB6DC_GhostGuess;
+extern s32 D_800FB6E0_GhostGuess;
+extern s32 D_800FB6E4_GhostGuess;
+extern s32 D_800FB6E8_GhostGuess;
+extern s32 D_800FB6EC_GhostGuess; /* a sound handle; read as (s16) */
+void func_8006035C(s16, s8);
 extern s32 D_800FB678_GhostGuess;
 extern f32 D_800FB674_GhostGuess;
 extern s32 D_800FB69C_GhostGuess; /* the ghost to find */
@@ -166,7 +175,7 @@ void func_800F6E78_GhostGuess(omObjData* arg0);
 void func_800F6FF4_GhostGuess(omObjData* arg0);
 void func_800F73E0_GhostGuess(omObjData* arg0);
 void func_800F789C_GhostGuess(omObjData* arg0);
-void func_800F79D4_GhostGuess(void);
+void func_800F79D4_GhostGuess(omObjData* arg0);
 void func_800F80E4_GhostGuess(omObjData* arg0);
 void func_800F86CC_GhostGuess(omObjData* arg0);
 void func_800F8888_GhostGuess(omObjData* arg0);
