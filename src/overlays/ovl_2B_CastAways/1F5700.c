@@ -1,8 +1,21 @@
 #include "CastAways.h"
 
+typedef struct CastAwaysAnimData {
+    s16 frameCount;
+    s16 unk_02;
+    void* unk_04;
+    void* unk_08;
+} CastAwaysAnimData;
+
 typedef struct CastAwaysLureWork {
-    char unk_00[8];
-    f32 unk_08;
+    omObjData* playerObj;
+    s16 model;
+    char unk_06[2];
+    f32 frame;
+    f32 step;
+    u16 flags;
+    char unk_12[2];
+    CastAwaysAnimData* animData;
 } CastAwaysLureWork;
 
 typedef struct CastAwaysSpriteData {
@@ -45,6 +58,7 @@ typedef struct CastAwaysCameraViewFromX {
 void func_80023888(void*);
 void func_80020CC4(void*);
 s16 func_80024198(u32, Gfx*, s32);
+void func_80020958(s16, CastAwaysAnimData*, s16);
 extern CastAwaysCameraView D_800EE738;
 extern CastAwaysCameraViewFromX D_800EE73C;
 
@@ -175,14 +189,33 @@ void func_800FB644_CastAways(u16 arg0, f32 arg1) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB668_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB778_CastAways);
+void func_800FB778_CastAways(omObjData* arg0) {
+    CastAwaysLureWork* lure = arg0->unk_50;
+    CastAwaysPlayerWork* player = lure->playerObj->unk_50;
+    s16 frameCount;
+
+    func_80020958(lure->model, lure->animData, (s16)(s32)lure->frame);
+    if (!(lure->flags & 8)) {
+        lure->frame += lure->step;
+    }
+    frameCount = lure->animData->frameCount;
+    if ((f32)frameCount <= lure->frame) {
+        lure->frame = frameCount - 1;
+        if (lure->flags & 1) {
+            omDelObj(arg0);
+            player->lureObj = NULL;
+            return;
+        }
+        player->unk_140 = 1;
+    }
+}
 
 f32 func_800FB858_CastAways(omObjData* arg0) {
     omObjData* lureObj = ((CastAwaysPlayerWork*)arg0->unk_50)->lureObj;
     f32 result;
 
     if (lureObj != NULL) {
-        result = ((CastAwaysLureWork*)lureObj->unk_50)->unk_08;
+        result = ((CastAwaysLureWork*)lureObj->unk_50)->frame;
     } else {
         result = -1.0f;
     }
