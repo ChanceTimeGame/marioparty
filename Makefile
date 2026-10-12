@@ -313,6 +313,9 @@ build/src/AD940.c.o: OPTFLAGS = -O0
 build/src/A1D90.c.o: OPTFLAGS = -O0
 # ovl_21 1A4EB0.c: nop between back-to-back mul.s in func_800F8D2C, func_800F8FE0
 build/src/overlays/ovl_21_TipsyTourney/1A4EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_18 PlatformPeril 170470.c, 16C6A0.c: nop between back-to-back mul.s (func_800FB680; func_800F7070, func_800F8220, func_800F979C)
+build/src/overlays/ovl_18_PlatformPeril/170470.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+build/src/overlays/ovl_18_PlatformPeril/16C6A0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
 
@@ -381,6 +384,14 @@ $(BUILD_DIR)/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2721F0.c.o: $(B
 # ovl_0E 12BC20.c: mul fix on, blank lines stripped (mul.s right after sinf/cosf's return in
 # func_800F9EE4_FaceLift); own rule so parallel branches do not edit a shared list.
 $(BUILD_DIR)/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o $(BUILD_DIR)/src/overlays/ovl_0E_FaceLift/12BC20.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_18 16C6A0.c, 170470.c: mul fix on, blank lines stripped (mul.s right after func_800AEAC0/func_800AEFD0 returns); own rule.
+$(BUILD_DIR)/src/overlays/ovl_18_PlatformPeril/16C6A0.c.o $(BUILD_DIR)/src/overlays/ovl_18_PlatformPeril/170470.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
