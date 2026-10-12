@@ -66,23 +66,30 @@ extern f32 D_800B8990;
 extern f32 D_800B8994;
 extern f32 D_800B8998;
 extern f32 D_800B899C;
-extern s16 D_800EE984;
+extern u16 D_800EE984;
 extern omObjData* D_800F2AF8[];
 extern omObjData* D_800EDE70[];
 extern unk2C0C0Struct70* D_800F37AC;
 
 /* .data (117210.c) */
 extern s32 D_800FB678_GhostGuess;
+extern f32 D_800FB674_GhostGuess;
+extern s32 D_800FB69C_GhostGuess; /* the ghost to find */
 extern s32 D_800FB6AC_GhostGuess;
+f64 func_8009B618(f64, f64);
 extern s16 D_800FB6D8_GhostGuess[2];
 f32 func_80025D40(s16);
+void func_800093FC(omObjData*, f32, f32, f32);
+void func_800090C4(omObjData* obj, u8 idx, u8 val);
 
 /* .bss */
 extern omObjData* D_800FBBE0_GhostGuess;
 extern omObjData* D_800FBBE4_GhostGuess;
 extern omObjData* D_800FBBE8_GhostGuess;
 extern omObjData* D_800FBBEC_GhostGuess;
-extern s32 D_800FBBF0_GhostGuess[6]; /* model ids (u16 results); read as (s16) */
+extern s32 D_800FBBF0_GhostGuess[4]; /* model ids (u16 results); read as (s16) */
+extern s32 D_800FBC00_GhostGuess;
+extern s32 D_800FBC04_GhostGuess;
 extern s32 D_800FBC08_GhostGuess;    /* the player's index; read as (s16) */
 extern s32 D_800FBC0C_GhostGuess;
 extern s16 D_800FBC10_GhostGuess;

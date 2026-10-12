@@ -156,12 +156,127 @@ void func_800F6E78_GhostGuess(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F6E78_GhostGuess);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F6FF4_GhostGuess);
+void func_800F6FF4_GhostGuess(omObjData* arg0) {
+    s32 idle[5] = { 0x0F, 0x38, 0x39, 0x3A, 0x3B };
+    s32 dir;
+    s32 file1;
+    u8 chr;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", D_800FB720_GhostGuess);
+    chr = GwPlayer[D_800FBC08_GhostGuess].character;
+    dir = D_800C59AC[chr].unk_00;
+    file1 = D_800C59AC[chr].unk_08;
+    func_8000979C(arg0, dir, file1, (s16)D_800FBC08_GhostGuess, 0x6D9, 0x6D9);
+    arg0->func_ptr = &func_800F8888_GhostGuess;
+    arg0->work[0] = arg0->work[1] = arg0->work[2] = 0;
+    arg0->work[3] = 0x2D;
+    ((unkGlobalStruct_00*)arg0->unk_50)->unk_DC = &func_800F86CC_GhostGuess;
+    arg0->model[3] = LoadFormFile(0x19, 0x68D);
+    arg0->model[4] = LoadFormFile(0x1A, 0x68D);
+    arg0->model[6] = LoadFormFile(0x1B, 0x68D);
+    arg0->model[5] = LoadFormFile(0x1C, 0x68D);
+    arg0->model[7] = LoadFormFile(0x1E, 0x68D);
+    arg0->model[8] = LoadFormFile(0x1D, 0x68D);
+    func_800187D0(arg0, 0, dir, 1, 0);
+    func_800187D0(arg0, 1, dir | 1, 1, 0);
+    func_800187D0(arg0, 2, dir | 3, 1, 0);
+    func_800187D0(arg0, 5, dir | 4, 0, 0);
+    func_800187D0(arg0, 6, dir | 5, 1, 0x13);
+    func_800187D0(arg0, 7, dir | 6, 1, 0x22);
+    func_800187D0(arg0, 8, dir | 9, 1, 0x1D);
+    func_800187D0(arg0, 9, dir | 0xA, 1, 0x27);
+    func_8001874C(arg0, 0xD, dir | idle[rand8() & 1], 1, 0x78);
+    func_800187D0(arg0, 0x11, dir | 0x18, 0, 0);
+    func_800187D0(arg0, 0x12, dir | 0x1C, 2, 0);
+    func_800187D0(arg0, 0x13, dir | 0x1D, 2, 0);
+    func_800187D0(arg0, 0xA, dir | 0x1E, 1, 0x27);
+    func_8001874C(arg0, 3, dir | 0x60, 1, 0);
+    func_8001874C(arg0, 4, dir | 0x61, 1, 0);
+    func_8001874C(arg0, 0x15, dir | 0x62, 0, 0);
+    func_8001874C(arg0, 0x1E, dir | 0x63, 0, 0);
+    func_8001874C(arg0, 0x1F, dir | 0x64, 0, 0);
+    func_8001874C(arg0, 0x20, dir | 0x67, 0, 0);
+    func_8001874C(arg0, 0x21, dir | 0x68, 2, 0);
+    func_8001874C(arg0, 0x22, dir | 0x69, 2, 0);
+    func_8001874C(arg0, 0x23, dir | 0x93, 1, 0);
+    func_800093FC(arg0, 0.0f, 0.0f, 0.0f);
+    omSetTra(arg0, 0.0f, 0.0f, 0.0f);
+    func_800090C4(arg0, 0, 2);
+}
+void func_800F73E0_GhostGuess(omObjData* arg0) {
+    GGGhost* g;
+    omObjData* obj;
+    void* file;
+    f64 angle;
+    f32 a;
+    f32 r;
+    s32 ghostSpr;
+    s32 spr1;
+    s32 spr2;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F73E0_GhostGuess);
-
+    D_800FBBF0_GhostGuess[0] = LoadFormFile(0x1C0004, 0x6DD);
+    D_800FBBF0_GhostGuess[1] = LoadFormFile(0x1C0005, 0x6DD);
+    D_800FBBF0_GhostGuess[2] = LoadFormFile(0x1C0006, 0x6DD);
+    D_800FBBF0_GhostGuess[3] = LoadFormFile(0x1C0003, 0x6DD);
+    D_800FBC00_GhostGuess = LoadFormFile(0x1C0007, 0x25D);
+    D_800FBC04_GhostGuess = LoadFormFile(0x1C0008, 0x25D);
+    file = DataRead(0x1C0009);
+    ghostSpr = func_800678A4(file);
+    DataClose(file);
+    D_800FBEB8_GhostGuess = func_80064EF4(8, 0);
+    file = DataRead(0x21);
+    spr1 = func_800678A4(file);
+    DataClose(file);
+    file = DataRead(0x2A);
+    spr2 = func_800678A4(file);
+    DataClose(file);
+    D_800FBEBC_GhostGuess = func_80064EF4(2, 0);
+    func_80067208((s16)D_800FBEBC_GhostGuess, 0, spr1, 0);
+    func_800674BC((s16)D_800FBEBC_GhostGuess, 0, 0x9000);
+    func_800672B0((s16)D_800FBEBC_GhostGuess, 0, 1);
+    for (i = 1; i < 2; i++) {
+        func_80067208((s16)D_800FBEBC_GhostGuess, i, spr2, 0);
+        func_800674BC((s16)D_800FBEBC_GhostGuess, i, 0x9000);
+        func_800672B0((s16)D_800FBEBC_GhostGuess, i, 0);
+        func_800674F4((s16)D_800FBEBC_GhostGuess, (s16)i, 0xFF, 0xFF, 0xBE);
+    }
+    arg0->func_ptr = &func_800F948C_GhostGuess;
+    D_800FB69C_GhostGuess = rand8() & 7;
+    for (i = 0; i < 8; i++) {
+        g = &D_800FBC18_GhostGuess[i];
+        if (i == D_800FB69C_GhostGuess) {
+            g->unk_04 = 1;
+        } else {
+            g->unk_04 = 0;
+        }
+        g->unk_05 = i;
+        angle = i * 45.0;
+        a = angle;
+        g->pos.x = func_800AEAC0(a) * D_800FB674_GhostGuess;
+        g->pos.y = -200.0f;
+        g->pos.z = func_800AEFD0(a) * D_800FB674_GhostGuess;
+        g->rot.x = g->rot.z = 0.0f;
+        g->rot.y = g->unk_44 = r = func_8009B618(angle + 180.0, 360.0);
+        if (r <= 90.0 || r >= 270.0) {
+            g->rot.y = 0.0f;
+        }
+        g->rot.x = 6.0f;
+        g->scale.x = g->scale.y = g->scale.z = 1.0f;
+        g->unk_34.x = g->unk_34.y = g->unk_34.z = 0.0f;
+        g->unk_4C = 0.05f;
+        g->unk_48 = g->unk_50 = 0.0001f;
+        g->unk_06 = 1;
+        g->unk_08 = 0;
+        g->unk_0A = 0;
+        obj = omAddObj(4, 1, 0, -1, &func_800F789C_GhostGuess);
+        D_800EDE70[D_800EE984++] = obj;
+        GG_GHOST_SET(obj, g);
+        func_80067208((s16)D_800FBEB8_GhostGuess, i, ghostSpr, 0);
+        func_800674BC((s16)D_800FBEB8_GhostGuess, i, 0x9000);
+        func_800672B0((s16)D_800FBEB8_GhostGuess, i, 0);
+        func_80067558((s16)D_800FBEB8_GhostGuess, (s16)i, 0xFF, 0xFF, 0xFF, 0xFF);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F789C_GhostGuess);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", D_800FB760_GhostGuess);
