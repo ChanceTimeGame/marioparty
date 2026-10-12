@@ -259,6 +259,9 @@ build/src/overlays/ovl_19_TeeteringTowers/176130.c.o: CFLAGS = -G0 -mips3 -mgp32
 build/src/overlays/ovl_0E_FaceLift/12BC20.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_28 1D9690.c: nop between mul.s in func_800F9F60 and func_800F7720 (mul fix on)
 build/src/overlays/ovl_28_ShyGuySays/1D9690.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_11 13EFB0.c and 142EA0.c (Bowl Over): nop between mul.s (func_800F9DB4, func_800FAC94)
+build/src/overlays/ovl_11_BowlOver/13EFB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+build/src/overlays/ovl_11_BowlOver/142EA0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_6B 2CAA00.c: nop between mul.s in func_800F7274 (mul fix on)
 build/src/overlays/ovl_6B_MinigameHouse/2CAA00.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1E 191700.c: nop between mul.s in func_800F74E8 (mul fix on)
@@ -368,6 +371,14 @@ $(BUILD_DIR)/src/1130.c.o $(BUILD_DIR)/src/34D80.c.o $(BUILD_DIR)/src/1B800.c.o 
 # ovl_0A 117210.c (Ghost Guess): blank-line strip as for 1130.c (func_800F9400: mul.s right after func_800AEAC0's return).
 # ovl_20 KnockBlockTower units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
 $(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o $(BUILD_DIR)/src/overlays/ovl_20_KnockBlockTower/19FEE0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_11 BowlOver units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
+$(BUILD_DIR)/src/overlays/ovl_11_BowlOver/13EFB0.c.o $(BUILD_DIR)/src/overlays/ovl_11_BowlOver/142EA0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
