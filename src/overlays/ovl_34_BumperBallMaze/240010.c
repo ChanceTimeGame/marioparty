@@ -239,6 +239,39 @@ void func_800F9990_BumperBallMaze(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800F9990_BumperBallMaze);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800FA010_BumperBallMaze);
+void func_800FA010_BumperBallMaze(void) {
+    Gfx* gfx;
+    s32 screen;
+    s32 row;
+    s32 column;
+
+    for (screen = 0; screen < D_800F37DA; screen++) {
+        gfx = D_800FB170_BumperBallMaze[screen];
+        gDPPipeSync(gfx++);
+        gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x504A50);
+        gSPClearGeometryMode(gfx++, G_LIGHTING);
+        gDPSetTextureFilter(gfx++, G_TF_BILERP);
+        gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+        gDPSetPrimColor(gfx++, 0, 0, 0xB2, 0xB2, 0xB2, 0xA0);
+        gDPSetCombineLERP(gfx++, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
+            TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE);
+        gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+        gDPLoadTLUT_pal16(gfx++, 0, D_800FB168_BumperBallMaze->unk_2C->unk_24);
+        gDPLoadTextureBlock_4b(gfx++, D_800FB168_BumperBallMaze->unk_24,
+            D_800FB168_BumperBallMaze->unk_18,
+            D_800FB168_BumperBallMaze->unk_1A, D_800FB168_BumperBallMaze->unk_1B, 0,
+            G_TX_WRAP, G_TX_WRAP, INTEGER_LOG2(D_800FB168_BumperBallMaze->unk_1A),
+            INTEGER_LOG2(D_800FB168_BumperBallMaze->unk_1B), G_TX_NOLOD, G_TX_NOLOD);
+        for (row = 0; row < 7; row++) {
+            gSPVertex(gfx++, D_800FB190_BumperBallMaze[screen] + (row * 30), 30, 0);
+            for (column = 0; column < 7; column++) {
+                gSP2Triangles(gfx++, column * 2, column * 2 + 1, column * 2 + 15, 0,
+                    column * 2 + 1, column * 2 + 16, column * 2 + 15, 0);
+            }
+        }
+        gDPPipeSync(gfx++);
+        gSPEndDisplayList(gfx++);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800FA620_BumperBallMaze);
