@@ -143,6 +143,7 @@ u16 func_800F8AFC_BumperBallMaze(BumperBallMazeFloorProbe*);
 void func_800F94A0_BumperBallMaze(omObjData*);
 void func_800F7BB8_BumperBallMaze(omObjData*);
 void func_800F7FE0_BumperBallMaze(omObjData*);
+void func_800F8108_BumperBallMaze(omObjData*);
 void func_800F7ED0_BumperBallMaze(omObjData*);
 void func_800F7F60_BumperBallMaze(omObjData*);
 void func_80060F04(s16 player, s16 arg1, s16 arg2, s16 arg3);
@@ -594,7 +595,32 @@ void func_800F7F60_BumperBallMaze(omObjData* object) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7FE0_BumperBallMaze);
+void func_800F7FE0_BumperBallMaze(omObjData* object) {
+    BumperBallMazeBallWork* work = object->unk_50;
+    omObjData* obj;
+    s32 i;
+
+    for (i = 0; i < 2; i++) {
+        if (work->unk_40[i] == 0) {
+            break;
+        }
+    }
+    if (i == 2) {
+        return;
+    }
+    work->unk_40[i] = 1;
+    obj = omAddObj(0x28, 0, 0, -1, func_800F8108_BumperBallMaze);
+    obj->work[0] = object->model[6 + i];
+    obj->work[1] = work->player;
+    obj->work[2] = i;
+    func_80025798(obj->work[0], object->trans.x, 125.0f, object->trans.z);
+    func_800257E4(obj->work[0], object->rot.x, object->rot.y, 0.0f);
+    func_800258EC(obj->work[0], 4, 0);
+    if (D_800F2B7C[obj->work[0]].unk_6C->unk_B8 != NULL) {
+        D_800F2B7C[obj->work[0]].unk_6C->unk_B8->unk_08 = 0;
+    }
+    func_80025CA8(obj->work[0], 0.0f);
+}
 
 void func_800F8108_BumperBallMaze(omObjData* object) {
     f32 time = func_80025D18(object->work[0]);
