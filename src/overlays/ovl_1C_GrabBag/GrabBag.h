@@ -68,7 +68,7 @@ typedef struct GrabBagPlayerWork {
     /* 0xEA */ s8 unk_EA;
     /* 0xEB */ u8 unk_EB;
     /* 0xEC */ u8 unk_EC;
-    /* 0xED */ u8 unk_ED;
+    /* 0xED */ s8 unk_ED;
     /* 0xEE */ s8 button_press_count;
     /* 0xEF */ u8 unk_EF;
     /* 0xF0 */ u8 unk_F0;
@@ -76,9 +76,9 @@ typedef struct GrabBagPlayerWork {
     /* 0xF2 */ s16 score;
     /* 0xF4 */ s16 unk_F4;
     /* 0xF6 */ s16 unk_F6;
-    /* 0xF8 */ s16 items_taken;
+    /* 0xF8 */ s16 total; /* score + unk_F4 + unk_F6 */
     /* 0xFA */ s16 start_score;
-    /* 0xFC */ s16 unk_FC;
+    /* 0xFC */ s16 start_total;
     /* 0xFE */ s16 unk_FE;
 } GrabBagPlayerWork; /* size = 0x100 on the N64 */
 

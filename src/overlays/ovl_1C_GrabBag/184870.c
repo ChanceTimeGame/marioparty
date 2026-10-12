@@ -1,13 +1,16 @@
 #include "GrabBag.h"
 
+extern s32 D_800FB294_GrabBag;
+
+
 f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 
-
-extern s32 D_800FB290_GrabBag;
 
 
 extern s32 D_800FB104_GrabBag[4];
 extern s32 D_800FB254_GrabBag;
+extern s32 D_800FB290_GrabBag;
+f32 func_800F97E8_GrabBag(omObjData*, omObjData*);
 extern f32 D_800B8960;
 extern f32 D_800B8984;
 extern u8 D_800F64F8;
@@ -121,8 +124,58 @@ void func_800F8984_GrabBag(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8984_GrabBag);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8A18_GrabBag);
+// scheduling: retail keeps the second angle store out of the delay slot (2 instructions)
+#ifdef NON_MATCHING
+void func_800F8A18_GrabBag(omObjData* arg0) {
+    GrabBagPlayerWork* work;
+    s16 coins;
 
+    work = GB_PLAYER(arg0);
+    func_800258EC(D_800EDE70[D_800FB294_GrabBag]->model[0], 4, 4);
+    func_800258EC(D_800EDE70[D_800FB294_GrabBag]->model[1], 4, 4);
+    if (work->unk_F1 == 0) {
+        coins = work->score - work->start_score;
+        GwPlayer[work->player].coins_mg = coins;
+        work->unk_F1 = 1;
+    }
+    if (arg0->trans.y <= 3.0f) {
+        if (D_800FB290_GrabBag == 2) {
+            work->angle = 0.0f;
+            if (_CheckFlag(0x2B) == 0) {
+                func_800184BC(arg0, 0xE);
+            } else {
+                func_800184BC(arg0, 0);
+            }
+        } else if (work->start_total < work->total) {
+            work->angle = 0.0f;
+            if (_CheckFlag(0x2B) == 0) {
+                func_800184BC(arg0, 0xD);
+            } else {
+                func_800184BC(arg0, 0);
+            }
+        } else {
+            work->angle = 0.0f;
+            if (work->start_total > work->total) {
+                if (_CheckFlag(0x2B) == 0) {
+                    func_800184BC(arg0, 0xE);
+                } else {
+                    func_800184BC(arg0, 0);
+                }
+            } else {
+                func_800184BC(arg0, 0);
+            }
+        }
+        func_80017DB0(arg0);
+        return;
+    }
+    arg0->trans.y -= 25.0f;
+    if (arg0->trans.y < 3.0f) {
+        arg0->trans.y = 3.0f;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8A18_GrabBag);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_GrabBag);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
@@ -142,7 +195,7 @@ void func_800F975C_GrabBag(GrabBagPlayerWork* arg0, s32 arg1) {
     }
 }
 
-void func_800F97E8_GrabBag(omObjData* arg0, omObjData* arg1) {
+f32 func_800F97E8_GrabBag(omObjData* arg0, omObjData* arg1) {
     f32 temp_f12;
     f32 temp_f20;
     f32 temp_f22;
@@ -160,7 +213,7 @@ void func_800F97E8_GrabBag(omObjData* arg0, omObjData* arg1) {
     temp_f12 = arg1->trans.x - temp_f22;
     temp_f2 = arg1->trans.y - temp_f24;
     temp_f4 = arg1->trans.z - temp_f0;
-    func_800B1750((temp_f12 * temp_f12) + (temp_f2 * temp_f2) + (temp_f4 * temp_f4));
+    return func_800B1750((temp_f12 * temp_f12) + (temp_f2 * temp_f2) + (temp_f4 * temp_f4));
 }
 
 f32 func_800F98A4_GrabBag(omObjData* arg0) {
@@ -187,8 +240,8 @@ f32 func_800F98A4_GrabBag(omObjData* arg0) {
         if (work->unk_E9 != 0) {
             continue;
         }
-        if (best < work->items_taken) {
-            best = work->items_taken;
+        if (best < work->total) {
+            best = work->total;
             targetX = obj->trans.x - func_800AEAC0(work->angle) * 60.0f;
             targetZ = obj->trans.z - func_800AEFD0(work->angle) * 60.0f;
         }
@@ -248,8 +301,52 @@ f32 func_800F9A1C_GrabBag(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9A1C_GrabBag);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9BC4_GrabBag);
+void func_800F9BC4_GrabBag(omObjData* arg0, omObjData* arg1) {
+    GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
+    f32 dot;
+    s32 btn;
 
+    work0 = GB_PLAYER(arg0);
+    work1 = GB_PLAYER(arg1);
+    if (work0->unk_ED == 1 || work1->unk_ED == 1) {
+        work0->unk_50 |= 0x200;
+        work1->unk_50 |= 0x200;
+        return;
+    }
+    dot = func_8000A72C(func_800AEAC0(work0->angle), func_800AEFD0(work0->angle), func_800AEAC0(work1->angle),
+                        func_800AEFD0(work1->angle));
+    if (((func_800F97E8_GrabBag(arg0, arg1) < work0->radius + work0->radius_offset + 25.0f) & (dot > -0.75f)) &&
+        !(work0->unk_5C & 0x20) && !(work1->unk_5C & 0x20) && work0->unk_EA == -1 && work1->unk_EA == work0->unk_EA) {
+        if (work0->unk_EF == 0 && work1->unk_EF == 0) {
+            btn = ContBtnTrg[work0->port];
+            /* Separate tests: GCC would merge them into (btn & 0xC000) == 0x4000. */
+            if (!(btn & 0x4000)) {
+                return;
+            }
+            if (btn & 0x8000) {
+                return;
+            }
+            work1->unk_ED = 1;
+            work0->unk_ED = 1;
+            work0->unk_EA = work1->player;
+            work1->unk_EA = work0->player;
+            work0->unk_EF++;
+            work1->unk_EF++;
+            work0->unk_E9 = 1;
+            work1->unk_E9 = 2;
+            work1->unk_FE = 0;
+            work0->unk_FE = 0;
+        }
+    } else {
+        work1->unk_E9 = 0;
+        work0->unk_E9 = 0;
+        work1->unk_EA = -1;
+        work0->unk_EA = -1;
+        work1->unk_EF = 0;
+        work0->unk_EF = 0;
+    }
+}
 void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
     f32 dx;
     f32 dz;
@@ -287,7 +384,7 @@ s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
 
     work0 = GB_PLAYER(arg0);
     work1 = GB_PLAYER(arg1);
-    if (work1->items_taken <= 0) {
+    if (work1->total <= 0) {
         return -1;
     }
     if (work0->unk_E8 == -1) {
@@ -336,7 +433,7 @@ u8 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
     work0 = GB_PLAYER(arg0);
     work1 = GB_PLAYER(arg1);
     kind = 0;
-    if (work1->items_taken >= 5) {
+    if (work1->total >= 5) {
         if ((u8)(rand8() % 10) < 4) {
             amount = 1;
         } else {
@@ -348,8 +445,8 @@ u8 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
     }
     work0->score = amount + work0->score;
     work1->score -= amount;
-    work0->items_taken = amount + work0->items_taken;
-    work1->items_taken -= amount;
+    work0->total = amount + work0->total;
+    work1->total -= amount;
     if (!(D_800F2B7C[D_800EDE70[kind]->model[0]].unk_20 & 4) || GB_BAG(D_800EDE70[kind])->unk_5C != 0) {
         kind += 3;
     }
