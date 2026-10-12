@@ -9,6 +9,7 @@ extern Gfx **D_800FB0F8_BalloonBurst[];
 extern s16 D_800F3778;
 extern s16 D_800FB10C_BalloonBurst;
 extern u16 D_800FB10E_BalloonBurst;
+extern u8 D_800FAF79_BalloonBurst[];
 extern u16 D_800FC386_BalloonBurst;
 extern f32 D_800FC380_BalloonBurst;
 extern s16 D_800FC384_BalloonBurst;
@@ -25,18 +26,34 @@ extern u16 D_800FC3A2_BalloonBurst[];
 extern u8 D_800F64F8;
 extern u16 D_800FB54E_BalloonBurst[];
 extern u16 D_800FB550_BalloonBurst[];
+extern unk34D80Struct80 *D_800ED554;
+
+void func_800396B0(s16, u8);
 
 typedef struct BalloonBurstObstacle {
     char unk_00[0x3E];
     s16 model;
     char unk_40[2];
     s16 secondary_model;
-    char unk_44[0x64];
+    s32 unk_44;
+    char unk_48[8];
+    f32 unk_50;
+    char unk_54[0x1E];
+    s16 unk_72;
+    char unk_74[0x34];
 } BalloonBurstObstacle;
 
 typedef struct BalloonBurstPlayer {
     BalloonBurstObstacle obstacles[7];
 } BalloonBurstPlayer;
+
+typedef struct BalloonBurstObjectWork {
+    char unk_00[3];
+    s8 player_index;
+    char unk_04[8];
+    f32 unk_0C;
+    f32 unk_10;
+} BalloonBurstObjectWork;
 
 extern BalloonBurstPlayer D_800FB120_BalloonBurst[];
 
@@ -153,7 +170,27 @@ void func_800F7D9C_BalloonBurst(u16 arg0) {
     func_800258EC(player->obstacles[6].secondary_model, 4, 4);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7E38_BalloonBurst);
+void func_800F7E38_BalloonBurst(omObjData *arg0, s8 player_index) {
+    BalloonBurstObjectWork *work = arg0->unk_50;
+    unk_ovl_2D_struct *model;
+    BalloonBurstPlayer *player;
+    f32 frame;
+
+    work->player_index = player_index;
+    model = &D_800F2B7C[arg0->model[0]];
+    model->unk_0A |= 3;
+    frame = D_800ED554[model->unk_08].unk_02 - 1.0f;
+    work->unk_10 = frame;
+    work->unk_0C = frame;
+    func_80025798(arg0->model[1], arg0->trans.x, 0.0f, arg0->trans.z);
+    func_80025830(arg0->model[1], 0.5f, 0.5f, 0.5f);
+    player = &D_800FB120_BalloonBurst[(u8)player_index];
+    player->obstacles[0].unk_50 = 5.0f;
+    work->unk_0C = 0.0f;
+    player->obstacles[0].unk_44 = 0;
+    func_800396B0(player->obstacles[0].unk_72,
+                  D_800FAF79_BalloonBurst[(s32)(player->obstacles[0].unk_50 / 1.6666666f) * 2]);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F7F94_BalloonBurst);
 
