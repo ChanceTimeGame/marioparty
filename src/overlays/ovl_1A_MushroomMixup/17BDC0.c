@@ -186,6 +186,7 @@ void func_800FA454_MushroomMixup(omObjData* arg0) {
     D_800FC848_MushroomMixup = D_800FC84C_MushroomMixup = 0.0f;
 }
 
+// argument copy order (masked 2)
 #ifdef NON_MATCHING
 void func_800FA53C_MushroomMixup(omObjData* arg0, MMMushroom* rec, s32 file, s32 idx, Vec* pos) {
     MMGroundWork* work;
@@ -663,6 +664,7 @@ void func_800FBF4C_MushroomMixup(omObjData* arg0) {
     func_800FA664_MushroomMixup(arg0, D_800C59AC[GwPlayer[3].character].unk_00, D_800C59AC[GwPlayer[3].character].unk_04, 3, 315.0f, 2);
 }
 
+// retail loads -5.0f and 0.0f together (masked 2)
 /* Retail addresses each record's fields through their own labels (MushroomMixup.h). */
 #ifdef NON_MATCHING
 void func_800FBFB0_MushroomMixup(omObjData* arg0) {

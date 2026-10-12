@@ -203,6 +203,7 @@ void func_800F7188_MushroomMixup(s16 arg0) {
     PlaySound((s32) arg0);
 }
 
+// register allocation and scheduling (same calls, fields and branches)
 #ifdef NON_MATCHING
 u16 func_800F71A8_MushroomMixup(u8 model, u8 phase, u8 arg2, u8 colL, u8 colR) {
     MMColorTable tbl = D_800FC7B0_MushroomMixup;
@@ -273,6 +274,7 @@ loop_1:
 }
 
 
+// phase flags read as u8 (retail s8: lb), register allocation; same states, calls and stores
 #ifdef NON_MATCHING
 void func_800F75B0_MushroomMixup(omObjData* arg0) {
     u16 model;
@@ -476,6 +478,7 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F75B0_MushroomMixup);
 #endif
 
+// register allocation, switch compare order
 #ifdef NON_MATCHING
 void func_800F7FCC_MushroomMixup(omObjData* arg0) {
     MMMushroom* rec;
@@ -540,6 +543,7 @@ u8 func_800F8260_MushroomMixup(omObjData* arg0) {
     return var_a1;
 }
 
+// register allocation (masked 0)
 #ifdef NON_MATCHING
 void func_800F82AC_MushroomMixup(omObjData* arg0) {
     MMPlayerWork* work;
@@ -596,6 +600,7 @@ s32 func_800F846C_MushroomMixup(u16 arg0) {
     return ret;
 }
 
+// loop counter widths (s8/u16) and register allocation; same decisions
 /* The round's winner: a player index, 4 when nobody, -1 while undecided. */
 #ifdef NON_MATCHING
 s8 func_800F84F0_MushroomMixup(void) {
@@ -687,6 +692,7 @@ void func_800F8848_MushroomMixup(omObjData* arg0) {
     }
 }
 
+// retail recomputes a - b and keeps &d in a register; same result
 /* A +-45 degree detour around the player the CPU is chasing (work unk_54). */
 #ifdef NON_MATCHING
 f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
@@ -732,6 +738,7 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F88AC_MushroomMixup);
 #endif
 
+// retail reaches d through a register and copies floats as words; register allocation
 /* The CPU: writes the pad state its player object reads this frame. */
 #ifdef NON_MATCHING
 void func_800F8A58_MushroomMixup(omObjData* arg0) {
@@ -936,6 +943,7 @@ void func_800F9510_MushroomMixup(omObjData* arg0, s32 arg1) {
     func_80025798(arg0->model[arg1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
 }
 
+// register allocation, u16 vs s16 load of D_800FC996 (tested != 0)
 /* A player's object function during the rounds. */
 #ifdef NON_MATCHING
 void func_800F9548_MushroomMixup(omObjData* arg0) {
@@ -987,6 +995,7 @@ void func_800F9548_MushroomMixup(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F9548_MushroomMixup);
 #endif
 
+// retail reaches d through a register; register allocation
 /* The start: each player walks to its partner (work[3]) and they turn to face each other. */
 #ifdef NON_MATCHING
 void func_800F9890_MushroomMixup(omObjData* arg0) {
