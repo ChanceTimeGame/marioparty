@@ -1295,9 +1295,9 @@ segments:
       - [0x1CCCF0, c]
       - [0x1CD680, c]
       - [0x1D3040, c]
-      - [0x1D3300, data, 1CCCF0]
-      - [0x1D3310, data, 1CD680]
-      - [0x1D38A0, data, 1D3040]
+      - [0x1D3300, .data, 1CCCF0]
+      - [0x1D3310, .data, 1CD680]
+      - [0x1D38A0, .data, 1D3040]
       - [0x1D38B0, .rodata, 1CCCF0]
       - [0x1D3900, .rodata, 1CD680]
       - {0x1D3990, type: bss, vram: 0x800FD280, name: ovl_26_bss}
