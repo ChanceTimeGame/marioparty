@@ -107,7 +107,6 @@ extern s32 D_800FB6EC_GhostGuess; /* a sound handle; read as (s16) */
 extern s32 D_800FB6F0_GhostGuess;
 extern f32 D_800FB6F4_GhostGuess; /* the CPU's heading */
 extern f32 D_800FB6F8_GhostGuess;
-extern u8 D_800FB69F_GhostGuess;
 extern s32 D_800FB6A4_GhostGuess; /* the ghost nearest the player */
 extern s32 D_800FB6A8_GhostGuess; /* spin direction */
 extern f32 D_800FB6B0_GhostGuess[4]; /* spin speed by CPU difficulty */
@@ -124,7 +123,7 @@ void func_800670C4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 void func_8006035C(s16, s8);
 extern s32 D_800FB678_GhostGuess;
 extern f32 D_800FB674_GhostGuess;
-extern s32 D_800FB69C_GhostGuess; /* the ghost to find */
+extern s32 D_800FB69C_GhostGuess; /* the ghost to find (the CPU reads its low byte) */
 extern s32 D_800FB6A0_GhostGuess; /* the ghost the player touched */
 extern s32 D_800FB6AC_GhostGuess;
 f64 func_8009B618(f64, f64);

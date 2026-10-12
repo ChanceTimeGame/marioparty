@@ -1,6 +1,34 @@
 #include "common.h"
 #include "GhostGuess.h"
 
+/* .data (0x800FB670..0x800FB710) */
+s32 D_800FB670_GhostGuess = 0;
+f32 D_800FB674_GhostGuess = 362.5f;
+s32 D_800FB678_GhostGuess = 0;
+s32 D_800FB67C_GhostGuess[8] = { 0 };
+s32 D_800FB69C_GhostGuess = 0;
+s32 D_800FB6A0_GhostGuess = 0;
+s32 D_800FB6A4_GhostGuess = 0;
+s32 D_800FB6A8_GhostGuess = 1;
+s32 D_800FB6AC_GhostGuess = 0;
+f32 D_800FB6B0_GhostGuess[4] = { 0.8f, 0.9f, 1.2f, 1.5f };
+f32 D_800FB6C0_GhostGuess[4] = { 5.625f, 5.0f, 4.0f, 3.0f };
+s32 D_800FB6D0_GhostGuess = 0;
+s32 D_800FB6D4_GhostGuess = 10;
+s16 D_800FB6D8_GhostGuess[2] = { 1, 2 };
+s32 D_800FB6DC_GhostGuess = 60;
+s32 D_800FB6E0_GhostGuess = 0;
+s32 D_800FB6E4_GhostGuess = 0;
+s32 D_800FB6E8_GhostGuess = 0;
+s32 D_800FB6EC_GhostGuess = 0;
+s32 D_800FB6F0_GhostGuess = 0;
+f32 D_800FB6F4_GhostGuess = 0.0f;
+f32 D_800FB6F8_GhostGuess = 1.47f;
+f32 D_800FB6FC_GhostGuess = 0.0f;
+f32 D_800FB700_GhostGuess = 0.0f;
+s32 D_800FB704_GhostGuess = 50;
+s32 D_800FB708_GhostGuess = 0;
+
 void func_800F65E0_GhostGuess(void) {
     u8 temp_s0;
     s16 i;
@@ -677,7 +705,7 @@ void func_800F8888_GhostGuess(omObjData* arg0) {
                     if (!(rand8() & 0x3F)) {
                         arg0->work[0]++;
                         if ((u8)(rand8() % 5) <= D_800FB6AC_GhostGuess) {
-                            arg0->work[1] = D_800FB69F_GhostGuess;
+                            arg0->work[1] = (u8)D_800FB69C_GhostGuess;
                         } else {
                             arg0->work[1] = rand8() & 7;
                         }
