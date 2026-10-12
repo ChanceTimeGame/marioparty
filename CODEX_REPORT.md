@@ -15,3 +15,11 @@ Host/layout note: `func_800FB884_CastAways` uses typed `D_800EE73C` only on N64 
 Prototype changes in `include/`: none. Overlay header corrected `func_800F7308_CastAways` to take `omObjData*` and typed the two light parameters. Makefile edits: none.
 
 Final verification evidence will replace this in-progress baseline before handoff. Current baseline: `make: Nothing to be done for 'all'.`; `0 objects differ — OK`; `1F0DA0.c: 29/29 functions identical — OK`; `1F5700.c: 13/13 functions identical — OK`.
+
+## Claude second pass (supersedes the "Still INCLUDE_ASM" and data lines above)
+
+All 15 remaining functions are C: `func_800FB0C8` matches; the other 14 are NON_MATCHING
+(logic-checked against the asm with `n64nmcmp.sh`). `.data` of both units is C. bss is referenced
+only through splat's `_CastAways` labels (the `_ovl2B` aliases indexed across labels, which the
+host gives separate objects). Work structs for the spawner, fish, hook and player objects are in
+`CastAways.h`.
