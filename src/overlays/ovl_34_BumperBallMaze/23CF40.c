@@ -28,8 +28,8 @@ typedef struct BumperBallMazeBallWork {
 
 /* D_800FAE14's work (func_800F9050, 0x20 bytes): the timer display. */
 typedef struct BumperBallMazeTimerWork {
-    /* 0x00 */ s16 digits[7];
-    /* 0x0E */ s16 bestDigits[7];
+    /* 0x00 */ u16 digits[7];     /* sprites: M, ':', S, S, '.', F, F */
+    /* 0x0E */ u16 bestDigits[7];
     /* 0x1C */ u16 time;
     /* 0x1E */ u16 best;
 } BumperBallMazeTimerWork; /* size = 0x20 */
@@ -93,6 +93,12 @@ extern u16 D_800FACBA_BumperBallMaze;
 #endif
 extern u16 D_800FACBC_BumperBallMaze;
 extern BumperBallMazeCameraPreset D_800FAC1C_BumperBallMaze[];
+typedef struct BumperBallMazeScreenPos {
+    /* 0x00 */ s16 x;
+    /* 0x02 */ s16 y;
+} BumperBallMazeScreenPos;
+extern BumperBallMazeScreenPos D_800FAB44_BumperBallMaze[]; /* best-time digits, per maze */
+extern BumperBallMazeScreenPos D_800FAB50_BumperBallMaze[]; /* current-time digits, per maze */
 extern s16 D_800FADE0_BumperBallMaze;
 extern u16 D_800FADE2_BumperBallMaze; /* the player whose result is shown */
 extern f32 D_800FADE4_BumperBallMaze; /* per-frame turn back to 0 degrees */
@@ -139,7 +145,7 @@ void func_800F69F4_BumperBallMaze(omObjData*);
 void func_800F9974_BumperBallMaze(s32);
 void func_800F6C7C_BumperBallMaze(omObjData*);
 s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe*, u16*, BumperBallMazeColVtx*);
-void func_800F928C_BumperBallMaze(u16, s16*);
+void func_800F928C_BumperBallMaze(u16, u16*);
 void func_800F8220_BumperBallMaze(omObjData*);
 void func_800594E4(s16, u16);
 void func_8001897C(s16, f32, f32, f32);
@@ -172,6 +178,8 @@ void func_800F8108_BumperBallMaze(omObjData*);
 void func_800F7ED0_BumperBallMaze(omObjData*);
 void func_800F7F60_BumperBallMaze(omObjData*);
 void func_800F9610_BumperBallMaze(s32);
+void func_80018DC4(u16, f32);
+void func_800F923C_BumperBallMaze(omObjData*);
 void func_80060F04(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
@@ -977,7 +985,42 @@ s32 func_800F9034_BumperBallMaze(void) {
     return ((BumperBallMazeBallWork*) D_800FAE10_BumperBallMaze->unk_50)->unk_00 != 3;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F9050_BumperBallMaze);
+void func_800F9050_BumperBallMaze(omObjData* object) {
+    BumperBallMazeTimerWork* work;
+    s32 i;
+    u16 x;
+    u16 bestX;
+
+    work = object->unk_50 = func_80023684(0x20, 0x7918);
+    work->best = func_800594FC(D_800FADF8_BumperBallMaze + 5);
+    work->time = 0;
+    object->work[1] = 0;
+    object->work[0] = 0;
+    x = D_800FAB50_BumperBallMaze[D_800FADF8_BumperBallMaze].x;
+    bestX = D_800FAB44_BumperBallMaze[D_800FADF8_BumperBallMaze].x;
+    for (i = 0; i < 7; i++) {
+        work->digits[i] = func_80019060(D_800FAE00_BumperBallMaze, 0, 1);
+        SetBasicSpritePos(work->digits[i], x, D_800FAB50_BumperBallMaze[D_800FADF8_BumperBallMaze].y);
+        func_80018DC4(work->digits[i], 0.0f);
+        work->bestDigits[i] = func_80019060(D_800FAE02_BumperBallMaze, 0, 1);
+        SetBasicSpritePos(work->bestDigits[i], bestX, D_800FAB44_BumperBallMaze[D_800FADF8_BumperBallMaze].y);
+        func_80018DC4(work->bestDigits[i], 0.0f);
+        if (i == 0) {
+            x += 8;
+            bestX += 8;
+        } else {
+            x += 12;
+            bestX += 12;
+        }
+    }
+    func_80018E50(work->digits[1], 10, 0);
+    func_80018E50(work->digits[4], 11, 0);
+    func_80018E50(work->bestDigits[1], 10, 0);
+    func_80018E50(work->bestDigits[4], 11, 0);
+    func_800F928C_BumperBallMaze(work->best, work->bestDigits);
+    func_800F928C_BumperBallMaze(work->time, work->digits);
+    object->func_ptr = func_800F923C_BumperBallMaze;
+}
 
 void func_800F923C_BumperBallMaze(omObjData* object) {
     BumperBallMazeTimerWork* state = object->unk_50;
