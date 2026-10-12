@@ -1,19 +1,10 @@
 #include "GrabBag.h"
 
-extern f32 D_800FB250_GrabBag;
-
-
-extern s32 D_800FB294_GrabBag;
-
-
-f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-
-
-
 extern s32 D_800FB104_GrabBag[4];
+extern f32 D_800FB250_GrabBag;
 extern s32 D_800FB254_GrabBag;
 extern s32 D_800FB290_GrabBag;
-f32 func_800F97E8_GrabBag(omObjData*, omObjData*);
+extern s32 D_800FB294_GrabBag;
 extern f32 D_800B8960;
 extern f32 D_800B8984;
 extern u8 D_800F64F8;
@@ -26,6 +17,7 @@ extern u8 D_800FB270_GrabBag[];
 extern u8 D_800FB278_GrabBag[];
 extern omObjData* D_800FB280_GrabBag;
 extern u16 ContBtn[4];
+extern s8 ContStkY[4];
 
 void func_800F776C_GrabBag(omObjData*);
 void func_800F859C_GrabBag(omObjData*);
@@ -33,7 +25,13 @@ void func_800F8984_GrabBag(void);
 void func_800F8A18_GrabBag(omObjData*);
 void func_800F8BDC_GrabBag(void);
 void func_800F903C_GrabBag(omObjData*);
+f32 func_800F97E8_GrabBag(omObjData*, omObjData*);
+f32 func_800F98A4_GrabBag(omObjData*);
+f32 func_800F9A1C_GrabBag(omObjData*);
+s32 func_800FA184_GrabBag(omObjData*, omObjData*);
+u8 func_800FA304_GrabBag(omObjData*, omObjData*);
 void func_800FA424_GrabBag(omObjData*);
+f32 func_800FA780_GrabBag(f32, f32, f32, f32);
 void func_800FAED8_GrabBag(void);
 void func_800FAFA0_GrabBag(void);
 void func_800FA8F4_GrabBag(omObjData*);
@@ -490,8 +488,25 @@ void func_800FA424_GrabBag(omObjData* arg0) {
     }
     func_80026174(arg0->model[9], arg0->model[10], D_800FB250_GrabBag);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA658_GrabBag);
+void func_800FA658_GrabBag(omObjData* arg0) {
+    GrabBagPlayerWork* work;
+    f32 angle;
 
+    work = GB_PLAYER(arg0);
+    if (work->unk_EF < 30) {
+        ContStkX[work->port] = ContStkY[work->port] = 0;
+    } else if (work->unk_E8 == -1) {
+        if (work->unk_FE > 60) {
+            angle = func_800F9A1C_GrabBag(arg0);
+        } else {
+            angle = func_800F98A4_GrabBag(arg0);
+        }
+        ContStkX[work->port] = func_800AEAC0(angle) * 32.0f;
+        ContStkY[work->port] = -func_800AEFD0(angle) * 32.0f;
+    }
+    ContBtnTrg[work->port] &= 0x7FFF;
+    ContBtnTrg[work->port] &= 0xBFFF;
+}
 // float register allocation at the shared return (masked 3)
 #ifdef NON_MATCHING
 f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
