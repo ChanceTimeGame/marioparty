@@ -9,9 +9,11 @@ typedef struct FlowerShowerBodyWork {
     /* 0x44 */ f32 unk_44;
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
-    /* 0x50 */ s16 unk_50;
+    /* 0x50 */ u16 unk_50;
     /* 0x52 */ s8 unk_52;
-    /* 0x53 */ char unk_53[9];
+    /* 0x53 */ s8 unk_53;
+    /* 0x54 */ u8 unk_54;
+    /* 0x55 */ char unk_55[7];
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ s32 unk_60;
     /* 0x64 */ f32 unk_64;
@@ -27,12 +29,16 @@ typedef struct FlowerShowerModelWork {
 
 FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData*, s32, f32, f32, s32, s32, s32, s32);
 f32 func_800051D4(omObjData*, f32, f32, f32, Vec3f*);
+f32 func_80029518(f32);
 f32 func_800FA5B8_FlowerShower(omObjData*);
 f32 func_800FA92C_FlowerShower(omObjData*);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
+void func_800090D8(omObjData*, u8, u8);
+void func_800093FC(omObjData*, f32, f32, f32);
 void func_800FACA0_FlowerShower(omObjData*);
 void func_800F7348_FlowerShower(omObjData*, s32, s32, s32);
 void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
+void func_800F9ACC_FlowerShower(omObjData*);
 void func_800FA4EC_FlowerShower(omObjData*);
 
 extern f32 D_800FAE50_FlowerShower;
@@ -288,7 +294,38 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F95F
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F9ACC_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA178_FlowerShower);
+void func_800FA178_FlowerShower(omObjData* arg0) {
+    FlowerShowerBodyWork* work = arg0->unk_50;
+    f32 speed;
+
+    if (work->unk_54 == 0) {
+        if (D_800ED430 == 1) {
+            if (work->unk_5C > work->unk_60) {
+                func_800093FC(arg0, 0.0f, 1000.0f, 0.0f);
+                work->unk_3C = func_80029518(work->unk_3C);
+                speed = work->unk_50;
+                work->unk_40 = speed;
+                if (speed > 3.3f) {
+                    work->unk_40 = 3.3f;
+                }
+                work->unk_38 = 0.0f;
+                work->unk_54 = 1;
+                work->unk_5C = 0;
+                func_800090D8(arg0, 0, 1);
+                func_800090D8(arg0, 1, 1);
+                func_800F9ACC_FlowerShower(arg0);
+                work->unk_60--;
+                if (work->unk_60 < 10) {
+                    work->unk_60 = 10;
+                }
+            }
+            work->unk_5C++;
+            work->unk_3C -= work->unk_50;
+        }
+    } else {
+        func_800F9ACC_FlowerShower(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA2B0_FlowerShower);
 
