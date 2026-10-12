@@ -79,9 +79,13 @@ typedef struct PPSpark {
 } PPSpark; /* sizeof 0x24 */
 
 //extern s32 D_800F2B7C;
-extern s32 D_800FE1B0_PlatformPeril[][2];
+/* Per player (indexed by the work's unk_58): 0 run, 1 falling, 2 goal, 3 out; -1 inactive. */
+typedef struct PPPlayerState {
+    s32 state;
+    f32 fall; /* fall speed */
+} PPPlayerState;
+extern PPPlayerState D_800FE1B0_PlatformPeril[4];
 extern s32 D_800FE2A0_PlatformPeril[];
-void func_800F979C_PlatformPeril(void);
 void func_800FAD64_PlatformPeril(omObjData*);
 void func_800F66E8_PlatformPeril(void);
 void func_800F6720_PlatformPeril(omObjData*);
@@ -215,3 +219,4 @@ typedef struct PPKinds3 {
 } PPKinds3;
 extern const s32 D_800FDFB8_PlatformPeril[6];
 extern const s32 D_800FDFD0_PlatformPeril[4];
+void func_800F979C_PlatformPeril(omObjData*);

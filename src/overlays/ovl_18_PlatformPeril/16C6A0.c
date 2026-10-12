@@ -721,8 +721,8 @@ void func_800F922C_PlatformPeril(omObjData* arg0, s32 arg1, s32 arg2, u16 arg3, 
     arg0->work[2] = 0;
 
     for (i = 0; i < 4; i++) {
-        D_800FE1B0_PlatformPeril[i][1] = 0;
-        D_800FE1B0_PlatformPeril[i][0] = 0;
+        D_800FE1B0_PlatformPeril[i].fall = 0.0f;
+        D_800FE1B0_PlatformPeril[i].state = 0;
     }
     temp_s0_2->unk_3C = 180.0f;
 }
@@ -763,7 +763,225 @@ void func_800F96F0_PlatformPeril(omObjData* obj) {
     ((unkGlobalStruct_00*)obj->unk_50)->unk_50 = 0x200;
 }
 
+#define PP_PWORK(o) ((unkGlobalStruct_00*)(o)->unk_50)
+#define PP_BOX(xl, xr, zl, zr) \
+    ((xl) - 0.0f < obj->trans.x && obj->trans.x < (xr) + 0.0f && (zl) - 20.0f < obj->trans.z && obj->trans.z < (zr) + 20.0f)
+
+// GCC cross-jumps the case 10 slope tail into case 4's, plus register allocation (masked 224 incl. that 46-instruction merge; logic-equivalent)
+#ifdef NON_MATCHING
+/* Player main: camera follow, platform collision, goal steps, falling. */
+void func_800F979C_PlatformPeril(omObjData* obj) {
+    s32 pl = obj->work[0];
+    s32 idx = PP_PWORK(obj)->unk_58;
+    s32 port = PP_PWORK(obj)->unk_56;
+    s32 hit;
+    s32 i;
+    s32 j;
+    f32 cx;
+    f32 cy;
+    f32 cz;
+    f32 s;
+    f32 xl;
+    f32 xr;
+    f32 zl;
+    f32 zr;
+    f32 w;
+    f32 dx;
+    f32 a;
+    f32 b;
+    f32 sx;
+    f32 sy;
+
+    if (D_800FE1B0_PlatformPeril[idx].state == -1) {
+        return;
+    }
+    D_800FDD2C_PlatformPeril[pl] = GwPlayer[pl].coins_mg;
+    if (obj->trans.z < D_800FCDA0_PlatformPeril) {
+        D_800FCDA0_PlatformPeril = obj->trans.z;
+        Center.z = obj->trans.z + 100.0f;
+    }
+    hit = -1;
+    for (i = 0; D_800FD2A0_PlatformPeril[i].type != 0; i++) {
+        if (D_800FD2A0_PlatformPeril[i].type != 18 && D_800FD2A0_PlatformPeril[i].state >= 3) {
+            continue;
+        }
+        switch (D_800FD2A0_PlatformPeril[i].type) {
+        case 2:
+            if (PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z - 0.0f, D_800FD2A0_PlatformPeril[i].pos.z + 300.0f)) {
+                hit = i;
+            }
+            break;
+        case 4:
+            if (PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z - 0.0f, D_800FD2A0_PlatformPeril[i].pos.z + 300.0f)) {
+                hit = i;
+                cx = D_800FD2A0_PlatformPeril[i].pos.x + D_800FD2A0_PlatformPeril[i].ofs.x;
+                cy = D_800FD2A0_PlatformPeril[i].pos.y + D_800FD2A0_PlatformPeril[i].ofs.y;
+                cz = D_800FD2A0_PlatformPeril[i].pos.z + D_800FD2A0_PlatformPeril[i].ofs.z;
+                s = 1.0f - (obj->trans.y - cy) / 150.0f;
+                xl = cx - s * 100.0f;
+                xr = cx + s * 100.0f;
+                zl = cz - s * 130.0f;
+                zr = cz + s * 170.0f;
+                if (xl < obj->trans.x && obj->trans.x < xr && zl < obj->trans.z && obj->trans.z < zr &&
+                    0.0f <= obj->trans.y && obj->trans.y < 150.0f) {
+                    w = xr - xl;
+                    dx = obj->trans.x - xl;
+                    a = (zl - zr) / w * dx + zr - obj->trans.z;
+                    b = (zr - zl) / w * dx + zl - obj->trans.z;
+                    if (a > 0.0f) {
+                        if (b > 0.0f) {
+                            obj->trans.z = zl;
+                        } else {
+                            obj->trans.x = xl;
+                        }
+                    } else if (b > 0.0f) {
+                        obj->trans.x = xr;
+                    } else {
+                        obj->trans.z = zr;
+                    }
+                }
+            }
+            break;
+        case 3:
+            if (PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z - 0.0f, D_800FD2A0_PlatformPeril[i].pos.z + 400.0f)) {
+                hit = i;
+            }
+            break;
+        case 10:
+            if (PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z - 0.0f, D_800FD2A0_PlatformPeril[i].pos.z + 400.0f)) {
+                hit = i;
+                cx = D_800FD2A0_PlatformPeril[i].pos.x + D_800FD2A0_PlatformPeril[i].ofs.x;
+                cy = D_800FD2A0_PlatformPeril[i].pos.y + D_800FD2A0_PlatformPeril[i].ofs.y;
+                cz = D_800FD2A0_PlatformPeril[i].pos.z + D_800FD2A0_PlatformPeril[i].ofs.z;
+                s = 1.0f - (obj->trans.y - cy) / 150.0f;
+                xl = cx - s * 100.0f;
+                xr = cx + s * 100.0f;
+                zl = cz - s * 180.0f;
+                zr = cz + s * 220.0f;
+                if (xl < obj->trans.x && obj->trans.x < xr && zl < obj->trans.z && obj->trans.z < zr &&
+                    0.0f <= obj->trans.y && obj->trans.y < 150.0f) {
+                    w = xr - xl;
+                    dx = obj->trans.x - xl;
+                    a = (zl - zr) / w * dx + zr - obj->trans.z;
+                    b = (zr - zl) / w * dx + zl - obj->trans.z;
+                    if (a > 0.0f) {
+                        if (!(b > 0.0f)) {
+                            obj->trans.x = xl;
+                        } else {
+                            obj->trans.z = zl;
+                        }
+                    } else if (!(b > 0.0f)) {
+                        obj->trans.z = zr;
+                    } else {
+                        obj->trans.x = xr;
+                    }
+                }
+            }
+            break;
+        case 17:
+            if (PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z - 0.0f, D_800FD2A0_PlatformPeril[i].pos.z + 600.0f)) {
+                hit = i;
+            }
+            break;
+        case 18:
+            /* The goal and its steps on both sides. */
+            if (PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z - 0.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1800.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 650.0f, D_800FD2A0_PlatformPeril[i].pos.x - 600.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1550.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1750.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x + 600.0f, D_800FD2A0_PlatformPeril[i].pos.x + 650.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1550.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1750.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 700.0f, D_800FD2A0_PlatformPeril[i].pos.x - 650.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1400.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1600.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x + 650.0f, D_800FD2A0_PlatformPeril[i].pos.x + 700.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1400.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1600.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 750.0f, D_800FD2A0_PlatformPeril[i].pos.x - 700.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1250.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1450.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x + 700.0f, D_800FD2A0_PlatformPeril[i].pos.x + 750.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1250.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1450.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x - 800.0f, D_800FD2A0_PlatformPeril[i].pos.x - 750.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1150.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1350.0f) ||
+                PP_BOX(D_800FD2A0_PlatformPeril[i].pos.x + 750.0f, D_800FD2A0_PlatformPeril[i].pos.x + 800.0f,
+                       D_800FD2A0_PlatformPeril[i].pos.z + 1150.0f, D_800FD2A0_PlatformPeril[i].pos.z + 1350.0f)) {
+                if (!(PP_PWORK(obj)->unk_5C & 0x20)) {
+                    for (j = 0; j < 4; j++) {
+                        if (idx == j) {
+                            D_800FE1B0_PlatformPeril[idx].state = 2;
+                        }
+                    }
+                    D_800FE2B0_PlatformPeril[idx] = 1;
+                }
+                hit = i;
+            }
+            break;
+        }
+    }
+    switch (D_800FE1B0_PlatformPeril[idx].state) {
+    case 0:
+        /* The course runs diagonally: rotate the stick by 45 degrees. */
+        sx = ContStkX[port];
+        sy = ContStkY[port];
+        ContStkX[port] = sinf(0.785375f) * sx - cosf(0.785375f) * sy;
+        ContStkY[port] = cosf(0.785375f) * sx + sinf(0.785375f) * sy;
+        func_800FBCD4_PlatformPeril(obj);
+        func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+        func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+        func_80025798(obj->model[1], obj->trans.x, 50.0f, obj->trans.z);
+        if (hit == -1) {
+            if (!(PP_PWORK(obj)->unk_5C & 0x20)) {
+                D_800FE1B0_PlatformPeril[idx].state = 1;
+            }
+        } else if (!(PP_PWORK(obj)->unk_5C & 0x20) && D_800FD2A0_PlatformPeril[hit].state == 0) {
+            D_800FD2A0_PlatformPeril[hit].state = 1;
+        }
+        break;
+    case 1:
+        if (D_800FE1B0_PlatformPeril[idx].fall == 0.0) {
+            func_80060618(0x45F, pl);
+        }
+        D_800FE1B0_PlatformPeril[idx].fall += 5.0f;
+        obj->trans.y -= D_800FE1B0_PlatformPeril[idx].fall;
+        if (obj->trans.y <= -5000.0f) {
+            D_800FE1B0_PlatformPeril[idx].state = 3;
+        }
+        func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+        func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+        func_80025798(obj->model[1], obj->trans.x, 10000.0f, obj->trans.z);
+        break;
+    case 3:
+        D_800FE2C4_PlatformPeril &= ~D_800FDD60_PlatformPeril[pl];
+        obj->work[2] = 0xFF;
+        obj->trans.x = 5000.0f;
+        obj->trans.y = -5000.0f;
+        obj->trans.z = 5000.0f;
+        func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+        func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+        func_80025798(obj->model[1], obj->trans.x, 10000.0f, obj->trans.z);
+        func_800258EC(obj->model[0], 4, 4);
+        func_800258EC(obj->model[1], 4, 4);
+        break;
+    case 2:
+        D_800FE1D8_PlatformPeril[1]->trans.y = -5000.0f;
+        ContStkX[port] = 0;
+        ContStkY[port] = 0;
+        func_800FBCD4_PlatformPeril(obj);
+        func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+        func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+        func_80025798(obj->model[1], obj->trans.x, 50.0f, obj->trans.z);
+        break;
+    }
+    if (300.0f < obj->trans.z) {
+        D_800FE1B0_PlatformPeril[idx].state = 3;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F979C_PlatformPeril);
+#endif
 
 // float register choice (masked 3)
 #ifdef NON_MATCHING
