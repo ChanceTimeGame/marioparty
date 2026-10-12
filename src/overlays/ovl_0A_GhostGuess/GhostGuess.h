@@ -108,11 +108,17 @@ extern s32 D_800FB6F0_GhostGuess;
 extern f32 D_800FB6F4_GhostGuess; /* the CPU's heading */
 extern f32 D_800FB6F8_GhostGuess;
 extern u8 D_800FB69F_GhostGuess;
+extern s32 D_800FB6A4_GhostGuess; /* the ghost nearest the player */
+extern s32 D_800FB6A8_GhostGuess; /* spin direction */
+extern f32 D_800FB6B0_GhostGuess[4]; /* spin speed by CPU difficulty */
 extern f32 D_800FB6C0_GhostGuess[4]; /* by CPU difficulty */
 extern s32 D_800FB6D4_GhostGuess;
 extern f32 D_800FB6FC_GhostGuess;
 extern f32 D_800FB700_GhostGuess;
+extern s32 D_800FB704_GhostGuess; /* timer */
 extern s32 D_800FB708_GhostGuess;
+f32 func_80025E70(s16);
+f32 func_80025D18(s16);
 void func_80066DF4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 void func_800670C4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 void func_8006035C(s16, s8);

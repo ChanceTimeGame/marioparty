@@ -795,8 +795,313 @@ void func_800F9400_GhostGuess(omObjData* arg0, f32 max) {
         arg0->trans.z = max * func_800AEFD0(a);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F948C_GhostGuess);
+// register allocation of the loop's double constants (0.125 pinned in s6/s7), compare order (masked 300, structural 74 lines)
+#ifdef NON_MATCHING
+void func_800F948C_GhostGuess(omObjData* arg0) {
+    Vec hit;
+    s32 hitOn;
+    f32 minDist;
+    omObjData* player;
+    unkGlobalStruct_00* work;
+    GGGhost* g;
+    s32 btn;
+    s32 i;
+    s32 t;
+    f32 f;
+    f32 r;
+    f32 a;
+    f32 old;
+    f32 dx;
+    f32 dy;
+    f32 dz;
 
+    hit.y = 0.0f;
+    hit.x = hit.y;
+    hit.z = r = hit.y;
+    hitOn = 0;
+    minDist = 3625.0f;
+    player = D_800FBBE4_GhostGuess;
+    btn = func_80017A60(player);
+    work = player->unk_50;
+    D_800FB700_GhostGuess = r;
+    if (D_800FB670_GhostGuess == 3 || D_800FB670_GhostGuess == 4 ||
+        ((D_800FB670_GhostGuess == 0) | (D_800FB670_GhostGuess == 2))) {
+        if (btn & 0x140) {
+            f = func_80025E70(player->model[0]);
+            if (f == -1.0f) {
+                f = func_80025D18(player->model[0]);
+            }
+            if ((f >= 16.0f) & (f <= 20.0f)) {
+                hitOn = 1;
+                r = work->unk_64 + work->unk_48;
+                a = work->unk_3C;
+                hit.x = func_800AEAC0(a) * r + player->trans.x;
+                hit.y = player->trans.y;
+                hit.z = func_800AEFD0(a) * r + player->trans.z;
+            }
+        }
+        D_800FB700_GhostGuess = func_800AEAC0(2.0f * (D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess])) * 12.0f;
+    } else {
+        D_800FB704_GhostGuess--;
+    }
+    for (i = 0; i < 8; i++) {
+        g = &D_800FBC18_GhostGuess[i];
+        switch (D_800FB670_GhostGuess) {
+        case 1:
+            t = 50 - D_800FB704_GhostGuess;
+            func_800FB2D0_GhostGuess(D_800FBBF0_GhostGuess[3], (u8)(t * 5 + 5));
+            g->pos.y = (t * 0.04 + -1.0) * 100.0;
+            if (t < 21) {
+                if (g->rot.y >= 105.0f && g->rot.y <= 255.0f) {
+                    g->unk_50 = t * 0.225;
+                } else {
+                    g->unk_50 = t * 0.2;
+                }
+            } else {
+                g->unk_4C = (t - 20) * 0.033;
+            }
+            g->unk_48 = t * 0.02;
+            break;
+        case 2:
+            func_800FB270_GhostGuess(g->obj->model[0], (s16)D_800FBBF0_GhostGuess[g->unk_08]);
+        case 3:
+        case 4:
+            a = (f32)(i * 45) + D_800FB6FC_GhostGuess;
+            g->pos.x = func_800AEAC0(a) * D_800FB674_GhostGuess;
+            g->pos.y = (func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 0.2 + 1.0) * 100.0;
+            g->pos.z = func_800AEFD0(a) * D_800FB674_GhostGuess;
+            old = g->rot.y;
+            g->rot.y = g->unk_44 = r = func_8009B618(a + 180.0f, 360.0);
+            if (r <= 90.0 || r >= 270.0) {
+                g->rot.y = 0.0f;
+            }
+            if (D_800FB6A8_GhostGuess == 0) {
+                if (g->rot.y + 10.0 <= old || old <= g->rot.y - 10.0) {
+                    g->rot.y = func_8009B618(old + 3.2, 360.0);
+                }
+            } else if (D_800FB6A8_GhostGuess == 1) {
+                if (g->rot.y + 4.0 <= old || old <= g->rot.y - 4.0) {
+                    g->rot.y = func_8009B618(old - 3.2 + 360.0, 360.0);
+                }
+            }
+            g->rot.x = func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 12.0f + 6.0f;
+            g->unk_48 = g->unk_4C = 362.5 / D_800FB674_GhostGuess;
+            g->unk_50 = (762.5 - D_800FB674_GhostGuess) / 100.0;
+            if (hitOn != 0) {
+                dx = g->pos.x - hit.x;
+                dy = g->pos.y - hit.y;
+                dz = g->pos.z - hit.z;
+                if (func_800B1750(dx * dx + dy * dy + dz * dz) < 200.0) {
+                    func_80017C0C(player, 7, g->obj->trans.x, player->trans.y, g->obj->trans.z, 0.0f, func_800B0CD8(dx, dz) + 180.0f);
+                    func_80060540(0x21D, 2);
+                    func_80060540(0x21D, 3);
+                    D_800FB6A0_GhostGuess = g->unk_05;
+                    g->unk_06 = 4;
+                    g->scale.x = g->scale.y = g->scale.z = 1.0f;
+                    g->rot.y = func_800B0CD8(player->trans.x - g->pos.x, player->trans.z - g->pos.z);
+                    g->unk_0A = 4;
+                    g->unk_34.x = func_800AEAC0(g->rot.y) * -25.0;
+                    g->unk_34.z = func_800AEFD0(g->rot.y) * -25.0;
+                    D_800FB670_GhostGuess = 5;
+                    func_800601D4(0x5A);
+                    func_80060F04((s16)D_800FBC08_GhostGuess, 2, 3, 10);
+                }
+            }
+            break;
+        case 5:
+            if (g->unk_06 != 5) {
+                g->rot.x = func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 12.0f + 6.0f;
+                g->rot.y = func_800B0CD8(player->trans.x - g->pos.x, player->trans.z - g->pos.z);
+                g->pos.y = (func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 0.2 + 1.0) * 100.0;
+            }
+            g->unk_4C = g->unk_48 = 362.5 / D_800FB674_GhostGuess;
+            g->unk_50 = (762.5 - D_800FB674_GhostGuess) / 100.0;
+            if (i == D_800FB6A0_GhostGuess && D_800FB704_GhostGuess == 50) {
+                if (i == D_800FB69C_GhostGuess) {
+                    g->unk_06 = 9;
+                    D_800FB6D0_GhostGuess = 1;
+                } else {
+                    PlaySound(0x100);
+                    if (g->unk_06 == 4) {
+                        g->unk_06 = 1;
+                    } else if (g->unk_06 == 5) {
+                        g->unk_06 = 6;
+                    }
+                    g->unk_08 = 0;
+                    func_800FB270_GhostGuess(g->obj->model[0], (s16)D_800FBBF0_GhostGuess[0]);
+                    D_800FB6D0_GhostGuess = 0;
+                }
+            }
+            break;
+        case 6:
+            g->unk_06 = 9;
+            break;
+        case 8:
+            if (i == D_800FB69C_GhostGuess) {
+                g->unk_06 = 7;
+                g->unk_0A = 0;
+                g->unk_4C = g->unk_48;
+                func_80060540(0x222, 2);
+            }
+            if (g->unk_44 >= 90.0f && g->unk_44 <= 270.0f) {
+                func_800FB270_GhostGuess(g->obj->model[1], (s16)D_800FBC04_GhostGuess);
+            }
+            g->unk_34.x = g->unk_34.y = g->unk_34.z = 0.0f;
+            dx = player->trans.x - g->pos.x;
+            dz = player->trans.z - g->pos.z;
+            g->unk_40 = sqrtf(dx * dx + dz * dz);
+            if (g->unk_40 < minDist) {
+                minDist = g->unk_40;
+                D_800FB6A4_GhostGuess = i;
+                g->unk_34.x = (g->unk_40 - 60.0) * func_800AEAC0(g->rot.y) * 0.125;
+                g->unk_34.z = (g->unk_40 - 60.0) * func_800AEFD0(g->rot.y) * 0.125;
+            }
+            break;
+        case 9:
+            g->pos.y = (func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 0.2 + 1.0) * 100.0;
+            g->rot.y = func_800B0CD8(player->trans.x - g->pos.x, player->trans.z - g->pos.z);
+            if (i == D_800FB6A4_GhostGuess) {
+                if (D_800FB704_GhostGuess < 8) {
+                    g->pos.x += g->unk_34.x;
+                    g->pos.z += g->unk_34.z;
+                    g->unk_48 += g->unk_40 * 0.125 / 362.5;
+                    g->unk_50 += g->unk_40 * 0.125 / 100.0;
+                    g->unk_4C = g->unk_48;
+                }
+            } else {
+                g->unk_4C = g->unk_48;
+            }
+            break;
+        case 10:
+            g->unk_4C = g->unk_48;
+            if (i != D_800FB6A4_GhostGuess) {
+                break;
+            }
+            if (fabs(work->unk_3C - g->rot.y + 180.0f) <= 90.0) {
+                func_800184BC(player, 9);
+                work->unk_40 = -18.0f;
+                work->unk_3C = func_800B0CD8(player->trans.x, player->trans.z);
+            } else {
+                func_800184BC(player, 10);
+                work->unk_40 = 18.0f;
+                work->unk_3C = func_800B0CD8(player->trans.x, player->trans.z) + 180.0f;
+            }
+            func_80017C0C(player, 5, g->pos.x, g->pos.y, g->pos.z, 0.0f, func_800B0CD8(player->trans.x, player->trans.z) + 180.0f);
+            func_80060540(0x144, 0);
+            func_80060F04((s16)D_800FBC08_GhostGuess, 20, 0, 20);
+        case 11:
+            g->pos.y = (func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 0.2 + 1.0) * 100.0;
+            g->rot.y = func_800B0CD8(player->trans.x - g->pos.x, player->trans.z - g->pos.z);
+            g->unk_4C = g->unk_48;
+            break;
+        case 12:
+            g->unk_06 = 7;
+            g->rot.y = func_8009B618(func_800B0CD8(g->pos.x, g->pos.z) + 180.0f, 360.0);
+            g->rot.x = 18.0f;
+            g->unk_40 = sqrtf(g->pos.x * g->pos.x + g->pos.z * g->pos.z) - 70.0;
+            g->unk_34.x = func_800AEAC0(g->rot.y) * g->unk_40 * 0.05;
+            g->unk_34.z = func_800AEFD0(g->rot.y) * g->unk_40 * 0.05;
+            g->unk_4C = g->unk_48;
+        case 13:
+            g->pos.y = (func_800AEAC0(D_800FB6FC_GhostGuess * D_800FB6C0_GhostGuess[D_800FB6AC_GhostGuess]) * 0.2 + 1.0) * 100.0;
+            g->pos.x += g->unk_34.x;
+            g->pos.z += g->unk_34.z;
+            g->unk_48 += g->unk_40 * 0.05 / 362.5;
+            g->unk_50 += g->unk_40 * 0.05 / 100.0;
+            g->unk_4C = g->unk_48;
+            break;
+        case 14:
+            g->unk_34.x = g->unk_48 * 0.03125;
+            g->unk_34.y = g->unk_4C * 0.05;
+            g->unk_34.z = g->unk_50 * 0.085;
+            g->unk_0A = rand8() & 7;
+            g->unk_4C = g->unk_48;
+            break;
+        case 15:
+            if (D_800FB704_GhostGuess < 13) {
+                g->unk_50 = (f32)D_800FB704_GhostGuess * g->unk_34.z + 0.001;
+                g->unk_4C = g->unk_34.y;
+            } else {
+                g->unk_4C = (f32)(D_800FB704_GhostGuess - 12) * g->unk_34.y;
+            }
+            g->unk_48 = (f32)D_800FB704_GhostGuess * g->unk_34.x + 0.001;
+            g->pos.y = (D_800FB704_GhostGuess * 0.078125 + -1.5) * 100.0;
+            if (D_800FB704_GhostGuess == 0) {
+                g->unk_06 = 1;
+                func_800258EC(g->obj->model[0], 4, 4);
+                func_800258EC(g->obj->model[1], 4, 4);
+            }
+            break;
+        case 16:
+        case 18:
+            if (D_800FB6D0_GhostGuess == 0) {
+                g->unk_4C = g->unk_48;
+            }
+            break;
+        }
+    }
+    if (D_800FB704_GhostGuess <= 0) {
+        switch (D_800FB670_GhostGuess) {
+        case 1:
+            D_800FB670_GhostGuess = 2;
+            func_80010ED4(GwPlayer[work->unk_58].character + 0x127, 0);
+            D_800FB704_GhostGuess = 80;
+            D_800FB6FC_GhostGuess = 0.0f;
+            break;
+        case 5:
+            if (D_800FB6D0_GhostGuess != 0) {
+                D_800FB670_GhostGuess = 6;
+            } else {
+                D_800FB670_GhostGuess = 8;
+            }
+            break;
+        case 8:
+            if (D_800FB678_GhostGuess == 0) {
+                D_800FB670_GhostGuess = 9;
+            } else {
+                D_800FB670_GhostGuess = 16;
+            }
+            D_800FB704_GhostGuess = 30;
+            break;
+        case 9:
+            D_800FB670_GhostGuess = 10;
+            break;
+        case 10:
+            D_800FB670_GhostGuess = 11;
+            D_800FB704_GhostGuess = 12;
+            break;
+        case 11:
+            D_800FB670_GhostGuess = 12;
+            break;
+        case 12:
+            func_80060540(0x222, 2);
+            D_800FB670_GhostGuess = 13;
+            D_800FB704_GhostGuess = 20;
+            break;
+        case 13:
+            D_800FB670_GhostGuess = 14;
+            break;
+        case 14:
+            D_800FB670_GhostGuess = 15;
+            func_80060540(0x225, 3);
+            D_800FB704_GhostGuess = 32;
+            break;
+        case 7:
+        case 17:
+        case 18:
+            D_800FB704_GhostGuess = 255;
+            break;
+        }
+    }
+    if (D_800FB6A8_GhostGuess == 0) {
+        D_800FB6FC_GhostGuess = func_8009B618(D_800FB6FC_GhostGuess + D_800FB6B0_GhostGuess[D_800FB6AC_GhostGuess], 360.0);
+    } else if (D_800FB6A8_GhostGuess == 1) {
+        D_800FB6FC_GhostGuess = func_8009B618(D_800FB6FC_GhostGuess + 360.0f - D_800FB6B0_GhostGuess[D_800FB6AC_GhostGuess], 360.0);
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F948C_GhostGuess);
+#endif
 // case 2/7 store tail not cross-jumped, sprite anim load order (masked 9)
 #ifdef NON_MATCHING
 void func_800FA764_GhostGuess(omObjData* arg0) {
