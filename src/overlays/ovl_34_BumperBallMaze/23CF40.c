@@ -127,6 +127,7 @@ s32 func_800F9034_BumperBallMaze(void);
 void func_800F943C_BumperBallMaze(void);
 void func_800F7240_BumperBallMaze(omObjData*);
 void func_8001E268(s16, u8, u8);
+f32 func_800296FC(f32, f32, BumperBallMazeColVtx*, BumperBallMazeColVtx*);
 void func_80025BB8(s16, s16);
 void func_80027AC8(s16, u8*, u8*);
 f32 func_80025D18(s16);
@@ -434,7 +435,31 @@ s32 func_800F8DFC_BumperBallMaze(s32 arg0, u16* polygon, BumperBallMazeColVtx* v
     return func_800F8E1C_BumperBallMaze(probe, polygon - 1, vertices);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F8E1C_BumperBallMaze);
+s32 func_800F8E1C_BumperBallMaze(BumperBallMazeHitProbe* probe, u16* poly, BumperBallMazeColVtx* verts) {
+    f32 x = probe->x;
+    f32 z = probe->z;
+    s32 cnt = (poly[0] >> 14) + 2;
+    s32 i;
+    s32 j;
+
+    poly++;
+    if (func_800296FC(x, z, &verts[(s16) poly[0]], &verts[(s16) poly[1]]) > 0.0f) {
+        for (i = 1; i < cnt; i++) {
+            j = (i + 1) % cnt;
+            if (func_800296FC(x, z, &verts[(s16) poly[i]], &verts[(s16) poly[j]]) < 0.0f) {
+                return 0;
+            }
+        }
+    } else {
+        for (i = 1; i < cnt; i++) {
+            j = (i + 1) % cnt;
+            if (func_800296FC(x, z, &verts[(s16) poly[i]], &verts[(s16) poly[j]]) > 0.0f) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
 
 s32 func_800F9034_BumperBallMaze(void) {
     return ((BumperBallMazeBallWork*) D_800FAE10_BumperBallMaze->unk_50)->unk_00 != 3;
