@@ -41,6 +41,14 @@ extern unk2C0C0Struct70* D_800FB168_BumperBallMaze; /* the water texture */
 extern Gfx* D_800FB170_BumperBallMaze[8];           /* per-screen display lists */
 extern Vtx* D_800FB190_BumperBallMaze[8];           /* per-screen water vertices (7 x 30) */
 extern s32 D_800FB1B0_BumperBallMaze;
+/* Water texture scroll (.data): the s/t of the near columns and rows, the far ones (+1024), and
+   the per-frame steps. */
+extern f32 D_800FACC4_BumperBallMaze;
+extern f32 D_800FACC8_BumperBallMaze;
+extern f32 D_800FACCC_BumperBallMaze;
+extern f32 D_800FACD0_BumperBallMaze;
+extern f32 D_800FACD4_BumperBallMaze;
+extern f32 D_800FACD8_BumperBallMaze;
 
 void func_800F96B0_BumperBallMaze(f32 cameraValue, f32 zoom, f32 rotX, f32 rotY, f32 rotZ,
                                  f32 centerX, f32 centerY, f32 centerZ) {
@@ -274,4 +282,79 @@ void func_800FA010_BumperBallMaze(void) {
     }
 }
 
+// Logic-equivalent animated water update; addressing and register allocation differ (masked 34).
+#ifdef NON_MATCHING
+void func_800FA620_BumperBallMaze(void) {
+    BumperBallMazeAnglePair* p;
+    Vtx* vertices;
+    Vtx* v0;
+    Vtx* v1;
+    Vtx* v2;
+    Vtx* v3;
+    Vec3f normal;
+    f32 angle;
+    s32 row;
+    s32 column;
+    s32 k;
+
+    *D_800F2B7C[D_800FB1B0_BumperBallMaze].unk_6C->unk_00 = D_800FB170_BumperBallMaze[D_800F37F0];
+    vertices = D_800FB190_BumperBallMaze[D_800F37F0];
+    for (row = 0; row < 7; row++) {
+        for (column = 0; column < 7; column++) {
+            p = &D_800FAE20_BumperBallMaze[row * 15 + column];
+            angle = p->first + 4.0f;
+            p->first = angle;
+            if (angle >= 360.0f) {
+                p->first = angle - 360.0f;
+            }
+            v0 = &vertices[column * 2 + row * 30];
+            v0->n.ob[1] = func_800AEAC0(p->first) * 40.0f + -100.0f;
+            v0->n.tc[0] = D_800FACC4_BumperBallMaze;
+            v0->n.tc[1] = D_800FACC8_BumperBallMaze;
+            angle = p->second + 4.0f;
+            p->second = angle;
+            if (angle >= 360.0f) {
+                p->second = angle - 360.0f;
+            }
+            v1 = v0 + 1;
+            v1->n.ob[1] = func_800AEAC0(p->second) * 40.0f + -100.0f;
+            v1->n.tc[0] = D_800FACCC_BumperBallMaze;
+            v1->n.tc[1] = D_800FACC8_BumperBallMaze;
+            p = &BBM_FAR(row)[column];
+            angle = p->first + 4.0f;
+            p->first = angle;
+            if (angle >= 360.0f) {
+                p->first = angle - 360.0f;
+            }
+            v2 = &vertices[column * 2 + (row * 2 + 1) * 15];
+            v2->n.ob[1] = func_800AEAC0(p->first) * 40.0f + -100.0f;
+            v2->n.tc[0] = D_800FACC4_BumperBallMaze;
+            v2->n.tc[1] = D_800FACD0_BumperBallMaze;
+            angle = p->second + 4.0f;
+            p->second = angle;
+            if (angle >= 360.0f) {
+                p->second = angle - 360.0f;
+            }
+            v3 = v2 + 1;
+            v3->n.ob[1] = func_800AEAC0(p->second) * 40.0f + -100.0f;
+            v3->n.tc[0] = D_800FACCC_BumperBallMaze;
+            v3->n.tc[1] = D_800FACD0_BumperBallMaze;
+            func_800295FC(v0, v1, v2, &normal);
+            for (k = 0; k < 3; k++) {
+                v0->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+                v1->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+                v2->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+                v3->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+            }
+        }
+    }
+    D_800FACC4_BumperBallMaze += D_800FACD4_BumperBallMaze;
+    D_800FACC8_BumperBallMaze += D_800FACD8_BumperBallMaze;
+    D_800FACC4_BumperBallMaze = func_8009B618(D_800FACC4_BumperBallMaze, 1024.0);
+    D_800FACC8_BumperBallMaze = func_8009B618(D_800FACC8_BumperBallMaze, 1024.0);
+    D_800FACCC_BumperBallMaze = D_800FACC4_BumperBallMaze + 1024.0f;
+    D_800FACD0_BumperBallMaze = D_800FACC8_BumperBallMaze + 1024.0f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800FA620_BumperBallMaze);
+#endif
