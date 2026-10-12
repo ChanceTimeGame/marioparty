@@ -1,5 +1,8 @@
 #include "GrabBag.h"
 
+extern GrabBagBagWork* D_800FB24C_GrabBag;
+
+
 void func_800FAC0C_GrabBag(omObjData*);
 void func_80018E0C(u16, s16);
 
@@ -11,6 +14,7 @@ extern s32 D_800FB290_GrabBag;
 extern s32 D_800FB294_GrabBag;
 extern f32 D_800B8960;
 extern f32 D_800B8984;
+extern f32 D_800B8988;
 extern u8 D_800F64F8;
 extern u16 D_800FB11C_GrabBag[4];
 extern u16 D_800FB244_GrabBag[4];
@@ -32,7 +36,7 @@ f32 func_800F97E8_GrabBag(omObjData*, omObjData*);
 f32 func_800F98A4_GrabBag(omObjData*);
 f32 func_800F9A1C_GrabBag(omObjData*);
 s32 func_800FA184_GrabBag(omObjData*, omObjData*);
-u8 func_800FA304_GrabBag(omObjData*, omObjData*);
+s32 func_800FA304_GrabBag(omObjData*, omObjData*);
 void func_800FA424_GrabBag(omObjData*);
 f32 func_800FA780_GrabBag(f32, f32, f32, f32);
 void func_800FAED8_GrabBag(void);
@@ -378,8 +382,54 @@ void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
     func_80025798(arg1->model[0], arg1->trans.x, 3.0f, arg1->trans.z);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
+// register allocation: work0/work1 in s3/s2 (masked 0)
+#ifdef NON_MATCHING
+void func_800F9ED0_GrabBag(omObjData* arg0, omObjData* arg1) {
+    GrabBagPlayerWork* work1;
+    GrabBagPlayerWork* work0;
 
+    work0 = GB_PLAYER(arg0);
+    work1 = GB_PLAYER(arg1);
+    func_80017C0C(arg0, 8, (arg0->trans.x + arg1->trans.x) / 2.0f, (arg0->trans.y + arg1->trans.y) / 2.0f,
+                  (arg0->trans.z + arg1->trans.z) / 2.0f, 0.0f, 0.0f);
+    if (func_800FA184_GrabBag(arg0, arg1) == 1) {
+        work1->unk_EC = work0->unk_EC = 1;
+        work1->speed = D_800B8988;
+        func_800184BC(arg1, 0xC);
+        work0->speed = -D_800B8988;
+        func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+        func_800184BC(arg0, 9);
+        D_800FB294_GrabBag = func_800FA304_GrabBag(arg0, arg1);
+        D_800FB24C_GrabBag = GB_BAG(D_800EDE70[D_800FB294_GrabBag]);
+        D_800FB24C_GrabBag->unk_6C = work0->unk_EA;
+        D_800FB24C_GrabBag->unk_6D = work0->player;
+        if (D_800FB294_GrabBag % 3 == 0) {
+            D_800FB24C_GrabBag->unk_6E = 0;
+        } else if (D_800FB294_GrabBag % 3 == 1) {
+            D_800FB24C_GrabBag->unk_6E = 1;
+            func_80060618(0x45F, work1->player);
+        }
+        D_800EDE70[D_800FB294_GrabBag]->trans.x = arg1->trans.x;
+        D_800EDE70[D_800FB294_GrabBag]->trans.y = arg1->trans.y;
+        D_800EDE70[D_800FB294_GrabBag]->trans.z = arg1->trans.z;
+        func_800258EC(D_800EDE70[D_800FB294_GrabBag]->model[0], 4, 0);
+        func_800258EC(D_800EDE70[D_800FB294_GrabBag]->model[1], 4, 0);
+        func_800F6E90_GrabBag(D_800EDE70[D_800FB294_GrabBag]);
+        work1->button_press_count = 0;
+    } else {
+        work0->speed = -D_800B8988;
+        func_800184BC(arg0, 0x1E);
+        work1->speed = D_800B8988;
+        func_800184BC(arg1, 0x1F);
+        work1->button_press_count = 0;
+    }
+    work0->button_press_count = 0;
+    work1->unk_EB = 1;
+    work0->unk_EB = 1;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
+#endif
 // control flow: GCC if-converts the ±1 returns (masked 39)
 #ifdef NON_MATCHING
 s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
@@ -428,7 +478,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA184_Gra
 #endif
 // register allocation: bag/model-table base registers (masked 6)
 #ifdef NON_MATCHING
-u8 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
+s32 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
     GrabBagPlayerWork* work0;
     GrabBagPlayerWork* work1;
     u8 kind;
