@@ -195,7 +195,7 @@ void func_800F9768_BumperBallMaze(void);
 void func_800F97B4_BumperBallMaze(u16, f32, f32, f32, f32, f32, f32, f32);
 void func_800F6994_BumperBallMaze(omObjData*);
 void func_800F6BB8_BumperBallMaze(omObjData*);
-void func_800F6C44_BumperBallMaze(s32);
+void func_800F6C44_BumperBallMaze(omObjData*);
 void func_800F8184_BumperBallMaze(omObjData*);
 void func_800F8AB8_BumperBallMaze(void);
 void func_800F9050_BumperBallMaze(omObjData*);
@@ -349,9 +349,9 @@ void func_800F6C28_BumperBallMaze(void) {
     func_800FA620_BumperBallMaze();
 }
 
-void func_800F6C44_BumperBallMaze(s32 arg0) {
+void func_800F6C44_BumperBallMaze(omObjData* object) {
     LoadFormFile(0x310002, 0x69D);
-    func_800F6C7C_BumperBallMaze(arg0);
+    func_800F6C7C_BumperBallMaze(object);
 }
 
 const char D_800FACE0_BumperBallMaze[] = "38mt006_DEF";
