@@ -1,5 +1,13 @@
 #include "GrabBag.h"
 
+extern u16 D_800B89A4[][14];
+extern u8 D_800FB0C0_GrabBag;
+extern s8 D_800FB114_GrabBag;
+extern s8 D_800FB115_GrabBag;
+extern s8 D_800FB118_GrabBag[4];
+extern u32 D_800FB240_GrabBag;
+
+
 extern GrabBagBagWork* D_800FB24C_GrabBag;
 
 
@@ -101,8 +109,73 @@ void func_800F8484_GrabBag(omObjData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F859C_GrabBag);
+void func_800F859C_GrabBag(omObjData* arg0) {
+    unk_ovl_2D_struct* model;
+    GrabBagPlayerWork* work;
+    f32 angle;
 
+    model = &D_800F2B7C[arg0->model[0]];
+    work = GB_PLAYER(arg0);
+    if (D_800FB118_GrabBag[work->player] == 0) {
+        func_80060540(D_800B89A4[work->player][1], work->player);
+        D_800FB118_GrabBag[work->player] = 1;
+    }
+    if (D_800FB240_GrabBag % 15 == 0 && !(work->unk_E9 & 8)) {
+        D_800FB118_GrabBag[work->player] = 0;
+    }
+    D_800FB240_GrabBag++;
+    if (D_800FB115_GrabBag == 1) {
+        arg0->trans.y = 0.0f;
+        model->unk_4C = 1.0f;
+        return;
+    }
+    if (arg0->trans.x <= 150.0f && arg0->trans.z >= -150.0f) {
+        work->unk_E9 |= 4;
+    }
+    if (work->unk_E9 & 4) {
+        angle = func_800B0CD8(-arg0->trans.x, -arg0->trans.z) + 90.0f;
+    } else {
+        angle = func_800B0CD8(-arg0->trans.x, -arg0->trans.z);
+    }
+    if (angle < 0.0f) {
+        angle += 360.0f;
+    }
+    work->angle = angle;
+    if (D_800FB0C0_GrabBag == 1) {
+        if (!(work->unk_E9 & 8)) {
+            work->unk_E9 |= 8;
+            work->angle = func_800B0CD8(-arg0->trans.x, -arg0->trans.z);
+            model->unk_4C = 0.5f;
+            func_800184BC(arg0, 0x1E);
+            func_80017DB0(arg0);
+        } else {
+            goto retreat;
+        }
+    } else if (!(work->unk_E9 & 8)) {
+        arg0->trans.x += func_800AEAC0(work->angle) * 20.0f;
+        arg0->trans.z += func_800AEFD0(work->angle) * 20.0f;
+        func_800184BC(arg0, 2);
+        func_80017DB0(arg0);
+    } else {
+    retreat:
+        arg0->trans.x -= func_800AEAC0(work->angle) * 32.0f;
+        arg0->trans.z -= func_800AEFD0(work->angle) * 32.0f;
+        if (D_800FB114_GrabBag == 1) {
+            arg0->trans.y -= 32.0f;
+            if (arg0->trans.y < 0.0f) {
+                D_800FB115_GrabBag = 1;
+            }
+        } else {
+            arg0->trans.y += 32.0f;
+            if (arg0->trans.y > 128.0f) {
+                D_800FB114_GrabBag = 1;
+            }
+        }
+    }
+    func_8009ECB0(D_800F2B7C[arg0->model[0]].unk7C, 0.0f, work->angle, 0.0f);
+    func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
+    func_80025798(arg0->model[1], arg0->trans.x, 0.0f, arg0->trans.z);
+}
 // register allocation (masked 0)
 #ifdef NON_MATCHING
 void func_800F8984_GrabBag(void) {
