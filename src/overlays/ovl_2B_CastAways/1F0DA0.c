@@ -1,23 +1,10 @@
 #include "CastAways.h"
 
-typedef struct CastAwaysItemSet {
-    char unk_00[4];
-    u16 count;
-    char unk_06[0x60];
-    u8 slots[3][8];
-} CastAwaysItemSet;
+extern u8 D_800FBA0C_CastAways[][3];
+extern u8 D_800FBA18_CastAways[][3];
 
-typedef struct CastAwaysTrail {
-    char unk_00[0x14];
-    u16 sampleCount;
-    char unk_16[0x22];
-    Vec samples[1];
-} CastAwaysTrail;
 
-typedef struct CastAwaysTrailTimer {
-    char unk_00[0x12];
-    u16 timer;
-} CastAwaysTrailTimer;
+
 
 extern u8 D_800F64F8;
 extern char D_800FBA64_CastAways[];
@@ -159,8 +146,44 @@ void func_800F7308_CastAways(omObjData* arg0) {
         D_800FBA70_CastAways, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F73AC_CastAways);
+// scheduling: the result store and one index multiply are ordered differently (masked 6)
+#ifdef NON_MATCHING
+void func_800F73AC_CastAways(omObjData* arg0, s32 arg1) {
+    CastAwaysItemSet* set;
+    unk_800ECDE0* sprite;
+    s16 id;
+    s32 i;
 
+    arg0->unk_50 = set = func_80023684(sizeof(CastAwaysItemSet), 0x7918);
+    set->id = arg1;
+    set->interval = D_800FB960_CastAways[(u16)arg1].interval;
+    set->count = D_800FB960_CastAways[(u16)arg1].count;
+    set->speed = D_800FB960_CastAways[(u16)arg1].speed;
+    set->spawned = 0;
+    set->timer = rand8() % 20;
+    set->x = D_800FB960_CastAways[(u16)arg1].x;
+    set->y = -25.0f;
+    set->z = D_800FB960_CastAways[(u16)arg1].z;
+    set->angle = 0;
+    for (i = 0; i < set->count; i++) {
+        id = func_8001E00C((void*)-1, 0x68D, 8);
+        sprite = D_800ECDE0 + id;
+        sprite->unk_02 = D_800FBB04_ovl2B[0];
+        func_80025930(sprite->unk_00, 0x40000000, 0x40000000);
+        set->models[0][i] = D_800ECDE0[id].unk_00;
+        set->spriteIds[i] = id;
+        set->slots[0][i] = 0;
+    }
+    for (i = 0; i < set->count; i++) {
+        set->models[2][i] = func_80023FC8(D_800FBB46_ovl2B);
+        set->slots[2][i] = 0;
+        func_80025830(set->models[2][i], 1.5f, 1.5f, 1.5f);
+        func_80025EB4(set->models[2][i], 1, 1);
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F73AC_CastAways);
+#endif
 s32 func_800F75BC_CastAways(CastAwaysItemSet* arg0, s32 arg1) {
     s32 slotIndex;
     s32 pad[1]; // Original function has an otherwise-unused 8-byte stack frame.
@@ -190,8 +213,73 @@ void func_800F7684_CastAways(omObjData* arg0) {
     arg0->func_ptr = &func_800F76B8_CastAways;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F76B8_CastAways);
+// register allocation and block order of the switch arms
+#ifdef NON_MATCHING
+void func_800F76B8_CastAways(omObjData* arg0) {
+    CastAwaysItemSet* set;
+    omObjData* fish;
+    CastAwaysFishWork* work;
+    s16 type;
+    s16 slot;
+    f32 angle;
 
+    if (D_800FBB7C_ovl2B != 2) {
+        set = arg0->unk_50;
+        if (set->timer == 0) {
+            if (set->spawned != set->count) {
+                set->timer = (u8)(rand8() % 20) + set->interval;
+                fish = omAddObj(0xC, 1, 0, set->id, &func_800F7A38_CastAways);
+                work = func_80023684(sizeof(CastAwaysFishWork), 0x7918);
+                fish->unk_50 = work;
+                type = func_800FABE4_CastAways(set->id);
+                switch (type) {
+                case 0:
+                    slot = func_800F75BC_CastAways(set, 0);
+                    D_800ECDE0[set->spriteIds[slot]].unk_02 = D_800FBB04_CastAways;
+                    func_8001E268(set->spriteIds[slot], 1, 0);
+                    func_8001E2A8(set->spriteIds[slot], 0);
+                    fish->model[0] = set->models[0][slot];
+                    omSetTra(fish, set->x, func_800AEAC0(set->angle) + set->y, set->z);
+                    omSetSca(fish, 4.0f, 4.0f, 4.0f);
+                    break;
+                case 1:
+                    slot = func_800F75BC_CastAways(set, 0);
+                    D_800ECDE0[set->spriteIds[slot]].unk_02 = D_800FBB06_CastAways;
+                    func_8001E268(set->spriteIds[slot], 1, 0);
+                    func_8001E2A8(set->spriteIds[slot], 0);
+                    fish->model[0] = set->models[0][slot];
+                    omSetTra(fish, set->x, func_800AEAC0(set->angle) + set->y, set->z);
+                    omSetSca(fish, 4.0f, 4.0f, 4.0f);
+                    break;
+                case 2:
+                    slot = func_800F75BC_CastAways(set, type);
+                    fish->model[0] = set->models[type][slot];
+                    omSetTra(fish, set->x, func_800AEAC0(set->angle) + set->y + 30.0f, set->z + -150.0f);
+                    omSetSca(fish, 1.5f, 1.5f, 1.5f);
+                    break;
+                }
+                func_800258EC(fish->model[0], 4, 0);
+                work->state = 0;
+                work->type = type;
+                work->slot = slot;
+                work->set = set;
+                work->speed = set->speed;
+                work->angle = set->angle;
+                set->spawned++;
+            }
+        } else {
+            set->timer--;
+        }
+        angle = set->angle + 45.0f;
+        set->angle = angle;
+        if (angle >= 360.0f) {
+            set->angle = angle - 360.0f;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F76B8_CastAways);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F7A38_CastAways);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8194_CastAways);
@@ -216,7 +304,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F92FC_CastAways);
 
-void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysTrail* arg1, CastAwaysTrailTimer* arg2) {
+void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwaysRodWork* arg2) {
     u16 timer = arg2->timer - 1;
 
     arg2->timer = timer;
@@ -235,8 +323,26 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA198_C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FABE4_CastAways);
+// register allocation: retail keeps a u16 copy of the weight (masked 2)
+#ifdef NON_MATCHING
+s16 func_800FABE4_CastAways(u16 arg0) {
+    u16 r;
+    u16 i;
+    u8 w;
 
+    r = (u8)(rand8() % 10);
+    for (i = 0; i < 3; i++) {
+        w = D_800FBA0C_CastAways[arg0][i];
+        if (r < w) {
+            break;
+        }
+        r -= w;
+    }
+    return D_800FBA18_CastAways[arg0][i];
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FABE4_CastAways);
+#endif
 void func_800FACA8_CastAways(void) {
     if ((D_800FB9E0_CastAways[2] != 0) || (D_800F5144 != 0)) {
         func_800FB5B4_CastAways(131);

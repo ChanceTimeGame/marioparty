@@ -1,43 +1,5 @@
 #include "CastAways.h"
 
-typedef struct CastAwaysAnimData {
-    s16 frameCount;
-    s16 unk_02;
-    void* unk_04;
-    void* unk_08;
-} CastAwaysAnimData;
-
-typedef struct CastAwaysLureWork {
-    omObjData* playerObj;
-    s16 model;
-    char unk_06[2];
-    f32 frame;
-    f32 step;
-    u16 flags;
-    char unk_12[2];
-    CastAwaysAnimData* animData;
-} CastAwaysLureWork;
-
-typedef struct CastAwaysSpriteData {
-    s16 model;
-    s8 unk_02;
-    s8 unk_03;
-    s8 unk_04;
-    char unk_05[3];
-    void* buffersA[8];
-    void* buffersB[8];
-} CastAwaysSpriteData;
-
-typedef struct CastAwaysPlayerWork {
-    char unk_00[0x34];
-    CastAwaysSpriteData* spriteData;
-    char unk_38[0xFC];
-    void* animDataA;
-    void* animDataB;
-    omObjData* lureObj;
-    s16 unk_140;
-} CastAwaysPlayerWork;
-
 typedef struct CastAwaysCameraView {
     f32 rot;
     f32 x;
@@ -61,6 +23,7 @@ s16 func_80024198(u32, Gfx*, s32);
 void func_80020958(s16, CastAwaysAnimData*, s16);
 extern CastAwaysCameraView D_800EE738;
 extern CastAwaysCameraViewFromX D_800EE73C;
+void func_800FB778_CastAways(omObjData*);
 
 void func_800FAF40_CastAways(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);
@@ -187,7 +150,34 @@ void func_800FB644_CastAways(u16 arg0, f32 arg1) {
     D_800F2B7C[arg0].unk_4C = arg1;
 }
 
+// register allocation: retail copies arg6 through v0 (masked 4)
+#ifdef NON_MATCHING
+void func_800FB668_CastAways(omObjData* arg0, s16 arg1, CastAwaysAnimData* arg2,
+        f32 arg3, f32 arg4, u16 arg5, s32 arg6) {
+    CastAwaysPlayerWork* player = arg0->unk_50;
+    omObjData* lureObj;
+    CastAwaysLureWork* lure;
+
+    if ((arg6 & 4) && player->lureObj != NULL) {
+        omDelObj(player->lureObj);
+        player->lureObj = NULL;
+        player->unk_140 = 0;
+    }
+    lureObj = omAddObj(0xE, 0, 0, -1, &func_800FB778_CastAways);
+    player->lureObj = lureObj;
+    player->unk_140 = 0;
+    lure = func_80023684(sizeof(*lure), 0x7918);
+    lureObj->unk_50 = lure;
+    lure->playerObj = arg0;
+    lure->model = arg1;
+    lure->frame = arg3;
+    lure->step = arg4 * (s16)arg5;
+    lure->flags = arg6;
+    lure->animData = arg2;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB668_CastAways);
+#endif
 
 void func_800FB778_CastAways(omObjData* arg0) {
     CastAwaysLureWork* lure = arg0->unk_50;
