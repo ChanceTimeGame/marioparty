@@ -430,3 +430,4 @@ D_800FC554_FaceLift = D_800FC4B0_FaceLift + 0xA4;
 D_800FC5A8_FaceLift = D_800FC4B0_FaceLift + 0xF8;
 D_800FC5F4_FaceLift = D_800FC5F0_FaceLift + 0x4;
 D_800FC7D6_FaceLift = D_800FC7D4_FaceLift + 0x2;
+D_800FDD7C_PlatformPeril = D_800FDD74_PlatformPeril + 0x8;

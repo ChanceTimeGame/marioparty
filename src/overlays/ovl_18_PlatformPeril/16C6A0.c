@@ -11,13 +11,13 @@ void func_800F6F68_PlatformPeril(void) {
     func_80017660(temp_s0, 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT);
     func_800176C4(temp_s0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
     func_8001D494(0, 30.0f, 80.0f, 8000.0f);
-    Center.x = D_800FDD74_PlatformPeril.unk4;
-    Center.y = D_800FDD74_PlatformPeril.unk8;
-    Center.z = D_800FDD74_PlatformPeril.unkC;
-    CRot.x = D_800FDD74_PlatformPeril.unk10;
-    CRot.y = D_800FDD74_PlatformPeril.unk14;
-    CRot.z = D_800FDD74_PlatformPeril.unk18;
-    CZoom = D_800FDD74_PlatformPeril.unk_00.float32;
+    Center.x = D_800FDD74_PlatformPeril[0].center.x;
+    Center.y = D_800FDD74_PlatformPeril[0].center.y;
+    Center.z = D_800FDD74_PlatformPeril[0].center.z;
+    CRot.x = D_800FDD74_PlatformPeril[0].rot.x;
+    CRot.y = D_800FDD74_PlatformPeril[0].rot.y;
+    CRot.z = D_800FDD74_PlatformPeril[0].rot.z;
+    CZoom = D_800FDD74_PlatformPeril[0].zoom;
 }
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F7070_PlatformPeril);
@@ -56,10 +56,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F8C
 
 void func_800F90C0_PlatformPeril(void) {
     D_800FCDA0_PlatformPeril = 300.0f;
-    D_800FE2B0_PlatformPeril.unk0 = 0;
-    D_800FE2B0_PlatformPeril.unk4 = 0;
-    D_800FE2B0_PlatformPeril.unk8 = 0;
-    D_800FE2B0_PlatformPeril.unkC = 0;
+    D_800FE2B0_PlatformPeril[0] = 0;
+    D_800FE2B0_PlatformPeril[1] = 0;
+    D_800FE2B0_PlatformPeril[2] = 0;
+    D_800FE2B0_PlatformPeril[3] = 0;
     func_80009500();
     func_80009618(0);
     D_800B8955 = 0;
