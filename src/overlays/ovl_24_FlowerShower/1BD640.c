@@ -13,7 +13,11 @@ typedef struct FlowerShowerBodyWork {
     /* 0x52 */ s8 unk_52;
     /* 0x53 */ s8 unk_53;
     /* 0x54 */ u8 unk_54;
-    /* 0x55 */ char unk_55[7];
+    /* 0x55 */ char unk_55;
+    /* 0x56 */ s8 unk_56;
+    /* 0x57 */ char unk_57;
+    /* 0x58 */ s8 unk_58;
+    /* 0x59 */ char unk_59[3];
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ s32 unk_60;
     /* 0x64 */ f32 unk_64;
@@ -35,15 +39,19 @@ f32 func_800FA92C_FlowerShower(omObjData*);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 void func_800090D8(omObjData*, u8, u8);
 void func_800093FC(omObjData*, f32, f32, f32);
+void func_80060F04(s16, s16, s16, s16);
 void func_800FACA0_FlowerShower(omObjData*);
 void func_800F7348_FlowerShower(omObjData*, s32, s32, s32);
 void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
+void func_800F898C_FlowerShower(omObjData*, u16*);
 void func_800F9ACC_FlowerShower(omObjData*);
 void func_800FA4EC_FlowerShower(omObjData*);
 
 extern f32 D_800FAE50_FlowerShower;
 extern f32 D_800FAE54_FlowerShower;
 extern u16 D_800FAE60_FlowerShower[];
+extern u16 ContBtn[];
+extern s8 ContStkY[];
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
 extern s32 D_800FAD64_FlowerShower;
@@ -286,7 +294,49 @@ f32 func_800F8918_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2, f32 arg3, Ve
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F898C_FlowerShower);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F90AC_FlowerShower);
+void func_800F90AC_FlowerShower(omObjData* arg0) {
+    s32 temp_s0;
+    s32 temp_s0_2;
+    s32 temp_s3;
+    s32 temp_s4;
+    u16* temp_a0;
+    u16* temp_a1;
+    u16* temp_v0;
+    u16 temp_s5;
+    u16 temp_s6;
+    FlowerShowerBodyWork* temp_s2;
+
+    temp_s2 = arg0->unk_50;
+    temp_s0 = temp_s2->unk_56;
+    temp_v0 = ContBtnTrg;
+    temp_a1 = &temp_v0[temp_s0];
+    temp_s5 = *temp_a1;
+    temp_a0 = &ContBtn[temp_s0];
+    temp_s6 = *temp_a0;
+    temp_s4 = ContStkX[temp_s0];
+    temp_s3 = ContStkY[temp_s0];
+    if (GwPlayer[temp_s2->unk_58].flags & 1) {
+        ContStkY[temp_s0] = 0;
+        ContStkX[temp_s0] = 0;
+        *temp_a0 = 0;
+        *temp_a1 = 0;
+        func_800F898C_FlowerShower(arg0, temp_a1);
+    }
+    func_80005A28(arg0);
+    ContBtnTrg[temp_s0] = temp_s5;
+    ContBtn[temp_s0] = temp_s6;
+    ContStkX[temp_s0] = temp_s4;
+    ContStkY[temp_s0] = temp_s3;
+    temp_s0_2 = temp_s2->unk_53;
+    if (temp_s0_2 == 1) {
+        func_800258EC(arg0->model[1], 4, 4);
+        if (D_800FAD64_FlowerShower == 0) {
+            func_80060540(0x2CD, temp_s2->unk_58);
+            D_800FAD64_FlowerShower = temp_s0_2;
+            func_80060F04(temp_s2->unk_58, 20, 0, 20);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F9224_FlowerShower);
 
