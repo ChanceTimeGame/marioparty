@@ -1,6 +1,9 @@
 #include "GrabBag.h"
 
-extern u16 D_800B89A4[][14];
+extern s16 D_800FB0D0_GrabBag;
+extern s32 D_800FB0D4_GrabBag[4];
+
+
 extern u8 D_800FB0C0_GrabBag;
 extern s8 D_800FB114_GrabBag;
 extern s8 D_800FB115_GrabBag;
@@ -15,6 +18,7 @@ void func_800FAC0C_GrabBag(omObjData*);
 void func_80018E0C(u16, s16);
 
 
+extern u16 D_800B89A4[][14];
 extern s32 D_800FB104_GrabBag[4];
 extern f32 D_800FB250_GrabBag;
 extern s32 D_800FB254_GrabBag;
@@ -75,8 +79,89 @@ void func_800F7680_GrabBag(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F776C_GrabBag);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F7EDC_GrabBag);
+void func_800F7EDC_GrabBag(omObjData* arg0, u32 dir, s32 file, s8 player, u16 flags) {
+    GrabBagPlayerWork* work;
+    s32 i;
+    s16 coins;
 
+    for (i = 0; i < arg0->mdlcnt; i++) {
+        arg0->model[i] = 0;
+    }
+    arg0->unk_50 = func_80023684(sizeof(GrabBagPlayerWork), 0x7918);
+    func_8009B770(arg0->unk_50, 0, sizeof(GrabBagPlayerWork));
+    work = arg0->unk_50;
+    work->unk_D8 = func_80023684(arg0->mtncnt * 4, 0x7918);
+    func_8009B770(work->unk_D8, 0, arg0->mtncnt * 4);
+    arg0->model[0] = LoadFormFile(dir | file, flags);
+    arg0->model[1] = func_800174F4(6, flags);
+    func_800370D4(arg0->model[1]);
+    for (i = 0; i < arg0->mtncnt; i++) {
+        arg0->motion[i] = -1;
+    }
+    for (i = 0; i < arg0->mtncnt; i++) {
+        work->unk_D8[i][0] = work->unk_D8[i][1] = 0;
+    }
+    work->port = GwPlayer[D_800FB0D4_GrabBag[D_800FB0D0_GrabBag]].port;
+    if (GwPlayer[D_800FB0D4_GrabBag[D_800FB0D0_GrabBag]].flags & 1) {
+        work->unk_E8 = -1;
+    } else if (!(GwPlayer[D_800FB0D4_GrabBag[D_800FB0D0_GrabBag]].flags & 1)) {
+        work->unk_E8 = 1;
+    }
+    work->unk_52 = 0;
+    work->unk_A4 = 1.0f;
+    work->unk_C0 = 0xFFFF;
+    work->unk_4C = 0.5f;
+    work->unk_BC = 1.0f;
+    work->unk_90 = work->unk_94 = work->unk_98 = 0.0f;
+    work->player = player;
+    work->angle = 0.0f;
+    work->unk_E9 = work->unk_F0 = work->button_press_count = 0;
+    work->unk_EA = -1;
+    work->unk_FE = 0;
+    func_80008FD0(arg0, 40.0f);
+    func_80008FDC(arg0, 150.0f);
+    func_80008FE8(arg0, 20.0f);
+    func_80008FA0(arg0, 1000.0f);
+    if (_CheckFlag(0x2B) != 0 && work->player == 0) {
+        work->start_score = work->score = 0;
+    } else {
+        coins = GwPlayer[D_800FB0D4_GrabBag[D_800FB0D0_GrabBag]].coins;
+        work->score = coins;
+        work->start_score = coins;
+    }
+    work->total = work->start_total = work->score + work->unk_F4 + work->unk_F6;
+    func_800FB064_GrabBag(work->player, work->score);
+    work->unk_EB = work->unk_EC = work->unk_ED = work->unk_F1 = work->unk_EF = 0;
+    switch (dir >> 16) {
+    case 5:
+        work->unk_A0 = 0.7f;
+        break;
+    case 3:
+        work->unk_A0 = 0.9f;
+        break;
+    case 4:
+        work->unk_A0 = 0.8f;
+        break;
+    default:
+        work->unk_A0 = 1.0f;
+        break;
+    }
+    i = dir >> 16;
+    D_800B89A4[work->player][0] = i + 0x112;
+    D_800B89A4[work->player][1] = i + 0x119;
+    D_800B89A4[work->player][2] = i + 0x120;
+    D_800B89A4[work->player][3] = i + 0x127;
+    D_800B89A4[work->player][4] = i + 0x12E;
+    D_800B89A4[work->player][5] = i + 0x135;
+    D_800B89A4[work->player][6] = i + 0x13C;
+    D_800B89A4[work->player][7] = 0x144;
+    D_800B89A4[work->player][8] = 0x145;
+    D_800B89A4[work->player][9] = 0x146;
+    D_800B89A4[work->player][10] = i + 0x147;
+    D_800B89A4[work->player][11] = i + 0x14E;
+    D_800B89A4[work->player][12] = 0x160;
+    D_800B89A4[work->player][13] = 0x162;
+}
 void func_800F8484_GrabBag(omObjData* arg0) {
     GrabBagPlayerWork* work;
 
