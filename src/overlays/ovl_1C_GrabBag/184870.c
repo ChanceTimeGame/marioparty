@@ -257,8 +257,76 @@ void func_800F8A18_GrabBag(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8A18_GrabBag);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_GrabBag);
+// CSE: retail reloads the screen position for each bounds test and keeps 165.0f in a register (masked 39)
+#ifdef NON_MATCHING
+void func_800F8BDC_GrabBag(void) {
+    Vec3f pos;
+    Vec2f screen;
+    Vec2f sum;
+    s32 i;
+    s32 state;
 
+    sum.x = sum.y = 0.0f;
+    for (i = 0; i < 4; i++) {
+        pos.x = D_800F3FB0[i]->trans.x;
+        pos.y = D_800F3FB0[i]->trans.y;
+        pos.z = D_800F3FB0[i]->trans.z;
+        Convert3DTo2D(0, &pos, &screen);
+        sum.x += screen.x;
+        sum.y += screen.y;
+    }
+    for (i = 0; i < 4; i++) {
+        pos.x = D_800F3FB0[i]->trans.x;
+        pos.y = D_800F3FB0[i]->trans.y;
+        pos.z = D_800F3FB0[i]->trans.z;
+        Convert3DTo2D(0, &pos, &screen);
+        state = 0;
+        if (screen.x > 250.0f || screen.x < 70.0f || screen.y > 170.0f || screen.y < 70.0f) {
+            break;
+        }
+        state = 2;
+        if (screen.x > 245.0f || screen.x < 75.0f || screen.y > 165.0f || screen.y < 75.0f) {
+            break;
+        }
+        state = 1;
+    }
+    if (state == 1) {
+        CZoom -= 20.0f;
+        if (CZoom < 1000.0f) {
+            CZoom = 1000.0f;
+        }
+    } else if (state == 0) {
+        CZoom += 20.0f;
+        if (CZoom > 1820.0f) {
+            CZoom = 1820.0f;
+        }
+    }
+    sum.x /= 4.0f;
+    sum.y /= 4.0f;
+    if (sum.y < 115.0f) {
+        Center.z -= 5.0f;
+    } else if (sum.y > 125.0f) {
+        Center.z += 5.0f;
+    }
+    if (Center.z < -105.0f) {
+        Center.z = -105.0f;
+    } else if (Center.z > -24.0f) {
+        Center.z = -24.0f;
+    }
+    if (sum.x < 155.0f) {
+        Center.x -= 5.0f;
+    } else if (sum.x > 165.0f) {
+        Center.x += 5.0f;
+    }
+    if (Center.x < -20.0f) {
+        Center.x = -20.0f;
+    } else if (Center.x > 0.0f) {
+        Center.x = 0.0f;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_GrabBag);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
 
 void func_800F975C_GrabBag(GrabBagPlayerWork* arg0, s32 arg1) {
