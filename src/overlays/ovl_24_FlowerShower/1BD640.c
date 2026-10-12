@@ -33,6 +33,13 @@ typedef struct FlowerShowerModelWork {
     /* 0x06 */ char unk_06[0x26];
 } FlowerShowerModelWork;
 
+typedef struct FlowerShowerNpcWork {
+    /* 0x00 */ u8 unk_00[0x3C];
+    /* 0x3C */ f32 unk_3C;
+    /* 0x40 */ u8 unk_40[0x13];
+    /* 0x53 */ u8 unk_53;
+} FlowerShowerNpcWork;
+
 FlowerShowerBodyWork* func_800F7A28_FlowerShower(omObjData*, s32, f32, f32, s32, s32, s32, s32);
 f32 func_800051D4(omObjData*, f32, f32, f32, Vec3f*);
 f32 func_80029518(f32);
@@ -49,6 +56,7 @@ void func_800F761C_FlowerShower(omObjData*, s32, s32, s32, f32, f32, f32);
 void func_800F870C_FlowerShower(Matrix4f, Vec3f*, omObjData*);
 void func_800F898C_FlowerShower(omObjData*, u16*);
 void func_800F9ACC_FlowerShower(omObjData*);
+void func_800FA2B0_FlowerShower(omObjData*, f32);
 void func_800FA4EC_FlowerShower(omObjData*);
 
 extern f32 D_800FAE50_FlowerShower;
@@ -56,6 +64,8 @@ extern f32 D_800FAE54_FlowerShower;
 extern u16 D_800FAE60_FlowerShower[];
 extern u16 ContBtn[];
 extern s8 ContStkY[];
+extern omObjData* D_800EDE70[];
+extern u16 D_800EE984;
 extern f32 D_800FADCC_FlowerShower;
 extern u8 D_800F64F8;
 extern s32 D_800FAD64_FlowerShower;
@@ -428,7 +438,57 @@ void func_800FA178_FlowerShower(omObjData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800FA2B0_FlowerShower);
+void func_800FA2B0_FlowerShower(omObjData* arg0, f32 arg1) {
+    FlowerShowerModelWork* model_work = arg0->unk_50;
+    FlowerShowerBodyWork* body_work;
+    FlowerShowerNpcWork* npc_work;
+    omObjData* obj;
+    f32 dx;
+    f32 dz;
+    f32 distance;
+    f32 angle;
+    s16 i;
+
+    arg0->rot.y += arg1;
+    i = 0;
+    if (D_800F2BC0 != 0) {
+        do {
+            obj = D_800F3FB0[i];
+            body_work = obj->unk_50;
+            if (body_work->unk_53 == model_work->unk_05) {
+                dx = arg0->trans.x - obj->trans.x;
+                dz = arg0->trans.z - obj->trans.z;
+                distance = func_800B1750(dx * dx + dz * dz);
+                angle = func_800B0CD8(obj->trans.x, obj->trans.z) + arg1;
+                if (arg1 != 0.0f) {
+                    obj->trans.x = func_800AEAC0(angle) * distance;
+                    obj->trans.z = func_800AEFD0(angle) * distance;
+                    body_work->unk_3C += arg1;
+                }
+            }
+            i++;
+        } while (i < D_800F2BC0);
+    }
+    i = 0;
+    if (D_800EE984 != 0) {
+        do {
+            obj = D_800EDE70[i];
+            npc_work = obj->unk_50;
+            if (npc_work->unk_53 == model_work->unk_05) {
+                dx = arg0->trans.x - obj->trans.x;
+                dz = arg0->trans.z - obj->trans.z;
+                distance = func_800B1750(dx * dx + dz * dz);
+                angle = func_800B0CD8(obj->trans.x, obj->trans.z) + arg1;
+                if (arg1 != 0.0f) {
+                    obj->trans.x = func_800AEAC0(angle) * distance;
+                    obj->trans.z = func_800AEFD0(angle) * distance;
+                    npc_work->unk_3C += arg1;
+                }
+            }
+            i++;
+        } while (i < D_800EE984);
+    }
+}
 
 void func_800FA4EC_FlowerShower(omObjData* arg0) {
     if (((func_8005FD5C() & 0xFFFF) + D_800F64F8) == 0) {
