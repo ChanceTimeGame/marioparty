@@ -1313,7 +1313,7 @@ segments:
     subsegments:
       - [0x1D3990, c]
       - [0x1D6E30, c]
-      - [0x1D93B0, data, 1D3990]
+      - [0x1D93B0, .data, 1D3990]
       - [0x1D93E0, data, 1D6E30]
       - [0x1D9400, .rodata, 1D3990]
       - [0x1D95F0, .rodata, 1D6E30]
