@@ -60,12 +60,29 @@ extern unkPPStruct D_800FDD74_PlatformPeril;
 extern s32 D_800FCD90_PlatformPeril;
 extern s32 D_800FE2F8_PlatformPeril;
 extern f32 D_800B895C;
-extern char D_800FDF60_PlatformPeril[];
-extern char D_800FDF6C_PlatformPeril[];
-extern char D_800FDF78_PlatformPeril[];
 extern unkPPStruct D_800FD2A0_PlatformPeril[];
 extern s32 D_800FE1D0_PlatformPeril;
 extern s32 D_800FE1D4_PlatformPeril;
 extern s32 D_800FE258_PlatformPeril[];
 
 
+void func_80025BB8(s16, s16);
+s32 func_800F6DF4_PlatformPeril(void);
+s32 func_800F6E14_PlatformPeril(void);
+void func_800FC17C_PlatformPeril(void);
+void func_800FC8D4_PlatformPeril(void);
+void func_800FC8DC_PlatformPeril(void);
+void func_800FCB10_PlatformPeril(omObjData*);
+s32 func_800FCBD4_PlatformPeril(void);
+void func_800FCD44_PlatformPeril(void);
+void func_800FCD50_PlatformPeril(u32);
+void func_800FCD5C_PlatformPeril(void);
+
+extern s32 D_800FCD94_PlatformPeril;
+extern s32 D_800FCD98_PlatformPeril;
+extern s32 D_800FE1A0_PlatformPeril;
+extern s32 D_800FE2C4_PlatformPeril;
+extern s32 D_800FE2C8_PlatformPeril; /* winner's player index, -1 none */
+extern f32 D_800FE2CC_PlatformPeril;
+extern s32 D_800FE2FC_PlatformPeril;
+extern omObjData* D_800FE540_PlatformPeril[4]; /* player objects */
