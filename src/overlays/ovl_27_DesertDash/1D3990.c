@@ -366,8 +366,274 @@ void func_800F7430_DesertDash(omObjData* obj) {
     D_800FC00C_DesertDash = func_800F983C_DesertDash(obj, 2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F7C6C_DesertDash);
+// register allocation only (masked 2: fabsf operand and a pointer temp)
+#ifdef NON_MATCHING
+/* Per-frame driver of both teams' sleds, cameras and sprites. */
+void func_800F7C6C_DesertDash(omObjData* obj) {
+    s32 i;
+    s32 prev;
+    f32 z;
+    f32 d;
+    f32 v;
+    DDTeam* team;
+    unk65770Obj* spr;
+    omObjData* o;
 
+    if (D_800FC000_DesertDash < 3) {
+        return;
+    }
+    for (i = 0; i < 2; i++) {
+        team = &D_800FC318_DesertDash[i];
+        prev = team->unk14;
+        z = (team->obj[0]->trans.z + team->obj[1]->trans.z) * 0.5;
+        team->unk28 = z;
+        switch (team->unk14) {
+            case 0:
+                team->unk14 = 1;
+                func_80067480((s16)D_800FC3B4_DesertDash, (s16)i, 0x8000);
+                func_800671DC((s16)D_800FC3B4_DesertDash, (s16)i, 0);
+                D_800FC2E0_DesertDash[i] = 80;
+                if (i != 0) {
+                    func_80060540(0x2E7, i);
+                } else {
+                    func_80060540(0x2E6, i);
+                }
+                break;
+            case 1:
+                if (team->unk8 == 3) {
+                    func_800F949C_DesertDash(team->obj[0], 1, 3.0f);
+                    func_800F949C_DesertDash(team->obj[1], 1, 3.0f);
+                    team->unk14 = 3;
+                    if (i != 0) {
+                        D_800FC2E8_DesertDash[i] = func_80060540(0x2ED, i);
+                    } else {
+                        D_800FC2E8_DesertDash[i] = func_80060540(0x2EC, i);
+                    }
+                } else if (team->unk1A >= 9) {
+                    team->unk14 = 7;
+                } else if (team->unk8 != 0) {
+                    team->unk1A++;
+                }
+                break;
+            case 3:
+                D_800F2B7C[team->unkE].unk_2C = z + (0.14 - team->unk18 * 0.03) * 100.0;
+                D_800F2B7C[team->unk10].unk_2C = z + (team->unk18 * 0.03 + -0.14) * 100.0;
+                if (team->unk1A == 0) {
+                    if (team->unk8 == 3) {
+                        team->unk14 = 4;
+                        func_800671DC((s16)D_800FC3B4_DesertDash, (s16)i, 1);
+                        D_800FC2E0_DesertDash[i] = -80;
+                        if (i != 0) {
+                            func_80060540(0x2E7, i);
+                        } else {
+                            func_80060540(0x2E6, i);
+                        }
+                    }
+                } else {
+                    team->unk14 = 7;
+                    func_8006071C((s16)D_800FC2E8_DesertDash[i]);
+                }
+                break;
+            case 4:
+                if (team->unk8 == 3) {
+                    func_800F949C_DesertDash(team->obj[0], 2, 3.0f);
+                    func_800F949C_DesertDash(team->obj[1], 2, 3.0f);
+                    team->unk14 = 6;
+                    if (i != 0) {
+                        D_800FC2E8_DesertDash[i] = func_80060540(0x2F0, i);
+                    } else {
+                        D_800FC2E8_DesertDash[i] = func_80060540(0x2EF, i);
+                    }
+                } else if (team->unk1A >= 9) {
+                    team->unk14 = 7;
+                } else if (team->unk8 != 0) {
+                    team->unk1A++;
+                }
+                break;
+            case 6:
+                D_800F2B7C[team->unkE].unk_2C = z + (team->unk18 * 0.03 + -0.14) * 100.0;
+                D_800F2B7C[team->unk10].unk_2C = z + (0.14 - team->unk18 * 0.03) * 100.0;
+                if (team->unk1A != 0) {
+                    team->unk14 = 7;
+                    func_8006071C((s16)D_800FC2E8_DesertDash[i]);
+                } else if (team->unk8 == 3) {
+                    team->unk14 = 1;
+                    func_800671DC((s16)D_800FC3B4_DesertDash, (s16)i, 0);
+                    D_800FC2E0_DesertDash[i] = 80;
+                    if (i != 0) {
+                        func_80060540(0x2E7, i);
+                    } else {
+                        func_80060540(0x2E6, i);
+                    }
+                }
+                break;
+            case 7:
+                if (team->unk18 == 0) {
+                    func_800F949C_DesertDash(team->obj[0], 6, 2.0f);
+                    func_800F949C_DesertDash(team->obj[1], 6, 2.0f);
+                    func_80060540(0x157, i);
+                    func_80067480((s16)D_800FC3B8_DesertDash, (s16)i, 0x8000);
+                    if (i != 0) {
+                        func_80060540(0x2F5, i);
+                    } else {
+                        func_80060540(0x2F4, i);
+                    }
+                    D_800F2B7C[team->unkE].unk_2C = D_800F2B7C[team->unk10].unk_2C = z;
+                    D_800FC2F0_DesertDash[0] = func_80060618(0x45F, team->player[0]);
+                    D_800FC2F0_DesertDash[1] = func_80060618(0x45F, team->player[1]);
+                    if (i != 0) {
+                        func_800607C4((s16)D_800FC2F0_DesertDash[0], 0x50);
+                        func_800607C4((s16)D_800FC2F0_DesertDash[1], 0x60);
+                    } else {
+                        func_800607C4((s16)D_800FC2F0_DesertDash[0], 0x20);
+                        func_800607C4((s16)D_800FC2F0_DesertDash[1], 0x30);
+                    }
+                    func_80060F04(team->player[0], 20, 0, 20);
+                    func_80060F04(team->player[1], 20, 0, 20);
+                }
+                if (team->unk18 < 8) {
+                    func_800671DC((s16)D_800FC3B8_DesertDash, (s16)i, team->unk18);
+                }
+                if (team->unk8 == 3) {
+                    func_800674BC((s16)D_800FC3B4_DesertDash, (s16)i, 0x8000);
+                    func_800674BC((s16)D_800FC3B8_DesertDash, (s16)i, 0x8000);
+                    func_800671DC((s16)D_800FC3B8_DesertDash, (s16)i, 0);
+                    team->unk14 = 8;
+                }
+                break;
+            case 8:
+                if (team->unk8 == 3) {
+                    team->unk14 = 0;
+                }
+                break;
+            case 9:
+                D_800F2B7C[team->unkE].unk_2C = z;
+                D_800F2B7C[team->unk10].unk_2C = z;
+                if (team->unk18 == 0) {
+                    func_800184BC(team->obj[0], 0);
+                    func_800184BC(team->obj[1], 0);
+                    func_800674BC((s16)D_800FC3B4_DesertDash, (s16)i, 0x8000);
+                    func_800674BC((s16)D_800FC3B8_DesertDash, (s16)i, 0x8000);
+                    func_80060F04(team->player[0], 2, 2, 20);
+                    func_80060F04(team->player[1], 2, 2, 20);
+                    D_800FC2F0_DesertDash[0] = func_80060618(0x45F, team->player[0]);
+                    D_800FC2F0_DesertDash[1] = func_80060618(0x45F, team->player[1]);
+                    if (i != 0) {
+                        func_800607C4((s16)D_800FC2F0_DesertDash[0], 0x50);
+                        func_800607C4((s16)D_800FC2F0_DesertDash[1], 0x60);
+                    } else {
+                        func_800607C4((s16)D_800FC2F0_DesertDash[0], 0x20);
+                        func_800607C4((s16)D_800FC2F0_DesertDash[1], 0x30);
+                    }
+                } else if (team->unk18 >= 67) {
+                    team->unk14 = 10;
+                    if (i != 0) {
+                        func_80060540(0x2F8, i);
+                    } else {
+                        func_80060540(0x2F7, i);
+                    }
+                }
+                D_800F2B7C[team->obj[0]->model[0]].unk_4C = 0.0f;
+                D_800F2B7C[team->obj[1]->model[0]].unk_4C = 0.0f;
+                break;
+            case 10:
+                team->unk1A += 2;
+                if (team->unk8 == 3) {
+                    D_800F2B7C[team->obj[0]->model[0]].unk_4C = 1.0f;
+                    D_800F2B7C[team->obj[1]->model[0]].unk_4C = 1.0f;
+                    team->unk14 = 0;
+                }
+                break;
+            case 11:
+                switch (D_800FC000_DesertDash) {
+                    case 6:
+                        if (team->unk18 == 0) {
+                            func_800F95E8_DesertDash(i, 622.5f, (i * 2 - 1) * 100.0, 177.5f, z, -27.6f, 0.0f, 0.0f, 6);
+                            func_800FAE1C_DesertDash(i, 6.0f);
+                        } else if (team->unk18 == 6) {
+                            func_800F95E8_DesertDash(i, 415.0f, (i * 2 - 1) * 100.0, 75.0f, z, -27.6f,
+                                                     (i * 2 - 1) * 210.0, 0.0f, 20);
+                        }
+                        team->unk18++;
+                        break;
+                    case 7:
+                        o = team->obj[0];
+                        o->rot.y = v = -((i * 2 - 1) * 150);
+                        team->obj[1]->rot.y = v;
+                        break;
+                }
+            case 12:
+                func_800674BC((s16)D_800FC3B4_DesertDash, (s16)i, 0x8000);
+                func_800674BC((s16)D_800FC3B8_DesertDash, (s16)i, 0x8000);
+                break;
+        }
+        if (D_800FC000_DesertDash >= 5) {
+            if (((team->unk14 != 11) & (team->unk14 != 9)) && team->unk14 != 10) {
+                team->unk14 = 12;
+            }
+        }
+        if (D_800FC000_DesertDash == 3) {
+            team->unk18++;
+            if (func_800FAD98_DesertDash(i, team->obj[0]->trans.z) != 0) {
+                team->unk14 = 11;
+                D_800FC020_DesertDash |= 1 << i;
+            }
+            if (D_800FC000_DesertDash == 4) {
+                team->unk14 = 12;
+            }
+            team->unk16 = func_800F8A80_DesertDash(team->obj[0]->trans.z);
+            if (team->unk16 == 3) {
+                team->unk14 = 9;
+            }
+            func_80025798(team->unk12, team->obj[0]->trans.x, 16.0f, team->obj[0]->trans.z);
+            if (prev != team->unk14) {
+                team->unk8 = 0;
+                team->unk1A = 0;
+                team->unk18 = 0;
+                team->unk1C = (rand8() & 7) + 4;
+            }
+            func_800F95E8_DesertDash(i, 830.0f, (i * 2 - 1) * 100.0, 280.0f, team->obj[0]->trans.z, -17.25f,
+                                     0.0f, 0.0f, 1);
+            func_80066DF4((s16)D_800FC3B4_DesertDash, (s16)i, (s16)i, D_800FC2E0_DesertDash[i] + team->obj[0]->trans.x,
+                          team->obj[0]->trans.y + 160.0, team->obj[0]->trans.z);
+            spr = func_800675F4((s16)D_800FC3B4_DesertDash, (s16)i);
+            func_80066DC4((s16)D_800FC3B8_DesertDash, (s16)i, spr->unk4, spr->unk6);
+        }
+    }
+    v = D_800FC318_DesertDash[0].unk28 - D_800FC318_DesertDash[1].unk28;
+    d = fabsf(v);
+    if (d < 300.0) {
+        D_800FC318_DesertDash[0].unk34 = 1.0f;
+        D_800FC318_DesertDash[1].unk34 = 1.0f;
+    } else if (d < 800.0) {
+        if (D_800FC318_DesertDash[0].unk28 - D_800FC318_DesertDash[1].unk28 > 0.0f) {
+            D_800FC318_DesertDash[0].unk34 = d / 100.0 * 0.1 + 0.8;
+            D_800FC318_DesertDash[1].unk34 = 1.0f;
+        } else {
+            D_800FC318_DesertDash[0].unk34 = 1.0f;
+            D_800FC318_DesertDash[1].unk34 = d / 100.0 * 0.1 + 0.8;
+        }
+    } else if (D_800FC318_DesertDash[0].unk28 - D_800FC318_DesertDash[1].unk28 > 0.0f) {
+        D_800FC318_DesertDash[0].unk34 = 1.6f;
+        D_800FC318_DesertDash[1].unk34 = 1.0f;
+    } else {
+        D_800FC318_DesertDash[0].unk34 = 1.0f;
+        D_800FC318_DesertDash[1].unk34 = 1.6f;
+    }
+    if (D_800FC020_DesertDash != 0) {
+        if (D_800FC020_DesertDash == 3) {
+            D_800FC318_DesertDash[rand8() & 1].unk14 = 12;
+        }
+        D_800FC000_DesertDash = 5;
+        D_800FC020_DesertDash = 0;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F7C6C_DesertDash);
+#endif
+
+// branch layout only (case 0 test: bc1f/j where retail has bc1tl/j; masked 19)
+#ifdef NON_MATCHING
 /* What lies ahead of z: 0 nothing, 1 an obstacle to wait for, 2 jump now, 3 hit; -1 unknown. */
 u16 func_800F8A80_DesertDash(f32 z) {
     s32 i;
@@ -410,8 +676,161 @@ u16 func_800F8A80_DesertDash(f32 z) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F8A80_DesertDash);
+#endif
 
+// register allocation only (s0..s3 permuted; masked 0)
+#ifdef NON_MATCHING
+/* A player's per-frame update: pull input (stick pushes and shakes) and squash-and-stretch. */
+void func_800F8C34_DesertDash(omObjData* obj) {
+    Vec pos; /* written, never read */
+    s16 stkX;
+    s16 stkY;
+    f32 x;
+    f32 y;
+    f32 z;
+    DDTeam* team;
+    s32 m;
+    DDPlayerWork* work;
+    s8 port;
+    f32 f;
+    s32 sy;
+
+    stkX = 0;
+    stkY = 0;
+    work = obj->unk_50;
+    m = 0;
+    team = func_800F9470_DesertDash(obj);
+    if (team->obj[0] != obj && team->obj[1] == obj) {
+        m = 1;
+    }
+    port = work->unk_56;
+    if (D_800FC000_DesertDash == 3) {
+        stkX = ContStkX[port];
+        stkY = ContStkY[port];
+        if (GwPlayer[work->unk_58].flags & 1) {
+            func_800F91C8_DesertDash(obj, &stkX, &stkY);
+        }
+    } else {
+        stkX = 0;
+        stkY = 0;
+    }
+    func_80017A50(obj);
+    x = obj->trans.x;
+    pos.x = x;
+    y = obj->trans.y;
+    pos.y = y;
+    z = obj->trans.z;
+    pos.z = z;
+    switch (team->unk14) {
+        case 0:
+            break;
+        case 1:
+            if (stkX >= 30) {
+                goto push;
+            }
+            goto shake;
+        case 4:
+            if (stkX < -29) {
+                goto push;
+            }
+        shake:
+            sy = stkY;
+            if (sy < 0) {
+                sy = -sy;
+            }
+            if (sy >= 50) {
+                team->unk1A += 9;
+            }
+            break;
+        case 3:
+        case 6:
+            if (team->unk16 != 2 && D_800FC000_DesertDash == 3) {
+                z -= team->unk34 * 16.0;
+            }
+            if (work->unk_C0 != 0xFFFF) {
+                break;
+            }
+            goto push;
+        case 7:
+            if (team->unk18 == 10) {
+                if (m == 0) {
+                    func_80017C0C(obj, 8, x, y, z + 75.0, 0.0f, 0.0f);
+                }
+                break;
+            }
+            if (team->unk18 < 30) {
+                break;
+            }
+            func_800258EC(obj->model[8], 4, 4);
+            func_800F949C_DesertDash(obj, 8, 2.0f);
+            goto push;
+        case 8:
+            if (work->unk_C0 != 0xFFFF) {
+                break;
+            }
+            func_800F949C_DesertDash(obj, 0, 1.0f);
+            goto push;
+        case 9:
+            if (team->unk16 != 0) {
+                z -= 5.0;
+            }
+            obj->scale.y = 0.2f;
+            obj->scale.x = obj->scale.z = 1.6f;
+            break;
+        case 10:
+            if (team->unk1A < 11) {
+                f = team->unk1A;
+                obj->scale.y = f * 0.05f + 0.2;
+                obj->scale.z = obj->scale.x = 1.8 - f * 0.08f;
+            } else if (team->unk1A < 21) {
+                f = team->unk1A - 10;
+                obj->scale.y = 0.9 - f * 0.05f;
+                obj->scale.z = obj->scale.x = f * 0.05f + 1.0;
+            } else if (team->unk1A < 31) {
+                f = team->unk1A - 20;
+                obj->scale.y = f * 0.05f + 0.7;
+                obj->scale.z = obj->scale.x = 1.4 - f * 0.04f;
+            } else if (team->unk1A < 39) {
+                f = team->unk1A - 30;
+                obj->scale.y = 1.3 - f * 0.1f;
+                obj->scale.z = obj->scale.x = f * 0.02f + 1.0;
+            } else if (team->unk1A < 47) {
+                f = team->unk1A - 38;
+                obj->scale.y = f * 0.1f + 0.3;
+                obj->scale.z = obj->scale.x = 1.1 - f * 0.01f;
+            } else {
+                func_800F949C_DesertDash(obj, 0, 1.0f);
+            push:
+                team->unk8 |= 1 << m;
+            }
+            break;
+        case 11:
+            if (D_800FC000_DesertDash == 6) {
+                func_800F949C_DesertDash(obj, 3, 1.0f);
+                break;
+            }
+            goto idle;
+        case 12:
+            if (D_800FC000_DesertDash == 6) {
+                func_800F949C_DesertDash(obj, 4, 1.0f);
+                break;
+            }
+        idle:
+            if (D_800FC000_DesertDash < 6) {
+                func_800F949C_DesertDash(obj, 0, 1.0f);
+            }
+            break;
+    }
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    func_80017DB0(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F8C34_DesertDash);
+#endif
 
 /* CPU input: push the stick when the partner does (human) or at random (CPU partner). */
 void func_800F91C8_DesertDash(omObjData* obj, s16* stkX, s16* stkY) {

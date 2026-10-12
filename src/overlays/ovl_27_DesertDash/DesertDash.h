@@ -6,6 +6,7 @@
    are only reached through their fields (the host strides pointers 8 bytes). */
 
 #include "common.h"
+#include "sprite65770.h"
 
 /* ---------------------------------------------------------------------------------------------
    Structs
@@ -100,7 +101,7 @@ extern f64 D_800FC048_DesertDash;
    --------------------------------------------------------------------------------------------- */
 extern s32 D_800FC2E0_DesertDash[2];
 extern s32 D_800FC2E8_DesertDash[2];
-extern s16 D_800FC2F0_DesertDash[4];
+extern s32 D_800FC2F0_DesertDash[2]; /* player sprite ids; read as s16 (D_800FC2F2, +6) */
 extern omObjData* D_800FC2F8_DesertDash;
 extern omObjData* D_800FC2FC_DesertDash;
 extern s32 D_800FC300_DesertDash;
@@ -134,6 +135,7 @@ extern f32 CZoomM[];
 extern omObjData* D_800F2AF8[];
 extern u16 D_800EE984;
 extern DDChr D_800C59A8[];
+extern s8 ContStkY[4];
 void omOutViewMulti(omObjData* obj);
 
 void func_80008EF0(omObjData* obj, u16 idx, s32 dir, s32 file, f32 arg4);
