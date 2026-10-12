@@ -62,17 +62,37 @@ typedef struct DDChr {
     /* 0x10 */ f32 scale;
 } DDChr; /* size = 0x14 */
 
-/* An obstacle on the course (D_800FC670[5]). No pointers. */
+/* An obstacle on the course (D_800FC670[5]): a block that rises and slams down. No pointers. */
 typedef struct DDObstacle {
     /* 0x00 */ s16 unk0;  /* active */
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;  /* kind */
-    /* 0x06 */ char unk6[4];
-    /* 0x0A */ s16 unkA;  /* model */
-    /* 0x0C */ char unkC[4];
-    /* 0x10 */ f32 unk10;
+    /* 0x02 */ s16 unk2;  /* held up (cleared at random frames) */
+    /* 0x04 */ s16 unk4;  /* phase: 0 rising, 1 falling, 2 down, 3 up */
+    /* 0x06 */ s16 unk6;  /* model */
+    /* 0x08 */ s16 unk8;  /* shadow model */
+    /* 0x0A */ s16 unkA;  /* dust model */
+    /* 0x0C */ f32 unkC;  /* phase timer */
+    /* 0x10 */ f32 unk10; /* height */
     /* 0x14 */ f32 unk14; /* z */
 } DDObstacle; /* size = 0x18 */
+
+/* A scenery model's position (D_800FC4F8[16]). */
+typedef struct DDScenery {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ u16 unk2; /* model kind 0..2 */
+    /* 0x04 */ f32 x;
+    /* 0x08 */ f32 y;
+    /* 0x0C */ f32 z;
+} DDScenery; /* size = 0x10 */
+
+/* A team's banner sprite (D_800FC620[2]). No pointers. */
+typedef struct DDBanner {
+    /* 0x00 */ f32 unk0;  /* y */
+    /* 0x04 */ f32 unk4;  /* y step */
+    /* 0x08 */ f32 unk8;  /* frames left */
+    /* 0x0C */ f32 unkC;  /* x */
+    /* 0x10 */ f32 unk10; /* x scale */
+    /* 0x14 */ f32 unk14; /* y scale */
+} DDBanner; /* size = 0x18 */
 
 /* ---------------------------------------------------------------------------------------------
    Data (.data)
@@ -124,6 +144,18 @@ extern f32 D_800FC4A8_DesertDash[4];   /* target CZoomM */
 extern s16 D_800FC4B8_DesertDash[4];   /* frames left */
 extern s16 D_800FC4C0_DesertDash[8];   /* frames total */
 extern u16 D_800FC4D0_DesertDash[8];
+extern omObjData* D_800FC4E0_DesertDash[3]; /* the two track objects and the scenery object */
+extern DDScenery D_800FC4F8_DesertDash[16];
+extern s16 D_800FC5F8_DesertDash[3];   /* sprite animations */
+extern s16 D_800FC5FE_DesertDash[2];   /* per-team sprite groups */
+extern s16 D_800FC602_DesertDash[2]; /* [0] the start banner's group, [1] the team markers' (D_800FC604) */
+extern Gfx* D_800FC608_DesertDash[2];  /* per-team banner display lists */
+extern s16 D_800FC614_DesertDash[2];   /* their models */
+extern DDBanner D_800FC620_DesertDash[2];
+extern s16 D_800FC650_DesertDash;
+extern s16 D_800FC652_DesertDash;
+extern s16 D_800FC654_DesertDash;
+extern f64 D_800FC658_DesertDash[2];   /* each team's z */
 extern DDObstacle D_800FC670_DesertDash[5];
 
 /* ---------------------------------------------------------------------------------------------
@@ -150,8 +182,14 @@ void func_8006035C(s16, s8);
 void func_800607C4(s16, s16);
 void func_80060F04(s16, s16, s16, s16);
 void func_80066DF4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
-void func_8006761C(s16 grpIdx, s16 idx, s16 arg2, s16 arg3, u16 arg4, u16 arg5);
+/* src/65770.c defines arg4/arg5 as u16; retail called it with s16 (sign-extended) values. */
+void func_8006761C(s16 grpIdx, s16 idx, s16 arg2, s16 arg3, s16 arg4, s16 arg5);
 void omInitObjMan(s32 maxObjects, s32 maxProcesses);
+s16 func_80024198(u32, Gfx*, s32); /* src/24740.c */
+unk65770Anim* func_80067310(s16 animIdx);
+f32 func_800AEAC0(f32);
+extern unk65770Anim* D_800EC700[256]; /* src/65770.c */
+extern u8 D_800F64F8;
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions
@@ -190,6 +228,21 @@ void func_800F9C9C_DesertDash(s16 x);
 u16 func_800FA1A0_DesertDash(u16 range);
 void func_800FA210_DesertDash(u8 seed);
 s16 func_800FAD98_DesertDash(u16 team, f32 z);
-void func_800FAE1C_DesertDash(u16 team, f32 arg1);
+void func_800FAE1C_DesertDash(u16 team, f32 frames);
+u16 func_800FA258_DesertDash(s32 file);
+void func_800FA29C_DesertDash(void);
+void func_800FA234_DesertDash(DDObstacle* o);
+void func_800FA460_DesertDash(omObjData* obj);
+void func_800FA724_DesertDash(omObjData* obj);
+void func_800FA9E0_DesertDash(omObjData* obj);
+void func_800FACD0_DesertDash(omObjData* obj);
+void func_800FAE60_DesertDash(void);
+void func_800FAFD4_DesertDash(void);
+void func_800FB3F8_DesertDash(u16 n);
+void func_800FB4F8_DesertDash(u16 team, f32 z);
+void func_800FB610_DesertDash(s16 mdl);
+void func_800FB6B8_DesertDash(void);
+void func_800FB750_DesertDash(Gfx** buf, s16 anim, s32 frame, s32 x, s32 y, s32 phase, s32 rows, f32 amp, s32 step,
+                              s32 strips, f32 sx, f32 sy);
 
 #endif

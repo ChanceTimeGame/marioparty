@@ -307,6 +307,8 @@ build/src/AD940.c.o: OPTFLAGS = -O0
 build/src/A1D90.c.o: OPTFLAGS = -O0
 # ovl_21 1A4EB0.c: nop between back-to-back mul.s in func_800F8D2C, func_800F8FE0
 build/src/overlays/ovl_21_TipsyTourney/1A4EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_27 1D6E30.c (DesertDash): nop between back-to-back mul.s in func_800FB750
+build/src/overlays/ovl_27_DesertDash/1D6E30.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
 
