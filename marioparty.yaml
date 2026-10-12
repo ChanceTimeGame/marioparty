@@ -941,8 +941,8 @@ segments:
     subsegments:
       - [0x13EFB0, c]
       - [0x142EA0, c]
-      - [0x145CA0, data, 13EFB0]
-      - [0x145DB0, data, 142EA0]
+      - [0x145CA0, .data, 13EFB0]
+      - [0x145DB0, .data, 142EA0]
       - [0x1460E0, .rodata, 13EFB0]
       - [0x146190, .rodata, 142EA0]
       - {0x146200, type: bss, vram: 0x800FD830, name: ovl_11_bss}
