@@ -69,7 +69,7 @@ typedef struct MBPlayerCpu {
    and 0xE4 as in every view of this work. */
 typedef struct MBPlayerWork {
     /* 0x00 */ char unk_00[0x56];
-    /* 0x56 */ u8 unk_56; /* controller port */
+    /* 0x56 */ s8 unk_56; /* controller port */
     /* 0x57 */ char unk_57;
     /* 0x58 */ s8 unk_58; /* player index */
     /* 0x59 */ char unk_59[0x47];
@@ -122,6 +122,13 @@ typedef struct MBBeatInfo {
     /* 0x04 */ s32 idx;
     /* 0x08 */ s16 unk8;
 } MBBeatInfo;
+
+#ifndef TARGET_PC
+/* N64 sizes the asm allocates and strides by. */
+typedef char MBSizeCheck[(sizeof(MBProp) == 0x14 && sizeof(MBCoin) == 0x20 && sizeof(MBItem) == 0x2C &&
+                          sizeof(MBPlayerCpu) == 0x14 && sizeof(MBPlayerWork) == 0xE8 &&
+                          sizeof(MBTrack) == 0x38 && sizeof(MBBeatInfo) == 0xC) ? 1 : -1];
+#endif
 
 /* ---------------------------------------------------------------------------------------------
    Main-code declarations missing from include/
@@ -190,8 +197,8 @@ void func_800FA790_MarioBandstand(s16, s16, s16, f32);
 void func_800FA7EC_MarioBandstand(omObjData*, s32, s32);
 void func_800FAA58_MarioBandstand(omObjData*);
 void func_800FAC2C_MarioBandstand(omObjData*);
-s32 func_800FAFEC_MarioBandstand(omObjData*, s16, s16);
-s32 func_800FB0D8_MarioBandstand(omObjData*, s16, s16);
+s32 func_800FAFEC_MarioBandstand(omObjData*, s32, s32);
+s32 func_800FB0D8_MarioBandstand(omObjData*, s32, s32);
 void func_800FB1D0_MarioBandstand(void);
 void func_800FB214_MarioBandstand(void);
 void func_800FB4D8_MarioBandstand(void);
@@ -219,7 +226,7 @@ s16 func_800FCAD4_MarioBandstand(omObjData*, s32, s32, s32, s16, s32);
    .data
    --------------------------------------------------------------------------------------------- */
 
-extern s16 D_800FCBF0_MarioBandstand;
+extern u16 D_800FCBF0_MarioBandstand;
 extern u32 D_800FD190_MarioBandstand;
 
 /* ---------------------------------------------------------------------------------------------

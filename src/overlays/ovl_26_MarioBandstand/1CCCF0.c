@@ -1,6 +1,6 @@
 #include "1CCCF0.h"
 
-s16 D_800FCBF0_MarioBandstand = 0;
+u16 D_800FCBF0_MarioBandstand = 0;
 
 void func_800F65E0_MarioBandstand(void) {
     s32 i;
@@ -60,7 +60,7 @@ void func_800F6828_MarioBandstand(void) {
     }
 }
 
-// NON_MATCHING: masked 20 (first pass, not yet reviewed)
+// NON_MATCHING: masked 20 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
 void func_800F68D4_MarioBandstand(void) {
     switch (D_800FD282_MarioBandstand) {
@@ -121,12 +121,13 @@ void func_800F68D4_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CCCF0", func_800F68D4_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 76 (first pass, not yet reviewed)
+// NON_MATCHING: masked 76 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
 void func_800F6B04_MarioBandstand(void) {
     s32 flag;
     s32 ret;
     s32 sound;
+    u16 left;
 
     flag = _CheckFlag(0x2B);
     switch (D_800FD284_MarioBandstand) {
@@ -197,8 +198,9 @@ void func_800F6B04_MarioBandstand(void) {
         if (CZoom > 1899.0f) {
             CZoom = 1899.0f;
             if (D_800FD290_MarioBandstand >= 3) {
-                D_800FD288_MarioBandstand = 0x5A - (D_800FD296_MarioBandstand - D_800FD288_MarioBandstand);
-                if (D_800FD288_MarioBandstand < 0) {
+                left = 0x5A - (D_800FD296_MarioBandstand - D_800FD288_MarioBandstand);
+                D_800FD288_MarioBandstand = left;
+                if (left & 0x8000) {
                     D_800FD288_MarioBandstand = 0;
                 }
                 if (flag != 0) {
@@ -247,7 +249,7 @@ void func_800F6B04_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CCCF0", func_800F6B04_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 2 (first pass, not yet reviewed)
+// NON_MATCHING: masked 2 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
 void func_800F6F10_MarioBandstand(void) {
     if (D_800F5144 != 0 || D_800FCBF0_MarioBandstand != 0) {
