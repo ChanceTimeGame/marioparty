@@ -1,5 +1,7 @@
 #include "common.h"
 
+void func_800370D4(s16);
+
 typedef struct FlowerShowerBodyWork {
     /* 0x00 */ u8 unk_00[0x23];
     /* 0x23 */ u8 unk_23;
