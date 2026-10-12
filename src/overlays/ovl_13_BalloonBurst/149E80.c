@@ -45,7 +45,11 @@ extern omObjData *D_800FC394_BalloonBurst;
 extern omObjData *D_800FC398_BalloonBurst;
 extern omObjData **D_800FC39C_BalloonBurst;
 
+#ifdef TARGET_PC
+void func_800396B0(s16, s32); /* host: matches the definition */
+#else
 void func_800396B0(s16, u8);
+#endif
 
 typedef struct BalloonBurstObstacle {
     Vec pos;
