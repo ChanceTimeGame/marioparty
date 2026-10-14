@@ -260,7 +260,12 @@ extern omObjData* D_800FED08_TreasureDivers[];
 extern s16 D_800FED30_TreasureDivers;
 extern TDWork* D_800FED40_TreasureDivers[256];
 extern Matrix4f D_800FF140_TreasureDivers;
+#ifdef TARGET_PC
+/* Split label: the view matrix's [3][2] (D_800FF140 + 0x38); a separate host object reads 0. */
+#define D_800FF178_TreasureDivers (D_800FF140_TreasureDivers[3][2])
+#else
 extern f32 D_800FF178_TreasureDivers;
+#endif
 extern s16 D_800FF180_TreasureDivers;
 extern TDBoat D_800FF188_TreasureDivers[3];
 extern omObjData* D_800FF248_TreasureDivers;
