@@ -454,3 +454,6 @@ D_800FD568_BowlOver = D_800FD564_BowlOver + 0x4;
 D_800FD56C_BowlOver = D_800FD564_BowlOver + 0x8;
 D_800FD5DC_BowlOver = D_800FD5D8_BowlOver + 0x4;
 D_800FD5E0_BowlOver = D_800FD5D8_BowlOver + 0x8;
+D_800FE3A8_BashNCash = D_800FE3A4_BashNCash + 0x4;
+D_800FE424_BashNCash = D_800FE420_BashNCash + 0x4;
+D_800FE428_BashNCash = D_800FE420_BashNCash + 0x8;

@@ -109,6 +109,8 @@ DEPENDS := $(OBJECTS:=.d)
 # ovl_32 TugOWar: mul fix on (nop between mul.s in func_800FB7AC); own line
 build/src/overlays/ovl_32_TugOWar/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_23_CraneGame/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_10 137050.c (Bash 'n' Cash): mul fix on (nop between mul.s in func_800FB940); own line
+build/src/overlays/ovl_10_BashNCash/137050.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_0B 11C810.c (Musical Mushroom): nop between back-to-back mul.s (func_800F7D1C)
 build/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_13 149E80.c (Balloon Burst) also has the mul fix on: nop between back-to-back mul.s (func_800F9368)
@@ -372,7 +374,8 @@ $(BUILD_DIR)/src/1130.c.o $(BUILD_DIR)/src/34D80.c.o $(BUILD_DIR)/src/1B800.c.o 
 
 # ovl_0A 117210.c (Ghost Guess): blank-line strip as for 1130.c (func_800F9400: mul.s right after func_800AEAC0's return).
 # ovl_20 KnockBlockTower units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
-$(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o $(BUILD_DIR)/src/overlays/ovl_20_KnockBlockTower/19FEE0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+# ovl_10 137050.c (Bash 'n' Cash) too (mul.s right after func_800AEAC0's return in func_800F8240).
+$(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o $(BUILD_DIR)/src/overlays/ovl_20_KnockBlockTower/19FEE0.c.o $(BUILD_DIR)/src/overlays/ovl_10_BashNCash/137050.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
