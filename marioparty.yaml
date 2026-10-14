@@ -1503,7 +1503,8 @@ segments:
     subsegments:
       - [0x2341E0, c]
       - [0x234F80, c]
-      - [0x23BDF0, data, 2341E0]
+      - [0x23BDF0, .data, 2341E0]
+      - [0x23BE10, .data, 234F80]
       - [0x23C9B0, .rodata, 2341E0]
       - [0x23CA40, .rodata, 234F80]
       - {0x23CF40, type: bss, vram: 0x800FF340, name: ovl_33_bss}
