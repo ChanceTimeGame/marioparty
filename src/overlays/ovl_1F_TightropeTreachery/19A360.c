@@ -236,6 +236,6 @@ s32 func_800F937C_TightropeTreachery(u32 seed) {
     return seed;
 }
 
-void func_800F9450_TightropeTreachery(void) {
-    D_800FE340_TightropeTreachery = func_800F937C_TightropeTreachery(D_800FE340_TightropeTreachery);
+s32 func_800F9450_TightropeTreachery(void) {
+    return D_800FE340_TightropeTreachery = func_800F937C_TightropeTreachery(D_800FE340_TightropeTreachery);
 }

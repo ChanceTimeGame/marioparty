@@ -95,14 +95,47 @@ typedef struct TTTexSize {
 
 /* A bomb's state (D_800FE720_TightropeTreachery[3], TTItemWork::bomb). No pointers. */
 typedef struct TTBomb {
-    /* 0x00 */ s8 active;
-    /* 0x01 */ s8 lit;
-    /* 0x02 */ s16 idx;
-    /* 0x04 */ u16 mdl[3]; /* the three 3D sprite ids (func_8001E00C) */
-    /* 0x0A */ char unk_0A[0x22];
+    /* 0x00 */ s8 active; /* the team member pressed A */
+    /* 0x01 */ s8 lit;    /* thrown */
+    /* 0x02 */ u16 idx;   /* the team member (D_800FE700 index) */
+    /* 0x04 */ u16 mdl[3]; /* 3D sprite ids (func_8001E00C): fuse, splash, explosion */
+    /* 0x0A */ char unk_0A[2];
+    /* 0x0C */ f32 ang;
+    /* 0x10 */ f32 dir[3];
+    /* 0x1C */ f32 pos[3];
+    /* 0x28 */ f32 vy;
     /* 0x2C */ s32 timer;
-    /* 0x30 */ char unk_30[4];
+    /* 0x30 */ f32 speed;
 } TTBomb; /* size = 0x34 */
+
+/* A team member's state (D_800FE7C8_TightropeTreachery[3], TTPlayerWork::unk_E4). No pointers. */
+typedef struct TTTeamWork {
+    /* 0x00 */ f32 push[2]; /* wind drift */
+    /* 0x08 */ f32 angle;
+    /* 0x0C */ f32 target;  /* CPU stick angle, < 0: none */
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ f32 unk_14;
+    /* 0x18 */ f32 aim;     /* CPU aim error (degrees) */
+    /* 0x1C */ s32 timer;
+    /* 0x20 */ s32 straight; /* frames walked straight on */
+    /* 0x24 */ u16 btn;     /* CPU buttons */
+    /* 0x26 */ u16 prevBtn;
+    /* 0x28 */ u16 idx;     /* 0..2 */
+    /* 0x2A */ s16 flash;   /* stunned (hit by a bomb) */
+    /* 0x2C */ u8 unk_2C[8];
+    /* 0x34 */ u8 unk_34[8];
+    /* 0x3C */ s8 port;
+    /* 0x3D */ s8 player;
+    /* 0x3E */ s8 unk_3E;
+    /* 0x3F */ char unk_3F;
+    /* 0x40 */ s8 sway;
+    /* 0x41 */ s8 swayDir;
+    /* 0x42 */ s8 noCtrl;
+    /* 0x43 */ s8 hasSpot;
+    /* 0x44 */ s8 spot;     /* D_800FE4D0_TightropeTreachery index */
+    /* 0x45 */ s8 aimed;
+    /* 0x46 */ s8 done;
+} TTTeamWork; /* size = 0x48 */
 
 /* A bomb object's work (func_80023684(0x6C)): main code's item view (src/1130.c) below 0x60, no
    pointers there; the bomb state pointer follows. */
@@ -161,6 +194,7 @@ extern int guRandom(void);
 void func_80060F04(s16, s16, s16, s16);
 void func_800AF2E0(f32, f32*, f32*);
 void func_80023A38(void* src, void* dst, s32 size);
+void func_80025BB8(s16, s16);
 void func_8006035C(s16, s8);
 /* func_80009028 with its s32 argument given as a float: retail passed an f32 there (O32 puts it in
    a1); the host passes the same bits as the s32 the definition takes. */
@@ -200,7 +234,7 @@ void func_800F9168_TightropeTreachery(TTPlayerWork*);
 void func_800F9204_TightropeTreachery(omObjData*, f32);
 void func_800F927C_TightropeTreachery(omObjData*, f32*, f32*);
 s32 func_800F937C_TightropeTreachery(u32);
-void func_800F9450_TightropeTreachery(void);
+s32 func_800F9450_TightropeTreachery(void);
 
 /* 19ACC0.c */
 void func_800F9480_TightropeTreachery(s16 model);
@@ -220,11 +254,19 @@ void func_800FBAB4_TightropeTreachery(void);
 void func_800FBBD0_TightropeTreachery(omObjData*);
 
 /* 19D510.c */
+s8 func_800FBCD0_TightropeTreachery(omObjData*);
 void func_800FBDB8_TightropeTreachery(void);
+void func_800FBF38_TightropeTreachery(omObjData*);
+void func_800FC180_TightropeTreachery(omObjData*);
+void func_800FC598_TightropeTreachery(omObjData*);
 void func_800FC65C_TightropeTreachery(omObjData*);
 void func_800FCCDC_TightropeTreachery(omObjData*);
 void func_800FCCF8_TightropeTreachery(omObjData*);
 void func_800FCD14_TightropeTreachery(omObjData*);
+void func_800FCD30_TightropeTreachery(omObjData* obj, f32 dx, f32 dz);
+void func_800FCEDC_TightropeTreachery(omObjData*);
+void func_800FD70C_TightropeTreachery(omObjData*);
+void func_800FDCE8_TightropeTreachery(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z, u16 idx);
 void func_800FE040(omObjData*);
 void func_800FE10C_TightropeTreachery(omObjData*);
 void func_800FE1DC_TightropeTreachery(omObjData*);
@@ -274,6 +316,8 @@ extern f32 D_800FE388_TightropeTreachery; /* y of the rope */
    --------------------------------------------------------------------------------------------- */
 
 extern s16 D_800FE6A0_TightropeTreachery; /* the wind sound */
+extern s16 D_800FE6E0_TightropeTreachery[8]; /* model / sprite caches of the bombs: [0] bomb, [1] shadow, [2..4] sprites */
+extern s16 D_800FE6F0_TightropeTreachery[8]; /* [0] the team's model cache */
 extern f32 D_800FE6A4_TightropeTreachery;
 extern TTTexSize D_800FE6A8_TightropeTreachery;
 extern unk2C0C0StructA0* D_800FE6AC_TightropeTreachery; /* the rope's base vertices */
@@ -285,11 +329,13 @@ extern f32 D_800FE70C_TightropeTreachery;
 extern s16 D_800FE710_TightropeTreachery;
 extern f32 D_800FE714_TightropeTreachery[3];
 extern TTBomb D_800FE720_TightropeTreachery[3];
+extern TTTeamWork D_800FE7C8_TightropeTreachery[3];
 
 extern f32 D_800FE7C0_TightropeTreachery;
 extern f32 D_800FE7C4_TightropeTreachery;
 extern s8 D_800FE8A0_TightropeTreachery[4]; /* [0] the walker, [1..3] the team */
 extern f32 D_800FE8A4_TightropeTreachery;
+extern u8 D_800FE8AC_TightropeTreachery[4]; /* the team's start spots (shuffled) */
 extern f32 D_800FE8A8_TightropeTreachery;
 extern f32 D_800FE8B0_TightropeTreachery;
 extern f32 D_800FE8B4_TightropeTreachery;
