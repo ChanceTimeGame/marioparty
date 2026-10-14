@@ -46,7 +46,7 @@ typedef struct TDWork {
     /* 0x48 */ s16 unk48;
     /* 0x4A */ u16 unk4A;
     /* 0x4C */ s16 unk4C;
-    /* 0x4E */ u16 unk4E;
+    /* 0x4E */ s16 unk4E;
     /* 0x50 */ s16 unk50;
     /* 0x52 */ s16 unk52;
     /* 0x54 */ s16 unk54;

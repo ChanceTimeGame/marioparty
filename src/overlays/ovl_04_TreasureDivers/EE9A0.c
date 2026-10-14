@@ -827,7 +827,7 @@ void func_800F8B98_TreasureDivers(omObjData* obj) {
         case 1:
             if (w->unk58 != 0) {
                 w->unk58--;
-                sc = (fabs(func_800AEAC0(w->unk58 * 22.5)) * 0.5 + 1.0) * w->unk30;
+                sc = (f32)(fabs(func_800AEAC0(w->unk58 * 22.5)) * 0.5 + 1.0) * w->unk30;
                 obj->scale.x = obj->scale.y = obj->scale.z = sc;
             }
             d = func_800FA614_TreasureDivers(D_800F3FB0[w->unk5A]);
