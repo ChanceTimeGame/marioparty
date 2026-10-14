@@ -108,6 +108,8 @@ DEPENDS := $(OBJECTS:=.d)
 #leave the mul fix on
 # ovl_32 TugOWar: mul fix on (nop between mul.s in func_800FB7AC); own line
 build/src/overlays/ovl_32_TugOWar/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_1F TightropeTreachery: mul fix on (nop between mul.s in func_800F8DA4); own line
+build/src/overlays/ovl_1F_TightropeTreachery/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_23_CraneGame/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_10 137050.c (Bash 'n' Cash): mul fix on (nop between mul.s in func_800FB940); own line
 build/src/overlays/ovl_10_BashNCash/137050.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
@@ -384,6 +386,15 @@ $(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o $(BUILD_DIR)/src/overlays
 
 # ovl_11 BowlOver units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
 $(BUILD_DIR)/src/overlays/ovl_11_BowlOver/13EFB0.c.o $(BUILD_DIR)/src/overlays/ovl_11_BowlOver/142EA0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_1F 19ACC0.c: mul fix on (CFLAGS line above), blank lines stripped (mult right after
+# guRandom's return in func_800F9FD8); own rule.
+$(BUILD_DIR)/src/overlays/ovl_1F_TightropeTreachery/19ACC0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
