@@ -350,8 +350,10 @@ void func_800FA838_TightropeTreachery(s16 model, f32 u, f32 v, s32 w, s32 h, cha
         dst = src = &m->unk_08[D_800F37F0][mat->unk_0A];
         sizeU = w << 5;
         sizeV = h << 5;
-        du = u * 32.0f;
-        dv = v * 32.0f;
+        /* through u32 as GCC converts it (a direct float to u16 is undefined on the host once
+           the scroll passes 65535) */
+        du = (u32)(u * 32.0f);
+        dv = (u32)(v * 32.0f);
         if (u < 0.0f) {
             u = -u;
         }
