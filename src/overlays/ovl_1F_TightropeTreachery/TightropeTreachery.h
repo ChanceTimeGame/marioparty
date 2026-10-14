@@ -71,6 +71,28 @@ typedef struct TTPlayerWork {
 
 #define TT_WORK(obj) ((TTPlayerWork*)(obj)->unk_50)
 
+/* The water's and the rope's work (func_80023684(0x2C)): src/1130.c's GroundWork; no pointers. */
+typedef struct TTGroundWork {
+    /* 0x00 */ u8 unk_00;
+    /* 0x01 */ u8 unk_01;
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ u8 unk_04;
+    /* 0x05 */ s8 unk_05;
+    /* 0x06 */ char unk_06[0x26];
+} TTGroundWork; /* size = 0x2C */
+
+/* A start angle for a team member (D_800FE4D0_TightropeTreachery[4]). */
+typedef struct TTSpot {
+    /* 0x00 */ f32 angle;
+    /* 0x04 */ s8 used;
+} TTSpot; /* size = 0x8 */
+
+/* func_80039C48's output: a texture's size. */
+typedef struct TTTexSize {
+    /* 0x00 */ u16 w;
+    /* 0x02 */ u16 h;
+} TTTexSize;
+
 /* A bomb's state (D_800FE720_TightropeTreachery[3], TTItemWork::bomb). No pointers. */
 typedef struct TTBomb {
     /* 0x00 */ s8 active;
@@ -138,6 +160,8 @@ void GMesSprClose(void);
 extern int guRandom(void);
 void func_80060F04(s16, s16, s16, s16);
 void func_800AF2E0(f32, f32*, f32*);
+void func_80023A38(void* src, void* dst, s32 size);
+void func_8006035C(s16, s8);
 /* func_80009028 with its s32 argument given as a float: retail passed an f32 there (O32 puts it in
    a1); the host passes the same bits as the s32 the definition takes. */
 #ifdef TARGET_PC
@@ -179,8 +203,20 @@ s32 func_800F937C_TightropeTreachery(u32);
 void func_800F9450_TightropeTreachery(void);
 
 /* 19ACC0.c */
+void func_800F9480_TightropeTreachery(s16 model);
+void func_800F9508_TightropeTreachery(s16 model);
+void func_800F9BA0_TightropeTreachery(void);
+void func_800F9FD8_TightropeTreachery(omObjData*);
+void func_800FA838_TightropeTreachery(s16 model, f32 u, f32 v, s32 w, s32 h, char* name);
+void func_800FAAD8_TightropeTreachery(omObjData*);
+void func_800FAE54_TightropeTreachery(omObjData*);
 void func_800FAF34_TightropeTreachery(omObjData*);
+void func_800FB150_TightropeTreachery(omObjData*);
 void func_800FB170_TightropeTreachery(omObjData*);
+f32 func_800FB2E0_TightropeTreachery(f32 dx, f32 dz);
+void func_800FB360_TightropeTreachery(s16 model, s16 src, s16 arg2, f32 t);
+void func_800FB3F4_TightropeTreachery(omObjData*);
+void func_800FBAB4_TightropeTreachery(void);
 void func_800FBBD0_TightropeTreachery(omObjData*);
 
 /* 19D510.c */
@@ -227,13 +263,25 @@ extern s32 D_800FE340_TightropeTreachery;
 extern s8 D_800FE35C_TightropeTreachery;
 extern s8 D_800FE35D_TightropeTreachery;
 extern f32 D_800FE384_TightropeTreachery; /* x of the rope */
+extern TTSpot D_800FE4D0_TightropeTreachery[4];
+extern s8 D_800FE4F0_TightropeTreachery[4];
+extern u16 D_800FE4F4_TightropeTreachery;
+extern Vec3f D_800FE4A0_TightropeTreachery[4];
 extern f32 D_800FE388_TightropeTreachery; /* y of the rope */
 
 /* ---------------------------------------------------------------------------------------------
    .bss (0x800FE6A0..0x800FE8D0)
    --------------------------------------------------------------------------------------------- */
 
+extern s16 D_800FE6A0_TightropeTreachery; /* the wind sound */
+extern f32 D_800FE6A4_TightropeTreachery;
+extern TTTexSize D_800FE6A8_TightropeTreachery;
+extern unk2C0C0StructA0* D_800FE6AC_TightropeTreachery; /* the rope's base vertices */
+extern u16 D_800FE6B0_TightropeTreachery[8];
+extern s32 D_800FE6C0_TightropeTreachery[4];
+extern s32 D_800FE6D0_TightropeTreachery[4];
 extern omObjData* D_800FE700_TightropeTreachery[3]; /* the team */
+extern f32 D_800FE70C_TightropeTreachery;
 extern s16 D_800FE710_TightropeTreachery;
 extern f32 D_800FE714_TightropeTreachery[3];
 extern TTBomb D_800FE720_TightropeTreachery[3];

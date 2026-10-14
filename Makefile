@@ -389,6 +389,15 @@ $(BUILD_DIR)/src/overlays/ovl_11_BowlOver/13EFB0.c.o $(BUILD_DIR)/src/overlays/o
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 
+# ovl_1F 19ACC0.c: mul fix on (CFLAGS line above), blank lines stripped (mult right after
+# guRandom's return in func_800F9FD8); own rule.
+$(BUILD_DIR)/src/overlays/ovl_1F_TightropeTreachery/19ACC0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
 # ovl_41 2721F0.c too (func_8010B0E4: mul fix on, mul.s right after sinf/cosf's return); own rule
 # so the five ovl_41 branches do not all edit the list above.
 $(BUILD_DIR)/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/2721F0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
