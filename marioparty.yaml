@@ -724,7 +724,7 @@ segments:
       - [0xEE9A0, c]
       - [0xF2800, c]
       - [0xF4420, c]
-      - [0xF6750, data, EE9A0]
+      - [0xF6750, .data, EE9A0]
       - [0xF6830, .rodata, EE9A0]
       - [0xF6A40, .rodata, F2800]
       - [0xF6A90, .rodata, F4420]

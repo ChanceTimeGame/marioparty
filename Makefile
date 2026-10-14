@@ -110,6 +110,10 @@ DEPENDS := $(OBJECTS:=.d)
 build/src/overlays/ovl_32_TugOWar/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1F TightropeTreachery: mul fix on (nop between mul.s in func_800F8DA4); own line
 build/src/overlays/ovl_1F_TightropeTreachery/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_04 F2800.c (Treasure Divers): nop between back-to-back mul.s (func_800FB79C)
+build/src/overlays/ovl_04_TreasureDivers/F2800.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_04 F4420.c too: nop before a mult (func_800FCA70)
+build/src/overlays/ovl_04_TreasureDivers/F4420.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_23_CraneGame/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_10 137050.c (Bash 'n' Cash): mul fix on (nop between mul.s in func_800FB940); own line
 build/src/overlays/ovl_10_BashNCash/137050.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
