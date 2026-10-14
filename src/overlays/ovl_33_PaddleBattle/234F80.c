@@ -203,7 +203,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F74F
 #endif
 
 /* The raft: steering, bumps against the banks, the camera. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 442 lines)
+// logic-equivalent; register allocation, branch layout and the order of the turn sum (normalised diff 442 lines)
 #ifdef NON_MATCHING
 void func_800F76B8_PaddleBattle(omObjData* obj) {
     PBRaft* r;
@@ -1286,7 +1286,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAFE
 #endif
 
 /* The raft's tilt from three float points around it (each eased toward the ground under it). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 108 lines)
+// logic-equivalent; block order of the identity fallback, register allocation (normalised diff 108 lines)
 #ifdef NON_MATCHING
 s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
     Vec p[3];
@@ -1447,7 +1447,7 @@ void func_800FB868_PaddleBattle(s16 cam, Vec* pos, Vec* out) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB868_PaddleBattle);
 #endif
 
-// logic-equivalent; register allocation and instruction order differ (normalised diff 1 lines)
+// logic-equivalent; retail steps the output pointer by 4 before the z store (normalised diff 1 lines)
 #ifdef NON_MATCHING
 void func_800FBA44_PaddleBattle(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
     out->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
@@ -1687,7 +1687,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FC78
 #endif
 
 /* Builds a textured quad model (the waterfall) from `vtx`; its texture is segment 2. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 253 lines)
+// logic-equivalent; retail copies the quad with unaligned word copies and writes the list through fixed offsets (normalised diff 253 lines)
 #ifdef NON_MATCHING
 s16 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
     Gfx* buf;
@@ -1776,7 +1776,7 @@ void func_800FD0B0_PaddleBattle(omObjData* obj) {
 }
 
 /* The waterfalls: next texture frame. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 52 lines)
+// logic-equivalent; retail writes the list at fixed offsets (normalised diff 52 lines)
 #ifdef NON_MATCHING
 void func_800FD29C_PaddleBattle(omObjData* obj) {
     unk2C0C0StructC0* m;
@@ -1932,10 +1932,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD71
 
 /* Moves pos by (dx, dy, dz), stopped at the first collision face of any registered model other than
    `skip`. Returns 1 when something was hit. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 22 lines)
+// logic-equivalent; the unused vector, register allocation (normalised diff 22 lines)
 #ifdef NON_MATCHING
 s16 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
-    Vec to;
     Vec p;
     Vec d;
     unk_ovl_2D_struct* m;
@@ -1945,9 +1944,7 @@ s16 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     s16 ret;
 
     D_800FFEF8_PaddleBattle = 1.1f;
-    to.x = dx + pos->x; /* unused */
-    to.y = dy + pos->y;
-    to.z = dz + pos->z;
+    /* retail also computes pos + d into an unused vector here */
     d.x = dx;
     d.y = dy;
     d.z = dz;
