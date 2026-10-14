@@ -71,6 +71,38 @@ typedef struct TTPlayerWork {
 
 #define TT_WORK(obj) ((TTPlayerWork*)(obj)->unk_50)
 
+/* A bomb's state (D_800FE720_TightropeTreachery[3], TTItemWork::bomb). No pointers. */
+typedef struct TTBomb {
+    /* 0x00 */ s8 active;
+    /* 0x01 */ s8 lit;
+    /* 0x02 */ s16 idx;
+    /* 0x04 */ u16 mdl[3]; /* the three 3D sprite ids (func_8001E00C) */
+    /* 0x0A */ char unk_0A[0x22];
+    /* 0x2C */ s32 timer;
+    /* 0x30 */ char unk_30[4];
+} TTBomb; /* size = 0x34 */
+
+/* A bomb object's work (func_80023684(0x6C)): main code's item view (src/1130.c) below 0x60, no
+   pointers there; the bomb state pointer follows. */
+typedef struct TTItemWork {
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ char unk_38[4];
+    /* 0x3C */ f32 unk_3C;
+    /* 0x40 */ char unk_40[4];
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ char unk_4C[6];
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53;
+    /* 0x54 */ u8 unk_54;
+    /* 0x55 */ char unk_55[7];
+    /* 0x5C */ s32 unk_5C;
+    /* 0x60 */ s32 unk_60;
+    /* 0x64 */ char unk_64[4];
+    /* 0x68 */ TTBomb* bomb;
+} TTItemWork; /* size = 0x6C on the N64 */
+
 /* ---------------------------------------------------------------------------------------------
    Main code
    --------------------------------------------------------------------------------------------- */
@@ -146,9 +178,38 @@ void func_800F927C_TightropeTreachery(omObjData*, f32*, f32*);
 s32 func_800F937C_TightropeTreachery(u32);
 void func_800F9450_TightropeTreachery(void);
 
+/* 19ACC0.c */
+void func_800FAF34_TightropeTreachery(omObjData*);
+void func_800FB170_TightropeTreachery(omObjData*);
+void func_800FBBD0_TightropeTreachery(omObjData*);
+
+/* 19D510.c */
+void func_800FBDB8_TightropeTreachery(void);
+void func_800FC65C_TightropeTreachery(omObjData*);
+void func_800FCCDC_TightropeTreachery(omObjData*);
+void func_800FCCF8_TightropeTreachery(omObjData*);
+void func_800FCD14_TightropeTreachery(omObjData*);
+void func_800FE040(omObjData*);
+void func_800FE10C_TightropeTreachery(omObjData*);
+void func_800FE1DC_TightropeTreachery(omObjData*);
+
 /* ---------------------------------------------------------------------------------------------
    .data
    --------------------------------------------------------------------------------------------- */
+
+/* 197E20.c */
+extern s16 D_800FE2B0_TightropeTreachery;
+extern s8 D_800FE2B2_TightropeTreachery;
+extern s8 D_800FE2B3_TightropeTreachery;
+extern s8 D_800FE2B4_TightropeTreachery;
+extern s8 D_800FE2B5_TightropeTreachery;
+extern s8 D_800FE2B6_TightropeTreachery;
+extern s8 D_800FE2B7_TightropeTreachery;
+extern f32 D_800FE2B8_TightropeTreachery;
+extern s8 D_800FE2BC_TightropeTreachery;
+extern s8 D_800FE2BD_TightropeTreachery;
+extern s8 D_800FE2C0_TightropeTreachery;
+extern s8 D_800FE2C1_TightropeTreachery;
 
 /* 19A360.c */
 extern s8 D_800FE300_TightropeTreachery;
@@ -162,16 +223,29 @@ extern s8 D_800FE33C_TightropeTreachery;
 extern u16 D_800FE33E_TightropeTreachery;
 extern s32 D_800FE340_TightropeTreachery;
 
+/* 19ACC0.c */
+extern s8 D_800FE35C_TightropeTreachery;
+extern s8 D_800FE35D_TightropeTreachery;
+extern f32 D_800FE384_TightropeTreachery; /* x of the rope */
+extern f32 D_800FE388_TightropeTreachery; /* y of the rope */
+
 /* ---------------------------------------------------------------------------------------------
    .bss (0x800FE6A0..0x800FE8D0)
    --------------------------------------------------------------------------------------------- */
 
+extern omObjData* D_800FE700_TightropeTreachery[3]; /* the team */
+extern s16 D_800FE710_TightropeTreachery;
+extern f32 D_800FE714_TightropeTreachery[3];
+extern TTBomb D_800FE720_TightropeTreachery[3];
+
 extern f32 D_800FE7C0_TightropeTreachery;
 extern f32 D_800FE7C4_TightropeTreachery;
+extern s8 D_800FE8A0_TightropeTreachery[4]; /* [0] the walker, [1..3] the team */
 extern f32 D_800FE8A4_TightropeTreachery;
 extern f32 D_800FE8A8_TightropeTreachery;
 extern f32 D_800FE8B0_TightropeTreachery;
 extern f32 D_800FE8B4_TightropeTreachery;
+extern omObjData* D_800FE8B8_TightropeTreachery[3]; /* the bombs */
 extern f32 D_800FE8C4_TightropeTreachery;
 
 #endif
