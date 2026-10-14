@@ -108,6 +108,8 @@ DEPENDS := $(OBJECTS:=.d)
 #leave the mul fix on
 # ovl_32 TugOWar: mul fix on (nop between mul.s in func_800FB7AC); own line
 build/src/overlays/ovl_32_TugOWar/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_1F TightropeTreachery: mul fix on (nop between mul.s in func_800F8DA4); own line
+build/src/overlays/ovl_1F_TightropeTreachery/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_23_CraneGame/%.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_0B 11C810.c (Musical Mushroom): nop between back-to-back mul.s (func_800F7D1C)
 build/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
