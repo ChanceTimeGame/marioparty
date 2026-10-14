@@ -458,3 +458,6 @@ D_800FEA10_PaddleBattle = D_800FE9FC_PaddleBattle + 0x14;
 D_800FEA24_PaddleBattle = D_800FEA20_PaddleBattle + 0x4;
 D_800FEA28_PaddleBattle = D_800FEA20_PaddleBattle + 0x8;
 D_800FEA84_PaddleBattle = D_800FEA80_PaddleBattle + 0x4;
+D_800FE3A8_BashNCash = D_800FE3A4_BashNCash + 0x4;
+D_800FE424_BashNCash = D_800FE420_BashNCash + 0x4;
+D_800FE428_BashNCash = D_800FE420_BashNCash + 0x8;

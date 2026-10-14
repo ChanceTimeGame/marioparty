@@ -926,7 +926,7 @@ segments:
     bss_size: 0x220
     subsegments:
       - [0x137050, c]
-      - [0x13EE10, data, 137050]
+      - [0x13EE10, .data, 137050]
       - [0x13EEC0, .rodata, 137050]
       - {0x13EFB0, type: bss, vram: 0x800FE540, name: ovl_10_bss}
   - type: code
