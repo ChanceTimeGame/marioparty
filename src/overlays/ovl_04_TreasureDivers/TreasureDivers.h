@@ -171,6 +171,7 @@ u32 func_800FA640_TreasureDivers(void);
 void func_800FA678_TreasureDivers(Matrix4f);
 void func_800FA7E8_TreasureDivers(Vec*, Vec*);
 void func_800FA8B8_TreasureDivers(f32, f32, f32, Vec*);
+void func_800FA984_TreasureDivers(s32, f32*, f32*, f32*);
 void func_800FAA34_TreasureDivers(u8*);
 void func_800FABD0_TreasureDivers(void);
 s32 func_800FABFC_TreasureDivers(f32*, f32*, s16);
