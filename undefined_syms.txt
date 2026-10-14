@@ -454,3 +454,7 @@ D_800FD568_BowlOver = D_800FD564_BowlOver + 0x4;
 D_800FD56C_BowlOver = D_800FD564_BowlOver + 0x8;
 D_800FD5DC_BowlOver = D_800FD5D8_BowlOver + 0x4;
 D_800FD5E0_BowlOver = D_800FD5D8_BowlOver + 0x8;
+D_800FEA10_PaddleBattle = D_800FE9FC_PaddleBattle + 0x14;
+D_800FEA24_PaddleBattle = D_800FEA20_PaddleBattle + 0x4;
+D_800FEA28_PaddleBattle = D_800FEA20_PaddleBattle + 0x8;
+D_800FEA84_PaddleBattle = D_800FEA80_PaddleBattle + 0x4;
