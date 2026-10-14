@@ -454,3 +454,6 @@ D_800FD568_BowlOver = D_800FD564_BowlOver + 0x4;
 D_800FD56C_BowlOver = D_800FD564_BowlOver + 0x8;
 D_800FD5DC_BowlOver = D_800FD5D8_BowlOver + 0x4;
 D_800FD5E0_BowlOver = D_800FD5D8_BowlOver + 0x8;
+D_800FE3C8_TreasureDivers = D_800FE3C4_TreasureDivers + 0x4;
+D_800FE3E8_TreasureDivers = D_800FE3E4_TreasureDivers + 0x4;
+D_800FE3EC_TreasureDivers = D_800FE3E4_TreasureDivers + 0x8;

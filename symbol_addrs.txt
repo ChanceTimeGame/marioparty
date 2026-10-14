@@ -639,3 +639,4 @@ D_8010F770_YoshisTropicalIslandEndingScene = 0x8010F770; // segment:YoshisTropic
 D_8010F774_YoshisTropicalIslandEndingScene = 0x8010F774; // segment:YoshisTropicalIslandEndingScene force_not_migration:True
 D_8010F734_YoshisTropicalIslandEndingScene = 0x8010F734; // segment:YoshisTropicalIslandEndingScene force_not_migration:True
 D_8010F5A8_YoshisTropicalIslandEndingScene = 0x8010F5A8; // segment:YoshisTropicalIslandEndingScene force_not_migration:True
+D_800FE698_TreasureDivers = 0x800FE698; // segment:TreasureDivers force_not_migration:True
