@@ -49,6 +49,15 @@ typedef struct CBBFxDef {
     /* 0x0E */ s16 unk_0E;
 } CBBFxDef; /* size = 0x10 */
 
+/* A coin block (D_80103294_CoinBlockBash[9], allocated). */
+typedef struct CBBCoin {
+    /* 0x00 */ char unk_00[0x10];
+    /* 0x10 */ s16 unk_10;
+    /* 0x12 */ char unk_12[0xA];
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ Vec pos;
+} CBBCoin; /* size = 0x2C */
+
 /* Facing per quadrant (D_80101D18). */
 typedef struct CBBQuad {
     f32 v[4];
@@ -159,6 +168,8 @@ void func_80020CC4(CBBMtxSet*);
 void func_80025BB8(s16, s16);
 void func_80017C0C(omObjData*, u8, f32, f32, f32, f32, f32);
 void MtxRotate(Matrix4f, f32, f32, f32);
+void func_80060F04(s16, s16, s16, s16);
+s16 MtxInv(Matrix4f, Matrix4f);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay
@@ -176,13 +187,7 @@ extern Vec D_80102520_CoinBlockBash;
 extern f32 D_8010252C_CoinBlockBash;
 extern f32 D_80102530_CoinBlockBash;
 extern f32 D_80102534_CoinBlockBash;
-#ifdef TARGET_PC
 extern CBBBlock D_80102538_CoinBlockBash;
-#define CBB_BLOCK_MODEL (D_80102538_CoinBlockBash.model)
-#else
-extern s16 D_80102538_CoinBlockBash;
-#define CBB_BLOCK_MODEL D_80102538_CoinBlockBash
-#endif
 /* Retail addresses the block's fields as separate symbols (no shared base): the N64 build keeps
    splat's labels, the host views the one object. */
 #ifdef TARGET_PC
@@ -226,6 +231,7 @@ extern s16 D_801031E0_CoinBlockBash;
 extern s16 D_801031E2_CoinBlockBash;
 extern s16 D_801031E4_CoinBlockBash;
 extern s32 D_801031FC_CoinBlockBash;
+extern CBBCoin* D_80103294_CoinBlockBash;
 extern u8 D_8010320E_CoinBlockBash[];
 
 void func_800F66F8_CoinBlockBash(omObjData* obj);
@@ -265,6 +271,7 @@ void func_800FE0AC_CoinBlockBash(Vec* n, Vec* e, Vec* c, Vec* rot);
 f32 func_800FE284_CoinBlockBash(Vec* pos);
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out);
 void func_800FE650_CoinBlockBash(void);
+void func_800FF904_CoinBlockBash(omObjData* obj, s32 arg, CBBCoin* c);
 void func_800FEE04_CoinBlockBash(void);
 void func_800FFBA8_CoinBlockBash(void);
 s16 func_800FFD60_CoinBlockBash(void);
