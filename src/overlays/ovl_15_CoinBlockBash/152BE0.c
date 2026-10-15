@@ -1366,7 +1366,7 @@ void func_800FB490_CoinBlockBash(void) {
         }
     }
 }
-// NON_MATCHING: pending
+// NON_MATCHING: register allocation: port re-extended (one extra sra); logic identical
 #ifdef NON_MATCHING
 void func_800FB4F4_CoinBlockBash(omObjData* obj) {
     CBBPlayer* p;
