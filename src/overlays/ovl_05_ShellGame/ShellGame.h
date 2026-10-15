@@ -190,7 +190,8 @@ typedef struct SGStageWork {
    --------------------------------------------------------------------------------------------- */
 
 extern unk65770Anim* D_800EC700[256]; /* src/65770.c */
-extern omObjData* D_800EDE70[]; /* src/1130.c's collision list, D_800EE984 entries */
+extern omObjData* D_800EDE70[];
+extern omObjData* D_800F2AF8[]; /* src/1130.c's collision list, D_800EE984 entries */
 extern s16 D_800EE984;
 extern u8 D_800F37DA;
 extern f32 D_800B8984;
@@ -224,8 +225,8 @@ extern s16 D_800FEC22_ShellGame;
 extern s16 D_800FEC24_ShellGame;
 extern s16 D_800FEC26_ShellGame;
 extern s16 D_800FEC28_ShellGame;
-extern s16 D_800FEC2A_ShellGame;
-extern s16 D_800FEC2C_ShellGame;
+extern u16 D_800FEC2A_ShellGame;
+extern u16 D_800FEC2C_ShellGame;
 extern s16 D_800FEC2E_ShellGame;
 extern s16 D_800FEC30_ShellGame;
 extern s16 D_800FEC32_ShellGame;
@@ -309,14 +310,14 @@ f32 func_800F7230_ShellGame(f32, f32, f32);
 f32 func_800F7398_ShellGame(f32, f32);
 f32 func_800F7410_ShellGame(f32, f32, f32, f32);
 void func_800F7470_ShellGame(f32, f32*, f32*, f32*, f32*);
-s16 func_800F750C_ShellGame(s32);
+u16 func_800F750C_ShellGame(s32);
 void func_800F7550_ShellGame(void);
 void func_800F76C4_ShellGame(void);
 s16 func_800F7840_ShellGame(s16, f32, f32, f32, u16);
 void func_800F79FC_ShellGame(omObjData*, u16);
 void func_800F7AE8_ShellGame(f32, f32, f32);
 void func_800F7BDC_ShellGame(void);
-void func_800F7DA8_ShellGame(omObjData*, s16);
+void func_800F7DA8_ShellGame(omObjData*, s32);
 s16 func_800F8154_ShellGame(void);
 s16 func_800F8238_ShellGame(s32, s32, s32);
 void func_800F828C_ShellGame(void);
