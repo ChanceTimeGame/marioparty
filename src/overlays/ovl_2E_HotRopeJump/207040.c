@@ -162,7 +162,7 @@ const Gfx D_800FE500_HotRopeJump[] = {
     gsDPSetAlphaCompare(G_AC_NONE),
     gsDPSetDepthSource(G_ZS_PIXEL),
     gsDPSetRenderMode(0x0F0A4000, 0),
-    gsSPNoOp(),
+    gsDPNoOp(),
     gsDPSetColorDither(G_CD_DISABLE),
     gsDPPipeSync(),
     gsSPEndDisplayList(),
