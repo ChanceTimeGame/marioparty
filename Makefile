@@ -121,6 +121,8 @@ build/src/overlays/ovl_10_BashNCash/137050.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp3
 build/src/overlays/ovl_05_ShellGame/F6AB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_0B 11C810.c (Musical Mushroom): nop between back-to-back mul.s (func_800F7D1C)
 build/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_2E 207040.c (Hot Rope Jump): mul fix on (nop between mul.s in func_800F8A14); own line
+build/src/overlays/ovl_2E_HotRopeJump/207040.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_13 149E80.c (Balloon Burst) also has the mul fix on: nop between back-to-back mul.s (func_800F9368)
 build/src/overlays/ovl_13_BalloonBurst/149E80.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1C 184870.c: nop between back-to-back mul.s in func_800F97E8
@@ -384,6 +386,14 @@ $(BUILD_DIR)/src/1130.c.o $(BUILD_DIR)/src/34D80.c.o $(BUILD_DIR)/src/1B800.c.o 
 # ovl_20 KnockBlockTower units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
 # ovl_10 137050.c (Bash 'n' Cash) too (mul.s right after func_800AEAC0's return in func_800F8240).
 $(BUILD_DIR)/src/overlays/ovl_0A_GhostGuess/117210.c.o $(BUILD_DIR)/src/overlays/ovl_20_KnockBlockTower/19FEE0.c.o $(BUILD_DIR)/src/overlays/ovl_10_BashNCash/137050.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_2E 207040.c (Hot Rope Jump): mul fix on, blank-line strip (mul.s right after sinf's return); own rule.
+$(BUILD_DIR)/src/overlays/ovl_2E_HotRopeJump/207040.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<

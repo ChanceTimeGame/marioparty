@@ -1420,7 +1420,7 @@ segments:
     bss_size: 0x1D50
     subsegments:
       - [0x207040, c]
-      - [0x20EEB0, data, 207040]
+      - [0x20EEB0, .data, 207040]
       - [0x20EF60, .rodata, 207040]
       - {0x20F570, type: bss, vram: 0x800FEB10, name: ovl_2E_bss}
   - type: code
