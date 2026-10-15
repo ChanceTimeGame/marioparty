@@ -123,6 +123,8 @@ build/src/overlays/ovl_05_ShellGame/F6AB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32
 build/src/overlays/ovl_0B_MusicalMushroom/11C810.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_2E 207040.c (Hot Rope Jump): mul fix on (nop between mul.s in func_800F8A14); own line
 build/src/overlays/ovl_2E_HotRopeJump/207040.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_30 218510.c (Deep Sea Divers): mul fix on (nop between mul.d in func_800FD8C8); own line
+build/src/overlays/ovl_30_DeepSeaDivers/218510.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_13 149E80.c (Balloon Burst) also has the mul fix on: nop between back-to-back mul.s (func_800F9368)
 build/src/overlays/ovl_13_BalloonBurst/149E80.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1C 184870.c: nop between back-to-back mul.s in func_800F97E8
