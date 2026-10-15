@@ -74,19 +74,78 @@ typedef struct PPCoin {
     /* 0x1C */ char unk1C[0xC];
 } PPCoin; /* size = 0x28 */
 
-/* A course piece (D_8010112C_PiranhasPursuit points at 25 of them, 0x3C each). */
+/* A course piece or a background tree (D_8010112C_PiranhasPursuit: 25 pieces,
+   D_80101124_PiranhasPursuit: 14 trees; 0x3C each). Types: 1 rock, 2 falling tree, 3 stump,
+   4 log on the water, 5 goal, 6 start. */
 typedef struct PPPiece {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2; /* type: 1..6 */
-    /* 0x04 */ f32 unk4; /* half width */
+    /* 0x00 */ s16 unk0; /* active; logs: 2 ridden, 3 sinking, 4 gone */
+    /* 0x02 */ s16 unk2; /* type */
+    /* 0x04 */ f32 unk4; /* radius */
     /* 0x08 */ s16 unk8;
-    /* 0x0A */ char unkA[6];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ char unk18[0x1C];
-    /* 0x34 */ f32 unk34; /* x */
-    /* 0x38 */ f32 unk38; /* y */
+    /* 0x0A */ char unkA[2];
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ Vec pos;
+    /* 0x1C */ Vec rot;
+    /* 0x28 */ Vec scale;
+    /* 0x34 */ f32 unk34; /* collision x */
+    /* 0x38 */ f32 unk38; /* collision y */
 } PPPiece; /* size = 0x3C */
+
+/* The Piranha Plant's state (D_80101150_PiranhasPursuit; retail also names its fields
+   D_80101152 .. D_8010117E). anim[] holds each model's motion (start, end, loop end). */
+typedef struct PPPlant {
+    /* 0x000 */ s16 unk0;
+    /* 0x002 */ s16 state;
+    /* 0x004 */ char unk4[0xC];
+    /* 0x010 */ f32 unk10; /* vertical speed */
+    /* 0x014 */ f32 unk14; /* x */
+    /* 0x018 */ f32 unk18; /* lunge offset */
+    /* 0x01C */ f32 unk1C; /* lunge target */
+    /* 0x020 */ s16 timer;
+    /* 0x022 */ s16 unk22;
+    /* 0x024 */ f32 unk24; /* scale to grow to */
+    /* 0x028 */ f32 unk28; /* scale */
+    /* 0x02C */ s16 unk2C; /* current motion */
+    /* 0x02E */ s16 unk2E; /* growing */
+    /* 0x030 */ char unk30[0x118];
+    /* 0x148 */ s16 anim[7][3];
+    /* 0x172 */ char unk172[2];
+} PPPlant; /* size = 0x174 */
+
+/* A rain drop (D_80101120_PiranhasPursuit: 64 of them, 0x80 each): a line per frame buffer. */
+typedef struct PPDrop {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 state; /* 1 falling, 0 bouncing */
+    /* 0x04 */ f32 x;
+    /* 0x08 */ f32 y;
+    /* 0x0C */ f32 z;
+    /* 0x10 */ f32 vx;
+    /* 0x14 */ f32 vy;
+    /* 0x18 */ f32 len;
+    /* 0x1C */ f32 depth;
+    /* 0x20 */ Vtx v[3][2];
+} PPDrop; /* size = 0x80 */
+
+/* A splash sprite (D_80101138_PiranhasPursuit: 32 of them, 0x18 each). */
+typedef struct PPSplash {
+    /* 0x00 */ s16 sprite;
+    /* 0x02 */ s16 state;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ char unk6[2];
+    /* 0x08 */ f32 x;
+    /* 0x0C */ f32 y;
+    /* 0x10 */ f32 z;
+    /* 0x14 */ s16 life;
+    /* 0x16 */ s16 life0;
+} PPSplash; /* size = 0x18 */
+
+/* func_8002040C's result (src/1EA70.c unk1EA70StructC). */
+typedef struct PPAnimMtx {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16* unk_04;
+    /* 0x08 */ Matrix4f* unk_08;
+} PPAnimMtx;
 
 /* ---------------------------------------------------------------------------------------------
    Data (.data)
@@ -111,6 +170,21 @@ extern s32 D_80100244_PiranhasPursuit;
 extern s32 D_80100248_PiranhasPursuit;
 extern f32 D_8010024C_PiranhasPursuit;
 extern u32 D_80100250_PiranhasPursuit; /* random seed */
+
+extern u32 D_80100260_PiranhasPursuit; /* random seed; retail also reads its low half */
+extern s32 D_801003E8_PiranhasPursuit;
+extern f32 D_801003EC_PiranhasPursuit;
+extern f32 D_801003F0_PiranhasPursuit;
+extern s16 D_801003F4_PiranhasPursuit[2];
+extern f32 D_801003F8_PiranhasPursuit;
+extern u16 D_801003FC_PiranhasPursuit;
+extern f32 D_80100400_PiranhasPursuit;
+extern s16 D_80100404_PiranhasPursuit;
+extern s16 D_80100406_PiranhasPursuit;
+extern s16 D_80100408_PiranhasPursuit;
+extern s16 D_8010040A_PiranhasPursuit;
+extern s16 D_8010040C_PiranhasPursuit;
+extern s16 D_8010040E_PiranhasPursuit;
 
 extern const char D_801004B0_PiranhasPursuit[];
 extern const char D_801004BC_PiranhasPursuit[];
@@ -161,13 +235,59 @@ extern f32 D_801010F0_PiranhasPursuit; /* zoom from */
 extern f32 D_801010F4_PiranhasPursuit; /* zoom to */
 extern s16 D_801010F8_PiranhasPursuit; /* frames left */
 extern u16 D_801010FA_PiranhasPursuit; /* frames */
-extern s16 D_801012F2_PiranhasPursuit[4];
+extern omObjData* D_80101100_PiranhasPursuit;
+extern omObjData* D_80101104_PiranhasPursuit; /* background */
+extern omObjData* D_80101108_PiranhasPursuit; /* the plant */
+extern omObjData* D_8010110C_PiranhasPursuit; /* the runner it chases */
+extern omObjData* D_80101110_PiranhasPursuit; /* rain; work[0]: splash frames */
+extern Gfx* D_80101114_PiranhasPursuit[3];
+extern PPDrop* D_80101120_PiranhasPursuit;
+extern PPPiece* D_80101124_PiranhasPursuit;
+extern s16 D_80101128_PiranhasPursuit[2];
+extern PPPiece* D_8010112C_PiranhasPursuit;
+extern s16* D_80101130_PiranhasPursuit; /* course models: 5 originals, then one per piece */
+extern s16 D_80101134_PiranhasPursuit; /* the goal piece */
+extern PPSplash* D_80101138_PiranhasPursuit;
+extern s16 D_8010113C_PiranhasPursuit;
+/* Splash offset x, y, z, then the plant's grow step: one f32[4] that retail also addresses by
+   its splat labels; the host has only the array. */
+extern f32 D_80101140_PiranhasPursuit[4];
+#ifdef TARGET_PC
+#define D_80101144_PiranhasPursuit (D_80101140_PiranhasPursuit[1])
+#define D_80101148_PiranhasPursuit (D_80101140_PiranhasPursuit[2])
+#define D_8010114C_PiranhasPursuit (D_80101140_PiranhasPursuit[3])
+#else
+extern f32 D_80101144_PiranhasPursuit;
+extern f32 D_80101148_PiranhasPursuit;
+extern f32 D_8010114C_PiranhasPursuit;
+#endif
+extern PPPlant D_80101150_PiranhasPursuit;
+#ifdef TARGET_PC
+#define D_8010117C_PiranhasPursuit (D_80101150_PiranhasPursuit.unk2C)
+#else
+extern s16 D_8010117C_PiranhasPursuit; /* D_80101150.unk2C */
+#endif
+extern PPAnimMtx* D_801012C4_PiranhasPursuit;
+extern s16 D_801012C8_PiranhasPursuit; /* 1: runner caught, 2: done */
+extern s16 D_801012CA_PiranhasPursuit; /* plant reached the goal */
+extern s16 D_801012CC_PiranhasPursuit;
+extern f32 D_801012D0_PiranhasPursuit;
+extern f32 D_801012D4_PiranhasPursuit;
+extern f32 D_801012D8_PiranhasPursuit;
+extern f32 D_801012DC_PiranhasPursuit;
+extern f32 D_801012E0_PiranhasPursuit;
+extern u16 D_801012E4_PiranhasPursuit;
+extern u16 D_801012E6_PiranhasPursuit;
+extern s16 D_801012E8_PiranhasPursuit;
+extern s16 D_801012EA_PiranhasPursuit;
+extern s16 D_801012F0_PiranhasPursuit[5]; /* sprite files */
 
 /* ---------------------------------------------------------------------------------------------
    Main code
    --------------------------------------------------------------------------------------------- */
 extern s32 D_800EDEC0;
 extern u16 D_800EE984;
+extern u8 D_800F64F8;
 extern omObjData* D_800F2AF8[];
 extern u16 ContBtn[];
 extern s8 ContStkY[];
@@ -196,6 +316,12 @@ void func_80066DF4(s16, s16, s16, f32, f32, f32);
 void func_80067284(s16, s16, f32);
 s32 func_80067328(s16, s16);
 f64 func_8009B618(f64, f64);
+f32 func_80025D40(s16);
+void func_800670C4(s16, s16, s16, f32, f32, f32);
+s16 func_80024198(s32, void*, s32);
+PPAnimMtx* func_8002040C(s16, s16, char*);
+void func_80020CC4(PPAnimMtx*);
+void MtxRotateX(Matrix4f mtx, f32 angle);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions
@@ -226,11 +352,54 @@ void func_800F9EE8_PiranhasPursuit(void);
 void func_800F9F4C_PiranhasPursuit(omObjData* obj); /* obj unused */
 
 void func_800FA0B0_PiranhasPursuit(void);
+void func_800FA168_PiranhasPursuit(omObjData* obj);
+void func_800FA1B8_PiranhasPursuit(omObjData* obj);
 void func_800FA1E4_PiranhasPursuit(void);
+u16 func_800FA218_PiranhasPursuit(u16 n);
+f32 func_800FA288_PiranhasPursuit(f32 target, f32 cur, f32 step);
+void func_800FA3F0_PiranhasPursuit(s16 model, omObjData* obj);
+void func_800FA480_PiranhasPursuit(omObjData* dst, omObjData* src);
+void func_800FA4CC_PiranhasPursuit(omObjData* obj);
+void func_800FA508_PiranhasPursuit(s16 model, s16 i, PPPlant* p, s16 end);
+void func_800FA5DC_PiranhasPursuit(s16 model, s16* anim, s16 dir);
+void func_800FA684_PiranhasPursuit(s16 model, s16* anim, s16 dir);
+void func_800FA740_PiranhasPursuit(s16 model);
 void func_800FA7C0_PiranhasPursuit(u16 frames);
+void func_800FA7E0_PiranhasPursuit(void);
+void func_800FA7E8_PiranhasPursuit(void);
+void func_800FA878_PiranhasPursuit(omObjData* obj);
+void func_800FAEE8_PiranhasPursuit(omObjData* obj);
+void func_800FB590_PiranhasPursuit(void);
 void func_800FB5C8_PiranhasPursuit(f32 x);
+void func_800FB5D4_PiranhasPursuit(s16* models);
+void func_800FBB98_PiranhasPursuit(s16* models, PPPiece* p, f32 x, s16 type, s16 i);
+void func_800FBE00_PiranhasPursuit(s16* models);
 PPPiece* func_800FC3F4_PiranhasPursuit(f32 x, f32 y);
+s16 func_800FC4D0_PiranhasPursuit(omObjData* obj);
+PPPiece* func_800FC52C_PiranhasPursuit(omObjData* obj);
 s16 func_800FC5A8_PiranhasPursuit(omObjData* obj);
+void func_800FC5F0_PiranhasPursuit(void);
+void func_800FC638_PiranhasPursuit(omObjData* obj);
+void func_800FC7F0_PiranhasPursuit(omObjData* obj);
+void func_800FC9C4_PiranhasPursuit(Gfx* g, PPDrop* d, u16 frame);
+void func_800FCABC_PiranhasPursuit(PPDrop* d);
+void func_800FCE78_PiranhasPursuit(PPDrop* d, u16 frame);
 void func_800FD4BC_PiranhasPursuit(f32 x, f32 y);
+void func_800FD674_PiranhasPursuit(void);
+void func_800FD6EC_PiranhasPursuit(void);
+void func_800FD728_PiranhasPursuit(omObjData* obj);
+void func_800FD9D0_PiranhasPursuit(omObjData* obj);
+void func_800FEF78_PiranhasPursuit(omObjData* obj, s16 anim, s16 fwd);
+void func_800FF0C0_PiranhasPursuit(omObjData* obj);
+s16 func_800FF35C_PiranhasPursuit(omObjData* obj);
+void func_800FF450_PiranhasPursuit(void);
+void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant);
+void func_800FF730_PiranhasPursuit(omObjData* obj);
+void func_800FFB28_PiranhasPursuit(omObjData* obj);
+u16 func_800FFBD8_PiranhasPursuit(s32 file);
+void func_800FFC1C_PiranhasPursuit(void);
+s32 func_800FFCD8_PiranhasPursuit(u16 type, f32 x, f32 y, f32 z, u16 life);
+void func_801000A8_PiranhasPursuit(void);
+void func_801001C8_PiranhasPursuit(void);
 
 #endif

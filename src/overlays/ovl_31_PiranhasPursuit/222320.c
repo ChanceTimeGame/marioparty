@@ -375,11 +375,11 @@ void func_800F7320_PiranhasPursuit(omObjData* obj, s32 player) {
     func_800090C4(obj, 0, 2);
     f = DataRead(0x21);
     coin = func_800678A4(f);
-    D_801012F2_PiranhasPursuit[0] = coin;
+    D_801012F0_PiranhasPursuit[1] = coin;
     DataClose(f);
     f = DataRead(0x2A);
     star = func_800678A4(f);
-    D_801012F2_PiranhasPursuit[3] = star;
+    D_801012F0_PiranhasPursuit[4] = star;
     DataClose(f);
     for (i = 0; i < 15; i++) {
         D_80100E68_PiranhasPursuit[i].sprite = grp = func_80064EF4(2, 0);
