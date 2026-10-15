@@ -1441,8 +1441,33 @@ void func_800FBF70_CoinBlockBash(omObjData* obj) {
         p->unk_44 = 60;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FC054_CoinBlockBash);
+void func_800FC054_CoinBlockBash(omObjData* obj) {
+    CBBBlock* b;
+    CBBPlayer* p;
 
+    b = &D_80102538_CoinBlockBash;
+    p = func_800F7644_CoinBlockBash(obj);
+    func_800284E4(obj->model[0]);
+    p->unk_58 = -1;
+    p->unk_64 = 0;
+    func_800258EC(b->model, 4, 0);
+    D_8010253C_CoinBlockBash = -1;
+    D_80102545_CoinBlockBash = 0;
+    D_80102544_CoinBlockBash = 0;
+    D_80102542_CoinBlockBash = 0;
+    D_80102540_CoinBlockBash = 0;
+    D_80102546_CoinBlockBash = 0;
+    D_80102548_CoinBlockBash = obj->trans.x;
+    D_8010254C_CoinBlockBash = obj->trans.y + 100.0;
+    D_80102550_CoinBlockBash = obj->trans.z;
+    D_80102554_CoinBlockBash = func_800AEAC0(obj->rot.y) * 0.3 * 100.0;
+    D_80102558_CoinBlockBash = 50.0f;
+    D_8010255C_CoinBlockBash = func_800AEFD0(obj->rot.y) * 0.3 * 100.0;
+    b->unk_28.x = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 360 / 65536;
+    b->unk_28.y = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 360 / 65536;
+    b->unk_28.z = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 360 / 65536;
+    func_800258EC(D_80102538_CoinBlockBash.model, 0x4000, 0);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FC2AC_CoinBlockBash);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80102280_CoinBlockBash);

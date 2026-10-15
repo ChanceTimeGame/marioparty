@@ -198,6 +198,7 @@ void func_8009E060(Matrix4f mf, f32 a, f32 x, f32 y, f32 z);
 extern s8 ContStkY[];
 void func_8002859C(s16 arg0, s16 arg1, char* arg2);
 void func_80028498(s16, s16, s16);
+void func_800284E4(s16);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay
