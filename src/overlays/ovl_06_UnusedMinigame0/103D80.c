@@ -158,9 +158,9 @@ UM0Work* func_800FB568_UnusedMinigame0(omObjData* obj) {
     w->unk2 = 0;
     w->unk8 = 0;
     w->obj = obj;
-    w->pos.x = w->pos.y = w->pos.z = 0.0f;
-    w->unk1C.x = w->unk1C.y = w->unk1C.z = 0.0f;
-    w->unk28.x = w->unk28.y = w->unk28.z = 0.0f;
+    w->unk10 = w->unk14 = w->unk18 = 0.0f;
+    w->unk1C = w->unk20 = w->unk24 = 0.0f;
+    w->unk28 = w->unk2C = w->unk30 = 0.0f;
     w->unk40 = w->unk42 = w->unk44 = w->unk46 = 0;
     w->unk48 = w->unk4A = w->unk4C = w->unk4E = 0;
     w->unk50 = w->unk52 = w->unk54 = w->unk56 = 0;

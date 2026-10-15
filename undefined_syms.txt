@@ -507,3 +507,6 @@ D_80101BAC_CoinBlockBash = D_80101BA4_CoinBlockBash + 0x8;
 D_80102C78_UnusedMinigame0 = D_80102C74_UnusedMinigame0 + 0x4;
 D_80102C38_UnusedMinigame0 = D_80102C34_UnusedMinigame0 + 0x4;
 D_80102C58_UnusedMinigame0 = D_80102C54_UnusedMinigame0 + 0x4;
+D_80102B1C_UnusedMinigame0 = D_80102B18_UnusedMinigame0 + 0x4;
+D_80102B58_UnusedMinigame0 = D_80102B54_UnusedMinigame0 + 0x4;
+D_80102BC0_UnusedMinigame0 = D_80102BBC_UnusedMinigame0 + 0x4;
