@@ -151,7 +151,7 @@ void func_800FF2B0_CoinBlockBash(void);
 s32 func_800FFBB8_CoinBlockBash(s32 time);
 void func_800FFE64_CoinBlockBash(unk2C0C0Struct50* node, f32 x, f32 y, f32 z);
 void func_800FFE74_CoinBlockBash(unk2C0C0Struct50* node, f32 x, f32 y, f32 z);
-void func_800FFE84_CoinBlockBash(unk2C0C0Struct50* node, s16 tex);
+void func_800FFE84_CoinBlockBash(unk2C0C0Struct50* node, s32 tex);
 void func_800FFE90_CoinBlockBash(unk2C0C0Struct50* node);
 void func_800FFED0_CoinBlockBash(u8 count);
 s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags);

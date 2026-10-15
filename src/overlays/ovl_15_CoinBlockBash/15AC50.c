@@ -59,6 +59,8 @@ void func_800FE684_CoinBlockBash(void) {
 }
 
 /* The index of the model's object called name, or -1. */
+// NON_MATCHING: retail's frame has 8 more bytes of locals (unused)
+#ifdef NON_MATCHING
 s16 func_800FE854_CoinBlockBash(unk2C0C0StructC0* model, char* name) {
     unk2C0C0Struct30* p = model->unk_80;
     s16 unused[2];
@@ -72,8 +74,13 @@ s16 func_800FE854_CoinBlockBash(unk2C0C0StructC0* model, char* name) {
     }
     return -1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FE854_CoinBlockBash);
+#endif
 
 /* The part of model that draws its object called name, or (unk2C0C0Struct50*)-1. */
+// NON_MATCHING: register allocation of the found index (re-sign-extended twice in retail)
+#ifdef NON_MATCHING
 unk2C0C0Struct50* func_800FE8DC_CoinBlockBash(s16 model, char* name) {
     unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
     s16 id = func_800FE854_CoinBlockBash(m, name);
@@ -100,7 +107,12 @@ unk2C0C0Struct50* func_800FE8DC_CoinBlockBash(s16 model, char* name) {
     }
     return &m->unk_A0[i];
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FE8DC_CoinBlockBash);
+#endif
 
+// NON_MATCHING: retail keeps &D_80103222 in s6 across the block loop
+#ifdef NON_MATCHING
 void func_800FEA5C_CoinBlockBash(void) {
     CBBCoinFull* c;
     CBBDropFull* d;
@@ -120,13 +132,12 @@ void func_800FEA5C_CoinBlockBash(void) {
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
             c = &CBB_COINS[j + i * 3];
-            k = 0;
             if (i < 2) {
                 do {
                     k = (u8)(rand8() % 9);
                 } while (CBB_DROPS[k].coin != NULL);
             } else {
-                for (; k < 9; k++) {
+                for (k = 0; k < 9; k++) {
                     if (CBB_DROPS[k].coin == NULL) {
                         break;
                     }
@@ -158,6 +169,9 @@ void func_800FEA5C_CoinBlockBash(void) {
     }
     D_8010323C_CoinBlockBash = 9;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FEA5C_CoinBlockBash);
+#endif
 
 void func_800FEE04_CoinBlockBash(void) {
     D_80101C00_CoinBlockBash = (D_80101C00_CoinBlockBash + 1) % 3;
@@ -344,14 +358,16 @@ void func_800FF2B0_CoinBlockBash(void) {
 s16 func_800FF904_CoinBlockBash(omObjData* obj, s32 damage, CBBCoin* coin) {
     CBBCoinFull* c = (CBBCoinFull*)coin;
     CBBDropFull* d;
+    s16 hits;
     f32 a;
 
     if (c->hittable == 0) {
         return -1;
     }
-    c->unk_10 -= damage;
+    hits = c->unk_10 - damage;
+    c->unk_10 = hits;
     c->hittable = 0;
-    if (c->unk_10 <= 0) {
+    if (hits <= 0) {
         func_800FFE90_CoinBlockBash(c->blk);
         func_800FFE90_CoinBlockBash(c->shadow);
         c->unk_10 = 0;
@@ -461,6 +477,8 @@ s16 func_800FFD6C_CoinBlockBash(void) {
 }
 
 /* A player picks up drop. */
+// NON_MATCHING: retail returns d->type (or -1 if not active); callers ignore it and CoinBlockBash.h declares void
+#ifdef NON_MATCHING
 void func_800FFD78_CoinBlockBash(CBBDrop* drop, omObjData* obj) {
     CBBDropFull* d = (CBBDropFull*)drop;
 
@@ -478,6 +496,9 @@ void func_800FFD78_CoinBlockBash(CBBDrop* drop, omObjData* obj) {
         func_80060540(D_80101C98_CoinBlockBash[d->type][1], obj->work[0]);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FFD78_CoinBlockBash);
+#endif
 
 void func_800FFE30_CoinBlockBash(void) {
     HuMemDirectFree(D_80103290_CoinBlockBash);
@@ -497,7 +518,7 @@ void func_800FFE74_CoinBlockBash(unk2C0C0Struct50* node, f32 x, f32 y, f32 z) {
     node->unk_64[2][2] = z;
 }
 
-void func_800FFE84_CoinBlockBash(unk2C0C0Struct50* node, s16 tex) {
+void func_800FFE84_CoinBlockBash(unk2C0C0Struct50* node, s32 tex) {
     node->unk_04[0] = tex;
 }
 
@@ -541,6 +562,8 @@ void func_800FFED0_CoinBlockBash(u8 count) {
     }
 }
 
+// NON_MATCHING: scheduling of the slot address
+#ifdef NON_MATCHING
 s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags) {
     CBBBill* fx;
     s16 i;
@@ -559,6 +582,9 @@ s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags) {
     fx->flags = flags;
     return i;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_801000B8_CoinBlockBash);
+#endif
 
 /* A billboard that draws model's display list (its per-frame segment 1) instead of a sprite. */
 s16 func_80100160_CoinBlockBash(s16 model, u8 flags) {
@@ -570,16 +596,16 @@ s16 func_80100160_CoinBlockBash(s16 model, u8 flags) {
             break;
         }
     }
-    if (i != D_80103258_CoinBlockBash) {
-        D_80103298_CoinBlockBash[i].sprite = 0xFFFF;
-        D_80103298_CoinBlockBash[i].flags = flags;
-        D_80103298_CoinBlockBash[i].unk_08 = 1;
-        fx = &D_80103298_CoinBlockBash[i];
-        fx->model = D_800F2B7C[model].unk_6C;
-        fx->dl = D_800F2B7C[model].unk_6C->unk_00[0];
-        return i;
+    if (i == D_80103258_CoinBlockBash) {
+        return -1;
     }
-    return -1;
+    D_80103298_CoinBlockBash[i].sprite = 0xFFFF;
+    D_80103298_CoinBlockBash[i].flags = flags;
+    D_80103298_CoinBlockBash[i].unk_08 = 1;
+    fx = &D_80103298_CoinBlockBash[i];
+    fx->model = D_800F2B7C[model].unk_6C;
+    fx->dl = D_800F2B7C[model].unk_6C->unk_00[0];
+    return i;
 }
 
 void func_80100264_CoinBlockBash(s16 id, s16 sprite) {
@@ -816,6 +842,8 @@ void func_801004E8_CoinBlockBash(void) {
 
 /* Draws the billboards: each one's matrix (facing the camera unless it is a model) and display
    list, into the billboard model's list for this frame. */
+// NON_MATCHING: scheduling of the view-matrix copy (as ovl_2E func_800FA2F4)
+#ifdef NON_MATCHING
 void func_80101748_CoinBlockBash(void) {
 #ifdef TARGET_PC
     static Mtx view; /* the list ends with a matrix load from it: retail's is on the stack */
@@ -863,6 +891,9 @@ void func_80101748_CoinBlockBash(void) {
     gSPMatrix(gfx++, osVirtualToPhysical(&view), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPEndDisplayList(gfx++);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_80101748_CoinBlockBash);
+#endif
 
 void func_80101A5C_CoinBlockBash(void) {
     s32 i;
