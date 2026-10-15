@@ -1,11 +1,9 @@
 #include "common.h"
-
-
+#include "sdk_hu2.h"
 
 typedef struct unkTesting { //unk struct of 0x28 size
     char unk_00[0x28];
 } unkTesting; //sizeof 0x28
-void func_800A18F0(Matrix4f mf, Vec3f* p, Vec3f* tmp);
 
 /* guLookAtReflectF (Hudson) */
 void func_800A1BD0(Matrix4f mf, LookAt* l, Vec3f* p, Vec3f* tmp) {

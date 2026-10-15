@@ -1,7 +1,5 @@
 #include "common.h"
-
-typedef struct HuViewVolume HuViewVolume;
-void func_800A2510(Matrix4f mf, HuViewVolume* v);
+#include "sdk_hu2.h"
 
 /* guFrustum */
 void func_800A2720(Mtx* m, HuViewVolume* v) {

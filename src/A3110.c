@@ -1,14 +1,5 @@
 #include "common.h"
-
-typedef struct HuViewVolume {
-    /* 0x00 */ f32 l;
-    /* 0x04 */ f32 r;
-    /* 0x08 */ f32 b;
-    /* 0x0C */ f32 t;
-    /* 0x10 */ f32 n;
-    /* 0x14 */ f32 f;
-    /* 0x18 */ f32 scale;
-} HuViewVolume;
+#include "sdk_hu2.h"
 
 /* guFrustumF (Hudson) */
 void func_800A2510(Matrix4f mf, HuViewVolume* v) {

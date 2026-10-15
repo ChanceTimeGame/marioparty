@@ -1,6 +1,5 @@
 #include "common.h"
-
-void func_800A1BD0(Matrix4f mf, LookAt* l, Vec3f* p, Vec3f* tmp);
+#include "sdk_hu2.h"
 
 /* guLookAtReflect */
 void func_800A1E90(Mtx* m, LookAt* l, Vec3f* p) {

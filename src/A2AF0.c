@@ -1,14 +1,6 @@
 #include "common.h"
+#include "sdk_hu2.h"
 
-/* guLookAtHiliteF's arguments as one block: eye/at/up, two light directions, texture size */
-typedef struct HuLookAtHiliteArg {
-    /* 0x00 */ Vec3f v[3];
-    /* 0x24 */ Vec3f l1;
-    /* 0x30 */ Vec3f l2;
-    /* 0x3C */ s32 tw;
-    /* 0x40 */ s32 th;
-} HuLookAtHiliteArg;
-void func_800A1BD0(Matrix4f mf, LookAt* l, Vec3f* p, Vec3f* tmp);
 f32 Vec3SqDistance(Vec3f*);
 void func_800A0F70(Vec3f* out, Vec3f* a, f32 s, Vec3f* b);
 f32 func_800A1480(Vec3f*, Vec3f*);

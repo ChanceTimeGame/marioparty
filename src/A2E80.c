@@ -1,7 +1,5 @@
 #include "common.h"
-
-typedef struct HuLookAtHiliteArg HuLookAtHiliteArg;
-void func_800A1EF0(Matrix4f mf, LookAt* l, Hilite* h, HuLookAtHiliteArg* p);
+#include "sdk_hu2.h"
 
 /* guLookAtHilite */
 void func_800A2280(Mtx* m, LookAt* l, Hilite* h, HuLookAtHiliteArg* p) {

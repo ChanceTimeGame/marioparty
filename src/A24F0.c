@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sdk_hu2.h"
 
 void func_800A0E80(Vec3f*, Vec3f*, Vec3f*);
 void func_800A1250(Vec3f*);

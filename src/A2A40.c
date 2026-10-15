@@ -1,6 +1,5 @@
 #include "common.h"
-
-void func_800A1BD0(Matrix4f mf, LookAt* l, Vec3f* p, Vec3f* tmp);
+#include "sdk_hu2.h"
 
 void func_800A1E40(Matrix4f mf, LookAt* l, Vec3f* p) {
     Vec3f tmp[3];
