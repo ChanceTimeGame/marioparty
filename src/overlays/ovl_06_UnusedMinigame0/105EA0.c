@@ -419,8 +419,72 @@ void func_800FE360_UnusedMinigame0(void) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FE3CC_UnusedMinigame0);
+void func_800FE3CC_UnusedMinigame0(s32 arg0) {
+    UM0Tile* t;
+    s32 i;
+    s32 n;
 
+    if ((arg0 == 0x18) | (arg0 == 0x10)) {
+        D_80104340_UnusedMinigame0 = 90;
+        D_80104344_UnusedMinigame0 = 8.0f;
+        func_80060540(0x1F0, 3);
+    }
+    for (i = 0; i < 6; i++) {
+        for (n = 0; n < D_80103688_UnusedMinigame0[i]; n++) {
+            if (D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[1] >= 0) {
+                D_80109CD8_UnusedMinigame0[i][1][0][D_80103704_UnusedMinigame0][n].v.ob[0] = D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0];
+                D_80109CD8_UnusedMinigame0[i][1][0][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2] - func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][1][1][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0] + func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][1][1][D_80103704_UnusedMinigame0][n].v.ob[2] = D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2];
+                D_80109CD8_UnusedMinigame0[i][1][2][D_80103704_UnusedMinigame0][n].v.ob[0] = D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0];
+                D_80109CD8_UnusedMinigame0[i][1][2][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2] + func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][1][3][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0] - func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][1][3][D_80103704_UnusedMinigame0][n].v.ob[2] = D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2];
+                D_80109CD8_UnusedMinigame0[i][2][0][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0] + func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][0][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2] - func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][1][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0] + func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][1][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2] + func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][2][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0] - func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][2][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2] + func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][3][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[0] - func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+                D_80109CD8_UnusedMinigame0[i][2][3][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_80109CD8_UnusedMinigame0[i][0][0][0][n].v.ob[2] - func_800AEAC0(D_80104340_UnusedMinigame0) * D_80104344_UnusedMinigame0;
+            }
+        }
+    }
+    if (arg0 < 0x11 && D_80104344_UnusedMinigame0 >= 0.0f) {
+        D_80104340_UnusedMinigame0 = (D_80104340_UnusedMinigame0 + 90) % 360;
+        D_80104344_UnusedMinigame0 -= 0.5;
+    }
+    for (i = 0; i < 8; i++) {
+        for (n = 0; n < 6; n++) {
+            t = &D_8010A040_UnusedMinigame0[i + n * 8];
+            if (t->state != 2) {
+                if (arg0 == 0x10) {
+                    func_800FDA50_UnusedMinigame0(t, 0);
+                } else if (arg0 == 1) {
+                    t->flags = 0;
+                }
+                if (t->shape != 0 && t->fade > 0) {
+                    t->fade -= 8;
+                } else if (t->shape == 0 && t->fade < 0x70) {
+                    t->fade += 8;
+                }
+            }
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FEBF0_UnusedMinigame0);
 
 void func_800FF284_UnusedMinigame0(void) {
