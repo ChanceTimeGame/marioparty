@@ -1647,6 +1647,10 @@ DSDWork* func_800FC058_DeepSeaDivers(omObjData* obj) {
 
     D_801017B0_DeepSeaDivers[D_80101BD4_DeepSeaDivers] = w;
 #ifdef TARGET_PC
+    /* Retail leaves unk4/unk6 (the radii) unset until the object's first frame, and
+       func_800FCF54 reads a diver's before then: the N64 heap held small values there; host
+       garbage pushed the first diver to the x clamp (invisible, camera followed it down). */
+    func_8009B770(w, 0, sizeof(DSDWork));
     /* The host keeps the table index in work[]: a pointer does not fit in four bytes. */
     obj->work[0] = 0;
     obj->work[1] = 0;
