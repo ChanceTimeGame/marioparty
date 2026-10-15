@@ -476,3 +476,6 @@ D_800FE484_TightropeTreachery = D_800FE47C_TightropeTreachery + 0x8;
 D_800FE3C8_TreasureDivers = D_800FE3C4_TreasureDivers + 0x4;
 D_800FE3E8_TreasureDivers = D_800FE3E4_TreasureDivers + 0x4;
 D_800FE3EC_TreasureDivers = D_800FE3E4_TreasureDivers + 0x8;
+D_800FE468_HotRopeJump = D_800FE464_HotRopeJump + 0x4;
+D_800FE46C_HotRopeJump = D_800FE464_HotRopeJump + 0x8;
+D_800FE470_HotRopeJump = D_800FE464_HotRopeJump + 0xC;
