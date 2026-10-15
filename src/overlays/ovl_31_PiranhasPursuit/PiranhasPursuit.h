@@ -18,7 +18,7 @@
    omObjData::work holds a big-endian pointer to it; the host keeps the index there. No pointers. */
 typedef struct PPPlayer {
     /* 0x00 */ s16 unk0;
-    /* 0x02 */ u16 unk2; /* flags: 1 running, 2 on a log, 4 caught, 8 ... */
+    /* 0x02 */ s16 unk2; /* flags: 1 running, 2 on a log, 4 caught, 8 eaten */
     /* 0x04 */ char unk4[0x18];
     /* 0x1C */ f32 unk1C; /* plant model position */
     /* 0x20 */ f32 unk20;
@@ -230,7 +230,7 @@ void func_800FA1E4_PiranhasPursuit(void);
 void func_800FA7C0_PiranhasPursuit(u16 frames);
 void func_800FB5C8_PiranhasPursuit(f32 x);
 PPPiece* func_800FC3F4_PiranhasPursuit(f32 x, f32 y);
-s32 func_800FC5A8_PiranhasPursuit(omObjData* obj);
+s16 func_800FC5A8_PiranhasPursuit(omObjData* obj);
 void func_800FD4BC_PiranhasPursuit(f32 x, f32 y);
 
 #endif

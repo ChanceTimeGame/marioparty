@@ -573,7 +573,459 @@ void func_800F7AA0_PiranhasPursuit(omObjData* obj) {
     func_80025830(D_80100E66_PiranhasPursuit, 1.0f, 1.0 - D_8010024C_PiranhasPursuit, 0.75f);
 }
 
+/* The solo runner: input (or the CPU), running, jumping over the course pieces, riding a log,
+   being caught at the end, and the coin shower. */
+// NON_MATCHING: register allocation, CSE of the clamp/landing speed reloads, branchless index (masked 117 of 1779; calls, stores and constants equal)
+#ifdef NON_MATCHING
+void func_800F8114_PiranhasPursuit(omObjData* obj) {
+    Vec pos;
+    PPWork* w;
+    u16 btn;
+    PPPlayer* p;
+    f32 ry;
+    u8 port;
+    s32 flags;
+    f32 x;
+    f32 y;
+    f32 z;
+    PPPiece* piece;
+    f32 dx;
+    f32 dist;
+    f32 vy;
+    f32 k;
+    f32 speed;
+    f32 s;
+    u32 r;
+    s16 mot;
+    s16 caught;
+    PPCoin* c;
+    omObjData* o;
+    s32 i;
+    s32 j;
+    s32 n;
+
+    w = obj->unk_50;
+    btn = 0;
+    p = func_800F9CDC_PiranhasPursuit(obj);
+    ry = obj->rot.y;
+    port = w->unk_56;
+    flags = func_80017A60(obj);
+    pos.x = x = obj->trans.x;
+    pos.y = y = obj->trans.y;
+    pos.z = z = obj->trans.z;
+    if (D_801001F0_PiranhasPursuit == 3) {
+        D_800ED430 = 1;
+        if (GwPlayer[w->unk_58].flags & 1) {
+            if (w->unk_40 < D_800B8980 * 0.4) {
+                if (func_800F9D40_PiranhasPursuit() % (5 - GwPlayer[w->unk_58].cpu_difficulty) == 0) {
+                    btn |= 0x4000;
+                }
+            } else if (func_800F9D40_PiranhasPursuit() % (7 - GwPlayer[w->unk_58].cpu_difficulty) == 0) {
+                btn |= 0x4000;
+            }
+            if (D_80100CA8_PiranhasPursuit != 0) {
+                D_80100CA8_PiranhasPursuit = 0;
+                btn |= 0x8000;
+            }
+        } else {
+            btn = ContBtnTrg[(s8)port];
+        }
+    } else {
+        D_800ED430 = 2;
+    }
+    switch (D_801001F0_PiranhasPursuit) {
+        case 0:
+            p->unk40 = p->unk42 = p->unk44 = p->unk46 = 0;
+            p->unk0 = 0;
+            p->unk2 = 1;
+        case 1:
+        case 2:
+        case 9:
+            p->unk38 = ry;
+            break;
+        case 3:
+        case 4:
+            if (p->unk2 == 2) {
+                x = D_80100CA0_PiranhasPursuit->unk34 + D_80100CA4_PiranhasPursuit;
+                y = D_80100CA0_PiranhasPursuit->unk38 + 20.0;
+                if (D_80100CA0_PiranhasPursuit->unk8 >= 0x50) {
+                    p->unk2 |= 1;
+                    w->unk_38 = -D_800B8964 * 0.625;
+                    w->unk_40 = D_800B8980;
+                }
+            } else if (flags & 7) {
+                if (btn & 0x4000) {
+                    w->unk_40 += 2.8;
+                    if (func_800184BC(obj, 1) != 0) {
+                        PlaySound(0x273);
+                        func_80017C0C(obj, 4, x + w->unk_40, y, z, 0.0f, 0.0f);
+                    }
+                } else {
+                    w->unk_40 += -0.32;
+                    if (flags & 1) {
+                        func_800184BC(obj, 0);
+                    }
+                }
+                if (btn & 0x8000) {
+                    func_800185A4(obj, 6);
+                    w->unk_38 = -D_800B8964;
+                    func_80060468(0x127, GwPlayer[w->unk_58].character);
+                }
+                speed = w->unk_40;
+                if (D_800B8980 < speed) {
+                    w->unk_40 = D_800B8980;
+                } else if (speed < D_800B8990) {
+                    w->unk_40 = D_800B8990;
+                }
+            } else if (flags & 0x820) {
+                vy = w->unk_38;
+                if (D_800B8994 < vy) {
+                    vy = D_800B8994;
+                }
+                vy = vy * vy;
+                k = 35.0f;
+                if (w->unk_38 >= 0.0f) {
+                    k = -35.0f;
+                }
+                y += vy * k;
+                w->unk_38 += D_800B8968 * 0.75;
+                if (flags & 0x20) {
+                    p->unk40 = p->unk40 - 3.5;
+                    if (p->unk40 < -45.0) {
+                        p->unk40 = -45;
+                    }
+                } else {
+                    p->unk40 = p->unk40 + 9.0;
+                    if (p->unk40 > 100.0) {
+                        p->unk40 = 100;
+                    }
+                    p->unk42 = p->unk42 + 7.0;
+                    if (p->unk42 > 85.0) {
+                        p->unk42 = 85;
+                    }
+                }
+                if (y <= 0.0) {
+                    y = 0.0f;
+                    if (p->unk2 & 2) {
+                        func_80060F04(w->unk_58, 10, 0, 10);
+                    }
+                    p->unk2 = 1;
+                    p->unk40 = 0;
+                    p->unk42 = 0;
+                    func_80060468(0x12E, GwPlayer[w->unk_58].character);
+                    func_80017C0C(obj, 8, x + w->unk_40, y, z, 0.0f, 0.0f);
+                    if (flags & 0x800) {
+                        w->unk_40 = D_800B8980 * 0.25;
+                        D_800F2B7C[obj->model[0]].unk_4C = 1.0f;
+                        func_800184BC(obj, 0);
+                    } else {
+                        func_800184BC(obj, 0x15);
+                    }
+                }
+            }
+            x += w->unk_40;
+            if (x - D_801001FC_PiranhasPursuit >= 250.0) {
+                if (D_801001F0_PiranhasPursuit == 3) {
+                    x = D_801001FC_PiranhasPursuit + 250.0;
+                }
+            } else if (x - D_801001FC_PiranhasPursuit <= -800.0) {
+                x = D_801001FC_PiranhasPursuit - 800.0;
+            }
+            if (x - D_801001FC_PiranhasPursuit >= 0.0) {
+                D_80100218_PiranhasPursuit = (x - D_801001FC_PiranhasPursuit) / 250.0;
+            } else {
+                D_80100218_PiranhasPursuit = 0.0f;
+            }
+            piece = func_800FC3F4_PiranhasPursuit(obj->trans.x, obj->trans.y);
+            if (func_800FC5A8_PiranhasPursuit(obj) != 0) {
+                D_801001F0_PiranhasPursuit = 7;
+                p->unk2 |= 8;
+                D_801001F8_PiranhasPursuit = 0;
+                func_80060618(0x45F, w->unk_58);
+                p->unk1C = x;
+                p->unk20 = 0.0f;
+                p->unk24 = z;
+                p->unk34 = 0.0f;
+                p->unk38 = ry;
+                p->unk3C = 0.0f;
+                p->unk40 = p->unk42 = 0;
+                p->unk38 = ry;
+                break;
+            }
+            dist = sqrtf((piece->unk34 - obj->trans.x) * (piece->unk34 - obj->trans.x) +
+                         (piece->unk38 - obj->trans.y) * (piece->unk38 - obj->trans.y));
+            if (piece->unk4 + 50.0 >= dist) {
+                switch (piece->unk2) {
+                    case 2:
+                        if (piece->unk0 == 0) {
+                            break;
+                        }
+                    case 1:
+                        if (!(flags & 0x800)) {
+                            func_800185A4(obj, 10);
+                            w->unk_38 = -D_800B8964 * 0.75;
+                            w->unk_40 = D_800B8980 * 0.5;
+                            func_80060468(0x127, GwPlayer[w->unk_58].character);
+                            func_80017C0C(obj, 7, x, y, 0.0f, 70.0f, 270.0f);
+                            func_80060540(0x350, 0);
+                            func_80060F04(w->unk_58, 20, 0, 20);
+                        }
+                        break;
+                    case 3:
+                        if (flags & 0x20) {
+                            if (w->unk_38 > 0.0) {
+                                func_800185A4(obj, 6);
+                                w->unk_38 = -D_800B8964 * 0.75;
+                                w->unk_40 = D_800B8980 * 0.6;
+                                func_80060468(0x127, GwPlayer[w->unk_58].character);
+                                func_80017C0C(obj, 6, x, y, 0.0f, 0.0f, 180.0f);
+                            }
+                        } else {
+                            x = pos.x;
+                        }
+                        break;
+                    case 4:
+                        if (!(p->unk2 & 2)) {
+                            p->unk2 = 2;
+                            D_80100CA0_PiranhasPursuit = piece;
+                            piece->unk0 = 2;
+                            w->unk_40 = 0.0f;
+                            if (piece->unk34 <= x) {
+                                D_80100CA4_PiranhasPursuit = x - piece->unk34;
+                            } else {
+                                D_80100CA4_PiranhasPursuit = (x - piece->unk34) * 0.5;
+                            }
+                        }
+                        break;
+                    case 5:
+                        D_801001F0_PiranhasPursuit = 4;
+                        break;
+                }
+            } else if (piece->unk2 == 5) {
+                if (dist >= 400.0 && (flags & 7)) {
+                    D_801001F0_PiranhasPursuit = 5;
+                    D_801001F8_PiranhasPursuit = 1;
+                    w->unk_40 = 0.0f;
+                    obj->rot.z = 20.0f;
+                    func_80017C0C(obj, 4, x + 150.0, y, z, 0.0f, 180.0f);
+                } else {
+                    D_801001F0_PiranhasPursuit = 4;
+                    w->unk_40 = D_800B8980 * 0.8;
+                }
+            } else if (GwPlayer[w->unk_58].flags & 1) {
+                if ((u32)(piece->unk2 - 5) >= 2) {
+                    r = func_800F9D40_PiranhasPursuit() % (GwPlayer[w->unk_58].cpu_difficulty * 2 + 6);
+                    if (dist <= (f32)((f32)(0.8f + (r + w->unk_40 * 0.075) * 0.1) * 100.0) + piece->unk4) {
+                        if (piece->unk34 - obj->trans.x >= 0.0f) {
+                            D_80100CA8_PiranhasPursuit = 1;
+                        }
+                    }
+                }
+            }
+            p->unk38 = ry;
+            break;
+        case 5:
+        case 6:
+            if (ry > 0.0) {
+                ry -= 18.0f;
+                x += 20.0;
+                p->unk38 -= 12.0f;
+            } else {
+                if (D_801001F0_PiranhasPursuit == 6) {
+                    y = 20.0f;
+                    func_800184BC(obj, 13);
+                    p->unk2 |= 4;
+                    p->unk34 = p->unk40;
+                    p->unk38 = 30.0f;
+                    p->unk3C = 0.0f;
+                }
+                obj->rot.z = 0.0f;
+            }
+            for (i = 0; i < 15; i++) {
+                c = &D_80100E68_PiranhasPursuit[i];
+                switch (c->state) {
+                    case 0:
+                        j = i % 3;
+                        o = D_800F3FB0[j + (j >= D_8010020C_PiranhasPursuit)];
+                        func_80066DF4(c->sprite, 0, 0, o->trans.x, o->trans.y + 100.0, o->trans.z);
+                        func_80067354(c->sprite, 0, 0.8f, 0.8f);
+                        c->timer = 16;
+                        c->x = o->trans.x;
+                        c->y = o->trans.y + 100.0;
+                        c->z = o->trans.z;
+                        c->vy = 60.0f;
+                        c->vx = ((obj->trans.x + 100.0) - o->trans.x) / c->timer;
+                        c->state++;
+                        break;
+                    case 1:
+                        if (p->unk44 >= i * 4 + 24) {
+                            func_80067480(c->sprite, 0, 0x8000);
+                            c->state++;
+                        }
+                        break;
+                    case 2:
+                        c->vy -= 12.0f;
+                        c->x += c->vx;
+                        c->y += c->vy;
+                        func_80066DF4(c->sprite, 0, 0, c->x, c->y, c->z);
+                        if (--c->timer == 0) {
+                            c->state++;
+                        }
+                        break;
+                    case 3:
+                        func_800674BC(c->sprite, 0, 0x8000);
+                        func_80067480(c->sprite, 1, 0x8000);
+                        func_800672B0(c->sprite, 1, 2);
+                        func_80067284(c->sprite, 1, 1.0f);
+                        func_800672DC(c->sprite, 1, 0, 0);
+                        func_80066DF4(c->sprite, 1, 0, c->x, c->y, c->z);
+                        c->sound = func_80060540(0xFC, i + 1);
+                        c->sound = func_80060540(0xFC, i + 1);
+                        c->state++;
+                        break;
+                    case 4:
+                        if (func_80067328(c->sprite, 1) & 4) {
+                            func_800674BC(c->sprite, 1, 0x8000);
+                            c->state++;
+                        }
+                        break;
+                }
+            }
+            p->unk44++;
+            break;
+        case 7:
+            caught = func_800FC5A8_PiranhasPursuit(obj);
+            if (p->unk0 != 0) {
+                for (i = 0; i < 15; i++) {
+                    c = &D_80100E68_PiranhasPursuit[i];
+                    switch (c->state) {
+                        case 0:
+                            if (p->unk44 >= i * 4) {
+                                func_80067480(c->sprite, 0, 0x8000);
+                                c->state++;
+                            }
+                            break;
+                        case 1:
+                            c->vy -= 10.0f;
+                            c->x += c->vx;
+                            c->y += c->vy;
+                            func_80066DF4(c->sprite, 0, 0, c->x, c->y, c->z);
+                            if (--c->timer == 0) {
+                                c->state++;
+                            }
+                            break;
+                        case 2:
+                            func_800674BC(c->sprite, 0, 0x8000);
+                            func_80067480(c->sprite, 1, 0x8000);
+                            func_800672B0(c->sprite, 1, 2);
+                            func_80067284(c->sprite, 1, 1.0f);
+                            func_800672DC(c->sprite, 1, 0, 0);
+                            func_80066DF4(c->sprite, 1, 0, c->x, c->y, c->z);
+                            c->sound = func_80060540(0xFC, i + 1);
+                            c->sound = func_80060540(0xFC, i + 1);
+                            c->state++;
+                            break;
+                        case 3:
+                            if (func_80067328(c->sprite, 1) & 4) {
+                                if (i == 14) {
+                                    D_801001F0_PiranhasPursuit = 8;
+                                }
+                                func_800674BC(c->sprite, 1, 0x8000);
+                                c->state++;
+                            }
+                            break;
+                    }
+                }
+                p->unk44++;
+            } else if (caught == 0) {
+                y = 0.0f;
+                ry = 0.0f;
+                func_800184BC(obj, 14);
+                D_80100214_PiranhasPursuit++;
+                if (D_8010021C_PiranhasPursuit == 0) {
+                    D_80100210_PiranhasPursuit = 5;
+                } else {
+                    D_80100210_PiranhasPursuit = 0;
+                }
+                if (D_80100210_PiranhasPursuit == 0) {
+                    D_801001F0_PiranhasPursuit = 8;
+                } else {
+                    p->unk0 = 1;
+                    p->unk44 = 0;
+                }
+                n = 0;
+                for (i = 0; i < 4; i++) {
+                    if (i != D_8010020C_PiranhasPursuit) {
+                        o = D_800F3FB0[i];
+                        for (j = 0; j < 5; j++) {
+                            c = &D_80100E68_PiranhasPursuit[n + j * 3];
+                            func_80066DF4(c->sprite, 0, 0, obj->trans.x, obj->trans.y, obj->trans.z);
+                            func_80067354(c->sprite, 0, 0.8f, 0.8f);
+                            c->timer = 16;
+                            c->x = obj->trans.x;
+                            c->y = obj->trans.y;
+                            c->z = obj->trans.z;
+                            c->vy = 130.0f;
+                            c->vx = (o->trans.x - obj->trans.x) / (f32)c->timer;
+                        }
+                        n++;
+                    }
+                }
+            }
+        case 8:
+            piece = func_800FC3F4_PiranhasPursuit(p->unk1C, 0.0f);
+            dx = piece->unk34 - p->unk1C;
+            if (sqrtf(dx * dx) <= piece->unk4 + 150.0) {
+                switch (piece->unk2) {
+                    case 2:
+                        if (piece->unk0 == 0) {
+                            break;
+                        }
+                    case 1:
+                    case 3:
+                        if (p->unk40 == 0) {
+                            p->unk40 = 20;
+                            p->unk1C = (piece->unk34 - piece->unk4) - 75.0;
+                        } else if (p->unk40 >= 180) {
+                            p->unk40 = 180;
+                        } else {
+                            p->unk40 = p->unk40 + p->unk40 * 0.25;
+                            p->unk1C = p->unk1C - 2.5;
+                        }
+                        p->unk34 = p->unk20 = func_800AEAC0(p->unk40) * 30.0f;
+                        break;
+                    case 4:
+                    case 5:
+                        p->unk1C += D_800B8980 * 0.8;
+                        break;
+                }
+            } else if (p->unk2 & 8) {
+                p->unk1C += D_800B8980 * 0.8;
+            }
+            break;
+    }
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    obj->rot.y = ry;
+    if (!(p->unk2 & 0xC)) {
+        p->unk1C = x - p->unk42;
+        p->unk20 = y;
+        p->unk24 = z;
+        p->unk34 = p->unk40;
+        p->unk3C = obj->rot.z;
+    }
+    func_80025798(obj->model[9], p->unk1C, p->unk20, p->unk24);
+    func_800257E4(obj->model[9], p->unk34, p->unk38, p->unk3C);
+    s = 1.0 - y / 2000.0;
+    func_80025798(obj->model[1], x, 0.0f, z);
+    func_80025830(obj->model[1], s, s, s);
+    func_80017DB0(obj);
+    func_80017BB0(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/222320", func_800F8114_PiranhasPursuit);
+#endif
 
 /* A watcher: CPU input, and keeps the watchers in place while the course scrolls. */
 // NON_MATCHING: register allocation (flags kept in a0)
