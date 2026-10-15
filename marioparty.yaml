@@ -760,8 +760,10 @@ segments:
       - [0xFF570, c]
       - [0x103D80, c]
       - [0x105EA0, c]
-      - [0x10BA80, data, FF570]
-      - [0x10C720, .rodata, FF570]
+      - [0x10BA80, .data, FF570]
+      - [0x10BB90, .data, 103D80]
+      - [0x10BCB0, data, 105EA0]
+      - [0x10C710, .rodata, FF570]
       - [0x10CA20, .rodata, 103D80]
       - [0x10CAF0, .rodata, 105EA0]
       - {0x10CD10, type: bss, vram: 0x80103D80, name: ovl_06_bss}

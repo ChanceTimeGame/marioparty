@@ -129,6 +129,8 @@ build/src/overlays/ovl_30_DeepSeaDivers/218510.c.o: CFLAGS = -G0 -mips3 -mgp32 -
 build/src/overlays/ovl_15_CoinBlockBash/152BE0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_15 15AC50.c (Coin Block Bash, blocks/billboards): mul fix on (nop between mul.d in func_800FEE90); own line
 build/src/overlays/ovl_15_CoinBlockBash/15AC50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_06 103D80.c: nop between mul.s (func_800FC29C)
+build/src/overlays/ovl_06_UnusedMinigame0/103D80.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1D 188410.c (Bobsled Run): mul fix on (nop between mul.s in func_800F6DB8); own line
 build/src/overlays/ovl_1D_BobsledRun/188410.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_13 149E80.c (Balloon Burst) also has the mul fix on: nop between back-to-back mul.s (func_800F9368)
@@ -416,6 +418,14 @@ $(BUILD_DIR)/src/overlays/ovl_2E_HotRopeJump/207040.c.o: $(BUILD_DIR)/src/%.c.o:
 
 # ovl_1D 188410.c (Bobsled Run): mul fix on, blank-line strip (mul.s right after a call's return); own rule.
 $(BUILD_DIR)/src/overlays/ovl_1D_BobsledRun/188410.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_06 UnusedMinigame0 103D80.c: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
+$(BUILD_DIR)/src/overlays/ovl_06_UnusedMinigame0/103D80.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
