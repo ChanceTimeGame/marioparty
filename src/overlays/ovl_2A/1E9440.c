@@ -167,7 +167,7 @@ extern s32 D_800FDFA0_name_2A;
 extern s32 D_800FDFA4_name_2A[2]; /* players placed at each basket end */
 extern f32 D_800FDFAC_name_2A;
 extern f32 D_800FDFB0_name_2A; /* Mini-Game Island */
-extern PB_PTR32 D_800FDFC0_name_2A;
+extern omObjData* D_800FDFC0_name_2A; /* spotlight on team 0's second player */
 extern s16 D_800FDFC4_name_2A;
 extern f32 D_800FDFC8_name_2A;
 extern f32 D_800FDFD0_name_2A;
@@ -180,7 +180,7 @@ extern u8 D_800FE02A_name_2A;
 extern omObjData* D_800FE02C_name_2A; /* ball shadow */
 extern omObjData* D_800FE030_name_2A[4]; /* players */
 extern omObjData* D_800FE040_name_2A; /* ball */
-extern PB_PTR32 D_800FE044_name_2A;
+extern omObjData* D_800FE044_name_2A; /* spotlight on team 0's first player */
 extern omObjData* D_800FE048_name_2A; /* hoop */
 extern f32 D_800FE04C_name_2A;
 extern s32 D_800FE050_name_2A;
@@ -220,14 +220,15 @@ void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
 #else
 void func_80060F04(s16, s32, s32, s32);
 #endif
-void func_8006B9B0(PB_PTR32, s32, f32, f32);
-void func_8006B9C0(PB_PTR32, s32, s32, s32);
-void func_8006B9D0(PB_PTR32, f32, f32, f32);
-void func_8006BAD0(PB_PTR32, s32);
-void func_8006BB08(PB_PTR32, s32);
-void func_8006BADC(PB_PTR32, f32, f32, f32);
-void func_8006BAF0(PB_PTR32, s32);
-s32 func_8006BAFC(PB_PTR32);
+/* src/6C470.c: the result spotlights */
+void func_8006B9B0(omObjData* obj, f32 x, f32 y, f32 z);
+void func_8006B9C0(omObjData* obj, f32 x, f32 y, f32 z);
+void func_8006B9D0(omObjData* obj, f32 x, f32 y, f32 z);
+void func_8006BAD0(omObjData* obj, f32 arg1);
+void func_8006BADC(omObjData* obj, f32 x, f32 y, f32 z);
+void func_8006BAF0(omObjData* obj, s32 arg1);
+s32 func_8006BAFC(omObjData* obj);
+void func_8006BB08(omObjData* obj, u16 mode);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions
@@ -1142,6 +1143,8 @@ void func_800F8940_name_2A(omObjData* obj, s32 player) {
 }
 
 /* A player's frame: input (CPU or pad), catching, passing, shooting, and the after-goal walk. */
+// register allocation: retail keeps a second copy of the hit flags and the ball pointer in s6
+#ifdef NON_MATCHING
 void func_800F9050_name_2A(omObjData* obj) {
     Vec from;
     Vec to;
@@ -1342,6 +1345,9 @@ void func_800F9050_name_2A(omObjData* obj) {
     func_800FB878_name_2A(ext);
     ext->unk_D0 = ext->unk_34;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800F9050_name_2A);
+#endif
 
 void func_800F9E20_name_2A(omObjData* obj) {
     func_800F8940_name_2A(obj, 0);
@@ -1439,6 +1445,8 @@ void func_800FA124_name_2A(void) {
 }
 
 /* Keeps a player out of the hoop's post and the four corner posts. */
+// float register allocation (dx/dz in f22/f20, 0.0f reloaded)
+#ifdef NON_MATCHING
 void func_800FA1CC_name_2A(omObjData* obj) {
     f32 dx;
     f32 dy;
@@ -1504,8 +1512,13 @@ void func_800FA1CC_name_2A(omObjData* obj) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA1CC_name_2A);
+#endif
 
 /* CPU control. */
+// register allocation (work/mate in s3/s4) and the -1 constant's delay slot
+#ifdef NON_MATCHING
 void func_800FA614_name_2A(omObjData* obj) {
     Vec from;
     Vec to;
@@ -1574,8 +1587,13 @@ void func_800FA614_name_2A(omObjData* obj) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA614_name_2A);
+#endif
 
 /* CPU holding the ball: shoot when near the hoop, else pass or run. */
+// index-before-base order of the teammate pointer (one sll)
+#ifdef NON_MATCHING
 void func_800FA8EC_name_2A(omObjData* obj) {
     Vec from;
     Vec to;
@@ -1685,6 +1703,13 @@ void func_800FA8EC_name_2A(omObjData* obj) {
         func_800FB3FC_name_2A(obj);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA8EC_name_2A);
+
+INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2A/1E9440", D_800FDE68_name_2A);
+
+INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2A/1E9440", D_800FDE78_name_2A);
+#endif
 
 /* CPU without the ball while the other team holds it: guard or wander. */
 void func_800FAEEC_name_2A(omObjData* obj) {
@@ -1770,6 +1795,8 @@ void func_800FB334_name_2A(N2APlayerExt* ext) {
 
 /* Stick toward work->unk_3C; deflection by CPU level (team 0 and team 1 use the levels in
    opposite order). */
+// GCC cross-jumps the identical team-1 cases into team 0's; retail keeps both copies
+#ifdef NON_MATCHING
 void func_800FB3FC_name_2A(omObjData* obj) {
     N2APlayerWork* work = obj->unk_50;
     N2APlayerExt* ext = work->unk_E4;
@@ -1812,6 +1839,9 @@ void func_800FB3FC_name_2A(omObjData* obj) {
     ContStkX[work->unk_56] = f * func_800AEAC0(angle);
     ContStkY[work->unk_56] = -f * func_800AEFD0(angle);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB3FC_name_2A);
+#endif
 
 void func_800FB6A8_name_2A(omObjData* obj) {
     N2APlayerWork* work = obj->unk_50;
@@ -1862,6 +1892,8 @@ void func_800FB878_name_2A(N2APlayerExt* ext) {
 }
 
 /* After a goal: send each team-0 player to the free end of the court (ext->unk_48/4C). */
+// register allocation; retail tests the end counters through hoisted pointers
+#ifdef NON_MATCHING
 void func_800FB8BC_name_2A(void) {
     f32 homeX[2];
     f32 homeZ[2];
@@ -1928,8 +1960,13 @@ void func_800FB8BC_name_2A(void) {
     obj->unk_50 = timer;
     *timer = 120;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB8BC_name_2A);
+#endif
 
 /* After a goal: walk to the home spot (team 0) or away from it (team 1). */
+// float load scheduling in the nearest-player distance
+#ifdef NON_MATCHING
 void func_800FBB50_name_2A(omObjData* obj) {
     Vec from;
     Vec to;
@@ -2004,6 +2041,9 @@ void func_800FBB50_name_2A(omObjData* obj) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FBB50_name_2A);
+#endif
 
 void func_800FBFC8_name_2A(omObjData* obj) {
     s32* timer = obj->unk_50;
@@ -2214,6 +2254,8 @@ void func_800FC990_name_2A(omObjData* obj, Vec* out) {
 }
 
 /* `player` catches the ball. */
+// index-before-base order of the player pointer (one sll)
+#ifdef NON_MATCHING
 void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     N2ABallWork* work = obj->unk_50;
     N2ABallExt* ext = work->unk_68;
@@ -2237,6 +2279,9 @@ void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     func_800258EC(D_800FE02C_name_2A->model[0], 4, 0);
     func_800258EC(D_800FE02C_name_2A->model[1], 4, 0);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC9EC_name_2A);
+#endif
 
 void func_800FCB5C_name_2A(omObjData* obj) {
     Vec from;
@@ -2417,21 +2462,21 @@ void func_800FD254_name_2A(omObjData* obj) {
 }
 
 void func_800FD428_name_2A(void) {
-    PB_PTR32 light;
+    omObjData* light;
 
     func_8006B870();
-    light = func_8006B8A4(0xC, 0x6D9, 0x699, 0x289, 1);
-    func_8006B9B0(light, 0, 50.0f, -805.0f);
-    func_8006B9C0(light, 0, 0, 0);
+    light = (omObjData*)func_8006B8A4(0xC, 0x6D9, 0x699, 0x289, 1);
+    func_8006B9B0(light, 0.0f, 50.0f, -805.0f);
+    func_8006B9C0(light, 0.0f, 0.0f, 0.0f);
     func_8006B9D0(light, 1.0f, 1.0f, 1.0f);
-    func_8006BAD0(light, 0);
+    func_8006BAD0(light, 0.0f);
     func_8006BB08(light, 0);
     D_800FE044_name_2A = light;
-    light = func_8006B8A4(0xC, 0x6D9, 0x699, 0x289, 1);
-    func_8006B9B0(light, 0, 50.0f, -805.0f);
-    func_8006B9C0(light, 0, 0, 0);
+    light = (omObjData*)func_8006B8A4(0xC, 0x6D9, 0x699, 0x289, 1);
+    func_8006B9B0(light, 0.0f, 50.0f, -805.0f);
+    func_8006B9C0(light, 0.0f, 0.0f, 0.0f);
     func_8006B9D0(light, 1.0f, 1.0f, 1.0f);
-    func_8006BAD0(light, 0);
+    func_8006BAD0(light, 0.0f);
     func_8006BB08(light, 4);
     D_800FDFC0_name_2A = light;
 }
@@ -2485,6 +2530,8 @@ void func_800FD670_name_2A(omObjData* obj) {
     }
 }
 
+// float load scheduling
+#ifdef NON_MATCHING
 f32 func_800FD7D8_name_2A(omObjData* obj) {
     f32 hx = D_800FE048_name_2A->trans.x + 0.0f;
     f32 hy = D_800FE048_name_2A->trans.y + 350.0f;
@@ -2493,6 +2540,9 @@ f32 func_800FD7D8_name_2A(omObjData* obj) {
     return D_800FDF50_name_2A = (hx - obj->trans.x) * (hx - obj->trans.x) + (hy - obj->trans.y) * (hy - obj->trans.y) +
                                 (hz - obj->trans.z) * (hz - obj->trans.z);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD7D8_name_2A);
+#endif
 
 s32 func_800FD850_name_2A(s32 flags, s32 mask) {
     return (flags & mask) != 0;
@@ -2507,6 +2557,8 @@ void func_800FD85C_name_2A(s32* flags, s32 mask, s32 set) {
 }
 
 /* out = (distance, -, yaw) from `from` to `to`. */
+// retail keeps the dead pitch range compares (as ovl_1B/ovl_0D's twin); float registers
+#ifdef NON_MATCHING
 void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromCopy;
@@ -2560,8 +2612,13 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     out->z = yaw;
     out->x = length;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD880_name_2A);
+#endif
 
 /* atan(x) by a continued fraction. */
+// f64 register allocation (as ovl_0D's twin)
+#ifdef NON_MATCHING
 f32 func_800FDBF4_name_2A(f32 x) {
     f32 a;
     f32 b;
@@ -2606,6 +2663,9 @@ f32 func_800FDBF4_name_2A(f32 x) {
     }
     return 0.0f;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FDBF4_name_2A);
+#endif
 
 void func_800FDD44_name_2A(void) {
 }
