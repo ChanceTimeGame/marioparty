@@ -99,7 +99,7 @@ typedef struct SGSwap {
 /* The game's settings and state (D_800FF9D0). Retail reaches its fields through the splat labels
    D_800FF9D2/D4/D6/D8/E0/E2/E4/E6/E8 and through one base register (func_800FB120). */
 typedef struct SGGame {
-    /* 0x00 */ s16 unk0; /* CPU skill (1..4) */
+    /* 0x00 */ u16 unk0; /* CPU skill (1..4) */
     /* 0x02 */ u16 unk2; /* shells */
     /* 0x04 */ u16 unk4; /* the shell with the ball */
     /* 0x06 */ s16 unk6; /* result: -1 none, 2 won, 5 lost */
@@ -141,7 +141,7 @@ typedef struct SGPlayerWork {
     /* 0x44 */ f32 unk44;
     /* 0x48 */ f32 unk48; /* radius */
     /* 0x4C */ char unk4C[0xC];
-    /* 0x58 */ u8 unk58; /* player */
+    /* 0x58 */ s8 unk58; /* player */
     /* 0x59 */ char unk59[3];
     /* 0x5C */ s32 unk5C; /* action flags */
     /* 0x60 */ char unk60[4];

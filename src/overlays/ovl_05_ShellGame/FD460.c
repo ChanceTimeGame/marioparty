@@ -13,6 +13,8 @@ u16 D_800FEC54_ShellGame = 0;
 f32 D_800FEC58_ShellGame = 0.0f;
 s16 D_800FEC5C_ShellGame = 0;
 
+// NON_MATCHING: register reuse of the character index
+#ifdef NON_MATCHING
 void func_800FCF90_ShellGame(omObjData* obj) {
     struct {
         s16 mot[4];
@@ -20,6 +22,7 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     } dizzy, cheer;
     SGPlayerWork* w;
     s32 ch;
+    u16 c;
     u16 i;
     u16 pl;
     u16 r;
@@ -40,6 +43,9 @@ void func_800FCF90_ShellGame(omObjData* obj) {
         }
     }
     switch (i) {
+    case 0:
+        pl = 0;
+        break;
     case 1:
         pl = 1;
         break;
@@ -61,8 +67,9 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     } else {
         D_800FF792_ShellGame = 0;
     }
-    D_800FFA0C_ShellGame = GwPlayer[pl].character;
-    ch = D_800C59AC[GwPlayer[pl].character].unk_00;
+    c = GwPlayer[pl].character;
+    D_800FFA0C_ShellGame = c;
+    ch = D_800C59AC[c].unk_00;
     func_80009618(1);
     func_8000979C(obj, ch, 0x9E, pl, 0x699, 0x699);
     func_80009500();
@@ -101,6 +108,9 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     func_800090C4(obj, 0, 2);
     D_800ED430 = 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FCF90_ShellGame);
+#endif
 void func_800FD448_ShellGame(omObjData* obj) {
     switch (D_800FF9EC_ShellGame) {
     case 3:
@@ -129,6 +139,8 @@ void func_800FD448_ShellGame(omObjData* obj) {
     func_800FE7B4_ShellGame(obj);
     func_800FEB40_ShellGame(obj);
 }
+// NON_MATCHING: retail reloads the answer shell in each skill case
+#ifdef NON_MATCHING
 void func_800FD538_ShellGame(omObjData* obj) {
     omObjData* sh;
     f32 dx;
@@ -198,6 +210,11 @@ void func_800FD538_ShellGame(omObjData* obj) {
         ContBtn[D_800FF794_ShellGame] |= 0x8000;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FD538_ShellGame);
+#endif
+// NON_MATCHING: branch-likely choice in two angle wraps
+#ifdef NON_MATCHING
 void func_800FD808_ShellGame(omObjData* obj) {
     SGPlayer* pl;
     f32 a;
@@ -280,6 +297,11 @@ void func_800FD808_ShellGame(omObjData* obj) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FD808_ShellGame);
+#endif
+// NON_MATCHING: retail addresses each field through its own label
+#ifdef NON_MATCHING
 void func_800FDD94_ShellGame(u16 n) {
     if (n == 0) {
         D_800FFA10_ShellGame[0].unk0 = 0;
@@ -295,6 +317,9 @@ void func_800FDD94_ShellGame(u16 n) {
         D_800FFA10_ShellGame[0].unk28 = 0;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FDD94_ShellGame);
+#endif
 void func_800FDE08_ShellGame(omObjData* obj, s16 mot) {
     if (D_800FF790_ShellGame != mot) {
         func_800184BC(obj, mot);
@@ -324,6 +349,8 @@ void func_800FDF28_ShellGame(omObjData* obj) {
     }
     func_8009ECB0(D_800F2B7C[obj->model[0]].unk7C, 0.0f, D_800FEC58_ShellGame, 0.0f);
 }
+// NON_MATCHING: retail reloads obj->work[0] for each use
+#ifdef NON_MATCHING
 void func_800FE010_ShellGame(omObjData* obj) {
     if (obj->work[0] < D_800FF9D0_ShellGame.unk2) {
         D_800FEC16_ShellGame = 0;
@@ -334,6 +361,11 @@ void func_800FE010_ShellGame(omObjData* obj) {
         D_800ED430 = 0;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE010_ShellGame);
+#endif
+// NON_MATCHING: register allocation / scheduling
+#ifdef NON_MATCHING
 void func_800FE07C_ShellGame(omObjData* obj) {
     SGPlayerWork* w;
     omObjData* o;
@@ -394,6 +426,9 @@ void func_800FE07C_ShellGame(omObjData* obj) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE07C_ShellGame);
+#endif
 void func_800FE46C_ShellGame(omObjData* obj) {
     f32 a;
     f32 d;
@@ -410,6 +445,8 @@ void func_800FE46C_ShellGame(omObjData* obj) {
         }
     }
 }
+// NON_MATCHING: block order of the two-state switch
+#ifdef NON_MATCHING
 void func_800FE5BC_ShellGame(omObjData* obj) {
     switch (D_800FEC5C_ShellGame) {
     case 0:
@@ -425,6 +462,11 @@ void func_800FE5BC_ShellGame(omObjData* obj) {
         break;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE5BC_ShellGame);
+#endif
+// NON_MATCHING: retail keeps 5.0f in a saved FP register
+#ifdef NON_MATCHING
 void func_800FE6BC_ShellGame(omObjData* obj) {
     SGStageWork* w;
 
@@ -440,6 +482,9 @@ void func_800FE6BC_ShellGame(omObjData* obj) {
     func_80008FC4(obj, 20.0f);
     func_80008FB8(obj, 1.0f);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE6BC_ShellGame);
+#endif
 void func_800FE7AC_ShellGame(omObjData* arg0) {
 }
 
@@ -453,6 +498,8 @@ void func_800FE7B4_ShellGame(omObjData* obj) {
     }
     D_800FFA10_ShellGame[obj->work[0]].unk20 = 0;
 }
+// NON_MATCHING: shared return tail
+#ifdef NON_MATCHING
 s32 func_800FE87C_ShellGame(omObjData* obj, omObjData* other) {
     SGPlayerWork* w;
     SGShellWork* ow;
@@ -500,6 +547,11 @@ s32 func_800FE87C_ShellGame(omObjData* obj, omObjData* other) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE87C_ShellGame);
+#endif
+// NON_MATCHING: load order of D_800FEC40
+#ifdef NON_MATCHING
 void func_800FEB40_ShellGame(omObjData* obj) {
     SGPlayerWork* w;
     SGPlayerWork* ow;
@@ -515,3 +567,6 @@ void func_800FEB40_ShellGame(omObjData* obj) {
         D_800FEC40_ShellGame = NULL;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FEB40_ShellGame);
+#endif
