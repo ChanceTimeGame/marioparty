@@ -9,6 +9,7 @@
    Pointer fields shift every later field on the host: use names, never offsets. */
 
 #include "common.h"
+#include "PR/gu.h"
 
 /* A falling block actor (D_80108C60_UnusedMinigame0[48]), size 0x40 (N64). */
 typedef struct UM0Drop {

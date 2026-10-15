@@ -485,8 +485,68 @@ void func_800FE3CC_UnusedMinigame0(s32 arg0) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FEBF0_UnusedMinigame0);
+void func_800FEBF0_UnusedMinigame0(s16 arg0) {
+    Gfx* gfx;
+    Mtx* mtx;
+    UM0Tile* t;
+    Mtx m;
+    s32 i;
 
+    gfx = D_801098A8_UnusedMinigame0[D_80103704_UnusedMinigame0];
+    mtx = D_80104350_UnusedMinigame0[D_80103704_UnusedMinigame0];
+    gDPPipeSync(gfx++);
+    if (arg0 == 0) {
+        gDPSetRenderMode(gfx++, 0x404240, 0);
+    } else {
+        gDPSetRenderMode(gfx++, 0x404A50, 0);
+    }
+    gDPSetCombineMode(gfx++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    for (i = 0; i < 48; i++) {
+        t = &D_8010A040_UnusedMinigame0[i];
+        if (t->state == 0) {
+            switch (t->color) {
+            case 0:
+                gDPSetPrimColor(gfx++, 0, 0, 0xFF - t->fade, 0, 0, t->fade * 0.5 + 112.0);
+                break;
+            case 1:
+                gDPSetPrimColor(gfx++, 0, 0, 0, 56.0 - t->fade * 0.5, 0xFF - t->fade, t->fade * 0.5 + 112.0);
+                break;
+            case 2:
+                gDPSetPrimColor(gfx++, 0, 0, 0, 0xFF - t->fade, 0, t->fade * 0.5 + 112.0);
+                break;
+            case 3:
+                gDPSetPrimColor(gfx++, 0, 0, 0xFF - t->fade, 0xFF - t->fade, 0, t->fade * 0.5 + 112.0);
+                break;
+            case 4:
+                gDPSetPrimColor(gfx++, 0, 0, 0xFF - t->fade, 128.0 - t->fade * 0.5, 0, t->fade * 0.5 + 112.0);
+                break;
+            }
+            switch (t->flags) {
+            case 0:
+                gSPSegment(gfx++, 15, osVirtualToPhysical(D_80109CD8_UnusedMinigame0[t->shape][0][0][0]));
+                break;
+            case 1:
+                gSPSegment(gfx++, 15, osVirtualToPhysical(D_80109CD8_UnusedMinigame0[t->shape][1][t->rot][D_80103704_UnusedMinigame0]));
+                break;
+            case 2:
+                gSPSegment(gfx++, 15, osVirtualToPhysical(D_80109CD8_UnusedMinigame0[t->shape][1][(t->rot + 1) & 3][D_80103704_UnusedMinigame0]));
+                break;
+            case 3:
+                gSPSegment(gfx++, 15, osVirtualToPhysical(D_80109CD8_UnusedMinigame0[t->shape][2][t->rot][D_80103704_UnusedMinigame0]));
+                break;
+            }
+            guMtxIdent(mtx);
+            guRotate(&m, t->rot * 90, 0.0f, 1.0f, 0.0f);
+            guMtxCatL(mtx, &m, mtx);
+            guTranslate(&m, t->x, 20.0f, t->z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_8010AD00_UnusedMinigame0[t->shape]);
+            gSPPopMatrix(gfx++, G_MTX_MODELVIEW);
+        }
+    }
+    gSPEndDisplayList(gfx++);
+}
 void func_800FF284_UnusedMinigame0(void) {
     s32 i;
 
