@@ -56,25 +56,45 @@ typedef struct CBBSwing {
     /* 0x03 */ u8 motion;
 } CBBSwing;
 
-/* A coin block (D_80103294_CoinBlockBash[9], allocated). */
-typedef struct CBBCoin {
-    /* 0x00 */ char unk_00[0x10];
-    /* 0x10 */ s16 unk_10;
-    /* 0x12 */ char unk_12[0xA];
-    /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ Vec pos;
-} CBBCoin; /* size = 0x2C */
-
-/* A coin popped out of a block (D_80103290_CoinBlockBash[9], allocated). */
+/* A coin popped out of a block (D_80103290_CoinBlockBash[9], allocated by 15AC50.c). Pointers at
+   0x00/0x04: use names, never offsets. */
 typedef struct CBBDrop {
-    /* 0x00 */ char unk_00[9];
+    /* 0x00 */ struct CBBCoin* coin; /* the block it came from */
+    /* 0x04 */ omObjData* obj;       /* the player collecting it */
+    /* 0x08 */ u8 state;  /* 0 none, 1 rising, 2 on the floor, 3 blinking, 4 collected, 5 gone */
     /* 0x09 */ u8 type;   /* D_80101B20_CoinBlockBash row: 0 coin, 1 big coin */
-    /* 0x0A */ s8 active;
-    /* 0x0B */ char unk_0B[0xD];
+    /* 0x0A */ s8 active; /* can be collected */
+    /* 0x0B */ char unk_0B;
+    /* 0x0C */ s16 bb;     /* billboard */
+    /* 0x0E */ s16 shadow; /* shadow billboard */
+    /* 0x10 */ s32 timer;
+    /* 0x14 */ s32 unk_14;
     /* 0x18 */ f32 radius;
     /* 0x1C */ Vec pos;
-    /* 0x28 */ char unk_28[0x1C];
-} CBBDrop; /* size = 0x44 */
+    /* 0x28 */ f32 unk_28; /* scale x */
+    /* 0x2C */ f32 unk_2C; /* scale y */
+    /* 0x30 */ f32 unk_30;
+    /* 0x34 */ Vec vel;
+    /* 0x40 */ f32 unk_40; /* angle while collected */
+} CBBDrop; /* size = 0x44 (N64) */
+
+/* A coin block (D_80103294_CoinBlockBash[9], allocated by 15AC50.c). Pointers at 0x00..0x08. */
+typedef struct CBBCoin {
+    /* 0x00 */ unk2C0C0Struct50* blk;    /* model part "blNN" */
+    /* 0x04 */ unk2C0C0Struct50* shadow; /* model part "kgNN" */
+    /* 0x08 */ CBBDrop* drop;
+    /* 0x0C */ u8 state;  /* 0 idle, 1 hit, 2 settling, 3 broken (flying), 4 gone */
+    /* 0x0D */ s8 hittable;
+    /* 0x0E */ s16 bb;     /* effect billboard, -1 none */
+    /* 0x10 */ s16 unk_10; /* hits left */
+    /* 0x12 */ char unk_12[2];
+    /* 0x14 */ s32 timer;
+    /* 0x18 */ f32 angle;  /* flight direction, -361 none */
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ Vec pos;
+} CBBCoin; /* size = 0x2C (N64) */
+
+
 
 /* Facing per quadrant (D_80101D18). */
 typedef struct CBBQuad {
