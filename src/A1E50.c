@@ -8,7 +8,16 @@ void func_800A1250(Vec3f* arg0) {
     arg0->y = inv * arg0->y;
     arg0->z = inv * arg0->z;
 }
-INCLUDE_ASM("asm/nonmatchings/A1E50", func_800A1320);
+f32 func_800A1320(Vec3f* a, Vec3f* b) {
+    f32 dx;
+    f32 dy;
+    f32 dz;
+
+    dx = a->x - b->x;
+    dy = a->y - b->y;
+    dz = a->z - b->z;
+    return dx * dx + dy * dy + dz * dz;
+}
 
 f32 func_800A13C0(Vec3f* arg0, Vec3f* arg1) {
     f32 dx;
