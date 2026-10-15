@@ -9,6 +9,7 @@
    Types come from the asm's accesses; N64 offsets are in the comments. */
 
 #include "common.h"
+#include "engine/pad.h"
 
 /* A top character's work (func_80023684(0x30), memset). Also the face-sprite state of
    func_800F76E0. No pointers. */
@@ -48,8 +49,8 @@ typedef struct UM1Machine {
     /* 0x1E */ char unk1E[2];
     /* 0x20 */ u8 unk20; /* player */
     /* 0x21 */ u8 unk21; /* face row (D_800F925C) */
-    /* 0x22 */ u8 unk22; /* character */
-    /* 0x23 */ u8 unk23; /* controller port */
+    /* 0x22 */ s8 unk22; /* character */
+    /* 0x23 */ s8 unk23; /* controller port */
 } UM1Machine; /* size = 0x24 */
 
 /* Texture size from func_80039C48 (D_800F943E). */

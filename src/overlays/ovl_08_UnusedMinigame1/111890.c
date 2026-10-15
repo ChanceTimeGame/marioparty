@@ -332,15 +332,3 @@ void func_800F79F0_UnusedMinigame1(omObjData* obj) {
             break;
     }
 }
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/111890", D_800F9344_UnusedMinigame1);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/111890", D_800F9354_UnusedMinigame1);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/111890", D_800F9364_UnusedMinigame1);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/111890", D_800F9374_UnusedMinigame1);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/111890", D_800F9384_UnusedMinigame1);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/111890", D_800F9394_UnusedMinigame1);
