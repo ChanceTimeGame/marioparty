@@ -517,3 +517,5 @@ D_80102C58_UnusedMinigame0 = D_80102C54_UnusedMinigame0 + 0x4;
 D_80102B1C_UnusedMinigame0 = D_80102B18_UnusedMinigame0 + 0x4;
 D_80102B58_UnusedMinigame0 = D_80102B54_UnusedMinigame0 + 0x4;
 D_80102BC0_UnusedMinigame0 = D_80102BBC_UnusedMinigame0 + 0x4;
+/* libgcc 64-bit division called by lldiv (9B9F0.c); KMC libgcc at 0x8009BCA0 */
+__divdi3 = func_8009BCA0;

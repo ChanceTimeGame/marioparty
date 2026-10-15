@@ -358,6 +358,7 @@ build/src/overlays/ovl_27_DesertDash/1D6E30.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
 build/src/9AF70.c.o: OPTFLAGS = -O3 -funsigned-char
+build/src/9B9F0.c.o: OPTFLAGS = -O3 -funsigned-char
 # 9C190.c (KMC libm fmod): nop between the call's div.d delay slot and mul.d (mul fix on)
 build/src/9C190.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
