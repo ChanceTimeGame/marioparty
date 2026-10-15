@@ -519,3 +519,5 @@ D_80102B58_UnusedMinigame0 = D_80102B54_UnusedMinigame0 + 0x4;
 D_80102BC0_UnusedMinigame0 = D_80102BBC_UnusedMinigame0 + 0x4;
 func_80093660 = 0x80093660; /* __osSetHWIntrRoutine (sdk-lib); Leo asm still calls it by address name */
 osClockRate = 0x800C7720; /* u64 (sdk-lib initialize.c); the data asm splits it as D_800C7720/D_800C7724 */
+D_800EA480 = 0x800EA480; /* piThreadStack (sdk-lib pimgr.c) */
+D_800EB660 = 0x800EB660; /* viThreadStack (sdk-lib vimgr.c) */
