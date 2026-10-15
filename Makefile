@@ -358,6 +358,12 @@ build/src/overlays/ovl_27_DesertDash/1D6E30.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
 
+# sdk-lib: libultra units in the main region (0x95BF0-0x9AD00) build like src/lib (-O3, unsigned char, lib headers)
+SDK_LIB_UNITS := build/src/95BF0.c.o build/src/95C00.c.o build/src/95CA0.c.o build/src/95CC0.c.o build/src/95CE0.c.o build/src/95E40.c.o build/src/95E50.c.o build/src/96AA0.c.o build/src/972D0.c.o build/src/98B20.c.o build/src/99680.c.o build/src/99880.c.o build/src/99AA0.c.o build/src/99B90.c.o build/src/99F50.c.o build/src/9A0C0.c.o build/src/9A230.c.o build/src/9AB60.c.o build/src/9ABB0.c.o build/src/9AC00.c.o build/src/9AC50.c.o build/src/9ACE0.c.o build/src/9AD00.c.o
+$(SDK_LIB_UNITS): OPTFLAGS = -O3 -funsigned-char
+$(SDK_LIB_UNITS): CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+$(SDK_LIB_UNITS): CPPFLAGS = -I include -I include/PR -I include/gcc -I $(BUILD_DIR)/include -I src -I src/lib/2.0I/audio -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2
+
 # Compile .c files with kmc gcc (use strip to fix objects so that they can be linked with modern gnu ld) 
 $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
