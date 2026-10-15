@@ -56,7 +56,8 @@ typedef struct UM0Work {
     /* 0x5E */ s16 unk5E; /* exit being pushed, -1 none */
 } UM0Work; /* size = 0x60 */
 
-/* What a board cell's entry points at first (105EA0.c owns it; only these fields are read here). */
+/* What a board cell's entry points at first. 105EA0.c owns the real cell type (a u8 at N64 0x17 too,
+   func_801025B8): these are partial views of the fields 103D80.c reads; unify at merge. */
 typedef struct UM0CellState {
     /* 0x00 */ char unk0[8];
     /* 0x08 */ s32 unk8;

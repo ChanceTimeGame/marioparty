@@ -279,7 +279,7 @@ void func_800F6EC0_UnusedMinigame0(omObjData* obj) {
 }
 
 /* cur turned by step towards target (degrees, the short way); target once within step. */
-// NON_MATCHING: TODO
+// NON_MATCHING: GCC folds the three fmod-normalise tests differently (one compare fewer); same branches
 #ifdef NON_MATCHING
 f32 func_800F7320_UnusedMinigame0(f32 cur, f32 target, f32 step) {
     f32 v;
@@ -324,7 +324,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800F7
     }
 
 /* The player: intro, walking (or the CPU's moves), pushing an exit gate, reaching the treasure. */
-// NON_MATCHING: TODO
+// NON_MATCHING: register allocation and addressing forms (labels vs struct offsets); stores and loads checked against retail
 #ifdef NON_MATCHING
 void func_800F75C0_UnusedMinigame0(omObjData* obj) {
     UM0MgWork* mg = obj->unk_50;
@@ -399,7 +399,7 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                         obj->trans.y += w->unk20;
                         w->unk20 += -4.0;
                         if (w->unk20 < 0.0 && obj->trans.y < 0.0) {
-                            obj->trans.y = 0.0f;
+                            w->unk14 = 0.0f; /* retail: the work's home y, not trans.y */
                             if (--w->unk44 == 0) {
                                 w->unk40++;
                                 w->unk42 = 0x20;
@@ -799,7 +799,7 @@ void func_800F924C_UnusedMinigame0(omObjData* obj) {
 }
 
 /* Opens (state 1) and closes (state 2) the entrance lift (slot 0) and the gates (slots 1..4). */
-// NON_MATCHING: TODO
+// NON_MATCHING: switch compare tree and register allocation
 #ifdef NON_MATCHING
 void func_800F95C0_UnusedMinigame0(omObjData* obj) {
     s16 i;
@@ -976,7 +976,7 @@ void func_800F9F04_UnusedMinigame0(omObjData* obj) {
     D_80103DA0_UnusedMinigame0++;
 }
 
-// NON_MATCHING: TODO
+// NON_MATCHING: register allocation; GCC drops some double conversions
 #ifdef NON_MATCHING
 void func_800FA024_UnusedMinigame0(omObjData* obj) {
     UM0ItemWork* iw = obj->unk_50;
@@ -1049,7 +1049,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA
 #endif
 
 /* The CPU's plan: (5 - difficulty / 2) random moves, then a search for the treasure's way out. */
-// NON_MATCHING: TODO
+// NON_MATCHING: register allocation; move bytes stored through the DB9 label
 #ifdef NON_MATCHING
 void func_800FA4A4_UnusedMinigame0(void) {
     u8 board[8][6];
@@ -1109,7 +1109,7 @@ void func_800FA678_UnusedMinigame0(u8 src[8][6], u8 dst[8][6]) {
 }
 
 /* The direction of a neighbour of (x, z) that holds val, or -1. */
-// NON_MATCHING: TODO
+// NON_MATCHING: branch layout of the neighbour test
 #ifdef NON_MATCHING
 s16 func_800FA6F8_UnusedMinigame0(u8 board[8][6], s16 x, s16 z, u8 val) {
     s16 d;
@@ -1134,7 +1134,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA
 #endif
 
 /* Walks the piece at (x, z) (marking it) and returns a random other cell of it in (x, z). */
-// NON_MATCHING: TODO
+// NON_MATCHING: branch layout of the stack pop
 #ifdef NON_MATCHING
 void func_800FA7A8_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     u8 stack[48][2];
@@ -1229,7 +1229,7 @@ void func_800FA9D0_UnusedMinigame0(UM0State* s) {
 }
 
 /* The first move towards the cheapest leaf, or NULL at the root. */
-// NON_MATCHING: TODO
+// NON_MATCHING: branch layout; retail keeps an empty 16-byte frame
 #ifdef NON_MATCHING
 UM0State* func_800FABF0_UnusedMinigame0(void) {
     u8 best = 0xFF;
@@ -1259,7 +1259,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA
 #endif
 
 /* A random movable cell. */
-// NON_MATCHING: TODO
+// NON_MATCHING: register allocation
 #ifdef NON_MATCHING
 s32 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     u8 cand[48][2];
