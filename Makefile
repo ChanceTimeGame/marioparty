@@ -258,6 +258,8 @@ build/src/overlays/ovl_40_ResultsScene/259EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -m
 build/src/overlays/ovl_64_ResultsEternalStar2/2B1670.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_31 225DF0.c: nop between mul.s in func_800FF35C (mul fix on)
 build/src/overlays/ovl_31_PiranhasPursuit/225DF0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_06 105EA0.c: nop between back-to-back mul.d in func_800FFA64 (mul fix on)
+build/src/overlays/ovl_06_UnusedMinigame0/105EA0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_00 CDA50.c: nop between mul.d in func_800F9178 (mul fix on)
 build/src/overlays/ovl_00_MemoryMatch/CDA50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_00 D27D0.c: nop between mul.s in func_800FD6A0 (mul fix on)

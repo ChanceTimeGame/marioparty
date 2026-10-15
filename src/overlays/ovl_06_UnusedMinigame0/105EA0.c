@@ -683,8 +683,157 @@ void func_800FF488_UnusedMinigame0(void) {
     func_800FFA64_UnusedMinigame0();
     func_80025830(UM0_MODEL_DROP, 2.5f, 2.5f, 2.5f);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FFA64_UnusedMinigame0);
+// float register allocation (masked 0)
+#ifdef NON_MATCHING
+void func_800FFA64_UnusedMinigame0(void) {
+    Gfx* gfx;
+    Mtx* mtx;
+    Mtx m;
+    s32 i;
+    s32 n;
+    s32 ring;
+    f32 w;
+    f32 s;
+    f32 sc;
 
+    ring = 0;
+    *D_800F2B7C[D_80109CCC_UnusedMinigame0].unk_6C->unk_00 = D_80108C50_UnusedMinigame0[D_80103704_UnusedMinigame0];
+    gfx = D_80108C50_UnusedMinigame0[D_80103704_UnusedMinigame0];
+    mtx = D_80106750_UnusedMinigame0[D_80103704_UnusedMinigame0];
+    gDPPipeSync(gfx++);
+    gDPSetRenderMode(gfx++, 0x504240, 0);
+    gDPSetCombineMode(gfx++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    for (i = 0; i < 48; i++) {
+        switch (D_8010A040_UnusedMinigame0[i].color) {
+        case 0:
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0, 0, 0x70);
+            break;
+        case 1:
+            gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0xFF, 0x70);
+            break;
+        case 2:
+            gDPSetPrimColor(gfx++, 0, 0, 0, 0xFF, 0, 0x70);
+            break;
+        case 3:
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0, 0x70);
+            break;
+        case 4:
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0x80, 0, 0x70);
+            break;
+        }
+        switch (D_80108C60_UnusedMinigame0[i].state) {
+        case 0:
+            continue;
+        case 1:
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_8010B070_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].skin][D_80103704_UnusedMinigame0]));
+            guMtxIdent(mtx);
+            if ((i & 7) < 4) {
+                s = 2.0f * func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) + 1.0f;
+                guScale(&m, s, 1.0f, 1.0 - func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) * 0.75);
+                guMtxCatL(mtx, &m, mtx);
+                guRotate(&m, 90.0f, 0.0f, 0.0f, 1.0f);
+            } else {
+                s = 1.0 - func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) * 0.75;
+                guScale(&m, s, 1.0f, 2.0f * func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) + 1.0f);
+                guMtxCatL(mtx, &m, mtx);
+                guRotate(&m, 90.0f, 1.0f, 0.0f, 0.0f);
+            }
+            guMtxCatL(mtx, &m, mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, D_80108C60_UnusedMinigame0[i].y, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_801035B8_UnusedMinigame0);
+            break;
+        case 2:
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_8010B070_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].skin][D_80103704_UnusedMinigame0]));
+            guMtxIdent(mtx);
+            guRotate(&m, (D_80108C60_UnusedMinigame0[i].angle + 90.0f) * func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 90 * 0.25 * 0.5),
+                     0.0f, 1.0f, 0.0f);
+            guMtxCatL(mtx, &m, mtx);
+            if ((i & 7) < 4) {
+                guRotate(&m, 90.0 - D_80108C60_UnusedMinigame0[i].timer * 90 * 0.25 * 0.5, 0.0f, 0.0f, 1.0f);
+            } else {
+                guRotate(&m, 90.0 - D_80108C60_UnusedMinigame0[i].timer * 90 * 0.25 * 0.5, 1.0f, 0.0f, 0.0f);
+            }
+            guMtxCatL(mtx, &m, mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, D_80108C60_UnusedMinigame0[i].y, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_801035B8_UnusedMinigame0);
+            break;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_8010B070_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].skin][D_80103704_UnusedMinigame0]));
+            w = (D_80108C60_UnusedMinigame0[i].speed - 1.0f) * 0.125;
+            if (w < 0.2) {
+                w = 0.2f;
+            }
+            guMtxIdent(mtx);
+            sc = (func_800AEAC0((D_80108C60_UnusedMinigame0[i].timer & 0xF) * 360 * 0.0625 - 90.0) + 1.0f) * w + 1.0f;
+            guScale(&m, sc, 1.0f, 1.0 - (func_800AEAC0((D_80108C60_UnusedMinigame0[i].timer & 0xF) * 360 * 0.0625 - 90.0) + 1.0f) * 0.25);
+            guMtxCatL(mtx, &m, mtx);
+            guRotate(&m, D_80108C60_UnusedMinigame0[i].dir + 90.0f, 0.0f, 1.0f, 0.0f);
+            guMtxCatL(mtx, &m, mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, 1.0f, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_801035B8_UnusedMinigame0);
+            break;
+        case 7:
+            for (n = 0; n < 16; n++) {
+                D_8010B0D0_UnusedMinigame0[ring][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                    D_801034A8_UnusedMinigame0[n].v.ob[0] * D_80108C60_UnusedMinigame0[i].timer * 0.25 +
+                    D_8010B070_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].skin][D_80103704_UnusedMinigame0][n].v.ob[0] *
+                        (4 - D_80108C60_UnusedMinigame0[i].timer) * 0.25;
+                D_8010B0D0_UnusedMinigame0[ring][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                    D_801034A8_UnusedMinigame0[n].v.ob[2] * D_80108C60_UnusedMinigame0[i].timer * 0.25 +
+                    D_8010B070_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].skin][D_80103704_UnusedMinigame0][n].v.ob[2] *
+                        (4 - D_80108C60_UnusedMinigame0[i].timer) * 0.25;
+            }
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_8010B0D0_UnusedMinigame0[ring][D_80103704_UnusedMinigame0]));
+            ring = (ring + 1) & 7;
+            guMtxIdent(mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, 2.0f, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_801035B8_UnusedMinigame0);
+            break;
+        case 8:
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_80102D20_UnusedMinigame0));
+            guMtxIdent(mtx);
+            guScale(&m, 1.0f, D_80108C60_UnusedMinigame0[i].timer * 0.125, 1.0f);
+            guMtxCatL(mtx, &m, mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, D_80108C60_UnusedMinigame0[i].timer * 20 * 0.125, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_80102F20_UnusedMinigame0);
+            break;
+        case 9:
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_80109CD8_UnusedMinigame0[0][1][0][D_80103704_UnusedMinigame0]));
+            guMtxIdent(mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, 20.0f, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_80102F20_UnusedMinigame0);
+            break;
+        case 10:
+            gSPSegment(gfx++, 15, osVirtualToPhysical(D_80102D20_UnusedMinigame0));
+            guMtxIdent(mtx);
+            guTranslate(&m, D_80108C60_UnusedMinigame0[i].x, 20.0f, D_80108C60_UnusedMinigame0[i].z);
+            guMtxCatL(mtx, &m, mtx);
+            gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_PUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, D_80102F20_UnusedMinigame0);
+            break;
+        }
+        gSPPopMatrix(gfx++, G_MTX_MODELVIEW);
+    }
+    gSPEndDisplayList(gfx++);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FFA64_UnusedMinigame0);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_80100850_UnusedMinigame0);
 
 u32 func_80102568_UnusedMinigame0(u32 n) {
