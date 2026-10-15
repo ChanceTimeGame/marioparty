@@ -49,6 +49,13 @@ typedef struct CBBFxDef {
     /* 0x0E */ s16 unk_0E;
 } CBBFxDef; /* size = 0x10 */
 
+/* A hammer swing (D_80101BD4_CoinBlockBash[2], .data). */
+typedef struct CBBSwing {
+    /* 0x00 */ u16 timer;
+    /* 0x02 */ u8 unk_02;
+    /* 0x03 */ u8 motion;
+} CBBSwing;
+
 /* A coin block (D_80103294_CoinBlockBash[9], allocated). */
 typedef struct CBBCoin {
     /* 0x00 */ char unk_00[0x10];
@@ -91,16 +98,17 @@ typedef struct CBBPlayer {
     /* 0x03 */ u8 state;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ Vec pos;
-    /* 0x14 */ Vec unk_14;
-    /* 0x20 */ char unk_20[0xC];
-    /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ char unk_30[8];
-    /* 0x38 */ f32 unk_38;
-    /* 0x3C */ char unk_3C[4];
+    /* 0x14 */ Vec unk_14;  /* last frame's push */
+    /* 0x20 */ Vec vel;
+    /* 0x2C */ f32 unk_2C;  /* facing target */
+    /* 0x30 */ f32 unk_30;  /* speed */
+    /* 0x34 */ char unk_34[4];
+    /* 0x38 */ f32 unk_38;  /* gravity */
+    /* 0x3C */ f32 unk_3C;  /* friction */
     /* 0x40 */ s16 unk_40;
     /* 0x42 */ s16 unk_42;
     /* 0x44 */ s16 unk_44;
-    /* 0x46 */ char unk_46[2];
+    /* 0x46 */ s16 unk_46;
     /* 0x48 */ s16 unk_48;
     /* 0x4A */ s16 unk_4A;
     /* 0x4C */ s16 unk_4C;
@@ -109,13 +117,14 @@ typedef struct CBBPlayer {
     /* 0x52 */ char unk_52[4];
     /* 0x56 */ s16 unk_56;
     /* 0x58 */ s16 unk_58;
-    /* 0x5A */ char unk_5A[4];
-    /* 0x5E */ s16 unk_5E;
-    /* 0x60 */ char unk_60[2];
+    /* 0x5A */ s16 unk_5A; /* queued motion */
+    /* 0x5C */ u16 unk_5C; /* its timer */
+    /* 0x5E */ s16 unk_5E; /* current motion */
+    /* 0x60 */ u16 unk_60;
     /* 0x62 */ s16 unk_62;
     /* 0x64 */ s16 unk_64;
-    /* 0x66 */ s16 unk_66;
-    /* 0x68 */ char unk_68[2];
+    /* 0x66 */ s16 unk_66; /* hammer swing (mtx set) */
+    /* 0x68 */ s16 unk_68; /* its frame */
     /* 0x6A */ s16 mtxCount[2];
     /* 0x6E */ char unk_6E[2];
     /* 0x70 */ Matrix4f* mtx[2];
@@ -198,6 +207,10 @@ void func_8009E060(Matrix4f mf, f32 a, f32 x, f32 y, f32 z);
 extern s8 ContStkY[];
 void func_8002859C(s16 arg0, s16 arg1, char* arg2);
 void func_80028498(s16, s16, s16);
+s16 func_80060618(s16, s16);
+s16 func_80060468(s16, u8);
+s16 func_80060540(s16, s16);
+void func_80017BB0(omObjData*);
 void func_800284E4(s16);
 
 /* ---------------------------------------------------------------------------------------------
@@ -206,6 +219,8 @@ void func_800284E4(s16);
 
 extern u8 D_80101B20_CoinBlockBash[2][2];
 extern CBBFxDef D_80101B24_CoinBlockBash[8];
+extern CBBSwing D_80101BD4_CoinBlockBash[2];
+extern u8 D_80101BDC_CoinBlockBash[12][2];
 extern Vec D_80101BA4_CoinBlockBash[3];
 extern f32 D_80101BC8_CoinBlockBash[3];
 extern CBBMain D_801024F0_CoinBlockBash;
@@ -277,12 +292,13 @@ s16 func_800F6C80_CoinBlockBash(s32 id);
 void func_800F6CC8_CoinBlockBash(void);
 void func_800F6EA0_CoinBlockBash(void);
 void func_800F7048_CoinBlockBash(omObjData* obj);
-s16 func_800F7148_CoinBlockBash(s32 self, Vec* pos, s32 unused, f32 vy);
+s32 func_800F7148_CoinBlockBash(s32 self, Vec* pos, f32 dx, f32 vy, f32 dz);
 CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj);
 void* func_800F766C_CoinBlockBash(omObjData* obj);
 s8 func_800F7674_CoinBlockBash(omObjData* obj);
 void func_800F7680_CoinBlockBash(omObjData* obj, s16 motion, char* name);
 void func_800F77BC_CoinBlockBash(omObjData* obj, s32 motion);
+void func_800F78DC_CoinBlockBash(omObjData* obj, s32 a, s32 b);
 void func_800F78E8_CoinBlockBash(void);
 void func_800F7A5C_CoinBlockBash(void);
 void func_800F8014_CoinBlockBash(void);
@@ -312,7 +328,7 @@ void func_800FDC5C_CoinBlockBash(void);
 void func_800FDCB4_CoinBlockBash(omObjData* obj);
 void func_800FDCF8_CoinBlockBash(omObjData* obj);
 void func_800FDDEC_CoinBlockBash(Vec* v);
-s32 func_800FE294_CoinBlockBash(Vec* pos, Vec* vel, Vec* out, Vec* n);
+s32 func_800FE294_CoinBlockBash(Vec* pos, Vec* vel, Vec* out, Vec* n, s32 unused);
 void func_800FDD50_CoinBlockBash(Matrix4f m, f32 x, f32 y, f32 z, Vec* out);
 f32 func_800FDEA0_CoinBlockBash(f32 x, f32 z);
 void func_800FDF20_CoinBlockBash(Matrix4f m, Vec* out);
