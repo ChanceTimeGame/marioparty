@@ -53,7 +53,7 @@ void func_800FAE84_UnusedMinigame0(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32
 
 /* Adds a camera key (the first one also records the current view); angles are taken the short
    way round from the previous key. */
-// NON_MATCHING: TODO
+// NON_MATCHING: retail stores the first key through each field label (lui at per store); GCC keeps the base in a register
 #ifdef NON_MATCHING
 void func_800FAEC4_UnusedMinigame0(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, u16 frames) {
     if (D_80104330_UnusedMinigame0 == 0) {
@@ -110,7 +110,7 @@ void func_800FB190_UnusedMinigame0(s32 i, f32 t) {
 }
 
 /* The camera object: plays the keys (padded to three with the last one). */
-// NON_MATCHING: TODO
+// NON_MATCHING: register allocation (masked 0)
 #ifdef NON_MATCHING
 void func_800FB3B4_UnusedMinigame0(omObjData* obj) {
     s16 i;
@@ -235,7 +235,7 @@ s16 func_800FB810_UnusedMinigame0(f32 x, f32 z, s32 mask) {
 }
 
 /* Picks a random spot whose two cells are free; returns its index, or -1 (x, z = 0). */
-// NON_MATCHING: TODO
+// NON_MATCHING: retail addresses board[] from cand[]'s base (one stack base register); register allocation
 #ifdef NON_MATCHING
 s16 func_800FB904_UnusedMinigame0(s16* x, s16* z) {
     s16 cand[4];
@@ -271,7 +271,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 #endif
 
 /* Whether board cell (x, z) is empty (0 off the board). */
-// NON_MATCHING: TODO
+// NON_MATCHING: register allocation (masked 4)
 #ifdef NON_MATCHING
 s32 func_800FBAA0_UnusedMinigame0(s16 x, s16 z) {
     if (((u16)x >= 8) | (z < 0)) {
@@ -288,7 +288,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 
 /* Builds the collision outline of the occupied cells around (x, z): each cell's square, with the
    edges that face an empty neighbour. */
-// NON_MATCHING: TODO
+// NON_MATCHING: retail reloads the outline pointer after the first store and folds the bounds test differently
 #ifdef NON_MATCHING
 void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
     s16 cx;
@@ -310,10 +310,10 @@ void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
     D_80103E22_UnusedMinigame0 = 0;
     cx = x / 10.0f + 4.0f;
     cz = z / 10.0f + 3.0f;
-    if (!(((u16)cx >= 8) | (cz < 0))) {
-        if (cz >= 6) {
-            return;
-        }
+    if (((u16)cx >= 8) | (cz < 0)) {
+        return;
+    }
+    if (cz < 6) {
         x0 = cx - 1;
         if (x0 < 0) {
             x0 = 0;
@@ -334,8 +334,7 @@ void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
             for (i = x0; i <= x1; i++) {
                 pz = (j - 3) * 10;
                 if (D_80108B88_UnusedMinigame0[i][j] != NULL) {
-                    px = (i - 4) * 10;
-                    D_80104248_UnusedMinigame0->x = px;
+                    D_80104248_UnusedMinigame0->x = px = (i - 4) * 10;
                     D_80104248_UnusedMinigame0->z = pz;
                     D_80104248_UnusedMinigame0++;
                     D_80104248_UnusedMinigame0->x = px + 10;
@@ -383,7 +382,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 #endif
 
 /* Builds the outlines of the movable pieces (D_801098B4 slots 1, 2, 4) from their model nodes. */
-// NON_MATCHING: TODO
+// NON_MATCHING: retail reloads the outline pointers once more; table label addressing
 #ifdef NON_MATCHING
 void func_800FBFE4_UnusedMinigame0(omObjData* obj) {
     Matrix4f m;
@@ -398,7 +397,7 @@ void func_800FBFE4_UnusedMinigame0(omObjData* obj) {
     D_80103E22_UnusedMinigame0 = 0;
     for (i = 0; i < 5; i++) {
         if (((i == 0) | (i == 3)) == 0 && D_801098B4_UnusedMinigame0[i] != 0) {
-            node = D_800F2B7C[obj->model[i]].unk_6C->unk_A0;
+            node = D_800F2B7C[obj->model[i + 1]].unk_6C->unk_A0;
             guTranslateF(m, node->unk_08.x / 10.0, node->unk_08.y / 10.0, node->unk_08.z / 10.0);
             MtxRotate(m, 0.0f, node->unk_44.y, 0.0f);
             for (j = 0; j < 4; j++) {
@@ -475,7 +474,7 @@ void func_800FC29C_UnusedMinigame0(f32* x, f32* z, f32 dist, UM0Vec2* pts, s16 n
 
 /* Pushes (x, z) out of the outline where a circle of radius crosses its edges; returns the number
    of crossings. */
-// NON_MATCHING: TODO
+// NON_MATCHING: retail computes -qb twice (neg.s/add.s) and converts t0 to double twice
 #ifdef NON_MATCHING
 s16 func_800FC564_UnusedMinigame0(f32* x, f32* z, f32 radius) {
     UM0Vec2 hits[256];
@@ -559,7 +558,7 @@ f32 func_800FC944_UnusedMinigame0(f32 x, f32 z) {
 
 /* Pushes obj off the first object of D_80108C4C on flat ground within radius + 40, sliding along
    it against the direction (dx, dz); returns that object's index, or -1. */
-// NON_MATCHING: TODO
+// NON_MATCHING: retail keeps the double constants 10.0/0.5 in integer registers (lw pairs); branch layout
 #ifdef NON_MATCHING
 s16 func_800FCA40_UnusedMinigame0(omObjData* obj, f32 dx, f32 dz, f32 radius) {
     s16 i;
@@ -618,7 +617,7 @@ const u32 D_80103B54_UnusedMinigame0 __attribute__((section(".rodata"))) = 0;
 #endif
 
 /* Points camera 0 at Center from CRot / CZoom. */
-// NON_MATCHING: TODO
+// NON_MATCHING: scheduling of the Center address load (masked 4)
 #ifdef NON_MATCHING
 void func_800FCD68_UnusedMinigame0(void) {
     Vec eye;
