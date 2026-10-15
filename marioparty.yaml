@@ -1435,7 +1435,7 @@ segments:
     subsegments:
       - [0x20F570, c]
       - [0x216140, c]
-      - [0x218330, data, 20F570]
+      - [0x218330, .data, 20F570]
       - [0x2183E0, .rodata, 20F570]
       - [0x218500, .rodata, 216140]
       - {0x218510, type: bss, vram: 0x800FF580, name: ovl_2F_bss}
