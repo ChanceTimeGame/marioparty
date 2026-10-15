@@ -18,7 +18,7 @@ typedef struct CBBMain {
 
 /* A spark/digit effect (D_80102870_CoinBlockBash[40]; eight per player, 32.. for the rest). */
 typedef struct CBBFx {
-    /* 0x00 */ u16 flags; /* 0x80 live, 1 drawn, 2 fixed size */
+    /* 0x00 */ s16 flags; /* 0x80 live, 1 drawn, 2 fixed size */
     /* 0x02 */ s16 type;
     /* 0x04 */ s16 unk_04;
     /* 0x06 */ s16 unk_06;
@@ -36,6 +36,18 @@ typedef struct CBBFx {
     /* 0x38 */ s16 unk_38;
     /* 0x3A */ s16 unk_3A;
 } CBBFx; /* size = 0x3C */
+
+/* An effect type (D_80101B24_CoinBlockBash[8], .data): what func_800F81E0 spawns. */
+typedef struct CBBFxDef {
+    /* 0x00 */ s16 count; /* < 0: take slots even if in use */
+    /* 0x02 */ u16 sprite;
+    /* 0x04 */ u16 frame;
+    /* 0x06 */ s16 scale; /* percent */
+    /* 0x08 */ s16 alpha; /* percent */
+    /* 0x0A */ u16 timer;
+    /* 0x0C */ u16 flags;
+    /* 0x0E */ s16 unk_0E;
+} CBBFxDef; /* size = 0x10 */
 
 /* Facing per quadrant (D_80101D18). */
 typedef struct CBBQuad {
@@ -147,11 +159,13 @@ CBBMtxSet* func_8002040C(s16, s16, char*);
 void func_80020CC4(CBBMtxSet*);
 void func_80025BB8(s16, s16);
 void func_80017C0C(omObjData*, u8, f32, f32, f32, f32, f32);
+void MtxRotate(Matrix4f, f32, f32, f32);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay
    --------------------------------------------------------------------------------------------- */
 
+extern CBBFxDef D_80101B24_CoinBlockBash[8];
 extern CBBMain D_801024F0_CoinBlockBash;
 extern s16 D_801024F8_CoinBlockBash;
 extern Vec D_801024FC_CoinBlockBash;
@@ -243,6 +257,7 @@ void func_800FB490_CoinBlockBash(void);
 void func_800FBF70_CoinBlockBash(omObjData* obj);
 void func_800FC2AC_CoinBlockBash(omObjData* obj);
 void func_800FDC5C_CoinBlockBash(void);
+void func_800FDD50_CoinBlockBash(Matrix4f m, f32 x, f32 y, f32 z, Vec* out);
 f32 func_800FE284_CoinBlockBash(Vec* pos);
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out);
 void func_800FE650_CoinBlockBash(void);
