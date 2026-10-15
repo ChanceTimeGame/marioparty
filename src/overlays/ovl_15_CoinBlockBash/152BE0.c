@@ -1422,8 +1422,125 @@ void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
         p->unk_9E = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 3 / 65536;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB900_CoinBlockBash);
+// NON_MATCHING: register allocation and branch layout (frame, case 1 count test); logic checked against the asm
+#ifdef NON_MATCHING
+void func_800FB900_CoinBlockBash(omObjData* obj) {
+    f32 d[4]; /* d[0]: distance; retail's frame holds 16 bytes here */
+    CBBPlayer* p;
+    CBBBlock* b;
+    omObjData* o;
+    f32 maxspd;
+    f32 dist;
+    f32 dx;
+    f32 dz;
+    s32 chance;
+    s16 idx;
+    s16 i;
+    s32 level;
 
+    p = func_800F7644_CoinBlockBash(obj);
+    if (D_801024F0_CoinBlockBash.timer < 4) {
+        return;
+    }
+    level = (u8)(GwPlayer[obj->work[0]].cpu_difficulty & 3);
+    maxspd = 1.0 - (f32)(3 - level) * 0.03;
+    if (p->unk_98 != 0) {
+        p->unk_80 = 0.0f;
+    }
+    switch (p->unk_98) {
+    case 0:
+        func_800FB71C_CoinBlockBash(obj, p);
+        break;
+    case 1:
+        dx = p->unk_8C.x - obj->trans.x;
+        dz = p->unk_8C.z - obj->trans.z;
+        d[0] = dist = sqrtf(dx * dx + dz * dz);
+        p->unk_9E++;
+        if (dist <= 100.0 && !(p->unk_9E & 3)) {
+            if ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536 < ((level << 2) | level) * 2 + 15) {
+                p->unk_84 = 1;
+            }
+        }
+        p->unk_80 = d[0] / (f32)((2.0 - (f32)level / 2.0) * 100.0);
+        if (p->unk_80 > 0.2) {
+            if (maxspd <= p->unk_80) {
+                p->unk_80 = maxspd;
+            }
+            p->unk_7C = func_800FDEA0_CoinBlockBash(dz, dx);
+        }
+        D_8010320E_CoinBlockBash[p->unk_9C] = 1;
+        if ((p->unk_9A > 150 || D_80103294_CoinBlockBash[p->unk_9C].unk_10 == 0) && (p->flags & 4)) {
+            p->unk_98 = 0;
+            D_8010320E_CoinBlockBash[p->unk_9C] = 0;
+        }
+        break;
+    case 2:
+        idx = p->unk_9C;
+        dx = p->unk_8C.x - obj->trans.x;
+        dz = p->unk_8C.z - obj->trans.z;
+        d[0] = dist = sqrtf(dx * dx + dz * dz);
+        p->unk_80 = dist / 50.0;
+        if (p->unk_64 != 0 && dist < 140.0 && (s16)func_800FA944_CoinBlockBash(p, d) >= 0 && d[0] < 200.0) {
+            p->unk_88 = 1;
+        }
+        if (!(p->unk_80 >= 0.2)) {
+            p->unk_80 = 0.0f;
+        } else {
+            if (maxspd <= p->unk_80) {
+                p->unk_80 = maxspd;
+            }
+            p->unk_7C = func_800FDEA0_CoinBlockBash(dz, dx);
+        }
+        if (D_80103290_CoinBlockBash[idx].active != 0) {
+            p->unk_8C.x = D_80103290_CoinBlockBash[idx].pos.x;
+            p->unk_8C.y = D_80103290_CoinBlockBash[idx].pos.y;
+            p->unk_8C.z = D_80103290_CoinBlockBash[idx].pos.z;
+        } else {
+            p->unk_98 = 0;
+        }
+        break;
+    case 3:
+        b = &D_80102538_CoinBlockBash;
+        dx = D_80102548_CoinBlockBash - obj->trans.x;
+        dz = D_80102550_CoinBlockBash - obj->trans.z;
+        d[0] = sqrtf(dx * dx + dz * dz);
+        p->unk_80 = maxspd;
+        p->unk_7C = func_800FDEA0_CoinBlockBash(dz, dx);
+        if (b->unk_04 >= 0) {
+            p->unk_98 = 0;
+        }
+        break;
+    }
+    i = func_800FA944_CoinBlockBash(p, d);
+    if (i >= 0 && d[0] < 150.0) {
+        if (p->unk_64 != 0) {
+            chance = level * 15;
+        } else {
+            chance = level * 6;
+        }
+        if ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536 < chance) {
+            o = D_801025B0_CoinBlockBash[i].obj;
+            dx = o->trans.x - obj->trans.x;
+            dz = o->trans.z - obj->trans.z;
+            p->unk_7C = func_800FDEA0_CoinBlockBash(dz, dx);
+            p->unk_88 = 1;
+            p->unk_84 = 0;
+        }
+    }
+    if (++p->unk_9A >= 0x7800) {
+        p->unk_9A -= 0x800;
+    }
+    level = p->unk_98 == 3 ? 30 : 12;
+    if (level < p->unk_9A && !(p->unk_9A & 0xF) && (p->flags & 4)) {
+        if (p->unk_98 == 1) {
+            D_8010320E_CoinBlockBash[p->unk_9C] = 0;
+        }
+        func_800FB71C_CoinBlockBash(obj, p);
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB900_CoinBlockBash);
+#endif
 void func_800FBF70_CoinBlockBash(omObjData* obj) {
     CBBPlayer* p;
 
