@@ -127,6 +127,8 @@ void func_800F6A98_ShellGame(omObjData* arg0) {
     }
 }
 
+// NON_MATCHING: register allocation of two timer compares (masked 0)
+#ifdef NON_MATCHING
 void func_800F6AC0_ShellGame(omObjData* arg0) {
     s16 winSe[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
     s16 loseSe[6] = { 0x44A, 0x44B, 0x44C, 0x44D, 0x44E, 0x44F };
@@ -189,7 +191,7 @@ void func_800F6AC0_ShellGame(omObjData* arg0) {
     case 3:
         D_800FEC22_ShellGame++;
         if (D_800FF9D0_ShellGame.unk6 != 5) {
-            ok = D_800FEC22_ShellGame > 35;
+            ok = 35 < D_800FEC22_ShellGame;
         } else {
             ok = D_800FEC22_ShellGame >= 18;
         }
@@ -206,7 +208,7 @@ void func_800F6AC0_ShellGame(omObjData* arg0) {
     case 4:
         D_800FEC22_ShellGame++;
         if (D_800FF9D0_ShellGame.unk6 != 5) {
-            ok = D_800FEC22_ShellGame > 56;
+            ok = 56 < D_800FEC22_ShellGame;
         } else {
             ok = D_800FEC22_ShellGame >= 72;
         }
@@ -220,6 +222,12 @@ void func_800F6AC0_ShellGame(omObjData* arg0) {
         break;
     }
 }
+#else
+const s16 D_800FEC98_ShellGame[6] __attribute__((section(".rodata"))) = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
+const s16 D_800FECA4_ShellGame[6] __attribute__((section(".rodata"))) = { 0x44A, 0x44B, 0x44C, 0x44D, 0x44E, 0x44F };
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F6AC0_ShellGame);
+#endif
+
 void func_800F6EE4_ShellGame(omObjData* arg0) {
     func_800F76C4_ShellGame();
     func_800F85B4_ShellGame();
