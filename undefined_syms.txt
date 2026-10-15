@@ -530,3 +530,9 @@ func_8009A100 = __osSiDeviceBusy; /* sdk-lib 9AD00.c; asm callers keep the addre
 alFxNew = func_80095F44; /* sdk-lib: until 96AA0.c is C */
 alFxParam = func_800976F4; /* sdk-lib: until 972D0.c is C */
 __umoddi3 = func_8009BE30; /* sdk-lib 9AD20.c: libgcc __umoddi3 is still asm under its address name */
+/* libgcc 64-bit division called by lldiv (9B9F0.c); KMC libgcc at 0x8009BCA0 */
+__divdi3 = func_8009BCA0;
+/* KMC libgcc/libm entry points called by name from 9BBD0.c/9BD50.c */
+__fixdfdi = func_8009BE70;
+__floatdidf = func_8009BF90;
+sqrt = func_8009B840;

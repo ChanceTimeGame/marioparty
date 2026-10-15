@@ -152,6 +152,7 @@ segments:
       - [0x83260, c]
       - [0x833C0, c]
       - [0x83490, c]
+      - [0x83960, c] # libleo, after LeoBootGame's encrypted __LeoBootGame2 (0x835CC-0x83960)
       - [0x861B0, hasm, lib/2.0I/gu/sqrtf]
       - [0x861C0, c, lib/2.0I/gu/cosf]
       - [0x86310, c, lib/2.0I/gu/lookat]
@@ -591,6 +592,7 @@ segments:
       - [0xCC2C0, .rodata, 6D4E0]
       - [0xCC590, .rodata, 72D90]
       - [0xCC700, .rodata, 80BE0]
+      - [0xCC998, .rodata, 83960] # libleo tables and jump tables of 83960.c
       - [0xCCED0, .rodata, lib/2.0I/gu/cosf]
       - [0xCCF30, .rodata, lib/2.0I/gu/lookat]
       - [0xCCF50, .rodata, lib/2.0I/gu/lookatref]

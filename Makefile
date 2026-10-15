@@ -445,6 +445,10 @@ $(SDK_LIB_UNITS): CPPFLAGS = -I include -I include/PR -I include/gcc -I $(BUILD_
 # 95F40.c (xprintf) keeps its -O2 but takes the lib defines (size_t needs _MIPS_SZLONG)
 build/src/95F40.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 build/src/95F40.c.o: CPPFLAGS = -I include -I include/PR -I include/gcc -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2
+build/src/9AF70.c.o: OPTFLAGS = -O3 -funsigned-char
+build/src/9B9F0.c.o: OPTFLAGS = -O3 -funsigned-char
+# 9C190.c (KMC libm fmod): nop between the call's div.d delay slot and mul.d (mul fix on)
+build/src/9C190.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # Compile .c files with kmc gcc (use strip to fix objects so that they can be linked with modern gnu ld) 
 $(BUILD_DIR)/src/%.c.o: src/%.c
