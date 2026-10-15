@@ -36,6 +36,8 @@ __asm__(".section .text\n.set noreorder\nnop\nnop\n.set reorder\n");
 // __muldi3: hand-written asm in the original library
 INCLUDE_ASM("asm/nonmatchings/9C630", func_8009BAA4);
 
+// KMC libgcc 64-bit unsigned divide/modulo core: hand-written asm in the original library
 INCLUDE_ASM("asm/nonmatchings/9C630", func_8009BAD8);
 
+// KMC libgcc 64-bit unsigned divide core: hand-written asm in the original library
 INCLUDE_ASM("asm/nonmatchings/9C630", func_8009BBD4);
