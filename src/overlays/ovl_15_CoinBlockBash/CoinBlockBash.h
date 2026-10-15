@@ -134,10 +134,9 @@ typedef struct CBBBlock {
     /* 0x0C */ u8 unk_0C;
     /* 0x0D */ u8 unk_0D;
     /* 0x0E */ s16 unk_0E;
-    /* 0x10 */ Vec unk_10;
-    /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ f32 unk_20;
-    /* 0x24 */ char unk_24[0x10];
+    /* 0x10 */ Vec unk_10; /* position */
+    /* 0x1C */ Vec unk_1C; /* velocity */
+    /* 0x28 */ Vec unk_28; /* rotation */
     /* 0x34 */ Matrix4f unk_34;
 } CBBBlock; /* size = 0x74 */
 
@@ -166,6 +165,8 @@ void MtxRotate(Matrix4f, f32, f32, f32);
    --------------------------------------------------------------------------------------------- */
 
 extern CBBFxDef D_80101B24_CoinBlockBash[8];
+extern Vec D_80101BA4_CoinBlockBash[3];
+extern f32 D_80101BC8_CoinBlockBash[3];
 extern CBBMain D_801024F0_CoinBlockBash;
 extern s16 D_801024F8_CoinBlockBash;
 extern Vec D_801024FC_CoinBlockBash;
@@ -196,9 +197,9 @@ extern s16 D_80102538_CoinBlockBash;
 #define D_80102548_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.x)
 #define D_8010254C_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.y)
 #define D_80102550_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.z)
-#define D_80102554_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C)
-#define D_80102558_CoinBlockBash (D_80102538_CoinBlockBash.unk_20)
-#define D_8010255C_CoinBlockBash (D_80102538_CoinBlockBash.unk_24)
+#define D_80102554_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C.x)
+#define D_80102558_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C.y)
+#define D_8010255C_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C.z)
 #define D_8010256C_CoinBlockBash (D_80102538_CoinBlockBash.unk_34)
 #else
 extern s16 D_8010253A_CoinBlockBash;
@@ -214,7 +215,7 @@ extern f32 D_8010254C_CoinBlockBash;
 extern f32 D_80102550_CoinBlockBash;
 extern f32 D_80102554_CoinBlockBash;
 extern f32 D_80102558_CoinBlockBash;
-extern u8 D_8010255C_CoinBlockBash[0x10];
+extern f32 D_8010255C_CoinBlockBash;
 extern Matrix4f D_8010256C_CoinBlockBash;
 #endif
 extern s16 D_801025AC_CoinBlockBash;
@@ -258,6 +259,9 @@ void func_800FBF70_CoinBlockBash(omObjData* obj);
 void func_800FC2AC_CoinBlockBash(omObjData* obj);
 void func_800FDC5C_CoinBlockBash(void);
 void func_800FDD50_CoinBlockBash(Matrix4f m, f32 x, f32 y, f32 z, Vec* out);
+f32 func_800FDEA0_CoinBlockBash(f32 x, f32 z);
+void func_800FDF20_CoinBlockBash(Matrix4f m, Vec* out);
+void func_800FE0AC_CoinBlockBash(Vec* n, Vec* e, Vec* c, Vec* rot);
 f32 func_800FE284_CoinBlockBash(Vec* pos);
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out);
 void func_800FE650_CoinBlockBash(void);
