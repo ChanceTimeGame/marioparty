@@ -332,7 +332,133 @@ void func_80083140(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_80083140);
 #endif
 
+#define GF_MUL func_80083DC4
+#define GF_DIV func_80083E08
+
+#ifdef NON_MATCHING
+// four erroneous sectors: Lagrange weights per sector, then every syndrome's contribution per byte
+void func_80083528(void) {
+    u8 A1 = D_800CBDD0[0x58 - D_800EA140.errSector[0]];
+    u8 A2 = D_800CBDD0[0x58 - D_800EA140.errSector[1]];
+    u8 A3 = D_800CBDD0[0x58 - D_800EA140.errSector[2]];
+    u8 A4 = D_800CBDD0[0x58 - D_800EA140.errSector[3]];
+    u8 one = D_800CBDD0[0];
+    u8 iA, iB, iC, iD;
+    u8 BC, CD, DB, DA, AC, AB;
+    u8 q1[4]; // second-syndrome coefficient values (iB^iC^iD, ...)
+    u8 r1[4]; // third-syndrome coefficient values
+    u8 t1[4]; // fourth-syndrome coefficient values
+    u8 W[4];  // Lagrange weights
+    u8 L0[4], L1[4], L2[4], L3[4]; // logs of the weighted coefficients, per syndrome
+    u32 i;
+    u32 n;
+    u8* p[4];
+    u8* c2;
+    u8 x, lx;
+    u8 v[4];
+
+    iA = GF_DIV(one, A1);
+    iB = GF_DIV(one, A2);
+    iC = GF_DIV(one, A3);
+    iD = GF_DIV(one, A4);
+    BC = GF_MUL(iB, iC);
+    CD = GF_MUL(iC, iD);
+    DB = GF_MUL(iD, iB);
+    DA = GF_MUL(iD, iA);
+    AC = GF_MUL(iA, iC);
+    AB = GF_MUL(iA, iB);
+    r1[0] = BC ^ CD ^ DB;
+    r1[1] = CD ^ DA ^ AC;
+    r1[2] = DA ^ AB ^ DB;
+    r1[3] = AB ^ BC ^ AC;
+    q1[0] = iB ^ iC ^ iD;
+    q1[1] = iC ^ iD ^ iA;
+    q1[2] = iD ^ iA ^ iB;
+    q1[3] = iA ^ iB ^ iC;
+    t1[0] = GF_MUL(GF_MUL(iB, iC), iD);
+    t1[1] = GF_MUL(GF_MUL(iC, iD), iA);
+    t1[2] = GF_MUL(GF_MUL(iD, iA), iB);
+    t1[3] = GF_MUL(GF_MUL(iA, iB), iC);
+
+    W[0] = GF_DIV(1, GF_MUL(GF_MUL(GF_DIV(A1, A2) ^ 1, GF_DIV(A1, A3) ^ 1), GF_DIV(A1, A4) ^ 1));
+    W[1] = GF_DIV(1, GF_MUL(GF_MUL(GF_DIV(A2, A1) ^ 1, GF_DIV(A2, A3) ^ 1), GF_DIV(A2, A4) ^ 1));
+    W[2] = GF_DIV(1, GF_MUL(GF_MUL(GF_DIV(A3, A1) ^ 1, GF_DIV(A3, A2) ^ 1), GF_DIV(A3, A4) ^ 1));
+    W[3] = GF_DIV(1, GF_MUL(GF_MUL(GF_DIV(A4, A1) ^ 1, GF_DIV(A4, A2) ^ 1), GF_DIV(A4, A3) ^ 1));
+
+    for (i = 0; i < 4; i++) {
+        L1[i] = D_800CBFD0[GF_MUL(q1[i], W[i])];
+        L2[i] = D_800CBFD0[GF_MUL(r1[i], W[i])];
+        L3[i] = D_800CBFD0[GF_MUL(t1[i], W[i])];
+        L0[i] = D_800CBFD0[W[i]];
+    }
+
+    n = D_800EA140.secBytes;
+    if (D_800EA140.errSector[3] < 0x55) {
+        p[3] = D_800EA140.dram + (D_800EA140.errSector[3] + 1) * n;
+        goto sector3;
+    }
+    p[3] = D_800E99F8;
+    if (D_800EA140.errSector[2] < 0x55) {
+    sector3:
+        p[2] = D_800EA140.dram + (D_800EA140.errSector[2] + 1) * n;
+        goto sector2;
+    }
+    p[2] = D_800E99F8;
+    if (D_800EA140.errSector[1] < 0x55) {
+    sector2:
+        p[1] = D_800EA140.dram + (D_800EA140.errSector[1] + 1) * n;
+    } else {
+        p[1] = D_800E99F8;
+        if (D_800EA140.errSector[0] >= 0x55) {
+            return;
+        }
+    }
+    p[0] = D_800EA140.dram + (D_800EA140.errSector[0] + 1) * n;
+
+    c2 = D_800EA140.c2end;
+    do {
+        c2 -= 4;
+        p[0]--;
+        p[1]--;
+        if ((x = c2[0]) != 0) {
+            lx = D_800CBFD0[x];
+            for (i = 0; i < 4; i++) {
+                v[i] = D_800CBDD0[lx + L0[i]];
+            }
+        } else {
+            v[0] = v[1] = v[2] = v[3] = 0;
+        }
+        p[2]--;
+        n--;
+        if ((x = c2[1]) != 0) {
+            lx = D_800CBFD0[x];
+            for (i = 0; i < 4; i++) {
+                v[i] ^= (q1[i] != 0) ? D_800CBDD0[lx + L1[i]] : 0;
+            }
+        }
+        if ((x = c2[2]) != 0) {
+            lx = D_800CBFD0[x];
+            for (i = 0; i < 4; i++) {
+                v[i] ^= (r1[i] != 0) ? D_800CBDD0[lx + L2[i]] : 0;
+            }
+        }
+        if ((x = c2[3]) != 0) {
+            lx = D_800CBFD0[x];
+            for (i = 0; i < 4; i++) {
+                v[i] ^= D_800CBDD0[lx + L3[i]];
+            }
+        }
+        p[3]--;
+        for (i = 0; i < 4; i++) {
+            if (v[i] != 0) {
+                *p[i] ^= v[i];
+            }
+        }
+    } while (n != 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80083528);
+#endif
 
 #ifdef NON_MATCHING
 // GF(256) multiply
