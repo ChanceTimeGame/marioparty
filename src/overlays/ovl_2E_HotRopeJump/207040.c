@@ -1114,7 +1114,7 @@ void func_800F9080_HotRopeJump(void) {
                         func_800F8FF4_HotRopeJump(i);
                         break;
                     }
-                    if ((fx->flags >> 1) & 1 | (len != -1)) {
+                    if (((fx->flags >> 1) & 1) | (len != -1)) {
                         fx->frame--;
                         break;
                     }
