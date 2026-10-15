@@ -17,7 +17,7 @@ u16 D_800FEC2C_ShellGame = 0;
 s16 D_800FEC2E_ShellGame = 0;
 s16 D_800FEC30_ShellGame = 0;
 s16 D_800FEC32_ShellGame = 0;
-s32 D_800FEC34_ShellGame = 0;
+u32 D_800FEC34_ShellGame = 0;
 f32 D_800FEC38_ShellGame = 0.0f;
 f32 D_800FEC3C_ShellGame = 0.0f;
 
@@ -692,7 +692,7 @@ void func_800F87CC_ShellGame(void) {
         p->unk24 = p->unk26 = p->unk28 = p->unk2A = 0;
     }
 }
-void func_800F88E8_ShellGame(Vec* from, Vec* to, s16 frames, s16 type) {
+void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 type) {
     unk65770Obj* o;
     f32 p0[2];
     f32 p1[2];
@@ -706,7 +706,7 @@ void func_800F88E8_ShellGame(Vec* from, Vec* to, s16 frames, s16 type) {
 
     ang = 0.0f;
     p = D_800FF714_ShellGame;
-    func_80066DF4(p->unk2, 0, 0, from->x, from->y, from->z);
+    func_80066DF4(p->unk2, 0, 0, from->trans.x, from->trans.y, from->trans.z);
     o = func_800675F4(p->unk2, 0);
     p0[0] = o->unk40;
     p0[1] = o->unk42;
@@ -715,7 +715,7 @@ void func_800F88E8_ShellGame(Vec* from, Vec* to, s16 frames, s16 type) {
         len = p0[1] - 16.0f;
         break;
     case 2:
-        func_80066DF4(p->unk2, 0, 0, to->x, to->y + 100.0, to->z);
+        func_80066DF4(p->unk2, 0, 0, to->trans.x, to->trans.y + 100.0, to->trans.z);
         o = func_800675F4(p->unk2, 0);
         p1[0] = o->unk40;
         p1[1] = o->unk42;
@@ -1010,50 +1010,891 @@ void func_800F9738_ShellGame(void) {
     D_800FF100_ShellGame = 0;
     D_800FF104_ShellGame = 0;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F9A8C_ShellGame);
+void func_800F9A8C_ShellGame(omObjData* obj) {
+    s16 m;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F9E24_ShellGame);
+    obj->func_ptr = &func_800F9E24_ShellGame;
+    if (obj->work[0] == 0) {
+        obj->model[0] = LoadFormFile(0x170002, 0xB9);
+        obj->model[1] = LoadFormFile(0x170003, 0x99);
+        obj->model[2] = LoadFormFile(0x170001, 0x99);
+        obj->model[3] = LoadFormFile(6, 0x99);
+        obj->model[4] = LoadFormFile(0x170005, 0x99);
+    } else {
+        obj->model[0] = func_80023FC8(D_800FF9F8_ShellGame[0]->model[0]);
+        obj->model[1] = func_80023FC8(D_800FF9F8_ShellGame[0]->model[1]);
+        obj->model[2] = func_80023FC8(D_800FF9F8_ShellGame[0]->model[2]);
+        obj->model[3] = func_80023FC8(D_800FF9F8_ShellGame[0]->model[3]);
+        obj->model[4] = func_80023FC8(D_800FF9F8_ShellGame[0]->model[4]);
+    }
+    D_800F2B7C[obj->model[1]].unk_4C = 0.0f;
+    D_800F2B7C[obj->model[2]].unk_4C = 0.0f;
+    func_800258EC(obj->model[1], 4, 4);
+    func_800258EC(obj->model[4], 4, 4);
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.5f;
+    switch (D_800FF9D0_ShellGame.unk2) {
+    case 3:
+        obj->trans.x = obj->work[0] * 10 * 20.0 + -200.0;
+        obj->trans.z = -300.0f;
+        obj->trans.y = 0;
+        break;
+    case 4:
+        obj->trans.x = obj->work[0] * 10 * 20.0 + -300.0;
+        if ((obj->work[0] != 0) & (obj->work[0] != 3)) {
+            obj->trans.z = -300.0f;
+        } else {
+            obj->trans.z = -140.0f;
+        }
+        obj->trans.y = 0;
+        break;
+    case 5:
+        if (obj->work[0] == 0) {
+            obj->trans.x = -300.0f;
+        } else if (obj->work[0] == 4) {
+            obj->trans.x = 300.0f;
+        } else {
+            obj->trans.x = obj->work[0] * 8 * 20.0 + -320.0;
+        }
+        if ((obj->work[0] != 0) & (obj->work[0] != 4)) {
+            obj->trans.z = -300.0f;
+        } else {
+            obj->trans.z = -140.0f;
+        }
+        obj->trans.y = 0;
+        break;
+    default:
+        obj->trans.y = 0;
+        break;
+    }
+    obj->rot.y = 0;
+    func_800FBBC8_ShellGame(obj);
+    func_80025FC8(obj->model[0], 0);
+    func_80025EB4(obj->model[0], 2, 2);
+}
+void func_800F9E24_ShellGame(omObjData* obj) {
+    SGShell* sh;
+    f32 x;
+    f32 z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA038_ShellGame);
+    sh = &D_800FF7A0_ShellGame[obj->work[0]];
+    x = func_800AEAC0(obj->rot.y) * sh->unk64;
+    z = func_800AEFD0(obj->rot.y) * sh->unk64;
+    sh->unk1C.x = x + obj->trans.x;
+    sh->unk1C.y = obj->trans.y + sh->unk68;
+    sh->unk1C.z = z + obj->trans.z;
+    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80025798(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80025798(obj->model[2], sh->unk1C.x, sh->unk1C.y, sh->unk1C.z);
+    func_80025798(obj->model[3], obj->trans.x, 2.0f, obj->trans.z);
+    func_80025798(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800257E4(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800257E4(obj->model[2], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800257E4(obj->model[4], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80025830(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80025830(obj->model[4], obj->scale.x, obj->scale.y, obj->scale.z);
+    x = 1.5 - obj->trans.y / 100.0 / 5.0;
+    func_80025830(obj->model[3], x, 1.0f, x);
+    func_800258EC(obj->model[3], 4, 0);
+}
+void func_800FA038_ShellGame(omObjData* obj) {
+    switch (D_800FF100_ShellGame) {
+    case 0:
+        func_800FA0EC_ShellGame();
+        break;
+    case 1:
+        func_800FA664_ShellGame();
+        break;
+    case 2:
+        func_800FA954_ShellGame();
+        break;
+    case 3:
+        func_800FAA44_ShellGame();
+        break;
+    case 4:
+        func_800FAC34_ShellGame();
+        break;
+    case 5:
+        func_800FB030_ShellGame();
+        break;
+    case 6:
+        func_800FB120_ShellGame();
+        break;
+    case 7:
+        func_800FB4A4_ShellGame();
+        break;
+    }
+}
+void func_800FA0EC_ShellGame(void) {
+    omObjData from;
+    omObjData to;
+    omObjData* obj;
+    SGShell* sh;
+    f32 x;
+    f32 z;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA0EC_ShellGame);
+    if (D_800FF104_ShellGame < 30) {
+    } else if (D_800FF104_ShellGame == 30) {
+        PlaySound(0x1E2);
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            func_800FC748_ShellGame(D_800FF9F8_ShellGame[i]);
+        }
+    } else if (D_800FF104_ShellGame < 45) {
+    } else if (D_800FF104_ShellGame == 45) {
+        sh = &D_800FF7A0_ShellGame[D_800FF9D0_ShellGame.unk4];
+        x = sh->unk1C.x;
+        from.trans.x = x;
+        from.trans.y = sh->unk1C.y - 100.0;
+        z = sh->unk1C.z;
+        from.trans.z = z;
+        to.trans.x = x;
+        to.trans.y = 500.0f;
+        to.trans.z = z;
+        func_800F88E8_ShellGame(&to, &from, 50, 2);
+    } else if (D_800FF104_ShellGame < 135) {
+    } else if (D_800FF104_ShellGame == 135) {
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            func_800674BC(D_800FF190_ShellGame[D_800FF7A0_ShellGame[i].unk6E].unk2, 0, 0x8000);
+            func_800FC77C_ShellGame(D_800FF9F8_ShellGame[i]);
+        }
+    } else if (D_800FF104_ShellGame < 165) {
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            if (func_80025D18(obj->model[2]) == 0.0) {
+                D_800F2B7C[obj->model[2]].unk_4C = 0.0f;
+            } else if (func_80025D18(obj->model[2]) == 4.0) {
+                PlaySound(0x1E3);
+            }
+        }
+        if (D_800FF104_ShellGame == 164) {
+            func_80060128(30);
+        }
+    } else {
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            if (sh->unkC == 0) {
+                sh->unkC = 1;
+            } else if (sh->unkC == 1) {
+                obj = D_800FF9F8_ShellGame[i];
+                func_800258EC(obj->model[0], 4, 4);
+                func_800258EC(obj->model[1], 4, 0);
+                func_800FC6E0_ShellGame(obj);
+                sh->unkC++;
+            } else if (sh->unkC == 20) {
+                func_800258EC(obj->model[1], 4, 4);
+                func_800258EC(obj->model[4], 4, 0);
+                func_800258EC(obj->model[2], 4, 4);
+                func_80025830(obj->model[2], 0.5f, 0.5f, 0.5f);
+                sh->unkC = 21;
+            } else {
+                if (sh->unk64 > 0.0f) {
+                    sh->unk64 -= 20.0;
+                }
+                if (sh->unk68 > 0.0f) {
+                    sh->unk68 -= 20.0;
+                }
+                sh->unkC++;
+            }
+        }
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            if (D_800FF7A0_ShellGame[i].unkC != 21) {
+                break;
+            }
+        }
+        if (i == D_800FF9D0_ShellGame.unk2) {
+            for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+                D_800FF7A0_ShellGame[i].unkC = 0;
+            }
+            D_800FF104_ShellGame = 0;
+            D_800FF100_ShellGame = 1;
+            return;
+        }
+    }
+    D_800FF104_ShellGame++;
+}
+void func_800FA664_ShellGame(void) {
+    omObjData* obj;
+    SGShell* sh;
+    f32 dx;
+    f32 dz;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA664_ShellGame);
+    switch (D_800FF104_ShellGame) {
+    case 0:
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            dx = sh->unk10.x - obj->trans.x;
+            dz = sh->unk10.z - obj->trans.z;
+            sh->unk58 = sqrtf(dx * dx + dz * dz) / 20.0;
+            sh->unk5C = func_800F7398_ShellGame(dx, dz);
+            sh->unk60 = 60.0f;
+        }
+        D_800FF9EC_ShellGame = 2;
+        break;
+    default:
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            obj->trans.x = func_800AEAC0(sh->unk5C) * sh->unk58 + obj->trans.x;
+            obj->trans.z = func_800AEFD0(sh->unk5C) * sh->unk58 + obj->trans.z;
+            if (sh->unk5C != sh->unk4) {
+                obj->trans.y = obj->trans.y + sh->unk60;
+            }
+            sh->unk60 -= 6.0;
+        }
+        break;
+    case 21:
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            obj->trans.x = sh->unk10.x;
+            obj->trans.y = 0;
+            obj->trans.z = sh->unk10.z;
+        }
+        D_800FF100_ShellGame = 2;
+        break;
+    }
+    D_800FF104_ShellGame++;
+}
+void func_800FA954_ShellGame(void) {
+    D_800FF104_ShellGame = 0;
+    switch (D_800FF110_ShellGame[D_800FEC2E_ShellGame]) {
+    case 0:
+        D_800FF100_ShellGame = 4;
+        D_800FEC2E_ShellGame++;
+        break;
+    case 1:
+        D_800FF100_ShellGame = 5;
+        if (D_800FEC30_ShellGame++ >= 4) {
+            D_800FEC30_ShellGame = 0;
+            D_800FEC2E_ShellGame++;
+        }
+        break;
+    case 2:
+        D_800FF100_ShellGame = 6;
+        D_800FEC2E_ShellGame++;
+        break;
+    }
+    if (D_800FF9D0_ShellGame.unk18 < D_800FEC2E_ShellGame) {
+        D_800FF104_ShellGame = 0;
+        D_800FF100_ShellGame = 3;
+        D_800FF9EC_ShellGame = 4;
+    }
+}
+void func_800FAA44_ShellGame(void) {
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA954_ShellGame);
+    if (D_800FF9D0_ShellGame.unk8 < 2 && D_800FF104_ShellGame == 0) {
+        D_800FF104_ShellGame = 1;
+        return;
+    }
+    if (D_800FF104_ShellGame <= 0) {
+        return;
+    }
+    if (D_800FF104_ShellGame == 1) {
+        D_800FF9D0_ShellGame.unk8 = 30;
+        D_800FF9D0_ShellGame.unkC = 20.0f;
+        D_800FF104_ShellGame = 2;
+        return;
+    }
+    if (D_800FF104_ShellGame < 30) {
+        if (++D_800FF104_ShellGame == 29) {
+            func_80060540(0x15E, 0);
+        }
+        return;
+    }
+    if (D_800FF104_ShellGame < 60) {
+        D_800FFA3C_ShellGame = 0x29A;
+        D_800FF104_ShellGame++;
+        return;
+    }
+    switch (D_800FF104_ShellGame) {
+    case 60:
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            func_800F9570_ShellGame(D_800FF9F8_ShellGame[i]);
+        }
+        GMesCreate(0);
+        func_80060758(0x15E);
+        D_800FF104_ShellGame++;
+        D_800ED430 = 1;
+        break;
+    case 61:
+        if (GMesStatAllGet() == 0) {
+            D_800FFA3C_ShellGame = 0;
+            D_800FF104_ShellGame++;
+        }
+        break;
+    default:
+        D_800FF9EC_ShellGame = 3;
+        D_800FEC16_ShellGame = 1;
+        D_800FF104_ShellGame = 0;
+        D_800FF100_ShellGame = 7;
+        break;
+    }
+}
+void func_800FAC34_ShellGame(void) {
+    omObjData* obj;
+    SGShell* sh;
+    f32 vol;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FAA44_ShellGame);
+    vol = 1.0f;
+    if (D_800FF104_ShellGame == 0) {
+        D_800FEC32_ShellGame = PlaySound(0x1E5);
+        D_800FEC34_ShellGame = D_800FF9D0_ShellGame.unk10 + func_800F719C_ShellGame(D_800FF9D0_ShellGame.unk10 / 3);
+        if (func_800F719C_ShellGame(0) & 1) {
+            D_800FEC38_ShellGame = 1.0f;
+        } else {
+            D_800FEC38_ShellGame = -1.0f;
+        }
+        D_800FEC3C_ShellGame = 0.0f;
+    } else if (D_800FF104_ShellGame < D_800FEC34_ShellGame) {
+        if (D_800FF104_ShellGame & 3) {
+            if (D_800FF104_ShellGame < D_800FF9D0_ShellGame.unk12) {
+                vol = (f32)D_800FF104_ShellGame / (f32)D_800FF9D0_ShellGame.unk12;
+            } else if (D_800FEC34_ShellGame - D_800FF9D0_ShellGame.unk12 < D_800FF104_ShellGame) {
+                vol = (f32)(D_800FEC34_ShellGame - D_800FF104_ShellGame) / (f32)D_800FF9D0_ShellGame.unk12;
+            }
+            func_80060440(D_800FEC32_ShellGame, vol * 400.0f);
+        }
+        if (D_800FF104_ShellGame < D_800FF9D0_ShellGame.unk12) {
+            D_800FEC3C_ShellGame = D_800FEC3C_ShellGame + D_800FEC38_ShellGame;
+        } else if (D_800FEC34_ShellGame - D_800FF9D0_ShellGame.unk12 < D_800FF104_ShellGame) {
+            D_800FEC3C_ShellGame = D_800FEC3C_ShellGame - D_800FEC38_ShellGame;
+        }
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            func_800F79FC_ShellGame(obj, 7);
+            sh->unk4 += D_800FEC3C_ShellGame;
+            if (sh->unk4 > 360.0) {
+                sh->unk4 -= 360.0;
+            } else if (sh->unk4 < 0.0) {
+                sh->unk4 += 360.0;
+            }
+            obj->trans.x = func_800AEAC0(sh->unk4) * 340.0;
+            obj->trans.z = func_800AEFD0(sh->unk4) * 340.0;
+        }
+    } else {
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            sh->unk10.x = obj->trans.x;
+            sh->unk10.y = obj->trans.y;
+            sh->unk10.z = obj->trans.z;
+        }
+        D_800FF100_ShellGame = 2;
+        func_80060758(0x1E5);
+    }
+    D_800FF104_ShellGame++;
+}
+void func_800FB030_ShellGame(void) {
+    u16 order[6];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FAC34_ShellGame);
+    if (D_800FF104_ShellGame == 0) {
+        PlaySound(0x1E4);
+        func_800FBDB8_ShellGame(order);
+        func_800FBEF0_ShellGame(D_800FF0D0_ShellGame, order);
+        func_800FC17C_ShellGame(D_800FF0D0_ShellGame);
+    } else if (D_800FF104_ShellGame < D_800FF9D0_ShellGame.unk14 + 1) {
+        func_800FC3F4_ShellGame(D_800FF0D0_ShellGame, (f32)D_800FF104_ShellGame / (f32)D_800FF9D0_ShellGame.unk14);
+    } else if (D_800FF104_ShellGame == D_800FF9D0_ShellGame.unk14 + 1) {
+        func_800FC55C_ShellGame(D_800FF0D0_ShellGame);
+        D_800FF100_ShellGame = 2;
+    }
+    D_800FF104_ShellGame++;
+}
+void func_800FB120_ShellGame(void) {
+    omObjData* obj;
+    SGShell* sh;
+    SGGame* g;
+    f32 v;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FB030_ShellGame);
+    if (D_800FF104_ShellGame == 0) {
+        PlaySound(0x1E4);
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            sh->unk4 += 220.0;
+            sh->unk58 = 680.0 / (f32)D_800FF9D0_ShellGame.unk16;
+            if (sh->unk4 > 360.0) {
+                sh->unk4 -= 360.0;
+            } else if (sh->unk4 < 0.0) {
+                sh->unk4 += 360.0;
+            }
+            sh->unk10.x = func_800AEAC0(sh->unk4) * 340.0;
+            sh->unk10.y = 0;
+            sh->unk10.z = v = func_800AEFD0(sh->unk4) * 340.0;
+            sh->unk5C = func_800F7398_ShellGame(sh->unk10.x - obj->trans.x, v - obj->trans.z);
+        }
+    } else if (D_800FF104_ShellGame < D_800FF9D0_ShellGame.unk16) {
+        g = &D_800FF9D0_ShellGame;
+        for (i = 0; i < g->unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            func_800F79FC_ShellGame(obj, 7);
+            obj->trans.x = func_800AEAC0(sh->unk5C) * sh->unk58 + obj->trans.x;
+            obj->trans.y = 0;
+            obj->trans.z = func_800AEFD0(sh->unk5C) * sh->unk58 + obj->trans.z;
+        }
+        if (D_800FF104_ShellGame == g->unk16 >> 1) {
+            g->unk8 = 20;
+            g->unkC = 60.0f;
+        }
+    } else {
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+            obj = D_800FF9F8_ShellGame[i];
+            sh = &D_800FF7A0_ShellGame[i];
+            obj->trans.x = sh->unk10.x = func_800AEAC0(sh->unk4) * 340.0;
+            obj->trans.y = sh->unk10.y = 0.0f;
+            obj->trans.z = sh->unk10.z = func_800AEFD0(sh->unk4) * 340.0;
+        }
+        D_800FF100_ShellGame = 2;
+    }
+    D_800FF104_ShellGame++;
+}
+void func_800FB4A4_ShellGame(void) {
+    omObjData tmp;
+    s16 landed[5];
+    omObjData* obj;
+    SGShell* sh;
+    s16 n;
+    s16 j;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FB120_ShellGame);
+    for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+        obj = D_800FF9F8_ShellGame[i];
+        if (D_800FEC18_ShellGame != 0) {
+            D_800FEC1C_ShellGame = D_800FEC1C_ShellGame - 4.0;
+            obj->trans.y = obj->trans.y + D_800FEC1C_ShellGame;
+            landed[i] = 0;
+            if (obj->trans.y <= 0.0) {
+                obj->trans.y = 0.0f;
+                landed[i] = 1;
+            }
+            if (i == D_800FF9D0_ShellGame.unk2 - 1) {
+                for (n = 0; n < D_800FF9D0_ShellGame.unk2; n++) {
+                    if (landed[n] != 1) {
+                        break;
+                    }
+                }
+                if (n == D_800FF9D0_ShellGame.unk2) {
+                    for (j = 0; j < D_800FF9D0_ShellGame.unk2; j++) {
+                        obj = D_800FF9F8_ShellGame[j];
+                        func_800F7AE8_ShellGame(obj->trans.x + 60.0, obj->trans.y, obj->trans.z);
+                        func_800F7AE8_ShellGame(obj->trans.x - 60.0, obj->trans.y, obj->trans.z);
+                        func_800F7AE8_ShellGame(obj->trans.x, obj->trans.y, obj->trans.z + 60.0);
+                    }
+                    D_800FEC18_ShellGame = 0;
+                }
+            }
+        }
+    }
+    for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
+        obj = D_800FF9F8_ShellGame[i];
+        sh = &D_800FF7A0_ShellGame[i];
+        if (sh->unk0 != 1) {
+            continue;
+        }
+        if (sh->unkC < 10) {
+            obj->scale.y = (f32)(sh->unkC / 10.0) * 0.5 + 1.0;
+        } else if (sh->unkC == 10) {
+            func_800258EC(obj->model[1], 4, 0);
+            func_800258EC(obj->model[4], 4, 4);
+            obj->scale.y = 1.5f;
+            func_800FC714_ShellGame(obj);
+            func_800258EC(obj->model[2], 4, 0);
+        } else if (sh->unkC < 35) {
+            f32 t = (sh->unkC - 10.0) / 25.0;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FB4A4_ShellGame);
+            if (t > 1.0) {
+                t = 1.0f;
+            }
+            sh->unk64 = t * 140.0;
+            sh->unk68 = t * 60.0;
+            func_80025830(obj->model[2], t, t, t);
+        } else if (sh->unkC == 35) {
+            obj->scale.y = 1.5f;
+            sh->unk64 = 140.0f;
+            sh->unk68 = 60.0f;
+            func_80025830(obj->model[2], 1.0f, 1.0f, 1.0f);
+            func_800258EC(obj->model[0], 4, 0);
+            func_800258EC(obj->model[1], 4, 4);
+            func_80025CA8(obj->model[0], 0.0f);
+        } else if (sh->unkC == 36) {
+            if (D_800FF9D0_ShellGame.unk6 == -1 && D_800FF9D0_ShellGame.unk4 == i) {
+                PlaySound(0x1E1);
+            } else {
+                PlaySound(0x1E2);
+            }
+            func_800FC748_ShellGame(obj);
+            func_800601D4(0x28);
+        } else if (sh->unkC == 51) {
+            if (D_800FF9D0_ShellGame.unk6 == -1) {
+                if (D_800FF9D0_ShellGame.unk4 == i) {
+                    tmp.trans.x = sh->unk1C.x;
+                    tmp.trans.y = sh->unk1C.y + 4.0;
+                    tmp.trans.z = sh->unk1C.z;
+                    func_800F88E8_ShellGame(&tmp, D_800F3FB0[0], 30, 2);
+                } else {
+                    func_800FBB44_ShellGame(D_800FF9D0_ShellGame.unk4);
+                }
+                func_800FC7B0_ShellGame(sh->unk6C);
+            } else if (D_800FF9D0_ShellGame.unk4 == i) {
+                tmp.trans.x = sh->unk1C.x;
+                tmp.trans.y = sh->unk1C.y + 4.0;
+                tmp.trans.z = sh->unk1C.z;
+                func_800F83BC_ShellGame(sh->unk1C.x, sh->unk1C.y + 4.0, sh->unk1C.z);
+            }
+        }
+        if (D_800FF9D0_ShellGame.unk6 == 2) {
+            if (sh->unkC == 98 && D_800FF9D0_ShellGame.unk4 == i) {
+                D_800FEC14_ShellGame = 0;
+                if (D_800FF784_ShellGame == 0) {
+                    D_800FF0F8_ShellGame->func_ptr = &func_800F6AC0_ShellGame;
+                } else {
+                    D_800FF0F8_ShellGame->func_ptr = &func_800F6EE4_ShellGame;
+                }
+            }
+        } else if (sh->unkC == 98) {
+            D_800FEC14_ShellGame = 0;
+            if (D_800FF784_ShellGame == 0) {
+                D_800FF0F8_ShellGame->func_ptr = &func_800F6AC0_ShellGame;
+            } else {
+                D_800FF0F8_ShellGame->func_ptr = &func_800F6EE4_ShellGame;
+            }
+        }
+        if (sh->unkC < 100) {
+            sh->unkC++;
+        }
+    }
+}
+void func_800FBB44_ShellGame(s16 n) {
+    SGShell* sh;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FBB44_ShellGame);
+    D_800FEC14_ShellGame = 0;
+    if (n < 0) {
+        n = 0;
+    } else if (n >= D_800FF9D0_ShellGame.unk2) {
+        n = D_800FF9D0_ShellGame.unk2 - 1;
+    }
+    sh = &D_800FF7A0_ShellGame[n];
+    if (sh->unk0 != 1) {
+        sh->unk0 = 1;
+        sh->unkC = 0;
+    }
+}
+void func_800FBBC8_ShellGame(omObjData* obj) {
+    SGShell* sh;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FBBC8_ShellGame);
+    sh = &D_800FF7A0_ShellGame[obj->work[0]];
+    sh->unk0 = 0;
+    sh->unk2 = 0;
+    sh->unkC = 0;
+    sh->unk4 = 360.0 / D_800FF9D0_ShellGame.unk2 * (obj->work[0] - (D_800FF9D0_ShellGame.unk2 >> 1));
+    if (D_800FF9D0_ShellGame.unk2 & 1) {
+        sh->unk4 = sh->unk4 + 180.0;
+    } else {
+        sh->unk4 = sh->unk4 + 45.0;
+    }
+    if (sh->unk4 < 0.0) {
+        sh->unk4 += 360.0;
+    }
+    if (sh->unk4 > 360.0) {
+        sh->unk4 -= 360.0;
+    }
+    sh->unk8 = 0;
+    if (D_800FF9D0_ShellGame.unk2 & 1) {
+        sh->unk4 = 360.0 - sh->unk4;
+    }
+    sh->unk10.x = func_800AEAC0(sh->unk4) * 340.0;
+    sh->unk10.y = 0;
+    sh->unk10.z = func_800AEFD0(sh->unk4) * 340.0;
+    sh->unk1C.x = sh->unk1C.y = sh->unk1C.z = 0.0f;
+    sh->unk58 = 0.0f;
+    sh->unk5C = 0.0f;
+    sh->unk60 = 0.0f;
+    sh->unk64 = 140.0f;
+    sh->unk68 = 60.0f;
+    sh->unk6E = -1;
+}
+void func_800FBDB8_ShellGame(u16* order) {
+    f32 ang[6];
+    SGShell* sh;
+    f32 t;
+    u16 tmp;
+    u16 i;
+    u16 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FBDB8_ShellGame);
+    sh = D_800FF7A0_ShellGame;
+    for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++, sh++) {
+        ang[i] = sh->unk4;
+        order[i] = i;
+    }
+    for (i = 0; i < D_800FF9D0_ShellGame.unk2 - 1; i++) {
+        for (j = i + 1; j < D_800FF9D0_ShellGame.unk2; j++) {
+            if (ang[j] < ang[i]) {
+                t = ang[j];
+                ang[j] = ang[i];
+                ang[i] = t;
+                tmp = order[j];
+                order[j] = order[i];
+                order[i] = tmp;
+            }
+        }
+    }
+}
+void func_800FBEF0_ShellGame(SGSwap* sw, u16* order) {
+    s16 a;
+    s16 b;
+    s16 dir;
+    u16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FBEF0_ShellGame);
+    b = 0;
+    dir = 0;
+    for (n = 0; n < (D_800FF9D0_ShellGame.unk2 >> 1); n++, sw++) {
+        if (n == 0) {
+            dir = func_800F719C_ShellGame(0);
+            a = func_800F719C_ShellGame(D_800FF9D0_ShellGame.unk2);
+        } else {
+            if (dir & 1) {
+                a = b + 1;
+            } else {
+                a = b - 1;
+            }
+            if (a >= D_800FF9D0_ShellGame.unk2) {
+                a = 0;
+            } else if (a < 0) {
+                a = D_800FF9D0_ShellGame.unk2 - 1;
+            }
+        }
+        if (dir & 1) {
+            b = a + 1;
+        } else {
+            b = a - 1;
+        }
+        if (b >= D_800FF9D0_ShellGame.unk2) {
+            b = 0;
+        } else if (b < 0) {
+            b = D_800FF9D0_ShellGame.unk2 - 1;
+        }
+        sw->unk2 = order[a];
+        sw->unk8 = D_800FF7A0_ShellGame[sw->unk2].unk4;
+        sw->unk4 = order[b];
+        sw->unkC = D_800FF7A0_ShellGame[sw->unk4].unk4;
+        if (dir & 1) {
+            sw->unk10 = sw->unk8 + 360.0 / D_800FF9D0_ShellGame.unk2 / 2.0;
+            if (sw->unk10 > 360.0) {
+                sw->unk10 -= 360.0;
+            }
+        } else {
+            sw->unk10 = sw->unk8 - 360.0 / D_800FF9D0_ShellGame.unk2 / 2.0;
+            if (sw->unk10 < 0.0) {
+                sw->unk10 += 360.0;
+            }
+        }
+        if (func_800F719C_ShellGame(0) & 1) {
+            sw->unk0 = 1;
+        } else {
+            sw->unk0 = 0xFFFF;
+        }
+    }
+}
+void func_800FC17C_ShellGame(SGSwap* sw) {
+    SGShell* a;
+    SGShell* b;
+    omObjData* oa;
+    omObjData* ob;
+    u16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC17C_ShellGame);
+    for (n = 0; n < (D_800FF9D0_ShellGame.unk2 >> 1); n++, sw++) {
+        a = &D_800FF7A0_ShellGame[sw->unk2];
+        b = &D_800FF7A0_ShellGame[sw->unk4];
+        oa = D_800FF9F8_ShellGame[sw->unk2];
+        ob = D_800FF9F8_ShellGame[sw->unk4];
+        a->unk28.x = oa->trans.x;
+        a->unk28.y = oa->trans.y;
+        a->unk28.z = oa->trans.z;
+        b->unk28.x = ob->trans.x;
+        b->unk28.y = ob->trans.y;
+        b->unk28.z = ob->trans.z;
+        a->unk34.x = ob->trans.x;
+        a->unk34.y = ob->trans.y;
+        a->unk34.z = ob->trans.z;
+        b->unk34.x = oa->trans.x;
+        b->unk34.y = oa->trans.y;
+        b->unk34.z = oa->trans.z;
+        if (sw->unk0 == 1) {
+            a->unk40.x = func_800AEAC0(sw->unk10) * 360.0 * 1.5;
+            a->unk40.y = 0;
+            a->unk40.z = func_800AEFD0(sw->unk10) * 360.0 * 1.5;
+            b->unk40.x = func_800AEAC0(sw->unk10) * 360.0 * 0.5;
+            b->unk40.y = 0;
+            b->unk40.z = func_800AEFD0(sw->unk10) * 360.0 * 0.5;
+        } else {
+            a->unk40.x = func_800AEAC0(sw->unk10) * 360.0 * 0.5;
+            a->unk40.y = 0;
+            a->unk40.z = func_800AEFD0(sw->unk10) * 360.0 * 0.5;
+            b->unk40.x = func_800AEAC0(sw->unk10) * 360.0 * 1.5;
+            b->unk40.y = 0;
+            b->unk40.z = func_800AEFD0(sw->unk10) * 360.0 * 1.5;
+        }
+    }
+}
+void func_800FC3F4_ShellGame(SGSwap* sw, f32 t) {
+    SGShell* a;
+    SGShell* b;
+    omObjData* oa;
+    omObjData* ob;
+    u16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC3F4_ShellGame);
+    for (n = 0; n < (D_800FF9D0_ShellGame.unk2 >> 1); n++, sw++) {
+        a = &D_800FF7A0_ShellGame[sw->unk2];
+        b = &D_800FF7A0_ShellGame[sw->unk4];
+        oa = D_800FF9F8_ShellGame[sw->unk2];
+        ob = D_800FF9F8_ShellGame[sw->unk4];
+        func_800F7470_ShellGame(t, &a->unk28.x, &a->unk40.x, &a->unk34.x, &a->unk4C.x);
+        func_800F7470_ShellGame(t, &b->unk28.x, &b->unk40.x, &b->unk34.x, &b->unk4C.x);
+        oa->trans.x = a->unk4C.x;
+        oa->trans.y = a->unk4C.y;
+        oa->trans.z = a->unk4C.z;
+        ob->trans.x = b->unk4C.x;
+        ob->trans.y = b->unk4C.y;
+        ob->trans.z = b->unk4C.z;
+        func_800F79FC_ShellGame(oa, 7);
+        func_800F79FC_ShellGame(ob, 7);
+    }
+}
+void func_800FC55C_ShellGame(SGSwap* sw) {
+    SGShell* a;
+    SGShell* b;
+    omObjData* oa;
+    omObjData* ob;
+    u16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC55C_ShellGame);
+    for (n = 0; n < (D_800FF9D0_ShellGame.unk2 >> 1); n++, sw++) {
+        a = &D_800FF7A0_ShellGame[sw->unk2];
+        b = &D_800FF7A0_ShellGame[sw->unk4];
+        oa = D_800FF9F8_ShellGame[sw->unk2];
+        ob = D_800FF9F8_ShellGame[sw->unk4];
+        a->unk4 = sw->unkC;
+        oa->trans.x = a->unk10.x = func_800AEAC0(a->unk4) * 340.0;
+        oa->trans.y = a->unk10.y = 0.0f;
+        oa->trans.z = a->unk10.z = func_800AEFD0(a->unk4) * 340.0;
+        b->unk4 = sw->unk8;
+        ob->trans.x = b->unk10.x = func_800AEAC0(b->unk4) * 340.0;
+        ob->trans.y = b->unk10.y = 0.0f;
+        ob->trans.z = b->unk10.z = func_800AEFD0(b->unk4) * 340.0;
+    }
+}
+void func_800FC6E0_ShellGame(omObjData* obj) {
+    D_800F2B7C[obj->model[1]].unk_4C = 1.0f;
+}
+void func_800FC714_ShellGame(omObjData* obj) {
+    D_800F2B7C[obj->model[1]].unk_4C = -1.0f;
+}
+void func_800FC748_ShellGame(omObjData* obj) {
+    D_800F2B7C[obj->model[2]].unk_4C = 1.0f;
+}
+void func_800FC77C_ShellGame(omObjData* obj) {
+    D_800F2B7C[obj->model[2]].unk_4C = -1.0f;
+}
+void func_800FC7B0_ShellGame(s16 result) {
+    D_800FF9D0_ShellGame.unk6 = result;
+    if ((u16)result == 2) {
+        GwPlayer[D_800FF9F0_ShellGame].coins_mg += 10;
+    }
+}
+/* Builds the scrolling backdrop: `strips` rows of the I8 image `image`, each cut into tiles,
+   scaled by (sx, sy) and scrolled by D_800FF728[row] (ovl_20 KnockBlockTower's func_800FA9B0). */
+// NON_MATCHING: logic-equivalent rewrite; the asm interleaves the display-list writes differently
+#ifdef NON_MATCHING
+void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16 strips, f32 sx, f32 sy) {
+    unk65770AnimC* frame;
+    u8* timg;
+    s16 w;
+    u16 h;
+    u16 sw;
+    s32 shx;
+    s32 shy;
+    s32 x0;
+    s32 y0;
+    s32 n;
+    s32 rows;
+    s32 th;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC6E0_ShellGame);
+    frame = D_800EC700[image]->unk0;
+    timg = frame->unk0;
+    h = frame->unk6;
+    sw = (s32)(frame->unk4 * sx);
+    y0 = y - (s32)((u16)frame->unkA * sy);
+    shx = sx / 2.0f;
+    shy = sy / 2.0f;
+    w = frame->unk4;
+    x0 = x - (s32)((u16)frame->unk8 * sx);
+    if (w < 81) {
+        n = (s16)((s16)h / 40);
+    } else if (w < 161) {
+        n = (s16)((s16)h / 20);
+    } else if (w < 321) {
+        n = (s16)((s16)h / 10);
+    } else if (w < 641) {
+        n = (s16)((s16)h / 5);
+    } else {
+        n = (s16)h;
+    }
+    if (n <= 0) {
+        n = 1;
+    }
+    rows = (s16)h / n;
+    th = rows * sy;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC714_ShellGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC748_ShellGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC77C_ShellGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC7B0_ShellGame);
-
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureLUT(gfx++, G_TT_NONE);
+    gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x004041C8);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetColorDither(gfx++, G_CD_MAGICSQ);
+    gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFDF2F9);
+    for (i = 0; i < strips; i++) {
+        switch (i % 3) {
+        case 0:
+            gDPSetPrimColor(gfx++, 0, 0, 0xD3, 0x98, 0x96, 0xFF);
+            break;
+        case 1:
+            gDPSetPrimColor(gfx++, 0, 0, 0xF7, 0xFF, 0xC9, 0xFF);
+            break;
+        case 2:
+            gDPSetPrimColor(gfx++, 0, 0, 0xDA, 0xBF, 0xBF, 0xFF);
+            break;
+        }
+        for (j = 0; j < n; j++) {
+            gDPLoadTextureTile(gfx++, timg + w * rows * j, G_IM_FMT_I, G_IM_SIZ_8b, w, rows, 0, 0, w - 1, rows - 1,
+                               0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+            gSPScisTextureRectangle(gfx++, x0 * 4, (y0 + th * j) * 4, (x0 + sw) * 4, (y0 + th * (j + 1)) * 4,
+                                    G_TX_RENDERTILE, D_800FF728_ShellGame[i][1], 0, 0x400 >> shx,
+                                    0x400 >> shy);
+        }
+        D_800FF728_ShellGame[i][1] -= D_800FF728_ShellGame[i][0];
+        if (D_800FF728_ShellGame[i][1] < -0xA00) {
+            D_800FF728_ShellGame[i][1] += 0x1400;
+        } else if (D_800FF728_ShellGame[i][1] > 0xA00) {
+            D_800FF728_ShellGame[i][1] -= 0x1400;
+        }
+        y0 += rowStep;
+    }
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FC800_ShellGame);
+#endif

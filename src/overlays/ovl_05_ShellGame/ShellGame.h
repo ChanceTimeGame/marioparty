@@ -67,8 +67,7 @@ typedef struct SGShell {
     /* 0x00 */ s16 unk0; /* lifting */
     /* 0x02 */ s16 unk2;
     /* 0x04 */ f32 unk4; /* angle on the ring */
-    /* 0x08 */ s16 unk8;
-    /* 0x0A */ char unkA[2];
+    /* 0x08 */ s32 unk8;
     /* 0x0C */ u16 unkC; /* frames in the state */
     /* 0x0E */ char unkE[2];
     /* 0x10 */ Vec unk10; /* home position */
@@ -88,7 +87,7 @@ typedef struct SGShell {
 
 /* One swap of two shells (D_800FF0D0[2]), 0x14 bytes. */
 typedef struct SGSwap {
-    /* 0x00 */ s16 unk0; /* direction, 1 or -1 */
+    /* 0x00 */ u16 unk0; /* direction, 1 or 0xFFFF */
     /* 0x02 */ u16 unk2; /* shell a */
     /* 0x04 */ u16 unk4; /* shell b */
     /* 0x06 */ char unk6[2];
@@ -107,10 +106,10 @@ typedef struct SGGame {
     /* 0x08 */ u16 unk8; /* spin frames */
     /* 0x0A */ char unkA[2];
     /* 0x0C */ f32 unkC; /* spin speed */
-    /* 0x10 */ s16 unk10; /* shuffle frames */
-    /* 0x12 */ s16 unk12; /* shuffle ramp */
-    /* 0x14 */ s16 unk14; /* swap frames */
-    /* 0x16 */ s16 unk16; /* jump frames */
+    /* 0x10 */ u16 unk10; /* shuffle frames */
+    /* 0x12 */ u16 unk12; /* shuffle ramp */
+    /* 0x14 */ u16 unk14; /* swap frames */
+    /* 0x16 */ u16 unk16; /* jump frames */
     /* 0x18 */ u16 unk18; /* moves */
     /* 0x1A */ char unk1A[2];
 } SGGame; /* size = 0x1C */
@@ -230,7 +229,7 @@ extern u16 D_800FEC2C_ShellGame;
 extern s16 D_800FEC2E_ShellGame;
 extern s16 D_800FEC30_ShellGame;
 extern s16 D_800FEC32_ShellGame;
-extern s32 D_800FEC34_ShellGame;
+extern u32 D_800FEC34_ShellGame;
 extern f32 D_800FEC38_ShellGame;
 extern f32 D_800FEC3C_ShellGame;
 extern omObjData* D_800FEC40_ShellGame;
@@ -325,7 +324,7 @@ void func_800F83BC_ShellGame(f32, f32, f32);
 void func_800F85B4_ShellGame(void);
 void func_800F87AC_ShellGame(void);
 void func_800F87CC_ShellGame(void);
-void func_800F88E8_ShellGame(Vec*, Vec*, s16, s16);
+void func_800F88E8_ShellGame(omObjData*, omObjData*, s16, s16);
 void func_800F8CF8_ShellGame(void);
 void func_800F913C_ShellGame(void);
 void func_800F915C_ShellGame(void);
