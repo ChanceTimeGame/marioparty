@@ -2700,7 +2700,7 @@ segments:
     bss_size: 0x1E0
     subsegments:
       - [0x317980, c]
-      - [0x31AC50, data, 317980]
+      - [0x31AC50, .data, 317980]
       - [0x31B860, .rodata, 317980]
       - {0x31BFE0, type: bss, vram: 0x800FAC40, name: ovl_83_bss}
   - [0x31BFE0, bin]
