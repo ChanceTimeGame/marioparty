@@ -92,7 +92,14 @@ extern Gfx D_80103498_UnusedMinigame0[];
 extern Vtx D_801034A8_UnusedMinigame0[17];
 extern Gfx D_801035B8_UnusedMinigame0[];
 extern UM0ShapeRot D_80103608_UnusedMinigame0[16];
+extern u32 D_801036A0_UnusedMinigame0[3][8];
+/* Seed row r: splat's D_80103640[r] (inside D_80103608, rows 3..5 = D_801036A0). */
+#ifdef TARGET_PC
+#define UM0_SEED_ROW(r) D_801036A0_UnusedMinigame0[(r) - 3]
+#else
 extern s32 D_80103640_UnusedMinigame0[][8];
+#define UM0_SEED_ROW(r) D_80103640_UnusedMinigame0[r]
+#endif
 extern s32 D_80103688_UnusedMinigame0[6];
 extern s32 D_80103700_UnusedMinigame0;
 extern s32 D_80103704_UnusedMinigame0;
@@ -117,7 +124,7 @@ extern s32 D_80103750_UnusedMinigame0;
 #define UM0_SOUND2 ((s16)D_80103750_UnusedMinigame0)
 extern f32 D_80103754_UnusedMinigame0;
 extern s16 D_80103758_UnusedMinigame0[4][2];
-extern s16 D_80103768_UnusedMinigame0[4][2];
+extern s16 D_80103768_UnusedMinigame0[6][2];
 
 /* .bss */
 extern s32 D_80104340_UnusedMinigame0;
