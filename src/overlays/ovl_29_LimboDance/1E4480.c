@@ -300,7 +300,6 @@ void func_800FB504_LimboDance(s16 sprite, Gfx** pgfx, f32 scroll) {
     gDPPipeSync(gfx++);
     gDPSetTexturePersp(gfx++, G_TP_NONE);
     gDPLoadTLUT_pal256(gfx++, anim->unkC);
-    gDPPipeSync(gfx++);
     gDPSetTextureLUT(gfx++, G_TT_RGBA16);
     gDPSetRenderMode(gfx++, 0x442008, 0);
     gDPSetTextureFilter(gfx++, G_TF_BILERP);
