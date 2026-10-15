@@ -580,8 +580,109 @@ void func_800FF284_UnusedMinigame0(void) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FF488_UnusedMinigame0);
+void func_800FF488_UnusedMinigame0(void) {
+    s32 i;
+    s32 f;
+    s32 n;
+    s32 flag;
 
+    for (i = 0; i < 4; i++) {
+        for (f = 0; f < 3; f++) {
+            D_8010B070_UnusedMinigame0[i][f] = HuMemDirectMalloc(17 * sizeof(Vtx));
+            D_8010B0A0_UnusedMinigame0[i][f] = 0;
+            D_8010B0D0_UnusedMinigame0[i][f] = HuMemDirectMalloc(17 * sizeof(Vtx));
+            D_8010B0D0_UnusedMinigame0[i + 4][f] = HuMemDirectMalloc(17 * sizeof(Vtx));
+        }
+        for (n = 0; n < 17; n++) {
+            for (f = 0; f < 3; f++) {
+                D_8010B070_UnusedMinigame0[i][f][n] = D_801034A8_UnusedMinigame0[n];
+                D_8010B0D0_UnusedMinigame0[i][f][n] = D_801034A8_UnusedMinigame0[n];
+                D_8010B0D0_UnusedMinigame0[i + 4][f][n] = D_801034A8_UnusedMinigame0[n];
+            }
+            D_8010AF60_UnusedMinigame0[i][n] = 0;
+            D_8010B458_UnusedMinigame0[i][n] = func_80102568_UnusedMinigame0(32) + 16;
+        }
+    }
+    for (i = 0; i < 48; i++) {
+        D_8010A040_UnusedMinigame0[i].drop = &D_80108C60_UnusedMinigame0[i];
+        D_80108C60_UnusedMinigame0[i].tile = i;
+        D_80108C60_UnusedMinigame0[i].skin = rand8() & 3;
+        D_80108C60_UnusedMinigame0[i].state = 0;
+        D_80108C60_UnusedMinigame0[i].timer = 0;
+        flag = 0;
+        switch (i & 7) {
+        case 0:
+            flag = 1;
+        case 4:
+            if (flag) {
+                D_80108C60_UnusedMinigame0[i].x = -170.0f;
+                D_80108C60_UnusedMinigame0[i].z = 100.0f;
+            } else {
+                D_80108C60_UnusedMinigame0[i].x = -140.0f;
+                D_80108C60_UnusedMinigame0[i].z = 130.0f;
+            }
+            D_80108C60_UnusedMinigame0[i].y = 100.0f;
+            D_80108C60_UnusedMinigame0[i].fromX = -140.0f;
+            D_80108C60_UnusedMinigame0[i].fromZ = 100.0f;
+            break;
+        case 1:
+            flag = 1;
+        case 5:
+            if (flag) {
+                D_80108C60_UnusedMinigame0[i].x = 170.0f;
+                D_80108C60_UnusedMinigame0[i].z = 100.0f;
+            } else {
+                D_80108C60_UnusedMinigame0[i].x = 140.0f;
+                D_80108C60_UnusedMinigame0[i].z = 130.0f;
+            }
+            D_80108C60_UnusedMinigame0[i].y = 100.0f;
+            D_80108C60_UnusedMinigame0[i].fromX = 140.0f;
+            D_80108C60_UnusedMinigame0[i].fromZ = 100.0f;
+            break;
+        case 2:
+            flag = 1;
+        case 6:
+            if (flag) {
+                D_80108C60_UnusedMinigame0[i].x = -170.0f;
+                D_80108C60_UnusedMinigame0[i].z = -100.0f;
+            } else {
+                D_80108C60_UnusedMinigame0[i].x = -140.0f;
+                D_80108C60_UnusedMinigame0[i].z = -130.0f;
+            }
+            D_80108C60_UnusedMinigame0[i].y = 100.0f;
+            D_80108C60_UnusedMinigame0[i].fromX = -140.0f;
+            D_80108C60_UnusedMinigame0[i].fromZ = -100.0f;
+            break;
+        case 3:
+            flag = 1;
+        case 7:
+            if (flag) {
+                D_80108C60_UnusedMinigame0[i].x = 170.0f;
+                D_80108C60_UnusedMinigame0[i].z = -100.0f;
+            } else {
+                D_80108C60_UnusedMinigame0[i].x = 140.0f;
+                D_80108C60_UnusedMinigame0[i].z = -130.0f;
+            }
+            D_80108C60_UnusedMinigame0[i].y = 100.0f;
+            D_80108C60_UnusedMinigame0[i].fromX = 140.0f;
+            D_80108C60_UnusedMinigame0[i].fromZ = -100.0f;
+            break;
+        }
+        D_80108C60_UnusedMinigame0[i].vx = D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX;
+        D_80108C60_UnusedMinigame0[i].vz = D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ;
+        D_80108C60_UnusedMinigame0[i].angle =
+            func_800B0CD8(D_80108C60_UnusedMinigame0[i].vx, D_80108C60_UnusedMinigame0[i].vz) + 90.0f;
+    }
+    for (i = 0; i < 8; i++) {
+        D_80108C60_UnusedMinigame0[i].state = 1;
+    }
+    D_80108C50_UnusedMinigame0[0] = HuMemDirectMalloc(0x1800);
+    D_80108C50_UnusedMinigame0[1] = HuMemDirectMalloc(0x1800);
+    D_80108C50_UnusedMinigame0[2] = HuMemDirectMalloc(0x1800);
+    D_80109CCC_UnusedMinigame0 = func_80024198(0x19, D_80108C50_UnusedMinigame0[0], 4);
+    func_800FFA64_UnusedMinigame0();
+    func_80025830(UM0_MODEL_DROP, 2.5f, 2.5f, 2.5f);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FFA64_UnusedMinigame0);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_80100850_UnusedMinigame0);

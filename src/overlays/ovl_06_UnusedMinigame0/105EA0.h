@@ -152,7 +152,7 @@ extern s32 D_8010B458_UnusedMinigame0[4][17];
 #define UM0_SPRGRP ((s16)D_80109CD4_UnusedMinigame0)
 
 /* main code */
-s16 func_80024198(s32, void*, s32);
+s32 func_80024198(s32, void*, s32);
 void func_80067284(s16, s16, f32);
 void func_80066DF4(s16, s16, s16, f32, f32, f32);
 
