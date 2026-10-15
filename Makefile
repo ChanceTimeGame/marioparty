@@ -258,6 +258,8 @@ build/src/overlays/ovl_40_ResultsScene/259EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -m
 build/src/overlays/ovl_64_ResultsEternalStar2/2B1670.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_31 225DF0.c: nop between mul.s in func_800FF35C (mul fix on)
 build/src/overlays/ovl_31_PiranhasPursuit/225DF0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_70 2F40C0.c: nop between mul.s in func_800F846C (mul fix on)
+build/src/overlays/ovl_70_TestingRoom/2F40C0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_00 CDA50.c: nop between mul.d in func_800F9178 (mul fix on)
 build/src/overlays/ovl_00_MemoryMatch/CDA50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_00 D27D0.c: nop between mul.s in func_800FD6A0 (mul fix on)
@@ -422,6 +424,14 @@ $(BUILD_DIR)/src/overlays/ovl_1D_BobsledRun/188410.c.o: $(BUILD_DIR)/src/%.c.o: 
 
 # ovl_15 152BE0.c (Coin Block Bash): mul fix on, blank-line strip (mul.s right after a call's return); own rule.
 $(BUILD_DIR)/src/overlays/ovl_15_CoinBlockBash/152BE0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_70 2F40C0.c (Testing Room): mul fix on, blank-line strip (mul.s right after a call's return); own rule.
+$(BUILD_DIR)/src/overlays/ovl_70_TestingRoom/2F40C0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
