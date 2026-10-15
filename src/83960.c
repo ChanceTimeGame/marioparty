@@ -51,6 +51,20 @@ extern u8 D_800CBFD0[];         // GF(256) logarithm table
 extern u16 D_800CBD98[];        // first user lba per disk type
 extern u32 D_800CBDA8[];        // capacity in bytes per disk type
 
+// C1 error report of the last read (80BE0.c)
+typedef struct LEORwInfo {
+    /* 0x00 */ u8* dram;
+    /* 0x04 */ u8* c2end;
+    /* 0x08 */ u8 errSector[4];
+    /* 0x0C */ u8 errNum;
+    /* 0x0D */ u8 secBytes;
+    /* 0x0E */ u16 blkBytes;
+} LEORwInfo;
+
+extern LEORwInfo D_800EA140;
+extern OSThread D_800E7D98;      // read/write thread
+extern OSMesgQueue D_800E8778;
+
 u8 func_80080E70(u32 asic_cmd, u32 asic_data);
 u8 func_80080EA8(u32 asic_cmd, u32 asic_data);
 u8 func_80080FE4(void);
@@ -59,6 +73,10 @@ s32 func_80081100(u32 sense);
 u8 func_80081210(void);
 
 void func_8008499C(u32 start); // leoRead_common
+void func_80082DEC(void);
+void func_80082EC0(void);
+void func_80083140(void);
+void func_80083528(void);
 u8 func_80085394(u8* rtc);     // read the RTC (6 bytes)
 
 INCLUDE_RODATA("asm/nonmatchings/83960", D_800CBD98);
@@ -69,9 +87,55 @@ INCLUDE_RODATA("asm/nonmatchings/83960", D_800CBDD0);
 
 INCLUDE_RODATA("asm/nonmatchings/83960", D_800CBFD0);
 
+#ifdef NON_MATCHING
+// leoC2_Correction: by the number of C1 error sectors
+u16 func_80082D60(void) {
+    switch (D_800EA140.errNum) {
+        case 0:
+            return 0;
+        case 1:
+            func_80082DEC();
+            return 0;
+        case 2:
+            func_80082EC0();
+            return 0;
+        case 3:
+            func_80083140();
+            return 0;
+        case 4:
+            func_80083528();
+            return 0;
+        default:
+            return 0xFFFF;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80082D60);
+#endif
 
+#ifdef NON_MATCHING
+// one erroneous sector: XOR the C2 parity back in
+void func_80082DEC(void) {
+    u32 s = D_800EA140.errSector[0];
+    u32 n;
+    u8* p;
+    u8* c2;
+
+    if (s >= 0x55) {
+        return;
+    }
+    n = D_800EA140.secBytes;
+    p = D_800EA140.dram + (s + 1) * n;
+    c2 = D_800EA140.c2end;
+    for (; n != 0; n--) {
+        c2 -= 4;
+        p--;
+        *p ^= *c2;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80082DEC);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/83960", func_80082EC0);
 
@@ -151,7 +215,46 @@ void func_800845A0(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_800845A0);
 #endif
 
+#ifdef NON_MATCHING
+// leoStart_stop
+void func_80084650(void) {
+    u8 retry = 8;
+    u8 sense;
+    u32 cmd;
+    u32 data;
+    u8 control;
+
+    while (TRUE) {
+        data = 0;
+        control = LEO_CUR(LEOCmdHeader)->control;
+        if (control & 1) {
+            cmd = 0x50001;
+        } else if (control & 2) {
+            cmd = 0xD0000;
+        } else {
+            cmd = 0x40000;
+            if (control & 4) {
+                data = 0x10000;
+            }
+        }
+        sense = func_80080EA8(cmd, data);
+        if (sense == 0) {
+            LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
+            return;
+        }
+        if (func_80081100(sense) != 0) {
+            break;
+        }
+        if (retry-- == 0) {
+            break;
+        }
+    }
+    LEO_CUR(LEOCmdHeader)->sense_code = sense;
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084650);
+#endif
 
 #ifdef NON_MATCHING
 // leoReadCapacity
@@ -261,7 +364,44 @@ INCLUDE_ASM("asm/nonmatchings/83960", func_80084C90);
 
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084CD0);
 
+#ifdef NON_MATCHING
+// leoWrite
+void func_80084F70(void) {
+    LEOCmdRead* cmd = D_800E87D8;
+    u32 lba = cmd->lba;
+    u32 xfer = cmd->xfer_blks;
+    OSMesg msg;
+
+    if ((((lba | xfer) >> 16) != 0) || ((lba += 0x18) >= 0x10DC) || (lba + xfer > 0x10DC)) {
+        cmd->header.sense_code = 0x20; // LBA out of range
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    if (lba < D_800CBD98[D_800E87E8]) {
+        cmd->header.sense_code = 0x21; // write protect (system area)
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    if (xfer == 0) {
+        cmd->header.sense_code = 0;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
+        return;
+    }
+    D_800E87E6 = 0x8000;
+    D_800E87F0.lba = lba;
+    osStartThread(&D_800E7D98);
+    osRecvMesg(&D_800E8778, &msg, OS_MESG_BLOCK);
+    if ((u32)msg != 0x90000) {
+        LEO_CUR(LEOCmdHeader)->sense_code = (u32)msg;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    LEO_CUR(LEOCmdHeader)->sense_code = 0;
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084F70);
+#endif
 
 #ifdef NON_MATCHING
 // leoReadTimer
@@ -289,7 +429,41 @@ INCLUDE_ASM("asm/nonmatchings/83960", func_800850A0);
 
 INCLUDE_ASM("asm/nonmatchings/83960", func_8008515C);
 
+#ifdef NON_MATCHING
+// read the RTC: year, month, day, hour, minute, second
+u8 func_80085394(u8* rtc) {
+    u32 data;
+    u8 sense;
+
+    if ((sense = func_80080EA8(0x140000, 0)) != 0) {
+        return sense;
+    }
+    osEPiReadIo(D_800EA150, 0x05000500, &data);
+    rtc[4] = (data & 0xFF000000) >> 24;
+    rtc[5] = (data & 0xFF0000) >> 16;
+    if ((sense = func_80080EA8(0x130000, 0)) != 0) {
+        rtc[4] &= 0xFF7F;
+        return sense;
+    }
+    osEPiReadIo(D_800EA150, 0x05000500, &data);
+    rtc[2] = (data & 0xFF000000) >> 24;
+    rtc[3] = (data & 0xFF0000) >> 16;
+    if ((sense = func_80080EA8(0x120000, 0)) != 0) {
+        rtc[4] &= 0xFF7F;
+        return sense;
+    }
+    osEPiReadIo(D_800EA150, 0x05000500, &data);
+    rtc[0] = (data & 0xFF000000) >> 24;
+    rtc[1] = (data & 0xFF0000) >> 16;
+    if (rtc[4] & 0x80) {
+        rtc[4] &= 0xFF7F;
+        return 5;
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80085394);
+#endif
 
 #ifdef NON_MATCHING
 // set the RTC from 6 bytes (year, month, day, hour, minute, second)
