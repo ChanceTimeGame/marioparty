@@ -233,15 +233,10 @@ void func_800F65E0_DeepSeaDivers(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F65E0_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800F6B1C_DeepSeaDivers(omObjData* obj) {
     obj->func_ptr = func_800F6BDC_DeepSeaDivers;
     SetFadeInTypeAndTime(0, 16);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F6B1C_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800F6B48_DeepSeaDivers(void) {
     s16 i;
 
@@ -250,9 +245,6 @@ void func_800F6B48_DeepSeaDivers(void) {
                                     &D_80100478_DeepSeaDivers[i].bottom);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F6B48_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800F6BDC_DeepSeaDivers(omObjData* obj) {
     switch (D_801003FC_DeepSeaDivers) {
@@ -346,7 +338,6 @@ void func_800F6BDC_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F6BDC_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800F6F7C_DeepSeaDivers(void) {
     if (D_80100402_DeepSeaDivers < 0 && func_80072718() == 0) {
         HuMemDirectFree(D_801003F8_DeepSeaDivers);
@@ -358,18 +349,10 @@ void func_800F6F7C_DeepSeaDivers(void) {
         omOvlReturnEx(1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F6F7C_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800F7000_DeepSeaDivers(omObjData* obj) {
     GMesCreate(8, (s16)(D_80100404_DeepSeaDivers / 30), 160, 24);
     obj->func_ptr = func_800F7074_DeepSeaDivers;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7000_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800F7074_DeepSeaDivers(omObjData* obj) {
     func_80079078((s16)((D_80100404_DeepSeaDivers + 29) / 30));
     if (D_80100404_DeepSeaDivers == 0 || D_80100402_DeepSeaDivers != 0) {
@@ -377,9 +360,6 @@ void func_800F7074_DeepSeaDivers(omObjData* obj) {
         func_800790C0();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7074_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800F70F4_DeepSeaDivers(omObjData* obj) {
     s16 sprite;
@@ -411,13 +391,9 @@ void func_800F70F4_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F70F4_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800F72D0_DeepSeaDivers(omObjData* obj) {
     func_800FF730_DeepSeaDivers(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F72D0_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800F72EC_DeepSeaDivers(void) {
     Vtx* v;
@@ -496,16 +472,11 @@ void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7470_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800F791C_DeepSeaDivers(omObjData* obj) {
     obj->model[0] = LoadFormFile(0x16000E, 0x299);
     func_800FEA00_DeepSeaDivers(obj);
     obj->func_ptr = func_800FEF34_DeepSeaDivers;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F791C_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800F7968_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* w;
     DSDWork* dw;
@@ -545,11 +516,6 @@ void func_800F7968_DeepSeaDivers(omObjData* obj) {
     dw->unk44 = player;
     D_80100C70_DeepSeaDivers[1]++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7968_DeepSeaDivers);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_800FFEC0_DeepSeaDivers);
-
 #ifdef NON_MATCHING
 void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
     f32 dirs[4][2] = { { 64.0f, 0.0f }, { 0.0f, 64.0f }, { -64.0f, 0.0f }, { 0.0f, -64.0f } };
@@ -736,9 +702,9 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
     }
 }
 #else
+INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_800FFEC0_DeepSeaDivers);
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7C9C_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800F8680_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* w;
     DSDWork* dw;
@@ -774,9 +740,6 @@ void func_800F8680_DeepSeaDivers(omObjData* obj) {
     dw->unk44 = player;
     D_80100C70_DeepSeaDivers[2]++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F8680_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800F88E0_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* pl;
@@ -1120,9 +1083,6 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F88E0_DeepSeaDivers);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_80100080_DeepSeaDivers);
-
-#ifdef NON_MATCHING
 void func_800F9AF4_DeepSeaDivers(omObjData* obj) {
     DSDTreasureDef defs[8] = {
         { 1, -320, 40, 1 }, { 1, -150, -40, 2 }, { 1, -380, -180, 3 }, { 1, 320, 40, 1 },
@@ -1153,9 +1113,6 @@ void func_800F9AF4_DeepSeaDivers(omObjData* obj) {
     w->unk34 = obj->scale.x;
     D_8010040C_DeepSeaDivers++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F9AF4_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
@@ -1335,7 +1292,6 @@ void func_800FA9A4_DeepSeaDivers(s16 idx) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FA9A4_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FAABC_DeepSeaDivers(s16 idx) {
     DSDWork* w;
 
@@ -1353,9 +1309,6 @@ void func_800FAABC_DeepSeaDivers(s16 idx) {
         func_800FD870_DeepSeaDivers(idx);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FAABC_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FAC68_DeepSeaDivers(s16 idx) {
     f64 x0;
@@ -1414,7 +1367,6 @@ void func_800FB010_DeepSeaDivers(s16 idx) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB010_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 s16 func_800FB130_DeepSeaDivers(void) {
     DSDWork* w;
     s16 i;
@@ -1435,9 +1387,6 @@ s16 func_800FB130_DeepSeaDivers(void) {
     }
     return -(D_80100410_DeepSeaDivers == 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB130_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 s32 func_800FB27C_DeepSeaDivers(omObjData* obj) {
     DSDWork* w = func_800FC1C8_DeepSeaDivers(obj);
@@ -1553,7 +1502,6 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB310_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FB860_DeepSeaDivers(void) {
     CZoom = 21000.0f;
     CRot.x = 2.9249f;
@@ -1563,9 +1511,6 @@ void func_800FB860_DeepSeaDivers(void) {
     Center.y = -580.0f;
     Center.z = -110.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB860_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
     f32* o = (f32*)out;
@@ -1577,16 +1522,11 @@ void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB8C8_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FB964_DeepSeaDivers(void) {
     D_801004B4_DeepSeaDivers = 0;
     D_801004B0_DeepSeaDivers = 0;
     D_801004B2_DeepSeaDivers = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB964_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FB984_DeepSeaDivers(void) {
     Matrix4f m;
     Vec v;
@@ -1606,17 +1546,9 @@ void func_800FB984_DeepSeaDivers(void) {
     D_801004D4_DeepSeaDivers.y = D_801004FC_DeepSeaDivers.y = v.y;
     D_801004D4_DeepSeaDivers.z = D_801004FC_DeepSeaDivers.z = v.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB984_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FBABC_DeepSeaDivers(void) {
     D_801004B0_DeepSeaDivers = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FBABC_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FBAC8_DeepSeaDivers(f32 x, f32 y, f32 z, f32 w) {
     if (D_801004B4_DeepSeaDivers < 16) {
         D_80100508_DeepSeaDivers[D_801004B4_DeepSeaDivers].x = x;
@@ -1626,9 +1558,6 @@ void func_800FBAC8_DeepSeaDivers(f32 x, f32 y, f32 z, f32 w) {
         D_801004B4_DeepSeaDivers++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FBAC8_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FBB30_DeepSeaDivers(void) {
     f32 hi[4];
@@ -1712,7 +1641,6 @@ void func_800FBB30_DeepSeaDivers(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FBB30_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 DSDWork* func_800FC058_DeepSeaDivers(omObjData* obj) {
     DSDWork* w = HuMemDirectMalloc(sizeof(DSDWork));
 
@@ -1744,10 +1672,6 @@ DSDWork* func_800FC058_DeepSeaDivers(omObjData* obj) {
     D_80101BD4_DeepSeaDivers++;
     return w;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC058_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FC148_DeepSeaDivers(void) {
     s16 i;
 
@@ -1757,10 +1681,6 @@ void func_800FC148_DeepSeaDivers(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC148_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 DSDWork* func_800FC1C8_DeepSeaDivers(omObjData* obj) {
 #ifdef TARGET_PC
     return D_801017B0_DeepSeaDivers[(obj->work[2] << 8) | obj->work[3]];
@@ -1768,9 +1688,6 @@ DSDWork* func_800FC1C8_DeepSeaDivers(omObjData* obj) {
     return (DSDWork*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
 #endif
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC1C8_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 u16 func_800FC1F4_DeepSeaDivers(void) {
     u8 hi = rand8();
@@ -1780,7 +1697,6 @@ u16 func_800FC1F4_DeepSeaDivers(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC1F4_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FC22C_DeepSeaDivers(omObjData* unused, f32* x, f32* y, f32* z) {
     if (*x < -2000.0) {
         *x = -2000.0f;
@@ -1795,9 +1711,6 @@ void func_800FC22C_DeepSeaDivers(omObjData* unused, f32* x, f32* y, f32* z) {
         *y = -2000.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC22C_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FC2F8_DeepSeaDivers(f32* x, f32* y, f32 dist, Vec2f* pts, s16 n, u16 flag, f32* outx, f32* outy) {
     f32 sx;
@@ -2052,11 +1965,9 @@ void func_800FCF54_DeepSeaDivers(omObjData* obj, f32 vx, f32 vy) {
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FCF54_DeepSeaDivers);
-#endif
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_80100268_DeepSeaDivers);
-
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_8010026C_DeepSeaDivers);
-
+#endif
 #ifdef NON_MATCHING
 s16 func_800FD28C_DeepSeaDivers(omObjData* obj) {
     omObjData* o;
@@ -2098,7 +2009,6 @@ s16 func_800FD28C_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD28C_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 s16 func_800FD450_DeepSeaDivers(s32 file) {
     void* data = DataRead(file);
     s16 ret = func_800678A4(data);
@@ -2106,9 +2016,6 @@ s16 func_800FD450_DeepSeaDivers(s32 file) {
     DataClose(data);
     return ret & 0xFF;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD450_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FD494_DeepSeaDivers(void) {
     s16 i;
@@ -2175,16 +2082,12 @@ s16 func_800FD680_DeepSeaDivers(s16 type, f32 x, f32 y, f32 z, s16 target) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD680_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FD870_DeepSeaDivers(s16 idx) {
     D_80100C80_DeepSeaDivers[idx].flags = 0;
     if (D_80100C80_DeepSeaDivers[idx].sprite >= 0) {
         func_800674BC(D_80100C80_DeepSeaDivers[idx].sprite, 0, 0x8000);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD870_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FD8C8_DeepSeaDivers(void) {
     Vec3f p;
@@ -2234,23 +2137,15 @@ void func_800FD8C8_DeepSeaDivers(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD8C8_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FDBA0_DeepSeaDivers(void) {
     func_800FDBC4_DeepSeaDivers();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDBA0_DeepSeaDivers);
-#endif
 void func_800FDBBC_DeepSeaDivers(void) {
 }
 
-#ifdef NON_MATCHING
 void func_800FDBC4_DeepSeaDivers(void) {
     func_8009B770(D_80100610_DeepSeaDivers, 0, sizeof(D_80100610_DeepSeaDivers));
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDBC4_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 s16 func_800FDBEC_DeepSeaDivers(void) {
     DSDRope* r;
@@ -2297,7 +2192,6 @@ s16 func_800FDBEC_DeepSeaDivers(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDBEC_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FDD84_DeepSeaDivers(s16 idx) {
     DSDRope* r;
 
@@ -2316,10 +2210,6 @@ void func_800FDD84_DeepSeaDivers(s16 idx) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDD84_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FDE04_DeepSeaDivers(s16 idx, f32 speed, Vec* top) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
 
@@ -2328,9 +2218,6 @@ void func_800FDE04_DeepSeaDivers(s16 idx, f32 speed, Vec* top) {
     r->top.y = top->y;
     r->top.z = top->z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDE04_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
@@ -2550,7 +2437,6 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FE378_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FEA00_DeepSeaDivers(omObjData* obj) {
     s16 i;
 
@@ -2564,9 +2450,6 @@ void func_800FEA00_DeepSeaDivers(omObjData* obj) {
     }
     D_80100C50_DeepSeaDivers = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FEA00_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FEAC4_DeepSeaDivers(s16 idx, s16 dir) {
     if (dir != 0) {
@@ -2712,16 +2595,12 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FEF34_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80026040(obj->model[1]);
     D_80100C5C_DeepSeaDivers = 0.0f;
     func_80039C48("dmy_I8", &D_80100C60_DeepSeaDivers);
     D_80100C64_DeepSeaDivers = D_80100C68_DeepSeaDivers = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FF6E0_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructC0* m;
