@@ -1461,10 +1461,11 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
             if (D_80100410_DeepSeaDivers != 0) {
                 sel = -1;
                 for (i = 0; i < D_80100410_DeepSeaDivers; i++) {
+                    /* a new best is always taken; a tie only on a coin flip */
                     if (best < D_80100418_DeepSeaDivers[i]->unk4E) {
                         best = D_80100418_DeepSeaDivers[i]->unk4E;
-                    }
-                    if (D_80100418_DeepSeaDivers[i]->unk4E == best && (func_800FC1F4_DeepSeaDivers() & 1)) {
+                        sel = i;
+                    } else if (D_80100418_DeepSeaDivers[i]->unk4E == best && (func_800FC1F4_DeepSeaDivers() & 1)) {
                         best = D_80100418_DeepSeaDivers[i]->unk4E;
                         sel = i;
                     }

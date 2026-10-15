@@ -1905,7 +1905,7 @@ u16 func_800FC4B0_HandcarHavoc(omObjData* obj) {
     return goal;
 }
 
-/* acos in degrees, clamped to [-1, 1]. */
+/* asin in degrees, clamped to [-1, 1]. */
 f32 func_800FC7E0_HandcarHavoc(f32 x) {
     if (x > 1.0f) {
         x = 1.0f;
