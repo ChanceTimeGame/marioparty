@@ -802,7 +802,7 @@ segments:
       - [0x113B20, data, 110F90]
       - [0x113B30, data, 111890]
       - [0x113BE0, data, 1127C0]
-      - [0x113C50, data, 113730]
+      - [0x113C50, .data, 113730]
       - [0x113C60, .rodata, 110F90]
       - [0x113C90, .rodata, 111890]
       - [0x113D50, .rodata, 1127C0]
