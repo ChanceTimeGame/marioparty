@@ -479,3 +479,6 @@ D_800FEA68_LimboDance = D_800FEA28_LimboDance + 0x40;
 D_800FE468_HotRopeJump = D_800FE464_HotRopeJump + 0x4;
 D_800FE46C_HotRopeJump = D_800FE464_HotRopeJump + 0x8;
 D_800FE470_HotRopeJump = D_800FE464_HotRopeJump + 0xC;
+D_800FF978_DeepSeaDivers = D_800FF974_DeepSeaDivers + 0x4;
+D_800FF998_DeepSeaDivers = D_800FF994_DeepSeaDivers + 0x4;
+D_800FF99C_DeepSeaDivers = D_800FF994_DeepSeaDivers + 0x8;

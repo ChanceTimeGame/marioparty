@@ -1,7 +1,7 @@
 #ifndef DEEPSEADIVERS_H
 #define DEEPSEADIVERS_H
 
-/* ovl_30 DeepSeaDivers (2v2: per team a diver on the sea floor and a pumper on the boat). */
+/* ovl_30 DeepSeaDivers (2v2: per team a pumper on the boat and a diver on its rope). */
 
 #include "common.h"
 #include "PR/gu.h"
@@ -83,8 +83,8 @@ typedef struct DSDPlayerWork {
 
 /* A team's two objects (D_80101780[2]). */
 typedef struct DSDTeamObj {
-    /* 0x00 */ omObjData* diver;
-    /* 0x04 */ omObjData* pumper;
+    /* 0x00 */ omObjData* boat; /* the pumper (func_800F7968) */
+    /* 0x04 */ omObjData* diver; /* func_800F8680 */
 } DSDTeamObj;
 
 /* A rope's ends (D_80100478[2]). */
@@ -137,6 +137,23 @@ typedef struct DSDFx {
     /* 0x2A */ s16 unk2A;
 } DSDFx;
 
+/* A treasure's placement (func_800F9AF4's table, in fifths). */
+typedef struct DSDTreasureDef {
+    /* 0x00 */ s16 scale;
+    /* 0x02 */ s16 x;
+    /* 0x04 */ s16 y;
+    /* 0x06 */ s16 value;
+} DSDTreasureDef;
+
+/* A fish (D_801006D8[2]) and its recorded positions (D_80100758[2][10]), stride 0x40. */
+typedef struct DSDFish {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ Vec rot;
+    /* 0x18 */ char pad18[0x18];
+    /* 0x30 */ f32 vx;
+    /* 0x34 */ char pad34[0xC];
+} DSDFish;
+
 /* A camera point to look at (D_80100508[16]). */
 typedef struct DSDFocus {
     /* 0x00 */ f32 x;
@@ -159,6 +176,12 @@ s32 func_80067328(s16, s16);
 void func_800672DC(s16, s16, u16, s32);
 f64 func_8009B618(f64, f64);
 void func_80025BB8(s16, s16);
+void func_8001D658(s16, Gfx**);
+extern u16 D_800ED728;
+s32 func_80009C90(omObjData*, s16, s16);
+void func_80028498(s16, s16, s16);
+void func_80060F04(s16, s16, s16, s16);
+void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 unk65770Anim* func_80067310(s16 animIdx); /* src/65770.c */
 s16 func_80076FF4(s16);
 extern s8 ContStkY[4];
@@ -190,8 +213,8 @@ void func_800FAABC_DeepSeaDivers(s16);
 void func_800FAC68_DeepSeaDivers(s16);
 void func_800FB010_DeepSeaDivers(s16);
 s16 func_800FB130_DeepSeaDivers(void);
-s32 func_800FB27C_DeepSeaDivers(omObjData*, omObjData*);
-void func_800FB310_DeepSeaDivers(void);
+s32 func_800FB27C_DeepSeaDivers(omObjData*);
+s16 func_800FB310_DeepSeaDivers(omObjData*);
 void func_800FB860_DeepSeaDivers(void);
 void func_800FB8C8_DeepSeaDivers(Matrix4f, f32, f32, f32, Vec*);
 void func_800FB964_DeepSeaDivers(void);
@@ -203,16 +226,16 @@ DSDWork* func_800FC058_DeepSeaDivers(omObjData*);
 void func_800FC148_DeepSeaDivers(void);
 DSDWork* func_800FC1C8_DeepSeaDivers(omObjData*);
 u16 func_800FC1F4_DeepSeaDivers(void);
-void func_800FC22C_DeepSeaDivers(f32*, f32*);
-void func_800FC2F8_DeepSeaDivers(f32*, f32*, f32, Vec*, s16, u16, f32*, f32*);
-void func_800FC644_DeepSeaDivers(omObjData*);
+void func_800FC22C_DeepSeaDivers(omObjData*, f32*, f32*, f32*);
+void func_800FC2F8_DeepSeaDivers(f32*, f32*, f32, Vec2f*, s16, u16, f32*, f32*);
+s16 func_800FC644_DeepSeaDivers(f32*, f32*, s16, u16, f32*, f32*);
 f32 func_800FCAE8_DeepSeaDivers(f32, f32);
 s16 func_800FCDC8_DeepSeaDivers(f32, f32, f32, f32);
 void func_800FCF54_DeepSeaDivers(omObjData*, f32, f32);
 s16 func_800FD28C_DeepSeaDivers(omObjData*);
 s16 func_800FD450_DeepSeaDivers(s32);
 void func_800FD494_DeepSeaDivers(void);
-s16 func_800FD680_DeepSeaDivers(s16, f32, f32, f32, u16);
+s16 func_800FD680_DeepSeaDivers(s16, f32, f32, f32, s16);
 void func_800FD870_DeepSeaDivers(s16);
 void func_800FD8C8_DeepSeaDivers(void);
 void func_800FDBA0_DeepSeaDivers(void);
@@ -223,18 +246,26 @@ void func_800FDE04_DeepSeaDivers(s16, f32, Vec*);
 void func_800FDE44_DeepSeaDivers(s16, Vec*, Vec*);
 void func_800FE170_DeepSeaDivers(s16, Vec*, Vec*);
 s16 func_800FE2C0_DeepSeaDivers(s16);
-void func_800FE378_DeepSeaDivers(void);
+void func_800FE378_DeepSeaDivers(Gfx**);
 void func_800FEA00_DeepSeaDivers(omObjData*);
-void func_800FEAC4_DeepSeaDivers(void);
-void func_800FED88_DeepSeaDivers(void);
+void func_800FEAC4_DeepSeaDivers(s16, s16);
+void func_800FED88_DeepSeaDivers(omObjData*, s16);
 void func_800FEF34_DeepSeaDivers(omObjData*);
 void func_800FF6E0_DeepSeaDivers(omObjData*);
-void func_800FF730_DeepSeaDivers(void);
+void func_800FF730_DeepSeaDivers(omObjData*);
 
 /* .data */
 extern s32 D_800FF960_DeepSeaDivers[2];
 extern s16 D_800FF968_DeepSeaDivers[2];
 extern s32 D_800FF96C_DeepSeaDivers[2];
+extern Vec* D_800FFC80_DeepSeaDivers[9]; /* the sea floor's outlines */
+extern s16 D_800FFCA4_DeepSeaDivers[14];
+extern Gfx D_800FFDD0_DeepSeaDivers[];
+extern Gfx D_800FFE10_DeepSeaDivers[];
+extern f32 D_800FF974_DeepSeaDivers[4][2]; /* the diver's tilt (x, y) per quarter turn */
+extern Vec D_800FF994_DeepSeaDivers[6]; /* the hook's offset in each character's hand */
+extern s32 D_800FFE60_DeepSeaDivers[3];
+extern s32 D_800FFE6C_DeepSeaDivers[5];
 
 /* .bss */
 extern s16 D_801003F0_DeepSeaDivers;
@@ -257,7 +288,7 @@ extern DSDWork* D_80100440_DeepSeaDivers[8];
 extern omObjData* D_80100460_DeepSeaDivers;
 extern s16 D_80100464_DeepSeaDivers;
 extern s16 D_80100466_DeepSeaDivers[2];
-extern s16 D_8010046A_DeepSeaDivers[4]; /* players by team: [2t] the diver, [2t + 1] the pumper */
+extern s16 D_8010046A_DeepSeaDivers[4]; /* players by team: [2t] the pumper, [2t + 1] the diver */
 extern DSDRopeEnds D_80100478_DeepSeaDivers[2];
 extern s16 D_801004A8_DeepSeaDivers[2];
 extern s16 D_801004B0_DeepSeaDivers;
@@ -273,11 +304,15 @@ extern f32 D_801004F8_DeepSeaDivers;
 extern Vec D_801004FC_DeepSeaDivers;
 extern DSDFocus D_80100508_DeepSeaDivers[16];
 extern DSDRope D_80100610_DeepSeaDivers[4];
+extern DSDFish D_801006D8_DeepSeaDivers[2];
+extern DSDFish D_80100758_DeepSeaDivers[2][10];
+extern s16 D_80100C50_DeepSeaDivers;
+extern f32 D_80100C54_DeepSeaDivers[2];
 extern f32 D_80100C5C_DeepSeaDivers;
-extern s32 D_80100C60_DeepSeaDivers;
+extern s16 D_80100C60_DeepSeaDivers[2];
 extern f32 D_80100C64_DeepSeaDivers;
 extern f32 D_80100C68_DeepSeaDivers;
-extern s16 D_80100C70_DeepSeaDivers[3]; /* the sprite file; divers and pumpers made so far */
+extern s16 D_80100C70_DeepSeaDivers[3]; /* the sprite file; pumpers and divers made so far */
 extern DSDFx D_80100C80_DeepSeaDivers[64];
 extern DSDTeamObj D_80101780_DeepSeaDivers[2];
 extern s16 D_80101790_DeepSeaDivers[3];
