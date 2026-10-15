@@ -1,6 +1,300 @@
 #include "common.h"
 #include "105EA0.h"
 
+/* .data (0x80102D20..0x80103780) */
+
+Vtx D_80102D20_UnusedMinigame0[24] = {
+    { { { -14, -20, 20 }, 0, { 0, 0 }, { 0xD0, 0x00, 0x75, 0xFF } } },
+    { { { -14, 20, 20 }, 0, { 0, 0 }, { 0xD0, 0x00, 0x75, 0xFF } } },
+    { { { -20, 20, 14 }, 0, { 0, 0 }, { 0x8B, 0x00, 0x30, 0xFF } } },
+    { { { -20, -20, 14 }, 0, { 0, 0 }, { 0x8B, 0x00, 0x30, 0xFF } } },
+    { { { -20, -20, -14 }, 0, { 0, 0 }, { 0x8B, 0x00, 0xD0, 0xFF } } },
+    { { { -20, 20, -14 }, 0, { 0, 0 }, { 0x8B, 0x00, 0xD0, 0xFF } } },
+    { { { 14, -20, 20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x75, 0xFF } } },
+    { { { 14, 20, 20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x75, 0xFF } } },
+    { { { 20, -20, 14 }, 0, { 0, 0 }, { 0x75, 0x00, 0x30, 0xFF } } },
+    { { { 20, 20, 14 }, 0, { 0, 0 }, { 0x75, 0x00, 0x30, 0xFF } } },
+    { { { -20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, -20, -14 }, 0, { 0, 0 }, { 0x75, 0x00, 0xD0, 0xFF } } },
+    { { { 20, 20, -14 }, 0, { 0, 0 }, { 0x75, 0x00, 0xD0, 0xFF } } },
+    { { { -14, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -14, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, -20, -20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x8B, 0xFF } } },
+    { { { 14, 20, -20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x8B, 0xFF } } },
+    { { { -14, 20, -20 }, 0, { 0, 0 }, { 0xD0, 0x00, 0x8B, 0xFF } } },
+    { { { -14, -20, -20 }, 0, { 0, 0 }, { 0xD0, 0x00, 0x8B, 0xFF } } },
+};
+
+Gfx D_80102EA0_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 24, 0),
+    gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
+    gsSP2Triangles(4, 3, 2, 0, 4, 2, 5, 0),
+    gsSP2Triangles(0, 6, 7, 0, 0, 7, 1, 0),
+    gsSP2Triangles(8, 9, 7, 0, 8, 7, 6, 0),
+    gsSP1Triangle(10, 11, 12, 0),
+    gsSP2Triangles(8, 13, 14, 0, 8, 14, 9, 0),
+    gsSP1Triangle(11, 15, 12, 0),
+    gsSP1Triangle(12, 16, 17, 0),
+    gsSP1Triangle(12, 18, 10, 0),
+    gsSP1Triangle(17, 19, 12, 0),
+    gsSP1Triangle(12, 15, 16, 0),
+    gsSP2Triangles(20, 21, 14, 0, 20, 14, 13, 0),
+    gsSP2Triangles(22, 23, 4, 0, 22, 4, 5, 0),
+    gsSP2Triangles(20, 23, 22, 0, 20, 22, 21, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx D_80102F20_UnusedMinigame0[] = {
+    gsSPDisplayList(D_80102EA0_UnusedMinigame0),
+    gsSPEndDisplayList(),
+};
+
+Vtx D_80102F30_UnusedMinigame0[20] = {
+    { { { 14, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, -20, 14 }, 0, { 0, 0 }, { 0x75, 0x00, 0x30, 0xFF } } },
+    { { { 20, 20, 14 }, 0, { 0, 0 }, { 0x75, 0x00, 0x30, 0xFF } } },
+    { { { 14, 20, 20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x75, 0xFF } } },
+    { { { 14, -20, 20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x75, 0xFF } } },
+    { { { 20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, -20, -14 }, 0, { 0, 0 }, { 0x75, 0x00, 0xD0, 0xFF } } },
+    { { { 20, 20, -14 }, 0, { 0, 0 }, { 0x75, 0x00, 0xD0, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, -20, -20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x8B, 0xFF } } },
+    { { { 14, 20, -20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x8B, 0xFF } } },
+    { { { -20, -20, 20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x7F, 0xFF } } },
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x7F, 0xFF } } },
+    { { { -20, -20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+};
+
+Gfx D_80103070_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 20, 0),
+    gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
+    gsSP2Triangles(4, 5, 6, 0, 4, 6, 7, 0),
+    gsSP1Triangle(2, 8, 0, 0),
+    gsSP2Triangles(9, 3, 0, 0, 10, 9, 0, 0),
+    gsSP2Triangles(4, 11, 12, 0, 4, 12, 5, 0),
+    gsSP1Triangle(0, 13, 10, 0),
+    gsSP2Triangles(14, 15, 12, 0, 14, 12, 11, 0),
+    gsSP2Triangles(16, 7, 6, 0, 16, 6, 17, 0),
+    gsSP2Triangles(14, 18, 19, 0, 14, 19, 15, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx D_801030C8_UnusedMinigame0[] = {
+    gsSPDisplayList(D_80103070_UnusedMinigame0),
+    gsSPEndDisplayList(),
+};
+
+Vtx D_801030D8_UnusedMinigame0[16] = {
+    { { { 14, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 14, -20, -20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x8B, 0xFF } } },
+    { { { 14, 20, -20 }, 0, { 0, 0 }, { 0x30, 0x00, 0x8B, 0xFF } } },
+    { { { 20, 20, -14 }, 0, { 0, 0 }, { 0x75, 0x00, 0xD0, 0xFF } } },
+    { { { 20, -20, -14 }, 0, { 0, 0 }, { 0x75, 0x00, 0xD0, 0xFF } } },
+    { { { -20, -20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { 20, -20, 20 }, 0, { 0, 0 }, { 0x7F, 0x00, 0x00, 0xFF } } },
+    { { { 20, 20, 20 }, 0, { 0, 0 }, { 0x7F, 0x00, 0x00, 0xFF } } },
+};
+
+Gfx D_801031D8_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 16, 0),
+    gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
+    gsSP2Triangles(4, 3, 0, 0, 5, 4, 0, 0),
+    gsSP1Triangle(2, 6, 0, 0),
+    gsSP1Triangle(0, 7, 5, 0),
+    gsSP2Triangles(8, 9, 10, 0, 8, 10, 11, 0),
+    gsSP2Triangles(8, 12, 13, 0, 8, 13, 9, 0),
+    gsSP2Triangles(14, 11, 10, 0, 14, 10, 15, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx D_80103220_UnusedMinigame0[] = {
+    gsSPDisplayList(D_801031D8_UnusedMinigame0),
+    gsSPEndDisplayList(),
+};
+
+Vtx D_80103230_UnusedMinigame0[14] = {
+    { { { -20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, -20, 20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x7F, 0xFF } } },
+    { { { 20, -20, 20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x7F, 0xFF } } },
+    { { { 20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x7F, 0xFF } } },
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x7F, 0xFF } } },
+    { { { 20, -20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { -20, -20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { 20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+};
+
+Gfx D_80103310_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 14, 0),
+    gsSP1Triangle(0, 1, 2, 0),
+    gsSP1Triangle(3, 0, 2, 0),
+    gsSP1Triangle(2, 4, 3, 0),
+    gsSP1Triangle(2, 1, 5, 0),
+    gsSP2Triangles(6, 7, 8, 0, 6, 8, 9, 0),
+    gsSP2Triangles(10, 11, 12, 0, 10, 12, 13, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx D_80103350_UnusedMinigame0[] = {
+    gsSPDisplayList(D_80103310_UnusedMinigame0),
+    gsSPEndDisplayList(),
+};
+
+Vtx D_80103360_UnusedMinigame0[10] = {
+    { { { -20, 20, -14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 14 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, -20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { -20, -20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+    { { { 20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x00, 0x81, 0xFF } } },
+};
+
+Gfx D_80103400_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 10, 0),
+    gsSP2Triangles(0, 1, 2, 0, 2, 3, 0, 0),
+    gsSP2Triangles(1, 4, 2, 0, 2, 4, 5, 0),
+    gsSP2Triangles(6, 7, 8, 0, 6, 8, 9, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx D_80103428_UnusedMinigame0[] = {
+    gsSPDisplayList(D_80103400_UnusedMinigame0),
+    gsSPEndDisplayList(),
+};
+
+Vtx D_80103438_UnusedMinigame0[4] = {
+    { { { -20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { 20, 20, 20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+    { { { -20, 20, -20 }, 0, { 0, 0 }, { 0x00, 0x7F, 0x00, 0xFF } } },
+};
+
+Gfx D_80103478_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 4, 0),
+    gsSP1Triangle(0, 1, 2, 0),
+    gsSP1Triangle(0, 1, 3, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx D_80103498_UnusedMinigame0[] = {
+    gsSPDisplayList(D_80103478_UnusedMinigame0),
+    gsSPEndDisplayList(),
+};
+
+Vtx D_801034A8_UnusedMinigame0[17] = {
+    { { { 0, 1, -20 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -14, 1, -20 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -17, 1, -17 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -20, 1, -14 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -20, 1, 0 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -20, 1, 14 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -17, 1, 17 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { -14, 1, 20 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 0, 1, 20 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 14, 1, 20 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 17, 1, 17 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 20, 1, 14 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 20, 1, 0 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 20, 1, -14 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 17, 1, -17 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 14, 1, -20 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+    { { { 0, 5, 0 }, 0, { 0, 0 }, { 0x00, 0x40, 0x00, 0xFF } } },
+};
+
+Gfx D_801035B8_UnusedMinigame0[] = {
+    gsSPVertex(0x0F000000, 17, 0),
+    gsSP2Triangles(0, 1, 16, 0, 1, 2, 16, 0),
+    gsSP2Triangles(2, 3, 16, 0, 3, 4, 16, 0),
+    gsSP2Triangles(4, 5, 16, 0, 5, 6, 16, 0),
+    gsSP2Triangles(6, 7, 16, 0, 7, 8, 16, 0),
+    gsSP2Triangles(8, 9, 16, 0, 9, 10, 16, 0),
+    gsSP2Triangles(10, 11, 16, 0, 11, 12, 16, 0),
+    gsSP2Triangles(12, 13, 16, 0, 13, 14, 16, 0),
+    gsSP2Triangles(14, 15, 16, 0, 15, 0, 16, 0),
+    gsSPEndDisplayList(),
+};
+
+/* (shape, rot) per same-colour neighbour mask; entries 7..15 are splat's D_80103640. */
+UM0ShapeRot D_80103608_UnusedMinigame0[16] = {
+    { 0, 0 },
+    { 1, 0 },
+    { 1, 1 },
+    { 2, 0 },
+    { 1, 2 },
+    { 3, 0 },
+    { 2, 1 },
+    { 4, 0 },
+    { 1, 3 },
+    { 2, 3 },
+    { 3, 1 },
+    { 4, 3 },
+    { 2, 2 },
+    { 4, 2 },
+    { 4, 1 },
+    { 5, 0 },
+};
+
+s32 D_80103688_UnusedMinigame0[6] = { 24, 20, 16, 14, 10, 4 };
+
+/* random seeds; D_80103640[3..5] in the original indexing */
+u32 D_801036A0_UnusedMinigame0[3][8] = {
+    { 0x41C64E6D, 0x45651696, 0xAF63BE8C, 0x3008C321, 0x0DE13587, 0xDAEB6AAC, 0x4CD63358, 0x7F9DFF74 },
+    { 0xBE50FA40, 0x2E70BBC0, 0x5DA877A1, 0xF1F3C5CD, 0x81F204CD, 0xC8482322, 0x7542D60B, 0x30FAC1EE },
+    { 0x9CB973E6, 0x021D0B74, 0x8C093124, 0xB7EADCAA, 0x8F213E84, 0x18A2628A, 0xEE21BB86, 0xDF297FA7 },
+};
+
+s32 D_80103700_UnusedMinigame0 = 0;
+s32 D_80103704_UnusedMinigame0 = 0;
+u32 D_80103708_UnusedMinigame0 = 0x41C64E6D;
+s16 D_8010370C_UnusedMinigame0[4][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+s16 D_8010371C_UnusedMinigame0[4][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+UM0LinkBit D_8010372C_UnusedMinigame0[4] = { { 0, 1 }, { 0, 4 }, { 0, 8 }, { 0, 2 } };
+s16 D_80103734_UnusedMinigame0 = 0;
+s32 D_80103738_UnusedMinigame0 = 1;
+s32 D_8010373C_UnusedMinigame0 = 0;
+s16 D_80103740_UnusedMinigame0 = 0;
+/* unreferenced halfwords up to D_80103748 */
+s16 D_80103742_UnusedMinigame0 = 0;
+s16 D_80103744_UnusedMinigame0 = 0;
+s16 D_80103746_UnusedMinigame0 = 0;
+s32 D_80103748_UnusedMinigame0 = 0;
+s32 D_8010374C_UnusedMinigame0 = 0;
+s32 D_80103750_UnusedMinigame0 = -1;
+f32 D_80103754_UnusedMinigame0 = 1.6f;
+s16 D_80103758_UnusedMinigame0[4][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+/* the last two rows are zero padding up to the unit's .rodata */
+s16 D_80103768_UnusedMinigame0[6][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { 0, 0 }, { 0, 0 } };
+
+
 void func_800FCF10_UnusedMinigame0(s16 arg0) {
     D_80103700_UnusedMinigame0 = 0;
     func_800FD5E0_UnusedMinigame0();
@@ -28,7 +322,7 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
 
     col = 0;
     row = 0;
-    D_80103708_UnusedMinigame0 = D_80103640_UnusedMinigame0[arg0][rand8() & 7];
+    D_80103708_UnusedMinigame0 = UM0_SEED_ROW(arg0)[rand8() & 7];
     for (j = 0; j < 6; j++) {
         for (i = 0; i < 8; i++) {
             D_80108B88_UnusedMinigame0[i][j] = NULL;
