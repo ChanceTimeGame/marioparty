@@ -16,6 +16,9 @@ TDWork* func_800FA4A8_TreasureDivers(omObjData* obj) {
 
     D_800FED40_TreasureDivers[D_800FF180_TreasureDivers] = w;
 #ifdef TARGET_PC
+    /* Retail leaves unk4/unk6 unset until first use (ovl_30 read them early: host heap garbage
+       pushed a diver off-screen); the host starts every work zeroed. */
+    func_8009B770(w, 0, sizeof(TDWork));
     /* The host keeps the table index in work[]: a pointer does not fit in four bytes. */
     obj->work[0] = 0;
     obj->work[1] = 0;
