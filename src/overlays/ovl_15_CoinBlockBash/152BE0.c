@@ -1069,14 +1069,137 @@ void func_800F9FE4_CoinBlockBash(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F9FE4_CoinBlockBash);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FA388_CoinBlockBash);
+s32 func_800FA388_CoinBlockBash(CBBPlayer* self, Vec* pos, Vec* rot, Vec* off, f32 r) {
+    Vec hit;
+    Vec p;
+    Vec q;
+    Matrix4f m;
+    CBBPlayer* pl;
+    omObjData* o;
+    s32 res;
+    s32 i;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FA600_CoinBlockBash);
+    res = 0;
+    if (self->unk_44 != 0) {
+        return 0;
+    }
+    func_800A2A50(m);
+    MtxTranslate(m, pos->x, pos->y, pos->z);
+    MtxRotate(m, rot->x, rot->y, rot->z);
+    func_800FDD50_CoinBlockBash(m, off->x, off->y, off->z, &hit);
+    pl = D_801025B0_CoinBlockBash;
+    for (i = 0; i < D_801031FC_CoinBlockBash; i++, pl++) {
+        if (pl == self || pl->unk_44 != 0) {
+            continue;
+        }
+        o = pl->obj;
+        if (sqrtf((o->trans.x - hit.x) * (o->trans.x - hit.x) +
+                  (o->trans.y + pl->unk_04 - hit.y) * (o->trans.y + pl->unk_04 - hit.y) +
+                  (o->trans.z - hit.z) * (o->trans.z - hit.z)) <= r + pl->unk_04) {
+            pl->state = 9;
+            a = func_800FDEA0_CoinBlockBash(pos->z - o->trans.z, pos->x - o->trans.x);
+            if (a >= 360.0) {
+                a -= 360.0;
+            }
+            o->rot.y = a;
+            pl->unk_7C = a;
+            pl->unk_2C = a;
+            p.x = o->trans.x;
+            p.y = o->trans.y + pl->unk_04;
+            p.z = o->trans.z;
+            q.x = q.z = 0.0f;
+            q.y = o->rot.y;
+            func_80017C0C(o, 5, hit.x, hit.y, hit.z, 0.0f, rot->y + 180.0f);
+            pl->unk_50 = 0;
+            res = 1;
+        }
+    }
+    return res;
+}
+s16 func_800FA600_CoinBlockBash(f32 x, f32 z, f32* best) {
+    CBBCoin* c;
+    s32 i;
+    s16 res;
+    f32 dx;
+    f32 dz;
+    f32 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FA7AC_CoinBlockBash);
+    res = -1;
+    *best = 10000.0f;
+    c = D_80103294_CoinBlockBash;
+    for (i = 0; i < 9; i++, c++) {
+        if (c->unk_10 != 0) {
+            dx = c->pos.x - x;
+            dz = c->pos.z - z;
+            d = sqrtf(dx * dx + dz * dz);
+            if (*best > d * (((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 60 / 65536 - 30) * 0.01 + 1.0) &&
+                D_8010320E_CoinBlockBash[i] == 0) {
+                *best = d;
+                res = i;
+            }
+        }
+    }
+    return res;
+}
+s16 func_800FA7AC_CoinBlockBash(f32 x, f32 z, f32* best) {
+    CBBDrop* d;
+    s32 i;
+    s16 res;
+    f32 dx;
+    f32 dz;
+    f32 dist;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FA944_CoinBlockBash);
+    res = -1;
+    *best = 10000.0f;
+    d = D_80103290_CoinBlockBash;
+    for (i = 0; i < 9; i++, d++) {
+        if (d->active != 0) {
+            dx = d->pos.x - x;
+            dz = d->pos.z - z;
+            dist = sqrtf(dx * dx + dz * dz);
+            if (*best > dist * (((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 60 / 65536 - 30) * 0.01 + 1.0)) {
+                *best = dist;
+                res = i;
+            }
+        }
+    }
+    return res;
+}
+s16 func_800FA944_CoinBlockBash(CBBPlayer* self, f32* best) {
+    omObjData* o;
+    CBBPlayer* p;
+    s32 i;
+    s16 res;
+    f32 x;
+    f32 z;
+    f32 dx;
+    f32 dz;
+    f32 d;
 
+    o = self->obj;
+    x = o->trans.x;
+    z = o->trans.z;
+    res = -1;
+    *best = 10000.0f;
+    p = D_801025B0_CoinBlockBash;
+    for (i = 0; i < D_801031FC_CoinBlockBash; i++, p++) {
+        if (p != self && !(p->flags & 0x10) && p->unk_44 == 0) {
+            o = p->obj;
+            dx = o->trans.x - x;
+            dz = o->trans.z - z;
+            d = sqrtf(dx * dx + dz * dz);
+            if (d < *best) {
+                *best = d;
+                res = i;
+            }
+        }
+    }
+    return res;
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FAA7C_CoinBlockBash);
 
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80101FF0_CoinBlockBash);
