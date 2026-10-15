@@ -1465,7 +1465,8 @@ segments:
     subsegments:
       - [0x222320, c]
       - [0x225DF0, c]
-      - [0x22BF30, data, 222320]
+      - [0x22BF30, .data, 222320]
+      - [0x22BFA0, .data, 225DF0]
       - [0x22C150, .rodata, 222320]
       - [0x22C480, .rodata, 225DF0]
       - {0x22C9E0, type: bss, vram: 0x80100CA0, name: ovl_31_bss}
