@@ -113,15 +113,25 @@ typedef struct CBBPlayer {
     /* 0x5E */ s16 unk_5E;
     /* 0x60 */ char unk_60[2];
     /* 0x62 */ s16 unk_62;
-    /* 0x64 */ char unk_64[2];
+    /* 0x64 */ s16 unk_64;
     /* 0x66 */ s16 unk_66;
     /* 0x68 */ char unk_68[2];
     /* 0x6A */ s16 mtxCount[2];
     /* 0x6E */ char unk_6E[2];
     /* 0x70 */ Matrix4f* mtx[2];
     /* 0x78 */ omObjData* obj;
-    /* 0x7C */ f32 unk_7C;
-    /* 0x80 */ char unk_80[0x30];
+    /* 0x7C */ f32 unk_7C; /* stick direction */
+    /* 0x80 */ f32 unk_80; /* stick strength */
+    /* 0x84 */ s16 unk_84; /* A pressed */
+    /* 0x86 */ s16 unk_86; /* Z/B pressed */
+    /* 0x88 */ s16 unk_88; /* B pressed */
+    /* 0x8A */ char unk_8A[2];
+    /* 0x8C */ Vec unk_8C; /* CPU target */
+    /* 0x98 */ s16 unk_98; /* CPU goal: 1 block, 2 coin, 3 hammer */
+    /* 0x9A */ s16 unk_9A;
+    /* 0x9C */ s16 unk_9C; /* CPU target index */
+    /* 0x9E */ s16 unk_9E;
+    /* 0xA0 */ char unk_A0[0x10];
 } CBBPlayer; /* size = 0xB0 (N64) */
 
 /* A player's work (obj->unk_50, func_80023684(0x828)): MgWork's layout (src/99E0.c) at the
@@ -140,7 +150,8 @@ typedef struct CBBPlayerWork {
     /* 0xDC */ void* unk_DC;
     /* 0xE0 */ char unk_E0[4];
     /* 0xE4 */ void* unk_E4;
-} CBBPlayerWork;
+    /* 0xE8 */ char unk_E8[0x740];
+} CBBPlayerWork; /* size = 0x828 (N64) */
 
 /* The hammer/block state (D_80102538, one 0x74 object: memset whole; splat's D_8010253A..
    D_8010256C are its fields). */
@@ -181,6 +192,10 @@ void func_80017C0C(omObjData*, u8, f32, f32, f32, f32, f32);
 void MtxRotate(Matrix4f, f32, f32, f32);
 void func_80060F04(s16, s16, s16, s16);
 s16 MtxInv(Matrix4f, Matrix4f);
+int abs(int);
+extern s8 ContStkY[];
+void func_8002859C(s16 arg0, s16 arg1, char* arg2);
+void func_80028498(s16, s16, s16);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay
@@ -242,7 +257,11 @@ extern s16 D_801031D0_CoinBlockBash[8];
 extern s16 D_801031E0_CoinBlockBash;
 extern s16 D_801031E2_CoinBlockBash;
 extern s16 D_801031E4_CoinBlockBash;
+extern s16 D_801031E8_CoinBlockBash[9];
 extern s32 D_801031FC_CoinBlockBash;
+extern s16 D_80103200_CoinBlockBash[4];
+extern s32 D_80103208_CoinBlockBash;
+extern s16 D_8010320C_CoinBlockBash;
 extern CBBDrop* D_80103290_CoinBlockBash;
 extern CBBCoin* D_80103294_CoinBlockBash;
 extern u8 D_8010320E_CoinBlockBash[];
@@ -275,10 +294,12 @@ void func_800F9A98_CoinBlockBash(void);
 s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out);
 void func_800F9FE4_CoinBlockBash(void);
 s32 func_800FA388_CoinBlockBash(CBBPlayer* self, Vec* pos, Vec* rot, Vec* off, f32 r);
-s16 func_800FA600_CoinBlockBash(f32 x, f32 z, f32* best);
-s16 func_800FA7AC_CoinBlockBash(f32 x, f32 z, f32* best);
+s32 func_800FA600_CoinBlockBash(f32 x, f32 z, f32* best);
+s32 func_800FA7AC_CoinBlockBash(f32 x, f32 z, f32* best);
 s16 func_800FA944_CoinBlockBash(CBBPlayer* self, f32* best);
 void func_800FAA7C_CoinBlockBash(void);
+void func_800FB4F4_CoinBlockBash(omObjData* obj);
+void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p);
 void func_800FACEC_CoinBlockBash(omObjData* obj);
 void func_800FB490_CoinBlockBash(void);
 void func_800FBF70_CoinBlockBash(omObjData* obj);

@@ -35,6 +35,8 @@ void func_800F66F8_CoinBlockBash(omObjData* obj) {
 }
 
 
+// NON_MATCHING: register allocation: wait in a1 vs v1 (masked 0)
+#ifdef NON_MATCHING
 void func_800F6770_CoinBlockBash(omObjData* obj) {
     s32 i;
     s32 mask;
@@ -142,6 +144,9 @@ void func_800F6770_CoinBlockBash(omObjData* obj) {
         omOvlReturnEx(1);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F6770_CoinBlockBash);
+#endif
 void func_800F6C20_CoinBlockBash(omObjData* obj) {
     if (func_80072718() == 0) {
         func_800F6C54_CoinBlockBash();
@@ -674,6 +679,8 @@ void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F81E0_CoinBlockBash);
 #endif
+// NON_MATCHING: and-operand order of the clamp (masked 0)
+#ifdef NON_MATCHING
 void func_800F8CD0_CoinBlockBash(void) {
     s16* blk = (s16*)&D_80102538_CoinBlockBash;
     s32 i;
@@ -690,6 +697,9 @@ void func_800F8CD0_CoinBlockBash(void) {
     func_800FBF70_CoinBlockBash(D_801025B0_CoinBlockBash[i].obj);
     func_800F7048_CoinBlockBash(D_801025B0_CoinBlockBash[i].obj);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F8CD0_CoinBlockBash);
+#endif
 // NON_MATCHING: float register allocation only (masked 0)
 #ifdef NON_MATCHING
 void func_800F8D98_CoinBlockBash(void) {
@@ -1120,7 +1130,7 @@ s32 func_800FA388_CoinBlockBash(CBBPlayer* self, Vec* pos, Vec* rot, Vec* off, f
     }
     return res;
 }
-s16 func_800FA600_CoinBlockBash(f32 x, f32 z, f32* best) {
+s32 func_800FA600_CoinBlockBash(f32 x, f32 z, f32* best) {
     CBBCoin* c;
     s32 i;
     s16 res;
@@ -1145,7 +1155,7 @@ s16 func_800FA600_CoinBlockBash(f32 x, f32 z, f32* best) {
     }
     return res;
 }
-s16 func_800FA7AC_CoinBlockBash(f32 x, f32 z, f32* best) {
+s32 func_800FA7AC_CoinBlockBash(f32 x, f32 z, f32* best) {
     CBBDrop* d;
     s32 i;
     s16 res;
@@ -1200,28 +1210,237 @@ s16 func_800FA944_CoinBlockBash(CBBPlayer* self, f32* best) {
     }
     return res;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FAA7C_CoinBlockBash);
+void func_800FAA7C_CoinBlockBash(void) {
+    CBBPlayer* p;
+    s32 i;
+    s32 j;
+    s32 t;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80101FF0_CoinBlockBash);
+    p = D_801025B0_CoinBlockBash;
+    for (i = 0; i < 4; i++, p++) {
+        func_8009B770(p, 0, sizeof(CBBPlayer));
+        p->unk_58 = -1;
+        p->unk_66 = -1;
+        D_80103200_CoinBlockBash[i] = i;
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (i == j) {
+                continue;
+            }
+            if ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536 > 40) {
+                t = D_80103200_CoinBlockBash[i];
+                D_80103200_CoinBlockBash[i] = D_80103200_CoinBlockBash[j];
+                D_80103200_CoinBlockBash[j] = t;
+            }
+        }
+    }
+    D_8010320C_CoinBlockBash = -1;
+    for (i = 0; i < 9; i++) {
+        D_801031E8_CoinBlockBash[i] = -1;
+    }
+    D_801031FC_CoinBlockBash = 0;
+    D_800F3FB0[D_800F2BC0++] = omAddObj(4, 9, 0x15, -1, func_800FACEC_CoinBlockBash);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(5, 9, 0x15, -1, func_800FACEC_CoinBlockBash);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(6, 9, 0x15, -1, func_800FACEC_CoinBlockBash);
+    D_800F3FB0[D_800F2BC0++] = omAddObj(7, 9, 0x15, -1, func_800FACEC_CoinBlockBash);
+}
+void func_800FACEC_CoinBlockBash(omObjData* obj) {
+    f32 start[4][2] = { { 4.0f, 4.0f }, { -4.0f, 4.0f }, { -4.0f, -4.0f }, { 4.0f, -4.0f } };
+    CBBQuad rot = D_80101D18_CoinBlockBash;
+    s32 motA[5] = { 0xF, 0x38, 0x39, 0x3A, 0x3B };
+    s32 motB[5] = { 0x10, 0x3C, 0x3D, 0x3E, 0x3F };
+    CBBPlayerWork* w;
+    CBBPlayer* p;
+    s32 dir;
+    s32 i;
+    s32 r;
+    s16 id;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80102010_CoinBlockBash);
+    id = D_801031FC_CoinBlockBash++;
+    D_80103208_CoinBlockBash = D_801031FC_CoinBlockBash;
+    dir = D_800C59AC[GwPlayer[id].character].unk_00;
+    if (GwPlayer[id].group == 0 && D_801025AC_CoinBlockBash < 0) {
+        D_801025AC_CoinBlockBash = id;
+    }
+    obj->unk_50 = func_80023684(sizeof(CBBPlayerWork), 0x7918);
+    func_8009B770(obj->unk_50, 0, sizeof(CBBPlayerWork));
+    w = obj->unk_50;
+    w->unk_D8 = func_80023684(obj->mtncnt * sizeof(unkGlobalStruct_00), 0x7918);
+    func_8009B770(w->unk_D8, 0, obj->mtncnt * sizeof(unkGlobalStruct_00));
+    w->unk_56 = GwPlayer[id].port;
+    w->unk_C0 = 0xFFFF;
+    for (i = 0; i < obj->mtncnt; i++) {
+        obj->motion[i] = -1;
+    }
+    for (i = 0; i < obj->mdlcnt; i++) {
+        obj->model[i] = 0;
+    }
+    if (D_801025AC_CoinBlockBash == id) {
+        obj->model[0] = LoadFormFile(dir | D_800C59AC[GwPlayer[id].character].unk_08, 0x2B9);
+    } else {
+        obj->model[0] = LoadFormFile(dir | D_800C59AC[GwPlayer[id].character].unk_04, 0x2B9);
+    }
+    obj->func_ptr = func_800FC2AC_CoinBlockBash;
+    obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    if (D_801031E8_CoinBlockBash[1] < 0) {
+        obj->model[1] = D_801031E8_CoinBlockBash[1] = func_800174F4(6, 0x699);
+        obj->model[3] = D_801031E8_CoinBlockBash[3] = LoadFormFile(0x19, 0x68D);
+        obj->model[4] = D_801031E8_CoinBlockBash[4] = LoadFormFile(0x1A, 0x68D);
+        obj->model[5] = D_801031E8_CoinBlockBash[5] = LoadFormFile(0x1C, 0x68D);
+    } else {
+        obj->model[1] = func_80023FC8(D_801031E8_CoinBlockBash[1]);
+        obj->model[3] = func_80023FC8(D_801031E8_CoinBlockBash[3]);
+        obj->model[4] = func_80023FC8(D_801031E8_CoinBlockBash[4]);
+        obj->model[5] = func_80023FC8(D_801031E8_CoinBlockBash[5]);
+    }
+    func_8001874C(obj, 0, dir, 1, 0);
+    func_8001874C(obj, 1, dir | 1, 1, 0);
+    func_8001874C(obj, 3, dir | 3, 1, 0);
+    func_8001874C(obj, 4, dir | 4, 1, 30);
+    func_8001874C(obj, 5, dir | 5, 1, 20);
+    func_8001874C(obj, 8, dir | 0xA, 1, 40);
+    func_8001874C(obj, 9, dir | 0x2F, 1, 0);
+    func_8001874C(obj, 0xC, dir | 0x18, 1, 15);
+    func_8001874C(obj, 0xD, dir | 0x67, 1, 14);
+    func_8001874C(obj, 0x10, dir | 0x1C, 1, 45);
+    func_8001874C(obj, 0x11, dir | 0x62, 1, 10);
+    func_8001874C(obj, 0x12, dir | 0x41, 1, 80);
+    func_8001874C(obj, 0x13, dir | 0x44, 1, 60);
+    func_8001874C(obj, 0x14, dir | 0x45, 1, 45);
+    r = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) / 32768;
+    r = r < 2 ? r : 0;
+    func_8001874C(obj, 0xA, dir | motA[r], 1, 120);
+    func_8001874C(obj, 0xB, dir | motB[r], 1, 120);
+    obj->work[0] = id;
+    p = &D_801025B0_CoinBlockBash[id];
+    p->obj = obj;
+    p->flags = 0xD;
+    p->state = 0;
+    obj->trans.x = p->pos.x = start[D_80103200_CoinBlockBash[id]][0] * 100.0;
+    obj->trans.y = p->pos.y = 0.0f;
+    obj->trans.z = p->pos.z = start[D_80103200_CoinBlockBash[id]][1] * 100.0;
+    i = 1;
+    if (!(obj->trans.x > 0.0)) {
+        i = 0;
+    }
+    if (obj->trans.z > 0.0) {
+        i |= 2;
+    }
+    p->unk_2C = p->unk_7C = obj->rot.y = rot.v[i];
+    p->unk_56 = 8;
+    p->unk_04 = 50.0f;
+    p->unk_38 = -4.628099f;
+    D_800B8980 = 12.5f;
+    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800F7680_CoinBlockBash(obj, 0x13, "item_hook");
+    func_800F7680_CoinBlockBash(obj, 0x14, "item_hook");
+}
+void func_800FB490_CoinBlockBash(void) {
+    CBBPlayer* p;
+    s32 i;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80102024_CoinBlockBash);
+    p = D_801025B0_CoinBlockBash;
+    for (i = 0; i < 4; i++, p++) {
+        if (p->mtx[0] != NULL) {
+            func_80023728(p->mtx[0]);
+        }
+        if (p->mtx[1] != NULL) {
+            func_80023728(p->mtx[1]);
+        }
+    }
+}
+// NON_MATCHING: pending
+#ifdef NON_MATCHING
+void func_800FB4F4_CoinBlockBash(omObjData* obj) {
+    CBBPlayer* p;
+    s16 port;
+    f32 x;
+    f32 y;
+    f32 a;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80102038_CoinBlockBash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FACEC_CoinBlockBash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB490_CoinBlockBash);
-
+    p = func_800F7644_CoinBlockBash(obj);
+    port = func_800F7674_CoinBlockBash(obj);
+    x = ContStkX[port];
+    y = ContStkY[port];
+    if (abs((s32)x) >= 5 || abs((s32)y) >= 5) {
+        a = func_800FDEA0_CoinBlockBash(x, y) + 90.0 + 29.0;
+        p->unk_7C = a;
+        if (a >= 360.0) {
+            p->unk_7C = a - 360.0;
+        }
+    }
+    p->unk_80 = sqrtf(x * x + y * y) / 64.0;
+    if (p->unk_80 < 0.2) {
+        p->unk_80 = 0.0f;
+    } else if (p->unk_80 > 1.0) {
+        p->unk_80 = 1.0f;
+    }
+    if (ContBtnTrg[port] & 0x8000) {
+        p->unk_84 = 1;
+    }
+    if (ContBtnTrg[port] & 0x2010) {
+        p->unk_86 = 1;
+    }
+    if (ContBtnTrg[port] & 0x4000) {
+        p->unk_88 = 1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB4F4_CoinBlockBash);
+#endif
+void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
+    f32 dDrop;
+    f32 dCoin;
+    s32 iDrop;
+    s32 iCoin;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB71C_CoinBlockBash);
-
+    if (D_8010253C_CoinBlockBash < 0 && (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536 < 30) {
+        p->unk_9A = 0;
+        p->unk_98 = 3;
+        return;
+    }
+    iDrop = (s16)func_800FA7AC_CoinBlockBash(obj->trans.x, obj->trans.z, &dDrop);
+    iCoin = (s16)func_800FA600_CoinBlockBash(obj->trans.x, obj->trans.z, &dCoin);
+    if (dDrop < 400.0 || dDrop * 0.7 <= dCoin) {
+        if (iDrop >= 0) {
+            p->unk_9C = iDrop;
+            p->unk_9A = 0;
+            p->unk_98 = 2;
+            p->unk_8C.x = D_80103290_CoinBlockBash[iDrop].pos.x;
+            p->unk_8C.y = D_80103290_CoinBlockBash[iDrop].pos.y;
+            p->unk_8C.z = D_80103290_CoinBlockBash[iDrop].pos.z;
+        }
+    } else if (iCoin >= 0) {
+        p->unk_9C = iCoin;
+        p->unk_9A = 0;
+        p->unk_98 = 1;
+        p->unk_8C.x = D_80103294_CoinBlockBash[iCoin].pos.x;
+        p->unk_8C.y = D_80103294_CoinBlockBash[iCoin].pos.y;
+        p->unk_8C.z = D_80103294_CoinBlockBash[iCoin].pos.z;
+        p->unk_9E = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 3 / 65536;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB900_CoinBlockBash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FBF70_CoinBlockBash);
+void func_800FBF70_CoinBlockBash(omObjData* obj) {
+    CBBPlayer* p;
 
+    p = func_800F7644_CoinBlockBash(obj);
+    func_80028498(obj->model[0], D_800F2B7C[obj->motion[0x12]].unk_08, 1);
+    p->unk_58 = 1;
+    p->unk_64 = 1;
+    D_80102538_CoinBlockBash.unk_04 = obj->work[0];
+    D_80102538_CoinBlockBash.unk_08 = D_80102538_CoinBlockBash.unk_0A = D_80102538_CoinBlockBash.unk_0C =
+        D_80102538_CoinBlockBash.unk_0D = 0;
+    func_800258EC(D_80102538_CoinBlockBash.model, 0x4000, 0x4000);
+    func_8002859C(D_80102538_CoinBlockBash.model, obj->model[0], "item_hook");
+    func_800F77BC_CoinBlockBash(obj, 0);
+    if (D_801024F0_CoinBlockBash.state == 1) {
+        p->unk_44 = 60;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FC054_CoinBlockBash);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FC2AC_CoinBlockBash);
