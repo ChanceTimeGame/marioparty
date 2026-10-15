@@ -1649,6 +1649,7 @@ s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big) {
     return done;
 }
 #else
+const f32 D_80102280_CoinBlockBash[6] __attribute__((section(".rodata"))) = { 1.0f, 1.0f, 1.0f, 0.8f, 0.9f, 0.7f };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FD8CC_CoinBlockBash);
 #endif
 void func_800FDC5C_CoinBlockBash(void) {
