@@ -357,6 +357,8 @@ build/src/overlays/ovl_18_PlatformPeril/16C6A0.c.o: CFLAGS = -G0 -mips3 -mgp32 -
 build/src/overlays/ovl_27_DesertDash/1D6E30.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/A1E00.c.o: OPTFLAGS = -O0
 build/src/95F40.c.o: OPTFLAGS = -O2
+# 9C190.c (KMC libm fmod): nop between the call's div.d delay slot and mul.d (mul fix on)
+build/src/9C190.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # Compile .c files with kmc gcc (use strip to fix objects so that they can be linked with modern gnu ld) 
 $(BUILD_DIR)/src/%.c.o: src/%.c
