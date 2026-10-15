@@ -71,7 +71,7 @@ typedef struct UM1Files {
 } UM1Files;
 
 /* .data */
-extern s16 D_800F9170_UnusedMinigame1;             /* 110F90.c: end request */
+extern u16 D_800F9170_UnusedMinigame1;             /* 110F90.c: end request */
 extern Vec D_800F9180_UnusedMinigame1[4];          /* 111890.c: character positions */
 extern UM1Files D_800F91B0_UnusedMinigame1[5];     /* 111890.c */
 extern f32 D_800F9230_UnusedMinigame1[6];          /* 1127C0.c: model y scale per character */
@@ -84,12 +84,12 @@ extern s32 D_800F92A0_UnusedMinigame1;             /* 113730.c: random seed */
 extern f32 D_800F9410_UnusedMinigame1;
 extern f32 D_800F9414_UnusedMinigame1;
 extern f32 D_800F9418_UnusedMinigame1;
-extern s16 D_800F941C_UnusedMinigame1;
-extern s16 D_800F941E_UnusedMinigame1;
-extern s16 D_800F9420_UnusedMinigame1;
-extern s16 D_800F9422_UnusedMinigame1;
-extern s16 D_800F9424_UnusedMinigame1;
-extern s16 D_800F9426_UnusedMinigame1;
+extern u16 D_800F941C_UnusedMinigame1;
+extern u16 D_800F941E_UnusedMinigame1;
+extern u16 D_800F9420_UnusedMinigame1;
+extern u16 D_800F9422_UnusedMinigame1;
+extern u16 D_800F9424_UnusedMinigame1;
+extern u16 D_800F9426_UnusedMinigame1;
 extern s16 D_800F9430_UnusedMinigame1;
 extern s16 D_800F9432_UnusedMinigame1;
 extern s32 D_800F9434_UnusedMinigame1;
