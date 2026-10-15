@@ -1117,7 +1117,7 @@ void func_800F9AF4_DeepSeaDivers(omObjData* obj) {
 void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
     DSDWork* pw;
-    omObjData* pumper;
+    omObjData* diver;
     unk2C0C0Struct50* anim;
     DSDPlayerWork* plw;
     Matrix4f m;
@@ -1176,16 +1176,16 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
                 s = (f32)(fabs(func_800AEAC0(w->unk5C * 22.5)) * 0.5 + 1.0) * w->unk34;
                 obj->scale.x = obj->scale.y = s;
             }
-            pumper = D_80101780_DeepSeaDivers[w->unk5E].diver;
-            pw = func_800FC1C8_DeepSeaDivers(pumper);
+            diver = D_80101780_DeepSeaDivers[w->unk5E].diver;
+            pw = func_800FC1C8_DeepSeaDivers(diver);
             if (!(pw->unk2 & 1)) {
                 w->unk8 = 0;
                 w->unk5E = -1;
                 pw->unk5E = -1;
             } else {
-                anim = D_800F2B7C[pumper->model[0]].unk_6C->unk_A0;
-                plw = pumper->unk_50;
-                guTranslateF(m, pumper->trans.x, pumper->trans.y, pumper->trans.z);
+                anim = D_800F2B7C[diver->model[0]].unk_6C->unk_A0;
+                plw = diver->unk_50;
+                guTranslateF(m, diver->trans.x, diver->trans.y, diver->trans.z);
                 MtxRotate(m, pw->unk28 + anim->unk_44.x - 90.0, pw->unk2C + anim->unk_44.y, 0.0f);
                 MtxTranslate(m, D_800FF994_DeepSeaDivers[plw->unk_58].x, D_800FF994_DeepSeaDivers[plw->unk_58].y,
                              D_800FF994_DeepSeaDivers[plw->unk_58].z);
@@ -1201,7 +1201,7 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
                     obj->trans.z = -60.0f;
                 }
             }
-            if (pumper->trans.y >= 585.0) {
+            if (diver->trans.y >= 585.0) {
                 w->unk0 &= ~0x80;
                 w->unk8++;
                 pw->unk8 = 0;
@@ -2153,6 +2153,7 @@ s16 func_800FDBEC_DeepSeaDivers(void) {
     s32 j;
     s32 k;
     f32 len;
+    s32 hi;
     s16 i;
 
     for (i = 0; i < 4; i++) {
@@ -2167,7 +2168,8 @@ s16 func_800FDBEC_DeepSeaDivers(void) {
     r->model = func_800FE2C0_DeepSeaDivers(i);
     r->nodes = func_80023668(5 * sizeof(DSDRopeNode));
     r->active = 1;
-    r->unk6 = (s32)func_800FC1F4_DeepSeaDivers() / 2048;
+    hi = rand8();
+    r->unk6 = (s32)(((hi & 0xFF) << 8) | (rand8() & 0xFF)) / 2048;
     r->n = 1;
     r->unk8 = 600.0f;
     r->unk10 = 1.0f;
