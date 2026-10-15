@@ -851,7 +851,7 @@ void func_800FCABC_PiranhasPursuit(PPDrop* d) {
             v[0].v.ob[1] = d->y;
             v[0].v.ob[2] = d->z;
             v[0].v.flag = 0;
-            v[0].v.tc[0] = v[0].v.tc[1] = 0;
+            v[0].v.tc[0] = 0; /* retail leaves tc[1] */
             v[0].v.cn[0] = 0xF0;
             v[0].v.cn[1] = 0xF0;
             v[0].v.cn[2] = 0xFF;
@@ -860,7 +860,7 @@ void func_800FCABC_PiranhasPursuit(PPDrop* d) {
             v[1].v.ob[1] = v[0].v.ob[1] + d->len * 80.0;
             v[1].v.ob[2] = 0;
             v[1].v.flag = 0;
-            v[1].v.tc[0] = v[1].v.tc[1] = 0;
+            v[1].v.tc[0] = 0; /* retail leaves tc[1] */
             v[1].v.cn[0] = 0xB4;
             v[1].v.cn[1] = 0xB4;
             v[1].v.cn[2] = 0xFF;
