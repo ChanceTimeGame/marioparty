@@ -414,6 +414,14 @@ $(BUILD_DIR)/src/overlays/ovl_1D_BobsledRun/188410.c.o: $(BUILD_DIR)/src/%.c.o: 
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 
+# ovl_15 152BE0.c (Coin Block Bash): mul fix on, blank-line strip (mul.s right after a call's return); own rule.
+$(BUILD_DIR)/src/overlays/ovl_15_CoinBlockBash/152BE0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
 # ovl_11 BowlOver units: mul fix on, blank-line strip (mul.s right after a call's return); own rule.
 $(BUILD_DIR)/src/overlays/ovl_11_BowlOver/13EFB0.c.o $(BUILD_DIR)/src/overlays/ovl_11_BowlOver/142EA0.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
