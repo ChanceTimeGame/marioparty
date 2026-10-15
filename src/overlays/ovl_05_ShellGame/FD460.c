@@ -199,8 +199,8 @@ void func_800FD538_ShellGame(omObjData* obj) {
     sh = D_800FF9F8_ShellGame[D_800FEC4A_ShellGame];
     dx = sh->trans.x - obj->trans.x;
     dz = sh->trans.z - obj->trans.z;
-    d = sqrtf(dx * dx + dz * dz);
     a = func_800F7398_ShellGame(dx, dz);
+    d = sqrtf(dx * dx + dz * dz);
     sx = func_800AEAC0(a) * 64.0f;
     sy = -(func_800AEFD0(a) * 64.0f);
     ContStkX[D_800FF794_ShellGame] = sx;

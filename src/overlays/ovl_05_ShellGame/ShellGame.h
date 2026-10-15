@@ -6,6 +6,7 @@
    reached through their fields only (the host strides pointers 8 bytes). */
 
 #include "common.h"
+#include "PR/gu.h"
 #include "sprite65770.h"
 
 /* ---------------------------------------------------------------------------------------------
