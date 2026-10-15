@@ -24,7 +24,7 @@ typedef struct UM1Chara {
     /* 0x1E */ s16 unk1E; /* face texture */
     /* 0x20 */ s16 unk20; /* tear texture */
     /* 0x22 */ char unk22[2];
-    /* 0x24 */ s16 unk24; /* sprite */
+    /* 0x24 */ u16 unk24; /* sprite */
     /* 0x26 */ s16 unk26; /* sprite x */
     /* 0x28 */ s16 unk28; /* sprite y */
     /* 0x2A */ u16 unk2A; /* sprite alpha */
