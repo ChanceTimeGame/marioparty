@@ -58,6 +58,17 @@ typedef struct CBBCoin {
     /* 0x20 */ Vec pos;
 } CBBCoin; /* size = 0x2C */
 
+/* A coin popped out of a block (D_80103290_CoinBlockBash[9], allocated). */
+typedef struct CBBDrop {
+    /* 0x00 */ char unk_00[9];
+    /* 0x09 */ u8 type;   /* D_80101B20_CoinBlockBash row: 0 coin, 1 big coin */
+    /* 0x0A */ s8 active;
+    /* 0x0B */ char unk_0B[0xD];
+    /* 0x18 */ f32 radius;
+    /* 0x1C */ Vec pos;
+    /* 0x28 */ char unk_28[0x1C];
+} CBBDrop; /* size = 0x44 */
+
 /* Facing per quadrant (D_80101D18). */
 typedef struct CBBQuad {
     f32 v[4];
@@ -175,6 +186,7 @@ s16 MtxInv(Matrix4f, Matrix4f);
    Overlay
    --------------------------------------------------------------------------------------------- */
 
+extern u8 D_80101B20_CoinBlockBash[2][2];
 extern CBBFxDef D_80101B24_CoinBlockBash[8];
 extern Vec D_80101BA4_CoinBlockBash[3];
 extern f32 D_80101BC8_CoinBlockBash[3];
@@ -231,6 +243,7 @@ extern s16 D_801031E0_CoinBlockBash;
 extern s16 D_801031E2_CoinBlockBash;
 extern s16 D_801031E4_CoinBlockBash;
 extern s32 D_801031FC_CoinBlockBash;
+extern CBBDrop* D_80103290_CoinBlockBash;
 extern CBBCoin* D_80103294_CoinBlockBash;
 extern u8 D_8010320E_CoinBlockBash[];
 
@@ -259,6 +272,7 @@ void func_800F96A0_CoinBlockBash(omObjData* obj, Matrix4f parent);
 s32 func_800F9814_CoinBlockBash(f32 x, f32 y, f32 z, f32 r);
 void func_800F99A0_CoinBlockBash(void);
 void func_800F9A98_CoinBlockBash(void);
+s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out);
 void func_800F9FE4_CoinBlockBash(void);
 void func_800FAA7C_CoinBlockBash(void);
 void func_800FACEC_CoinBlockBash(omObjData* obj);
@@ -273,7 +287,8 @@ void func_800FE0AC_CoinBlockBash(Vec* n, Vec* e, Vec* c, Vec* rot);
 f32 func_800FE284_CoinBlockBash(Vec* pos);
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out);
 void func_800FE650_CoinBlockBash(void);
-void func_800FF904_CoinBlockBash(omObjData* obj, s32 arg, CBBCoin* c);
+s16 func_800FF904_CoinBlockBash(omObjData* obj, s32 arg, CBBCoin* c);
+void func_800FFD78_CoinBlockBash(CBBDrop* d, omObjData* obj);
 void func_800FEE04_CoinBlockBash(void);
 void func_800FFBA8_CoinBlockBash(void);
 s16 func_800FFD60_CoinBlockBash(void);
