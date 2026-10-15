@@ -104,7 +104,7 @@ typedef struct CBBPlayer {
     /* 0x48 */ s16 unk_48;
     /* 0x4A */ s16 unk_4A;
     /* 0x4C */ s16 unk_4C;
-    /* 0x4E */ char unk_4E[2];
+    /* 0x4E */ s16 unk_4E; /* squash timer */
     /* 0x50 */ s16 unk_50;
     /* 0x52 */ char unk_52[4];
     /* 0x56 */ s16 unk_56;
@@ -307,6 +307,7 @@ void func_800FACEC_CoinBlockBash(omObjData* obj);
 void func_800FB490_CoinBlockBash(void);
 void func_800FBF70_CoinBlockBash(omObjData* obj);
 void func_800FC2AC_CoinBlockBash(omObjData* obj);
+s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big);
 void func_800FDC5C_CoinBlockBash(void);
 void func_800FDCB4_CoinBlockBash(omObjData* obj);
 void func_800FDCF8_CoinBlockBash(omObjData* obj);

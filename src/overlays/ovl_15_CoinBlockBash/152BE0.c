@@ -1587,10 +1587,70 @@ void func_800FC054_CoinBlockBash(omObjData* obj) {
 }
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FC2AC_CoinBlockBash);
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_80102280_CoinBlockBash);
 
+// NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10)
+#ifdef NON_MATCHING
+s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big) {
+    f32 scl[6] = { 1.0f, 1.0f, 1.0f, 0.8f, 0.9f, 0.7f };
+    s32 done;
+    u16 t;
+    u16 a;
+    u16 end;
+    f32 lo;
+    f32 base;
+    f32 k;
+    f32 f;
+
+    done = 0;
+    t = p->unk_4E * 2;
+    if (big == 0) {
+        a = 60;
+        lo = 0.6f;
+        base = scl[GwPlayer[obj->work[0]].character];
+        k = 1.4f;
+        end = 106;
+    } else {
+        a = 120;
+        end = 166;
+        lo = 0.1f;
+        base = scl[GwPlayer[obj->work[0]].character];
+        k = 1.6f;
+    }
+    base *= k;
+    if (t < end) {
+        if (t <= a) {
+            obj->scale.x = obj->scale.z = base;
+            obj->scale.y = lo;
+        } else if (t <= a + 10) {
+            f = t - a;
+            obj->scale.y = f * 0.05f + 0.2;
+            obj->scale.x = obj->scale.z = 1.8 - f * 0.08f;
+        } else if (t <= a + 20) {
+            f = (f32)(t - 10 - a) * 0.05f;
+            obj->scale.y = 0.9 - f;
+            obj->scale.x = obj->scale.z = f + 1.0;
+        } else if (t <= a + 30) {
+            f = t - 20 - a;
+            obj->scale.y = f * 0.05f + 0.7;
+            obj->scale.x = obj->scale.z = 1.4 - f * 0.04f;
+        } else if (t <= a + 38) {
+            f = t - 30 - a;
+            obj->scale.y = 1.3 - f * 0.1f;
+            obj->scale.x = obj->scale.z = f * 0.02f + 1.0;
+        } else {
+            f = t - 38 - a;
+            obj->scale.y = f * 0.1f + 0.3;
+            obj->scale.x = obj->scale.z = 1.1 - f * 0.01f;
+        }
+    } else {
+        obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+        done = 1;
+    }
+    return done;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FD8CC_CoinBlockBash);
-
+#endif
 void func_800FDC5C_CoinBlockBash(void) {
     D_800F2AF8[D_800ED440++] = omAddObj(1, 2, 0, -1, func_800FDCF8_CoinBlockBash);
 }
