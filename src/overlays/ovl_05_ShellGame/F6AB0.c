@@ -1,9 +1,28 @@
 #include "common.h"
 #include "ShellGame.h"
 
-#ifdef NON_MATCHING //TODO: sjis strings
+/* .data (0x800FEC10..0x800FEC40) */
+u32 D_800FEC10_ShellGame = 0x19971204;
+s16 D_800FEC14_ShellGame = 1;
+s16 D_800FEC16_ShellGame = 0;
+s16 D_800FEC18_ShellGame = 0;
+f32 D_800FEC1C_ShellGame = 0.0f;
+s16 D_800FEC20_ShellGame = 0;
+s16 D_800FEC22_ShellGame = 0;
+s16 D_800FEC24_ShellGame = 0;
+s16 D_800FEC26_ShellGame = 0;
+s16 D_800FEC28_ShellGame = 0;
+s16 D_800FEC2A_ShellGame = 1;
+s16 D_800FEC2C_ShellGame = 0;
+s16 D_800FEC2E_ShellGame = 0;
+s16 D_800FEC30_ShellGame = 0;
+s16 D_800FEC32_ShellGame = 0;
+s32 D_800FEC34_ShellGame = 0;
+f32 D_800FEC38_ShellGame = 0.0f;
+f32 D_800FEC3C_ShellGame = 0.0f;
+
 void func_800F65E0_ShellGame(void) {
-    unk_Struct00* temp_s0_2;
+    unk_Struct00* cam;
     s32 temp_s0;
 
     func_80029090(50);
@@ -24,9 +43,9 @@ void func_800F65E0_ShellGame(void) {
     func_800F7550_ShellGame();
     func_800F828C_ShellGame();
     func_800F87CC_ShellGame();
-    temp_s0_2 = D_800C3110;
-    D_800FF168_ShellGame = func_800AEAC0(temp_s0_2->unk_40 / 2.0) / func_800AEFD0(temp_s0_2->unk_40 / 2.0);
-    func_80086F08(&D_800FF128_ShellGame, &temp_s0_2->unk_138);
+    cam = D_800C3110;
+    D_800FF168_ShellGame = func_800AEAC0(cam->unk_40 / 2.0) / func_800AEFD0(cam->unk_40 / 2.0);
+    guMtxL2F(D_800FF128_ShellGame, &cam->unk_138);
     func_80028510(0x3A5, 0x402, 0xFF, 0xC8, 0xC8);
     D_800F2BC0 = 0;
     D_800ED440 = 0;
@@ -42,13 +61,10 @@ void func_800F65E0_ShellGame(void) {
     D_800FEC18_ShellGame = 0;
     D_800FEC1C_ShellGame = 0;
     D_800FF784_ShellGame = 0;
-    func_8007B168(&D_800FEC60_ShellGame, 1);
-    func_8007B168(&D_800FEC6C_ShellGame, 1);
-    func_8007B168(&D_800FEC7C_ShellGame, 1);
+    func_8007B168((u8*)"\x82\x72\x82\x73\x82\x60\x82\x71\x82\x73", 1);
+    func_8007B168((u8*)"\x82\x65\x82\x68\x82\x6D\x82\x68\x82\x72\x82\x67", 1);
+    func_8007B168((u8*)"\x82\x73\x82\x68\x82\x6C\x82\x64\x82\x74\x82\x6F", 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F65E0_ShellGame);
-#endif
 
 void func_800F689C_ShellGame(omObjData* arg0) {
     arg0->func_ptr = &func_800F68E8_ShellGame;
@@ -59,13 +75,14 @@ void func_800F689C_ShellGame(omObjData* arg0) {
         D_800FF784_ShellGame = 1;
     }
 }
+
 void func_800F68E8_ShellGame(omObjData* arg0) {
     func_800F76C4_ShellGame();
     func_800F85B4_ShellGame();
     func_800F8CF8_ShellGame();
     func_800F7BDC_ShellGame();
     func_800F6A98_ShellGame(arg0);
-    
+
     if (D_800FEC16_ShellGame == 1) {
         if (D_800ED430 == D_800FEC16_ShellGame) {
             if ((func_800F8154_ShellGame()) == 0) {
@@ -80,27 +97,27 @@ void func_800F68E8_ShellGame(omObjData* arg0) {
                         func_800601D4(0x28);
                         D_800FF0F8_ShellGame->func_ptr = &func_800F6EE4_ShellGame;
                     }
-                    D_800FF9D6_ShellGame = 5;
+                    D_800FF9D0_ShellGame.unk6 = 5;
                     D_800ED430 = 0;
                     D_800FF780_ShellGame = 1;
-                    D_800ED430 = 0;                    
+                    D_800ED430 = 0;
                 }
             }
         }
     }
 }
 
-void func_800F6A14_ShellGame(void) {
+void func_800F6A14_ShellGame(omObjData* arg0) {
     u16 i;
 
     func_800F87AC_ShellGame();
     func_800F913C_ShellGame();
     func_80060198();
-    
+
     for (i = 0; i < D_800F37DA; i++) {
         HuMemDirectFree(D_800FF718_ShellGame[i]);
     }
-    
+
     omOvlReturnEx(1);
 }
 
@@ -110,10 +127,127 @@ void func_800F6A98_ShellGame(omObjData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F6AC0_ShellGame);
+void func_800F6AC0_ShellGame(omObjData* arg0) {
+    s16 winSe[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
+    s16 loseSe[6] = { 0x44A, 0x44B, 0x44C, 0x44D, 0x44E, 0x44F };
+    f32 t;
+    s32 mes;
+    s32 ok;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F6EE4_ShellGame);
-
+    func_800F76C4_ShellGame();
+    func_800F85B4_ShellGame();
+    func_800F8CF8_ShellGame();
+    func_800F7BDC_ShellGame();
+    func_800F6A98_ShellGame(arg0);
+    if (D_800FEC24_ShellGame != 0) {
+        if (D_800FF9D0_ShellGame.unk6 == 5) {
+            t = D_800FEC26_ShellGame / 45.0;
+        } else {
+            t = D_800FEC26_ShellGame / 30.0;
+        }
+        if (t > 1.0) {
+            t = 1.0f;
+            D_800FEC24_ShellGame = 0;
+        }
+        func_800F7098_ShellGame(t);
+        D_800FEC26_ShellGame++;
+    }
+    switch (D_800FEC20_ShellGame) {
+    case 0:
+        if (++D_800FEC22_ShellGame >= 0) {
+            mes = 0x10;
+            if (D_800FF780_ShellGame == 0 && (mes = 0xE, D_800FF9D0_ShellGame.unk6 != 5)) {
+                GMesCreate(2);
+            } else {
+                GMesCreate(mes);
+                GwPlayer[D_800FF9F0_ShellGame].coins_mg -= 5;
+            }
+            D_800FEC22_ShellGame = 0;
+            D_800FEC20_ShellGame = 1;
+        }
+        break;
+    case 1:
+        if (++D_800FEC22_ShellGame >= 0 && GMesStatAllGet() == 2) {
+            func_80060128(D_800FF9D0_ShellGame.unk6 != 5 ? 0x33 : 0x34);
+            D_800FEC22_ShellGame = 0;
+            D_800FEC20_ShellGame = 2;
+            D_800FEC24_ShellGame = 1;
+        }
+        break;
+    case 2:
+        if (++D_800FEC22_ShellGame >= 0) {
+            if (D_800FF9D0_ShellGame.unk6 != 5) {
+                D_800FFA3C_ShellGame = 0x309;
+            } else {
+                D_800FFA3C_ShellGame = 0x14D;
+            }
+            D_800FF9EC_ShellGame = 4;
+            D_800FEC22_ShellGame = 0;
+            D_800FEC20_ShellGame = 3;
+        }
+        break;
+    case 3:
+        D_800FEC22_ShellGame++;
+        if (D_800FF9D0_ShellGame.unk6 != 5) {
+            ok = D_800FEC22_ShellGame > 35;
+        } else {
+            ok = D_800FEC22_ShellGame >= 18;
+        }
+        if (ok) {
+            if (D_800FF9D0_ShellGame.unk6 != 5) {
+                PlaySound(winSe[D_800FFA0C_ShellGame]);
+            } else {
+                PlaySound(loseSe[D_800FFA0C_ShellGame]);
+            }
+            D_800FEC22_ShellGame = 0;
+            D_800FEC20_ShellGame = 4;
+        }
+        break;
+    case 4:
+        D_800FEC22_ShellGame++;
+        if (D_800FF9D0_ShellGame.unk6 != 5) {
+            ok = D_800FEC22_ShellGame > 56;
+        } else {
+            ok = D_800FEC22_ShellGame >= 72;
+        }
+        if (ok && GMesWait() != 1) {
+            func_800726AC(0, 20);
+            func_800601D4(0x28);
+            arg0->func_ptr = &func_800F6FFC_ShellGame;
+            D_800FEC22_ShellGame = 0;
+            D_800FEC20_ShellGame = 5;
+        }
+        break;
+    }
+}
+void func_800F6EE4_ShellGame(omObjData* arg0) {
+    func_800F76C4_ShellGame();
+    func_800F85B4_ShellGame();
+    func_800F8CF8_ShellGame();
+    func_800F7BDC_ShellGame();
+    func_800F6A98_ShellGame(arg0);
+    switch (D_800FEC28_ShellGame) {
+    case 0:
+        GMesCreate(2);
+        if (D_800FF780_ShellGame != 0 || D_800FF9D0_ShellGame.unk6 == 5) {
+            GwPlayer[D_800FF9F0_ShellGame].coins_mg -= 5;
+        }
+        D_800FEC28_ShellGame++;
+        break;
+    case 1:
+        if (GMesStatAllGet() == 2) {
+            D_800FEC28_ShellGame++;
+        }
+        break;
+    default:
+        if (GMesWait() == 0) {
+            func_800726AC(0, 20);
+            func_80060398(0x28);
+            arg0->func_ptr = &func_800F6FFC_ShellGame;
+        }
+        break;
+    }
+}
 void func_800F6FFC_ShellGame(omObjData* arg0) {
     if (func_80072718() == 0) {
         arg0->func_ptr = &func_800F6A14_ShellGame;
@@ -132,24 +266,24 @@ void func_800F7034_ShellGame(void) {
 
 void func_800F7098_ShellGame(f32 arg0) {
     omObjData* temp_a0;
-    
+
     if (arg0 == 0.0) {
         temp_a0 = D_800F3FB0[0];
         D_800FF0A0_ShellGame.x = Center.x;
         D_800FF0A0_ShellGame.y = Center.y;
         D_800FF0A0_ShellGame.z = Center.z;
-        D_800FF0AC_ovl05.x = temp_a0->trans.x;
-        D_800FF0AC_ovl05.y = temp_a0->trans.y;
-        D_800FF0AC_ovl05.z = temp_a0->trans.z;
+        D_800FF0AC_ShellGame.x = temp_a0->trans.x;
+        D_800FF0AC_ShellGame.y = temp_a0->trans.y;
+        D_800FF0AC_ShellGame.z = temp_a0->trans.z;
         return;
     }
-    Center.x = D_800FF0A0_ShellGame.x + (arg0 * (D_800FF0AC_ovl05.x - D_800FF0A0_ShellGame.x));
-    Center.y = D_800FF0A0_ShellGame.y + (arg0 * (D_800FF0AC_ovl05.y - D_800FF0A0_ShellGame.y));
-    Center.z = D_800FF0A0_ShellGame.z + (arg0 * (D_800FF0AC_ovl05.z - D_800FF0A0_ShellGame.z));
+    Center.x = D_800FF0A0_ShellGame.x + (arg0 * (D_800FF0AC_ShellGame.x - D_800FF0A0_ShellGame.x));
+    Center.y = D_800FF0A0_ShellGame.y + (arg0 * (D_800FF0AC_ShellGame.y - D_800FF0A0_ShellGame.y));
+    Center.z = D_800FF0A0_ShellGame.z + (arg0 * (D_800FF0AC_ShellGame.z - D_800FF0A0_ShellGame.z));
     CZoom = 1328.0 - (arg0 * 664.0);
 }
 
-u16 func_800F719C_ShellGame(u16 arg0) { //shared overlay function
+u16 func_800F719C_ShellGame(u16 arg0) {
     D_800FEC10_ShellGame = D_800FEC10_ShellGame * 0x19971204;
     D_800FEC10_ShellGame = (D_800FEC10_ShellGame + 0x19760831) >> 0x10;
     if (arg0 == 0) {
@@ -159,7 +293,7 @@ u16 func_800F719C_ShellGame(u16 arg0) { //shared overlay function
     }
 }
 
-void func_800F720C_ShellGame(u8 arg0) { //shared overlay function
+void func_800F720C_ShellGame(u8 arg0) {
     D_800FEC10_ShellGame = arg0 + (arg0 * D_800FEC10_ShellGame);
 }
 

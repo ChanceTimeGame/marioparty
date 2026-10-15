@@ -742,8 +742,9 @@ segments:
     subsegments:
       - [0xF6AB0, c]
       - [0xFD460, c]
-      - [0xFF0E0, data, F6AB0]
-      - [0xFF180, .rodata, F6AB0]
+      - [0xFF0E0, .data, F6AB0]
+      - [0xFF110, .data, FD460]
+      - [0xFF130, .rodata, F6AB0]
       - [0xFF490, .rodata, FD460]
       - {0xFF570, type: bss, vram: 0x800FF0A0, name: ovl_05_bss}
   - type: code
