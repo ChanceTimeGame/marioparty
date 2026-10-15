@@ -524,3 +524,4 @@ D_800EB660 = 0x800EB660; /* viThreadStack (sdk-lib vimgr.c) */
 func_8009A100 = __osSiDeviceBusy; /* sdk-lib 9AD00.c; asm callers keep the address name */
 alFxNew = func_80095F44; /* sdk-lib: until 96AA0.c is C */
 alFxParam = func_800976F4; /* sdk-lib: until 972D0.c is C */
+__umoddi3 = func_8009BE30; /* sdk-lib 9AD20.c: libgcc __umoddi3 is still asm under its address name */
