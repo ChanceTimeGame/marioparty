@@ -54,4 +54,43 @@ void func_8007FD44(LEOCmdRead* cmd); // leoCommand
 u16 func_800815F0(u32 lba);          // leoLba_to_phys
 u16 func_800817E4(u32 lba);          // leoLba_to_vzone
 
+// LEO_COMMAND_INQUIRY's block (LeoC?CreateLeoManager)
+typedef struct LEOCmdInquiry {
+    /* 0x00 */ LEOCmdHeader header;
+    /* 0x0C */ u8 dev_type;
+    /* 0x0D */ u8 version;
+    /* 0x0E */ u8 dev_num;
+    /* 0x0F */ u8 leo_bios_ver;
+    /* 0x10 */ u32 reserve5[2];
+} LEOCmdInquiry; // sizeof 0x18
+
+typedef struct LEOVersion {
+    /* 0x00 */ u8 driver;
+    /* 0x01 */ u8 drive;
+    /* 0x02 */ u8 deviceType;
+    /* 0x03 */ u8 ndevices;
+} LEOVersion;
+
+#include "PR/rcp.h"
+
+#define LEO_IO_READ(addr) (*(vu32*)((addr) | 0xA0000000))
+#define LEO_IO_WRITE(addr, data) (*(vu32*)((addr) | 0xA0000000) = (u32)(data))
+
+extern LEOVersion D_800E8800;   // __leoVersion
+extern u8 D_800E9800[];         // stack end for the 64DD interrupt handler
+extern OSPiHandle D_800E9890;   // __DriveRomHandle
+extern s32 D_800C63E0;          // osDriveRomInit's first-call flag
+
+void __osPiGetAccess(void);
+void __osPiRelAccess(void);
+u32 __osDisableInt(void);
+void __osRestoreInt(u32 mask);
+s32 __osLeoInterrupt(void);
+void func_80093660(s32 intr, s32 (*handler)(void), void* stackEnd); // __osSetHWIntrRoutine
+void func_8007FB70(OSPri comPri, OSPri intPri, OSMesg* cmdBuf, s32 cmdMsgCnt); // leoInitialize
+void func_8007FF34(void);           // __leoSetReset
+OSPiHandle* osLeoDiskInit(void);
+OSPiHandle* func_80082660(void);    // osDriveRomInit
+s32 func_800827C0(void);            // LeoDriveExist (the real one)
+
 #endif
