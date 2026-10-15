@@ -16,6 +16,27 @@ typedef struct CBBMain {
     /* 0x06 */ s16 time;  /* frames left */
 } CBBMain; /* size = 0x8 */
 
+/* A spark/digit effect (D_80102870_CoinBlockBash[40]; eight per player, 32.. for the rest). */
+typedef struct CBBFx {
+    /* 0x00 */ u16 flags; /* 0x80 live, 1 drawn, 2 fixed size */
+    /* 0x02 */ s16 type;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ Vec pos;
+    /* 0x14 */ Vec vel;
+    /* 0x20 */ s32 unk_20;
+    /* 0x24 */ f32 scale;
+    /* 0x28 */ f32 alpha;
+    /* 0x2C */ s16 unk_2C;
+    /* 0x2E */ s16 unk_2E;
+    /* 0x30 */ s16 unk_30;
+    /* 0x32 */ s16 sound;
+    /* 0x34 */ s16 unk_34;
+    /* 0x36 */ s16 timer;
+    /* 0x38 */ s16 unk_38;
+    /* 0x3A */ s16 unk_3A;
+} CBBFx; /* size = 0x3C */
+
 /* Facing per quadrant (D_80101D18). */
 typedef struct CBBQuad {
     f32 v[4];
@@ -32,7 +53,8 @@ typedef struct CBBMtxSet {
 /* A player (D_801025B0_CoinBlockBash[4]; obj->work[0] is the index). Pointers at 0x70/0x78: use
    names, never offsets. Splat's D_801025B3, D_801025F0, D_80102612, D_80102628 are fields of [0]. */
 typedef struct CBBPlayer {
-    /* 0x00 */ u16 flags;
+    /* 0x00 */ u8 flags;
+    /* 0x01 */ u8 unk_01;
     /* 0x02 */ u8 unk_02;
     /* 0x03 */ u8 state;
     /* 0x04 */ f32 unk_04;
@@ -51,8 +73,8 @@ typedef struct CBBPlayer {
     /* 0x4A */ s16 unk_4A;
     /* 0x4C */ s16 unk_4C;
     /* 0x4E */ char unk_4E[2];
-    /* 0x50 */ s32 unk_50;
-    /* 0x54 */ char unk_54[2];
+    /* 0x50 */ s16 unk_50;
+    /* 0x52 */ char unk_52[4];
     /* 0x56 */ s16 unk_56;
     /* 0x58 */ s16 unk_58;
     /* 0x5A */ char unk_5A[4];
@@ -183,6 +205,11 @@ extern Matrix4f D_8010256C_CoinBlockBash;
 #endif
 extern s16 D_801025AC_CoinBlockBash;
 extern CBBPlayer D_801025B0_CoinBlockBash[4];
+extern CBBFx D_80102870_CoinBlockBash[40];
+extern s16 D_801031D0_CoinBlockBash[8];
+extern s16 D_801031E0_CoinBlockBash;
+extern s16 D_801031E2_CoinBlockBash;
+extern s16 D_801031E4_CoinBlockBash;
 extern s32 D_801031FC_CoinBlockBash;
 extern u8 D_8010320E_CoinBlockBash[];
 
@@ -194,12 +221,17 @@ s16 func_800F6C80_CoinBlockBash(s32 id);
 void func_800F6CC8_CoinBlockBash(void);
 void func_800F6EA0_CoinBlockBash(void);
 void func_800F7048_CoinBlockBash(omObjData* obj);
+s16 func_800F7148_CoinBlockBash(s32 self, Vec* pos, s32 unused, f32 vy);
 CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj);
 void* func_800F766C_CoinBlockBash(omObjData* obj);
 s8 func_800F7674_CoinBlockBash(omObjData* obj);
+void func_800F7680_CoinBlockBash(omObjData* obj, s16 motion, char* name);
+void func_800F77BC_CoinBlockBash(omObjData* obj, s32 motion);
 void func_800F78E8_CoinBlockBash(void);
 void func_800F7A5C_CoinBlockBash(void);
 void func_800F8014_CoinBlockBash(void);
+void func_800F8184_CoinBlockBash(s16 type, f32 x, f32 y, f32 z, s16 arg);
+void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s16 arg);
 void func_800F8CD0_CoinBlockBash(void);
 void func_800F8D98_CoinBlockBash(void);
 void func_800F99A0_CoinBlockBash(void);

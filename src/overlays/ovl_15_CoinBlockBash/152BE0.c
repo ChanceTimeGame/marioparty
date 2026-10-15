@@ -229,8 +229,96 @@ void func_800F7048_CoinBlockBash(omObjData* obj) {
     D_8010252C_CoinBlockBash = 800.0f;
     D_80102534_CoinBlockBash = 0.0f;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F7148_CoinBlockBash);
+// NON_MATCHING: register allocation of the two radii (masked ~40)
+#ifdef NON_MATCHING
+s16 func_800F7148_CoinBlockBash(s32 self, Vec* pos, s32 unused, f32 vy) {
+    f32 rot[3];
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 dist;
+    f32 push;
+    f32 rA;
+    f32 rB;
+    f32 angle;
+    CBBPlayer* p;
+    omObjData* o;
+    s16 res;
+    s16 i;
 
+    res = 0;
+    rA = rB = 50.0f;
+    rB = 50.0f;
+    rA = rB;
+    rB = rA;
+    for (i = 0; i < D_801031FC_CoinBlockBash; i++) {
+        if (i == self) {
+            continue;
+        }
+        if (i == D_801025B0_CoinBlockBash[self].unk_40) {
+            continue;
+        }
+        p = &D_801025B0_CoinBlockBash[i];
+        if (p->flags & 0x20) {
+            continue;
+        }
+        o = p->obj;
+        dx = o->trans.x - pos->x;
+        dy = o->trans.y - pos->y;
+        dz = o->trans.z - pos->z;
+        if (abs((s32)dy) > 100.0) {
+            continue;
+        }
+        dist = sqrtf(dx * dx + dz * dz);
+        if (!(dist < rA + rB)) {
+            continue;
+        }
+        if (vy < 0.0 && dy < 0.0 && dy + vy <= -100.0 && p->unk_44 == 0) {
+            pos->y = rB + rB + o->trans.y;
+            p->unk_40 = self;
+            if (p->unk_44 == 0) {
+                p->state = 8;
+                p->unk_42 = 30;
+                p->unk_50 = 0;
+                rot[0] = -90.0f;
+                rot[1] = rot[2] = 0.0f;
+                func_80017C0C(o, 5, pos->x, pos->y, pos->z, rot[0], rot[1]);
+            }
+            res = -1;
+            continue;
+        }
+        if (dist == 0.0) {
+            dx = pos->x - -25.0;
+            dz = pos->z - -14.999999999999972;
+            if (dx == 0.0 && dz == 0.0) {
+                angle = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 360 / 65536;
+                dx = func_800AEAC0(angle);
+                dz = func_800AEFD0(angle);
+            } else if (dx == 0.0) {
+                dz /= abs((s32)dz);
+            } else if (dz == 0.0) {
+                dx /= abs((s32)dx);
+            } else {
+                dist = sqrtf(dx * dx + dz * dz);
+                dx /= dist;
+                dz /= dist;
+            }
+            push = 100.0f;
+        } else {
+            dx /= dist;
+            dz /= dist;
+            push = rA + rB - dist;
+        }
+        pos->x -= dx * push;
+        pos->z -= dz * push;
+        res = 1;
+    }
+    D_801025B0_CoinBlockBash[self].unk_40 = -1;
+    return res;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F7148_CoinBlockBash);
+#endif
 CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj) {
     return &D_801025B0_CoinBlockBash[obj->work[0]];
 }
@@ -240,21 +328,115 @@ void* func_800F766C_CoinBlockBash(omObjData* obj) {
 s8 func_800F7674_CoinBlockBash(omObjData* obj) {
     return ((CBBPlayerWork*)obj->unk_50)->unk_56;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F7680_CoinBlockBash);
+void func_800F7680_CoinBlockBash(omObjData* obj, s16 motion, char* name) {
+    CBBMtxSet* set;
+    CBBPlayer* p;
+    Matrix4f* dst;
+    Matrix4f* src;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F77BC_CoinBlockBash);
+    func_80025BB8(obj->model[0], obj->motion[motion]);
+    set = func_8002040C(obj->model[0], 2, name);
+    p = func_800F7644_CoinBlockBash(obj);
+    for (i = 0; i < 2; i++) {
+        if (p->mtxCount[i] == 0) {
+            break;
+        }
+    }
+    if (i < 2) {
+        p->mtx[i] = dst = func_80023684((p->mtxCount[i] = set->count) * 64, 0x7918);
+        src = set->mtx;
+        for (j = 0; j < p->mtxCount[i]; j++) {
+            func_8002C37C(*dst++, *src++);
+        }
+    }
+    func_80020CC4(set);
+}
+void func_800F77BC_CoinBlockBash(omObjData* obj, s32 motion) {
+    CBBPlayer* p;
+    s16 id;
+    u8 mdl;
 
+    id = func_80017A50(obj);
+    p = func_800F7644_CoinBlockBash(obj);
+    if (p->unk_4A != id && p->unk_4C != id) {
+        if (p->unk_48 != 0) {
+            p->unk_4C = id;
+        } else {
+            p->unk_4A = id;
+        }
+        p->unk_48 = 1 - p->unk_48;
+    }
+    if (obj->motion[(u8)motion] >= 0) {
+        mdl = obj->model[0];
+        if (func_80018490(obj, (u8)motion) != 0) {
+            D_800F2B7C[mdl].unk_0A |= 2;
+        } else {
+            D_800F2B7C[mdl].unk_0A &= ~2;
+        }
+        func_800184BC(obj, (u8)motion);
+        p->unk_5E = (u8)motion;
+    }
+}
 void func_800F78DC_CoinBlockBash(void) {
     s32 pad[4]; /* retail's frame */
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F78E8_CoinBlockBash);
+void func_800F78E8_CoinBlockBash(void) {
+    s32 i;
 
+    D_801031E2_CoinBlockBash = 0;
+    D_801031D0_CoinBlockBash[D_801031E2_CoinBlockBash++] = func_800F6C80_CoinBlockBash(0x270004);
+    D_801031D0_CoinBlockBash[D_801031E2_CoinBlockBash++] = func_800F6C80_CoinBlockBash(0x390019);
+    D_801031E2_CoinBlockBash++;
+    D_801031E0_CoinBlockBash = func_80064EF4(40, 0);
+    for (i = 0; i < 40; i++) {
+        func_80067208(D_801031E0_CoinBlockBash, i, D_801031D0_CoinBlockBash[0], 0);
+        func_80067354(D_801031E0_CoinBlockBash, i, 1.0f, 1.0f);
+        func_8006752C(D_801031E0_CoinBlockBash, i, 0x100);
+        func_800674BC(D_801031E0_CoinBlockBash, i, 0x9008);
+        func_800672B0(D_801031E0_CoinBlockBash, i, 0);
+    }
+    func_8009B770(D_80102870_CoinBlockBash, 0, sizeof(D_80102870_CoinBlockBash));
+    D_801031E4_CoinBlockBash = -1;
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F7A5C_CoinBlockBash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F8014_CoinBlockBash);
+void func_800F8014_CoinBlockBash(void) {
+    Vec v;
+    CBBPlayer* p;
+    omObjData* o;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F8184_CoinBlockBash);
+    for (i = 0; i < D_801031FC_CoinBlockBash; i++) {
+        p = &D_801025B0_CoinBlockBash[i];
+        o = p->obj;
+        if (func_8005FD5C() + D_800F64F8 == 0) {
+            if ((p->unk_44 & 1) && !(p->flags & 0x10) && D_801024F0_CoinBlockBash.state == 1) {
+                func_80025798(o->model[0], 1500.0f, 500.0f, 1500.0f);
+                func_80025798(o->model[1], 1500.0f, 500.0f, 1500.0f);
+            }
+            p->pos.x = o->trans.x;
+            p->pos.y = o->trans.y;
+            p->pos.z = o->trans.z;
+        } else {
+            v.x = o->trans.x;
+            v.z = o->trans.z;
+            v.y = func_800FE284_CoinBlockBash(&v);
+            func_80025798(o->model[1], o->trans.x, v.y, o->trans.z);
+        }
+    }
+}
+void func_800F8184_CoinBlockBash(s16 type, f32 x, f32 y, f32 z, s16 arg) {
+    Vec pos;
+    Vec rot;
 
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
+    rot.x = rot.y = rot.z = 0.0f;
+    func_800F81E0_CoinBlockBash(NULL, type, &pos, &rot, arg);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F81E0_CoinBlockBash);
 
 void func_800F8CD0_CoinBlockBash(void) {
