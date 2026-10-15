@@ -1449,35 +1449,142 @@ INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", D_801022
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FD8CC_CoinBlockBash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDC5C_CoinBlockBash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDCB4_CoinBlockBash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDCF8_CoinBlockBash);
-
-// NON_MATCHING: retail steps the output pointer by 4 before the z store (as ovl_33 func_800FBA44)
+void func_800FDC5C_CoinBlockBash(void) {
+    D_800F2AF8[D_800ED440++] = omAddObj(1, 2, 0, -1, func_800FDCF8_CoinBlockBash);
+}
+void func_800FDCB4_CoinBlockBash(omObjData* obj) {
+    if (D_801024F0_CoinBlockBash.state == 0 && D_801024F0_CoinBlockBash.timer == 0x42) {
+        func_800258EC(obj->model[1], 4, 0);
+    }
+}
+void func_800FDCF8_CoinBlockBash(omObjData* obj) {
+    obj->func_ptr = func_800FDCB4_CoinBlockBash;
+    obj->model[0] = func_800174C0(0x270000, 0x99);
+    obj->model[1] = func_800174C0(0x270003, 0xBD);
+}
+// NON_MATCHING: retail steps the output pointer by 4 before the y store (as ovl_33 func_800FBA44)
 #ifdef NON_MATCHING
 void func_800FDD50_CoinBlockBash(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    out->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    out->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    out->z = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+    f32* o = (f32*)out;
+
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDD50_CoinBlockBash);
 #endif
+void func_800FDDEC_CoinBlockBash(Vec* v) {
+    f32 inv = v->x * v->x + v->y * v->y + v->z * v->z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDDEC_CoinBlockBash);
+    inv = sqrtf(inv);
+    if (inv != 0.0f) {
+        inv = 1.0 / inv;
+        v->x = inv * v->x;
+        v->y = inv * v->y;
+        v->z = inv * v->z;
+    }
+}
+f32 func_800FDEA0_CoinBlockBash(f32 x, f32 y) {
+    f32 a = func_800B0CD8(y, x);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDEA0_CoinBlockBash);
+    if (a < 0.0) {
+        a += 360.0;
+    } else if (a >= 360.0) {
+        a -= 360.0;
+    }
+    return a;
+}
+void func_800FDF20_CoinBlockBash(Matrix4f m, Vec* angles) {
+    f32 s;
+    f32 c;
+    f64 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDF20_CoinBlockBash);
+    angles->x = func_800FDEA0_CoinBlockBash(m[2][2], m[1][2]);
+    angles->z = func_800FDEA0_CoinBlockBash(m[0][0], m[0][1]);
+    s = -m[0][2];
+    t = 1.0 - s * s;
+    if (t < 0.0) {
+        t = -t;
+    }
+    c = sqrtf(t);
+    if (angles->x > 90.0 && angles->x < 270.0 && angles->z > 90.0 && angles->z < 270.0) {
+        angles->x = func_8009B618(angles->x + 180.0, 360.0);
+        angles->z = func_8009B618(angles->z + 180.0, 360.0);
+        c = -c;
+    }
+    angles->y = func_800FDEA0_CoinBlockBash(c, s);
+}
+void func_800FE0AC_CoinBlockBash(Vec* a, Vec* b, Vec* c, Vec* rot) {
+    Matrix4f m;
+    Vec v[3];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FE0AC_CoinBlockBash);
+    v[0].x = a->x;
+    v[0].y = a->y;
+    v[0].z = a->z;
+    func_800FDDEC_CoinBlockBash(&v[0]);
+    v[1].x = b->x;
+    v[1].y = b->y;
+    v[1].z = b->z;
+    func_800FDDEC_CoinBlockBash(&v[1]);
+    v[2].x = c->x;
+    v[2].y = c->y;
+    v[2].z = c->z;
+    func_800FDDEC_CoinBlockBash(&v[2]);
+    rot->z = func_800FDEA0_CoinBlockBash(v[0].x, v[0].y);
+    if (rot->z == 180.0 && v[1].y >= 0.0) {
+        rot->z = 0.0f;
+    }
+    func_8009E060(m, -rot->z, 0.0f, 0.0f, 1.0f);
+    func_800FDD50_CoinBlockBash(m, v[0].x, v[0].y, v[0].z, &v[0]);
+    func_800FDD50_CoinBlockBash(m, v[1].x, v[1].y, v[1].z, &v[1]);
+    func_800FDD50_CoinBlockBash(m, v[2].x, v[2].y, v[2].z, &v[2]);
+    rot->y = func_800FDEA0_CoinBlockBash(v[0].x, -v[0].z);
+    func_8009E060(m, -rot->y, 0.0f, 1.0f, 0.0f);
+    func_800FDD50_CoinBlockBash(m, v[1].x, v[1].y, v[1].z, &v[1]);
+    func_800FDDEC_CoinBlockBash(&v[1]);
+    rot->x = func_800FDEA0_CoinBlockBash(v[1].y, v[1].z);
+}
+f32 func_800FE284_CoinBlockBash(Vec* pos) {
+    return -5.0f;
+}
+s32 func_800FE294_CoinBlockBash(Vec* pos, Vec* vel, Vec* out, Vec* n) {
+    s32 r;
+    f32 h;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FE284_CoinBlockBash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FE294_CoinBlockBash);
-
+    out->x = pos->x + vel->x;
+    out->y = pos->y + vel->y;
+    out->z = pos->z + vel->z;
+    r = 0;
+    if (vel->y <= 0.0) {
+        h = func_800FE284_CoinBlockBash(out);
+        if (out->y <= h) {
+            out->y = h;
+            r = 1;
+        }
+    }
+    n->x = 0.0f;
+    if (out->x <= -480.0) {
+        out->x = -480.0f;
+        n->x = 1.0f;
+        r |= 2;
+    } else if (out->x >= 430.0) {
+        out->x = 430.0f;
+        n->x = -1.0f;
+        r |= 2;
+    }
+    n->z = 0.0f;
+    if (out->z <= -470.0) {
+        out->z = -470.0f;
+        n->z = 1.0f;
+        r |= 4;
+    } else if (out->z >= 440.00000000000006) {
+        out->z = 440.0f;
+        n->z = -1.0f;
+        r |= 4;
+    }
+    return r;
+}
 // NON_MATCHING: register allocation and instruction order (as ovl_33 func_800FB868)
 #ifdef NON_MATCHING
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out) {
