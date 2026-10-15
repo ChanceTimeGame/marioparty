@@ -303,6 +303,17 @@ build/src/overlays/ovl_1E_BumperBalls/191700.c.o: CFLAGS = -G0 -mips3 -mgp32 -mf
 build/src/7CD60.c.o: OPTFLAGS = -O3
 
 build/src/9CE40.c.o: OPTFLAGS = -O0
+# SDK pass (sdk-hu1): Hudson -O0 gu/vector math
+build/src/9CCA0.c.o: OPTFLAGS = -O0
+build/src/9CD00.c.o: OPTFLAGS = -O0
+build/src/9CD60.c.o: OPTFLAGS = -O0
+build/src/9D2E0.c.o: OPTFLAGS = -O0
+build/src/9D920.c.o: OPTFLAGS = -O0
+build/src/9E440.c.o: OPTFLAGS = -O0
+build/src/9E6D0.c.o: OPTFLAGS = -O0
+build/src/9E910.c.o: OPTFLAGS = -O0
+build/src/9EBF0.c.o: OPTFLAGS = -O0
+build/src/A0E70.c.o: OPTFLAGS = -O0
 build/src/9F750.c.o: OPTFLAGS = -O0
 build/src/A1620.c.o: OPTFLAGS = -O0
 build/src/A19A0.c.o: OPTFLAGS = -O0
