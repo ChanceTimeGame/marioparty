@@ -1,6 +1,6 @@
 #include "sdk_hu1.h"
 
-/* guFrustum */
+/* guOrtho */
 void func_8009DAD0(Mtx* m, f32 l, f32 r, f32 b, f32 t, f32 n, f32 f, f32 scale) {
     Matrix4f mf;
 
