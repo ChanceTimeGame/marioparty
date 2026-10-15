@@ -107,8 +107,8 @@ typedef struct N2ABallExt {
     /* 0x64 */ f32 unk_64;
 } N2ABallExt; /* size = 0x68 */
 
-/* The ball's (and the hoop's) work: main code's PlayerWork layout to 0x64 (func_80004D1C reads
-   it), then the overlay's extension pointer. */
+/* The ball's (and the hoop's) work: main code's MgItemWork (src/99E0.c) to 0x64 -- the player
+   carrying it is written at 0x64 -- then the overlay's extension pointer. */
 typedef struct N2ABallWork {
     /* 0x00 */ char unk_00[0x34];
     /* 0x34 */ f32 unk_34;
@@ -121,9 +121,10 @@ typedef struct N2ABallWork {
     /* 0x50 */ u16 unk_50;
     /* 0x52 */ char unk_52[6];
     /* 0x58 */ f32 unk_58;
-    /* 0x5C */ char unk_5C[0xC];
+    /* 0x5C */ char unk_5C[8];
+    /* 0x64 */ omObjData* unk_64; /* carrier: main code's MgItemWork (func_8000A634) writes it */
     /* 0x68 */ N2ABallExt* unk_68;
-} N2ABallWork;
+} N2ABallWork; /* size = 0x6C */
 
 /* The camera objects' work (func_800F7760, func_800F7C00: 0x20). */
 typedef struct N2ACamWork {
@@ -138,6 +139,14 @@ typedef struct N2ACamWork {
 } N2ACamWork; /* size = 0x20 */
 
 #define N2A_WRAP(a) ((a) >= 360.0f ? (a) - 360.0f : (a) < 0.0f ? (a) + 360.0f : (a))
+
+/* D_800FDF60[i] for a player index that may be -1 (nobody has held the ball yet). Retail reads
+   the unused bss word before the array (always 0 there); the host must not. */
+#ifdef TARGET_PC
+#define N2A_HOLDER_FLAGS(i) ((i) >= 0 ? D_800FDF60_name_2A[i] : 0)
+#else
+#define N2A_HOLDER_FLAGS(i) (D_800FDF60_name_2A[i])
+#endif
 
 #define N2A_PLAYER(obj) ((N2APlayerWork*)(obj)->unk_50)
 #define N2A_BALL(obj) ((N2ABallWork*)(obj)->unk_50)
@@ -196,9 +205,9 @@ extern f32 D_800B8990;
 
 void* func_80014614(s32);
 void DataCloseTemp(void*);
-void func_80004D1C(omObjData*, Vec4f*, f32);
-void func_8000A534(omObjData*, s32);
-void func_8000A634(omObjData*, omObjData*);
+s32 func_80004D1C(omObjData*, Vec4f*, f32);
+void func_8000A534(omObjData* obj, f32 speed);
+s32 func_8000A634(omObjData* obj, omObjData* item);
 void func_8000A6F4(omObjData*);
 void func_80008FAC(omObjData*, f32);
 void func_80008FE8(omObjData*, f32);
@@ -210,11 +219,11 @@ f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 s16 func_80025E48(s16);
 void func_80025BB8(s16, s16);
-void func_80028498(s16, s16, s32);
+void func_80028498(s16, s16, s16);
 void func_800284E4(s16);
 void func_800370D4(s16);
 void func_80021E58(void);
-void func_80021EC0(s32, f32, f32, f32);
+void func_80021EC0(s16, f32, f32, f32);
 #ifdef TARGET_PC
 void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
 #else
@@ -520,7 +529,8 @@ void func_800F6E74_name_2A(omObjData* obj) {
     s32* timer = obj->unk_50;
 
     (*timer)--;
-    if ((func_800FD850_name_2A(D_800FDF60_name_2A[D_800FDF98_name_2A], 0x20) != 0) || (*timer == 0)) {
+    /* D_800FDF98 is -1 when nobody ever caught the ball: retail reads unused bss before the array. */
+    if ((func_800FD850_name_2A(N2A_HOLDER_FLAGS(D_800FDF98_name_2A), 0x20) != 0) || (*timer == 0)) {
         D_800FE024_name_2A = 5;
     }
 }
@@ -2451,12 +2461,18 @@ void func_800FD254_name_2A(omObjData* obj) {
     }
     func_80009730();
     if (ext->unk_48 != -1) {
-        func_8000A534(D_800FE030_name_2A[ext->unk_48], 0);
+        func_8000A534(D_800FE030_name_2A[ext->unk_48], 0.0f);
     }
     if (D_800FDF58_name_2A == 0) {
         D_800FE024_name_2A = 4;
-        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x4000, 0);
-        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x8000, 1);
+#ifdef TARGET_PC
+        /* Time up with the ball free: retail writes D_800FDF60[-1], unused bss before the array. */
+        if (ext->unk_48 != -1)
+#endif
+        {
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x4000, 0);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x8000, 1);
+        }
     }
     func_800601D4(40);
 }
