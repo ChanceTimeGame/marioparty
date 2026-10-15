@@ -400,8 +400,90 @@ void func_800F78E8_CoinBlockBash(void) {
     func_8009B770(D_80102870_CoinBlockBash, 0, sizeof(D_80102870_CoinBlockBash));
     D_801031E4_CoinBlockBash = -1;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F7A5C_CoinBlockBash);
+// NON_MATCHING: GCC hoists 360.0 out of the loop (one more saved FPR); otherwise identical
+#ifdef NON_MATCHING
+void func_800F7A5C_CoinBlockBash(void) {
+    Vec pos;
+    Vec scr;
+    CBBFx* fx;
+    s32 i;
+    s32 sec;
+    f32 scale;
 
+    fx = D_80102870_CoinBlockBash;
+    for (i = 0; i < 40; i++, fx++) {
+        if (!(fx->flags & 0x80)) {
+            continue;
+        }
+        switch (fx->type) {
+        case 0:
+            fx->scale -= 0.2;
+            break;
+        case 2:
+            fx->scale -= fx->unk_2E != 0 ? 0.2 : 0.1;
+            break;
+        case 1:
+            fx->scale += 0.01;
+        case 5:
+            fx->unk_06++;
+            break;
+        case 3:
+            fx->flags |= 1;
+            sec = (s16)(D_801024F0_CoinBlockBash.time / 30);
+            fx->unk_06 = fx->unk_2C != 0 ? sec / 10 : sec % 10;
+            if (D_801024F0_CoinBlockBash.state == 1) {
+                fx->timer = 60;
+            }
+            break;
+        case 6:
+            fx->unk_2E += 12.0;
+            if (fx->unk_2E >= 360.0) {
+                fx->unk_2E = fx->unk_2E - 360.0;
+            }
+            fx->pos.x = fx->unk_38 + func_800AEAC0(fx->unk_2E) * 0.5 * 100.0;
+            fx->pos.z = fx->unk_3A + func_800AEFD0(fx->unk_2E) * 0.5 * 100.0;
+            fx->vel.y = func_800AEAC0((fx->unk_2E * 2) % 360) * 0.03 * 100.0;
+            break;
+        }
+        fx->pos.x += fx->vel.x;
+        fx->pos.y += fx->vel.y;
+        fx->pos.z += fx->vel.z;
+        if (fx->timer == 0) {
+            if (fx->sound >= 0) {
+                func_8006071C(fx->sound);
+            }
+            fx->sound = -1;
+            fx->flags = 0;
+        }
+        fx->timer--;
+    }
+    fx = D_80102870_CoinBlockBash;
+    for (i = 0; i < 40; i++, fx++) {
+        if (fx->flags & 1) {
+            func_80067480(D_801031E0_CoinBlockBash, i, 0x8000);
+            if (fx->flags & 2) {
+                func_80066DC4(D_801031E0_CoinBlockBash, i, fx->pos.x, fx->pos.y);
+                func_80067354(D_801031E0_CoinBlockBash, i, fx->scale, fx->scale);
+            } else {
+                pos.x = fx->pos.x;
+                pos.y = fx->pos.y;
+                pos.z = fx->pos.z;
+                func_800FE470_CoinBlockBash(0, &pos, &scr);
+                func_80066DC4(D_801031E0_CoinBlockBash, i, scr.x + 160.0f, scr.y + 120.0f);
+                scale = scr.z * fx->scale;
+                func_80067354(D_801031E0_CoinBlockBash, i, scale, scale);
+            }
+            func_8006752C(D_801031E0_CoinBlockBash, i, (u32)(fx->alpha * 256.0f));
+            func_800673B0(D_801031E0_CoinBlockBash, i, fx->rot * 360.0f);
+            func_800671DC(D_801031E0_CoinBlockBash, i, fx->unk_06);
+        } else {
+            func_800674BC(D_801031E0_CoinBlockBash, i, 0x8000);
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F7A5C_CoinBlockBash);
+#endif
 void func_800F8014_CoinBlockBash(void) {
     Vec v;
     CBBPlayer* p;

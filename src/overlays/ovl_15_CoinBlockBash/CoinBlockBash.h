@@ -24,7 +24,7 @@ typedef struct CBBFx {
     /* 0x06 */ s16 unk_06;
     /* 0x08 */ Vec pos;
     /* 0x14 */ Vec vel;
-    /* 0x20 */ s32 unk_20;
+    /* 0x20 */ f32 rot;   /* turns */
     /* 0x24 */ f32 scale;
     /* 0x28 */ f32 alpha;
     /* 0x2C */ s16 unk_2C;
@@ -244,6 +244,7 @@ void func_800FBF70_CoinBlockBash(omObjData* obj);
 void func_800FC2AC_CoinBlockBash(omObjData* obj);
 void func_800FDC5C_CoinBlockBash(void);
 f32 func_800FE284_CoinBlockBash(Vec* pos);
+void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out);
 void func_800FE650_CoinBlockBash(void);
 void func_800FEE04_CoinBlockBash(void);
 void func_800FFBA8_CoinBlockBash(void);
