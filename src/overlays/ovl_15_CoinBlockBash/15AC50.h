@@ -7,48 +7,12 @@
 
 #include "CoinBlockBash.h"
 
-/* A coin popped out of a block (D_80103290_CoinBlockBash[9]): the full layout. CoinBlockBash.h's
-   CBBDrop pads 0x00-0x08 as bytes, but 0x00 and 0x04 are pointers: on the host every later field
-   moves, so this unit reads drops through this type (same N64 offsets and field names). */
-typedef struct CBBDropFull {
-    /* 0x00 */ struct CBBCoinFull* coin; /* the block it came from */
-    /* 0x04 */ omObjData* obj;           /* the player collecting it */
-    /* 0x08 */ u8 state;  /* 0 none, 1 rising, 2 on the floor, 3 blinking, 4 collected, 5 gone */
-    /* 0x09 */ u8 type;   /* 0 coin, 1 big coin, 2 .. (D_80103248 sprite) */
-    /* 0x0A */ s8 active; /* can be collected */
-    /* 0x0B */ char unk_0B;
-    /* 0x0C */ s16 bb;     /* billboard */
-    /* 0x0E */ s16 shadow; /* shadow billboard */
-    /* 0x10 */ s32 timer;
-    /* 0x14 */ s32 unk_14;
-    /* 0x18 */ f32 radius;
-    /* 0x1C */ Vec pos;
-    /* 0x28 */ f32 unk_28; /* scale x */
-    /* 0x2C */ f32 unk_2C; /* scale y */
-    /* 0x30 */ f32 unk_30;
-    /* 0x34 */ Vec vel;
-    /* 0x40 */ f32 unk_40; /* angle while collected */
-} CBBDropFull; /* size = 0x44 (N64) */
+/* The drops and blocks (CoinBlockBash.h's CBBDrop / CBBCoin; pointer fields at 0x00..0x08). */
+typedef CBBDrop CBBDropFull;
+typedef CBBCoin CBBCoinFull;
 
-/* A coin block (D_80103294_CoinBlockBash[9]): the full layout (see CBBDropFull: CoinBlockBash.h's
-   CBBCoin pads its three pointers at 0x00-0x0C as bytes). */
-typedef struct CBBCoinFull {
-    /* 0x00 */ unk2C0C0Struct50* blk;    /* model part "blNN" */
-    /* 0x04 */ unk2C0C0Struct50* shadow; /* model part "kgNN" */
-    /* 0x08 */ CBBDropFull* drop;
-    /* 0x0C */ u8 state;  /* 0 idle, 1 hit, 2 settling, 3 broken (flying), 4 gone */
-    /* 0x0D */ s8 hittable;
-    /* 0x0E */ s16 bb;    /* effect billboard, -1 none */
-    /* 0x10 */ s16 unk_10; /* hits left */
-    /* 0x12 */ char unk_12[2];
-    /* 0x14 */ s32 timer;
-    /* 0x18 */ f32 angle; /* flight direction, -361 none */
-    /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ Vec pos;
-} CBBCoinFull; /* size = 0x2C (N64) */
-
-#define CBB_DROPS ((CBBDropFull*)D_80103290_CoinBlockBash)
-#define CBB_COINS ((CBBCoinFull*)D_80103294_CoinBlockBash)
+#define CBB_DROPS D_80103290_CoinBlockBash
+#define CBB_COINS D_80103294_CoinBlockBash
 
 /* A billboard D_80103298_CoinBlockBash[D_80103258_CoinBlockBash]: ovl_2E HotRopeJump's HRJFx, but
    0x04 is the model (func_80100160) whose per-frame segment list the draw loads. The pointer fields
