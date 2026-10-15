@@ -1,6 +1,9 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/9CE40", func_8009C240);
+/* HuVecDotProduct */
+f32 func_8009C240(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ) {
+    return (aX * bX) + (aY * bY) + (aZ * bZ);
+}
 
 // register allocation: retail copies each result through $f2 before storing (masked 18).
 // Hudson's copy of guLookAtF: eye - at in single precision (the SDK uses at - eye and -1.0).
