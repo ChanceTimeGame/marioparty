@@ -62,6 +62,7 @@ typedef struct LEORwInfo {
 } LEORwInfo;
 
 extern LEORwInfo D_800EA140;
+extern u8 D_800E99F8[];          // scratch sector (end) for an out-of-range erasure
 extern LEOCmdRead D_800C6450;    // read command template for the system area
 extern u8 D_800CC2A0[];          // system-area lbas tried in turn (2)
 extern u8 D_800CC2A2[];
@@ -118,6 +119,8 @@ s32 func_80081100(u32 sense);
 u8 func_80081210(void);
 
 void func_8008499C(u32 start); // leoRead_common
+u8 func_80083DC4(u8 a, u8 b); // GF(256) multiply
+u8 func_80083E08(u8 a, u8 b); // GF(256) divide
 void func_80082DEC(void);
 void func_80082EC0(void);
 void func_80083140(void);
@@ -182,9 +185,152 @@ void func_80082DEC(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_80082DEC);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/83960", func_80082EC0);
+#ifdef NON_MATCHING
+// two erroneous sectors: solve for both from the two C2 syndromes
+void func_80082EC0(void) {
+    u32 e1 = D_800EA140.errSector[0];
+    u32 e2 = D_800EA140.errSector[1];
+    u8* a2 = &D_800CBDD0[0x58 - e2]; // alpha^(88 - e2)
+    u8 k;
+    u32 n;
+    u8* p1;
+    u8* p2;
+    u8* c2;
+    u8 s0;
+    u8 s1;
+    u8 v;
 
+    k = D_800CBFD0[func_80083E08(1, D_800CBDD0[0x58 - e2] ^ D_800CBDD0[0x58 - e1])];
+    n = D_800EA140.secBytes;
+    if (D_800EA140.errSector[1] < 0x55) {
+        p2 = D_800EA140.dram + (D_800EA140.errSector[1] + 1) * n;
+    } else {
+        if (D_800EA140.errSector[0] >= 0x55) {
+            return;
+        }
+        p2 = D_800E99F8;
+    }
+    p1 = D_800EA140.dram + (D_800EA140.errSector[0] + 1) * n;
+    c2 = D_800EA140.c2end;
+    for (; n != 0; n--) {
+        c2 -= 4;
+        p1--;
+        s0 = c2[0];
+        if (s0 != 0) {
+            s1 = c2[1] ^ a2[D_800CBFD0[s0]];
+        } else {
+            s1 = c2[1];
+        }
+        p2--;
+        if (s1 != 0) {
+            v = D_800CBDD0[D_800CBFD0[s1] + k];
+            *p1 ^= v;
+            *p2 ^= v ^ s0;
+        } else {
+            *p2 ^= s0;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/83960", func_80082EC0);
+#endif
+
+#ifdef NON_MATCHING
+// three erroneous sectors: invert the 3x3 Vandermonde system once, then correct each byte column
+void func_80083140(void) {
+    u8 a = D_800CBDD0[0x58 - D_800EA140.errSector[0]];
+    u8 b = D_800CBDD0[0x58 - D_800EA140.errSector[1]];
+    u8 c = D_800CBDD0[0x58 - D_800EA140.errSector[2]];
+    u8 a2, b2, c2sq;
+    u8 m10, m11, m12; // row coefficients (logs) for sector 1
+    u8 m20, m21, m22; // sector 2
+    u8 m30, m31, m32; // sector 3
+    u8 det;
+    u8 d1, d2, d3;
+    u32 n;
+    u8* p1;
+    u8* p2;
+    u8* p3;
+    u8* c2;
+    u8 x, lx;
+    u8 v1, v2, v3;
+
+    c2sq = func_80083DC4(c, c);
+    b2 = func_80083DC4(b, b);
+    a2 = func_80083DC4(a, a);
+    d1 = func_80083DC4(c, b2) ^ func_80083DC4(b, c2sq);
+    d2 = func_80083DC4(a, c2sq) ^ func_80083DC4(c, a2);
+    d3 = func_80083DC4(a, b2) ^ func_80083DC4(b, a2);
+    det = func_80083E08(1, d1 ^ d2 ^ d3);
+
+    m10 = D_800CBFD0[d1];
+    m11 = D_800CBFD0[c2sq ^ b2];
+    m12 = D_800CBFD0[b ^ c];
+    m20 = D_800CBFD0[d2];
+    m21 = D_800CBFD0[c2sq ^ a2];
+    m22 = D_800CBFD0[c ^ a];
+    m30 = D_800CBFD0[d3];
+    m31 = D_800CBFD0[b2 ^ a2];
+    m32 = D_800CBFD0[a ^ b];
+    det = D_800CBFD0[det];
+
+    n = D_800EA140.secBytes;
+    if (D_800EA140.errSector[2] < 0x55) {
+        p3 = D_800EA140.dram + (D_800EA140.errSector[2] + 1) * n;
+        p2 = D_800EA140.dram + (D_800EA140.errSector[1] + 1) * n;
+    } else {
+        p3 = D_800E99F8;
+        if (D_800EA140.errSector[1] < 0x55) {
+            p2 = D_800EA140.dram + (D_800EA140.errSector[1] + 1) * n;
+        } else {
+            p2 = D_800E99F8;
+            if (D_800EA140.errSector[0] >= 0x55) {
+                return;
+            }
+        }
+    }
+    p1 = D_800EA140.dram + (D_800EA140.errSector[0] + 1) * n;
+    c2 = D_800EA140.c2end;
+    do {
+        c2 -= 4;
+        p1--;
+        p2--;
+        if ((x = c2[0]) != 0) {
+            lx = D_800CBFD0[x];
+            v1 = D_800CBDD0[lx + m10];
+            v2 = D_800CBDD0[lx + m20];
+            v3 = D_800CBDD0[lx + m30];
+        } else {
+            v1 = v2 = v3 = 0;
+        }
+        n--;
+        if ((x = c2[1]) != 0) {
+            lx = D_800CBFD0[x];
+            v1 ^= D_800CBDD0[lx + m11];
+            v2 ^= D_800CBDD0[lx + m21];
+            v3 ^= D_800CBDD0[lx + m31];
+        }
+        if ((x = c2[2]) != 0) {
+            lx = D_800CBFD0[x];
+            v1 ^= D_800CBDD0[lx + m12];
+            v2 ^= D_800CBDD0[lx + m22];
+            v3 ^= D_800CBDD0[lx + m32];
+        }
+        p3--;
+        if (v1 != 0) {
+            *p1 ^= D_800CBDD0[D_800CBFD0[v1] + det];
+        }
+        if (v2 != 0) {
+            *p2 ^= D_800CBDD0[D_800CBFD0[v2] + det];
+        }
+        if (v3 != 0) {
+            *p3 ^= D_800CBDD0[D_800CBFD0[v3] + det];
+        }
+    } while (n != 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80083140);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/83960", func_80083528);
 
