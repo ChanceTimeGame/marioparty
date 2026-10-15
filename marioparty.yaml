@@ -1344,7 +1344,7 @@ segments:
     subsegments:
       - [0x1E0A30, c]
       - [0x1E4480, c]
-      - [0x1E8DD0, data, 1E0A30]
+      - [0x1E8DD0, .data, 1E0A30]
       - [0x1E8F10, .rodata, 1E0A30]
       - [0x1E9250, .rodata, 1E4480]
       - {0x1E9440, type: bss, vram: 0x800FEFF0, name: ovl_29_bss}
