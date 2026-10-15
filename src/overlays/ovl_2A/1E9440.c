@@ -1,6 +1,8 @@
 #include "common.h"
 #include "engine/pad.h"
 
+int abs(int);
+
 /* ovl_2A (name_2A): a 2 vs 2 ball minigame. Two teams (GwPlayer[].group) chase one ball (D_800FE040)
    and score by putting it through the hoop object D_800FE048 (at its position + (0, 350, -560)).
    Types come from the asm's accesses; N64 offsets are in the comments. Work blocks are allocated
@@ -134,6 +136,8 @@ typedef struct N2ACamWork {
     /* 0x18 */ f32 unk_18;
     /* 0x1C */ f32 unk_1C;
 } N2ACamWork; /* size = 0x20 */
+
+#define N2A_WRAP(a) ((a) >= 360.0f ? (a) - 360.0f : (a) < 0.0f ? (a) + 360.0f : (a))
 
 #define N2A_PLAYER(obj) ((N2APlayerWork*)(obj)->unk_50)
 #define N2A_BALL(obj) ((N2ABallWork*)(obj)->unk_50)
@@ -1137,7 +1141,207 @@ void func_800F8940_name_2A(omObjData* obj, s32 player) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800F9050_name_2A);
+/* A player's frame: input (CPU or pad), catching, passing, shooting, and the after-goal walk. */
+void func_800F9050_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    N2APlayerWork* work = obj->unk_50;
+    N2APlayerExt* ext = work->unk_E4;
+    N2ABallExt* ball;
+    s32 hit;
+    s32 hit2;
+    s16 motion;
+    f32 mag;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 a;
+
+    ext->unk_38 = work->unk_38;
+    func_80017A60(obj);
+    ball = NULL;
+    if (func_800FD850_name_2A(D_800FDF70_name_2A, 4) == 0) {
+        ball = N2A_BALL(D_800FE040_name_2A)->unk_68;
+    }
+    work->unk_60 = CRot.y;
+    from.x = obj->trans.x;
+    from.y = obj->trans.y;
+    from.z = obj->trans.z;
+    to.x = func_800AEAC0(CRot.y) * func_800AEFD0(CRot.x) * CZoom + Center.x;
+    to.y = -func_800AEAC0(CRot.x) * CZoom + Center.y;
+    to.z = func_800AEFD0(CRot.y) * func_800AEFD0(CRot.x) * CZoom + Center.z;
+    func_800FD880_name_2A(&from, &to, &out);
+    if (out.x < work->unk_48 * 3.0f) {
+        func_800258EC(obj->model[0], 4, 4);
+    } else {
+        func_800258EC(obj->model[0], 4, 0);
+    }
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 2) != 0) {
+        return;
+    }
+    if (GwPlayer[ext->player].flags & 1) {
+        ContStkX[work->unk_56] = 0;
+        ContStkY[work->unk_56] = 0;
+        ContBtn[work->unk_56] = 0;
+        ContBtnTrg[work->unk_56] = 0;
+        if (func_800FD850_name_2A(D_800FDF70_name_2A, 4) == 0) {
+            func_800FA614_name_2A(obj);
+        }
+    }
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x20000) != 0) {
+        ContStkX[work->unk_56] = 0;
+        ContStkY[work->unk_56] = 0;
+        ContBtn[work->unk_56] = 0;
+        ContBtnTrg[work->unk_56] = 0;
+        func_800FBB50_name_2A(obj);
+    }
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x40000) != 0) {
+        ContStkX[work->unk_56] = 0;
+        ContStkY[work->unk_56] = 0;
+        ContBtn[work->unk_56] = 0;
+        ContBtnTrg[work->unk_56] = 0;
+    }
+    func_80005A28(obj);
+    work->unk_3C = N2A_WRAP(work->unk_3C);
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 1) != 0 &&
+        func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x200) == 0) {
+        obj->trans.y += 3.0f;
+    }
+    hit2 = hit = func_80017A60(obj);
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x4000) != 0) {
+        /* Holding the ball. */
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x8000) != 0) {
+            func_800186E4(obj, 0, 0x23);
+            func_800186E4(obj, 1, 0x24);
+            func_800186E4(obj, 2, 0x25);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x8000, 0);
+            if (hit & 2) {
+                func_800185A4(obj, 0);
+            }
+            if (hit2 & 4) {
+                func_800185A4(obj, 2);
+            }
+        }
+        if (work->unk_38 != 1000.0f && ext->unk_44 == 1000.0f) {
+            if (work->unk_D8[0x26][0] & 4) {
+                motion = obj->motion[0x26] & 0x3FFF;
+            } else {
+                motion = func_80025E48(obj->motion[0x26] & 0x3FFF);
+            }
+            func_80028498(obj->model[0], motion, 2);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x100, 1);
+            func_800186E4(obj, 0x14, 0x28);
+        }
+        if ((hit2 & 6) && (func_80025D18(obj->model[0]) == 12.0f || func_80025D18(obj->model[0]) == 34.0f ||
+                          func_80025D18(obj->model[0]) == 56.0f)) {
+            D_800FE028_name_2A = PlaySound(0x30C);
+        }
+    } else if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x8000) != 0) {
+        func_800186E4(obj, 0, 0x23);
+        func_800186E4(obj, 1, 0x24);
+        func_800186E4(obj, 2, 0x25);
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x8000, 0);
+        if (hit2 & 2) {
+            func_800185A4(obj, 0);
+        }
+    } else if (D_800ED430 == 0 ||
+               (D_800ED430 == 1 && D_800FE024_name_2A == 2 && func_800FD850_name_2A(D_800FDF70_name_2A, 4) == 0)) {
+        /* Free ball close enough: catch it. */
+        dx = obj->trans.x - D_800FE040_name_2A->trans.x;
+        dy = obj->trans.y - D_800FE040_name_2A->trans.y;
+        dz = obj->trans.z - D_800FE040_name_2A->trans.z;
+        if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0 && ball->unk_48 == -1) {
+            func_800FC9EC_name_2A(D_800FE040_name_2A, ext->player);
+            if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 1) == 0) {
+                func_800FA124_name_2A();
+            }
+        }
+    }
+    if (work->unk_38 != 1000.0f && func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x4000) != 0 &&
+        (ContBtnTrg[work->unk_56] & 0x4000) && func_800FD850_name_2A(D_800FDF70_name_2A, 4) == 0 &&
+        func_800FB718_name_2A(obj) < 150.0f) {
+        /* B in the air near the hoop: dunk. */
+        func_800186E4(obj, 0x14, 0x29);
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x40, 1);
+        func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 1);
+    }
+    if (work->unk_38 == 1000.0f && ext->unk_44 != 1000.0f) {
+        func_800284E4(obj->model[0]);
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x100, 0);
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x40, 0);
+        func_800186E4(obj, 0x14, 0x28);
+    }
+    if (work->unk_38 == 1000.0f || D_800FE024_name_2A == 4) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x200) != 0) {
+            a = func_80025D18(obj->model[0]);
+            if (func_80025D40(obj->model[0]) <= a) {
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x200, 0);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x20, 1);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 2, 1);
+            }
+        } else if (D_800FDFB0_name_2A == 0.0f) {
+            /* Result poses (win 0x400, lose 0x1000). */
+            if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x400) != 0) {
+                work->unk_40 = D_800B8990;
+                if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x8000) != 0) {
+                    func_800186E4(obj, 0, 0x23);
+                    func_800186E4(obj, 1, 0x24);
+                    func_800186E4(obj, 2, 0x25);
+                }
+                func_8000A6F4(obj);
+                func_800185A4(obj, 0xD);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x200, 1);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x4000, 0);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x400, 0);
+                work->unk_3C = 0.0f;
+            }
+            if (D_800FDFB0_name_2A == 0.0f && func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x1000) != 0) {
+                work->unk_40 = D_800B8990;
+                if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x8000) != 0) {
+                    func_800186E4(obj, 0, 0x23);
+                    func_800186E4(obj, 1, 0x24);
+                    func_800186E4(obj, 2, 0x25);
+                }
+                func_8000A6F4(obj);
+                func_800185A4(obj, 0xE);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x200, 1);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x4000, 0);
+                func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x1000, 0);
+            }
+        }
+    } else if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x400) != 0 ||
+               func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x1000) != 0) {
+        /* Result jump in the air: spin. */
+        a = func_800FB79C_name_2A(obj);
+        ext->unk_34 = a;
+        mag = 60.0f;
+        ContStkX[work->unk_56] = func_800AEAC0(a) * mag;
+        ContStkY[work->unk_56] = func_800AEFD0(a) * -mag;
+    }
+    if (hit2 & 0x80) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 0x800) == 0) {
+            if (work->unk_38 != 1000.0f) {
+                func_800FA088_name_2A(obj);
+            } else {
+                func_800F9F1C_name_2A(obj);
+            }
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x800, 1);
+            func_800FD85C_name_2A(&ext->unk_DC, 1, 1);
+        }
+    } else {
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x800, 0);
+    }
+    if (func_800FD850_name_2A(D_800FDF74_name_2A, 1) == 0) {
+        func_800FA1CC_name_2A(obj);
+    }
+    ext->unk_44 = work->unk_38;
+    ext->unk_0C = obj->trans.x;
+    ext->unk_10 = obj->trans.y;
+    ext->unk_14 = obj->trans.z;
+    func_800FB878_name_2A(ext);
+    ext->unk_D0 = ext->unk_34;
+}
 
 void func_800F9E20_name_2A(omObjData* obj) {
     func_800F8940_name_2A(obj, 0);
@@ -1169,86 +1373,1239 @@ s32 func_800F9E90_name_2A(s32 player) {
     return D_800FDF40_name_2A;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800F9F1C_name_2A);
+void func_800F9F1C_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    N2APlayerWork* work = obj->unk_50;
+    N2APlayerExt* ext = work->unk_E4;
+    s32 mate;
+    f32 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA088_name_2A);
+    mate = func_800F9E90_name_2A(ext->player);
+    from.x = obj->trans.x;
+    from.y = obj->trans.y;
+    from.z = obj->trans.z;
+    to.x = D_800FE030_name_2A[mate]->trans.x;
+    to.y = D_800FE030_name_2A[mate]->trans.y;
+    to.z = D_800FE030_name_2A[mate]->trans.z;
+    func_800FD880_name_2A(&from, &to, &out);
+    if (GwPlayer[ext->player].flags & 1) {
+        work->unk_3C = ext->unk_E0;
+    }
+    D_800FDF54_name_2A = 27.0f;
+    d = out.z - work->unk_3C;
+    if (d >= -20.0f) {
+        if (d < 20.0f) {
+        work->unk_3C = out.z;
+        ext->unk_E0 = out.z;
+        if (out.x <= 647.0f) {
+            D_800FDF54_name_2A = out.x / 23.96f;
+        }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA124_name_2A);
+void func_800FA088_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    N2APlayerWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA1CC_name_2A);
+    from.x = obj->trans.x;
+    from.y = obj->trans.y;
+    from.z = obj->trans.z;
+    to.x = D_800FE048_name_2A->trans.x + 0.0f;
+    to.y = obj->trans.y;
+    to.z = D_800FE048_name_2A->trans.z + -560.0f;
+    func_800FD880_name_2A(&from, &to, &out);
+    work->unk_3C = out.z;
+    D_800FDF54_name_2A = 12.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA614_name_2A);
+void func_800FA124_name_2A(void) {
+    s32 unused[4];
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA8EC_name_2A);
+    for (i = 0; i < 4; i++) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[i], 1) != 0) {
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[i], 1, 0);
+        } else {
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[i], 1, 1);
+        }
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[i], 0x80, 1);
+        unused[i] = 0;
+    }
+}
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2A/1E9440", D_800FDE68_name_2A);
+/* Keeps a player out of the hoop's post and the four corner posts. */
+void func_800FA1CC_name_2A(omObjData* obj) {
+    f32 dx;
+    f32 dy;
+    f32 dz;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2A/1E9440", D_800FDE78_name_2A);
+    dx = D_800FE048_name_2A->trans.x + 0.0f - obj->trans.x;
+    dy = D_800FE048_name_2A->trans.y + 250.0f - obj->trans.y;
+    dz = D_800FE048_name_2A->trans.z + -560.0f - obj->trans.z;
+    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 125.0f) {
+        if (dx >= 0.0f) {
+            obj->trans.x -= 30.0f;
+        } else {
+            obj->trans.x += 30.0f;
+        }
+        if (dz >= 0.0f) {
+            obj->trans.z -= 30.0f;
+        } else {
+            obj->trans.z += 30.0f;
+        }
+    }
+    dx = -430.0f - obj->trans.x;
+    dy = 170.0f - obj->trans.y;
+    dz = -560.0f - obj->trans.z;
+    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
+        if (dx >= 0.0f) {
+            obj->trans.x -= 30.0f;
+        } else {
+            obj->trans.x += 30.0f;
+        }
+        obj->trans.z += 30.0f;
+    }
+    dx = 430.0f - obj->trans.x;
+    dy = 170.0f - obj->trans.y;
+    dz = -560.0f - obj->trans.z;
+    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
+        if (dx >= 0.0f) {
+            obj->trans.x -= 30.0f;
+        } else {
+            obj->trans.x += 30.0f;
+        }
+        obj->trans.z += 30.0f;
+    }
+    dx = -610.0f - obj->trans.x;
+    dy = 170.0f - obj->trans.y;
+    dz = 50.0f - obj->trans.z;
+    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
+        obj->trans.x += 30.0f;
+        if (dz >= 0.0f) {
+            obj->trans.z -= 30.0f;
+        } else {
+            obj->trans.z += 30.0f;
+        }
+    }
+    dx = 610.0f - obj->trans.x;
+    dy = 170.0f - obj->trans.y;
+    dz = 50.0f - obj->trans.z;
+    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
+        obj->trans.x -= 30.0f;
+        if (dz >= 0.0f) {
+            obj->trans.z -= 30.0f;
+        } else {
+            obj->trans.z += 30.0f;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FAEEC_name_2A);
+/* CPU control. */
+void func_800FA614_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    s32 mate;
+    N2APlayerWork* work;
+    N2APlayerExt* ext;
+    N2ABallExt* ball;
+    omObjData** holder;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB280_name_2A);
+    if (func_800FD850_name_2A(D_800FDF70_name_2A, 4) == 0 && D_800ED430 != 0) {
+        work = obj->unk_50;
+        ext = work->unk_E4;
+        ball = N2A_BALL(D_800FE040_name_2A)->unk_68;
+        if (func_800FD850_name_2A(ext->unk_DC, 2) != 0) {
+            work->unk_3C = ext->unk_E0;
+            func_800FB3FC_name_2A(obj);
+            if (--ext->unk_D4 == 0) {
+                func_800FD85C_name_2A(&ext->unk_DC, 2, 0);
+            }
+        } else if (func_800FD850_name_2A(ext->unk_DC, 1) != 0) {
+            work->unk_3C = ext->unk_E0;
+            func_800FB6F0_name_2A(obj);
+        } else if (func_800FD850_name_2A(ext->unk_DC, 4) != 0) {
+            work->unk_3C = ext->unk_E0;
+            if (--ext->unk_D4 == 0) {
+                func_800FB6F0_name_2A(obj);
+                func_800FD85C_name_2A(&ext->unk_DC, 4, 0);
+            }
+        } else if (ball->unk_48 == ext->player) {
+            func_800FA8EC_name_2A(obj);
+        } else {
+            mate = func_800F9E90_name_2A(ext->player);
+            if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 1) != 0 && ball->unk_48 == mate) {
+                holder = &D_800FE030_name_2A[ball->unk_48];
+                if (func_800FD850_name_2A(N2A_PLAYER(*holder)->unk_E4->unk_DC, 1) == 0) {
+                    ext->unk_24 = -(*holder)->trans.x;
+                    ext->unk_28 = -abs((s32)(*holder)->trans.z);
+                    from.x = obj->trans.x;
+                    from.y = 0.0f;
+                    from.z = obj->trans.z;
+                    to.x = ext->unk_24;
+                    to.y = 0.0f;
+                    to.z = ext->unk_28;
+                    func_800FD880_name_2A(&from, &to, &out);
+                    goto turn;
+                }
+            } else if (ball->unk_48 == -1) {
+                ext->unk_24 = D_800FE040_name_2A->trans.x;
+                ext->unk_28 = D_800FE040_name_2A->trans.z;
+                from.x = obj->trans.x;
+                from.y = 0.0f;
+                from.z = obj->trans.z;
+                to.x = ext->unk_24;
+                to.y = 0.0f;
+                to.z = ext->unk_28;
+                func_800FD880_name_2A(&from, &to, &out);
+                if (work->unk_38 == 1000.0f) {
+                turn:
+                    work->unk_3C = out.z;
+                    func_800FB3FC_name_2A(obj);
+                }
+            } else {
+                func_800FAEEC_name_2A(obj);
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB2DC_name_2A);
+/* CPU holding the ball: shoot when near the hoop, else pass or run. */
+void func_800FA8EC_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    s32 near[4];
+    f32 range[4] = { 400.0f, 300.0f, 200.0f, 100.0f };
+    s32 odds[4][2] = { { 3, 5 }, { 3, 7 }, { 2, 7 }, { 2, 9 } };
+    u16 flags;
+    N2APlayerWork* work;
+    N2APlayerExt* ext;
+    omObjData** p;
+    s32 n;
+    s32 i;
+    s32 r;
+    f32 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB334_name_2A);
+    work = obj->unk_50;
+    flags = func_80017A60(obj);
+    ext = work->unk_E4;
+    from.x = obj->trans.x;
+    from.y = 0.0f;
+    from.z = obj->trans.z;
+    to.x = D_800FE048_name_2A->trans.x + from.y;
+    to.y = from.y;
+    to.z = D_800FE048_name_2A->trans.z + -560.0f;
+    func_800FD880_name_2A(&from, &to, &out);
+    n = 0;
+    if (out.x < range[ext->unk_D8]) {
+        if (work->unk_38 == 1000.0f) {
+            work->unk_3C = out.z;
+            func_800FB6A8_name_2A(obj);
+            func_800FD85C_name_2A(&ext->unk_DC, 4, 1);
+            ext->unk_D4 = 3;
+            ext->unk_E0 = out.z;
+            D_800FE050_name_2A = 0;
+        } else if (--ext->unk_D4 == 0) {
+            func_800FB6F0_name_2A(obj);
+        }
+        return;
+    }
+    for (i = 0; i < 4; i++) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[i], 1) == 0 && func_800FB280_name_2A(obj, D_800FE030_name_2A[i]) < 200.0f) {
+            near[n] = i;
+            n++;
+        }
+    }
+    if (n == 2) {
+        i = func_800F9E90_name_2A(ext->player);
+        to.x = D_800FE030_name_2A[i]->trans.x;
+        to.y = 0.0f;
+        to.z = D_800FE030_name_2A[i]->trans.z;
+        func_800FD880_name_2A(&from, &to, &out);
+        if (work->unk_38 == 1000.0f && !(flags & 0x80)) {
+            work->unk_3C = out.z;
+            func_800FD85C_name_2A(&ext->unk_DC, 1, 1);
+            i = func_800F9E90_name_2A(ext->player);
+            to.x = D_800FE030_name_2A[i]->trans.x;
+            to.y = 0.0f;
+            to.z = D_800FE030_name_2A[i]->trans.z;
+            func_800FD880_name_2A(&from, &to, &out);
+            work->unk_3C = out.z;
+            ext->unk_D4 = 0;
+            ext->unk_E0 = out.z;
+        }
+    } else if (n == 1) {
+        to.x = D_800FE030_name_2A[near[0]]->trans.x;
+        to.y = 0.0f;
+        to.z = D_800FE030_name_2A[near[0]]->trans.z;
+        func_800FD880_name_2A(&from, &to, &out);
+        d = out.z - work->unk_3C;
+        if (d >= -45.0f) {
+            if (d < 45.0f) {
+                func_800FB6A8_name_2A(obj);
+                goto turn;
+            }
+        }
+        if (work->unk_38 == 1000.0f) {
+            r = rand8() & 0xF;
+            if (r < odds[ext->unk_D8][0]) {
+                work->unk_3C = N2A_WRAP(out.z + 180.0f);
+            } else if (r < odds[ext->unk_D8][1]) {
+                p = D_800FE030_name_2A + func_800F9E90_name_2A(ext->player);
+                if (func_800FD7D8_name_2A(*p) < func_800FD7D8_name_2A(obj)) {
+                    to.x = (*p)->trans.x;
+                    to.y = 0.0f;
+                    to.z = (*p)->trans.z;
+                    func_800FD880_name_2A(&from, &to, &out);
+                    func_800FD85C_name_2A(&ext->unk_DC, 1, 1);
+                    ext->unk_E0 = out.z;
+                }
+                return;
+            } else {
+                to.x = D_800FE048_name_2A->trans.x + 0.0f;
+                to.y = 0.0f;
+                to.z = D_800FE048_name_2A->trans.z + -560.0f;
+                func_800FD880_name_2A(&from, &to, &out);
+                work->unk_3C = out.z;
+            }
+            func_800FB3FC_name_2A(obj);
+            func_800FD85C_name_2A(&ext->unk_DC, 2, 1);
+            ext->unk_E0 = out.z;
+            ext->unk_D4 = 30;
+        }
+    } else if (work->unk_38 == 1000.0f) {
+    turn:
+        work->unk_3C = out.z;
+        func_800FB3FC_name_2A(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB3FC_name_2A);
+/* CPU without the ball while the other team holds it: guard or wander. */
+void func_800FAEEC_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    N2APlayerWork* work = obj->unk_50;
+    N2APlayerExt* ext = work->unk_E4;
+    N2ABallExt* ball = N2A_BALL(D_800FE040_name_2A)->unk_68;
+    f32 ox;
+    f32 oz;
+    f32 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB6A8_name_2A);
+    from.x = obj->trans.x;
+    from.y = 0.0f;
+    from.z = obj->trans.z;
+    to.x = D_800FE030_name_2A[ball->unk_48]->trans.x;
+    to.y = 0.0f;
+    to.z = D_800FE030_name_2A[ball->unk_48]->trans.z;
+    func_800FD880_name_2A(&from, &to, &out);
+    if (out.x < 200.0) {
+        work->unk_3C = out.z;
+        func_800FB6F0_name_2A(obj);
+        return;
+    }
+    if (--ext->unk_3C == 0) {
+        if (ext->unk_54 == 1) {
+            ext->unk_3C = 30;
+            ext->unk_54 = 0;
+        } else {
+            ext->unk_3C = 90;
+            ext->unk_54 = 1;
+        }
+        return;
+    }
+    if (ext->unk_54 == 0) {
+        ox = (rand8() % (ext->unk_D8 + 1)) * 30 - (ext->unk_D8 + 1) * 15;
+        oz = (rand8() % (ext->unk_D8 + 1)) * 30 - (ext->unk_D8 + 1) * 15;
+        ext->unk_24 = ox + D_800FE030_name_2A[ball->unk_48]->trans.x;
+        ext->unk_28 = oz + D_800FE030_name_2A[ball->unk_48]->trans.z;
+    } else {
+        from.x = D_800FE030_name_2A[ball->unk_48]->trans.x;
+        from.y = 0.0f;
+        from.z = D_800FE030_name_2A[ball->unk_48]->trans.z;
+        to.x = D_800FE048_name_2A->trans.x + from.y;
+        to.y = from.y;
+        to.z = D_800FE048_name_2A->trans.z + -560.0f;
+        func_800FD880_name_2A(&from, &to, &out);
+        d = out.x * 0.4f;
+        ext->unk_24 = D_800FE030_name_2A[ball->unk_48]->trans.x + d * func_800AEAC0(out.z);
+        ext->unk_28 = D_800FE030_name_2A[ball->unk_48]->trans.z + d * func_800AEFD0(out.z);
+    }
+    from.x = obj->trans.x;
+    from.y = 0.0f;
+    from.z = obj->trans.z;
+    to.x = ext->unk_24;
+    to.y = 0.0f;
+    to.z = ext->unk_28;
+    func_800FD880_name_2A(&from, &to, &out);
+    if (work->unk_38 == 1000.0f) {
+        work->unk_3C = out.z;
+        func_800FB3FC_name_2A(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB6F0_name_2A);
+f32 func_800FB280_name_2A(omObjData* a, omObjData* b) {
+    return D_800FDF44_name_2A = sqrtf((a->trans.x - b->trans.x) * (a->trans.x - b->trans.x) +
+                                      (a->trans.z - b->trans.z) * (a->trans.z - b->trans.z));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB718_name_2A);
+void func_800FB2DC_name_2A(N2APlayerExt* ext, s32 arg1) {
+    s32 pad[4];
+    s32 unused[32] = { 0, 1, 2, 3, 2, 3, 2, 0, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 0, 2, 0, 1, 2, 3, 0, 1, 0, 2 };
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB79C_name_2A);
+    ext->unk_54 = 0;
+    ext->unk_3C = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB878_name_2A);
+void func_800FB334_name_2A(N2APlayerExt* ext) {
+    ext->unk_24 = (rand8() * 4) % 1000 - 500;
+    ext->unk_28 = (rand8() * 4) % 1000 - 500;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB8BC_name_2A);
+/* Stick toward work->unk_3C; deflection by CPU level (team 0 and team 1 use the levels in
+   opposite order). */
+void func_800FB3FC_name_2A(omObjData* obj) {
+    N2APlayerWork* work = obj->unk_50;
+    N2APlayerExt* ext = work->unk_E4;
+    f32 angle = work->unk_3C;
+    s32 mag;
+    f32 f;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FBB50_name_2A);
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 1) != 0) {
+        switch (ext->unk_D8) {
+            case 0:
+                mag = (u8)(rand8() % 14) * 5;
+                break;
+            case 1:
+                mag = (u8)(rand8() % 10) * 5 + 20;
+                break;
+            case 2:
+                mag = (u8)(rand8() % 6) * 5 + 40;
+                break;
+            default:
+                mag = (rand8() & 1) * 5 + 60;
+                break;
+        }
+    } else {
+        switch (ext->unk_D8) {
+            case 0:
+                mag = 60 + (rand8() & 1) * 5;
+                break;
+            case 1:
+                mag = 40 + (u8)(rand8() % 6) * 5;
+                break;
+            case 2:
+                mag = 20 + (u8)(rand8() % 10) * 5;
+                break;
+            default:
+                mag = (u8)(rand8() % 14) * 5;
+                break;
+        }
+    }
+    f = mag;
+    ContStkX[work->unk_56] = f * func_800AEAC0(angle);
+    ContStkY[work->unk_56] = -f * func_800AEFD0(angle);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FBFC8_name_2A);
+void func_800FB6A8_name_2A(omObjData* obj) {
+    N2APlayerWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC098_name_2A);
+    ContBtnTrg[work->unk_56] |= 0x8000;
+    ContBtn[work->unk_56] |= 0x8000;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC364_name_2A);
+void func_800FB6F0_name_2A(omObjData* obj) {
+    ContBtnTrg[N2A_PLAYER(obj)->unk_56] |= 0x4000;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC70C_name_2A);
+f32 func_800FB718_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC7A4_name_2A);
+    from.x = obj->trans.x;
+    from.y = obj->trans.y;
+    from.z = obj->trans.z;
+    to.x = D_800FE048_name_2A->trans.x + 0.0f;
+    to.y = obj->trans.y;
+    to.z = D_800FE048_name_2A->trans.z + -560.0f;
+    func_800FD880_name_2A(&from, &to, &out);
+    return D_800FDF48_name_2A = out.x;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC8C8_name_2A);
+f32 func_800FB79C_name_2A(omObjData* obj) {
+    N2APlayerWork* work = obj->unk_50;
+    N2APlayerExt* ext = work->unk_E4;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC990_name_2A);
+    if (--ext->unk_3C == 0 && ext->unk_58[29] != 1000.0f) {
+        ext->unk_D0 = N2A_WRAP(ext->unk_D0 + 30.0f);
+        ext->unk_3C = 30;
+        work->unk_38 = 300.0f;
+    }
+    return D_800FDF4C_name_2A = ext->unk_D0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC9EC_name_2A);
+void func_800FB878_name_2A(N2APlayerExt* ext) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FCB5C_name_2A);
+    /* Retail shifts 30 entries up by one: [29] lands in [30], which is unk_D0. */
+    for (i = 0; i < 30; i++) {
+        ext->unk_58[30 - i] = ext->unk_58[29 - i];
+    }
+    ext->unk_58[0] = ext->unk_38;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD1B4_name_2A);
+/* After a goal: send each team-0 player to the free end of the court (ext->unk_48/4C). */
+void func_800FB8BC_name_2A(void) {
+    f32 homeX[2];
+    f32 homeZ[2];
+    Vec from;
+    Vec to;
+    Vec out;
+    omObjData* obj;
+    N2APlayerExt* ext;
+    s32* timer;
+    f32 d;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD20C_name_2A);
+    homeX[0] = -78.0f;
+    homeX[1] = 78.0f;
+    homeZ[1] = homeZ[0] = -300.0f;
+    for (i = 0; i < 4; i++) {
+        ext = N2A_PLAYER(D_800FE030_name_2A[i])->unk_E4;
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 1) != 0) {
+            from.x = D_800FE030_name_2A[i]->trans.x;
+            from.y = 0.0f;
+            from.z = D_800FE030_name_2A[i]->trans.z;
+            to.x = homeX[0];
+            to.y = 0.0f;
+            to.z = homeZ[0];
+            func_800FD880_name_2A(&from, &to, &out);
+            d = out.x;
+            to.x = homeX[1];
+            to.y = 0.0f;
+            to.z = homeZ[1];
+            func_800FD880_name_2A(&from, &to, &out);
+            if (d < out.x) {
+                if (D_800FDFA4_name_2A[0] == 0) {
+                    goto home0;
+                }
+                goto home1;
+            }
+            if (D_800FDFA4_name_2A[1] != 0) {
+            home0:
+                ext->unk_48 = homeX[0];
+                ext->unk_4C = homeZ[0];
+                D_800FDFA4_name_2A[0]++;
+            } else {
+            home1:
+                ext->unk_48 = homeX[1];
+                ext->unk_4C = homeZ[1];
+                D_800FDFA4_name_2A[1]++;
+            }
+            if (D_800FDFA4_name_2A[0] == 2) {
+                ext->unk_48 = homeX[1];
+                ext->unk_4C = homeZ[1];
+            }
+            if (D_800FDFA4_name_2A[1] == 2) {
+                ext->unk_48 = homeX[0];
+                ext->unk_4C = homeZ[0];
+            }
+        } else {
+            ext->unk_48 = 0.0f;
+            ext->unk_4C = -300.0f;
+        }
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[i], 0x20000, 1);
+    }
+    obj = omAddObj(0x10, 0, 0, -1, &func_800FBFC8_name_2A);
+    timer = func_80023684(sizeof(s32), 0x7918);
+    obj->unk_50 = timer;
+    *timer = 120;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD254_name_2A);
+/* After a goal: walk to the home spot (team 0) or away from it (team 1). */
+void func_800FBB50_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    N2APlayerWork* work = obj->unk_50;
+    N2APlayerExt* ext = work->unk_E4;
+    omObjData* other;
+    f32 mag;
+    f32 best;
+    f32 dx;
+    f32 dz;
+    f32 d;
+    s32 nearest;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD428_name_2A);
+    nearest = 0;
+    if (func_800FD850_name_2A(D_800FDF60_name_2A[ext->player], 1) != 0) {
+        from.x = obj->trans.x;
+        from.y = obj->trans.y;
+        from.z = obj->trans.z;
+        to.x = ext->unk_48;
+        to.y = 0.0f;
+        to.z = ext->unk_4C;
+        func_800FD880_name_2A(&from, &to, &out);
+        mag = (out.x >= 180.0f) ? 60.0f : 36.0f;
+        ContStkX[work->unk_56] = mag * func_800AEAC0(out.z);
+        ContStkY[work->unk_56] = -mag * func_800AEFD0(out.z);
+        best = 1000.0f;
+        for (i = 0; i < 4; i++) {
+            other = D_800FE030_name_2A[i];
+            if (obj != other) {
+                d = sqrtf((other->trans.x - obj->trans.x) * (other->trans.x - obj->trans.x) +
+                          (other->trans.z - obj->trans.z) * (other->trans.z - obj->trans.z));
+                if (d < best) {
+                    best = d;
+                    nearest = i;
+                }
+            }
+        }
+        if (best < 135.0f && N2A_PLAYER(D_800FE030_name_2A[nearest])->unk_38 == 1000.0f) {
+            ContBtnTrg[work->unk_56] |= 0x8000;
+            ContBtn[work->unk_56] |= 0x8000;
+        }
+        if (out.x <= 30.0f) {
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x20000, 0);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x40000, 1);
+            ContStkX[work->unk_56] = 0;
+            ContStkY[work->unk_56] = 0;
+            func_80009E20(obj);
+            work->unk_50 &= ~0x200;
+            work->unk_3C = 0.0f;
+        }
+    } else {
+        from.x = obj->trans.x;
+        from.y = obj->trans.y;
+        from.z = obj->trans.z;
+        to.x = ext->unk_48;
+        to.y = 0.0f;
+        to.z = ext->unk_4C;
+        func_800FD880_name_2A(&from, &to, &out);
+        out.z = N2A_WRAP(out.z + 180.0f);
+        mag = 60.0f;
+        ContStkX[work->unk_56] = func_800AEAC0(out.z) * mag;
+        ContStkY[work->unk_56] = func_800AEFD0(out.z) * -mag;
+        if (out.x >= 500.0f) {
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x20000, 0);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->player], 0x40000, 1);
+            ContStkX[work->unk_56] = 0;
+            ContStkY[work->unk_56] = 0;
+            func_80009E20(obj);
+            work->unk_50 &= ~0x200;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD54C_name_2A);
+void func_800FBFC8_name_2A(omObjData* obj) {
+    s32* timer = obj->unk_50;
+    s32 n;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD670_name_2A);
+    n = 0;
+    for (i = 0; i < 4; i++) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[i], 1) != 0) {
+            n += func_800FD850_name_2A(D_800FDF60_name_2A[i], 0x20000);
+        }
+    }
+    (*timer)--;
+    if (n == 0 || *timer == 0) {
+        D_800FE024_name_2A = 9;
+        D_800ED430 = 2;
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD7D8_name_2A);
+void func_800FC098_name_2A(void) {
+    omObjData* obj;
+    N2ABallWork* work;
+    N2ABallExt* ext;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD850_name_2A);
+    obj = omAddObj(5, 2, 2, -1, &func_800FC364_name_2A);
+    D_800FE040_name_2A = obj;
+    obj->unk_50 = func_80023684(sizeof(N2ABallWork), 0x7918);
+    for (i = 0; i < 4; i++) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[i], 1) != 0) {
+            break;
+        }
+    }
+    obj->trans.x = -200.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 500.0f;
+    obj->rot.x = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->rot.z = 0.0f;
+    obj->scale.x = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.z = 1.0f;
+    work = obj->unk_50;
+    ext = work->unk_68 = func_80023684(sizeof(N2ABallExt), 0x7918);
+    obj->model[0] = LoadFormFile(0x3E0009, 0x699);
+    work->unk_50 = 0x40;
+    work->unk_48 = 40.0f;
+    work->unk_34 = 40.0f;
+    work->unk_38 = 1000.0f;
+    work->unk_3C = 180.0f;
+    work->unk_58 = 0.8f;
+    work->unk_4C = 0.5f;
+    work->unk_40 = 0.0f;
+    ext->unk_00 = 0.0f;
+    ext->unk_04 = 0.0f;
+    ext->unk_08 = 0.0f;
+    ext->unk_0C = 0.0f;
+    ext->unk_10 = 0.0f;
+    ext->unk_14 = 0.0f;
+    ext->unk_18 = 1.0f;
+    ext->unk_1C = 1.0f;
+    ext->unk_20 = 1.0f;
+    ext->unk_44 = 2.0f;
+    ext->unk_48 = -1;
+    ext->unk_50 = 4.9f;
+    ext->unk_40 = 0.0f;
+    ext->unk_58 = 0;
+    ext->unk_4C = -1;
+    ext->unk_5C = 0.0f;
+    ext->unk_60 = 0.0f;
+    ext->unk_64 = 0.0f;
+    D_800FDF98_name_2A = -1;
+    omSetTra(obj, obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->model[1] = LoadFormFile(6, 0x699);
+    func_800370D4(obj->model[1]);
+    func_80025830(obj->model[1], 1.0f, 1.0f, 1.0f);
+    D_800FDF70_name_2A = 0;
+    func_800090C4(obj, 0, 2);
+    func_800090C4(obj, 1, 2);
+    func_80008FAC(obj, 0.5f);
+    func_8001775C(obj, 0, 0x3E000A);
+    func_8001775C(obj, 1, 0x3E000B);
+    func_800FC70C_name_2A(obj);
+    ext->unk_30 = -200.0f;
+    ext->unk_34 = 500.0f;
+    func_80021E58();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD85C_name_2A);
+void func_800FC364_name_2A(omObjData* obj) {
+    Vec4f sphere;
+    N2ABallWork* work;
+    N2ABallExt* ext;
+    f32 x;
+    f32 y;
+    f32 z;
+    s32 hit;
+    s32 i;
 
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2A/1E9440", D_800FDEA0_name_2A);
+    if (func_800FD850_name_2A(D_800FDF70_name_2A, 4) != 0) {
+        func_800258EC(obj->model[0], 4, 4);
+        func_800258EC(obj->model[1], 4, 4);
+        omDelObj(obj);
+        return;
+    }
+    work = obj->unk_50;
+    ext = work->unk_68;
+    omSetTra(obj, obj->trans.x, obj->trans.y, obj->trans.z);
+    omSetRot(obj, obj->rot.x, obj->rot.y, obj->rot.z);
+    x = obj->trans.x;
+    y = obj->trans.y;
+    z = obj->trans.z;
+    D_800ED6B8 = 0.0f;
+    D_800F5254 = 0.0f;
+    sphere.x = x;
+    sphere.y = y;
+    sphere.z = z;
+    sphere.w = work->unk_48;
+    func_80004D1C(obj, &sphere, 0.0f);
+    hit = 0;
+    if (D_800F5254 >= 0.00001f || D_800F5254 <= -0.00001f) {
+        work->unk_3C = N2A_WRAP(-(work->unk_3C - 180.0f));
+        hit = 1;
+    }
+    if (D_800ED6B8 >= 0.00001f || D_800ED6B8 <= -0.00001f) {
+        work->unk_3C = N2A_WRAP(-work->unk_3C);
+        hit = 1;
+    }
+    if (hit) {
+        if (D_800FDF54_name_2A * 0.5f <= work->unk_40 && ext->unk_48 == -1) {
+            work->unk_40 *= 0.5f;
+            obj->trans.x = ext->unk_5C;
+            obj->trans.y = ext->unk_60;
+            obj->trans.z = ext->unk_64;
+            D_800FE028_name_2A = PlaySound(0x30C);
+        }
+    }
+    func_80025798(obj->model[1], obj->trans.x, 4.0f, obj->trans.z);
+    ext->unk_5C = obj->trans.x;
+    ext->unk_60 = obj->trans.y;
+    ext->unk_64 = obj->trans.z;
+    if (D_800FE024_name_2A != 0 && D_800FE024_name_2A != 1 && D_800FE024_name_2A != -1) {
+        if (func_800FD850_name_2A(D_800FDF70_name_2A, 1) != 0) {
+            func_800FC7A4_name_2A(obj);
+        } else {
+            func_800FCB5C_name_2A(obj);
+        }
+    }
+    ext->unk_4C = ext->unk_48;
+    for (i = 0; i < 4; i++) {
+        if (N2A_PLAYER(D_800FE030_name_2A[i])->unk_B1 != -1) {
+            N2A_PLAYER(D_800FE030_name_2A[i])->unk_B1 = -1;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD880_name_2A);
+/* Puts the ball in demo mode (rolling to random spots) until the game starts. */
+void func_800FC70C_name_2A(omObjData* obj) {
+    N2ABallExt* ext = N2A_BALL(obj)->unk_68;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FDBF4_name_2A);
+    obj->rot.x = 0.0f;
+    obj->rot.z = 0.0f;
+    func_800FC8C8_name_2A(ext);
+    func_800FD85C_name_2A(&D_800FDF70_name_2A, 1, 1);
+    func_800FD85C_name_2A(&D_800FDF70_name_2A, 2, 0);
+    func_800258EC(obj->model[0], 0x4000, 0);
+    func_80025BB8(obj->model[0], obj->motion[1]);
+    func_80025EB4(obj->model[0], 2, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FDD44_name_2A);
+void func_800FC7A4_name_2A(omObjData* obj) {
+    s16 pos[2];
+    s16 target[2];
+    Vec out;
+    N2ABallWork* work = obj->unk_50;
+    N2ABallExt* ext = work->unk_68;
+
+    func_800FC990_name_2A(obj, &out);
+    obj->rot.y = work->unk_3C = out.z;
+    obj->trans.x += func_800AEAC0(work->unk_3C) * ext->unk_44;
+    obj->trans.z += func_800AEFD0(work->unk_3C) * ext->unk_44;
+    pos[0] = (s32)obj->trans.x / 32;
+    pos[1] = (s32)obj->trans.z / 32;
+    target[0] = (s32)ext->unk_30 / 32;
+    target[1] = (s32)ext->unk_34 / 32;
+    if (out.x < ext->unk_44) {
+        func_800FC8C8_name_2A(ext);
+    }
+}
+
+void func_800FC8C8_name_2A(N2ABallExt* ext) {
+    ext->unk_30 = (rand8() * 4) % 1000 - 500;
+    ext->unk_34 = (rand8() * 4) % 1000 - 500;
+}
+
+void func_800FC990_name_2A(omObjData* obj, Vec* out) {
+    Vec from;
+    Vec to;
+    N2ABallExt* ext = N2A_BALL(obj)->unk_68;
+
+    from.x = obj->trans.x;
+    from.y = obj->trans.y;
+    from.z = obj->trans.z;
+    to.x = ext->unk_30;
+    to.y = obj->trans.y;
+    to.z = ext->unk_34;
+    func_800FD880_name_2A(&from, &to, out);
+}
+
+/* `player` catches the ball. */
+void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
+    N2ABallWork* work = obj->unk_50;
+    N2ABallExt* ext = work->unk_68;
+    omObjData** p = D_800FE030_name_2A + player;
+    N2APlayerWork* pw = (*p)->unk_50;
+    s32* flags;
+
+    func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 0);
+    func_800FD85C_name_2A(&D_800FDF70_name_2A, 1, 0);
+    flags = &D_800FDF60_name_2A[player];
+    func_800FD85C_name_2A(flags, 0x4000, 1);
+    func_800FD85C_name_2A(flags, 0x8000, 1);
+    func_8000A634(*p, obj);
+    pw->unk_50 &= ~0x100;
+    pw->unk_A4 = 0.8f;
+    ext->unk_48 = player;
+    D_800FDF98_name_2A = player;
+    func_80025BB8(obj->model[0], obj->motion[0]);
+    func_80025EB4(obj->model[0], 2, 0);
+    obj->trans.y += work->unk_48;
+    func_800258EC(D_800FE02C_name_2A->model[0], 4, 0);
+    func_800258EC(D_800FE02C_name_2A->model[1], 4, 0);
+}
+
+void func_800FCB5C_name_2A(omObjData* obj) {
+    Vec from;
+    Vec to;
+    Vec out;
+    N2ABallWork* work;
+    N2ABallExt* ext;
+    N2APlayerWork* holder;
+    s32* flags;
+    f32 frames;
+    f32 y;
+    f32 vy;
+    f32 gravity;
+
+    if (func_800FD850_name_2A(D_800FDF70_name_2A, 4) != 0) {
+        return;
+    }
+    work = obj->unk_50;
+    ext = work->unk_68;
+    if (!(work->unk_50 & 0x20)) {
+        if (ext->unk_48 == -1) {
+            obj->trans.x += func_800AEAC0(work->unk_3C) * work->unk_40;
+            obj->trans.y += ext->unk_40;
+            if (obj->trans.y < work->unk_48) {
+                obj->trans.y = work->unk_48;
+                func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 0);
+                if (ext->unk_54 > 10.0f) {
+                    D_800FE028_name_2A = PlaySound(0x30C);
+                }
+                ext->unk_54 *= 0.6f;
+                if (ext->unk_54 < 0.1f) {
+                    ext->unk_54 = 0.0f;
+                }
+                ext->unk_40 = ext->unk_54;
+            }
+            ext->unk_40 -= ext->unk_50;
+            obj->trans.z += func_800AEFD0(work->unk_3C) * work->unk_40;
+            if (obj->trans.y == work->unk_48) {
+                work->unk_40 -= work->unk_44;
+                if (work->unk_40 < 0.0f) {
+                    work->unk_40 = 0.0f;
+                }
+                if (work->unk_40 == 0.0f) {
+                    if (func_800FD850_name_2A(D_800FDF70_name_2A, 2) == 0) {
+                        func_800FD85C_name_2A(&D_800FDF70_name_2A, 2, 1);
+                        ext->unk_58 = 30;
+                    } else if (--ext->unk_58 == 0) {
+                        func_800FC70C_name_2A(obj);
+                    }
+                }
+                obj->rot.x += func_800AEFD0(work->unk_3C) * work->unk_40;
+                obj->rot.x = N2A_WRAP(obj->rot.x);
+                obj->rot.z -= func_800AEAC0(work->unk_3C) * work->unk_40;
+                obj->rot.z = N2A_WRAP(obj->rot.z);
+            }
+        } else {
+            holder = D_800FE030_name_2A[ext->unk_48]->unk_50;
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x4000, 0);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x8000, 1);
+            ext->unk_48 = -1;
+            ext->unk_54 = 50.0f;
+            ext->unk_40 = 50.0f;
+            if (holder->unk_B1 != -1) {
+                obj->trans.x = D_800FE030_name_2A[holder->unk_B1]->trans.x;
+                obj->trans.y = D_800FE030_name_2A[holder->unk_B1]->trans.y;
+                obj->trans.z = D_800FE030_name_2A[holder->unk_B1]->trans.z;
+                func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 0);
+                work->unk_40 = 0.0f;
+                work->unk_38 = 0.0f;
+                holder->unk_B1 = -1;
+            } else {
+                work->unk_40 = D_800FDF54_name_2A;
+                if (func_800FD850_name_2A(D_800FDF60_name_2A[D_800FDF98_name_2A], 0x40) != 0) {
+                    /* A shot: time the arc to come down at the hoop. */
+                    ext->unk_54 = 10.0f;
+                    ext->unk_40 = 10.0f;
+                    frames = 0.0f;
+                    y = obj->trans.y;
+                    vy = 10.0f;
+                    gravity = ext->unk_50;
+                    while ((D_800FE048_name_2A->trans.y + 350.0f <= y) | (vy > 0.0f)) {
+                        y += vy;
+                        vy -= gravity;
+                        frames += 1.0f;
+                    }
+                    from.x = obj->trans.x;
+                    from.y = obj->trans.y;
+                    from.z = obj->trans.z;
+                    to.x = D_800FE048_name_2A->trans.x + 0.0f;
+                    to.y = from.y;
+                    to.z = D_800FE048_name_2A->trans.z + -560.0f;
+                    func_800FD880_name_2A(&from, &to, &out);
+                    work->unk_40 = out.x / frames;
+                }
+                func_800258EC(D_800FE02C_name_2A->model[0], 4, 4);
+                func_800258EC(D_800FE02C_name_2A->model[1], 4, 4);
+            }
+            obj->rot.x = 0.0f;
+            obj->rot.y = 0.0f;
+            obj->rot.z = 0.0f;
+            flags = &holder->unk_E4->unk_DC;
+            func_800FD85C_name_2A(flags, 1, 0);
+            func_800FD85C_name_2A(flags, 2, 0);
+            func_800FD85C_name_2A(flags, 4, 0);
+        }
+    } else {
+        if (ext->unk_48 != -1) {
+            obj->trans.x = D_800FE030_name_2A[ext->unk_48]->trans.x;
+            obj->trans.y = D_800FE030_name_2A[ext->unk_48]->trans.y;
+            obj->trans.z = D_800FE030_name_2A[ext->unk_48]->trans.z;
+        }
+        if (ext->unk_4C != -1 && ext->unk_4C != ext->unk_48) {
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_4C], 0x4000, 0);
+            func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_4C], 0x8000, 1);
+        }
+    }
+}
+
+void func_800FD1B4_name_2A(omObjData* obj) {
+    omObjData* timerObj;
+    s32* timer;
+
+    timerObj = omAddObj(5, 0, 0, -1, &func_800FD20C_name_2A);
+    timer = func_80023684(sizeof(N2ABallExt), 0x7918);
+    timerObj->unk_50 = timer;
+    *timer = 1;
+}
+
+void func_800FD20C_name_2A(omObjData* obj) {
+    s32* timer = obj->unk_50;
+
+    (*timer)--;
+    if (*timer == 0) {
+        func_800FD254_name_2A(D_800FE040_name_2A);
+        omDelObj(obj);
+    }
+}
+
+/* Goal or time up: a camera on the ball (or the court), then the result. */
+void func_800FD254_name_2A(omObjData* obj) {
+    N2ABallExt* ext = N2A_BALL(obj)->unk_68;
+    f32 dz;
+    f32 dx;
+
+    func_800258EC(D_800FE02C_name_2A->model[0], 4, 4);
+    func_800258EC(D_800FE02C_name_2A->model[1], 4, 4);
+    dz = 0.0f;
+    dx = dz;
+    if (ext->unk_48 != -1) {
+        dx = -50.0f;
+    } else {
+        dz = 100.0f;
+    }
+    if (D_800FE024_name_2A == 3) {
+        func_80021EC0(2, dx + D_800FE040_name_2A->trans.x, D_800FE040_name_2A->trans.y + 50.0f,
+                      dz + D_800FE040_name_2A->trans.z);
+    } else {
+        func_80021EC0(2, 0.0f, 300.0f, -500.0f);
+    }
+    D_800FE024_name_2A = -1;
+    func_800FD85C_name_2A(&D_800FDF70_name_2A, 4, 1);
+    func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 0);
+    if (func_800FD850_name_2A(D_800FDF74_name_2A, 1) != 0) {
+        D_800FDFC4_name_2A = PlaySound(0x308);
+    } else {
+        D_800FDFC4_name_2A = PlaySound(0x30E);
+    }
+    func_80009730();
+    if (ext->unk_48 != -1) {
+        func_8000A534(D_800FE030_name_2A[ext->unk_48], 0);
+    }
+    if (D_800FDF58_name_2A == 0) {
+        D_800FE024_name_2A = 4;
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x4000, 0);
+        func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x8000, 1);
+    }
+    func_800601D4(40);
+}
+
+void func_800FD428_name_2A(void) {
+    PB_PTR32 light;
+
+    func_8006B870();
+    light = func_8006B8A4(0xC, 0x6D9, 0x699, 0x289, 1);
+    func_8006B9B0(light, 0, 50.0f, -805.0f);
+    func_8006B9C0(light, 0, 0, 0);
+    func_8006B9D0(light, 1.0f, 1.0f, 1.0f);
+    func_8006BAD0(light, 0);
+    func_8006BB08(light, 0);
+    D_800FE044_name_2A = light;
+    light = func_8006B8A4(0xC, 0x6D9, 0x699, 0x289, 1);
+    func_8006B9B0(light, 0, 50.0f, -805.0f);
+    func_8006B9C0(light, 0, 0, 0);
+    func_8006B9D0(light, 1.0f, 1.0f, 1.0f);
+    func_8006BAD0(light, 0);
+    func_8006BB08(light, 4);
+    D_800FDFC0_name_2A = light;
+}
+
+void func_800FD54C_name_2A(void) {
+    s32 team[2];
+    s32 n;
+    s32 i;
+
+    n = 0;
+    for (i = 0; i < 4; i++) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[i], 1) != 0) {
+            team[n] = i;
+            n++;
+        }
+    }
+    func_8006BADC(D_800FE044_name_2A, D_800FE030_name_2A[team[0]]->trans.x, 0.0f, D_800FE030_name_2A[team[0]]->trans.z);
+    func_8006BADC(D_800FDFC0_name_2A, D_800FE030_name_2A[team[1]]->trans.x, 0.0f, D_800FE030_name_2A[team[1]]->trans.z);
+    func_8006BAF0(D_800FE044_name_2A, 1);
+    func_8006BAF0(D_800FDFC0_name_2A, 1);
+    omAddObj(0xC, 0, 0, -1, &func_800FD670_name_2A);
+    D_800FE024_name_2A = -1;
+}
+
+void func_800FD670_name_2A(omObjData* obj) {
+    s32 team[2];
+    N2APlayerWork* work;
+    N2APlayerExt* ext;
+    s32 n;
+    s32 i;
+
+    n = 0;
+    for (i = 0; i < 4; i++) {
+        if (func_800FD850_name_2A(D_800FDF60_name_2A[i], 1) != 0) {
+            team[n] = i;
+            n++;
+        }
+    }
+    func_8006BADC(D_800FE044_name_2A, D_800FE030_name_2A[team[0]]->trans.x, D_800FE030_name_2A[team[0]]->trans.y, D_800FE030_name_2A[team[0]]->trans.z);
+    func_8006BADC(D_800FDFC0_name_2A, D_800FE030_name_2A[team[1]]->trans.x, D_800FE030_name_2A[team[1]]->trans.y, D_800FE030_name_2A[team[1]]->trans.z);
+    if (func_8006BAFC(D_800FE044_name_2A) == 0 && func_8006BAFC(D_800FDFC0_name_2A) == 0) {
+        for (i = 0; i < 4; i++) {
+            work = D_800FE030_name_2A[i]->unk_50;
+            ext = work->unk_E4;
+            work->unk_50 = (work->unk_50 | 0x200) & 0xFFF8;
+            ext->unk_3C = 15;
+            ext->unk_D0 = work->unk_3C;
+        }
+        func_800F7760_name_2A(D_800FDF98_name_2A);
+        omDelObj(obj);
+    }
+}
+
+f32 func_800FD7D8_name_2A(omObjData* obj) {
+    f32 hx = D_800FE048_name_2A->trans.x + 0.0f;
+    f32 hy = D_800FE048_name_2A->trans.y + 350.0f;
+    f32 hz = D_800FE048_name_2A->trans.z + -560.0f;
+
+    return D_800FDF50_name_2A = (hx - obj->trans.x) * (hx - obj->trans.x) + (hy - obj->trans.y) * (hy - obj->trans.y) +
+                                (hz - obj->trans.z) * (hz - obj->trans.z);
+}
+
+s32 func_800FD850_name_2A(s32 flags, s32 mask) {
+    return (flags & mask) != 0;
+}
+
+void func_800FD85C_name_2A(s32* flags, s32 mask, s32 set) {
+    if (set != 0) {
+        *flags |= mask;
+    } else {
+        *flags &= ~mask;
+    }
+}
+
+/* out = (distance, -, yaw) from `from` to `to`. */
+void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
+    Vec delta;
+    Vec fromCopy;
+    Vec toCopy;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    f32 length;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromCopy.x = from->x;
+    fromCopy.y = from->y;
+    fromCopy.z = from->z;
+    toCopy.x = to->x;
+    toCopy.y = to->y;
+    toCopy.z = to->z;
+    delta.x = toCopy.x - fromCopy.x;
+    delta.y = toCopy.y - fromCopy.y;
+    delta.z = toCopy.z - fromCopy.z;
+    horizontal = sqrtf((delta.x * delta.x) + (delta.z * delta.z));
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        horizontal = 0.0f;
+        pitch = 180.0f;
+        yaw = 0.0f;
+        if (!(delta.y > 0.0001f) && (delta.y < 0.0001f)) {
+            pitch = 0.0f;
+        }
+    } else {
+        if (delta.x != 0.0f && delta.z != 0.0f) {
+            yaw = func_800FDBF4_name_2A(delta.x / delta.z) * 57.29577951308232;
+        } else {
+            yaw = 0.0f;
+        }
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        if (horizontal != 0.0f && delta.y != 0.0f) {
+            pitch = func_800FDBF4_name_2A(delta.y / horizontal) * 57.29577951308232;
+        } else {
+            pitch = 0.0f;
+        }
+        yaw = N2A_WRAP(yaw);
+        pitch = N2A_WRAP(pitch + 90.0f);
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    length = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
+    out->z = yaw;
+    out->x = length;
+}
+
+/* atan(x) by a continued fraction. */
+f32 func_800FDBF4_name_2A(f32 x) {
+    f32 a;
+    f32 b;
+    f32 sum;
+    f64 base;
+    f64 frac;
+    s32 sign;
+    s32 i;
+
+    sign = 1;
+    if (x > 1.0f) {
+        x = 1.0f / x;
+    } else {
+        sign = -1;
+        if (x < -1.0f) {
+            x = 1.0f / x;
+        } else {
+            sign = 0;
+        }
+    }
+    sum = 0.0f;
+    i = 6;
+    do {
+        a = (f32)(i * i) * x * x;
+        b = (f32)(i * 2 + 1) + sum;
+        i--;
+        sum = a / b;
+    } while (i > 0);
+    if (sum != -1.0f) {
+        if (sign > 0) {
+            base = 1.5707963267948966;
+            frac = x / (sum + 1.0f);
+            goto done;
+        }
+        if (sign < 0) {
+            frac = x / (sum + 1.0f);
+            base = -1.5707963267948966;
+        done:
+            return base - frac;
+        }
+        return x / (sum + 1.0f);
+    }
+    return 0.0f;
+}
+
+void func_800FDD44_name_2A(void) {
+}
