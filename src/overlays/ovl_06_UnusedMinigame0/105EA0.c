@@ -74,7 +74,7 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
         t->flags = 1;
         t->visited = 0;
         t->state = 0;
-        t->dy = t->dx = 0.0f;
+        t->dx = t->dy = 0.0f;
         t->moveTimer = 0;
         t->match = NULL;
     }
@@ -88,7 +88,7 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
         }
     }
     for (i = 0; i < 3; i++) {
-        buf = HuMemDirectMalloc(0x1E00);
+        buf = HuMemDirectMalloc(960 * sizeof(Gfx));
         D_801098A8_UnusedMinigame0[i] = buf;
         D_80109CC0_UnusedMinigame0[i] = func_80024198(0x19, buf, 4);
     }
@@ -676,9 +676,9 @@ void func_800FF488_UnusedMinigame0(void) {
     for (i = 0; i < 8; i++) {
         D_80108C60_UnusedMinigame0[i].state = 1;
     }
-    D_80108C50_UnusedMinigame0[0] = HuMemDirectMalloc(0x1800);
-    D_80108C50_UnusedMinigame0[1] = HuMemDirectMalloc(0x1800);
-    D_80108C50_UnusedMinigame0[2] = HuMemDirectMalloc(0x1800);
+    D_80108C50_UnusedMinigame0[0] = HuMemDirectMalloc(768 * sizeof(Gfx));
+    D_80108C50_UnusedMinigame0[1] = HuMemDirectMalloc(768 * sizeof(Gfx));
+    D_80108C50_UnusedMinigame0[2] = HuMemDirectMalloc(768 * sizeof(Gfx));
     D_80109CCC_UnusedMinigame0 = func_80024198(0x19, D_80108C50_UnusedMinigame0[0], 4);
     func_800FFA64_UnusedMinigame0();
     func_80025830(UM0_MODEL_DROP, 2.5f, 2.5f, 2.5f);
@@ -834,8 +834,355 @@ void func_800FFA64_UnusedMinigame0(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FFA64_UnusedMinigame0);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_80100850_UnusedMinigame0);
+// register allocation and block order (state machine; logic checked against the asm)
+#ifdef NON_MATCHING
+s32 func_80100850_UnusedMinigame0(void) {
+    s32* p;
+    s32 i;
+    s32 n;
+    s32 a;
+    f32 diff;
+    f32 dist;
+    f32 nx;
+    f32 nz;
 
+    for (i = 0; i < 4; i++) {
+        for (n = 0; n < 16; n++) {
+            p = &D_8010AF60_UnusedMinigame0[i][n];
+            D_8010B070_UnusedMinigame0[i][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                D_801034A8_UnusedMinigame0[n].v.ob[0] + D_801034A8_UnusedMinigame0[n].v.ob[0] * (func_800AEAC0(*p) + 1.0f) * 0.225;
+            D_8010B070_UnusedMinigame0[i][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                D_801034A8_UnusedMinigame0[n].v.ob[2] + D_801034A8_UnusedMinigame0[n].v.ob[2] * (-func_800AEAC0(*p) - 1.0f) * -0.225;
+            D_8010B070_UnusedMinigame0[i][D_80103704_UnusedMinigame0][n].v.ob[0] =
+                D_8010B070_UnusedMinigame0[i][D_80103704_UnusedMinigame0][n].v.ob[0] * 0.85;
+            D_8010B070_UnusedMinigame0[i][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                D_8010B070_UnusedMinigame0[i][D_80103704_UnusedMinigame0][n].v.ob[2] * 0.85;
+            a = (*p + D_8010B458_UnusedMinigame0[i][n]) % 360;
+            if ((s32)fabs(a - D_8010AF60_UnusedMinigame0[i][(n + 15) & 0xF]) < 270) {
+                *p = a;
+            }
+        }
+    }
+    for (i = 0; i < 48; i++) {
+        switch (D_80108C60_UnusedMinigame0[i].state) {
+        case 0:
+            continue;
+        case 1:
+            if (D_80108C60_UnusedMinigame0[i].timer < 8) {
+                D_80108C60_UnusedMinigame0[i].y =
+                    100.0f - func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 90 * 0.25 * 0.5) * 90.0f;
+            } else if (D_80108C60_UnusedMinigame0[i].timer >= 9) {
+                D_80108C60_UnusedMinigame0[i].state = 2;
+                if (i + 8 < 48) {
+                    D_80108C60_UnusedMinigame0[i + 8].state = 1;
+                }
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+            }
+            break;
+        case 2:
+            if ((i & 7) < 4) {
+                if (i & 1) {
+                    D_80108C60_UnusedMinigame0[i].x =
+                        D_80108C60_UnusedMinigame0[i].timer * D_80108C60_UnusedMinigame0[i].fromX * 0.25 * 0.5 +
+                        (8 - D_80108C60_UnusedMinigame0[i].timer) * 170 * 0.25 * 0.5;
+                } else {
+                    D_80108C60_UnusedMinigame0[i].x =
+                        D_80108C60_UnusedMinigame0[i].timer * D_80108C60_UnusedMinigame0[i].fromX * 0.25 * 0.5 +
+                        -((8 - D_80108C60_UnusedMinigame0[i].timer) * 170) * 0.25 * 0.5;
+                }
+            } else {
+                if ((i & 3) < 2) {
+                    D_80108C60_UnusedMinigame0[i].z =
+                        D_80108C60_UnusedMinigame0[i].timer * D_80108C60_UnusedMinigame0[i].fromZ * 0.25 * 0.5 +
+                        (8 - D_80108C60_UnusedMinigame0[i].timer) * 130 * 0.25 * 0.5;
+                } else {
+                    D_80108C60_UnusedMinigame0[i].z =
+                        D_80108C60_UnusedMinigame0[i].timer * D_80108C60_UnusedMinigame0[i].fromZ * 0.25 * 0.5 +
+                        -((8 - D_80108C60_UnusedMinigame0[i].timer) * 130) * 0.25 * 0.5;
+                }
+            }
+            D_80108C60_UnusedMinigame0[i].y = D_80108C60_UnusedMinigame0[i].timer * 0.25 * 0.5 +
+                                              (8 - D_80108C60_UnusedMinigame0[i].timer) * 10 * 0.25 * 0.5;
+            if (D_80108C60_UnusedMinigame0[i].timer >= 9) {
+                D_80108C60_UnusedMinigame0[i].state = 3;
+                D_80108C60_UnusedMinigame0[i].wait = (rand8() & 0xF) + 4;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+                D_80108C60_UnusedMinigame0[i].speed = 0.0f;
+                switch (i & 3) {
+                case 0:
+                    D_80108C60_UnusedMinigame0[i].vx = rand8() & 0x1F;
+                    D_80108C60_UnusedMinigame0[i].vz = -(u8)(rand8() % 24);
+                    break;
+                case 1:
+                    D_80108C60_UnusedMinigame0[i].vx = -(f32)(rand8() & 0x1F);
+                    D_80108C60_UnusedMinigame0[i].vz = -(u8)(rand8() % 24);
+                    break;
+                case 2:
+                    D_80108C60_UnusedMinigame0[i].vx = rand8() & 0x1F;
+                    D_80108C60_UnusedMinigame0[i].vz = (u8)(rand8() % 24);
+                    break;
+                case 3:
+                    D_80108C60_UnusedMinigame0[i].vx = -(f32)(rand8() & 0x1F);
+                    D_80108C60_UnusedMinigame0[i].vz = (u8)(rand8() % 24);
+                    break;
+                }
+                D_80108C60_UnusedMinigame0[i].spin = ((rand8() & 7) + 1) * 0.5;
+                if (rand8() & 1) {
+                    D_80108C60_UnusedMinigame0[i].spin = -D_80108C60_UnusedMinigame0[i].spin;
+                }
+                D_80108C60_UnusedMinigame0[i].angle = D_80108C60_UnusedMinigame0[i].dir =
+                    func_800B0CD8(D_80108C60_UnusedMinigame0[i].vx, D_80108C60_UnusedMinigame0[i].vz);
+                D_80108C60_UnusedMinigame0[i].vx = D_80108C60_UnusedMinigame0[i].vx * 0.1;
+                D_80108C60_UnusedMinigame0[i].vz = D_80108C60_UnusedMinigame0[i].vz * 0.1;
+                D_80108C60_UnusedMinigame0[i].speed =
+                    func_800B1750(D_80108C60_UnusedMinigame0[i].vx * D_80108C60_UnusedMinigame0[i].vx +
+                                  D_80108C60_UnusedMinigame0[i].vz * D_80108C60_UnusedMinigame0[i].vz);
+            }
+            break;
+        case 3:
+            if (D_80108C60_UnusedMinigame0[i].timer > D_80108C60_UnusedMinigame0[i].wait) {
+                D_80108C60_UnusedMinigame0[i].fromX = D_80108C60_UnusedMinigame0[i].x;
+                D_80108C60_UnusedMinigame0[i].fromZ = D_80108C60_UnusedMinigame0[i].z;
+                diff = D_80108C60_UnusedMinigame0[i].angle - D_80108C60_UnusedMinigame0[i].dir;
+                dist = func_800B1750(
+                    (D_8010A040_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].tile].x - D_80108C60_UnusedMinigame0[i].fromX) *
+                        (D_8010A040_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].tile].x - D_80108C60_UnusedMinigame0[i].fromX) +
+                    (D_8010A040_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].tile].z - D_80108C60_UnusedMinigame0[i].fromZ) *
+                        (D_8010A040_UnusedMinigame0[D_80108C60_UnusedMinigame0[i].tile].z - D_80108C60_UnusedMinigame0[i].fromZ));
+                D_80108C60_UnusedMinigame0[i].angle =
+                    func_800B0CD8(D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX,
+                                  D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ);
+                if (dist > 45.0f) {
+                    D_80108C60_UnusedMinigame0[i].speed = 450.0 / dist;
+                    D_80108C60_UnusedMinigame0[i].state = 4;
+                    if (((diff <= 180.0f) & (diff > 0.0f)) || diff < -180.0f) {
+                        D_80108C60_UnusedMinigame0[i].spin = 4.0f;
+                    } else if (((diff > 180.0f) | (diff >= -180.0f)) && diff <= 0.0f) {
+                        D_80108C60_UnusedMinigame0[i].spin = -4.0f;
+                    }
+                } else if (dist > 5.0f) {
+                    D_80108C60_UnusedMinigame0[i].state = 5;
+                    if (((diff <= 180.0f) & (diff > 0.0f)) || diff < -180.0f) {
+                        D_80108C60_UnusedMinigame0[i].spin = 8.0f;
+                    } else if (diff > 180.0f || ((diff >= -180.0f) & (diff <= 0.0f))) {
+                        D_80108C60_UnusedMinigame0[i].spin = -8.0f;
+                    }
+                    D_80108C60_UnusedMinigame0[i].speed =
+                        func_800B1750(D_80108C60_UnusedMinigame0[i].vx * D_80108C60_UnusedMinigame0[i].vx +
+                                      D_80108C60_UnusedMinigame0[i].vz * D_80108C60_UnusedMinigame0[i].vz) * 0.8;
+                } else {
+                    D_80108C60_UnusedMinigame0[i].state = 7;
+                    D_80108C60_UnusedMinigame0[i].x = D_8010A040_UnusedMinigame0[i].x;
+                    D_80108C60_UnusedMinigame0[i].z = D_8010A040_UnusedMinigame0[i].z;
+                    D_80108C60_UnusedMinigame0[i].vx = 0.0f;
+                    D_80108C60_UnusedMinigame0[i].vz = 0.0f;
+                    D_80108C60_UnusedMinigame0[i].timer = 0;
+                    break;
+                }
+                D_80108C60_UnusedMinigame0[i].vz = func_800AEFD0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+                D_80108C60_UnusedMinigame0[i].vx = func_800AEAC0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+            } else if ((D_80108C60_UnusedMinigame0[i].timer & 3) == 0) {
+                D_80108C60_UnusedMinigame0[i].spin = ((rand8() & 7) + 1) * 0.5;
+                if (rand8() & 1) {
+                    D_80108C60_UnusedMinigame0[i].spin = -D_80108C60_UnusedMinigame0[i].spin;
+                }
+            }
+            D_80108C60_UnusedMinigame0[i].dir = D_80108C60_UnusedMinigame0[i].dir + D_80108C60_UnusedMinigame0[i].spin;
+            D_80108C60_UnusedMinigame0[i].vz = func_800AEFD0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            D_80108C60_UnusedMinigame0[i].vx = func_800AEAC0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            nx = D_80108C60_UnusedMinigame0[i].x + D_80108C60_UnusedMinigame0[i].vx;
+            if (-140.0f < nx) {
+                if (nx < 140.0f) {
+                    D_80108C60_UnusedMinigame0[i].x = nx;
+                }
+            }
+            nz = D_80108C60_UnusedMinigame0[i].z + D_80108C60_UnusedMinigame0[i].vz;
+            if (-100.0f < nz) {
+                if (nz < 100.0f) {
+                    D_80108C60_UnusedMinigame0[i].z = nz;
+                }
+            }
+            break;
+        case 4:
+            D_80108C60_UnusedMinigame0[i].fromX = D_80108C60_UnusedMinigame0[i].x;
+            D_80108C60_UnusedMinigame0[i].fromZ = D_80108C60_UnusedMinigame0[i].z;
+            D_80108C60_UnusedMinigame0[i].angle =
+                (s32)(func_800B0CD8(D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX,
+                                    D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ) + 360.0f) % 360;
+            diff = D_80108C60_UnusedMinigame0[i].angle - D_80108C60_UnusedMinigame0[i].dir;
+            dist = func_800B1750((D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX) *
+                                     (D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX) +
+                                 (D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ) *
+                                     (D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ));
+            if (dist > 45.0f) {
+                D_80108C60_UnusedMinigame0[i].speed = 450.0 / dist;
+                if (((diff <= 180.0f) & (diff > 0.0f)) || diff < -180.0f) {
+                    D_80108C60_UnusedMinigame0[i].spin =
+                        D_80108C60_UnusedMinigame0[i].speed * D_80108C60_UnusedMinigame0[i].speed * 0.03125 + 4.5;
+                } else if (diff > 180.0f || ((diff >= -180.0f) & (diff <= 0.0f))) {
+                    D_80108C60_UnusedMinigame0[i].spin =
+                        -4.5 - D_80108C60_UnusedMinigame0[i].speed * D_80108C60_UnusedMinigame0[i].speed * 0.03125;
+                }
+                if (D_80108C60_UnusedMinigame0[i].timer >= 16) {
+                    D_80108C60_UnusedMinigame0[i].state = 6;
+                }
+            } else if (dist > 5.0f) {
+                D_80108C60_UnusedMinigame0[i].state = 5;
+                if (((diff <= 180.0f) & (diff > 0.0f)) || diff < -180.0f) {
+                    D_80108C60_UnusedMinigame0[i].spin = 9.0f;
+                } else if (diff > 180.0f || ((diff >= -180.0f) & (diff <= 0.0f))) {
+                    D_80108C60_UnusedMinigame0[i].spin = -9.0f;
+                }
+                D_80108C60_UnusedMinigame0[i].speed =
+                    func_800B1750(D_80108C60_UnusedMinigame0[i].vx * D_80108C60_UnusedMinigame0[i].vx +
+                                  D_80108C60_UnusedMinigame0[i].vz * D_80108C60_UnusedMinigame0[i].vz) * 0.8;
+            } else {
+                D_80108C60_UnusedMinigame0[i].state = 7;
+                D_80108C60_UnusedMinigame0[i].x = D_8010A040_UnusedMinigame0[i].x;
+                D_80108C60_UnusedMinigame0[i].z = D_8010A040_UnusedMinigame0[i].z;
+                D_80108C60_UnusedMinigame0[i].vx = 0.0f;
+                D_80108C60_UnusedMinigame0[i].vz = 0.0f;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+                break;
+            }
+            D_80108C60_UnusedMinigame0[i].dir =
+                (s32)(D_80108C60_UnusedMinigame0[i].dir + D_80108C60_UnusedMinigame0[i].spin + 360.0f) % 360;
+            D_80108C60_UnusedMinigame0[i].vz = func_800AEFD0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            D_80108C60_UnusedMinigame0[i].vx = func_800AEAC0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            nx = D_80108C60_UnusedMinigame0[i].x + D_80108C60_UnusedMinigame0[i].vx;
+            if (-140.0f < nx) {
+                if (nx < 140.0f) {
+                    D_80108C60_UnusedMinigame0[i].x = nx;
+                }
+            }
+            nz = D_80108C60_UnusedMinigame0[i].z + D_80108C60_UnusedMinigame0[i].vz;
+            if (-100.0f < nz) {
+                if (nz < 100.0f) {
+                    D_80108C60_UnusedMinigame0[i].z = nz;
+                }
+            }
+            break;
+        case 5:
+            D_80108C60_UnusedMinigame0[i].fromX = D_80108C60_UnusedMinigame0[i].x;
+            D_80108C60_UnusedMinigame0[i].fromZ = D_80108C60_UnusedMinigame0[i].z;
+            D_80108C60_UnusedMinigame0[i].angle =
+                (s32)(func_800B0CD8(D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX,
+                                    D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ) + 360.0f) % 360;
+            diff = D_80108C60_UnusedMinigame0[i].angle - D_80108C60_UnusedMinigame0[i].dir;
+            dist = func_800B1750((D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX) *
+                                     (D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX) +
+                                 (D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ) *
+                                     (D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ));
+            if (((diff <= 180.0f) & (diff > 0.0f)) || diff < -180.0f) {
+                D_80108C60_UnusedMinigame0[i].spin = 9.0f;
+            } else if (diff > 180.0f || ((diff >= -180.0f) & (diff <= 0.0f))) {
+                D_80108C60_UnusedMinigame0[i].spin = -9.0f;
+            }
+            if (dist <= 5.0f) {
+                D_80108C60_UnusedMinigame0[i].state = 7;
+                D_80108C60_UnusedMinigame0[i].x = D_8010A040_UnusedMinigame0[i].x;
+                D_80108C60_UnusedMinigame0[i].z = D_8010A040_UnusedMinigame0[i].z;
+                D_80108C60_UnusedMinigame0[i].vx = 0.0f;
+                D_80108C60_UnusedMinigame0[i].vz = 0.0f;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+                break;
+            }
+            if (D_80108C60_UnusedMinigame0[i].timer >= 32) {
+                D_80108C60_UnusedMinigame0[i].state = 6;
+            }
+            if (D_80108C60_UnusedMinigame0[i].speed > 0.5) {
+                D_80108C60_UnusedMinigame0[i].speed = D_80108C60_UnusedMinigame0[i].speed * 0.9;
+            }
+            D_80108C60_UnusedMinigame0[i].dir =
+                (s32)(D_80108C60_UnusedMinigame0[i].dir + D_80108C60_UnusedMinigame0[i].spin + 360.0f) % 360;
+            D_80108C60_UnusedMinigame0[i].vz = func_800AEFD0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            D_80108C60_UnusedMinigame0[i].vx = func_800AEAC0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            D_80108C60_UnusedMinigame0[i].x = D_80108C60_UnusedMinigame0[i].x + D_80108C60_UnusedMinigame0[i].vx;
+            D_80108C60_UnusedMinigame0[i].z = D_80108C60_UnusedMinigame0[i].z + D_80108C60_UnusedMinigame0[i].vz;
+            break;
+        case 6:
+            D_80108C60_UnusedMinigame0[i].fromX = D_80108C60_UnusedMinigame0[i].x;
+            D_80108C60_UnusedMinigame0[i].fromZ = D_80108C60_UnusedMinigame0[i].z;
+            D_80108C60_UnusedMinigame0[i].angle =
+                func_800B0CD8(D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX,
+                              D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ);
+            D_80108C60_UnusedMinigame0[i].dir = (s32)(D_80108C60_UnusedMinigame0[i].angle + 360.0f) % 360;
+            dist = func_800B1750((D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX) *
+                                     (D_8010A040_UnusedMinigame0[i].x - D_80108C60_UnusedMinigame0[i].fromX) +
+                                 (D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ) *
+                                     (D_8010A040_UnusedMinigame0[i].z - D_80108C60_UnusedMinigame0[i].fromZ));
+            if (dist <= 5.0f) {
+                D_80108C60_UnusedMinigame0[i].state = 7;
+                D_80108C60_UnusedMinigame0[i].x = D_8010A040_UnusedMinigame0[i].x;
+                D_80108C60_UnusedMinigame0[i].z = D_8010A040_UnusedMinigame0[i].z;
+                D_80108C60_UnusedMinigame0[i].vx = 0.0f;
+                D_80108C60_UnusedMinigame0[i].vz = 0.0f;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+                break;
+            }
+            if (dist > 36.0f) {
+                D_80108C60_UnusedMinigame0[i].speed = 540.0 / dist;
+            } else if (D_80108C60_UnusedMinigame0[i].speed > 1.0) {
+                D_80108C60_UnusedMinigame0[i].speed = D_80108C60_UnusedMinigame0[i].speed * 0.9;
+            }
+            D_80108C60_UnusedMinigame0[i].vz = func_800AEFD0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            D_80108C60_UnusedMinigame0[i].vx = func_800AEAC0(D_80108C60_UnusedMinigame0[i].dir) * D_80108C60_UnusedMinigame0[i].speed;
+            D_80108C60_UnusedMinigame0[i].x = D_80108C60_UnusedMinigame0[i].x + D_80108C60_UnusedMinigame0[i].vx;
+            D_80108C60_UnusedMinigame0[i].z = D_80108C60_UnusedMinigame0[i].z + D_80108C60_UnusedMinigame0[i].vz;
+            break;
+        case 7:
+            if (D_80108C60_UnusedMinigame0[i].timer >= 5) {
+                D_80108C60_UnusedMinigame0[i].state = 8;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+            }
+            break;
+        case 8:
+            if (D_80108C60_UnusedMinigame0[i].timer >= 8) {
+                D_80108C60_UnusedMinigame0[i].state = 10;
+                D_80103748_UnusedMinigame0 = 90;
+                D_80103754_UnusedMinigame0 = 1.6f;
+                if (func_800115C8(UM0_SOUND2) == 0 || D_80103750_UnusedMinigame0 == -1) {
+                    D_80103750_UnusedMinigame0 = func_80060540(0x1F1, 3);
+                }
+                D_80103750_UnusedMinigame0 ^= 1;
+                D_8010374C_UnusedMinigame0++;
+            }
+            break;
+        case 9:
+            if (D_80108C60_UnusedMinigame0[i].timer >= 16) {
+                D_80108C60_UnusedMinigame0[i].state = 10;
+                D_80108C60_UnusedMinigame0[i].timer = 0;
+            }
+            break;
+        case 10:
+            if (D_8010374C_UnusedMinigame0 == 48) {
+                return 1;
+            }
+            break;
+        }
+        if (D_80108C60_UnusedMinigame0[i].state != 10) {
+            D_80108C60_UnusedMinigame0[i].timer++;
+        }
+    }
+    for (n = 0; n < 24; n++) {
+        if (D_80109CD8_UnusedMinigame0[0][0][0][0][n].v.ob[1] >= 0) {
+            D_80109CD8_UnusedMinigame0[0][1][0][D_80103704_UnusedMinigame0][n].v.ob[0] = D_80109CD8_UnusedMinigame0[0][0][0][0][n].v.ob[0];
+            D_80109CD8_UnusedMinigame0[0][1][0][D_80103704_UnusedMinigame0][n].v.ob[2] =
+                D_80109CD8_UnusedMinigame0[0][0][0][0][n].v.ob[2] - func_800AEAC0(D_80103748_UnusedMinigame0) * D_80103754_UnusedMinigame0;
+        }
+    }
+    func_800FFA64_UnusedMinigame0();
+    D_80103748_UnusedMinigame0 = (D_80103748_UnusedMinigame0 + 90) % 360;
+    D_80103754_UnusedMinigame0 = D_80103754_UnusedMinigame0 - 0.1;
+    if (D_80103754_UnusedMinigame0 < 0.0f) {
+        D_80103754_UnusedMinigame0 = 1.6f;
+    }
+    return 0;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_80100850_UnusedMinigame0);
+#endif
 u32 func_80102568_UnusedMinigame0(u32 n) {
     D_80103708_UnusedMinigame0 = D_80103708_UnusedMinigame0 * 0x41C64E6D + 0x3039;
     return ((D_80103708_UnusedMinigame0 >> 16) + ((D_80103708_UnusedMinigame0 << 16) >> 31)) % n;

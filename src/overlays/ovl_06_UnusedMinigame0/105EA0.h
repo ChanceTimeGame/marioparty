@@ -111,8 +111,10 @@ extern s32 D_8010373C_UnusedMinigame0;
 #define UM0_SOUND ((s16)D_8010373C_UnusedMinigame0)
 extern s16 D_80103740_UnusedMinigame0;
 extern s32 D_80103748_UnusedMinigame0;
-extern s16 D_80103750_UnusedMinigame0;
-extern s16 D_80103752_UnusedMinigame0;
+extern s32 D_8010374C_UnusedMinigame0;
+/* A sound handle kept as a word; read through its low half (split label D_80103752). */
+extern s32 D_80103750_UnusedMinigame0;
+#define UM0_SOUND2 ((s16)D_80103750_UnusedMinigame0)
 extern f32 D_80103754_UnusedMinigame0;
 extern s16 D_80103758_UnusedMinigame0[4][2];
 extern s16 D_80103768_UnusedMinigame0[4][2];
@@ -155,6 +157,7 @@ extern s32 D_8010B458_UnusedMinigame0[4][17];
 s32 func_80024198(s32, void*, s32);
 void func_80067284(s16, s16, f32);
 void func_80066DF4(s16, s16, s16, f32, f32, f32);
+s32 func_800115C8(s16);
 
 /* this unit */
 void func_800FCF10_UnusedMinigame0(s16 arg0);
