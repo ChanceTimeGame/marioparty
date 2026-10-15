@@ -794,18 +794,20 @@ segments:
     exclusive_ram_id: minigame
     symbol_name_format: $VRAM_$SEG
     bss_size: 0xA0
+    # 1127C0.c's .rodata starts 4 bytes past an 8-byte boundary (0x113CF4): retail was not SUBALIGN(8)
+    subalign: 4
     subsegments:
       - [0x110F90, c]
       - [0x111890, c]
       - [0x1127C0, c]
       - [0x113730, c]
-      - [0x113B20, data, 110F90]
-      - [0x113B30, data, 111890]
-      - [0x113BE0, data, 1127C0]
-      - [0x113C50, data, 113730]
+      - [0x113B20, .data, 110F90]
+      - [0x113B30, .data, 111890]
+      - [0x113BE0, .data, 1127C0]
+      - [0x113C50, .data, 113730]
       - [0x113C60, .rodata, 110F90]
       - [0x113C90, .rodata, 111890]
-      - [0x113D50, .rodata, 1127C0]
+      - [0x113CF4, .rodata, 1127C0]
       - [0x113DA0, .rodata, 113730]
       - {0x113DC0, type: bss, vram: 0x800F9410, name: ovl_08_bss}
   - type: code
