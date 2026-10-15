@@ -1,5 +1,20 @@
 #include "CoinBlockBash.h"
 
+/* .data (0x80101B20..0x80101BF4) */
+u8 D_80101B20_CoinBlockBash[2][2] = { { 0, 1 }, { 1, 5 } };
+CBBFxDef D_80101B24_CoinBlockBash[8] = {
+    { -8, 0, 0, 200, 100, 8, 1, 0 },   { 1, 1, 0, 100, 100, 11, 1, 0 },  { 5, 0, 0, 100, 100, 8, 1, 0 },
+    { 2, 2, 0, 100, 100, 999, 2, 0 }, { 1, 3, 0, 100, 100, 30, 3, 0 },  { 3, 1, 0, 80, 100, 11, 1, 0 },
+    { -3, 0, 0, 80, 100, 60, 1, 0 },  { 1, 0, 0, 100, 100, 1, 1, 0 },
+};
+Vec D_80101BA4_CoinBlockBash[3] = { { 0.0f, 90.0f, 0.0f }, { 0.0f, -90.0f, 0.0f }, { 0.0f, 0.0f, -70.0f } };
+f32 D_80101BC8_CoinBlockBash[3] = { 50.0f, 50.0f, 30.0f };
+CBBSwing D_80101BD4_CoinBlockBash[2] = { { 0x20, 0, 0x13 }, { 0x18, 0, 0x14 } };
+u8 D_80101BDC_CoinBlockBash[12][2] = {
+    { 0x0F, 0x15 }, { 0x09, 0x0D }, { 0x0F, 0x14 }, { 0x09, 0x10 }, { 0x0D, 0x14 }, { 0x0A, 0x0F },
+    { 0x0C, 0x12 }, { 0x0A, 0x10 }, { 0x0D, 0x13 }, { 0x08, 0x0D }, { 0x0D, 0x13 }, { 0x08, 0x0D },
+};
+
 void func_800F65E0_CoinBlockBash(void) {
     D_801024F8_CoinBlockBash = _CheckFlag(0x2B) != 0;
     func_80029090(50);

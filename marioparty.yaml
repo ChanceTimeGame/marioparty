@@ -1008,7 +1008,7 @@ segments:
     subsegments:
       - [0x152BE0, c]
       - [0x15AC50, c]
-      - [0x15E120, data, 152BE0]
+      - [0x15E120, .data, 152BE0]
       - [0x15E200, data, 15AC50]
       - [0x15E2B0, .rodata, 152BE0]
       - [0x15E980, .rodata, 15AC50]
