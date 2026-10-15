@@ -62,6 +62,30 @@ typedef struct LEORwInfo {
 } LEORwInfo;
 
 extern LEORwInfo D_800EA140;
+extern LEOCmdRead D_800C6450;    // read command template for the system area
+extern u8 D_800CC2A0[];          // system-area lbas tried in turn (2)
+extern u8 D_800CC2A2[];
+extern u32 D_800E9910[8];        // disk ID read from the system area
+extern OSMesgQueue D_800E7A98;
+extern u8 D_800CC2B0[];          // RTC field maxima
+extern u8 D_800CC2B8[];          // days per month
+
+typedef struct LEOCmdReadDiskId {
+    /* 0x00 */ LEOCmdHeader header;
+    /* 0x0C */ u32* buffer_pointer;
+} LEOCmdReadDiskId;
+
+typedef struct LEOCmdLBAConv {
+    /* 0x00 */ LEOCmdHeader header;
+    /* 0x0C */ u32 lba;
+    /* 0x10 */ u32 in;  // bytes (control & 1) or lbas
+    /* 0x14 */ u32 out; // lbas (control & 1) or bytes
+} LEOCmdLBAConv;
+
+void func_800812DC(void);
+void func_800812F8(void);
+u16 func_80082D60(void);
+u8 func_80085504(u8* rtc);
 extern OSThread D_800E7D98;      // read/write thread
 extern OSMesgQueue D_800E8778;
 
@@ -276,7 +300,45 @@ void func_80084740(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084740);
 #endif
 
+#ifdef NON_MATCHING
+// leoReadDiskId: read the disk ID from the first system-area lba that reads
+void func_800847E0(void) {
+    LEOCmdReadDiskId* saved = D_800E87D8;
+    LEOCmdRead tmp;
+    u8* lba = D_800CC2A0;
+    u32* dst;
+    u32* src;
+
+    D_800E87D8 = &tmp;
+    do {
+        tmp = D_800C6450;
+        D_800E87E6 = 0x2000;
+        tmp.lba = *lba;
+        func_8008499C(0);
+        lba++;
+        if (tmp.header.sense_code != 0x17) {
+            break;
+        }
+    } while (lba < D_800CC2A2);
+    D_800E87D8 = saved;
+    dst = saved->buffer_pointer;
+    for (src = D_800E9910; src != D_800E9910 + 8; src += 4, dst += 4) {
+        dst[0] = src[0];
+        dst[1] = src[1];
+        dst[2] = src[2];
+        dst[3] = src[3];
+    }
+    LEO_CUR(LEOCmdHeader)->sense_code = tmp.header.sense_code;
+    LEO_CUR(LEOCmdHeader)->status = tmp.header.status;
+    if (LEO_CUR(LEOCmdHeader)->status == LEO_STATUS_GOOD) {
+        func_800812DC();
+    } else {
+        func_800812F8();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_800847E0);
+#endif
 
 #ifdef NON_MATCHING
 // leoRead
@@ -288,7 +350,54 @@ void func_80084970(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084970);
 #endif
 
+#ifdef NON_MATCHING
+// leoRead_common: the read thread does the transfer; 0x80000 asks for C2 correction
+void func_8008499C(u32 start) {
+    LEOCmdRead* cmd = D_800E87D8;
+    u32 lba = cmd->lba;
+    u32 xfer = cmd->xfer_blks;
+    OSMesg msg;
+
+    if ((((lba | xfer) >> 16) != 0) || ((lba += start) + xfer > 0x10DC)) {
+        goto out_of_range;
+    }
+    if (xfer == 0) {
+        if (lba >= 0x10DC) {
+            goto out_of_range;
+        }
+        cmd->header.sense_code = 0;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
+        return;
+    }
+    D_800E87F0.lba = lba;
+    D_800E87E6 &= 0x3FFF;
+    osSendMesg(&D_800E7A98, NULL, OS_MESG_NOBLOCK);
+    osStartThread(&D_800E7D98);
+    while (TRUE) {
+        osRecvMesg(&D_800E8778, &msg, OS_MESG_BLOCK);
+        if ((u32)msg != 0x80000) {
+            break;
+        }
+        func_80082D60();
+        D_800E87E6 &= ~0x4000;
+        osSendMesg(&D_800E7A98, NULL, OS_MESG_NOBLOCK);
+    }
+    if ((u32)msg == 0x90000) {
+        LEO_CUR(LEOCmdHeader)->sense_code = 0;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
+        return;
+    }
+    LEO_CUR(LEOCmdHeader)->sense_code = (u32)msg;
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+    return;
+
+out_of_range:
+    cmd->header.sense_code = 0x20;
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_8008499C);
+#endif
 
 #ifdef NON_MATCHING
 // leoRezero
@@ -362,7 +471,79 @@ void func_80084C90(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084C90);
 #endif
 
+#ifdef NON_MATCHING
+// leoByte_to_lba / leoLba_to_byte as a command (control & 1: bytes to lbas)
+void func_80084CD0(void) {
+    LEOCmdLBAConv* cmd = D_800E87D8;
+    u32 lba = cmd->lba;
+    u32 count = 0;
+    u32 bytes = 0;
+    u32 n;
+    u32 byte_p_blk;
+    u16 vzone = 1;
+    u16 zone;
+    s32 flag = 1;
+
+    if (lba >= 0x10C4) {
+        cmd->header.sense_code = 0x20;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    lba += 0x18;
+    if (cmd->header.control & 1) {
+        bytes = cmd->in;
+        while (bytes != 0) {
+            if (flag || (D_800CBC18[D_800E87E8][vzone] == lba)) {
+                vzone = func_800817E4(lba);
+                zone = D_800CBD18[D_800E87E8][vzone];
+                if (zone >= 8) {
+                    zone -= 7;
+                }
+                byte_p_blk = D_800CBC04[zone];
+            }
+            if (bytes < byte_p_blk) {
+                bytes = 0;
+            } else {
+                bytes -= byte_p_blk;
+            }
+            count++;
+            lba++;
+            if ((bytes != 0) && (lba >= 0x10DC)) {
+                LEO_CUR(LEOCmdHeader)->sense_code = 0x20;
+                LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+                return;
+            }
+            flag = 0;
+        }
+        LEO_CUR(LEOCmdLBAConv)->out = count;
+    } else {
+        n = cmd->in;
+        while (n != 0) {
+            if (flag || (D_800CBC18[D_800E87E8][vzone] == lba)) {
+                vzone = func_800817E4(lba);
+                zone = D_800CBD18[D_800E87E8][vzone];
+                if (zone >= 8) {
+                    zone -= 7;
+                }
+                byte_p_blk = D_800CBC04[zone];
+            }
+            n--;
+            bytes += byte_p_blk;
+            lba++;
+            if ((n != 0) && (lba >= 0x10DC)) {
+                LEO_CUR(LEOCmdHeader)->sense_code = 0x20;
+                LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+                return;
+            }
+            flag = 0;
+        }
+        LEO_CUR(LEOCmdLBAConv)->out = bytes;
+    }
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_80084CD0);
+#endif
 
 #ifdef NON_MATCHING
 // leoWrite
@@ -427,7 +608,72 @@ void func_800850A0(void) {
 INCLUDE_ASM("asm/nonmatchings/83960", func_800850A0);
 #endif
 
+#ifdef NON_MATCHING
+// leoSetTimer: validate the BCD date (year, month, day, hour, minute, second), write it, read it back
+void func_8008515C(void) {
+    LEOCmdReadTimer* cmd = D_800E87D8;
+    u8* p = &cmd->yearlo;
+    u8 rtc[6];
+    u32 prev = 0;  // the field before this one
+    u32 prev2 = 0; // the one before that
+    u32 v;
+    u32 i;
+    u8 sense;
+
+    for (i = 0; i < 6; i++) {
+        v = p[i];
+        if ((v & 0xF) >= 10) {
+            goto invalid;
+        }
+        v -= (v >> 4) * 6;
+        if (i == 2) {
+            // day: 29 February only in a leap year
+            if ((D_800CC2B8[prev] < v) && ((v != 29) || ((prev2 & 3) != 0))) {
+                goto invalid;
+            }
+        }
+        if (((i == 1) || (i == 2)) && (v == 0)) {
+            goto invalid;
+        }
+        if (D_800CC2B0[i] < v) {
+            goto invalid;
+        }
+        prev2 = prev;
+        prev = v;
+    }
+    rtc[0] = cmd->yearlo;
+    rtc[1] = cmd->month;
+    rtc[2] = cmd->day;
+    rtc[3] = cmd->hour;
+    rtc[4] = cmd->minute;
+    rtc[5] = cmd->second;
+    if ((sense = func_80085504(rtc)) != 0) {
+        LEO_CUR(LEOCmdHeader)->sense_code = sense;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    if ((sense = func_80085394(rtc)) != 0) {
+        LEO_CUR(LEOCmdHeader)->sense_code = sense;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    cmd = D_800E87D8;
+    if ((cmd->yearlo != rtc[0]) || (cmd->month != rtc[1]) || (cmd->day != rtc[2]) ||
+        (cmd->hour != rtc[3]) || (cmd->minute != rtc[4]) || (cmd->second != rtc[5])) {
+        cmd->header.sense_code = 0x24;
+        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+        return;
+    }
+    cmd->header.status = LEO_STATUS_GOOD;
+    return;
+
+invalid:
+    cmd->header.sense_code = 0x24; // invalid field
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/83960", func_8008515C);
+#endif
 
 #ifdef NON_MATCHING
 // read the RTC: year, month, day, hour, minute, second
