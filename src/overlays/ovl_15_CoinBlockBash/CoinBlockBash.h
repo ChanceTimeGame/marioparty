@@ -255,6 +255,8 @@ void func_800F8184_CoinBlockBash(s16 type, f32 x, f32 y, f32 z, s16 arg);
 void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s16 arg);
 void func_800F8CD0_CoinBlockBash(void);
 void func_800F8D98_CoinBlockBash(void);
+void func_800F96A0_CoinBlockBash(omObjData* obj, Matrix4f parent);
+s32 func_800F9814_CoinBlockBash(f32 x, f32 y, f32 z, f32 r);
 void func_800F99A0_CoinBlockBash(void);
 void func_800F9A98_CoinBlockBash(void);
 void func_800F9FE4_CoinBlockBash(void);
