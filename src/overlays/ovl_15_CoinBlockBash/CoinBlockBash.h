@@ -1,0 +1,222 @@
+#ifndef COINBLOCKBASH_H
+#define COINBLOCKBASH_H
+
+/* ovl_15 CoinBlockBash (4P): units 152BE0.c (game) and 15AC50.c (coin blocks, billboards).
+   Types come from the asm's accesses; N64 offsets are in the comments. */
+
+#include "common.h"
+#include "sprite65770.h"
+#include "PR/gu.h"
+
+/* Main state (D_801024F0, one object: splat's D_801024F4/D_801024F6 are its timer/time). */
+typedef struct CBBMain {
+    /* 0x00 */ s16 state; /* 0 intro, 1 play, 2 end, 3 results */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 timer; /* frames in this state */
+    /* 0x06 */ s16 time;  /* frames left */
+} CBBMain; /* size = 0x8 */
+
+/* Facing per quadrant (D_80101D18). */
+typedef struct CBBQuad {
+    f32 v[4];
+} CBBQuad;
+
+/* Main code's model matrix set (src/1EA70.c, func_8002040C). */
+typedef struct CBBMtxSet {
+    /* 0x00 */ s16 count;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16* unk_04;
+    /* 0x08 */ Matrix4f* mtx;
+} CBBMtxSet;
+
+/* A player (D_801025B0_CoinBlockBash[4]; obj->work[0] is the index). Pointers at 0x70/0x78: use
+   names, never offsets. Splat's D_801025B3, D_801025F0, D_80102612, D_80102628 are fields of [0]. */
+typedef struct CBBPlayer {
+    /* 0x00 */ u16 flags;
+    /* 0x02 */ u8 unk_02;
+    /* 0x03 */ u8 state;
+    /* 0x04 */ f32 unk_04;
+    /* 0x08 */ Vec pos;
+    /* 0x14 */ Vec unk_14;
+    /* 0x20 */ char unk_20[0xC];
+    /* 0x2C */ f32 unk_2C;
+    /* 0x30 */ char unk_30[8];
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ char unk_3C[4];
+    /* 0x40 */ s16 unk_40;
+    /* 0x42 */ s16 unk_42;
+    /* 0x44 */ s16 unk_44;
+    /* 0x46 */ char unk_46[2];
+    /* 0x48 */ s16 unk_48;
+    /* 0x4A */ s16 unk_4A;
+    /* 0x4C */ s16 unk_4C;
+    /* 0x4E */ char unk_4E[2];
+    /* 0x50 */ s32 unk_50;
+    /* 0x54 */ char unk_54[2];
+    /* 0x56 */ s16 unk_56;
+    /* 0x58 */ s16 unk_58;
+    /* 0x5A */ char unk_5A[4];
+    /* 0x5E */ s16 unk_5E;
+    /* 0x60 */ char unk_60[2];
+    /* 0x62 */ s16 unk_62;
+    /* 0x64 */ char unk_64[2];
+    /* 0x66 */ s16 unk_66;
+    /* 0x68 */ char unk_68[2];
+    /* 0x6A */ s16 mtxCount[2];
+    /* 0x6E */ char unk_6E[2];
+    /* 0x70 */ Matrix4f* mtx[2];
+    /* 0x78 */ omObjData* obj;
+    /* 0x7C */ f32 unk_7C;
+    /* 0x80 */ char unk_80[0x30];
+} CBBPlayer; /* size = 0xB0 (N64) */
+
+/* A player's work (obj->unk_50, func_80023684(0x828)): MgWork's layout (src/99E0.c) at the
+   start; its pointers sit where MgWork's do. */
+typedef struct CBBPlayerWork {
+    /* 0x00 */ char unk_00[0x56];
+    /* 0x56 */ s8 unk_56; /* controller port */
+    /* 0x57 */ char unk_57;
+    /* 0x58 */ s8 unk_58; /* player */
+    /* 0x59 */ char unk_59[0x5F];
+    /* 0xB8 */ void* unk_B8;
+    /* 0xBC */ char unk_BC[4];
+    /* 0xC0 */ u16 unk_C0;
+    /* 0xC2 */ char unk_C2[0x16];
+    /* 0xD8 */ void* unk_D8; /* motion table */
+    /* 0xDC */ void* unk_DC;
+    /* 0xE0 */ char unk_E0[4];
+    /* 0xE4 */ void* unk_E4;
+} CBBPlayerWork;
+
+/* The hammer/block state (D_80102538, one 0x74 object: memset whole; splat's D_8010253A..
+   D_8010256C are its fields). */
+typedef struct CBBBlock {
+    /* 0x00 */ s16 model;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ s16 unk_08;
+    /* 0x0A */ s16 unk_0A;
+    /* 0x0C */ u8 unk_0C;
+    /* 0x0D */ u8 unk_0D;
+    /* 0x0E */ s16 unk_0E;
+    /* 0x10 */ Vec unk_10;
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ f32 unk_20;
+    /* 0x24 */ char unk_24[0x10];
+    /* 0x34 */ Matrix4f unk_34;
+} CBBBlock; /* size = 0x74 */
+
+/* ---------------------------------------------------------------------------------------------
+   Main code
+   --------------------------------------------------------------------------------------------- */
+
+extern u16 D_800EE984;
+extern u8 D_800F64F8;
+extern u16 D_800F5144;
+extern omObjData* D_800F3FB0[];
+extern omObjData* D_800F2AF8[];
+extern unk_ovl_2D_struct* D_800F2B7C;
+extern f32 D_800B8980;
+
+u16 func_80017A50(omObjData* obj);
+s32 func_80018490(omObjData* obj, u16 motion);
+CBBMtxSet* func_8002040C(s16, s16, char*);
+void func_80020CC4(CBBMtxSet*);
+void func_80025BB8(s16, s16);
+void func_80017C0C(omObjData*, u8, f32, f32, f32, f32, f32);
+
+/* ---------------------------------------------------------------------------------------------
+   Overlay
+   --------------------------------------------------------------------------------------------- */
+
+extern CBBMain D_801024F0_CoinBlockBash;
+extern s16 D_801024F8_CoinBlockBash;
+extern Vec D_801024FC_CoinBlockBash;
+extern Vec D_80102508_CoinBlockBash;
+extern Vec D_80102514_CoinBlockBash;
+extern Vec D_80102520_CoinBlockBash;
+extern f32 D_8010252C_CoinBlockBash;
+extern f32 D_80102530_CoinBlockBash;
+extern f32 D_80102534_CoinBlockBash;
+#ifdef TARGET_PC
+extern CBBBlock D_80102538_CoinBlockBash;
+#define CBB_BLOCK_MODEL (D_80102538_CoinBlockBash.model)
+#else
+extern s16 D_80102538_CoinBlockBash;
+#define CBB_BLOCK_MODEL D_80102538_CoinBlockBash
+#endif
+/* Retail addresses the block's fields as separate symbols (no shared base): the N64 build keeps
+   splat's labels, the host views the one object. */
+#ifdef TARGET_PC
+#define D_8010253A_CoinBlockBash (D_80102538_CoinBlockBash.unk_02)
+#define D_8010253C_CoinBlockBash (D_80102538_CoinBlockBash.unk_04)
+#define D_8010253E_CoinBlockBash (D_80102538_CoinBlockBash.unk_06)
+#define D_80102540_CoinBlockBash (D_80102538_CoinBlockBash.unk_08)
+#define D_80102542_CoinBlockBash (D_80102538_CoinBlockBash.unk_0A)
+#define D_80102544_CoinBlockBash (D_80102538_CoinBlockBash.unk_0C)
+#define D_80102545_CoinBlockBash (D_80102538_CoinBlockBash.unk_0D)
+#define D_80102546_CoinBlockBash (D_80102538_CoinBlockBash.unk_0E)
+#define D_80102548_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.x)
+#define D_8010254C_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.y)
+#define D_80102550_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.z)
+#define D_80102554_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C)
+#define D_80102558_CoinBlockBash (D_80102538_CoinBlockBash.unk_20)
+#define D_8010255C_CoinBlockBash (D_80102538_CoinBlockBash.unk_24)
+#define D_8010256C_CoinBlockBash (D_80102538_CoinBlockBash.unk_34)
+#else
+extern s16 D_8010253A_CoinBlockBash;
+extern s16 D_8010253C_CoinBlockBash;
+extern s16 D_8010253E_CoinBlockBash;
+extern s16 D_80102540_CoinBlockBash;
+extern s16 D_80102542_CoinBlockBash;
+extern u8 D_80102544_CoinBlockBash;
+extern u8 D_80102545_CoinBlockBash;
+extern s16 D_80102546_CoinBlockBash;
+extern f32 D_80102548_CoinBlockBash;
+extern f32 D_8010254C_CoinBlockBash;
+extern f32 D_80102550_CoinBlockBash;
+extern f32 D_80102554_CoinBlockBash;
+extern f32 D_80102558_CoinBlockBash;
+extern u8 D_8010255C_CoinBlockBash[0x10];
+extern Matrix4f D_8010256C_CoinBlockBash;
+#endif
+extern s16 D_801025AC_CoinBlockBash;
+extern CBBPlayer D_801025B0_CoinBlockBash[4];
+extern s32 D_801031FC_CoinBlockBash;
+extern u8 D_8010320E_CoinBlockBash[];
+
+void func_800F66F8_CoinBlockBash(omObjData* obj);
+void func_800F6770_CoinBlockBash(omObjData* obj);
+void func_800F6C20_CoinBlockBash(omObjData* obj);
+void func_800F6C54_CoinBlockBash(void);
+s16 func_800F6C80_CoinBlockBash(s32 id);
+void func_800F6CC8_CoinBlockBash(void);
+void func_800F6EA0_CoinBlockBash(void);
+void func_800F7048_CoinBlockBash(omObjData* obj);
+CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj);
+void* func_800F766C_CoinBlockBash(omObjData* obj);
+s8 func_800F7674_CoinBlockBash(omObjData* obj);
+void func_800F78E8_CoinBlockBash(void);
+void func_800F7A5C_CoinBlockBash(void);
+void func_800F8014_CoinBlockBash(void);
+void func_800F8CD0_CoinBlockBash(void);
+void func_800F8D98_CoinBlockBash(void);
+void func_800F99A0_CoinBlockBash(void);
+void func_800F9A98_CoinBlockBash(void);
+void func_800F9FE4_CoinBlockBash(void);
+void func_800FAA7C_CoinBlockBash(void);
+void func_800FACEC_CoinBlockBash(omObjData* obj);
+void func_800FB490_CoinBlockBash(void);
+void func_800FBF70_CoinBlockBash(omObjData* obj);
+void func_800FC2AC_CoinBlockBash(omObjData* obj);
+void func_800FDC5C_CoinBlockBash(void);
+f32 func_800FE284_CoinBlockBash(Vec* pos);
+void func_800FE650_CoinBlockBash(void);
+void func_800FEE04_CoinBlockBash(void);
+void func_800FFBA8_CoinBlockBash(void);
+s16 func_800FFD60_CoinBlockBash(void);
+s16 func_800FFD6C_CoinBlockBash(void);
+void func_800FFE30_CoinBlockBash(void);
+
+#endif
