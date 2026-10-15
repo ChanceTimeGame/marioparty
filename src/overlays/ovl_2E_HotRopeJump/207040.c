@@ -327,7 +327,12 @@ void func_800F6EEC_HotRopeJump(omObjData* obj, s32 player) {
     func_8001874C(obj, 6, dir | 5, 1, 0x13);
     m = (rand8() & 1) + a;
     func_8001874C(obj, 0xD, dir | m[0], 1, 0x78);
+#ifdef TARGET_PC
+    /* retail: m[6] is b[r] (a at sp+0x18, b at sp+0x30); a separate host array is not there */
+    func_8001874C(obj, 0xE, dir | b[m - a], 1, 0x78);
+#else
     func_8001874C(obj, 0xE, dir | m[6], 1, 0x78);
+#endif
     func_8001874C(obj, 0x11, dir | 0x18, 0, 0);
     func_8001874C(obj, 0x15, dir | 0x62, 0, 0);
     func_8001874C(obj, 0x1E, dir | 0x63, 0, 0);
