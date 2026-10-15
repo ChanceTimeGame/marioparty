@@ -1,4 +1,4 @@
-#include "common.h"
+#include "CoinBlockBash.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FE650_CoinBlockBash);
 
