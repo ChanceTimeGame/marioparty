@@ -3534,6 +3534,9 @@ void func_80100744_AdventureModeSetup(omObjData* arg0) {
     func_80018C90(id);
     arg0->work[0] = D_80101ADC_AdventureModeSetup++;
     if ((s16)spr >= 0x100) {
+#ifdef TARGET_PC
+        pb_layer_fatal("ovl_6A AdventureModeSetup: sprite id >= 0x100 (retail hangs)");
+#endif
         while (1) {}
     }
     arg0->work[1] = 0;

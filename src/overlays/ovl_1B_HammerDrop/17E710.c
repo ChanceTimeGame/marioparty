@@ -972,6 +972,9 @@ void func_800F9228_HammerDrop(void) {
             if (func_800F9E68_HammerDrop(HAMMER_ITEM_WORK(item)->item->unk_44, 1) != 0) {
                 if (attempts > 0xFFFE) {
                     osSyncPrintf(D_800FB620_HammerDrop);
+#ifdef TARGET_PC
+                    pb_layer_fatal("ovl_1B HammerDrop: no item after 0xFFFE attempts (retail hangs)");
+#endif
                     while (1) {}
                 }
                 continue;

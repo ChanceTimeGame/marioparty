@@ -131,6 +131,25 @@ void HuPrcInit(void) {
     processtop = NULL;
 }
 
+#ifdef TARGET_PC
+/* PartyBoard host: when a run ends (the host unloads mp1.dll), frees the fiber of every process
+ * still alive; their Process blocks are in the game heap, which the host frees with it. */
+void HuPrcHostReleaseAll(void) {
+    Process* process;
+
+    for (process = processtop; process != NULL; process = process->next) {
+        PbPrcHost* host = process->host;
+        if (host != NULL) {
+            free(host->mem);
+            free(host);
+            process->host = NULL;
+        }
+    }
+    processtop = NULL;
+    processcnt = 0;
+}
+#endif
+
 void HuLinkProcess(Process** root, Process* process) {
     Process* src_process = *root;
 

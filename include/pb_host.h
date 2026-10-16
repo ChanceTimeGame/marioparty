@@ -36,6 +36,9 @@
 void bcopy(const void *src, void *dst, size_t len);
 void bzero(void *dst, size_t len);
 int bcmp(const void *a, const void *b, size_t len);
+/* Host (games/mp1/host, host_main.c): stops the run on an unrecoverable error and parks the
+ * calling game thread; mp1.dll then returns to the PartyBoard host instead of ending the process. */
+void pb_layer_fatal(const char *what);
 typedef intptr_t PB_PTR32;
 typedef uintptr_t PB_UPTR32;
 #if defined(_MSC_VER) && !defined(__clang__)
