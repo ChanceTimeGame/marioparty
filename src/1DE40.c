@@ -1,5 +1,6 @@
 #include "common.h"
 #ifdef TARGET_PC
+#include "PR/gu.h"
 void func_800A2B40(Mtx*); /* SDK-region asm unit A3650 (unprototyped on the N64) */
 #endif
 
@@ -104,6 +105,48 @@ void func_8001D658(s16 index, Gfx** gfx) {
     temp_a0->unk62 = temp_v1->unk30.y;
     temp_a0->unk64 = temp_v1->unk30.z;
 
+#ifdef TARGET_PC
+    if (pb_interp_fold_viewport() && index >= 0 && index < 6) {
+        /* Frame interpolation: the boards scroll by moving the viewport, which RT64 cannot
+           interpolate. Draw through a viewport centred on the camera's scissor rectangle and
+           shift the projection by the difference instead (clip x += ofs * w), which RT64
+           interpolates. The camera's own Vp and Mtx are left as retail wrote them: 65770.c
+           reads them. Offsets beyond one viewport width keep the retail path. */
+        static Vp pbVp[6][2];
+        static Mtx pbProj[6][2];
+        f32 ofsX = (temp_a0->unk60 - (temp_v1->unkD8.x + temp_v1->unkD8.z) * 2.0f) / (f32) temp_a0->unk58;
+        f32 ofsY = -(temp_a0->unk62 - (temp_v1->unkD8.y + temp_v1->unkD8.w) * 2.0f) / (f32) temp_a0->unk5A;
+        if (temp_a0->unk58 != 0 && temp_a0->unk5A != 0 && fabsf(ofsX) <= 1.0f && fabsf(ofsY) <= 1.0f) {
+            Vp* vp = &pbVp[index][D_800F3FA8 & 1];
+            Mtx* proj = &pbProj[index][D_800F3FA8 & 1];
+            f32 mf[4][4];
+            s32 r;
+
+            vp->vp.vscale[0] = temp_a0->unk58;
+            vp->vp.vscale[1] = temp_a0->unk5A;
+            vp->vp.vscale[2] = temp_a0->unk5C;
+            vp->vp.vscale[3] = 0;
+            vp->vp.vtrans[0] = (s16) ((temp_v1->unkD8.x + temp_v1->unkD8.z) * 2.0f);
+            vp->vp.vtrans[1] = (s16) ((temp_v1->unkD8.y + temp_v1->unkD8.w) * 2.0f);
+            vp->vp.vtrans[2] = temp_a0->unk64;
+            vp->vp.vtrans[3] = 0;
+            /* the rounding of the centre goes into the offset too */
+            ofsX = (temp_a0->unk60 - vp->vp.vtrans[0]) / (f32) temp_a0->unk58;
+            ofsY = -(temp_a0->unk62 - vp->vp.vtrans[1]) / (f32) temp_a0->unk5A;
+            guMtxL2F(mf, temp_s1);
+            for (r = 0; r < 4; r++) {
+                mf[r][0] += ofsX * mf[r][3];
+                mf[r][1] += ofsY * mf[r][3];
+            }
+            guMtxF2L(mf, proj);
+            gSPViewport((*gfx)++, vp);
+            gSPPerspNormalize((*gfx)++, temp_v1->unk4C);
+            gSPMatrix((*gfx)++, osVirtualToPhysical(proj), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+            gSPMatrix((*gfx)++, osVirtualToPhysical(temp_s1 + 1), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            return;
+        }
+    }
+#endif
     gSPViewport((*gfx)++, &temp_v1->unk58 + (D_800F3FA8 * 8));
     gSPPerspNormalize((*gfx)++, temp_v1->unk4C);
     gSPMatrix((*gfx)++, osVirtualToPhysical(temp_s1), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);

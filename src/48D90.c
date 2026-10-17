@@ -1065,6 +1065,92 @@ void func_8004AAA8(Gfx** gfx, void* tex, s32 x, s16 y) {
 INCLUDE_ASM("asm/nonmatchings/48D90", func_8004AAA8);
 #endif
 
+#ifdef TARGET_PC
+#include "PR/gbi_ex.h"
+#include "PR/gu.h"
+/* Frame interpolation: the board ground is streamed 64x48 tiles drawn as texture rectangles at
+   scrolled screen positions, which RT64 cannot interpolate, so the ground stepped at 30 fps
+   under 3D that moved smoothly. While interpolation is on, each tile half is drawn as a quad in
+   board coordinates under one scroll translation that RT64 interpolates (pb_interp_fold_viewport,
+   1DE40.c moves the 3D camera's matching viewport scroll into its projection). Same texture
+   loads, combiner and render mode (1-cycle, point filter, no Z). */
+#define PB_BG_QUADS (6 * 6 * 2)
+static Vtx pbBgVtx[2][PB_BG_QUADS * 4];
+static Mtx pbBgMtx[2][2];
+static Vp pbBgVp = { { { 640, 480, 511, 0 }, { 640, 480, 511, 0 } } };
+static s32 pbBgBuf;
+static s32 pbBgCount;
+
+static void pbBgTile(Gfx** gfx, void* tex, s32 x, s16 y, s32 scrollX, s32 scrollY) {
+    s32 i;
+    s32 k;
+
+    for (i = 0; i < 2; i++) {
+        Vtx* v;
+        s32 x0;
+        s32 y0;
+
+        if (pbBgCount >= PB_BG_QUADS) {
+            return;
+        }
+        v = &pbBgVtx[pbBgBuf][pbBgCount++ * 4];
+        x0 = x + scrollX;
+        y0 = y + i * 24 + scrollY;
+        for (k = 0; k < 4; k++) {
+            s32 u = (k == 1 || k == 2) ? 64 : 0;
+            s32 t = (k >= 2) ? 24 : 0;
+
+            v[k].v.ob[0] = (s16) (x0 + u);
+            v[k].v.ob[1] = (s16) (y0 + t);
+            v[k].v.ob[2] = 0;
+            v[k].v.flag = 0;
+            v[k].v.tc[0] = (s16) (u << 5);
+            v[k].v.tc[1] = (s16) (t << 5);
+            v[k].v.cn[0] = v[k].v.cn[1] = v[k].v.cn[2] = v[k].v.cn[3] = 0xFF;
+        }
+        func_8003A4EC(gfx, (PB_PTR32) tex + i * (64 * 24 * 2), G_IM_FMT_RGBA, G_IM_SIZ_16b, 64, 24, 0, 0, 64, 24, 0,
+                      G_TX_CLAMP, G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gSPVertex((*gfx)++, v, 4, 0);
+        gSP2Triangles((*gfx)++, 0, 1, 2, 0, 0, 2, 3, 0);
+    }
+}
+
+static void pbBgBegin(Gfx** gfx, s32 scrollX, s32 scrollY) {
+    Mtx* m;
+
+    pbBgBuf ^= 1;
+    pbBgCount = 0;
+    m = pbBgMtx[pbBgBuf];
+    guOrtho(&m[0], 0.0f, 320.0f, 240.0f, 0.0f, -10.0f, 10.0f, 1.0f);
+    guTranslate(&m[1], (f32) -scrollX, (f32) -scrollY, 0.0f);
+    gEXPushViewport((*gfx)++);
+    gEXPushProjectionMatrix((*gfx)++);
+    gEXPushGeometryMode((*gfx)++);
+    gSPViewport((*gfx)++, &pbBgVp);
+    gSPMatrix((*gfx)++, osVirtualToPhysical(&m[0]), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gEXMatrixGroup((*gfx)++, 0x48D90000u, G_EX_INTERPOLATE_SIMPLE, G_EX_PUSH, G_MTX_MODELVIEW,
+                   G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                   G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_AUTO,
+                   G_EX_ORDER_LINEAR, G_EX_EDIT_NONE, G_EX_ASPECT_AUTO, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_AUTO);
+    gSPMatrix((*gfx)++, osVirtualToPhysical(&m[1]), G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPClearGeometryMode((*gfx)++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH | G_CULL_BOTH | G_FOG | G_LIGHTING |
+                                       G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD);
+    gSPTexture((*gfx)++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+    /* D_800C4F80 turns perspective correction off, which halves a triangle's texture coordinates
+       (texture rectangles ignore it); the ortho w is 1, so on is exact. */
+    gDPSetTexturePersp((*gfx)++, G_TP_PERSP);
+}
+
+static void pbBgEnd(Gfx** gfx) {
+    gDPSetTexturePersp((*gfx)++, G_TP_NONE);
+    gSPPopMatrix((*gfx)++, G_MTX_MODELVIEW);
+    gEXPopMatrixGroup((*gfx)++, G_MTX_MODELVIEW);
+    gEXPopGeometryMode((*gfx)++);
+    gEXPopProjectionMatrix((*gfx)++);
+    gEXPopViewport((*gfx)++);
+}
+#endif
+
 void func_8004ACEC(Gfx** gfx, s32 arg1, u8 arg2) {
     s16 prev;
     s16 i;
@@ -1096,6 +1182,25 @@ void func_8004ACEC(Gfx** gfx, s32 arg1, u8 arg2) {
                 }
                 gDPSetRenderMode((*gfx)++, 0x552048, 0);
             }
+#ifdef TARGET_PC
+            if (pb_interp_fold_viewport()) {
+                s32 scrollX = D_800D6736 + D_800D6732 - 160;
+                s32 scrollY = D_800D6738 + D_800D6734 - 120;
+
+                pbBgBegin(gfx, scrollX, scrollY);
+                for (j = 0; j < 6; j++) {
+                    for (i = 0; i < 6; i++) {
+                        if (D_800D6A60[i][j] != NULL) {
+                            pbBgTile(gfx, D_800D6A60[i][j]->data, (s16) (i * 64 - offX), (s16) (j * 48 - offY),
+                                     scrollX, scrollY);
+                        }
+                    }
+                }
+                pbBgEnd(gfx);
+                func_8004A530();
+                return;
+            }
+#endif
             for (j = 0; j < 6; j++) {
                 for (i = 0; i < 6; i++) {
                     if (D_800D6A60[i][j] != NULL) {

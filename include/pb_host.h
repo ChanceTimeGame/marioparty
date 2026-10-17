@@ -80,6 +80,10 @@ int pb_autoplay_steer(void);
    interpolation is on (mp1host --sprite-quad overrides). */
 int pb_sprite_quad(const void *sprite, s32 x, s32 y, f32 scaleX, f32 scaleY, s32 box0, s32 box1);
 int pb_sprite_quad_budget(void); /* nonzero: size the quad buffer for every sprite (65770.c) */
+/* Nonzero while frame interpolation is on: func_8001D658 (1DE40.c) moves a camera's viewport
+   offset into its projection, because the boards scroll by moving the viewport and RT64 cannot
+   interpolate a viewport (mp1host --interp-viewport overrides). */
+int pb_interp_fold_viewport(void);
 #define PB_N64_RAM_SIZE(s) ((s) * 2)
 /* The depth buffer at N64 RAM 0x803D0800 (320 x 240 x 16 bits, up to the RSP buffers at
    0x803F6000); display lists name it by its physical address 0x3D0800. */
