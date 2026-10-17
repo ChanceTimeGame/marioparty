@@ -1,5 +1,9 @@
 #include "ovl6f.h"
 
+#ifdef TARGET_PC
+#define OVL6F_WIDE_X (pb_widescreen() ? 1.8f : 1.0f)
+#endif
+
 void func_800F6610_MinigameInstructions(void) {
     omObjData* obj;
     s32 i;
@@ -177,13 +181,23 @@ void func_800F6B14_MinigameInstructions(void) {
     in.y = 281.0f;
     func_8001DD24(0, CZoom, (Vec3f*) &in, &out);
     func_80025798(deco, out.x, out.y, 57.0f);
+#ifdef TARGET_PC
+    /* Host widescreen: the two cloud layers are finite meshes sized for 4:3, so their sides
+       ended at the 4:3 edges. Stretch them sideways (flat clouds; 1.8 covers up to ~2.4:1). */
+    func_80025830(deco, 2.1f * OVL6F_WIDE_X, 2.1f, 2.1f);
+#else
     func_80025830(deco, 2.1f, 2.1f, 2.1f);
+#endif
     deco = LoadFormFile(0xB000B, 0x299);
     in.x = 160.0f;
     in.y = 280.0f;
     func_8001DD24(0, CZoom + -130.0f, (Vec3f*) &in, &out);
     func_80025798(deco, out.x, out.y, -130.0f);
+#ifdef TARGET_PC
+    func_80025830(deco, 2.2f * OVL6F_WIDE_X, 2.2f, 2.2f);
+#else
     func_80025830(deco, 2.2f, 2.2f, 2.2f);
+#endif
     if (D_8010F4E0_MinigameInstructions == 0 && _CheckFlag(0x2D) == 0) {
         alpha = 255;
         do {
