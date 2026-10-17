@@ -646,6 +646,9 @@ void func_80065BF8(void) {
 INCLUDE_ASM("asm/nonmatchings/65770", func_80065BF8);
 #endif
 
+#ifdef TARGET_PC
+void *pb_sprite_quad_end; /* end of this frame's quad buffer (69010.c checks the fit) */
+#endif
 void func_800666D4(void) {
     if (D_800EE978[D_800F37F0] != NULL) {
         func_80023728(D_800EE978[D_800F37F0]);
@@ -656,6 +659,9 @@ void func_800666D4(void) {
         D_800EE978[D_800F37F0] = NULL;
     }
     D_800F54B4 = D_800EE978[D_800F37F0];
+#ifdef TARGET_PC
+    pb_sprite_quad_end = D_800F54B4 != NULL ? (u8 *)D_800F54B4 + D_800F37CC : NULL;
+#endif
 }
 void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
     unk65770Obj* obj;
@@ -1197,7 +1203,12 @@ void func_80068124(unk65770Obj* obj) {
 
     flags = obj->unk20 = obj->unk56 ^ obj->unk48;
     if (obj->unk4C != NULL && !(flags & 0x8000) &&
-        (obj->unk1C != 0.0 || (flags & 0x3C0000) || (flags & 0x30000) == 0x30000)) {
+        (obj->unk1C != 0.0 || (flags & 0x3C0000) || (flags & 0x30000) == 0x30000
+#ifdef TARGET_PC
+         /* Frame interpolation: any sprite may take the quad path while it moves (69010.c) */
+         || pb_sprite_quad_budget()
+#endif
+        )) {
         anim = obj->unk4C;
         frame = &anim->unk0[obj->unk52];
         switch (anim->unk18 & 0x7FFF) {

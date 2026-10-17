@@ -1,4 +1,7 @@
 #include "common.h"
+#ifdef TARGET_PC
+#include "PR/gbi_ex.h" /* RT64 interpolation tags */
+#endif
 s32 D_800C5B50 = 0x100;
 s32 D_800C5B54[4] = { 12, 6, 20, 0 };
 s32 D_800C5B64[] = { 1, 0, 3 };
@@ -89,6 +92,9 @@ extern s32 D_800F5444;
 extern s32 D_800F5448;
 extern s32 D_800F5454;
 extern void* D_800F54B4;
+#ifdef TARGET_PC
+extern void *pb_sprite_quad_end; /* 65770.c */
+#endif
 
 void func_8003B0AC(unk3AC60Struct1* arg0, f64 arg1, f64 arg2, f64 arg3);
 void func_8003B190(unk3AC60Struct0* arg0, unk3AC60Struct1* arg1, unk3AC60Struct2* arg2);
@@ -424,8 +430,17 @@ void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
 // register allocation: flip/dt get t1/t2/t3 swapped with hoisted temporaries; the masked residue (6) is
 // only the u16 read of D_800EE314/D_800ED0F8, which retail's object relocates against the split bss labels
 // D_800EE316/D_800ED0FA (same address once linked)
+#ifdef TARGET_PC
+/* Host: whether the sprite takes the quad path, decided once (it is tested in three places) */
+#define SPRITE_QUAD pbQuad
+#else
+#define SPRITE_QUAD (fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000)
+#endif
 #ifdef NON_MATCHING
 void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
+#ifdef TARGET_PC
+    s32 pbQuad;
+#endif
     Matrix4f mf;
     unk3AC60Struct0 pos;
     Gfx* gfx;
@@ -477,7 +492,17 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
         arg1->unk_2C = (f32)(arg1->unk_3C - arg1->unk_38) / (frame->width * scaleX);
         arg1->unk_30 = (f32)(arg1->unk_3E - arg1->unk_3A) / (frame->height * scaleY);
     }
-    if (fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000) {
+#ifdef TARGET_PC
+    pbQuad = fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000
+        /* Frame interpolation: a moving sprite takes the quad path, whose matrix RT64 can
+           interpolate; texture rectangles stay at the game's 30 fps (host_interp.c). */
+        || (D_800F54B4 != NULL &&
+            (u8 *)D_800F54B4 + (D_800F5448 + 2) * 2 * sizeof(Vtx) + sizeof(Mtx) <= (u8 *)pb_sprite_quad_end &&
+            pb_sprite_quad(arg1, arg1->x, arg1->y, scaleX, scaleY,
+                          (s32)(((u32)(u16)arg1->unk_38 << 16) | (u16)arg1->unk_3A),
+                          (s32)(((u32)(u16)arg1->unk_3C << 16) | (u16)arg1->unk_3E)));
+#endif
+    if (SPRITE_QUAD) {
         vtx = D_800F54B4;
         mtx = (Mtx*)&vtx[(D_800F5448 + 2) * 2];
         D_800F54B4 = mtx + 1;
@@ -587,6 +612,15 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
         func_8003B0AC((unk3AC60Struct1*)mf, arg1->x - 160, 120 - arg1->y, arg1->rot);
         guMtxIdent(mtx);
         func_8003B190(&pos, (unk3AC60Struct1*)mf, (unk3AC60Struct2*)mtx);
+#ifdef TARGET_PC
+        /* RT64: match this sprite across frames by its address; the scale is baked into the
+           vertices, so they are interpolated too. Popped at the end of the function. */
+        gEXMatrixGroup(gfx++, 0x50000000u | (u32)(((uintptr_t)arg1 >> 3) & 0x0FFFFFFFu),
+                       G_EX_INTERPOLATE_SIMPLE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
+                       G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
+                       G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_AUTO, G_EX_ORDER_LINEAR,
+                       G_EX_EDIT_NONE, G_EX_ASPECT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO);
+#endif
         gSPMatrix(gfx++, osVirtualToPhysical(mtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     } else {
         if (arg1->flags & 0x10000) {
@@ -628,7 +662,7 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
     }
     for (i = 0; i < D_800F5448; i++) {
         func_8006B014(&gfx, arg1, D_800EE314, 0, i * D_800EE314, frame->width - 1, (i + 1) * D_800EE314 - 1, cms, cmt, masks, maskt);
-        if (fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000) {
+        if (SPRITE_QUAD) {
             gSPVertex(gfx++, &vtx[i * 2], 4, 0);
             gSP2Triangles(gfx++, 0, 2, 3, 0, 0, 3, 1, 0);
         } else {
@@ -651,7 +685,7 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
     }
     if (D_800ED0F8 != 0) {
         func_8006B014(&gfx, arg1, D_800ED0F8, 0, i * D_800EE314, frame->width - 1, frame->height - 1, cms, cmt, masks, maskt);
-        if (fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000) {
+        if (SPRITE_QUAD) {
             gSPVertex(gfx++, &vtx[i * 2], 4, 0);
             gSP2Triangles(gfx++, 0, 2, 3, 0, 0, 3, 1, 0);
         } else {
@@ -671,6 +705,11 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
             }
         }
     }
+#ifdef TARGET_PC
+    if (pbQuad) {
+        gEXPopMatrixGroup(gfx++, G_MTX_MODELVIEW);
+    }
+#endif
     gDPPipeSync(gfx++);
     *arg0 = gfx;
 }

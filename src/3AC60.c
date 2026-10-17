@@ -107,6 +107,27 @@ void func_8003B0AC(unk3AC60Struct1* arg0, f64 arg1, f64 arg2, f64 arg3) {
 void func_8003B190(unk3AC60Struct0* arg0, unk3AC60Struct1* arg1, unk3AC60Struct2* arg2) {
     arg1->unk_30 = arg0->unk_00 * arg1->unk_00 + arg1->unk_30 + arg0->unk_04 * arg1->unk_10;
     arg1->unk_34 = arg0->unk_00 * arg1->unk_04 + arg1->unk_34 + arg0->unk_04 * arg1->unk_14;
+#ifdef TARGET_PC
+    {
+        /* Host: an Mtx holds host s32 words (integer and fraction halves packed as guMtxF2L
+           does), so N64 halfword k of a word is host halfword k ^ 1. Retail's s16 field writes
+           swapped every pair (x and y traded places in every rotated 2D sprite). */
+        s16 *m = (s16 *)arg2;
+        m[0 ^ 1] = (s32) (arg1->unk_00 * 65536.0f) >> 16;
+        m[1 ^ 1] = (s32) (arg1->unk_04 * 65536.0f) >> 16;
+        m[4 ^ 1] = (s32) (arg1->unk_10 * 65536.0f) >> 16;
+        m[5 ^ 1] = (s32) (arg1->unk_14 * 65536.0f) >> 16;
+        m[12 ^ 1] = (s32) (arg1->unk_30 * 65536.0f) >> 16;
+        m[13 ^ 1] = (s32) (arg1->unk_34 * 65536.0f) >> 16;
+        m[16 ^ 1] = arg1->unk_00 * 65536;
+        m[17 ^ 1] = arg1->unk_04 * 65536;
+        m[20 ^ 1] = arg1->unk_10 * 65536;
+        m[21 ^ 1] = arg1->unk_14 * 65536;
+        m[28 ^ 1] = arg1->unk_30 * 65536;
+        m[29 ^ 1] = arg1->unk_34 * 65536;
+        return;
+    }
+#endif
     arg2->unk_00 = (s32) (arg1->unk_00 * 65536.0f) >> 16;
     arg2->unk_02 = (s32) (arg1->unk_04 * 65536.0f) >> 16;
     arg2->unk_08 = (s32) (arg1->unk_10 * 65536.0f) >> 16;
