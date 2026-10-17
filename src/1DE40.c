@@ -111,12 +111,14 @@ void func_8001D658(s16 index, Gfx** gfx) {
            interpolate. Draw through a viewport centred on the camera's scissor rectangle and
            shift the projection by the difference instead (clip x += ofs * w), which RT64
            interpolates. The camera's own Vp and Mtx are left as retail wrote them: 65770.c
-           reads them. Offsets beyond one viewport width keep the retail path. */
+           reads them. The board's "where is the star" pan scrolls several viewport widths: an
+           offset limit of one width put part of the pan on the retail path (30 fps, and a
+           projection jump each time it switched), so only absurd offsets keep it now. */
         static Vp pbVp[6][2];
         static Mtx pbProj[6][2];
         f32 ofsX = (temp_a0->unk60 - (temp_v1->unkD8.x + temp_v1->unkD8.z) * 2.0f) / (f32) temp_a0->unk58;
         f32 ofsY = -(temp_a0->unk62 - (temp_v1->unkD8.y + temp_v1->unkD8.w) * 2.0f) / (f32) temp_a0->unk5A;
-        if (temp_a0->unk58 != 0 && temp_a0->unk5A != 0 && fabsf(ofsX) <= 1.0f && fabsf(ofsY) <= 1.0f) {
+        if (temp_a0->unk58 != 0 && temp_a0->unk5A != 0 && fabsf(ofsX) <= 64.0f && fabsf(ofsY) <= 64.0f) {
             Vp* vp = &pbVp[index][D_800F3FA8 & 1];
             Mtx* proj = &pbProj[index][D_800F3FA8 & 1];
             f32 mf[4][4];

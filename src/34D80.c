@@ -108,13 +108,19 @@ static void pb_mtnx_swap(unk34D80Struct40* m, s32 size) {
     m->unk_10 = (s32)pb_bswap32((u32)m->unk_10);
     m->unk_14 = (s32)pb_bswap32((u32)m->unk_14);
     pb_swap32_array(m->unk_18, m->unk_09);
-    pb_swap16_array(base + m->unk_10, (size_t)(pb_mtnx_end(m, size, m->unk_10) - m->unk_10) / 2);
-    pb_swap32_array(base + m->unk_14, (size_t)(pb_mtnx_end(m, size, m->unk_14) - m->unk_14) / 4);
+    /* A section can start at or past the copied size: Hammer Drop crashed here (2026-10-17) on a
+       file whose f32 section starts beyond it. Swap only what lies inside the copy. */
+    if (m->unk_10 > 0 && m->unk_10 < size) {
+        pb_swap16_array(base + m->unk_10, (size_t)(pb_mtnx_end(m, size, m->unk_10) - m->unk_10) / 2);
+    }
+    if (m->unk_14 > 0 && m->unk_14 < size) {
+        pb_swap32_array(base + m->unk_14, (size_t)(pb_mtnx_end(m, size, m->unk_14) - m->unk_14) / 4);
+    }
     for (i = 0; i < m->unk_09; i++) {
         for (j = 0; j < i; j++) {
             if (m->unk_18[j] == m->unk_18[i]) break; /* a record shared by two entries: once */
         }
-        if (j == i) {
+        if (j == i && m->unk_18[i] >= 0 && m->unk_18[i] + 16 <= size) {
             pb_swap16_array(base + m->unk_18[i] + 4, 6);
         }
     }
