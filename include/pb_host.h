@@ -71,6 +71,7 @@ s32 pb_dev_turns(void);
 s32 pb_dev_board(void); /* --dev-board N: the board a new game uses (GwSystem.curBoardIndex), or -1 */
 s32 pb_dev_overworld(void); /* --dev-overworld N: the overworld's first selection (0 Adventure ... 5 Mini-Game Island), or -1 */
 s32 pb_widescreen(void); /* config.json video.aspectRatio "expand" (RT64 widens the 3D view) */
+s32 pb_quick_saves(void); /* config.json game.quickSaves: save without the "saving" boxes */
 /* --autoplay: nonzero makes events that steer a human with the stick (Chance Time walks under
    each block) drive player 1 with the game's own CPU logic, as autoplay presses buttons only. */
 int pb_autoplay_steer(void);

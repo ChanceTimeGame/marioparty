@@ -565,6 +565,14 @@ void func_8005727C(void) {
                     case 2:
                         SetBoardFeatureFlag(0);
                         SetBoardFeatureFlag(0x40);
+#ifdef TARGET_PC
+                        /* Quick saves: the same EEPROM write, without the "saving" box and
+                           the "saved" box that waits for A (the write takes no time here). */
+                        if (pb_quick_saves()) {
+                            func_8005B3B0();
+                            break;
+                        }
+#endif
                         win = CreateTextWindow(0x58, 0x6C, 0xD, 1);
                         func_8006E154(win, 0);
                         LoadStringIntoWindow(win, (void*)0x178, -1, -1);
