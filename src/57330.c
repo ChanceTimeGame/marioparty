@@ -305,6 +305,11 @@ void func_80056B78(void) {
         }
 #endif
         gameStatus->saveSetting = 0;
+#ifdef TARGET_PC
+        if (pb_dev_save() >= 0) {
+            gameStatus->saveSetting = pb_dev_save(); /* mp1host --dev-save */
+        }
+#endif
         gameStatus->minigameExplanation = 0;
         gameStatus->messageSpeed = 1;
         

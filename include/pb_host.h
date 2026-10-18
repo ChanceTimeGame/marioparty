@@ -68,6 +68,7 @@ int pb_dev_minigame_forced(void); /* --dev-minigame: one minigame overlay only *
 s32 pb_dev_minigame_type(s32 mg); /* 1 = 1v3, 2 = 2v2, 0 = other (src/43760.c) */
 void pb_dev_minigame_teams(s32 type); /* teams of that shape for a forced minigame */
 s32 pb_dev_turns(void);
+s32 pb_dev_save(void); /* --dev-save N: a new game's save setting (GwSystem.saveSetting), or -1 */
 s32 pb_dev_board(void); /* --dev-board N: the board a new game uses (GwSystem.curBoardIndex), or -1 */
 s32 pb_dev_overworld(void); /* --dev-overworld N: the overworld's first selection (0 Adventure ... 5 Mini-Game Island), or -1 */
 s32 pb_widescreen(void); /* config.json video.aspectRatio "expand" (RT64 widens the 3D view) */
