@@ -603,6 +603,17 @@ void func_80062524(s16 arg0, u8* arg1) {
 #define FILL_COLOR_RGBA5551(r, g, b, a) ((GPACK_RGBA5551(r, g, b, a) << 16) | GPACK_RGBA5551(r, g, b, a))
 
 
+/* Retail scissors the font pass to 319x339, past the 240-line screen. On the host RT64 keeps the
+   frame's 2D rectangles at 4:3 in widescreen only when every scissor of the frame is 4:3, so the
+   oversized one stretched the message boxes; use the screen instead. */
+#ifdef TARGET_PC
+#define PF_SCISSOR_W 320
+#define PF_SCISSOR_H 240
+#else
+#define PF_SCISSOR_W 319
+#define PF_SCISSOR_H 339
+#endif
+
 Gfx *pfDrawFonts(Gfx *gfx) {
     u16 count;
     s32 i;
@@ -617,7 +628,7 @@ Gfx *pfDrawFonts(Gfx *gfx) {
     count = strlinecnt;
 
     if (emppfwin != 0) {
-        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, 319, 339);
+        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, PF_SCISSOR_W, PF_SCISSOR_H);
         gDPPipeSync(gfx++);
         gDPSetTextureLOD(gfx++, G_TL_LOD);
         gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
@@ -714,7 +725,7 @@ Gfx *pfDrawFonts(Gfx *gfx) {
         gDPFillRectangle(gfx++, 296, 16, 296, 224);
     }
 
-    gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, 319, 339);
+    gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, PF_SCISSOR_W, PF_SCISSOR_H);
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_COPY);
     gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
