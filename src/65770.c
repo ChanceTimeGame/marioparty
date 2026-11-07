@@ -57,6 +57,10 @@ extern s16 D_800F329E;
 
 extern Gfx* D_800E4120;
 void func_80068410(Gfx** gfx, unk65770Obj* obj);
+#ifdef TARGET_PC
+void pb_spr_classify(void);
+void pb_spr_align_end(Gfx** g);
+#endif
 void func_80023888(void*);
 extern f32 D_800E4124;
 extern unk65770Anim* D_800EC700[256];
@@ -672,6 +676,9 @@ void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
 
     D_800F37CC = 0;
     func_80065BF8();
+#ifdef TARGET_PC
+    pb_spr_classify(); /* 69010.c: widescreen backdrops */
+#endif
     obj = func_80065700();
     func_800666D4();
     gSPViewport((*gfx)++, &D_800C5B40);
@@ -720,6 +727,9 @@ void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
     } else if (D_800E4120 != NULL) {
         gSPEndDisplayList(end);
     }
+#ifdef TARGET_PC
+    pb_spr_align_end(gfx); /* 69010.c */
+#endif
     gDPSetTextureLUT((*gfx)++, G_TT_NONE);
     gSPMatrix((*gfx)++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
     gSPMatrix((*gfx)++, mtx + 1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -738,6 +748,9 @@ void func_80066B3C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
         gDPSetBlendColor((*gfx)++, 0, 0, 0, 1);
         gDPSetAlphaCompare((*gfx)++, G_AC_THRESHOLD);
         gSPDisplayList((*gfx)++, D_800E4120);
+#ifdef TARGET_PC
+        pb_spr_align_end(gfx);
+#endif
         gDPSetTextureLUT((*gfx)++, G_TT_NONE);
         gSPMatrix((*gfx)++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
         gSPMatrix((*gfx)++, mtx + 1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

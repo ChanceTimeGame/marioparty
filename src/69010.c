@@ -111,6 +111,111 @@ void func_8006B014(Gfx** arg0, unk69010Sprite* arg1, u16 arg2, u16 arg3, u16 arg
 void func_8006B464(Gfx** arg0, unk69010Sprite* arg1, u16 arg2, u16 arg3, u16 arg4, u16 arg5, u16 arg6, u16 arg7, u16 arg8, u16 arg9, u16 arg10);
 
 // decomp-permuter
+#ifdef TARGET_PC
+#include "sprite65770.h"
+extern Vp D_800C5B40; /* 65770.c: the sprite layer's full-screen viewport */
+
+/* Widescreen (RT64 "expand"): RT64 widens any viewport that spans the screen, and the sprite layer's
+   ortho camera cannot tell it apart from 3D, so every 2D element (message boxes, HUD, menus) was
+   stretched ~1.33x and moved out over the 3D scene (as MP2's message box over Toad). A sprite keeps
+   its 4:3 size and place (viewport origin CENTER) unless its group spans the screen this frame (a
+   background, often tiled): that still stretches (origin NONE), as the owner chose for full-screen
+   pictures (ovl_6F). The same in MP2 (games/mp2/src/84FF0.c). */
+#define PB_SPR_WIDE_MAX 512
+static unk69010Sprite* pb_spr_wide[PB_SPR_WIDE_MAX];
+static s32 pb_spr_wide_count;
+
+void pb_spr_classify(void)
+{
+  s16 g;
+  s16 i;
+
+  pb_spr_wide_count = 0;
+  if (!pb_widescreen())
+  {
+    return;
+  }
+  for (g = 0; g < 256; g++)
+  {
+    unk65770Grp* grp = D_800EE330[g];
+    f32 minX = 1e9f;
+    f32 maxX = -1e9f;
+    if (grp == NULL)
+    {
+      continue;
+    }
+    for (i = 0; i < grp->count; i++)
+    {
+      unk69010Sprite* spr = (unk69010Sprite*) grp->obj[i];
+      unk69010Frame* frame;
+      f32 x0;
+      f32 x1;
+      if (spr == NULL || spr->sheet == NULL || !(spr->scaleX > 0.0f) || !(spr->scaleY > 0.0f))
+      {
+        continue;
+      }
+      frame = &spr->sheet->frames[spr->frame];
+      x0 = spr->x - frame->centerX * spr->scaleX; /* unrotated extent: enough to spot a backdrop */
+      x1 = spr->x + (frame->width - frame->centerX) * spr->scaleX;
+      if (x1 < 0.0f || x0 > 320.0f)
+      {
+        continue;
+      }
+      if (x0 < minX)
+      {
+        minX = x0;
+      }
+      if (x1 > maxX)
+      {
+        maxX = x1;
+      }
+    }
+    if (minX <= 10.0f && maxX >= 310.0f)
+    {
+      for (i = 0; i < grp->count && pb_spr_wide_count < PB_SPR_WIDE_MAX; i++)
+      {
+        if (grp->obj[i] != NULL)
+        {
+          pb_spr_wide[pb_spr_wide_count++] = (unk69010Sprite*) grp->obj[i];
+        }
+      }
+    }
+  }
+}
+
+static void pb_spr_align(Gfx** g, unk69010Sprite* spr)
+{
+  s32 i;
+  s32 wide = 0;
+
+  if (!pb_widescreen())
+  {
+    return;
+  }
+  for (i = 0; i < pb_spr_wide_count; i++)
+  {
+    if (pb_spr_wide[i] == spr)
+    {
+      wide = 1;
+      break;
+    }
+  }
+  gEXSetViewportAlign((*g)++, wide ? G_EX_ORIGIN_NONE : G_EX_ORIGIN_CENTER, 0, 0);
+  gSPViewport((*g)++, &D_800C5B40);
+}
+
+/* After the sprite layer: the default origin again, with the layer's viewport reloaded under it, since
+   what follows may draw through it without setting one. */
+void pb_spr_align_end(Gfx** g)
+{
+  if (pb_widescreen())
+  {
+    gEXSetViewportAlign((*g)++, G_EX_ORIGIN_NONE, 0, 0);
+    gSPViewport((*g)++, &D_800C5B40);
+  }
+}
+#endif
+
 void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
 {
   f32 corners[4][2];
@@ -187,6 +292,9 @@ void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
     return;
   }
   gfx = *arg0;
+#ifdef TARGET_PC
+  pb_spr_align(&gfx, arg1);
+#endif
   switch (arg1->sheet->format)
   {
     case 0x4:
