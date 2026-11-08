@@ -51,7 +51,17 @@ extern s16 D_800D6736;
 extern s16 D_800D6738;
 extern s32 D_800F6598;
 extern f32 D_800D672C;
+#ifdef TARGET_PC
+/* Host: the board art draws up to 10 tile columns (6 in retail) while widescreen or frame
+   interpolation is on (func_8004ACEC), so a larger tile pool keeps free slots for the tiles a
+   scroll brings in (retail: 36 of 40). */
+#define PB_BG_POOL 70
+static unk20 pb_bg_pool[PB_BG_POOL];
+#define D_800D6740 pb_bg_pool
+#else
+#define PB_BG_POOL 40
 extern unk20 D_800D6740[40];
+#endif
 extern unk20 *D_800D6A60[6][6]; // Have no clue what this is
 
 extern OSMesgQueue D_800D6AF0;
@@ -863,9 +873,19 @@ void func_8004A394(void) {
 }
 
 void func_8004A41C(void) {
+#ifdef TARGET_PC
+    /* One message per tile in flight: with the larger pool a full 40-message queue dropped a
+       request (osSendMesg without blocking), and that slot stayed "loading" for good, so tiles
+       went missing. Room for every slot plus the two kill messages. */
+    static OSMesg pbBgMesg[3][PB_BG_POOL + 2];
+    osCreateMesgQueue(&D_800D6AF0, pbBgMesg[0], PB_BG_POOL + 2);
+    osCreateMesgQueue(&D_800D7F20, pbBgMesg[1], PB_BG_POOL + 2);
+    osCreateMesgQueue(&D_800D7FD8, pbBgMesg[2], PB_BG_POOL + 2);
+#else
     osCreateMesgQueue(&D_800D6AF0, &D_800D6B08, 0x28);
     osCreateMesgQueue(&D_800D7F20, &D_800D7F38, 0x28);
     osCreateMesgQueue(&D_800D7FD8, &D_800D7FF0, 0x28);
+#endif
     osCreateMesgQueue(&D_800D8090, &D_800D80A8, 2);
     D_800D7710 = 1;
     osCreateThread(&D_800D7560, 0x64, (void*)&func_8004A394, 0, &D_800D7F20, 1);
@@ -909,7 +929,7 @@ void func_8004A5BC(void) {
     func_8004A530();
     osRecvMesg(&D_800D8090, 0, 1);
     osRecvMesg(&D_800D8090, 0, 1);
-    for (i = 0; i < 40; i++) {
+    for (i = 0; i < PB_BG_POOL; i++) {
         unkFile = &D_800D6740[i];
         pArchive = unkFile->archive;
         if (pArchive != NULL) {
@@ -924,7 +944,7 @@ void func_8004A684(void) {
     s32 i;
 
     var_s0 = D_800D6740;
-    for(i = 0; i < 40; i++) {
+    for(i = 0; i < PB_BG_POOL; i++) {
         var_s0->unk0 = 0;
         var_s0->unk2 = -1;
         var_s0->data = func_80023668(0x1800);
@@ -939,7 +959,7 @@ void func_8004A6F8(void) {
     s32 i;
 
     var_v1 = D_800D6740;
-    for(i = 0; i < 40; i++) {
+    for(i = 0; i < PB_BG_POOL; i++) {
         if ((var_v1->archive == NULL) &&
              ((u16) var_v1->unk0 == 0)) {
             var_v1->unk2 = -1;
@@ -957,7 +977,7 @@ void func_8004A73C(void) {
     s32 i;
 
     unkFile = D_800D6740;
-    for (i = 0; i < 40; i++) {
+    for (i = 0; i < PB_BG_POOL; i++) {
         unkFile->unk0 = 0;
         unkFile->unk2 = -1;
         pData = unkFile->data;
@@ -1002,7 +1022,7 @@ unk20* func_8004A890(u16 arg0) {
     s32 i;
 
     var_s1 = NULL;
-    for (var_v1 = D_800D6740, i = 0; i < 40; var_v1++, i++) {
+    for (var_v1 = D_800D6740, i = 0; i < PB_BG_POOL; var_v1++, i++) {
         if (var_v1->unk2 == -1) {
             var_s1 = var_v1;
         } else if (var_v1->unk2 == arg0) {
@@ -1025,11 +1045,47 @@ unk20* func_8004A890(u16 arg0) {
     return var_s1;
 }
 
+#ifdef TARGET_PC
+/* While widescreen or interpolation is on the board art is quads (func_8004ACEC): the tiles in
+   view then include two extra columns each side of retail's six (enough for a 2.4:1 window). */
+#define PB_BG_COLS 10
+static unk20* pb_bg_wide[PB_BG_COLS][6];
+
+static s32 pb_bg_quads(void) {
+    return pb_widescreen() || pb_interp_fold_viewport();
+}
+#endif
+
 void func_8004A950(void) {
     s32 var_s1;
     u32 var_s2;
     s32 i, j;
 
+#ifdef TARGET_PC
+    if (pb_bg_quads()) {
+        var_s2 = ((D_800D6738 + D_800D6734) - 0x78) / 48;
+        for (i = 0; i < 6; var_s2++, i++) {
+            s32 temp = D_800D6736 + D_800D6732 - 0xA0;
+            if (temp < 0) {
+                temp = D_800D6736 + D_800D6732 - 0x61;
+            }
+            var_s1 = (temp >> 6) - 2;
+            for (j = 0; j < PB_BG_COLS; var_s1++, j++) {
+                if (((((u32) var_s1 >> 0x1F) | (var_s2 >> 0x1F)) != 0) ||
+                    ((var_s1 < D_800C4F78->unk8) == 0) ||
+                    ((s32) var_s2 >= D_800C4F78->unkC)) {
+                    pb_bg_wide[j][i] = NULL;
+                } else {
+                    pb_bg_wide[j][i] = func_8004A890(func_8004A814(var_s1, var_s2));
+                }
+                if (j >= 2 && j < 8) {
+                    D_800D6A60[j - 2][i] = pb_bg_wide[j][i];
+                }
+            }
+        }
+        return;
+    }
+#endif
     var_s2 = ((D_800D6738 + D_800D6734) - 0x78) / 48;
     for (i = 0; i < 6; var_s2++, i++) {
         s32 temp = D_800D6736 + D_800D6732 - 0xA0;
@@ -1073,8 +1129,11 @@ INCLUDE_ASM("asm/nonmatchings/48D90", func_8004AAA8);
    under 3D that moved smoothly. While interpolation is on, each tile half is drawn as a quad in
    board coordinates under one scroll translation that RT64 interpolates (pb_interp_fold_viewport,
    1DE40.c moves the 3D camera's matching viewport scroll into its projection). Same texture
-   loads, combiner and render mode (1-cycle, point filter, no Z). */
-#define PB_BG_QUADS (6 * 6 * 2)
+   loads, combiner and render mode (1-cycle, point filter, no Z).
+   Widescreen takes the same path: RT64 keeps texture rectangles at 4:3 but widens these quads
+   (a full-screen viewport) like the 3D, so the art reaches the window's edges with the spaces
+   on it; pb_bg_wide adds the columns beyond 4:3. MP2 51630.c does the same. */
+#define PB_BG_QUADS (PB_BG_COLS * 6 * 2)
 static Vtx pbBgVtx[2][PB_BG_QUADS * 4];
 static Mtx pbBgMtx[2][2];
 static Vp pbBgVp = { { { 640, 480, 511, 0 }, { 640, 480, 511, 0 } } };
@@ -1183,15 +1242,15 @@ void func_8004ACEC(Gfx** gfx, s32 arg1, u8 arg2) {
                 gDPSetRenderMode((*gfx)++, 0x552048, 0);
             }
 #ifdef TARGET_PC
-            if (pb_interp_fold_viewport()) {
+            if (pb_bg_quads()) {
                 s32 scrollX = D_800D6736 + D_800D6732 - 160;
                 s32 scrollY = D_800D6738 + D_800D6734 - 120;
 
                 pbBgBegin(gfx, scrollX, scrollY);
                 for (j = 0; j < 6; j++) {
-                    for (i = 0; i < 6; i++) {
-                        if (D_800D6A60[i][j] != NULL) {
-                            pbBgTile(gfx, D_800D6A60[i][j]->data, (s16) (i * 64 - offX), (s16) (j * 48 - offY),
+                    for (i = 0; i < PB_BG_COLS; i++) {
+                        if (pb_bg_wide[i][j] != NULL) {
+                            pbBgTile(gfx, pb_bg_wide[i][j]->data, (i - 2) * 64 - offX, (s16) (j * 48 - offY),
                                      scrollX, scrollY);
                         }
                     }
