@@ -124,6 +124,11 @@ extern Vp D_800C5B40; /* 65770.c: the sprite layer's full-screen viewport */
 #define PB_SPR_WIDE_MAX 512
 static unk69010Sprite* pb_spr_wide[PB_SPR_WIDE_MAX];
 static s32 pb_spr_wide_count;
+/* The origin last set in each of the layer's two streams (65770.c func_8006677C: sprites flagged
+   0x4000 draw inline, the rest in the list func_80066B3C replays later). Both start at NONE;
+   setting it only when it changes keeps the layer's display list within its retail size, as
+   MP2 84FF0.c (emitting it per sprite overran MP2's and crashed in HuMemMemoryAlloc). */
+static u16 pb_spr_origin[2];
 
 void pb_spr_classify(void)
 {
@@ -131,6 +136,7 @@ void pb_spr_classify(void)
   s16 i;
 
   pb_spr_wide_count = 0;
+  pb_spr_origin[0] = pb_spr_origin[1] = G_EX_ORIGIN_NONE;
   if (!pb_widescreen())
   {
     return;
@@ -200,8 +206,18 @@ static void pb_spr_align(Gfx** g, unk69010Sprite* spr)
       break;
     }
   }
-  gEXSetViewportAlign((*g)++, wide ? G_EX_ORIGIN_NONE : G_EX_ORIGIN_CENTER, 0, 0);
-  gSPViewport((*g)++, &D_800C5B40);
+  {
+    u16 origin = wide ? G_EX_ORIGIN_NONE : G_EX_ORIGIN_CENTER;
+    u16* cur = &pb_spr_origin[(spr->flags & 0x4000) ? 0 : 1];
+
+    if (*cur == origin)
+    {
+      return;
+    }
+    *cur = origin;
+    gEXSetViewportAlign((*g)++, origin, 0, 0);
+    gSPViewport((*g)++, &D_800C5B40);
+  }
 }
 
 /* After the sprite layer: the default origin again, with the layer's viewport reloaded under it, since

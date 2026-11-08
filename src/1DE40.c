@@ -106,9 +106,10 @@ void func_8001D658(s16 index, Gfx** gfx) {
     temp_a0->unk64 = temp_v1->unk30.z;
 
 #ifdef TARGET_PC
-    if (pb_interp_fold_viewport() && index >= 0 && index < 6) {
-        /* Frame interpolation: the boards scroll by moving the viewport, which RT64 cannot
-           interpolate. Draw through a viewport centred on the camera's scissor rectangle and
+    if ((pb_interp_fold_viewport() || pb_widescreen()) && index >= 0 && index < 6) {
+        /* Frame interpolation and widescreen: the boards scroll by moving the viewport, which
+           RT64 cannot interpolate, and RT64 widens only a viewport spanning the screen, about its
+           own centre (the 3D went 4:3 or drifted off the board art; MP2 20C70.c does the same). Draw through a viewport centred on the camera's scissor rectangle and
            shift the projection by the difference instead (clip x += ofs * w), which RT64
            interpolates. The camera's own Vp and Mtx are left as retail wrote them: 65770.c
            reads them. The board's "where is the star" pan scrolls several viewport widths: an

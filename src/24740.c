@@ -713,6 +713,16 @@ void func_80025658(void* arg0, void* arg1) {
                                       GPACK_RGBA5551(D_800C30C0, D_800C30C1, D_800C30C2, 1));
         gSPDisplayList(D_800F37DC++, D_800C3460);
     }
+#ifdef TARGET_PC
+    else {
+        /* Retail skips the clear when a full-screen scene covers the frame, and the framebuffers
+           rotate, so a pixel no scene draws (the last column; and in widescreen the edge RT64
+           adds) shows a frame several frames old: a line along an edge that a TV's overscan
+           hides. Clear to black instead; anything drawn covers it (MP2 274D0.c). */
+        gDPSetFillColor(D_800F37DC++, GPACK_RGBA5551(0, 0, 0, 1) << 16 | GPACK_RGBA5551(0, 0, 0, 1));
+        gSPDisplayList(D_800F37DC++, D_800C3460);
+    }
+#endif
 }
 void func_8002578C(s32 arg0) {
     D_800ED6BC = arg0;
