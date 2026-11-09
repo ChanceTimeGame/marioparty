@@ -394,12 +394,54 @@ void func_800543D8(s32 arg0) {
     D_800D84D0[arg0] = NULL;
     temp_s2->unk2C = NULL;
 }
+#ifdef TARGET_PC
+/* Host widescreen: the four player cards keep their 4:3 distance from the screen's sides. A card at
+   its corner (x 24 or 200; slides in from beyond) moves out by the extra width; one in a centred
+   layout (rankings, x 60 / 164) stays; in between it is weighted, so a move between the two glides.
+   The sprite layer applies it (69010.c pb_spr_align). Only while the HUD exists (pb_hud_live). */
+static s32 pb_hud_live;
+
+f32 pb_hud_card_shift(s32 group) {
+    f32 e = 160.0f * (pb_wide_scale() - 1.0f);
+    s32 i;
+
+    if (!pb_hud_live || e <= 0.0f) {
+        return 0.0f;
+    }
+    for (i = 0; i < 4; i++) {
+        unkStruct4* p = &D_800D83A8[i];
+        f32 x = p->unk_0C;
+
+        if (p->unk_06 != group) {
+            continue;
+        }
+        if (x <= 24.0f) {
+            return -e;
+        }
+        if (x < 60.0f) {
+            return -e * (60.0f - x) / 36.0f;
+        }
+        if (x >= 200.0f) {
+            return e;
+        }
+        if (x > 164.0f) {
+            return e * (x - 164.0f) / 36.0f;
+        }
+        return 0.0f;
+    }
+    return 0.0f;
+}
+#endif
+
 void func_800544E4(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
         func_800543D8(i);
     }
+#ifdef TARGET_PC
+    pb_hud_live = 1;
+#endif
     D_800D83A0 = omAddPrcObj(func_80053A1C, 0, 0x2000, 0);
     omPrcSetStatBit(D_800D83A0, 0x80);
     D_800D84AA = -1;
@@ -438,6 +480,9 @@ s32 func_80054654(void) {
         func_8005456C(i);
     }
     HuPrcKill(D_800D83A0);
+#ifdef TARGET_PC
+    pb_hud_live = 0;
+#endif
     func_80055228();
     D_800C54D0 = -1;
     D_800C54D4 = -1;
@@ -903,6 +948,9 @@ void func_80055AFC(void) {
     func_8005456C(D_800C54D0);
     func_8005456C(D_800C54D4);
     HuPrcKill(D_800D83A0);
+#ifdef TARGET_PC
+    pb_hud_live = 0;
+#endif
     func_80055228();
     D_800C54D0 = -1;
     D_800C54D4 = -1;

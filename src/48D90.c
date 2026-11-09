@@ -810,16 +810,34 @@ void func_8004A19C(s16 arg0, s16 arg1) {
 
 u16 func_8004A1B0(Vec2f* arg0, f32 arg1) {
     u16 ret = 0;
+#ifdef TARGET_PC
+    /* Host widescreen: retail stops the scroll where the 4:3 view (160 each side) meets the map's
+       edge, so a wider view showed black past it; stop where the wide view meets it (a map
+       narrower than the view stays centred). As MP2 51630.c MBDBackPosClamp. */
+    f32 hv = 160.0f * pb_wide_scale();
 
-    if (arg0->x <= ((-D_800D6736 + 160.0f) / arg1) + 160.0f) {
-        arg0->x =  ((-D_800D6736 + 160.0f) / arg1) + 160.0f;
+    if (hv > D_800D6736) {
+        hv = D_800D6736;
+    }
+    if (hv < 160.0f) {
+        hv = 160.0f;
+    }
+#else
+#define hv 160.0f
+#endif
+
+    if (arg0->x <= ((-D_800D6736 + hv) / arg1) + 160.0f) {
+        arg0->x =  ((-D_800D6736 + hv) / arg1) + 160.0f;
         ret |= 1;
     }
 
-    if (arg0->x >= ((D_800D6736 - 160.0f) / arg1) + 160.0f) {
-        arg0->x =  ((D_800D6736 - 160.0f) / arg1) + 160.0f;
+    if (arg0->x >= ((D_800D6736 - hv) / arg1) + 160.0f) {
+        arg0->x =  ((D_800D6736 - hv) / arg1) + 160.0f;
         ret |= 2;
     }
+#ifndef TARGET_PC
+#undef hv
+#endif
 
     if (arg0->y <= ((-D_800D6738 + 120.0f) / arg1) + 120.0f) {
         arg0->y =  ((-D_800D6738 + 120.0f) / arg1) + 120.0f;
@@ -1050,6 +1068,7 @@ unk20* func_8004A890(u16 arg0) {
    view then include two extra columns each side of retail's six (enough for a 2.4:1 window). */
 #define PB_BG_COLS 10
 static unk20* pb_bg_wide[PB_BG_COLS][6];
+static u8 pb_bg_flip[PB_BG_COLS][6]; /* 1: a mirrored edge tile (a backdrop narrower than the view) */
 
 static s32 pb_bg_quads(void) {
     return pb_widescreen() || pb_interp_fold_viewport();
@@ -1063,6 +1082,11 @@ void func_8004A950(void) {
 
 #ifdef TARGET_PC
     if (pb_bg_quads()) {
+        /* A backdrop no wider than the view (the board-start scene's, an event's: 320 for 4:3) ends
+           in black past its sides: repeat its edge columns there, mirrored, so the art continues
+           and nothing inside 4:3 moves (MP2 51630.c, owner 2026-11-09). Boards are wider. */
+        s32 narrow = D_800D6736 < 160.0f * pb_wide_scale();
+
         var_s2 = ((D_800D6738 + D_800D6734) - 0x78) / 48;
         for (i = 0; i < 6; var_s2++, i++) {
             s32 temp = D_800D6736 + D_800D6732 - 0xA0;
@@ -1071,12 +1095,22 @@ void func_8004A950(void) {
             }
             var_s1 = (temp >> 6) - 2;
             for (j = 0; j < PB_BG_COLS; var_s1++, j++) {
-                if (((((u32) var_s1 >> 0x1F) | (var_s2 >> 0x1F)) != 0) ||
-                    ((var_s1 < D_800C4F78->unk8) == 0) ||
+                s32 col = var_s1;
+
+                pb_bg_flip[j][i] = 0;
+                if (narrow && col < 0 && col >= -D_800C4F78->unk8) {
+                    col = -1 - col;
+                    pb_bg_flip[j][i] = 1;
+                } else if (narrow && col >= D_800C4F78->unk8 && col < 2 * D_800C4F78->unk8) {
+                    col = 2 * D_800C4F78->unk8 - 1 - col;
+                    pb_bg_flip[j][i] = 1;
+                }
+                if (((((u32) col >> 0x1F) | (var_s2 >> 0x1F)) != 0) ||
+                    ((col < D_800C4F78->unk8) == 0) ||
                     ((s32) var_s2 >= D_800C4F78->unkC)) {
                     pb_bg_wide[j][i] = NULL;
                 } else {
-                    pb_bg_wide[j][i] = func_8004A890(func_8004A814(var_s1, var_s2));
+                    pb_bg_wide[j][i] = func_8004A890(func_8004A814(col, var_s2));
                 }
                 if (j >= 2 && j < 8) {
                     D_800D6A60[j - 2][i] = pb_bg_wide[j][i];
@@ -1140,6 +1174,8 @@ static Vp pbBgVp = { { { 640, 480, 511, 0 }, { 640, 480, 511, 0 } } };
 static s32 pbBgBuf;
 static s32 pbBgCount;
 
+static s32 pbBgFlip;
+
 static void pbBgTile(Gfx** gfx, void* tex, s32 x, s16 y, s32 scrollX, s32 scrollY) {
     s32 i;
     s32 k;
@@ -1163,7 +1199,7 @@ static void pbBgTile(Gfx** gfx, void* tex, s32 x, s16 y, s32 scrollX, s32 scroll
             v[k].v.ob[1] = (s16) (y0 + t);
             v[k].v.ob[2] = 0;
             v[k].v.flag = 0;
-            v[k].v.tc[0] = (s16) (u << 5);
+            v[k].v.tc[0] = (s16) ((pbBgFlip ? 64 - u : u) << 5);
             v[k].v.tc[1] = (s16) (t << 5);
             v[k].v.cn[0] = v[k].v.cn[1] = v[k].v.cn[2] = v[k].v.cn[3] = 0xFF;
         }
@@ -1250,11 +1286,13 @@ void func_8004ACEC(Gfx** gfx, s32 arg1, u8 arg2) {
                 for (j = 0; j < 6; j++) {
                     for (i = 0; i < PB_BG_COLS; i++) {
                         if (pb_bg_wide[i][j] != NULL) {
+                            pbBgFlip = pb_bg_flip[i][j];
                             pbBgTile(gfx, pb_bg_wide[i][j]->data, (i - 2) * 64 - offX, (s16) (j * 48 - offY),
                                      scrollX, scrollY);
                         }
                     }
                 }
+                pbBgFlip = 0;
                 pbBgEnd(gfx);
                 func_8004A530();
                 return;
