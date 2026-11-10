@@ -102,7 +102,8 @@ Gfx D_800FC870_FaceLift[] = {
     gsSPEndDisplayList(),
 };
 
-// register allocation (two hoisted table bases)
+// register allocation: hoisted table bases and the D_800FC9FA store address (raw 23, masked 2; tried
+// struct indexing, an s16 view, a separate store statement)
 #ifdef NON_MATCHING
 void func_800F65E0_FaceLift(void) {
     omObjData* obj;

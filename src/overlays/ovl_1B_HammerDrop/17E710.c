@@ -177,8 +177,6 @@ void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6AF8_HammerDrop);
 #endif
 
-// Logic-equivalent player update state machine; register allocation differs.
-#ifdef NON_MATCHING
 void func_800F6F9C_HammerDrop(omObjData* arg0) {
     unkGlobalStruct_00* work = arg0->unk_50;
     HammerDropPlayerState* state = (HammerDropPlayerState*) work->unk_E4;
@@ -239,9 +237,6 @@ void func_800F6F9C_HammerDrop(omObjData* arg0) {
         work->unk_50 |= 0x200;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6F9C_HammerDrop);
-#endif
 
 void func_800F736C_HammerDrop(omObjData* arg0) {
     unkGlobalStruct_00* work = arg0->unk_50;
