@@ -272,7 +272,7 @@ void func_800FC2A0_HandcarHavoc(u16 i, Vec* out);
 void func_800FC338_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos);
 u16 func_800FC4B0_HandcarHavoc(omObjData* obj);
 f32 func_800FC7E0_HandcarHavoc(f32 x);
-s16 func_800FC85C_HandcarHavoc(void);
+u16 func_800FC85C_HandcarHavoc(void);
 void func_800FCA58_HandcarHavoc(omObjData* obj, u16 side);
 void func_800FCBA4_HandcarHavoc(omObjData* obj);
 void func_800FCCA4_HandcarHavoc(omObjData* obj);

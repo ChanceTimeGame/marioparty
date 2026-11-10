@@ -1912,9 +1912,7 @@ f32 func_800FC7E0_HandcarHavoc(f32 x) {
 }
 
 /* The race's winner: the car nearer the goal; saves a new record. */
-// NON_MATCHING: u16 masks on the winner index
-#ifdef NON_MATCHING
-s16 func_800FC85C_HandcarHavoc(void) {
+u16 func_800FC85C_HandcarHavoc(void) {
     f32 dist[2];
     HHCar* w;
     HHTimer* t;
@@ -1924,15 +1922,15 @@ s16 func_800FC85C_HandcarHavoc(void) {
     for (i = 0; i < 2; i++) {
         w = D_800FF618_HandcarHavoc[i]->unk_50;
         dist[i] = func_800FC22C_HandcarHavoc(
-            func_800AEAC0(w->rot.y) * D_800FF3B8_HandcarHavoc[0] + D_800FF618_HandcarHavoc[i]->trans.x,
+            D_800FF618_HandcarHavoc[i]->trans.x + func_800AEAC0(w->rot.y) * D_800FF3B8_HandcarHavoc[0],
             D_800FF618_HandcarHavoc[i]->trans.y,
-            func_800AEFD0(w->rot.y) * D_800FF3B8_HandcarHavoc[0] + D_800FF618_HandcarHavoc[i]->trans.z,
+            D_800FF618_HandcarHavoc[i]->trans.z + func_800AEFD0(w->rot.y) * D_800FF3B8_HandcarHavoc[0],
             D_800FF610_HandcarHavoc - 2);
         if (w->seg[0] < (s16)D_800FF610_HandcarHavoc - 2) {
             dist[i] = -dist[i];
         }
     }
-    if (dist[1] < dist[0]) {
+    if (dist[0] > dist[1]) {
         win = 0;
     } else {
         win = 0;
@@ -1941,7 +1939,7 @@ s16 func_800FC85C_HandcarHavoc(void) {
         }
     }
     t = D_800FF62C_HandcarHavoc->unk_50;
-    if (t->time < t->record) {
+    if (t->record > t->time) {
         t->record = t->time;
         w = D_800FF618_HandcarHavoc[win]->unk_50;
         if (!(GwPlayer[w->player[0]].flags & 1) || !(GwPlayer[w->player[1]].flags & 1)) {
@@ -1951,9 +1949,6 @@ s16 func_800FC85C_HandcarHavoc(void) {
     }
     return win;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FC85C_HandcarHavoc);
-#endif
 
 /* Sparks from one side's wheels. */
 void func_800FCA58_HandcarHavoc(omObjData* obj, u16 side) {
