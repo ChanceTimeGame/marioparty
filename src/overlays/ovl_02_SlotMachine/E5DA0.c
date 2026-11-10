@@ -262,7 +262,7 @@ void func_800FCBFC_SlotMachine(Matrix4f m, f32 x, f32 y, f32 z, f32* out) {
     *out++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
     *out = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-// register allocation: s0/s1/s2 permuted (masked 0)
+// register allocation: face/(s16)i/reel get s0/s1/s2 in retail, s2/s0/s1 here (masked 0; decl order, split post-loop face tried)
 #ifdef NON_MATCHING
 void func_800FCC98_SlotMachine(void) {
     s16 face;

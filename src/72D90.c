@@ -1393,7 +1393,7 @@ void GMesSprKill(unkCommonStruct0* arg0) {
     }
 }
 
-// unk_04 kept in a register across the "< 10" branch where retail reloads it (masked 8)
+// unk_04 kept in a register across the "< 10" branch where retail rematerialises it from memory at each use (masked 14; else-if chain tried)
 #ifdef NON_MATCHING
 s32 func_800763CC(unkCommonStruct0* arg0, Gfx** arg1) {
     f32 temp_f24;

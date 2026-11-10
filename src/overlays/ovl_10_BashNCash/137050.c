@@ -136,7 +136,7 @@ void func_800F6B80_BashNCash(omObjData* obj) {
 }
 
 /* Picks the cash player (the one in group 0) and shuffles the other three's start positions. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// register allocation: the first loop counter is a0 in retail, v1 here (masked 0; separate counter variable tried)
 #ifdef NON_MATCHING
 void func_800F6BCC_BashNCash(void) {
     s32 i;
@@ -152,8 +152,7 @@ void func_800F6BCC_BashNCash(void) {
     if (i >= 4) {
         i = 0;
     }
-    D_800FE690_BashNCash.order[0] = i;
-    D_800FE610_BashNCash = (u16)i;
+    D_800FE610_BashNCash = D_800FE690_BashNCash.order[0] = i;
     for (k = 1; k < 4; k++) {
         n = rand8() % (4 - k);
         for (j = 0; j < 4; j++) {
@@ -1285,11 +1284,10 @@ void func_800FA094_BashNCash(void) {
 }
 
 /* A stunned hammer player spins. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FA120_BashNCash(omObjData* obj) {
     BashPlayerWork* w = obj->unk_50;
     BashInput* in;
+    u8 i;
 
     if (D_800FE710_BashNCash[obj->work[0]].unk_0A >= 46) {
         D_800FE710_BashNCash[obj->work[0]].unk_10 &= ~1;
@@ -1297,19 +1295,17 @@ void func_800FA120_BashNCash(omObjData* obj) {
     }
     w->unk_3C += 16.0f;
     D_800FE710_BashNCash[obj->work[0]].unk_0A++;
-    in = &D_800FE6A8_BashNCash[obj->work[0]];
+    i = obj->work[0];
+    in = &D_800FE6A8_BashNCash[i];
     in->stickX = 0;
     in->stickY = 0;
     in->btn = 0;
     in->trg = 0;
-    ContBtn[GwPlayer[obj->work[0]].port] = in->btn;
-    ContBtnTrg[GwPlayer[obj->work[0]].port] = in->trg;
-    ContStkX[GwPlayer[obj->work[0]].port] = in->stickX;
-    ContStkY[GwPlayer[obj->work[0]].port] = -in->stickY;
+    ContBtn[GwPlayer[i].port] = in->btn;
+    ContBtnTrg[GwPlayer[i].port] = in->trg;
+    ContStkX[GwPlayer[i].port] = in->stickX;
+    ContStkY[GwPlayer[i].port] = -in->stickY;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FA120_BashNCash);
-#endif
 
 /* A thrown hammer flies and falls. */
 void func_800FA26C_BashNCash(omObjData* obj) {
