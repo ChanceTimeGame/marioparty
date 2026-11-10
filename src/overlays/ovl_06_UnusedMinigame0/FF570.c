@@ -969,7 +969,7 @@ void func_800F9F04_UnusedMinigame0(omObjData* obj) {
     D_80103DA0_UnusedMinigame0++;
 }
 
-// NON_MATCHING: register allocation; GCC drops some double conversions
+// register allocation (masked 0, raw 6): case 1's double r temp gets $f20 where retail uses $f2
 #ifdef NON_MATCHING
 void func_800FA024_UnusedMinigame0(omObjData* obj) {
     UM0ItemWork* iw = obj->unk_50;
