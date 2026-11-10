@@ -936,8 +936,6 @@ f32 func_800F9774_HandcarHavoc(s8 arg0) {
 }
 
 /* Tipping over: the car rolls onto its side, then the riders are thrown. */
-// NON_MATCHING: retail shares the lean clamp store (cross-jumped)
-#ifdef NON_MATCHING
 void func_800F9844_HandcarHavoc(omObjData* obj) {
     Vec rot;
     Vec pos;
@@ -982,13 +980,12 @@ void func_800F9844_HandcarHavoc(omObjData* obj) {
     if (w->rot.z >= 360.0f) {
         w->rot.z -= 360.0f;
     }
-    if (w->leanIn < w->lean) {
+    if (w->lean > w->leanIn) {
         w->lean -= 2.0f;
         if (w->lean < w->leanIn) {
             w->lean = w->leanIn;
         }
-    }
-    if (w->lean < w->leanIn) {
+    } else if (w->lean < w->leanIn) {
         w->lean += 2.0f;
         if (w->leanIn < w->lean) {
             w->lean = w->leanIn;
@@ -1004,13 +1001,8 @@ void func_800F9844_HandcarHavoc(omObjData* obj) {
     D_800FF5D8_HandcarHavoc[w->team] = obj->trans.y + -1500.0f;
     obj->work[0] |= 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9844_HandcarHavoc);
-#endif
 
 /* Throws both riders off the side the car fell to. */
-// NON_MATCHING: retail stores the fall yaw once in a shared tail
-#ifdef NON_MATCHING
 void func_800F9B54_HandcarHavoc(omObjData* obj) {
     Vec pos;
     HHCar* w;
@@ -1025,8 +1017,7 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
         f = rider->unk_50 = func_80023684(sizeof(HHFall), 0x7918);
         if (obj->work[0] & 0x20) {
             f->yaw = w->rot.y - 90.0f;
-        }
-        if (obj->work[0] & 0x40) {
+        } else if (obj->work[0] & 0x40) {
             f->yaw = w->rot.y + 90.0f;
         }
         if (f->yaw < 0.0f) {
@@ -1042,8 +1033,7 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
         omSetTra(rider, pos.x, pos.y, pos.z);
         omSetRot(rider, 0.0f, ry, 0.0f);
         func_80025BB8(rider->model[0], rider->motion[0]);
-        f->angle = 10.0f;
-        f->v0 = 10.0f;
+        f->v0 = f->angle = 10.0f;
         f->t = 0.0f;
         f->g = 2.5f;
         f->side = 40.0f;
@@ -1062,9 +1052,6 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
     func_800FB5DC_HandcarHavoc(obj);
     D_80101CA0_HandcarHavoc++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9B54_HandcarHavoc);
-#endif
 
 /* The fallen car slides off and sinks; decides the race when both have fallen. */
 // NON_MATCHING: only residue is retail's VR4300 mul-fix nop between the mul.s of fallG*t*t (as in
@@ -2050,21 +2037,24 @@ void func_800FCFB4_HandcarHavoc(omObjData* obj) {
 }
 
 /* m'ss"cc */
-// NON_MATCHING: retail walks the digit array with pointer increments
+// register allocation (masked 0, raw 14): rest gets its own register, sec % 10 goes straight to a1; tried declaration order
 #ifdef NON_MATCHING
 void func_800FCFFC_HandcarHavoc(u16 time, u16* digit) {
     u16 rest;
     u16 sec;
     u16 cs;
 
-    func_80018E50(digit[0], time / 3600, 0);
+    func_80018E50(*digit, time / 3600, 0);
+    digit += 2;
     rest = time % 3600;
     sec = rest / 60;
-    func_80018E50(digit[2], sec / 10, 0);
-    func_80018E50(digit[3], sec % 10, 0);
+    func_80018E50(*digit, sec / 10, 0);
+    digit++;
+    func_80018E50(*digit, sec % 10, 0);
+    digit += 2;
     cs = (u16)(rest % 60) * 1.6666666f;
-    func_80018E50(digit[5], cs / 10, 0);
-    func_80018E50(digit[6], cs % 10, 0);
+    func_80018E50(digit[0], cs / 10, 0);
+    func_80018E50(digit[1], cs % 10, 0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FCFFC_HandcarHavoc);
