@@ -1507,36 +1507,31 @@ void func_800FB548_CrazyCutter(s32 arg0) {
     }
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800FB640_CrazyCutter(omObjData* parent, s32 sprite, s32 sprite2, s32 player) {
-    omObjData* obj;
-    CrazyCutterRing* ring;
-
-    func_800FB450_CrazyCutter(sprite);
-    obj = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
-    obj->unk_50 = ring = func_80023684(sizeof(CrazyCutterRing), 0x7918);
-    ring->radius = 0;
-    ring->step = 1.0f;
-    ring->end = 80.0f;
-    ring->mask = D_800FD518_CrazyCutter;
-    ring->width = D_800FD520_CrazyCutter;
-    ring->player = player;
-    func_800FB548_CrazyCutter(sprite2);
-    obj = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
-    obj->unk_50 = ring = func_80023684(sizeof(CrazyCutterRing), 0x7918);
-    ring->radius = 80.0f;
-    ring->step = -1.0f;
-    ring->end = 0;
-    ring->mask = D_800FD51C_CrazyCutter;
-    ring->width = D_800FD528_CrazyCutter;
-    ring->player = player;
-    ring->frame = 0;
-    D_800FD5CA_CrazyCutter = -1;
+// decomp-permuter
+void func_800FB640_CrazyCutter(omObjData *parent, s32 sprite, s32 sprite2, s32 player)
+{
+  CrazyCutterRing *ring;
+  func_800FB450_CrazyCutter(sprite);
+  parent = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
+  parent->unk_50 = (ring = func_80023684(sizeof(CrazyCutterRing), 0x7918));
+  ring->radius = 0;
+  ring->step = 1.0f;
+  ring->end = 80.0f;
+  ring->mask = D_800FD518_CrazyCutter;
+  ring->width = D_800FD520_CrazyCutter;
+  ring->player = player;
+  func_800FB548_CrazyCutter(sprite2);
+  parent = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
+  parent->unk_50 = (ring = func_80023684(sizeof(CrazyCutterRing), 0x7918));
+  ring->radius = 80.0f;
+  ring->step = -1.0f;
+  ring->end = 0;
+  ring->mask = D_800FD51C_CrazyCutter;
+  ring->width = D_800FD528_CrazyCutter;
+  ring->player = player;
+  ring->frame = 0;
+  D_800FD5CA_CrazyCutter = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FB640_CrazyCutter);
-#endif
 // register allocation, mask read lb vs lbu (masked 17)
 #ifdef NON_MATCHING
 void func_800FB778_CrazyCutter(omObjData* obj) {
@@ -1589,14 +1584,13 @@ s32 func_800FB944_CrazyCutter(CrazyCutterPlayer* st) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FB944_CrazyCutter);
 #endif
-// retail computes the index before loading D_800ED60C (masked 4)
-#ifdef NON_MATCHING
-s16 func_800FBAFC_CrazyCutter(s32 idx) {
-    return D_800FD14C_CrazyCutter = D_800ED60C[idx].unk_04;
+// decomp-permuter
+s16 func_800FBAFC_CrazyCutter(s32 idx)
+{
+  unkSpriteStruct *new_var;
+  new_var = &D_800ED60C[idx];
+  return D_800FD14C_CrazyCutter = (*new_var).unk_04;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FBAFC_CrazyCutter);
-#endif
 void func_800FBB2C_CrazyCutter(void) {
     omObjData* temp_s0;
     s32* temp_v0;
