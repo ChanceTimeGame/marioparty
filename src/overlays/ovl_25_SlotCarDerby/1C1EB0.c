@@ -158,38 +158,37 @@ void func_800F6ED4_SlotCarDerby(SCDCar* car, s16 sound) {
         car->unk_76 = 30;
     }
 }
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800F6F38_SlotCarDerby(omObjData* obj) {
-    SCDCar* car;
-    s16 n;
-    s32 lane;
-    s32 i;
-
-    n = D_80102308_SlotCarDerby;
-    if (n < 4) {
-        D_80102308_SlotCarDerby++;
-        lane = D_8010230A_SlotCarDerby[n];
-        D_80102314_SlotCarDerby = D_80102308_SlotCarDerby;
-        car = &D_80101DF8_SlotCarDerby[lane];
-        car->unk_00 = 1;
-        car->unk_02 = 4;
-        car->unk_01 = n;
-        car->unk_78 = -1;
-        car->unk_74 = -1;
-        car->unk_60 = 0;
-        car->unk_7C = obj;
-        obj->work[1] = lane;
-        for (i = 0; i < D_80100C7C_SlotCarDerby[D_80101420_SlotCarDerby][lane]; i++) {
-            car->unk_48 += D_8010142C_SlotCarDerby[i];
-        }
-        car->unk_48 += D_80100C8C_SlotCarDerby[D_80101420_SlotCarDerby];
-        func_800F7650_SlotCarDerby(obj->model[0], 0.0f);
+// decomp-permuter
+void func_800F6F38_SlotCarDerby(omObjData *obj)
+{
+  SCDCar *car;
+  long n;
+  s32 lane;
+  s32 i;
+  n = D_80102308_SlotCarDerby;
+  if (n < 4)
+  {
+    D_80102308_SlotCarDerby++;
+    lane = D_8010230A_SlotCarDerby[n];
+    D_80102314_SlotCarDerby = D_80102308_SlotCarDerby;
+    car = &D_80101DF8_SlotCarDerby[lane];
+    car->unk_00 = 1;
+    car->unk_02 = 4;
+    car->unk_01 = n;
+    car->unk_78 = -1;
+    car->unk_74 = -1;
+    car->unk_60 = 0;
+    car->unk_7C = obj;
+    obj->work[1] = lane;
+    for (i = 0; i < D_80100C7C_SlotCarDerby[D_80101420_SlotCarDerby][lane]; i++)
+    {
+      car->unk_48 += D_8010142C_SlotCarDerby[i];
     }
+
+    car->unk_48 += D_80100C8C_SlotCarDerby[D_80101420_SlotCarDerby];
+    func_800F7650_SlotCarDerby(obj->model[0], 0.0f);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800F6F38_SlotCarDerby);
-#endif
 void func_800F7084_SlotCarDerby(omObjData* obj) {
     func_800F6F38_SlotCarDerby(obj);
     func_800184BC(obj, 0);
