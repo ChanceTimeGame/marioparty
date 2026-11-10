@@ -59,14 +59,11 @@ void func_800FA4D0_BowlOver(omObjData* obj) {
     }
 }
 
-// loop.c hoists &D_800FD3D0 into s4 where retail reloads it (masked 13); retail also passes func_80009028's
-// arg1 as the f32 0.0f of the trans chain (mfc1 a1,$f20): a cast call gives masked 12 but breaks the host
-#ifdef NON_MATCHING
 void func_800FA5A0_BowlOver(omObjData* obj) {
     BowlFloorWork* w;
     s16 i;
 
-    obj->model[0] = func_800174C0(D_800FD3D4_BowlOver[D_800FD3D0_BowlOver[0]], 0x99);
+    obj->model[0] = func_800174C0(D_800FD3D4_BowlOver[D_800FD3D0_BowlOver], 0x99);
     obj->model[1] = func_800174C0(0x230000, 0x99);
     obj->model[2] = func_800174C0(0x230001, 0x99);
     obj->model[3] = func_800174C0(0x230002, 0x99);
@@ -74,14 +71,14 @@ void func_800FA5A0_BowlOver(omObjData* obj) {
         obj->model[i + 4] = func_80023FC8(obj->model[3]);
     }
     for (i = 0; i < 16; i++) {
-        func_80025798(obj->model[i + 3], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][0] * 5.0f, 5.0f,
-                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][1] * 5.0f);
+        func_80025798(obj->model[i + 3], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][0] * 5.0f, 5.0f,
+                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][1] * 5.0f);
         func_80025F10(obj->model[i + 3], 1);
-        func_80025798(obj->model[i + 19], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][0] * 5.0f, 5.0f,
-                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][1] * 5.0f);
+        func_80025798(obj->model[i + 19], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][0] * 5.0f, 5.0f,
+                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][1] * 5.0f);
         func_80025F10(obj->model[i + 19], 2);
     }
-    if (D_800FD3D0_BowlOver[0] != 2) {
+    if (D_800FD3D0_BowlOver != 2) {
         for (i = 0; i < 2; i++) {
             func_80025F10(obj->model[i + 17], 0);
             func_80025F10(obj->model[i + 33], 0);
@@ -96,12 +93,10 @@ void func_800FA5A0_BowlOver(omObjData* obj) {
     func_8009B770(w, 0, sizeof(BowlFloorWork));
     w->unk_04 = 1;
     w->unk_05 = 0;
-    func_80009028(obj, 0, -250.0f, -5000.0f, 250.0f, 500.0f);
+    /* retail passed an f32 0.0f (func_80009028 stores the bits into a float field) */
+    ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(obj, 0.0f, -250.0f, -5000.0f, 250.0f, 500.0f);
     obj->func_ptr = func_800FA4D0_BowlOver;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FA5A0_BowlOver);
-#endif
 
 void func_800FA8D0_BowlOver(void) {
     s32 i;

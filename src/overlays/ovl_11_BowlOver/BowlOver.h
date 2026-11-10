@@ -173,7 +173,7 @@ extern s8 D_800FD3B8_BowlOver[8];
 extern s8 D_800FD3C0_BowlOver[8];
 extern s8 D_800FD3C8_BowlOver;
 extern u32 D_800FD3CC_BowlOver; /* random seed */
-extern u8 D_800FD3D0_BowlOver[4]; /* [0]: alley (0-2) */
+extern u8 D_800FD3D0_BowlOver; /* alley (0-2) */
 extern s32 D_800FD3D4_BowlOver[3]; /* alley model per alley */
 
 /* ---------------------------------------------------------------------------------------------
