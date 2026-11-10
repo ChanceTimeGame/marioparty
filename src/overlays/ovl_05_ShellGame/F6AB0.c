@@ -863,10 +863,9 @@ void func_800F915C_ShellGame(void) {
     D_800F2AF8[D_800ED440] = omAddObj(10, 1, 1, -1, &func_800FE6BC_ShellGame);
     D_800FF108_ShellGame = omAddObj(10, 2, 1, -1, &func_800F91DC_ShellGame);
 }
-// NON_MATCHING: load scheduling of one base address
-#ifdef NON_MATCHING
 void func_800F91DC_ShellGame(omObjData* obj) {
     SGStageWork* w;
+    s16* title;
     u16 i;
 
     obj->func_ptr = &func_800F94A0_ShellGame;
@@ -889,9 +888,9 @@ void func_800F91DC_ShellGame(omObjData* obj) {
         func_800FC800_ShellGame(D_800FF718_ShellGame[i], D_800FF182_ShellGame, 20, 160, 10, 11, 2.0f, 2.0f);
     }
     D_800FF724_ShellGame = func_80024198(0x99, D_800FF718_ShellGame[0], 0);
-    D_800FF184_ShellGame = func_800F750C_ShellGame(0x170009);
+    *(title = &D_800FF184_ShellGame) = func_800F750C_ShellGame(0x170009);
     D_800FF188_ShellGame = func_80064EF4(1, 0);
-    func_80067208(D_800FF188_ShellGame, 0, D_800FF184_ShellGame, 0);
+    func_80067208(D_800FF188_ShellGame, 0, *title, 0);
     func_800674BC(D_800FF188_ShellGame, 0, 0x02004000);
     func_80066DC4(D_800FF188_ShellGame, 0, 0xA0, 0x78);
     func_800674F4(D_800FF188_ShellGame, 0, 0xED, 0xE6, 0xC1);
@@ -900,9 +899,6 @@ void func_800F91DC_ShellGame(omObjData* obj) {
     SetFadeInTypeAndTime(0, 16);
     D_800ED440++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F91DC_ShellGame);
-#endif
 void func_800F94A0_ShellGame(omObjData* obj) {
     Gfx* gfx;
 
@@ -956,7 +952,8 @@ void func_800F9618_ShellGame(void) {
         D_800FF9F0_ShellGame = 0;
     }
 }
-// NON_MATCHING: retail reloads the clamped shell/move counts after storing them
+// NON_MATCHING: retail does not fold the shell/move clamps after the constant stores (masked 37);
+// direct field stores give retail's s0 base but fold both clamps; per-case stores tried
 #ifdef NON_MATCHING
 void func_800F9738_ShellGame(void) {
     s16 cnt[3] = { 3, 3, 3 };
