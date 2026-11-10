@@ -1135,9 +1135,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F929C_
 #endif
 
 /* Bar i at x, height (cm): its posts' heights come from the dancer's character. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
-void func_800F97B8_LimboDance(s32 i, s16* models, s16* src, f32 x, u16 height) {
+void func_800F97B8_LimboDance(s16 i, s16* models, s16* src, f32 x, u16 height) {
     f32 tbl[6][7] = {
         { -80.0f, -70.0f, -60.0f, -55.0f, -40.0f, -40.0f, -35.0f },
         { -105.0f, -85.0f, -75.0f, -65.0f, -55.0f, -45.0f, -30.0f },
@@ -1148,13 +1146,15 @@ void func_800F97B8_LimboDance(s32 i, s16* models, s16* src, f32 x, u16 height) {
     };
     LDBar* b;
     s32 k;
+    s16 row;
 
-    b = &D_800FF068_LimboDance[(s16)i];
+    b = &D_800FF068_LimboDance[i];
     b->active = 1;
     b->height = (s16)height;
+    row = 6 - (s16)height / 10;
     b->x0 = x - 20.0;
     b->x1 = b->x0 + 20.0;
-    b->y0 = tbl[D_800FF062_LimboDance][(s16)(6 - (s16)height / 10)] / 20.0 * 20.0;
+    b->y0 = tbl[D_800FF062_LimboDance][row] / 20.0 * 20.0;
     b->y1 = b->y0 + 200.0;
     if ((s16)height < 21) {
         k = 0;
@@ -1172,14 +1172,7 @@ void func_800F97B8_LimboDance(s32 i, s16* models, s16* src, f32 x, u16 height) {
     func_80025798(models[D_800FF064_LimboDance * 2 + 1], b->x1, b->y1, 0.0f);
     D_800FF064_LimboDance++;
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", D_800FECF8_LimboDance);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F97B8_LimboDance);
-#endif
-
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F9A28_LimboDance(omObjData* obj) {
     LDBar* b;
     u16 i;
@@ -1188,6 +1181,8 @@ void func_800F9A28_LimboDance(omObjData* obj) {
     for (i = 0; i < D_800FF064_LimboDance; i++, b++) {
         if (b->active != 0) {
             switch (b->state) {
+            case 0:
+                break;
             case 1:
                 b->x1 += 10.0;
                 b->y1 += b->vel;
@@ -1219,9 +1214,6 @@ void func_800F9A28_LimboDance(omObjData* obj) {
     func_800257E4(obj->model[30], 0.0f, 270.0f, 0.0f);
     func_80025830(obj->model[30], 0.65f, 0.65f, 0.65f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F9A28_LimboDance);
-#endif
 
 /* 1 when every bar is still up and untouched. */
 s16 func_800F9C98_LimboDance(void) {
