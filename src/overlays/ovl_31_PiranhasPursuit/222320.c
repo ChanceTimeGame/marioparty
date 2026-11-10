@@ -300,7 +300,7 @@ const PPMotIds D_801004F8_PiranhasPursuit = { { 0x0F, 0x38, 0x39, 0x3A, 0x3B } }
 const PPMotIds D_8010050C_PiranhasPursuit = { { 0x10, 0x3C, 0x3D, 0x3E, 0x3F } };
 
 /* The solo runner. */
-// NON_MATCHING: retail sign-extends the sprite ids at assignment (s32-returning prototypes)
+// NON_MATCHING: register allocation of the motion-id pointer (masked 0, raw 3; tried &a.v[r], a.v + r, r + a.v, m = a.v; m += r)
 #ifdef NON_MATCHING
 void func_800F7320_PiranhasPursuit(omObjData* obj, s32 player) {
     PPMotIds a = D_801004F8_PiranhasPursuit;
@@ -311,9 +311,9 @@ void func_800F7320_PiranhasPursuit(omObjData* obj, s32 player) {
     PPWork* w;
     s32* m;
     s16 i;
-    s16 grp;
-    s16 coin;
-    s16 star;
+    s32 grp;
+    s32 coin;
+    s32 star;
     void* f;
 
     tex = 0;
@@ -369,8 +369,7 @@ void func_800F7320_PiranhasPursuit(omObjData* obj, s32 player) {
     func_80017DB0(obj);
     func_800090C4(obj, 0, 2);
     f = DataRead(0x21);
-    coin = func_800678A4(f);
-    D_801012F0_PiranhasPursuit[1] = coin;
+    D_801012F0_PiranhasPursuit[1] = coin = func_800678A4(f);
     DataClose(f);
     f = DataRead(0x2A);
     star = func_800678A4(f);
