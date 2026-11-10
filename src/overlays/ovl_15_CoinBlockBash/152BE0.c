@@ -2128,17 +2128,17 @@ void func_800FDCF8_CoinBlockBash(omObjData* obj) {
     obj->model[1] = func_800174C0(0x270003, 0xBD);
 }
 // NON_MATCHING: retail steps the output pointer by 4 before the y store (as ovl_33 func_800FBA44)
-#ifdef NON_MATCHING
-void func_800FDD50_CoinBlockBash(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    f32* o = (f32*)out;
-
-    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+// decomp-permuter
+void func_800FDD50_CoinBlockBash(Matrix4f m, f32 x, f32 y, f32 z, Vec *out)
+{
+  f32 *new_var;
+  f32 *o = (f32 *) out;
+ do { } while (0);
+  *(o++) = (((x * m[0][0]) + (y * m[1][0])) + (z * m[2][0])) + m[3][0];
+  *(o++) = (((x * m[0][1]) + (y * m[1][1])) + (z * m[2][1])) + m[3][1];
+  new_var = m[0];
+  *o = (((x * new_var[2]) + (y * m[1][2])) + (z * m[2][2])) + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FDD50_CoinBlockBash);
-#endif
 void func_800FDDEC_CoinBlockBash(Vec* v) {
     f32 inv = v->x * v->x + v->y * v->y + v->z * v->z;
 
