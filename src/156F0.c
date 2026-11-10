@@ -209,8 +209,6 @@ void func_8001536C(s32 arg0) {
     func_80015430(D_800C1918, D_800C1918, 16, D_800F5248);
 }
 
-// instruction order: channel masks applied before the blue product (masked 6)
-#ifdef NON_MATCHING
 void func_80015430(u8* dst, u8* src, s16 count, s16 scale) {
     u16 i;
     u16 c;
@@ -224,15 +222,19 @@ void func_80015430(u8* dst, u8* src, s16 count, s16 scale) {
         g = c >> 6;
         b = c >> 1;
         r = c >> 11;
-        v = ((r * scale << 3) & 0xF800) | (((g & 0x1F) * scale >> 2) & 0x7C0) | (((b & 0x1F) * scale >> 7) & 0x3E) |
-            (c & 1);
+        r *= scale;
+        r <<= 3;
+        g &= 0x1F;
+        g *= scale;
+        g >>= 2;
+        b &= 0x1F;
+        b *= scale;
+        b >>= 7;
+        v = (r & 0xF800) | (g & 0x7C0) | (b & 0x3E) | (c & 1);
         dst[i * 2] = v >> 8;
         dst[i * 2 + 1] = v;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/156F0", func_80015430);
-#endif
 
 void func_800154F8(s16 id) {
     Win* w;
@@ -541,7 +543,7 @@ void func_8001636C(char* fmt, ...) {
 INCLUDE_ASM("asm/nonmatchings/156F0", func_8001636C);
 #endif
 
-// register allocation (started/len swapped) and one assembler hazard nop (masked 4)
+// register allocation (i and len swapped) (masked 0)
 #ifdef NON_MATCHING
 s16 func_800166D8(char* buf, s32 val, s16 width) {
     s16 neg;
