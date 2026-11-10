@@ -1356,52 +1356,56 @@ void func_800FA760_WhackAPlant(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800FA760_WhackAPlant);
 #endif
-// NON_MATCHING: register allocation: found/pots in swapped saved registers (masked 0)
-#ifdef NON_MATCHING
-f32 func_800FAF34_WhackAPlant(f32 arg0, f32 arg1, u16 arg2, f32* arg3, u16* arg4) {
-    omObjData** objs;
-    f32 dx;
-    f32 dz;
-    f32 d;
-    s32 i;
-    u16 j;
-    u16 found;
-    WAPPots* pots;
-
-    pots = D_800FB6FC_WhackAPlant->unk_50;
-    *arg4 = 9;
-    *arg3 = 10000.0f;
-    found = 0;
-    if (pots->unk0 != 0) {
-        objs = func_8005DB44(0);
-        j = (u8)(rand8() % 9) - 1;
-        for (i = 0; i < 9; i++) {
-            j++;
-            if (j == 9) {
-                j -= 9;
-            }
-            if (j != arg2 && pots->unk2[j] != 0) {
-                if (((WAPPlantWork*)objs[j]->unk_50)->unk68->unk0 != 3) {
-                    dx = D_800FB580_WhackAPlant[j][0] - arg0;
-                    dz = D_800FB580_WhackAPlant[j][1] - arg1;
-                    d = func_800B1750(dx * dx + dz * dz);
-                    if (d < *arg3) {
-                        *arg3 = d;
-                        *arg4 = j;
-                        found = 1;
-                    }
-                }
-            }
+// decomp-permuter
+f32 func_800FAF34_WhackAPlant(f32 arg0, f32 arg1, u16 arg2, f32 *arg3, u16 *arg4)
+{
+  omObjData **objs;
+  f32 dx;
+  f32 dz;
+  f32 d;
+  s32 i;
+  u16 j;
+  u16 found;
+  WAPPots *pots;
+ do { pots = D_800FB6FC_WhackAPlant->unk_50; } while (0);
+  *arg4 = 9;
+  *arg3 = 10000.0f;
+  found = 0;
+  if (pots->unk0 != 0)
+  {
+    objs = func_8005DB44(0);
+    j = ((u8) (rand8() % 9)) - 1;
+    for (i = 0; i < 9; i++)
+    {
+      j++;
+      if (j == 9)
+      {
+        j = j - 9;
+      }
+      if ((j != arg2) && (pots->unk2[j] != 0))
+      {
+        if (((WAPPlantWork *) objs[j]->unk_50)->unk68->unk0 != 3)
+        {
+          dx = D_800FB580_WhackAPlant[j][0] - arg0;
+          dz = D_800FB580_WhackAPlant[j][1] - arg1;
+          d = func_800B1750((dx * dx) + (dz * dz));
+          if (d < (*arg3))
+          {
+            *arg3 = d;
+            *arg4 = j;
+            found = 1;
+          }
         }
-        if (found == 1) {
-            return func_800B0CD8(D_800FB580_WhackAPlant[*arg4][1] - arg1, D_800FB580_WhackAPlant[*arg4][0] - arg0);
-        }
+      }
     }
-    return 1000.0f;
+
+    if (found == 1)
+    {
+      return func_800B0CD8(D_800FB580_WhackAPlant[*arg4][1] - arg1, D_800FB580_WhackAPlant[*arg4][0] - arg0);
+    }
+  }
+  return 1000.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800FAF34_WhackAPlant);
-#endif
 u16 func_800FB138_WhackAPlant(void) {
     u16 n;
 
