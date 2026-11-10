@@ -2038,12 +2038,10 @@ void func_800FCCA4_HandcarHavoc(omObjData* obj) {
 }
 
 /* The race timer and the record (two rows of digits). */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 void func_800FCE3C_HandcarHavoc(omObjData* obj) {
     HHTimer* t;
-    s16 x;
     s32 i;
+    s16 x;
 
     t = obj->unk_50 = func_80023684(sizeof(HHTimer), 0x7918);
     t->record = func_800594FC(3);
@@ -2058,10 +2056,10 @@ void func_800FCE3C_HandcarHavoc(omObjData* obj) {
         t->best[i] = func_80019060(D_80101CAE_HandcarHavoc, 0, 1);
         SetBasicSpritePos(t->best[i], x, 208);
         func_80018DC4(t->best[i], 0);
-        if (i != 0) {
-            x += 12;
-        } else {
+        if (i == 0) {
             x += 8;
+        } else {
+            x += 12;
         }
     }
     func_80018E50(t->digit[1], 10, 0);
@@ -2071,9 +2069,6 @@ void func_800FCE3C_HandcarHavoc(omObjData* obj) {
     func_800FCFFC_HandcarHavoc(t->record, t->best);
     obj->func_ptr = func_800FCFB4_HandcarHavoc;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FCE3C_HandcarHavoc);
-#endif
 
 void func_800FCFB4_HandcarHavoc(omObjData* obj) {
     HHTimer* t;
