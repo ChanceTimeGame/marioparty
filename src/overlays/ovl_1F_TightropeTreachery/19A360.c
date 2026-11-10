@@ -111,8 +111,6 @@ f32 func_800F8DA4_TightropeTreachery(void) {
 
 /* Rotation of angle about axis, translated (retail uses pos->z where pos->x would be expected;
    ovl_11's func_800FA1D8_BowlOver is the same function). */
-// operand order of three commutative mul.s (masked 0)
-#ifdef NON_MATCHING
 void func_800F8F70_TightropeTreachery(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
     f32 s;
     f32 c;
@@ -129,6 +127,9 @@ void func_800F8F70_TightropeTreachery(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m
     f32 xy;
     f32 xz;
     f32 yz;
+    f32 txy;
+    f32 txz;
+    f32 tyz;
     f32 py;
     f32 pz;
 
@@ -151,24 +152,21 @@ void func_800F8F70_TightropeTreachery(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m
     m[3][3] = 1.0f;
     m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[0][0] = t * xx + c;
-    xy = xy * t;
-    m[0][1] = xy + zs;
-    xz = xz * t;
-    m[0][2] = xz - ys;
-    m[1][0] = xy - zs;
+    txy = t * xy;
+    m[0][1] = txy + zs;
+    txz = t * xz;
+    m[0][2] = txz - ys;
+    m[1][0] = txy - zs;
     m[1][1] = t * yy + c;
-    yz = yz * t;
-    m[1][2] = yz + xs;
-    m[2][0] = xz + ys;
-    m[2][1] = yz - xs;
+    tyz = t * yz;
+    m[1][2] = tyz + xs;
+    m[2][0] = txz + ys;
+    m[2][1] = tyz - xs;
     m[2][2] = t * zz + c;
-    m[3][0] = pz * t * (1.0f - xx) + py * (zs - xy) - pz * (xz + ys);
-    m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
-    m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
+    m[3][0] = pz * t * (1.0f - xx) + py * (zs - txy) - pz * (txz + ys);
+    m[3][1] = -pz * (txy + zs) + py * t * (1.0f - yy) + pz * (xs - tyz);
+    m[3][2] = pz * (ys - txz) - py * (tyz + xs) + pz * t * (1.0f - zz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19A360", func_800F8F70_TightropeTreachery);
-#endif
 
 /* A CPU player on the rope presses nothing but Z. */
 void func_800F9168_TightropeTreachery(TTPlayerWork* work) {
