@@ -788,7 +788,7 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F8BE8_WhackAPlant);
 #endif
-// NON_MATCHING: register allocation and beql/bc1fl vs beq/bc1f on the early returns (masked 7)
+// NON_MATCHING: register allocation and beql/bc1fl vs beq/bc1f on the early returns (masked 7); arg0/arg1 and cpu/p s-register pairs swapped; tried early return 0, declaration order, no state local
 #ifdef NON_MATCHING
 s32 func_800F92FC_WhackAPlant(omObjData* arg0, omObjData* arg1) {
     WAPPlayerWork* w;
