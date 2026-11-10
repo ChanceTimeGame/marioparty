@@ -1160,25 +1160,21 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FA5E
 
 /* The river: banks D_800FE210 (left) and D_800FE600 (right) are quadratic B-splines over
    `dist` 0..2000; `lateral` 0..1 goes from one bank to the other. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 26 lines)
-#ifdef NON_MATCHING
 s16 func_800FABAC_PaddleBattle(f32 dist, f32* frac) {
+    s16* n = &D_800FE9F8_PaddleBattle;
     f32 f;
-    s32 seg;
+    s16 seg;
 
-    f = dist * (f32)(D_800FE9F8_PaddleBattle - 2) / 2000.0;
+    f = dist * (f32)(*n - 2) / 2000.0;
     seg = func_8009B6F0(f);
-    f = f - (f32)(s16)seg;
-    if ((s16)seg >= D_800FE9F8_PaddleBattle - 2) {
-        seg = D_800FE9F8_PaddleBattle - 3;
+    f = f - (f32)seg;
+    if (seg >= *n - 2) {
+        seg = *n - 3;
         f = 1.0f;
     }
     *frac = f;
     return seg;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FABAC_PaddleBattle);
-#endif
 
 /* The river point at (dist, lateral). */
 void func_800FAC70_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
@@ -1411,7 +1407,7 @@ void func_800FB868_PaddleBattle(s16 cam, Vec* pos, Vec* out) {
     c = &D_800C3110[cam];
     HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y,
                 c->unk18.z);
-    func_800FBA44_PaddleBattle(m, pos->x, pos->y, pos->z, &v);
+    func_800FBA44_PaddleBattle(m, pos->x, pos->y, pos->z, &v.x);
     d = func_800AEAC0(c->unk_40 * 0.5) / func_800AEFD0(c->unk_40 * 0.5) * v.z;
     if (d < 0.0f) {
         d = -d;
@@ -1426,16 +1422,11 @@ void func_800FB868_PaddleBattle(s16 cam, Vec* pos, Vec* out) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB868_PaddleBattle);
 #endif
 
-// logic-equivalent; retail steps the output pointer by 4 before the z store (normalised diff 1 lines)
-#ifdef NON_MATCHING
-void func_800FBA44_PaddleBattle(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    out->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    out->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    out->z = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+void func_800FBA44_PaddleBattle(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FBA44_PaddleBattle);
-#endif
 
 /* Scenery: the river models, the water, the light rings. */
 void func_800FBAE0_PaddleBattle(void) {
