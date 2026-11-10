@@ -2187,8 +2187,6 @@ s32 func_800FCE84_BashNCash(void) {
 }
 
 /* The cash player's object setup. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FCE8C_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3f* pos, u16 chr) {
     char* heads[6] = {
         "atama_2", "Luigi1-atama_2", "C002_000b-bmerge10_1", "c003_000-head_1", "Luigi1-atama_1", "c005_000-bmerge1",
@@ -2229,9 +2227,9 @@ void func_800FCE8C_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
         w->unk_DC = func_800FCE84_BashNCash;
     }
     D_800B8964 = 1.6f;
-    k = chr + 1;
     D_800B89A4[player][0] = 0x24C;
     D_800B89A4[player][1] = 0x24C;
+    k = chr + 1;
     D_800B89A4[player][2] = k + 0x120;
     D_800B89A4[player][3] = 0x251;
     D_800B89A4[player][4] = k + 0x12E;
@@ -2252,21 +2250,11 @@ void func_800FCE8C_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
     obj->model[0xA] = LoadFormFile(dir | 0x9E, 0xA9D);
     func_80020EA0(obj->model[0xA], heads[chr], obj->model[0], "21_kimoti_1b-atama_3");
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE480_BashNCash);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE4E4_BashNCash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FCE8C_BashNCash);
-#endif
 
 /* A hammer player's object setup. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FD2B0_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3f* pos) {
     BashPlayerWork* w;
     Vec3f v;
-    s32 mot;
 
     func_8000979C(obj, dir, file, player, 0xA99, 0xA99);
     obj->model[3] = LoadFormFile(0x19, 0xA8D);
@@ -2278,12 +2266,11 @@ void func_800FD2B0_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
     func_8001874C(obj, 2, dir | 3, 1, 0);
     if (rand8() & 1) {
         func_800187D0(obj, 0xD, dir | 0xF, 1, 0x78);
-        mot = dir | 0x10;
+        func_800187D0(obj, 0xE, dir | 0x10, 1, 0x78);
     } else {
         func_800187D0(obj, 0xD, dir | 0x38, 1, 0x78);
-        mot = dir | 0x3C;
+        func_800187D0(obj, 0xE, dir | 0x3C, 1, 0x78);
     }
-    func_800187D0(obj, 0xE, mot, 1, 0x78);
     func_800090C4(obj, 0, 2);
     obj->work[0] = player;
     func_800F6F6C_BashNCash(obj);
@@ -2331,9 +2318,6 @@ void func_800FD2B0_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
     D_800FE600_BashNCash[D_800FE3F8_BashNCash++] = obj;
     obj->work[1] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FD2B0_BashNCash);
-#endif
 
 void func_800FD748_BashNCash(s32 player, s32 coins) {
     if (coins < 0) {
