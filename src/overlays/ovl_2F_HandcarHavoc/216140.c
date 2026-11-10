@@ -43,8 +43,6 @@ void func_800FD204_HandcarHavoc(omObjData* obj) {
 }
 
 /* Height of the face's plane at (x, z); unused. */
-// NON_MATCHING: branch layout (unused function)
-#ifdef NON_MATCHING
 f32 func_800FD464_HandcarHavoc(f32 x, f32 y, f32 z, HHColVtx* vtx, HHColFace* face) {
     Vec3f n;
     Vec3f p;
@@ -61,14 +59,11 @@ f32 func_800FD464_HandcarHavoc(f32 x, f32 y, f32 z, HHColVtx* vtx, HHColFace* fa
     nx = n.x;
     ny = n.y;
     nz = n.z;
-    if (ny != 0.0f) {
-        return y + (nx * (p.x - x) + ny * (p.y - y) + nz * (p.z - z)) / ny;
+    if (ny == 0.0f) {
+        return -100000.0f;
     }
-    return -100000.0f;
+    return y + (nx * (p.x - x) + ny * (p.y - y) + nz * (p.z - z)) / ny;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FD464_HandcarHavoc);
-#endif
 
 /* A rider's seat position: the car's rotations applied to (0, 162.5, seat offset). */
 // decomp-permuter
