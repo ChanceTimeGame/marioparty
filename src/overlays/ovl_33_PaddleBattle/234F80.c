@@ -509,15 +509,13 @@ const s32 D_800FEFCC_PaddleBattle[5] __attribute__((section(".rodata"))) = { 0x1
 
 /* Looks for `n` stick directions in a row going round from `dir` (newest first): 1 counter-
    clockwise, 2 clockwise, 0 neither. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 80 lines)
-#ifdef NON_MATCHING
 s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
     u8* pat;
     s16 i;
     s16 k;
-    s32 j;
+    s16 j;
 
-    pat = &D_800FE9FC_PaddleBattle.ccw[4 - dir];
+    pat = D_800FE9FC_PaddleBattle.ccw + 4 - dir;
     j = idx;
     k = n;
     for (i = 0; i < n * 8; i++) {
@@ -531,7 +529,7 @@ s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
             }
         }
     }
-    pat = &D_800FE9FC_PaddleBattle.cw[dir];
+    pat = D_800FE9FC_PaddleBattle.cw + dir;
     j = idx;
     k = n;
     for (i = 0; i < n * 8; i++) {
@@ -547,9 +545,6 @@ s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F89F0_PaddleBattle);
-#endif
 
 /* A rider: paddling (a stick circle is a stroke), the bump reaction, placed on its seat. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 141 lines)
@@ -1186,17 +1181,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FABA
 #endif
 
 /* The river point at (dist, lateral). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 24 lines)
-#ifdef NON_MATCHING
 void func_800FAC70_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     Vec p;
     Vec* l;
-    Vec* r;
     f32 t;
     f32 a;
     f32 b;
     f32 c;
-    s16 seg;
+    s32 seg;
 
     seg = func_800FABAC_PaddleBattle(dist, &t);
     a = (1.0 - t) * (1.0 - t) * 0.5;
@@ -1206,61 +1198,52 @@ void func_800FAC70_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     p.x = a * l[0].x + b * l[1].x + c * l[2].x;
     p.y = a * l[0].y + b * l[1].y + c * l[2].y;
     p.z = a * l[0].z + b * l[1].z + c * l[2].z;
-    r = &D_800FE600_PaddleBattle[seg];
-    out->x = a * r[0].x + b * r[1].x + c * r[2].x;
-    out->y = a * r[0].y + b * r[1].y + c * r[2].y;
-    out->z = a * r[0].z + b * r[1].z + c * r[2].z;
+    l = &D_800FE600_PaddleBattle[seg];
+    out->x = a * l[0].x + b * l[1].x + c * l[2].x;
+    out->y = a * l[0].y + b * l[1].y + c * l[2].y;
+    out->z = a * l[0].z + b * l[1].z + c * l[2].z;
     out->x = (out->x - p.x) * lateral + p.x;
     out->y = (out->y - p.y) * lateral + p.y;
     out->z = (out->z - p.z) * lateral + p.z + 10000.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAC70_PaddleBattle);
-#endif
 
 /* The river's width at `dist`. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 99 lines)
-#ifdef NON_MATCHING
 f32 func_800FAE48_PaddleBattle(f32 dist) {
+    Vec p;
     Vec* l;
-    Vec* r;
     f32 t;
     f32 a;
     f32 b;
     f32 c;
-    f32 x;
-    f32 y;
-    f32 z;
-    s16 seg;
+    s32 seg;
 
     seg = func_800FABAC_PaddleBattle(dist, &t);
     a = (1.0 - t) * (1.0 - t) * 0.5;
     b = (1.0 - t) * t + 0.5;
     c = t * t * 0.5;
     l = &D_800FE210_PaddleBattle[seg];
-    r = &D_800FE600_PaddleBattle[seg];
-    x = (a * l[0].x + b * l[1].x + c * l[2].x) - (a * r[0].x + b * r[1].x + c * r[2].x);
-    y = (a * l[0].y + b * l[1].y + c * l[2].y) - (a * r[0].y + b * r[1].y + c * r[2].y);
-    z = (a * l[0].z + b * l[1].z + c * l[2].z) - (a * r[0].z + b * r[1].z + c * r[2].z);
-    return sqrtf(x * x + y * y + z * z);
+    p.x = a * l[0].x + b * l[1].x + c * l[2].x;
+    p.y = a * l[0].y + b * l[1].y + c * l[2].y;
+    p.z = a * l[0].z + b * l[1].z + c * l[2].z;
+    l = &D_800FE600_PaddleBattle[seg];
+    p.x = p.x - (a * l[0].x + b * l[1].x + c * l[2].x);
+    p.y = p.y - (a * l[0].y + b * l[1].y + c * l[2].y);
+    p.z = p.z - (a * l[0].z + b * l[1].z + c * l[2].z);
+    return sqrtf(p.x * p.x + p.y * p.y + p.z * p.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAE48_PaddleBattle);
-#endif
 
 /* The river's direction (unit vector) at (dist, lateral). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 87 lines)
+// float register allocation only (a in $f4, not $f2; masked 0, raw ~42); tried declaration orders, b before a
 #ifdef NON_MATCHING
 void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     Vec p;
     Vec q;
     Vec* l;
-    Vec* r;
     f32 t;
     f32 a;
     f32 b;
     f32 inv;
-    s16 seg;
+    s32 seg;
 
     seg = func_800FABAC_PaddleBattle(dist, &t);
     a = t - 1.0;
@@ -1269,10 +1252,10 @@ void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     p.x = a * l[0].x + b * l[1].x + t * l[2].x;
     p.y = a * l[0].y + b * l[1].y + t * l[2].y;
     p.z = a * l[0].z + b * l[1].z + t * l[2].z;
-    r = &D_800FE600_PaddleBattle[seg];
-    q.x = a * r[0].x + b * r[1].x + t * r[2].x;
-    q.y = a * r[0].y + b * r[1].y + t * r[2].y;
-    q.z = a * r[0].z + b * r[1].z + t * r[2].z;
+    l = &D_800FE600_PaddleBattle[seg];
+    q.x = a * l[0].x + b * l[1].x + t * l[2].x;
+    q.y = a * l[0].y + b * l[1].y + t * l[2].y;
+    q.z = a * l[0].z + b * l[1].z + t * l[2].z;
     p.x = (q.x - p.x) * lateral + p.x;
     p.y = (q.y - p.y) * lateral + p.y;
     p.z = (q.z - p.z) * lateral + p.z;
@@ -1286,12 +1269,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAFE
 #endif
 
 /* The raft's tilt from three float points around it (each eased toward the ground under it). */
-// logic-equivalent; block order of the identity fallback, register allocation (normalised diff 108 lines)
+// tail differs: retail keeps &p[2] in s2 across the calls, negates y before the sqrt and lays the identity
+// fallback out last (masked 33, raw 70; the loop matches). Tried q = &p[2] for the tail (worse).
 #ifdef NON_MATCHING
 s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
     Vec p[3];
     Vec* q;
     Vec* s;
+    Vec* t;
     f32 len;
     f32 inv;
     s32 i;
@@ -1302,14 +1287,15 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
         q->z = pos->z + func_800AEFD0(rotY + D_800FEA78_PaddleBattle[i]) * 1.5 * 100.0;
         q->y = pos->y + 300.0;
         s = &st[i * 2];
+        t = &s[1];
         if (func_800FDBB8_PaddleBattle(q, 0.0f, -1000.0f, 0.0f, -1) != 0) {
             s[1].x = q->x;
             s[1].y = q->y;
             s[1].z = q->z;
         }
-        q->x = s[0].x = s[0].x + (s[1].x - s[0].x) * 0.1;
-        q->y = s[0].y = s[0].y + (s[1].y - s[0].y) * 0.1;
-        q->z = s[0].z = s[0].z + (s[1].z - s[0].z) * 0.1;
+        q->x = s[0].x = s[0].x + (t->x - s[0].x) * 0.1;
+        q->y = s[0].y = s[0].y + (t->y - s[0].y) * 0.1;
+        q->z = s[0].z = s[0].z + (t->z - s[0].z) * 0.1;
     }
     p[0].x -= p[2].x;
     p[0].y -= p[2].y;
@@ -1391,33 +1377,26 @@ s16 func_800FB704_PaddleBattle(s32 file) {
 }
 
 /* Turns angle `cur` toward `target` by `rate` of the shorter way (degrees, 0..360). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 34 lines)
-#ifdef NON_MATCHING
 f32 func_800FB74C_PaddleBattle(f32 target, f32 cur, f32 rate) {
-    f32 d;
-
     if (target >= 360.0f) {
         target -= 360.0f;
     } else if (target < 0.0) {
         target += 360.0f;
     }
-    d = target - cur;
-    if (d < -180.0) {
-        d += 360.0;
-    } else if (d >= 180.0) {
-        d -= 360.0;
+    target -= cur;
+    if (target < -180.0) {
+        target += 360.0;
+    } else if (target >= 180.0) {
+        target -= 360.0;
     }
-    cur = cur + d * rate;
-    if (cur >= 360.0f) {
-        cur -= 360.0f;
-    } else if (cur < 0.0) {
-        cur += 360.0f;
+    target = cur + target * rate;
+    if (target >= 360.0f) {
+        target -= 360.0f;
+    } else if (target < 0.0) {
+        target += 360.0f;
     }
-    return cur;
+    return target;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB74C_PaddleBattle);
-#endif
 
 /* World `pos` to screen coordinates (x, y from the centre) and a scale in z, for camera `cam`. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 68 lines)
@@ -1846,7 +1825,7 @@ void func_800FD51C_PaddleBattle(s16 model) {
     D_800FFEF0_PaddleBattle++;
 }
 
-// logic-equivalent; register allocation and instruction order differ (normalised diff 34 lines)
+// register allocation (masked 0, raw 19); tried size/i reuse for the malloc sizes and g/g30 order
 #ifdef NON_MATCHING
 void func_800FD570_PaddleBattle(PBCol* e, s16 model) {
     unk2C0C0StructC0* m;
@@ -1934,7 +1913,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD71
    `skip`. Returns 1 when something was hit. */
 // logic-equivalent; the unused vector, register allocation (normalised diff 22 lines)
 #ifdef NON_MATCHING
-s16 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     Vec p;
     Vec d;
     unk_ovl_2D_struct* m;
@@ -1978,7 +1957,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FDBB
 #endif
 
 /* Intersects the segment p + t * d with the faces and keeps the nearest t in D_800FFEF8. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 89 lines)
+// register allocation: j/prev swap t0/a3 and n is extended late (masked 39, raw 77); j = 0 before the loop and
+// default: break are retail's (an unknown axis falls through to the j < nv test). Tried declaration order.
 #ifdef NON_MATCHING
 void func_800FDE08_PaddleBattle(PBColFace* f, s16 n, Vec* p, Vec* d) {
     unk2C0C0StructA0* prev;
@@ -2005,6 +1985,7 @@ void func_800FDE08_PaddleBattle(PBColFace* f, s16 n, Vec* p, Vec* d) {
     dx = d->x;
     dy = d->y;
     dz = d->z;
+    j = 0;
     for (i = 0; i < n; i++, f++) {
         dn = dx * f->nx + dy * f->ny + dz * f->nz;
         if (dn == 0.0) {
@@ -2059,7 +2040,7 @@ void func_800FDE08_PaddleBattle(PBColFace* f, s16 n, Vec* p, Vec* d) {
             }
             break;
         default:
-            continue;
+            break;
         }
         if (j < nv) {
             continue;

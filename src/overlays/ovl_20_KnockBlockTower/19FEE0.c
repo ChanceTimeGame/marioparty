@@ -242,23 +242,21 @@ void func_800F6DC4_KnockBlockTower(omObjData* obj) {
     }
 }
 
-// register allocation: v0/v1 swapped for the frame count and Center (masked 10)
+// register allocation: frames in v1, retail v0 (masked 0, raw 2); tried if/else, s32/u16 frames, a ternary store
 #ifdef NON_MATCHING
 void func_800F6F64_KnockBlockTower(omObjData* obj) {
     omObjData* p = D_800F3FB0[0];
     s16 frames;
-    f32 n;
 
     frames = 33;
     if (D_800FB8D4_KnockBlockTower == 0) {
         frames = 20;
     }
     D_800FB84C_KnockBlockTower = frames;
-    n = D_800FB84C_KnockBlockTower;
-    D_800FB8F4_KnockBlockTower = (p->trans.x - Center.x) / n;
-    D_800FB8E4_KnockBlockTower = (p->trans.y - Center.y + 50.0f) / n;
-    D_800FB848_KnockBlockTower = (p->trans.z - Center.z) / n;
-    D_800FB8E8_KnockBlockTower = (900.0f - CZoom) / n;
+    D_800FB8F4_KnockBlockTower = (p->trans.x - Center.x) / D_800FB84C_KnockBlockTower;
+    D_800FB8E4_KnockBlockTower = (p->trans.y - Center.y + 50.0f) / D_800FB84C_KnockBlockTower;
+    D_800FB848_KnockBlockTower = (p->trans.z - Center.z) / D_800FB84C_KnockBlockTower;
+    D_800FB8E8_KnockBlockTower = (900.0f - CZoom) / D_800FB84C_KnockBlockTower;
     obj->func_ptr = &func_800F6DC4_KnockBlockTower;
 }
 #else

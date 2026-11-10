@@ -251,7 +251,8 @@ s32 func_800F66D0_MoveDoorsLuigiBoard(void) {
 #undef COINS
 #undef P_
 
-// loop-invariant hoisting picks -1 instead of 0x400 for fp (masked 5)
+// loop-invariant hoisting picks -1 instead of 0x400 for fp (masked 5, raw 7); swapping the flags arms hoists
+// 0x400 but reorders the whole loop
 #ifdef NON_MATCHING
 s32 func_800F6F14_MoveDoorsLuigiBoard(s32 arg0, u8* arg1) {
     s16 sp18[4];

@@ -703,17 +703,17 @@ void func_800F7BA0_MinigameHouse(void) {
     func_8002890C(0xFF, 0xFF, 0xFF);
     D_8010060C_MinigameHouse = omAddObj(0x2710, 2, 0, -1, &func_800F7B00_MinigameHouse);
 }
-// model[1] load scheduled after the 180.0f constant (masked 2)
-#ifdef NON_MATCHING
 void func_800F7C6C_MinigameHouse(omObjData* arg0) {
     TextWindow* win;
+    f32 angle;
 
     func_80027E48(arg0->model[0], D_801000FC_MinigameHouse, 0, 0x40, 0x40, "36t_002", 0);
     D_801000FC_MinigameHouse += 0.5f;
     if (D_801000FC_MinigameHouse > 64.0f) {
         D_801000FC_MinigameHouse -= 64.0f;
     }
-    func_800257E4(arg0->model[1], 180.0f - func_800B0CD8(arg0->trans.y + 20.0f - Center.y, arg0->trans.z - Center.z), 0.0f, 0.0f);
+    angle = func_800B0CD8(arg0->trans.y + 20.0f - Center.y, arg0->trans.z - Center.z);
+    func_800257E4(arg0->model[1], 180.0f - angle, 0.0f, 0.0f);
     win = arg0->unk_50;
     if (win != NULL) {
         if ((s8)arg0->work[0] != win->unk_11) {
@@ -727,10 +727,7 @@ void func_800F7C6C_MinigameHouse(omObjData* arg0) {
         arg0->work[0] = win->unk_11;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7C6C_MinigameHouse);
-#endif
-// float register allocation f0/f2 (masked 0)
+// float register allocation f0/f2 for scale (masked 0, raw 16); tried scale += 1.0f, declaration order, split mul
 #ifdef NON_MATCHING
 void func_800F7DE0_MinigameHouse(omObjData* arg0) {
     s32 v;
@@ -1311,7 +1308,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F88
 #endif
 const char D_801002BC_MinigameHouse[] __attribute__((section(".rodata"))) = "%d";
 
-// register allocation; retail hoists the buffer base out of three fill loops (masked 37)
+// register allocation; retail hoists the buffer base out of three fill loops (masked 44, 197 vs 194 instructions);
+// tried D[n] stores and a local buffer pointer (worse)
 #ifdef NON_MATCHING
 char* func_800F9D64_MinigameHouse(s32 arg0) {
     u8* str;
@@ -1945,12 +1943,9 @@ s32 func_800FBAC0_MinigameHouse(s32 idx) {
     }
     return 1;
 }
-// register allocation; D_800ED60C base loaded after the index (masked 4)
-#ifdef NON_MATCHING
 void func_800FBB28_MinigameHouse(s32 port, s32 p, s16 spr) {
     Vec3f pos;
     Vec2f scr;
-    unkSpriteStruct* s;
     s32 prev;
     s32 save;
     s32 t;
@@ -2051,14 +2046,9 @@ void func_800FBB28_MinigameHouse(s32 port, s32 p, s16 spr) {
     Convert3DTo2D(0, &pos, &scr);
     scr.x += 10.0f;
     scr.y -= 24.0f;
-    s = D_800ED60C;
-    s += spr;
-    s->unk_0A = s->unk_0A + (scr.x - s->unk_0A) / 2.0f;
-    s->unk_0C = s->unk_0C + (scr.y - s->unk_0C) / 2.0f;
+    D_800ED60C[spr].unk_0A = D_800ED60C[spr].unk_0A + (scr.x - D_800ED60C[spr].unk_0A) / 2.0f;
+    D_800ED60C[spr].unk_0C = D_800ED60C[spr].unk_0C + (scr.y - D_800ED60C[spr].unk_0C) / 2.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FBB28_MinigameHouse);
-#endif
 void func_800FBFA4_MinigameHouse(s32 p, s32 spr) {
     Vec3f pos;
     Vec2f scr;
@@ -2102,7 +2092,8 @@ void func_800FC110_MinigameHouse(void) {
         break;
     }
 }
-// register allocation s6/v1 for the table pointer (masked 0)
+// register allocation s6/v1 for the table pointer (masked 0, raw 2); tried D[row], D[0] + row * 4, &D[0][row * 4]
+// (all compute the index first)
 #ifdef NON_MATCHING
 void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s32 row, s32 mode) {
     s32 team;

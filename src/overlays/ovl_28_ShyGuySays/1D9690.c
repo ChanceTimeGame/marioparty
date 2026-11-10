@@ -575,7 +575,8 @@ f32 func_800F7AF8_ShyGuySays(f32 arg0, f32 arg1, f32 arg2) {
     }
     return -fabs(arg1 - arg0);
 }
-// register allocation: arg0/arg1 copies swap s2/s3 (masked 0)
+// register allocation: arg0/arg1 copies swap s2/s3 (masked 0, raw 5); a local element pointer fixes the
+// registers but not the folded 0x1C offset (tried p = &(&arg1->unk_1C)[arg2], inline and base forms)
 #ifdef NON_MATCHING
 void func_800F7B74_ShyGuySays(omObjData* arg0, unkStruct_ShyGuySays_01* arg1, u16 arg2, s32 arg3) {
     arg0->motion[arg2] = func_8001755C(arg3);
@@ -1353,7 +1354,8 @@ void func_800F9F60_ShyGuySays(omObjData* arg0, s16* arg1, u16 arg2) {
     }
 }
 
-// register allocation and one move/lw scheduling swap in the joint loop (masked 2)
+// register allocation in the joint loop: (f32)i lands in t's $f20, retail uses a $f2 temp (masked 2, raw 7);
+// tried swapped operands, t/sway declaration order
 #ifdef NON_MATCHING
 void func_800FA308_ShyGuySays(omObjData* arg0, s16* arg1, u16 arg2) {
     f32 sp18[3];
