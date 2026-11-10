@@ -245,17 +245,17 @@ void func_800F6F6C_BashNCash(omObjData* obj) {
 }
 
 /* Whether target (moved by ofs) is within reach of obj's hammer. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 u16 func_800F6FD0_BashNCash(omObjData* obj, omObjData* target, Vec3f* ofs) {
     Vec3f v_s;
     Vec3f* v;
     BashPlayerWork* tw;
+    BashPlayerWork* w;
     f32 angle;
 
+    w = PLAYER_WORK(obj);
     tw = target->unk_50;
     v = &v_s;
-    angle = PLAYER_WORK(obj)->unk_3C;
+    angle = w->unk_3C;
     v->x = func_800AEAC0(angle) * 200.0f;
     v->y = 40.0f;
     v->z = func_800AEFD0(angle) * 200.0f;
@@ -266,9 +266,6 @@ u16 func_800F6FD0_BashNCash(omObjData* obj, omObjData* target, Vec3f* ofs) {
     v->z -= target->trans.z + ofs->z;
     return func_800A1200(v) < tw->unk_48 + 40.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F6FD0_BashNCash);
-#endif
 
 void func_800F7108_BashNCash(f32* a, f32* b) {
     f32 t = *a;

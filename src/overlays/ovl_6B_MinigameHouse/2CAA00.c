@@ -730,7 +730,7 @@ void func_800F7C6C_MinigameHouse(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7C6C_MinigameHouse);
 #endif
-// float register allocation f0/f2 (masked 0)
+// float register allocation f0/f2 for scale (masked 0, raw 16); tried scale += 1.0f, declaration order, split mul
 #ifdef NON_MATCHING
 void func_800F7DE0_MinigameHouse(omObjData* arg0) {
     s32 v;
