@@ -309,7 +309,8 @@ void func_800FAE2C_BowlOver(omObjData* obj) {
     }
 }
 
-// register allocation and float temporaries
+// float register allocation only (masked 0, raw 12): retail keeps the double angle in f20 and the
+// sqrt result in f4
 #ifdef NON_MATCHING
 void func_800FB230_BowlOver(omObjData* obj) {
     BowlPin* pin;
@@ -320,6 +321,7 @@ void func_800FB230_BowlOver(omObjData* obj) {
     f32 dz;
     f32 a;
     s16 snd;
+    s32 turns;
 
     pin = &D_800FD880_BowlOver[PIN_IDX(obj)];
     if (D_800ED430 != 1) {
@@ -338,13 +340,16 @@ void func_800FB230_BowlOver(omObjData* obj) {
                 pin->unk_0E = 1;
                 pin->unk_0F = 0;
                 pin->unk_08 = 90.0f;
-                if (D_800FD560_BowlOver != 0) {
-                    snd = 0x25E;
-                    if (D_800FD560_BowlOver != 1) {
-                        snd = 0x25F;
-                    }
-                } else {
+                switch (D_800FD560_BowlOver) {
+                case 0:
                     snd = 0x25D;
+                    break;
+                case 1:
+                    snd = 0x25E;
+                    break;
+                default:
+                    snd = 0x25F;
+                    break;
                 }
                 PlaySound(snd);
                 D_800FD560_BowlOver++;
@@ -367,11 +372,15 @@ void func_800FB230_BowlOver(omObjData* obj) {
             }
         }
     } else {
-        a = pin->unk_04 + obj->rot.y;
+        a = pin->unk_04;
+        a += obj->rot.y;
+        turns = a / 360.0f;
+        a -= turns * 360.0;
+        a = 360.0f - a;
         pos.x = 0.0f;
         pos.y = 30.0f;
         pos.z = 0.0f;
-        a = (360.0f - (f32)(a - (s32)(a / 360.0f) * 360.0)) * 0.017453289f;
+        a *= 0.017453289f;
         axis.x = cosf(a);
         axis.y = 0.0f;
         axis.z = -sinf(a);
