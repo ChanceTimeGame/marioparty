@@ -492,8 +492,6 @@ void func_800F7C24_BowlOver(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F7C24_BowlOver);
 #endif
 
-// float conversion placement in the switch
-#ifdef NON_MATCHING
 void func_800F7D14_BowlOver(omObjData* obj) {
     f32 s;
 
@@ -514,13 +512,9 @@ void func_800F7D14_BowlOver(omObjData* obj) {
             s = 0.8f;
             break;
     }
-    s = s * 2.5;
-    func_80025830(obj->model[1], s, 1.0f, s);
+    func_80025830(obj->model[1], s * 2.5, 1.0f, s * 2.5);
     func_80025798(obj->model[1], obj->trans.x, 8.0f, obj->trans.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F7D14_BowlOver);
-#endif
 
 void func_800F7E20_BowlOver(omObjData* obj) {
     u8 port;
