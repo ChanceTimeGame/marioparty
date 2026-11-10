@@ -165,20 +165,18 @@ u16 func_800FA258_DesertDash(s32 file) {
     return ret;
 }
 
-// register allocation only (the two table bases swap s0/s1)
-#ifdef NON_MATCHING
 void func_800FA29C_DesertDash(void) {
     unk65770AnimC* frame;
 
-    D_800F2AF8[0] = D_800FC4E0_DesertDash[0] = omAddObj(2, 5, 0, -1, func_800FA460_DesertDash);
+    D_800FC4E0_DesertDash[0] = D_800F2AF8[0] = omAddObj(2, 5, 0, -1, func_800FA460_DesertDash);
     omSetStatBit(D_800FC4E0_DesertDash[0], 0xA0);
     D_800FC4E0_DesertDash[0]->work[0] = 1;
     D_800FC4E0_DesertDash[0]->work[1] = 0;
-    D_800F2AF8[1] = D_800FC4E0_DesertDash[1] = omAddObj(3, 5, 0, -1, func_800FA460_DesertDash);
+    D_800FC4E0_DesertDash[1] = D_800F2AF8[1] = omAddObj(3, 5, 0, -1, func_800FA460_DesertDash);
     omSetStatBit(D_800FC4E0_DesertDash[1], 0xA0);
     D_800FC4E0_DesertDash[1]->work[0] = 2;
     D_800FC4E0_DesertDash[1]->work[1] = 1;
-    D_800F2AF8[2] = D_800FC4E0_DesertDash[2] = omAddObj(4, 0x16, 0, -1, func_800FA9E0_DesertDash);
+    D_800FC4E0_DesertDash[2] = D_800F2AF8[2] = omAddObj(4, 0x16, 0, -1, func_800FA9E0_DesertDash);
     omSetStatBit(D_800FC4E0_DesertDash[2], 0xA0);
     D_800FC5F8_DesertDash[0] = func_800FA258_DesertDash(0x3B000B);
     frame = D_800EC700[D_800FC5F8_DesertDash[0]]->unk0;
@@ -191,17 +189,11 @@ void func_800FA29C_DesertDash(void) {
     func_80067208(D_800FC602_DesertDash[1], 0, D_800FC5F8_DesertDash[1], 0);
     func_800674BC(D_800FC602_DesertDash[1], 0, 0x8000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FA29C_DesertDash);
-#endif
 
-// one andi scheduled before its copy (register only)
-#ifdef NON_MATCHING
 /* A team's track object (work[0] = camera group, work[1] = team). */
 void func_800FA460_DesertDash(omObjData* obj) {
     u16 i;
     s32 w;
-    s32 t;
 
     obj->func_ptr = func_800FA724_DesertDash;
     obj->trans.x = obj->trans.y = 0.0f;
@@ -216,33 +208,29 @@ void func_800FA460_DesertDash(omObjData* obj) {
         func_80025F10(obj->model[i], obj->work[0]);
     }
     w = obj->work[1];
-    t = (u16)w;
-    D_800FC5FE_DesertDash[t] = func_80064EF4(1, 0);
-    func_80067208(D_800FC5FE_DesertDash[t], 0, D_800FC5F8_DesertDash[0], 0);
-    func_800674BC(D_800FC5FE_DesertDash[t], 0, 0x1403C);
-    func_8006761C(D_800FC5FE_DesertDash[t], 0, 160, 0, 320, 240);
-    func_80067384(D_800FC5FE_DesertDash[t], 0, w - 16);
+    D_800FC5FE_DesertDash[(u16)w] = func_80064EF4(1, 0);
+    func_80067208(D_800FC5FE_DesertDash[(u16)w], 0, D_800FC5F8_DesertDash[0], 0);
+    func_800674BC(D_800FC5FE_DesertDash[(u16)w], 0, 0x1403C);
+    func_8006761C(D_800FC5FE_DesertDash[(u16)w], 0, 160, 0, 320, 240);
+    func_80067384(D_800FC5FE_DesertDash[(u16)w], 0, w - 16);
     /* 0x1000 bytes on the N64: 0x200 commands (a host Gfx is 16 bytes) */
-    D_800FC608_DesertDash[t] = HuMemDirectMalloc(0x200 * sizeof(Gfx));
-    D_800FC614_DesertDash[t] = func_80024198(0xA0, D_800FC608_DesertDash[t], 0);
-    func_80025F10(D_800FC614_DesertDash[t], obj->work[0]);
-    func_800FB750_DesertDash(&D_800FC608_DesertDash[t], D_800FC5F8_DesertDash[2], 0, 160, 480, 0, 1, 1.0f, 0, 1,
+    D_800FC608_DesertDash[(u16)w] = HuMemDirectMalloc(0x200 * sizeof(Gfx));
+    D_800FC614_DesertDash[(u16)w] = func_80024198(0xA0, D_800FC608_DesertDash[(u16)w], 0);
+    func_80025F10(D_800FC614_DesertDash[(u16)w], obj->work[0]);
+    func_800FB750_DesertDash(&D_800FC608_DesertDash[(u16)w], D_800FC5F8_DesertDash[2], 0, 160, 480, 0, 1, 1.0f, 0, 1,
                              1.0f, 1.0f);
-    D_800FC620_DesertDash[t].unk0 = 480.0f;
-    D_800FC620_DesertDash[t].unk4 = 0.0f;
-    D_800FC620_DesertDash[t].unk8 = 160.0f;
-    D_800FC620_DesertDash[t].unkC = obj->work[1] * 160 + 48;
-    D_800FC620_DesertDash[t].unk10 = 1.0f;
-    D_800FC620_DesertDash[t].unk14 = 1.0f;
+    D_800FC620_DesertDash[(u16)w].unk0 = 480.0f;
+    D_800FC620_DesertDash[(u16)w].unk4 = 0.0f;
+    D_800FC620_DesertDash[(u16)w].unk8 = 160.0f;
+    D_800FC620_DesertDash[(u16)w].unkC = obj->work[1] * 160 + 48;
+    D_800FC620_DesertDash[(u16)w].unk10 = 1.0f;
+    D_800FC620_DesertDash[(u16)w].unk14 = 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FA460_DesertDash);
-#endif
 
-// index copy and a model-pointer load scheduled differently
+// masked 4: the final call loads obj->model[0] before the trans.z / 16.0 divide, retail after it (s16 t fixed the index copy)
 #ifdef NON_MATCHING
 void func_800FA724_DesertDash(omObjData* obj) {
-    s32 t;
+    s16 t;
     s16 i;
 
     t = obj->work[1];
