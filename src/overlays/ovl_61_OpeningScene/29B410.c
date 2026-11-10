@@ -1610,7 +1610,8 @@ void func_800FBD7C_OpeningScene(void) {
     func_8004E184();
 }
 
-// retail copies the flags stack argument into a second callee-saved register (frame 72 vs 64; masked 11)
+// retail copies the flags stack argument into a second callee-saved register (frame 72 vs 64; masked 11);
+// retail tests arg3 & 2 in place on the original and keeps the copy for & 1; tried a late flags = arg3 & 1 (M1c)
 #ifdef NON_MATCHING
 s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* arg2, s32 arg3) {
     Vec3f sp10;
