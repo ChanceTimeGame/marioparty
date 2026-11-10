@@ -1406,7 +1406,7 @@ void func_800FB354_HotRopeJump(f32 angle) {
     HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y,
                 c->unk18.z);
     m[3][0] = m[3][1] = m[3][2] = 0.0f;
-    func_800FE3B4_HotRopeJump(m, func_800AEFD0(angle) * 100.0, func_800AEAC0(angle) * 100.0, 0.0f, &v);
+    func_800FE3B4_HotRopeJump(m, func_800AEFD0(angle) * 100.0, func_800AEAC0(angle) * 100.0, 0.0f, (f32*)&v);
     func_80023504(1, 0.0f, 0.0f, -100.0f);
     func_80023504(2, v.x, v.y, v.z);
 }
@@ -2203,15 +2203,8 @@ void func_800FE3A8_HotRopeJump(f32 speed) {
     D_801007C8_HotRopeJump = speed;
 }
 
-// NON_MATCHING: retail keeps out + 4 in a register (masked 3)
-#ifdef NON_MATCHING
-void func_800FE3B4_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    f32* o = (f32*)out;
-
+void func_800FE3B4_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
     *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    o[0] = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    o[1] = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FE3B4_HotRopeJump);
-#endif
