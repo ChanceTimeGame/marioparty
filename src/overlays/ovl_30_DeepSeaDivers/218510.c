@@ -2119,14 +2119,13 @@ void func_800FDBBC_DeepSeaDivers(void) {
 void func_800FDBC4_DeepSeaDivers(void) {
     func_8009B770(D_80100610_DeepSeaDivers, 0, sizeof(D_80100610_DeepSeaDivers));
 }
-#ifdef NON_MATCHING
 s16 func_800FDBEC_DeepSeaDivers(void) {
     DSDRope* r;
     DSDRopeNode* node;
     s32 j;
     s32 k;
     f32 len;
-    s32 hi;
+    u8 hi;
     s16 i;
 
     for (i = 0; i < 4; i++) {
@@ -2142,7 +2141,7 @@ s16 func_800FDBEC_DeepSeaDivers(void) {
     r->nodes = func_80023668(5 * sizeof(DSDRopeNode));
     r->active = 1;
     hi = rand8();
-    r->unk6 = (s32)(((hi & 0xFF) << 8) | (rand8() & 0xFF)) / 2048;
+    r->unk6 = ((hi << 8) | rand8()) / 2048;
     r->n = 1;
     r->unk8 = 600.0f;
     r->unk10 = 1.0f;
@@ -2153,10 +2152,10 @@ s16 func_800FDBEC_DeepSeaDivers(void) {
         node++;
     }
     len = 0.0f;
-    for (k = r->n, j = 0; k >= 0; k--, j++) {
-        node = &r->nodes[k];
+    for (j = r->n, k = 0; j >= 0; j--, k++) {
+        node = &r->nodes[j];
         node->unk0 = 1;
-        if (j != 0) {
+        if (k != 0) {
             node->unk4 = 200.0f;
         }
         len -= node->unk4;
@@ -2164,9 +2163,6 @@ s16 func_800FDBEC_DeepSeaDivers(void) {
     }
     return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDBEC_DeepSeaDivers);
-#endif
 void func_800FDD84_DeepSeaDivers(s16 idx) {
     DSDRope* r;
 
