@@ -120,7 +120,7 @@ typedef struct MBLoop {
 /* What func_800FB99C reports for a track. */
 typedef struct MBBeatInfo {
     /* 0x00 */ s16 diff;
-    /* 0x02 */ s16 len;
+    /* 0x02 */ u16 len;
     /* 0x04 */ s32 idx;
     /* 0x08 */ s16 unk8;
 } MBBeatInfo;
@@ -203,7 +203,7 @@ void func_800FB1D0_MarioBandstand(void);
 void func_800FB214_MarioBandstand(void);
 void func_800FB4D8_MarioBandstand(void);
 s16 func_800FB8EC_MarioBandstand(s32);
-s16 func_800FB99C_MarioBandstand(s32, MBBeatInfo*);
+s32 func_800FB99C_MarioBandstand(s32, MBBeatInfo*);
 void func_800FBB14_MarioBandstand(void);
 void func_800FBD1C_MarioBandstand(void);
 void func_800FBD8C_MarioBandstand(void);
