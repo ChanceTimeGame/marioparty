@@ -1183,65 +1183,71 @@ void func_800F8114_DKsJungleAdventure(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DKsJungleAdventure/2418D0", func_800F8114_DKsJungleAdventure);
 #endif
 
-// register allocation: retail copies idx into a second callee-saved register for the table reads (one extra move; masked 2)
-#ifdef NON_MATCHING
-void func_800F8248_DKsJungleAdventure(void) {
-    Process* proc;
-    DKThwompMove* work;
-    s16 space;
-    s32 dest;
-    s32 idx;
-    s16 cur;
-
-    cur = GetCurrentSpaceIndex();
-    space = -1;
-    idx = 0;
-    switch (cur) {
+// decomp-permuter
+void func_800F8248_DKsJungleAdventure(void)
+{
+  Process *proc;
+  DKThwompMove *work;
+  s16 space;
+  s32 dest;
+  s32 idx;
+  s16 cur;
+  cur = GetCurrentSpaceIndex();
+  space = -1;
+  idx = 0;
+  switch (cur)
+  {
     case 0x45:
-        space = 0x65;
-        GwCommon.boardWork[0] = 1;
-        idx = 0;
-        break;
+      space = 0x65;
+      GwCommon.boardWork[0] = 1;
+      idx = 0;
+      break;
+
     case 0x48:
-        space = 0x68;
-        GwCommon.boardWork[0] = 0;
-        idx = 0;
-        break;
+      space = 0x68;
+      GwCommon.boardWork[0] = 0;
+      idx = 0;
+      break;
+
     case 0x38:
-        idx = 1;
-        GwCommon.boardWork[1] = idx;
-        space = 0x6C;
-        break;
+      idx = 1;
+      GwCommon.boardWork[1] = idx;
+      space = 0x6C;
+      break;
+
     case 0x42:
-        space = 0x66;
-        GwCommon.boardWork[1] = 0;
-        idx = 1;
-        break;
+      space = 0x66;
+      GwCommon.boardWork[1] = 0;
+      idx = 1;
+      break;
+
     case 0x1A:
-        space = 0x5E;
-        GwCommon.boardWork[2] = 1;
-        idx = 2;
-        break;
+      space = 0x5E;
+      GwCommon.boardWork[2] = 1;
+      idx = 2;
+      break;
+
     case 0x25:
-        space = 0x67;
-        idx = 2;
-        GwCommon.boardWork[2] = 0;
-        break;
-    }
-    dest = space;
-    if (dest != 0) {
-        proc = omAddPrcObj(func_800F8114_DKsJungleAdventure, 0x4800, 0, 0x40);
-        work = HuMemMemoryAlloc(proc->heap, sizeof(DKThwompMove));
-        proc->user_data = work;
-        work->obj = D_800FA330_DKsJungleAdventure[idx];
-        work->dest = BoardSpaceGet(dest);
-        work->facing = BoardSpaceGet(D_800F997C_DKsJungleAdventure[idx]);
-    }
-    EndProcess(NULL);
+      space = 0x67;
+      idx = 2;
+      GwCommon.boardWork[2] = 0;
+      break;
+
+  }
+
+  dest = space;
+  if (dest != 0)
+  {
+    proc = omAddPrcObj(func_800F8114_DKsJungleAdventure, 0x4800, 0, 0x40);
+    space = idx;
+    work = HuMemMemoryAlloc(proc->heap, sizeof(DKThwompMove));
+    proc->user_data = work;
+    work->obj = D_800FA330_DKsJungleAdventure[space];
+    work->dest = BoardSpaceGet(dest);
+    work->facing = BoardSpaceGet(D_800F997C_DKsJungleAdventure[space]);
+  }
+  EndProcess(0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DKsJungleAdventure/2418D0", func_800F8248_DKsJungleAdventure);
-#endif
 
 void func_800F83B0_DKsJungleAdventure(void) {
     if (_CheckFlag(0xD) == 0) {
@@ -1606,38 +1612,39 @@ void func_800F9428_DKsJungleAdventure(void) {
 void func_800F944C_DKsJungleAdventure(void) {
     SetNextChainAndSpace(-1, 0, 1);
 }
-// register allocation: retail copies the coin amount into a second callee-saved register before the coin calls (one extra move; masked 1)
-#ifdef NON_MATCHING
-void func_800F9470_DKsJungleAdventure(void) {
-    s16 player;
-    s16 win;
-    s32 coins;
-
-    player = GetCurrentPlayerIndex();
-    func_800405DC(player);
-    SetPlayerAnimation(-1, -1, 2);
-    if (_CheckFlag(0x42) == 0) {
-        win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-        LoadStringIntoWindow(win, (void*)0x239, -1, -1);
-        coins = 10;
-    } else {
-        win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-        LoadStringIntoWindow(win, (void*)0x23A, -1, -1);
-        coins = 20;
-    }
-    func_8006E070(win, 0);
-    ShowTextWindow(win);
-    PlaySound(0x432);
-    func_8004DBD4(win, player);
-    HideTextWindow(win);
-    func_80055960(player, coins);
-    ShowPlayerCoinChange(player, coins);
-    HuPrcSleep(30);
-    func_8003FEFC(player);
+// decomp-permuter
+void func_800F9470_DKsJungleAdventure(void)
+{
+  s16 player;
+  s16 win;
+  short coins;
+  int new_var;
+  player = GetCurrentPlayerIndex();
+  func_800405DC(player);
+  SetPlayerAnimation(-1, -1, 2);
+  if (_CheckFlag(0x42) == 0)
+  {
+    win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
+    LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
+    coins = 10;
+  }
+  else
+  {
+    new_var = 0x41;
+    win = CreateTextWindow(new_var, 0x3C, 0x11, 3);
+    LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
+    coins = 20;
+  }
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
+  PlaySound(0x432);
+  func_8004DBD4(win, player);
+  HideTextWindow(win);
+  func_80055960(player, coins);
+  ShowPlayerCoinChange(player, coins);
+  HuPrcSleep(30);
+  func_8003FEFC(player);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DKsJungleAdventure/2418D0", func_800F9470_DKsJungleAdventure);
-#endif
 
 void func_800F95A4_DKsJungleAdventure(void) {
     GwCommon.boardWork[31]++;
