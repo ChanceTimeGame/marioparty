@@ -54,7 +54,7 @@ void func_800F9C68_DesertDash(void) {
     HuMemDirectFree(D_800FC608_DesertDash[1]);
 }
 
-// register allocation (scale/off temporaries; masked residue is FPR choice)
+// register allocation (masked 0, raw 10): FPR choice in the D_800FC03C / 60.0f scale, v0/v1 in the D_800FC03E test
 #ifdef NON_MATCHING
 /* The split-screen intro and the two banners: x is the split position (320 = full). */
 void func_800F9C9C_DesertDash(s16 x) {
