@@ -245,7 +245,6 @@ void func_800F6B48_DeepSeaDivers(void) {
                                     &D_80100478_DeepSeaDivers[i].bottom);
     }
 }
-#ifdef NON_MATCHING
 void func_800F6BDC_DeepSeaDivers(omObjData* obj) {
     switch (D_801003FC_DeepSeaDivers) {
         case 0:
@@ -284,7 +283,11 @@ void func_800F6BDC_DeepSeaDivers(omObjData* obj) {
                 D_80100400_DeepSeaDivers = 1;
                 if (D_80100408_DeepSeaDivers == 0) {
                     D_801003FC_DeepSeaDivers++;
-                    GMesCreate(D_80100404_DeepSeaDivers == 0 ? 16 : 2);
+                    if (D_80100404_DeepSeaDivers == 0) {
+                        GMesCreate(16);
+                    } else {
+                        GMesCreate(2);
+                    }
                 } else {
                     D_801003FC_DeepSeaDivers = 6;
                     GMesCreate(2);
@@ -335,9 +338,6 @@ void func_800F6BDC_DeepSeaDivers(omObjData* obj) {
     func_800FD8C8_DeepSeaDivers();
     func_800F6F7C_DeepSeaDivers();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F6BDC_DeepSeaDivers);
-#endif
 void func_800F6F7C_DeepSeaDivers(void) {
     if (D_80100402_DeepSeaDivers < 0 && func_80072718() == 0) {
         HuMemDirectFree(D_801003F8_DeepSeaDivers);
