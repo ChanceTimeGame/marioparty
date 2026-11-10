@@ -1254,8 +1254,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA
 #endif
 
 /* A random movable cell. */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 s32 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     u8 cand[48][2];
     s16 n = 0;
@@ -1280,6 +1278,3 @@ s32 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FACA0_UnusedMinigame0);
-#endif
