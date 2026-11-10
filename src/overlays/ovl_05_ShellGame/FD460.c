@@ -139,7 +139,7 @@ void func_800FD448_ShellGame(omObjData* obj) {
     func_800FE7B4_ShellGame(obj);
     func_800FEB40_ShellGame(obj);
 }
-// NON_MATCHING: retail reloads the answer shell in each skill case
+// NON_MATCHING: retail keeps a separate "t = unk4" arm per skill case (GCC cross-jumps ours) and has a nop between the mul.s pair (masked 43; tried ternary arms, a goto-shared else)
 #ifdef NON_MATCHING
 void func_800FD538_ShellGame(omObjData* obj) {
     omObjData* sh;
@@ -195,6 +195,7 @@ void func_800FD538_ShellGame(omObjData* obj) {
         }
         D_800FEC4A_ShellGame = t;
         D_800FEC48_ShellGame = 0;
+        return;
     }
     sh = D_800FF9F8_ShellGame[D_800FEC4A_ShellGame];
     dx = sh->trans.x - obj->trans.x;
@@ -300,26 +301,21 @@ void func_800FD808_ShellGame(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FD808_ShellGame);
 #endif
-// NON_MATCHING: retail addresses each field through its own label
-#ifdef NON_MATCHING
 void func_800FDD94_ShellGame(u16 n) {
     if (n == 0) {
-        D_800FFA10_ShellGame[0].unk0 = 0;
-        D_800FFA10_ShellGame[0].unk2 = 0;
-        D_800FFA10_ShellGame[0].unk4 = -1;
-        D_800FFA10_ShellGame[0].unk8 = 180.0f;
-        D_800FFA10_ShellGame[0].unkC = 180.0f;
-        D_800FFA10_ShellGame[0].unk10 = 180.0f;
-        D_800FFA10_ShellGame[0].unk14 = 0;
-        D_800FFA10_ShellGame[0].unk18 = 0;
-        D_800FFA10_ShellGame[0].unk1C = 0;
-        D_800FFA10_ShellGame[0].unk20 = 0;
-        D_800FFA10_ShellGame[0].unk28 = 0;
+        D_800FFA10_ShellGame[n].unk0 = 0;
+        D_800FFA10_ShellGame[n].unk2 = 0;
+        D_800FFA10_ShellGame[n].unk4 = -1;
+        D_800FFA10_ShellGame[n].unk8 = 180.0f;
+        D_800FFA10_ShellGame[n].unkC = 180.0f;
+        D_800FFA10_ShellGame[n].unk10 = 180.0f;
+        D_800FFA10_ShellGame[n].unk14 = 0;
+        D_800FFA10_ShellGame[n].unk18 = 0;
+        D_800FFA10_ShellGame[n].unk1C = 0;
+        D_800FFA10_ShellGame[n].unk20 = 0;
+        D_800FFA10_ShellGame[n].unk28 = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FDD94_ShellGame);
-#endif
 void func_800FDE08_ShellGame(omObjData* obj, s16 mot) {
     if (D_800FF790_ShellGame != mot) {
         func_800184BC(obj, mot);
@@ -349,21 +345,18 @@ void func_800FDF28_ShellGame(omObjData* obj) {
     }
     func_8009ECB0(D_800F2B7C[obj->model[0]].unk7C, 0.0f, D_800FEC58_ShellGame, 0.0f);
 }
-// NON_MATCHING: retail reloads obj->work[0] for each use
-#ifdef NON_MATCHING
 void func_800FE010_ShellGame(omObjData* obj) {
-    if (obj->work[0] < D_800FF9D0_ShellGame.unk2) {
+    u32 i = obj->work[0];
+
+    if (i < D_800FF9D0_ShellGame.unk2) {
         D_800FEC16_ShellGame = 0;
-        D_800FF7A0_ShellGame[obj->work[0]].unk0 = 1;
-        D_800FF7A0_ShellGame[obj->work[0]].unkC = 0;
+        D_800FF7A0_ShellGame[i].unk0 = 1;
+        D_800FF7A0_ShellGame[i].unkC = 0;
         D_800FF796_ShellGame = 1;
         func_800790C0();
         D_800ED430 = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE010_ShellGame);
-#endif
 // NON_MATCHING: register allocation / scheduling
 #ifdef NON_MATCHING
 void func_800FE07C_ShellGame(omObjData* obj) {
