@@ -360,19 +360,20 @@ void func_800F7074_DeepSeaDivers(omObjData* obj) {
         func_800790C0();
     }
 }
+// register allocation: retail keeps sprite in s3 (the loop counter's register); tried reusing i, decl order (masked 3)
 #ifdef NON_MATCHING
 void func_800F70F4_DeepSeaDivers(omObjData* obj) {
     s16 sprite;
     s16 m;
-    u16 i;
+    s16 i;
 
     obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
     obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
-    for (i = 0; i < 2; i++) {
-        obj->model[(s16)i] = func_800174C0(D_800FF960_DeepSeaDivers[(s16)i], 0x2D9);
-        func_80025798(obj->model[(s16)i], obj->trans.x, obj->trans.y, obj->trans.z);
-        func_80025830(obj->model[(s16)i], obj->scale.x, obj->scale.y, obj->scale.z);
-        if ((s16)i == 0) {
+    for (i = 0; (u16)i < 2; i++) {
+        obj->model[i] = func_800174C0(D_800FF960_DeepSeaDivers[i], 0x2D9);
+        func_80025798(obj->model[i], obj->trans.x, obj->trans.y, obj->trans.z);
+        func_80025830(obj->model[i], obj->scale.x, obj->scale.y, obj->scale.z);
+        if (i == 0) {
             func_80025EB4(obj->model[0], 2, 2);
             D_800F2B7C[obj->model[0]].unk_4C = 0.5f;
         }
