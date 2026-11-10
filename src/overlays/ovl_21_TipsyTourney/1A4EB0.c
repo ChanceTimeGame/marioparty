@@ -540,11 +540,8 @@ void func_800F8500_TipsyTourney(void) {
     }
 }
 
-// scheduling: one sll before the lui of ContBtnTrg's address (masked 1)
-#ifdef NON_MATCHING
 void func_800F8800_TipsyTourney(omObjData* obj) {
     TipsyWork* work = obj->unk_50;
-    u16* trg;
     u16* btn;
     u16 savedTrg;
     u16 savedBtn;
@@ -560,19 +557,18 @@ void func_800F8800_TipsyTourney(omObjData* obj) {
     case 1:
         if (GwPlayer[work->unk_58].flags & 1) {
             player = work->unk_56;
-            trg = ContBtnTrg + player;
-            savedTrg = *trg;
+            savedTrg = ContBtnTrg[player];
             btn = &ContBtn[player];
             savedBtn = *btn;
             savedX = ContStkX[player];
             savedY = ContStkY[player];
             ContStkY[player] = 0;
             ContStkX[player] = 0;
-            *trg = 0;
+            ContBtnTrg[player] = 0;
             *btn = 0;
             func_800FAC80_TipsyTourney(obj);
             func_80005A28(obj);
-            *trg = savedTrg;
+            ContBtnTrg[player] = savedTrg;
             *btn = savedBtn;
             ContStkX[player] = savedX;
             ContStkY[player] = savedY;
@@ -625,9 +621,6 @@ void func_800F8800_TipsyTourney(omObjData* obj) {
     }
     func_80005A28(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_TipsyTourney/1A4EB0", func_800F8800_TipsyTourney);
-#endif
 
 void func_800F8C2C_TipsyTourney(omObjData* obj, f32 dx, f32 dz) {
     if (func_8005FD5C() + D_800F64F8 == 0) {
