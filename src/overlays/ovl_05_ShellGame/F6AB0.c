@@ -1450,12 +1450,9 @@ void func_800FB030_ShellGame(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FB030_ShellGame);
 #endif
-// NON_MATCHING: base-register CSE of D_800FF9D0's fields
-#ifdef NON_MATCHING
 void func_800FB120_ShellGame(void) {
     omObjData* obj;
     SGShell* sh;
-    SGGame* g;
     f32 v;
     u16 i;
 
@@ -1477,8 +1474,7 @@ void func_800FB120_ShellGame(void) {
             sh->unk5C = func_800F7398_ShellGame(sh->unk10.x - obj->trans.x, v - obj->trans.z);
         }
     } else if (D_800FF104_ShellGame < D_800FF9D0_ShellGame.unk16) {
-        g = &D_800FF9D0_ShellGame;
-        for (i = 0; i < g->unk2; i++) {
+        for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
             obj = D_800FF9F8_ShellGame[i];
             sh = &D_800FF7A0_ShellGame[i];
             func_800F79FC_ShellGame(obj, 7);
@@ -1486,30 +1482,29 @@ void func_800FB120_ShellGame(void) {
             obj->trans.y = 0;
             obj->trans.z = func_800AEFD0(sh->unk5C) * sh->unk58 + obj->trans.z;
         }
-        if (D_800FF104_ShellGame == g->unk16 >> 1) {
-            g->unk8 = 20;
-            g->unkC = 60.0f;
+        if (D_800FF104_ShellGame == D_800FF9D0_ShellGame.unk16 >> 1) {
+            D_800FF9D0_ShellGame.unk8 = 20;
+            D_800FF9D0_ShellGame.unkC = 60.0f;
         }
     } else {
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
             obj = D_800FF9F8_ShellGame[i];
             sh = &D_800FF7A0_ShellGame[i];
-            obj->trans.x = sh->unk10.x = func_800AEAC0(sh->unk4) * 340.0;
-            obj->trans.y = sh->unk10.y = 0.0f;
-            obj->trans.z = sh->unk10.z = func_800AEFD0(sh->unk4) * 340.0;
+            sh->unk10.x = obj->trans.x = func_800AEAC0(sh->unk4) * 340.0;
+            sh->unk10.y = obj->trans.y = 0.0f;
+            sh->unk10.z = obj->trans.z = func_800AEFD0(sh->unk4) * 340.0;
         }
         D_800FF100_ShellGame = 2;
     }
     D_800FF104_ShellGame++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FB120_ShellGame);
-#endif
-// NON_MATCHING: branch layout of the result checks
+// NON_MATCHING: masked 26: reorg turns the 0x1E1 test into beql (retail bne/nop); landed-loop counter
+// register; one cvt.s.d temp register (if/else, default-then-override and call-per-branch tried)
 #ifdef NON_MATCHING
 void func_800FB4A4_ShellGame(void) {
     omObjData tmp;
     s16 landed[5];
+    s32 snd;
     omObjData* obj;
     SGShell* sh;
     s16 n;
@@ -1576,11 +1571,11 @@ void func_800FB4A4_ShellGame(void) {
             func_800258EC(obj->model[1], 4, 4);
             func_80025CA8(obj->model[0], 0.0f);
         } else if (sh->unkC == 36) {
+            snd = 0x1E2;
             if (D_800FF9D0_ShellGame.unk6 == -1 && D_800FF9D0_ShellGame.unk4 == i) {
-                PlaySound(0x1E1);
-            } else {
-                PlaySound(0x1E2);
+                snd = 0x1E1;
             }
+            PlaySound(snd);
             func_800FC748_ShellGame(obj);
             func_800601D4(0x28);
         } else if (sh->unkC == 51) {
@@ -1856,9 +1851,9 @@ void func_800FC748_ShellGame(omObjData* obj) {
 void func_800FC77C_ShellGame(omObjData* obj) {
     D_800F2B7C[obj->model[2]].unk_4C = -1.0f;
 }
-void func_800FC7B0_ShellGame(s16 result) {
+void func_800FC7B0_ShellGame(u16 result) {
     D_800FF9D0_ShellGame.unk6 = result;
-    if ((u16)result == 2) {
+    if (result == 2) {
         GwPlayer[D_800FF9F0_ShellGame].coins_mg += 10;
     }
 }

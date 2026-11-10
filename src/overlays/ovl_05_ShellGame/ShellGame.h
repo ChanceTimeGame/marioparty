@@ -82,7 +82,7 @@ typedef struct SGShell {
     /* 0x60 */ f32 unk60; /* hop speed */
     /* 0x64 */ f32 unk64; /* item distance */
     /* 0x68 */ f32 unk68; /* item height */
-    /* 0x6C */ s16 unk6C; /* contents: 2 ball, 5 empty */
+    /* 0x6C */ u16 unk6C; /* contents: 2 ball, 5 empty */
     /* 0x6E */ s16 unk6E; /* sprite slot, -1 none */
 } SGShell; /* size = 0x70 */
 
@@ -356,7 +356,7 @@ void func_800FC6E0_ShellGame(omObjData*);
 void func_800FC714_ShellGame(omObjData*);
 void func_800FC748_ShellGame(omObjData*);
 void func_800FC77C_ShellGame(omObjData*);
-void func_800FC7B0_ShellGame(s16);
+void func_800FC7B0_ShellGame(u16);
 void func_800FC800_ShellGame(Gfx*, s16, u16, s32, s32, u16, f32, f32);
 
 /* FD460.c */
