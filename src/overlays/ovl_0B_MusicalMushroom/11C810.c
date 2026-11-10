@@ -553,7 +553,7 @@ void func_800F7D1C_MusicalMushroom(omObjData* obj) {
         ContStkY[GwPlayer[player].port] = -cpu->unk16;
     }
 }
-// register allocation and scheduling of the D_800FB5C8 index (masked 4)
+// register allocation and scheduling of the D_800FB5C8 index: r in a0, table base before the index math (masked 4); tried base + r, [r - 2], inline field reads
 #ifdef NON_MATCHING
 void func_800F83BC_MusicalMushroom(omObjData* obj) {
     Vec3f v;
@@ -690,7 +690,7 @@ void func_800F8910_MusicalMushroom(omObjData* obj) {
     }
 }
 
-// register allocation: obj/cpu in s1/s0 swapped (masked 0)
+// register allocation: obj/cpu in s1/s0 swapped (masked 0); tried declaration order, work before player, u8 player
 #ifdef NON_MATCHING
 void func_800F8AC4_MusicalMushroom(omObjData* obj) {
     void (*cpuFuncs[2])(omObjData*) = { func_800F7D1C_MusicalMushroom, func_800F83BC_MusicalMushroom };
