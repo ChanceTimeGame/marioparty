@@ -1957,7 +1957,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FDBB
 #endif
 
 /* Intersects the segment p + t * d with the faces and keeps the nearest t in D_800FFEF8. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 89 lines)
+// register allocation: j/prev swap t0/a3 and n is extended late (masked 39, raw 77); j = 0 before the loop and
+// default: break are retail's (an unknown axis falls through to the j < nv test). Tried declaration order.
 #ifdef NON_MATCHING
 void func_800FDE08_PaddleBattle(PBColFace* f, s16 n, Vec* p, Vec* d) {
     unk2C0C0StructA0* prev;
@@ -1984,6 +1985,7 @@ void func_800FDE08_PaddleBattle(PBColFace* f, s16 n, Vec* p, Vec* d) {
     dx = d->x;
     dy = d->y;
     dz = d->z;
+    j = 0;
     for (i = 0; i < n; i++, f++) {
         dn = dx * f->nx + dy * f->ny + dz * f->nz;
         if (dn == 0.0) {
@@ -2038,7 +2040,7 @@ void func_800FDE08_PaddleBattle(PBColFace* f, s16 n, Vec* p, Vec* d) {
             }
             break;
         default:
-            continue;
+            break;
         }
         if (j < nv) {
             continue;
