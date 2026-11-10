@@ -71,72 +71,86 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FD46
 #endif
 
 /* A rider's seat position: the car's rotations applied to (0, 162.5, seat offset). */
-// NON_MATCHING: register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800FD59C_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
-    Matrix4f m;
-    f32 v[4];
-    f32 t[4];
-    HHCar* w;
-    f32 rx;
-    f32 ry;
-    f32 rz;
-    f32 s;
-    f32 c;
-    s32 i;
-    s32 j;
+// decomp-permuter
+void func_800FD59C_HandcarHavoc(omObjData *obj, u16 seat, Vec *out)
+{
+  Matrix4f m;
+  f32 v[4];
+  f32 t[4];
+  HHCar *w;
+  f32 rx;
+  float new_var;
+  f32 ry;
+  f32 rz;
+  f32 s;
+  f32 c;
+  s32 i;
+  float new_var2;
+  s32 j;
+  w = obj->unk_50;
+  v[0] = 0.0f;
+  v[1] = 162.5f;
+  v[2] = w->seat[seat];
+  v[3] = 1.0f;
+  s = func_800AEAC0(w->rot.y);
+  c = func_800AEFD0(w->rot.y);
+  new_var2 = s * w->lean;
+  rx = (new_var2 + w->rot.x) + (s * w->tilt);
+  ry = w->rot.y;
+  new_var = c * w->lean;
+  rz = (new_var + w->rot.z) + (c * w->tilt);
+  if (rx < 0.0f)
+  {
+    rx += 360.0f;
+  }
+  if (rx >= 360.0f)
+  {
+    rx -= 360.0f;
+  }
+  if (ry < 0.0f)
+  {
+    ry += 360.0f;
+  }
+  if (ry >= 360.0f)
+  {
+    ry -= 360.0f;
+  }
+  if (rz < 0.0f)
+  {
+    rz += 360.0f;
+  }
+  if (rz >= 360.0f)
+  {
+    rz -= 360.0f;
+  }
+  guMtxIdentF(m);
+  MtxRotate(m, 0.0f, ry, 0.0f);
+  for (j = 0; j < 4; j++)
+  {
+    t[j] = 0;
+    for (i = 0; i < 4; i++)
+    {
+      t[j] += v[i] * m[i][j];
+    }
 
-    w = obj->unk_50;
-    v[0] = 0.0f;
-    v[1] = 162.5f;
-    v[2] = w->seat[seat];
-    v[3] = 1.0f;
-    s = func_800AEAC0(w->rot.y);
-    c = func_800AEFD0(w->rot.y);
-    rx = s * w->lean + w->rot.x + s * w->tilt;
-    ry = w->rot.y;
-    rz = c * w->lean + w->rot.z + c * w->tilt;
-    if (rx < 0.0f) {
-        rx += 360.0f;
+  }
+
+  guMtxIdentF(m);
+  MtxRotate(m, rx, 0.0f, rz);
+  for (j = 0; j < 4; j++)
+  {
+    v[j] = 0.0f;
+    for (i = 0; i < 4; i++)
+    {
+      v[j] += t[i] * m[i][j];
     }
-    if (rx >= 360.0f) {
-        rx -= 360.0f;
-    }
-    if (ry < 0.0f) {
-        ry += 360.0f;
-    }
-    if (ry >= 360.0f) {
-        ry -= 360.0f;
-    }
-    if (rz < 0.0f) {
-        rz += 360.0f;
-    }
-    if (rz >= 360.0f) {
-        rz -= 360.0f;
-    }
-    guMtxIdentF(m);
-    MtxRotate(m, 0.0f, ry, 0.0f);
-    for (j = 0; j < 4; j++) {
-        t[j] = 0;
-        for (i = 0; i < 4; i++) {
-            t[j] += v[i] * m[i][j];
-        }
-    }
-    guMtxIdentF(m);
-    MtxRotate(m, rx, 0.0f, rz);
-    for (j = 0; j < 4; j++) {
-        v[j] = 0.0f;
-        for (i = 0; i < 4; i++) {
-            v[j] += t[i] * m[i][j];
-        }
-    }
-    out->x = obj->trans.x + v[0];
-    out->y = obj->trans.y + v[1];
-    out->z = obj->trans.z + v[2];
+
+  }
+
+  out->x = obj->trans.x + v[0];
+  out->y = obj->trans.y + v[1];
+  out->z = obj->trans.z + v[2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FD59C_HandcarHavoc);
-#endif
 
 /* The two wheel spots of one side (D_800FF404). */
 // NON_MATCHING: stack addressing of the copy array
