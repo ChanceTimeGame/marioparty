@@ -818,9 +818,12 @@ void func_800F8964_BowlOver(omObjData *obj, s32 dir, s32 file, s32 player, f32 x
   D_800FD5AC_BowlOver[D_800FDC5A_BowlOver[0]] = GwPlayer[D_800FDC5A_BowlOver[0]].coins;
 }
 
-// register allocation and float temporaries
+// D_800FD338's address is CSE'd into a register; retail keeps %hi/%lo per access (masked 4; tried
+// D -= 2, vol += (u8)(v - 2))
 #ifdef NON_MATCHING
 void func_800F8C64_BowlOver(omObjData* obj) {
+    BowlBallWork* bw = BALL_WORK(obj);
+    f32 rot;
     f32 turn;
     s8 vol;
     s16 pitch;
@@ -832,7 +835,7 @@ void func_800F8C64_BowlOver(omObjData* obj) {
     if (D_800ED430 != 1) {
         return;
     }
-    if (BALL_WORK(obj)->unk_50 & 0x20) {
+    if (bw->unk_50 & 0x20) {
         return;
     }
     func_80025F10(obj->model[1], D_800FDC58_BowlOver);
@@ -856,15 +859,16 @@ void func_800F8C64_BowlOver(omObjData* obj) {
         D_800FD348_BowlOver = 25.0f;
         D_800FD340_BowlOver = ContStkX[(s8)PLAYER_WORK(D_800F3FB0[0])->unk_56] * 1.6;
         D_800FD34C_BowlOver -= D_800FD340_BowlOver;
-        turn = D_800FD34C_BowlOver / 9.0f;
-        if (!(BOWL_ABS(turn) < 263.0f)) {
+        rot = D_800FD34C_BowlOver / 9.0f;
+        if (BOWL_ABS(rot) < 263.0f) {
+            turn = rot;
+        } else {
             turn = 263.0f;
         }
         obj->rot.y = turn + obj->rot.y;
         D_800FD344_BowlOver -= D_800FD34C_BowlOver / 1700.0f;
         D_800FD34C_BowlOver *= 0.9;
-        t = fabs((turn / 263.0f) * 200.0f);
-        vol = t;
+        vol = fabs((turn / 263.0f) * 200.0f);
         if (vol > 0x5E) {
             vol = 0x5E;
         }
@@ -881,11 +885,11 @@ void func_800F8C64_BowlOver(omObjData* obj) {
                 if (a < 0) {
                     a = 0;
                 }
-                func_8006035C(D_800FD842_BowlOver[0], a);
                 vol += D_800FD338_BowlOver[0];
                 if (vol < 0) {
                     vol = 0;
                 }
+                func_8006035C(D_800FD842_BowlOver[0], a);
                 func_8006035C(D_800FD842_BowlOver[1], vol);
             } else {
                 func_8006035C(D_800FD842_BowlOver[1], vol);
