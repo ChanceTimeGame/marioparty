@@ -374,8 +374,6 @@ void func_800FA1C0_MinigameStadiumMinigameResultsScreen(PlayerRes* res, ColWork*
 }
 
 /* the jump down one column step */
-// scheduling around the jump reset (masked 22)
-#ifdef NON_MATCHING
 void func_800FA35C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     f32 t;
 
@@ -391,6 +389,7 @@ void func_800FA35C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
             func_80025798(res->model, res->pos.x, res->pos.y, res->pos.z);
             res->unk_04 = 0;
             res->flags &= ~0x40;
+            return;
         }
     }
     res->pos.x -= 10.0f;
@@ -416,9 +415,6 @@ void func_800FA35C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800FA35C_MinigameStadiumMinigameResultsScreen);
-#endif
 
 /* the minigame coins over the player: a sign, then one to three digits */
 // register allocation and hoisting of 12.5f in the minus branch (masked 12)
