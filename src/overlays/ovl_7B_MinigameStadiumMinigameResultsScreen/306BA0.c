@@ -308,21 +308,19 @@ void func_800F9F54_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
 }
 
 /* the minigame coins' digits */
-// register allocation (masked 3)
-#ifdef NON_MATCHING
-void func_800F9F94_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
-    s32 n;
-    s16 rem;
-
-    n = (res->coinsMg < 0) ? -res->coinsMg : res->coinsMg;
-    res->digits[1] = n / 100;
-    rem = n % 100;
-    res->digits[2] = rem / 10;
-    res->digits[3] = rem % 10;
+// decomp-permuter
+void func_800F9F94_MinigameStadiumMinigameResultsScreen(PlayerRes *res)
+{
+  s32 n;
+  s16 new_var;
+  s16 rem;
+  new_var = res->coinsMg;
+  n = (new_var < 0) ? (-new_var) : (res->coinsMg);
+  res->digits[1] = n / 100;
+  rem = n % 100;
+  res->digits[2] = rem / 10;
+  res->digits[3] = rem % 10;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9F94_MinigameStadiumMinigameResultsScreen);
-#endif
 
 /* climb with the counted coins */
 // retail recomputes coins % 20 in its own block; C shares it (masked 21)
@@ -564,27 +562,28 @@ void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800FA64C_MinigameStadiumMinigameResultsScreen);
 #endif
 
-// register allocation in the gather loop (masked 4)
-#ifdef NON_MATCHING
-void func_800FAD74_MinigameStadiumMinigameResultsScreen(PlayerRes* unused) {
-    Process* proc;
-    PlayerRes* res;
-    ResMain* main;
-    s32 i;
+// decomp-permuter
+void func_800FAD74_MinigameStadiumMinigameResultsScreen(PlayerRes *unused)
+{
+  Process *proc;
+  PlayerRes *res;
+  ResMain *main;
+  Process *new_var;
+  s32 i;
+  proc = HuPrcCurrentGet();
+  res = proc->user_data;
+  main = proc->relative->user_data;
+  for (i = 0; i < 4; i++)
+  {
+    new_var = main->player[i];
+    D_800FB260_MinigameStadiumMinigameResultsScreen[i] = new_var->user_data;
+  }
 
-    proc = HuPrcCurrentGet();
-    res = proc->user_data;
-    main = proc->relative->user_data;
-    for (i = 0; i < 4; i++) {
-        D_800FB260_MinigameStadiumMinigameResultsScreen[i] = main->player[i]->user_data;
-    }
-    if (res->flags & 0x400) {
-        func_800FAEE0_MinigameStadiumMinigameResultsScreen(res);
-    }
+  if (res->flags & 0x400)
+  {
+    func_800FAEE0_MinigameStadiumMinigameResultsScreen(res);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800FAD74_MinigameStadiumMinigameResultsScreen);
-#endif
 
 void func_800FADE8_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     if (func_80025E48(res->model) != func_80025E48(res->mot[1])) {
