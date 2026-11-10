@@ -649,68 +649,74 @@ void func_800F813C_HammerDrop(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F813C_HammerDrop);
 #endif
 
-// Result-register move is scheduled before the object-work store (masked 2).
-#ifdef NON_MATCHING
-void func_800F82E0_HammerDrop(void) {
-    omObjData* obj;
-    s32* timer;
-
-    obj = omAddObj(16, 0, 0, -1, func_800F8394_HammerDrop);
-    timer = func_80023684(sizeof(s32), 0x7918);
-    obj->unk_50 = timer;
-    if ((D_800FB6C4_HammerDrop == 0) && (D_800FB988_HammerDrop == 0)) {
-        *timer = 60;
-        GMesCreate(14);
-        func_800601D4(40);
-    } else {
-        if (D_800FB98C_HammerDrop == 0) {
-            *timer = 84;
-        } else {
-            *timer = 105;
-        }
-    }
-    D_800FB980_HammerDrop = -1;
+// decomp-permuter
+void func_800F82E0_HammerDrop(void)
+{
+  omObjData *obj;
+  s32 *timer;
+  obj = omAddObj(16, 0, 0, -1, func_800F8394_HammerDrop);
+  timer = (obj->unk_50 = func_80023684(sizeof(s32), 0x7918));
+  if ((D_800FB6C4_HammerDrop == 0) && (D_800FB988_HammerDrop == 0))
+  {
+    *timer = 60;
+    GMesCreate(14);
+    func_800601D4(40);
+  }
+  else
+    if (D_800FB98C_HammerDrop == 0)
+  {
+    *timer = 84;
+  }
+  else
+  {
+    *timer = 105;
+  }
+  D_800FB980_HammerDrop = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F82E0_HammerDrop);
-#endif
 
-// Addition operand order only (masked 0).
-#ifdef NON_MATCHING
-void func_800F8394_HammerDrop(omObjData* arg0) {
-    s32* timer = arg0->unk_50;
-    s32 total;
-    s16 i;
-
-    if (*timer > 0) {
-        (*timer)--;
-        if (*timer == 0) {
-            if (D_800FB6C4_HammerDrop == 0) {
-                total = 0;
-                for (i = 0; i < 4; i++) {
-                    total = (u16) GwPlayer[i].coins_mg + total;
-                }
-                if ((total << 16) != 0) {
-                    func_80060128(0x35);
-                } else {
-                    func_80060128(0x34);
-                }
-            } else {
-                func_800726AC(0, 20);
-                *timer = 2;
-                arg0->func_ptr = func_800F84A0_HammerDrop;
-            }
+// decomp-permuter
+void func_800F8394_HammerDrop(omObjData *arg0)
+{
+  unsigned short total;
+  s32 *timer = arg0->unk_50;
+  short i;
+  if ((*timer) > 0)
+  {
+    (*timer)--;
+    if ((*timer) == 0)
+    {
+      if (D_800FB6C4_HammerDrop == 0)
+      {
+        total = 0;
+        for (i = 0; i < 4; i++)
+        {
+          total = ((u16) GwPlayer[i].coins_mg) + total;
         }
-    }
-    if (GMesWait() == 0) {
+
+        if ((total << 16) != 0)
+        {
+          func_80060128(0x35);
+        }
+        else
+        {
+          func_80060128(0x34);
+        }
+      }
+      else
+      {
         func_800726AC(0, 20);
         *timer = 2;
         arg0->func_ptr = func_800F84A0_HammerDrop;
+      }
     }
+  }
+  if (GMesWait() == 0)
+  {
+    func_800726AC(0, 20);
+    *timer = 2;
+    arg0->func_ptr = func_800F84A0_HammerDrop;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8394_HammerDrop);
-#endif
 
 void func_800F84A0_HammerDrop(omObjData* arg0) {
     s32* timer = arg0->unk_50;
