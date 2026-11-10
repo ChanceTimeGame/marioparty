@@ -843,39 +843,42 @@ void func_800F8324_MinigameHouse(void) {
     D_8010062E_MinigameHouse = func_800678A4(data);
     DataClose(data);
 }
-// register allocation s0/s1 (masked 2)
-#ifdef NON_MATCHING
-s16 func_800F8364_MinigameHouse(s32 arg0, s16 arg1) {
-    s16 i;
-    s16 x;
-    s16 win;
-
-    D_80100630_MinigameHouse = win = func_80064EF4(7, 5);
-    func_80067208(win, 0, D_8010062E_MinigameHouse, 0);
-    func_80067480(win, 0, 0xFFFF);
-    func_800674BC(win, 0, 0x8000);
-    func_80066DC4(win, 0, arg0 - 0x10, arg1);
-    func_80067384(win, 0, 1);
-    x = 4;
-    for (i = 1; i < 7; i++) {
-        func_80067384(win, i, 1);
-        func_80067208(win, i, D_8010062E_MinigameHouse, 0);
-        func_80066DC4(win, i, x, 0);
-        func_80067480(win, i, 0xFFFF);
-        func_800674BC(win, i, 0x8000);
-        if (i == 3) {
-            x += 8;
-        } else {
-            x += 12;
-        }
-        func_80067598(win, i, 0);
+// decomp-permuter
+s16 func_800F8364_MinigameHouse(s32 arg0, s16 arg1)
+{
+  s16 i;
+  short new_var;
+  s16 x;
+  s16 win;
+  D_80100630_MinigameHouse = (win = func_80064EF4(7, 5));
+  new_var = win;
+  func_80067208(new_var, 0, D_8010062E_MinigameHouse, 0);
+  func_80067480(new_var, 0, 0xFFFF);
+  func_800674BC(new_var, 0, 0x8000);
+  func_80066DC4(new_var, 0, arg0 - 0x10, arg1);
+  func_80067384(new_var, 0, 1);
+  x = 4;
+  for (i = 1; i < 7; i++)
+  {
+    func_80067384(new_var, i, 1);
+    func_80067208(new_var, i, D_8010062E_MinigameHouse, 0);
+    func_80066DC4(new_var, i, x, 0);
+    func_80067480(new_var, i, 0xFFFF);
+    func_800674BC(new_var, i, 0x8000);
+    if (i == 3)
+    {
+      x += 8;
     }
-    func_80067480(win, 2, 0x8000);
-    return win;
+    else
+    {
+      x += 12;
+    }
+    func_80067598(new_var, i, 0);
+  }
+
+  func_80067480(new_var, 2, 0x8000);
+  return new_var;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F8364_MinigameHouse);
-#endif
 void func_800F8514_MinigameHouse(void) {
     func_80064D38(D_80100630_MinigameHouse);
     func_80067704(D_8010062E_MinigameHouse);
@@ -1677,32 +1680,41 @@ s32 func_800FAD28_MinigameHouse(s16* out, s16 y) {
     }
     return n;
 }
-// retail keeps the final 1/0 as a branch; GCC here folds it to sltu (masked 3)
-#ifdef NON_MATCHING
-s32 func_800FAE94_MinigameHouse(s32 cat) {
-    s32 ret;
-    s32 r;
-    s32 i;
-    s32 n;
+// decomp-permuter
+s32 func_800FAE94_MinigameHouse(s32 cat)
+{
+  s32 ret;
+  s32 r;
+  int new_var;
+  s32 i;
+  s32 n;
+  n = 0;
+  for (i = 0; i < D_801001C4_MinigameHouse[cat].count; i++)
+  {
+    n += func_8005949C(D_801001C4_MinigameHouse[cat].list[i] - 1) != 0;
+  }
 
-    n = 0;
-    for (i = 0; i < D_801001C4_MinigameHouse[cat].count; i++) {
-        n += func_8005949C(D_801001C4_MinigameHouse[cat].list[i] - 1) != 0;
-    }
-    r = n < 5;
-    if (((cat == 0) | (cat == 3)) == 0) {
-        r = n < 3;
-    }
-    if (r != 0) {
-        ret = 1;
-    } else {
-        ret = 0;
-    }
-    return ret;
+  new_var = (cat == 0) | (cat == 3);
+  r = n < 5;
+  if (new_var == 0)
+  {
+    r = n < 3;
+  }
+  if (r != 0)
+  {
+    ret = 1;
+  }
+  else
+    if (n)
+  {
+    ret = 0;
+  }
+  else
+  {
+    ret = 0;
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FAE94_MinigameHouse);
-#endif
 s32 func_800FAF5C_MinigameHouse(s16 win) {
     char buf[2][3];
     s32 total;
