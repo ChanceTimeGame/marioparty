@@ -1224,16 +1224,15 @@ void func_800F8CC8_WariosBattleCanyon(void) {
     SetBoardFeatureFlag(0x51);
 }
 
-// retail re-masks the random target with andi 0xFF after the & 3 (one instruction; masked 2)
-#ifdef NON_MATCHING
-void func_800F8D10_WariosBattleCanyon(void) {
-    func_800F86A8_WariosBattleCanyon(rand8() & 3);
-    func_800559F8();
-    EndProcess(NULL);
+// decomp-permuter
+void func_800F8D10_WariosBattleCanyon(void)
+{
+  short new_var;
+  new_var = rand8() & 3;
+  func_800F86A8_WariosBattleCanyon(new_var);
+  func_800559F8();
+  EndProcess(0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_39_WariosBattleCanyon/248F30", func_800F8D10_WariosBattleCanyon);
-#endif
 
 
 void func_800F8D48_WariosBattleCanyon(void) {
@@ -1395,38 +1394,37 @@ void func_800F93FC_WariosBattleCanyon(void) {
     SetNextChainAndSpace(GetCurrentPlayerIndex(), 2, 1);
 }
 
-// register allocation: retail copies the coin amount into a second callee-saved register before the coin calls (one extra move; masked 1, as DK's func_800F9470)
-#ifdef NON_MATCHING
-void func_800F942C_WariosBattleCanyon(void) {
-    s16 player;
-    s16 win;
-    s32 coins;
-
-    player = GetCurrentPlayerIndex();
-    func_800405DC(player);
-    SetPlayerAnimation(-1, -1, 2);
-    if (_CheckFlag(0x42) == 0) {
-        win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-        LoadStringIntoWindow(win, (void*)0x239, -1, -1);
-        coins = 10;
-    } else {
-        win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-        LoadStringIntoWindow(win, (void*)0x23A, -1, -1);
-        coins = 20;
-    }
-    func_8006E070(win, 0);
-    ShowTextWindow(win);
-    PlaySound(0x432);
-    func_8004DBD4(win, player);
-    HideTextWindow(win);
-    func_80055960(player, coins);
-    ShowPlayerCoinChange(player, coins);
-    HuPrcSleep(30);
-    func_8003FEFC(player);
+// decomp-permuter
+void func_800F942C_WariosBattleCanyon(void)
+{
+  s16 player;
+  s16 win;
+  short coins;
+  player = GetCurrentPlayerIndex();
+  func_800405DC(player);
+  SetPlayerAnimation(-1, -1, 2);
+  if (_CheckFlag(0x42) == 0)
+  {
+    win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
+    LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
+    coins = 10;
+  }
+  else
+  {
+    win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
+    LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
+    coins = 20;
+  }
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
+  PlaySound(0x432);
+  func_8004DBD4(win, player);
+  HideTextWindow(win);
+  func_80055960(player, coins);
+  ShowPlayerCoinChange(player, coins);
+  HuPrcSleep(30);
+  func_8003FEFC(player);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_39_WariosBattleCanyon/248F30", func_800F942C_WariosBattleCanyon);
-#endif
 
 
 void func_800F9560_WariosBattleCanyon(void) {
