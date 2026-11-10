@@ -2561,19 +2561,16 @@ void func_800FD670_name_2A(omObjData* obj) {
     }
 }
 
-// float load scheduling
-#ifdef NON_MATCHING
 f32 func_800FD7D8_name_2A(omObjData* obj) {
     f32 hx = D_800FE048_name_2A->trans.x + 0.0f;
     f32 hy = D_800FE048_name_2A->trans.y + 350.0f;
     f32 hz = D_800FE048_name_2A->trans.z + -560.0f;
+    f32 ox = obj->trans.x;
+    f32 oy = obj->trans.y;
+    f32 oz = obj->trans.z;
 
-    return D_800FDF50_name_2A = (hx - obj->trans.x) * (hx - obj->trans.x) + (hy - obj->trans.y) * (hy - obj->trans.y) +
-                                (hz - obj->trans.z) * (hz - obj->trans.z);
+    return D_800FDF50_name_2A = (hx - ox) * (hx - ox) + (hy - oy) * (hy - oy) + (hz - oz) * (hz - oz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD7D8_name_2A);
-#endif
 
 s32 func_800FD850_name_2A(s32 flags, s32 mask) {
     return (flags & mask) != 0;
@@ -2648,14 +2645,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD880_name_2A);
 #endif
 
 /* atan(x) by a continued fraction. */
-// f64 register allocation (as ovl_0D's twin)
-#ifdef NON_MATCHING
 f32 func_800FDBF4_name_2A(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 base;
-    f64 frac;
     s32 sign;
     s32 i;
 
@@ -2680,23 +2673,15 @@ f32 func_800FDBF4_name_2A(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            base = 1.5707963267948966;
-            frac = x / (sum + 1.0f);
-            goto done;
+            return 1.5707963267948966 - (x / (sum + 1.0f));
         }
         if (sign < 0) {
-            frac = x / (sum + 1.0f);
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - (x / (sum + 1.0f));
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FDBF4_name_2A);
-#endif
 
 void func_800FDD44_name_2A(void) {
 }
