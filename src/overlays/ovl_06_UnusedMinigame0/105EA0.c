@@ -566,7 +566,7 @@ void func_800FDA50_UnusedMinigame0(UM0Tile* t, s32 match) {
         }
     }
 }
-// argument narrowing order (retail narrows col/row twice)
+// argument narrowing order: retail narrows col/row twice, GCC CSEs them (masked 41, raw 36); tried implicit narrowing, s16 locals after the call
 #ifdef NON_MATCHING
 s32 func_800FDC1C_UnusedMinigame0(s32 col, s32 row) {
     UM0Tile** p;

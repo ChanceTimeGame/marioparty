@@ -236,7 +236,7 @@ void func_800F9814_HotBobOmb(s32 port) {
     D_800FA5B4_HotBobOmb[port]++;
 }
 
-// masked
+// sign tests: GCC if-converts dy/dx = +-1 to slti/negu/ori where retail branches (masked 20, raw 59); tried if/else, the s8 parameters directly
 #ifdef NON_MATCHING
 s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
     s32 x;
