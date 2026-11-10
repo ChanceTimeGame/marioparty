@@ -182,13 +182,11 @@ void func_800F6AB8_LimboDance(omObjData* obj) {
 }
 
 /* Result: coins (+10 cleared, -5 failed), the zoom on the dancer, the voice, then the exit. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F6C7C_LimboDance(omObjData* obj) {
     s16 cleared[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
     s16 failed[6] = { 0x44A, 0x44B, 0x44C, 0x44D, 0x44E, 0x44F };
     f32 t;
-    s32 go;
+    s16 go;
     s32 msg;
 
     if (D_800FE992_LimboDance != 0) {
@@ -206,7 +204,9 @@ void func_800F6C7C_LimboDance(omObjData* obj) {
     }
     switch (D_800FE98E_LimboDance) {
     case 0:
-        if (D_800FE990_LimboDance == 0 || D_800FE990_LimboDance < 0) {
+        if (D_800FE990_LimboDance == 0) {
+            D_800FE990_LimboDance++;
+        } else if (D_800FE990_LimboDance < 0) {
             D_800FE990_LimboDance++;
         } else {
             if (D_800FF1BC_LimboDance != 0) {
@@ -284,13 +284,6 @@ void func_800F6C7C_LimboDance(omObjData* obj) {
     func_800F756C_LimboDance();
     func_800F723C_LimboDance(obj);
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", D_800FEAE0_LimboDance);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", D_800FEAEC_LimboDance);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F6C7C_LimboDance);
-#endif
 
 /* Practice result (_CheckFlag(0x2B)). */
 void func_800F70C0_LimboDance(omObjData* obj) {
