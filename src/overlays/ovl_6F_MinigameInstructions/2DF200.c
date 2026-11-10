@@ -1535,8 +1535,6 @@ void func_801001B0_MinigameInstructions(Ovl6FPlayerWork* work) {
     work->unk_4C--;
 }
 
-// the -180.0f for CZoom - unk_14 is rematerialised in retail, CSE'd here (masked 2)
-#ifdef NON_MATCHING
 void func_801001D0_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;
@@ -1554,6 +1552,10 @@ void func_801001D0_MinigameInstructions(Ovl6FPlayerWork* work) {
                       (u8*)"21_kimoti_1b-atama_3");
         func_80025830(work->unk_4E, 0.28f, 0.28f, 0.28f);
         func_80025798(work->unk_70, -1000.0f, 0.0f, 0.0f);
+        work->unk_08 = work->unk_38 * 30 + 40;
+        pos.x = work->unk_00 = -50.0f;
+        pos.y = work->unk_04 = 150.0f;
+        work->unk_14 = -180.0f;
     } else {
         work->unk_4E = LoadFormFile((D_8010E964_MinigameInstructions[chr] << 16) | 0x9F, 0x299);
         work->unk_50 = func_80023FC8(work->unk_4E);
@@ -1567,21 +1569,18 @@ void func_801001D0_MinigameInstructions(Ovl6FPlayerWork* work) {
         func_800258EC(work->unk_70, 0x4000, 0x4000);
         func_80025830(work->unk_4E, 0.28f, 0.28f, 0.28f);
         func_80028498(work->unk_4E, func_80025E48(work->unk_56), 2);
+        work->unk_08 = work->unk_38 * 30 + 40;
+        pos.x = work->unk_00 = -50.0f;
+        pos.y = work->unk_04 = 150.0f;
+        work->unk_14 = -180.0f;
     }
-    work->unk_08 = work->unk_38 * 30 + 40;
-    pos.x = work->unk_00 = -50.0f;
-    pos.y = work->unk_04 = 150.0f;
-    work->unk_14 = -180.0f;
-    func_8001DD24(0, CZoom - work->unk_14, (Vec3f*)&pos, &out);
+    func_8001DD24(0, CZoom - -180.0f, (Vec3f*)&pos, &out);
     work->unk_0C = out.x;
     work->unk_10 = out.y;
     func_80025798(work->unk_4E, out.x, out.y, work->unk_14);
     func_800257E4(work->unk_4E, 0.0f, 0.0f, 0.0f);
     work->unk_B4 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2DF200", func_801001D0_MinigameInstructions);
-#endif
 void func_801004EC_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;
