@@ -933,12 +933,13 @@ void func_800F9510_MushroomMixup(omObjData* arg0, s32 arg1) {
 
 // register allocation, u16 vs s16 load of D_800FC996 (tested != 0)
 /* A player's object function during the rounds. */
+// register allocation (masked 0, raw 13): retail swaps s2/s3 (st and the ContBtnTrg base); declaring st first does not move them
 #ifdef NON_MATCHING
 void func_800F9548_MushroomMixup(omObjData* arg0) {
     MMPlayerWork* work;
     MMPlayerState* st;
     MMMushroom* rec;
-    u8 p;
+    s32 p;
 
     p = arg0->work[0];
     work = arg0->unk_50;
@@ -947,37 +948,37 @@ void func_800F9548_MushroomMixup(omObjData* arg0) {
     st->savBtnTrg = ContBtnTrg[GwPlayer[p].port];
     st->savStkX = ContStkX[GwPlayer[p].port];
     st->savStkY = ContStkY[GwPlayer[p].port];
-    if (func_800F8260_MushroomMixup(arg0)) {
-        func_800F82AC_MushroomMixup(arg0);
-        return;
-    }
-    func_800F8A58_MushroomMixup(arg0);
-    ContBtnTrg[GwPlayer[p].port] &= 0xBFFF;
-    if (D_800FC996_MushroomMixup != 0) {
-        ContBtn[GwPlayer[p].port] = 0;
-        ContBtnTrg[GwPlayer[p].port] = 0;
-        ContStkX[GwPlayer[p].port] = 0;
-        ContStkY[GwPlayer[p].port] = 0;
-        work->unk_40 = 0.0f;
-    }
-    if ((u8)(work->unk_53 - 2) < 7) {
-        rec = &D_800FC9C0_MushroomMixup[work->unk_53 - 2];
-        if ((rec->color & 7) != D_800FC81C_MushroomMixup && D_800FC8A0_MushroomMixup == 0 && rec->state == 2 &&
-            rec->speed < 0.0f) {
-            if (D_800FC710_MushroomMixup[arg0->work[0]] == 0) {
-                D_800FC710_MushroomMixup[arg0->work[0]] = 0xC;
-                func_80060F04(work->unk_58, 2, 3, 0xA);
-            } else {
-                D_800FC710_MushroomMixup[arg0->work[0]]--;
+    if (func_800F8260_MushroomMixup(arg0) == 0) {
+        func_800F8A58_MushroomMixup(arg0);
+        ContBtnTrg[GwPlayer[p].port] &= 0xBFFF;
+        if (D_800FC996_MushroomMixup != 0) {
+            ContBtn[GwPlayer[p].port] = 0;
+            ContBtnTrg[GwPlayer[p].port] = 0;
+            ContStkX[GwPlayer[p].port] = 0;
+            ContStkY[GwPlayer[p].port] = 0;
+            work->unk_40 = 0.0f;
+        }
+        if ((u8)(work->unk_53 - 2) < 7) {
+            rec = &D_800FC9C0_MushroomMixup[work->unk_53 - 2];
+            if ((rec->color & 7) != D_800FC81C_MushroomMixup && D_800FC8A0_MushroomMixup == 0 && rec->state == 2 &&
+                rec->speed < 0.0f) {
+                if (D_800FC710_MushroomMixup[arg0->work[0]] == 0) {
+                    D_800FC710_MushroomMixup[arg0->work[0]] = 0xC;
+                    func_80060F04(work->unk_58, 2, 3, 0xA);
+                } else {
+                    D_800FC710_MushroomMixup[arg0->work[0]]--;
+                }
             }
         }
+        func_80005A28(arg0);
+        ContBtn[GwPlayer[p].port] = st->savBtn;
+        ContBtnTrg[GwPlayer[p].port] = st->savBtnTrg;
+        ContStkX[GwPlayer[p].port] = st->savStkX;
+        ContStkY[GwPlayer[p].port] = st->savStkY;
+        func_800F8260_MushroomMixup(arg0);
+    } else {
+        func_800F82AC_MushroomMixup(arg0);
     }
-    func_80005A28(arg0);
-    ContBtn[GwPlayer[p].port] = st->savBtn;
-    ContBtnTrg[GwPlayer[p].port] = st->savBtnTrg;
-    ContStkX[GwPlayer[p].port] = st->savStkX;
-    ContStkY[GwPlayer[p].port] = st->savStkY;
-    func_800F8260_MushroomMixup(arg0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F9548_MushroomMixup);
