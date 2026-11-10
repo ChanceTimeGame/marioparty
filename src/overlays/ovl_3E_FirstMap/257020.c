@@ -373,7 +373,7 @@ void func_800F70F0_FirstMap(s16 arg0) {
 }
 
 // retail loads the first curPlayerIndex through %hi(GwSystem + 0x1C), the rest through the
-// &GwSystem register: GCC CSEs the first one too (one instruction, masked 0 otherwise)
+// &GwSystem register: GCC CSEs the first one too (one instruction, masked 0 otherwise); tried gs assigned after the call, no gs local
 #ifdef NON_MATCHING
 void func_800F714C_FirstMap(void) {
     GW_SYSTEM* gs = &GwSystem;
