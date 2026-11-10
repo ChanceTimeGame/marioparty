@@ -1651,8 +1651,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FBABC
 
 
 /* The two torches: flame models at the ends of the floor, each with a light. */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 void func_800FC0B4_HotRopeJump(omObjData* obj) {
     s16 pos[2][4] = { { 0, 150, -600, 0 }, { 0, 150, 600, 180 } };
     HRJSeg* seg;
@@ -1670,8 +1668,7 @@ void func_800FC0B4_HotRopeJump(omObjData* obj) {
     func_8009B770(seg, 0, 13 * sizeof(HRJSeg));
     for (i = 0; i < 2; i++, seg++) {
         tex = func_80067310(D_801007CC_HotRopeJump);
-        seg->model = func_800FD90C_HotRopeJump(D_800FE650_HotRopeJump, tex, func_80067310(D_801007CE_HotRopeJump));
-        obj->model[i] = seg->model;
+        obj->model[i] = seg->model = func_800FD90C_HotRopeJump(D_800FE650_HotRopeJump, tex, func_80067310(D_801007CE_HotRopeJump));
         mdl = &D_800F2B7C[seg->model];
         seg->pos.x = seg->base.x = pos[i][0];
         seg->pos.y = seg->base.y = pos[i][1];
@@ -1702,11 +1699,6 @@ void func_800FC0B4_HotRopeJump(omObjData* obj) {
     D_80100830_HotRopeJump.z = CRot.z = 0.0f;
     D_80100848_HotRopeJump = CZoom = 1000.0f;
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", D_800FE998_HotRopeJump);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FC0B4_HotRopeJump);
-#endif
 
 /* The torches: the intro camera move and light, then each flame's light and list. */
 // NON_MATCHING: register allocation and block layout
