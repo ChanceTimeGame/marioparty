@@ -242,54 +242,69 @@ f32 func_800F7560_GroundPound(omObjData* obj, f32 angle) {
     return angle;
 }
 
-// register allocation: angle/dist swap f22/f28 (masked 0)
-#ifdef NON_MATCHING
-f32 func_800F7628_GroundPound(omObjData* obj, f32 angle) {
-    f32 dist;
-    GPMoleWork* w = obj->unk_50;
-    f32 dx = obj->trans.x - w->home.x;
-    f32 dz = obj->trans.z - w->home.z;
-    f32 d = dx * dx + dz * dz;
-    s32 fast;
-
-    if (d < 196.0f) {
-        w->state = 1;
-        w->pos.x = w->home.x;
-        w->pos.y = w->home.y;
-        w->pos.z = w->home.z;
-        func_80025BB8(obj->model[0], obj->motion[0]);
-        func_80025EB4(obj->model[0], 2, 0);
-        w->timer = 120;
-    } else {
-        dist = func_800B1750(d);
-        if (d < 3600.0f) {
-            if (dist > 0.01f) {
-                d = (w->pos.y - w->home.y) / dist;
-                w->pos.y -= d;
-            }
-        }
-        fast = D_800FA450_GroundPound < 25;
-        if (D_800FA450_GroundPound < 48) {
-            goto turn;
-        }
-        if (d > 57600.0f) {
-        turn:
-            angle = func_800F7310_GroundPound(fast, angle, dx, dz);
-        }
-        if (D_800FA450_GroundPound != 0) {
-            if (dist / w->speed > D_800FA450_GroundPound - 15) {
-                w->speed = dist / D_800FA450_GroundPound;
-            } else {
-                angle = func_800F73E4_GroundPound(w, angle);
-            }
-        }
-        func_800F7180_GroundPound(obj, angle, w->speed, w->home.y, w->pos.y);
+// decomp-permuter
+f32 func_800F7628_GroundPound(omObjData *obj, f32 angle)
+{
+  f32 dist;
+  GPMoleWork *w = obj->unk_50;
+  f32 dx = obj->trans.x - w->home.x;
+  f32 dz = obj->trans.z - w->home.z;
+  f32 d = (dx * dx) + (dz * dz);
+  s32 fast;
+  if (d < 196.0f)
+  {
+    w->state = 1;
+    w->pos.x = w->home.x;
+    w->pos.y = w->home.y;
+    w->pos.z = w->home.z;
+    func_80025BB8(obj->model[0], obj->motion[0]);
+    func_80025EB4(obj->model[0], 2, 0);
+    w->timer = 120;
+  }
+  else
+  {
+    dist = func_800B1750(d);
+    if (d < 3600.0f)
+    {
+      if (dist > 0.01f)
+      {
+        d = (w->pos.y - w->home.y) / dist;
+        w->pos.y -= d;
+      }
     }
+    fast = D_800FA450_GroundPound < 25;
+    if (D_800FA450_GroundPound < 48)
+    {
+      goto turn;
+    }
+    if (d > 57600.0f)
+    {
+      turn:
+      angle = func_800F7310_GroundPound(fast, angle, dx, dz);
+
+    }
+    if (D_800FA450_GroundPound != 0)
+    {
+      if ((dist / w->speed) > (D_800FA450_GroundPound - 15))
+      {
+        w->speed = dist / D_800FA450_GroundPound;
+      }
+      else
+      {
+        angle = func_800F73E4_GroundPound(w, angle);
+      }
+    }
+    func_800F7180_GroundPound(obj, angle, w->speed, w->home.y, w->pos.y);
+  }
+  if (dist || (&w->home))
+  {
     return angle;
+  }
+  else
+  {
+    return angle;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_GroundPound/146B60", func_800F7628_GroundPound);
-#endif
 
 f32 func_800F7844_GroundPound(omObjData* obj, f32 angle) {
     GPMoleWork* w = obj->unk_50;
