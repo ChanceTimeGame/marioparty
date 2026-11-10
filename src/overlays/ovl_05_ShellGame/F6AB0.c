@@ -1254,8 +1254,6 @@ void func_800FA0EC_ShellGame(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA0EC_ShellGame);
 #endif
-// NON_MATCHING: compare tree of the frame switch (cases 0, 21)
-#ifdef NON_MATCHING
 void func_800FA664_ShellGame(void) {
     omObjData* obj;
     SGShell* sh;
@@ -1263,8 +1261,7 @@ void func_800FA664_ShellGame(void) {
     f32 dz;
     u16 i;
 
-    switch (D_800FF104_ShellGame) {
-    case 0:
+    if (D_800FF104_ShellGame == 0) {
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
             obj = D_800FF9F8_ShellGame[i];
             sh = &D_800FF7A0_ShellGame[i];
@@ -1275,8 +1272,7 @@ void func_800FA664_ShellGame(void) {
             sh->unk60 = 60.0f;
         }
         D_800FF9EC_ShellGame = 2;
-        break;
-    default:
+    } else if (D_800FF104_ShellGame < 21) {
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
             obj = D_800FF9F8_ShellGame[i];
             sh = &D_800FF7A0_ShellGame[i];
@@ -1287,8 +1283,7 @@ void func_800FA664_ShellGame(void) {
             }
             sh->unk60 -= 6.0;
         }
-        break;
-    case 21:
+    } else if (D_800FF104_ShellGame == 21) {
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
             obj = D_800FF9F8_ShellGame[i];
             sh = &D_800FF7A0_ShellGame[i];
@@ -1297,15 +1292,9 @@ void func_800FA664_ShellGame(void) {
             obj->trans.z = sh->unk10.z;
         }
         D_800FF100_ShellGame = 2;
-        break;
     }
     D_800FF104_ShellGame++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA664_ShellGame);
-#endif
-// NON_MATCHING: load order in the move-list switch
-#ifdef NON_MATCHING
 void func_800FA954_ShellGame(void) {
     D_800FF104_ShellGame = 0;
     switch (D_800FF110_ShellGame[D_800FEC2E_ShellGame]) {
@@ -1325,17 +1314,12 @@ void func_800FA954_ShellGame(void) {
         D_800FEC2E_ShellGame++;
         break;
     }
-    if (D_800FF9D0_ShellGame.unk18 < D_800FEC2E_ShellGame) {
+    if (D_800FEC2E_ShellGame > D_800FF9D0_ShellGame.unk18) {
         D_800FF104_ShellGame = 0;
         D_800FF100_ShellGame = 3;
         D_800FF9EC_ShellGame = 4;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA954_ShellGame);
-#endif
-// NON_MATCHING: compare tree of the frame switch (cases 60, 61)
-#ifdef NON_MATCHING
 void func_800FAA44_ShellGame(void) {
     u16 i;
 
@@ -1363,8 +1347,7 @@ void func_800FAA44_ShellGame(void) {
         D_800FF104_ShellGame++;
         return;
     }
-    switch (D_800FF104_ShellGame) {
-    case 60:
+    if (D_800FF104_ShellGame == 60) {
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
             func_800F9570_ShellGame(D_800FF9F8_ShellGame[i]);
         }
@@ -1372,24 +1355,22 @@ void func_800FAA44_ShellGame(void) {
         func_80060758(0x15E);
         D_800FF104_ShellGame++;
         D_800ED430 = 1;
-        break;
-    case 61:
+        return;
+    }
+    if (D_800FF104_ShellGame == 61) {
         if (GMesStatAllGet() == 0) {
             D_800FFA3C_ShellGame = 0;
             D_800FF104_ShellGame++;
         }
-        break;
-    default:
+        return;
+    }
+    if (D_800FF104_ShellGame >= 62) {
         D_800FF9EC_ShellGame = 3;
         D_800FEC16_ShellGame = 1;
         D_800FF104_ShellGame = 0;
         D_800FF100_ShellGame = 7;
-        break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FAA44_ShellGame);
-#endif
 // NON_MATCHING: FP register allocation
 #ifdef NON_MATCHING
 void func_800FAC34_ShellGame(void) {
@@ -1451,7 +1432,7 @@ void func_800FAC34_ShellGame(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FAC34_ShellGame);
 #endif
-// NON_MATCHING: FP register allocation
+// NON_MATCHING: FP register allocation of the progress quotient (masked 0; implicit casts tried)
 #ifdef NON_MATCHING
 void func_800FB030_ShellGame(void) {
     u16 order[6];
