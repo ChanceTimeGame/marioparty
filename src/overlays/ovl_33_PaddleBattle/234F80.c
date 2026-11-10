@@ -1391,33 +1391,26 @@ s16 func_800FB704_PaddleBattle(s32 file) {
 }
 
 /* Turns angle `cur` toward `target` by `rate` of the shorter way (degrees, 0..360). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 34 lines)
-#ifdef NON_MATCHING
 f32 func_800FB74C_PaddleBattle(f32 target, f32 cur, f32 rate) {
-    f32 d;
-
     if (target >= 360.0f) {
         target -= 360.0f;
     } else if (target < 0.0) {
         target += 360.0f;
     }
-    d = target - cur;
-    if (d < -180.0) {
-        d += 360.0;
-    } else if (d >= 180.0) {
-        d -= 360.0;
+    target -= cur;
+    if (target < -180.0) {
+        target += 360.0;
+    } else if (target >= 180.0) {
+        target -= 360.0;
     }
-    cur = cur + d * rate;
-    if (cur >= 360.0f) {
-        cur -= 360.0f;
-    } else if (cur < 0.0) {
-        cur += 360.0f;
+    target = cur + target * rate;
+    if (target >= 360.0f) {
+        target -= 360.0f;
+    } else if (target < 0.0) {
+        target += 360.0f;
     }
-    return cur;
+    return target;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB74C_PaddleBattle);
-#endif
 
 /* World `pos` to screen coordinates (x, y from the centre) and a scale in z, for camera `cam`. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 68 lines)
@@ -1846,7 +1839,7 @@ void func_800FD51C_PaddleBattle(s16 model) {
     D_800FFEF0_PaddleBattle++;
 }
 
-// logic-equivalent; register allocation and instruction order differ (normalised diff 34 lines)
+// register allocation (masked 0, raw 19); tried size/i reuse for the malloc sizes and g/g30 order
 #ifdef NON_MATCHING
 void func_800FD570_PaddleBattle(PBCol* e, s16 model) {
     unk2C0C0StructC0* m;
