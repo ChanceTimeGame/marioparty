@@ -398,8 +398,6 @@ void func_800F7B88_MarioBandstand(s32 state) {
     }
 }
 
-// NON_MATCHING: masked 24 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F7C1C_MarioBandstand(s32 cmd) {
     s32 i;
 
@@ -415,7 +413,6 @@ void func_800F7C1C_MarioBandstand(s32 cmd) {
             func_800258EC(D_800FD2A8_MarioBandstand[i][0], 4, 4);
         }
         func_800258EC(D_800FD2A8_MarioBandstand[2][1], 4, 4);
-    case 4:
         func_800F7458_MarioBandstand();
         break;
     case 3:
@@ -425,14 +422,14 @@ void func_800F7C1C_MarioBandstand(s32 cmd) {
         func_800258EC(D_800FD2A8_MarioBandstand[2][1], 4, 0);
         func_800F73E8_MarioBandstand();
         break;
+    case 4:
+        func_800F7458_MarioBandstand();
+        break;
     }
     if (cmd >= 100) {
         func_800F7B88_MarioBandstand(cmd - 100);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7C1C_MarioBandstand);
-#endif
 
 /* Ranks the players by score (lowest first), pays the best 10 coins each; returns half the
    rounded score total. */
@@ -506,25 +503,26 @@ void func_800F7F7C_MarioBandstand(omObjData* obj) {
 
 /* Recolours the crown model's vertices and brightens its "18mt000_IA44" texture (IA4: doubles
    each intensity nibble). */
-// NON_MATCHING: masked 30 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F80B0_MarioBandstand(s16 model) {
     unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
-    s16 count = m->unk_76;
+    s32 count = m->unk_76;
     unk2C0C0Struct70* tex;
     u8* p;
     s32 i;
     s32 size;
     u32 v;
+    u32 hi;
 
     for (i = 0; i < count; i++) {
-        m->unk_A8[i].unk_01 = 0xFB;
-        m->unk_A8[i].unk_05.r = 0xFB;
-        m->unk_A8[i].unk_02 = 0xFF;
-        m->unk_A8[i].unk_05.g = 0xFF;
-        m->unk_A8[i].unk_03 = 0x8E;
-        m->unk_A8[i].unk_05.b = 0x8E;
-        m->unk_A8[i].unk_0D = 0xFF;
+        unk2C0C0Struct90* e = &m->unk_A8[i];
+
+        e->unk_01 = 0xFB;
+        e->unk_05.r = 0xFB;
+        e->unk_02 = 0xFF;
+        e->unk_05.g = 0xFF;
+        e->unk_03 = 0x8E;
+        e->unk_05.b = 0x8E;
+        e->unk_0D = 0xFF;
     }
     tex = func_80038178(m, (u8*)"18mt000_IA44");
     if (tex != NULL) {
@@ -532,18 +530,19 @@ void func_800F80B0_MarioBandstand(s16 model) {
         p = tex->unk_24;
         if ((*(u32*)&tex->unk_18 & 0xFFFF0000) == 0x03010000) {
             for (i = 0; i < size; i++, p++) {
+                hi = *p & 0xF0;
                 v = (*p & 0xF) * 2;
                 if (v >= 0x10) {
                     v = 0xF;
                 }
-                *p = v | (*p & 0xF0);
+                *p = v | hi;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F80B0_MarioBandstand);
-#endif
+
+const char D_800FD238_MarioBandstand[] __attribute__((section(".rodata"))) = "";
+const char D_800FD23C_MarioBandstand[] __attribute__((section(".rodata"))) = "";
 
 // NON_MATCHING: masked 35 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -936,24 +935,24 @@ void func_800F8FCC_MarioBandstand(MBItem* it) {
 }
 
 /* Frees the items' models (the object's model slots that hold them). */
-// NON_MATCHING: masked 43 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F92B4_MarioBandstand(omObjData* obj) {
     MBItem* it = obj->unk_50;
     s16* model;
     s32 n;
     s32 i;
+    s16 m1;
     s16 m2;
 
     n = 0;
     do {
         it->state = 0;
+        m1 = it->model;
         m2 = it->model2;
         model = obj->model;
         for (i = 0; i < obj->mdlcnt; i++, model++) {
-            if (*model == it->model) {
+            if (*model == m1) {
                 *model = -1;
-                func_8002456C(it->model);
+                func_8002456C(m1);
                 break;
             }
         }
@@ -969,9 +968,6 @@ void func_800F92B4_MarioBandstand(omObjData* obj) {
         it++;
     } while (n < 8);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F92B4_MarioBandstand);
-#endif
 
 void func_800F93A4_MarioBandstand(omObjData* obj) {
     MBItem* it = obj->unk_50;
