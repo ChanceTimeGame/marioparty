@@ -359,23 +359,21 @@ void func_800F72B8_LimboDance(void) {
 }
 
 /* The intro pan, t = 0..1. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F7328_LimboDance(f32 t) {
+    f64 d;
+
     if (t > 1.0) {
         t = 1.0f;
     }
-    CRot.x = t * -7.0 + -3.0;
-    CRot.y = t * 0.0 + 0.0;
-    CRot.z = t * 0.0 + 0.0;
-    Center.x = t * -350.0 + 350.0;
-    Center.y = t * 125.0 + 25.0;
-    Center.z = t * 1050.0 + -1050.0;
-    CZoom = t * 0.0 + 900.0;
+    d = t;
+    CRot.x = d * -7.0 + -3.0;
+    CRot.y = d * 0.0 + 0.0;
+    CRot.z = d * 0.0 + 0.0;
+    Center.x = d * -350.0 + 350.0;
+    Center.y = d * 125.0 + 25.0;
+    Center.z = d * 1050.0 + -1050.0;
+    CZoom = d * 0.0 + 900.0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F7328_LimboDance);
-#endif
 
 /* The result zoom, t = 0..1. */
 void func_800F7424_LimboDance(f32 t) {
@@ -494,8 +492,6 @@ void func_800F78DC_LimboDance(s16 model, LDMot* mot, s16 loop) {
     }
 }
 
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F7984_LimboDance(void) {
     omObjData* obj;
     s16 i;
@@ -518,6 +514,7 @@ void func_800F7984_LimboDance(void) {
     case 3:
         pl = 3;
         break;
+    case 0:
     default:
         pl = 0;
         break;
@@ -542,12 +539,7 @@ void func_800F7984_LimboDance(void) {
     D_800FF062_LimboDance = GwPlayer[pl].character;
     D_800F2BC0++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F7984_LimboDance);
-#endif
 
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F7B08_LimboDance(omObjData* obj) {
     s16 stepA[2] = { 15, 56 };
     s16 stepB[2] = { 16, 60 };
@@ -573,6 +565,7 @@ void func_800F7B08_LimboDance(omObjData* obj) {
     case 3:
         pl = 3;
         break;
+    case 0:
     default:
         pl = 0;
         break;
@@ -606,9 +599,6 @@ void func_800F7B08_LimboDance(omObjData* obj) {
     obj->rot.y = 90.0f;
     D_800F2B7C[obj->model[0]].unk_4C = 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F7B08_LimboDance);
-#endif
 
 /* The dancer: lean back with A (CPU: func_800F8CA0), step under the bars, fall on a miss. */
 // NON_MATCHING: register allocation / scheduling
