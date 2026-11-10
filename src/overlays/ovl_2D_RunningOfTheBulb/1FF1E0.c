@@ -1686,128 +1686,165 @@ void func_800FBAA4_RunningOfTheBulb(omObjData* arg0) {
     }
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800FBB5C_RunningOfTheBulb(omObjData* arg0) {
-    RotbPlayerWork* work;
-    RotbPlayerExt* ext;
-    omObjData* obj;
-    s32 i;
-    u16 n;
-
-    switch (D_800FE4A4_RunningOfTheBulb) {
+// decomp-permuter
+void func_800FBB5C_RunningOfTheBulb(omObjData *arg0)
+{
+  RotbPlayerWork *work;
+  RotbPlayerExt *ext;
+  omObjData *obj;
+  s32 i;
+  u16 n;
+  switch (D_800FE4A4_RunningOfTheBulb)
+  {
     case 5:
-        for (i = 0; i < 4; i++) {
-            func_800F9648_RunningOfTheBulb(D_800FE460_RunningOfTheBulb[i]);
-        }
-        GMesCreate(2);
-        if (D_800FE458_RunningOfTheBulb != 0) {
-            D_800FE4A4_RunningOfTheBulb = 11;
-        } else {
-            D_800FE4A4_RunningOfTheBulb = 6;
-        }
-        break;
-    case 6:
-        if (GMesStatAllGet() & 2) {
-            D_800FE4A4_RunningOfTheBulb = 1;
-        }
-        break;
-    case 1:
-        for (i = 0; i < 4; i++) {
-            work = D_800FE460_RunningOfTheBulb[i]->unk_50;
-            ext = work->unk_E4;
-            work->unk_40 = 0.0f;
-            func_80009E20(D_800FE460_RunningOfTheBulb[i]);
-            /* Retail sets the count per player instead of adding to it, so it never reaches 4
-               and D_800FE448 is always 0xA5. */
-            n = 0;
-            if (!(ext->unk_00 & 0x20)) {
-                func_800185A4(D_800FE460_RunningOfTheBulb[i], 0xD);
-                n = 1;
-            }
-            D_800FE460_RunningOfTheBulb[i]->func_ptr = &func_800F960C_RunningOfTheBulb;
-        }
-        if (n == 4) {
-            D_800FE448_RunningOfTheBulb = 0xB4;
-        } else {
-            D_800FE448_RunningOfTheBulb = 0xA5;
-        }
-        func_80060128(0x37);
-        D_800FE4A4_RunningOfTheBulb = 7;
-        break;
-    case 2:
-        for (i = 0; i < 4; i++) {
-            obj = D_800FE460_RunningOfTheBulb[i];
-            ext = ROTB_PLAYER(obj)->unk_E4;
-            if (!(ext->unk_00 & 0x30)) {
-                func_800F947C_RunningOfTheBulb(obj, 45.0f);
-            }
-        }
-        D_800FE4A4_RunningOfTheBulb = 3;
-        break;
-    case 3:
-        n = 0;
-        for (i = 0; i < 4; i++) {
-            ext = ROTB_PLAYER(D_800FE460_RunningOfTheBulb[i])->unk_E4;
-            if (ext->unk_00 & 0x130) {
-                n++;
-            }
-        }
-        if (n == 4) {
-            D_800FE4A4_RunningOfTheBulb = 5;
-        }
-        break;
-    case 7:
-        if (--D_800FE448_RunningOfTheBulb == 0) {
-            D_800FE4A4_RunningOfTheBulb = 8;
-            func_800726AC(0, 0x14);
-        }
-        break;
-    case 8:
-        if (func_80072718() == 0) {
-            D_800FE3A0_RunningOfTheBulb[0] = 1;
-        }
-        break;
-    case 9:
-        if (D_800FE458_RunningOfTheBulb == 0) {
-            GMesCreate(0xE);
-            D_800FE4A4_RunningOfTheBulb = 10;
-        } else {
-            GMesCreate(2);
-            D_800FE4A4_RunningOfTheBulb = 11;
-        }
-        break;
-    case 10:
-        if ((GMesStatAllGet() & 2) && func_800F9650_RunningOfTheBulb() == 1) {
-            func_80060128(0x34);
-            for (i = 0; i < 4; i++) {
-                work = D_800FE460_RunningOfTheBulb[i]->unk_50;
-                ext = work->unk_E4;
-                work->unk_40 = 0.0f;
-                func_80009E20(D_800FE460_RunningOfTheBulb[i]);
-                if (!(ext->unk_00 & 0x30)) {
-                    func_800185A4(D_800FE460_RunningOfTheBulb[i], 0xE);
-                }
-                func_800258EC(D_800FE460_RunningOfTheBulb[i]->model[9], 4, 4);
-                D_800FE460_RunningOfTheBulb[i]->func_ptr = &func_800F960C_RunningOfTheBulb;
-            }
-            D_800FE448_RunningOfTheBulb = 0x96;
-            D_800FE4A4_RunningOfTheBulb = 7;
-        }
-        break;
-    case 11:
-        if (GMesWait() != 1) {
-            D_800FE4A4_RunningOfTheBulb = 8;
-            func_800726AC(0, 0x14);
-        }
-        break;
-    case 0:
-        break;
+      for (i = 0; i < 4; i++)
+    {
+      func_800F9648_RunningOfTheBulb(D_800FE460_RunningOfTheBulb[i]);
     }
+
+      GMesCreate(2);
+      if (D_800FE458_RunningOfTheBulb != 0)
+    {
+      D_800FE4A4_RunningOfTheBulb = 11;
+    }
+    else
+    {
+      D_800FE4A4_RunningOfTheBulb = 6;
+    }
+      break;
+
+    case 6:
+      if (GMesStatAllGet() & 2)
+    {
+      D_800FE4A4_RunningOfTheBulb = 1;
+    }
+      break;
+
+    case 1:
+      for (i = 0; i < 4; i++)
+    {
+      work = D_800FE460_RunningOfTheBulb[i]->unk_50;
+      ext = work->unk_E4;
+      work->unk_40 = 0.0f;
+      func_80009E20(D_800FE460_RunningOfTheBulb[i]);
+      n = 0;
+      if (!(ext->unk_00 & 0x20))
+      {
+        func_800185A4(D_800FE460_RunningOfTheBulb[i], 0xD);
+        n = 1;
+      }
+      D_800FE460_RunningOfTheBulb[i]->func_ptr = &func_800F960C_RunningOfTheBulb;
+    }
+
+      if (n == 4)
+    {
+      D_800FE448_RunningOfTheBulb = 0xB4;
+    }
+    else
+    {
+      D_800FE448_RunningOfTheBulb = 0xA5;
+    }
+      func_80060128(0x37);
+      D_800FE4A4_RunningOfTheBulb = 7;
+      break;
+
+    case 2:
+      for (i = 0; i < 4; i++)
+    {
+      obj = D_800FE460_RunningOfTheBulb[i];
+      work = (RotbPlayerWork *) obj->unk_50;
+      ext = work->unk_E4;
+      if (!(ext->unk_00 & 0x30))
+      {
+        func_800F947C_RunningOfTheBulb(obj, 45.0f);
+      }
+    }
+
+      D_800FE4A4_RunningOfTheBulb = 3;
+      break;
+
+    case 3:
+      n = 0;
+      for (i = 0; i < 4; i++)
+    {
+      ext = ((RotbPlayerWork *) D_800FE460_RunningOfTheBulb[i]->unk_50)->unk_E4;
+      if (ext->unk_00 & 0x130)
+      {
+        n++;
+      }
+    }
+
+      if (n == 4)
+    {
+      D_800FE4A4_RunningOfTheBulb = 5;
+    }
+      break;
+
+    case 7:
+      if ((--D_800FE448_RunningOfTheBulb) == 0)
+    {
+      D_800FE4A4_RunningOfTheBulb = 8;
+      func_800726AC(0, 0x14);
+    }
+      break;
+
+    case 8:
+      if (func_80072718() == 0)
+    {
+      D_800FE3A0_RunningOfTheBulb[0] = 1;
+    }
+      break;
+
+    case 9:
+      if (D_800FE458_RunningOfTheBulb == 0)
+    {
+      GMesCreate(0xE);
+      D_800FE4A4_RunningOfTheBulb = 10;
+    }
+    else
+    {
+      GMesCreate(2);
+      D_800FE4A4_RunningOfTheBulb = 11;
+    }
+      break;
+
+    case 10:
+      if ((GMesStatAllGet() & 2) && (func_800F9650_RunningOfTheBulb() == 1))
+    {
+      func_80060128(0x34);
+      for (i = 0; i < 4; i++)
+      {
+        work = D_800FE460_RunningOfTheBulb[i]->unk_50;
+        ext = work->unk_E4;
+        work->unk_40 = 0.0f;
+        func_80009E20(D_800FE460_RunningOfTheBulb[i]);
+        if (!(ext->unk_00 & 0x30))
+        {
+          func_800185A4(D_800FE460_RunningOfTheBulb[i], 0xE);
+        }
+        func_800258EC(D_800FE460_RunningOfTheBulb[i]->model[9], 4, 4);
+        D_800FE460_RunningOfTheBulb[i]->func_ptr = &func_800F960C_RunningOfTheBulb;
+      }
+
+      D_800FE448_RunningOfTheBulb = 0x96;
+      D_800FE4A4_RunningOfTheBulb = 7;
+    }
+      break;
+
+    case 11:
+      if (GMesWait() != 1)
+    {
+      D_800FE4A4_RunningOfTheBulb = 8;
+      func_800726AC(0, 0x14);
+    }
+      break;
+
+    case 0:
+      break;
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FBB5C_RunningOfTheBulb);
-#endif
 void func_800FBF30_RunningOfTheBulb(void) {
     if ((D_800FE3A0_RunningOfTheBulb[0] != 0) || (D_800F5144 != 0)) {
         func_800FE178_RunningOfTheBulb(0x83);
