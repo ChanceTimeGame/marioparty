@@ -676,15 +676,13 @@ void func_800F853C_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F853C_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 14 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F87EC_MarioBandstand(omObjData* obj) {
     MBCoin* c;
     s32 i;
 
     if (D_800FD518_MarioBandstand != 0) {
         c = D_800FD418_MarioBandstand;
-        for (i = 0; i < 8; i++, c++) {
+        for (i = 0; i < 8; c++, i++) {
             switch (c->state) {
             case 0:
                 if (c->timer != 0) {
@@ -709,13 +707,12 @@ void func_800F87EC_MarioBandstand(omObjData* obj) {
                     PlaySound(0xFC);
                 }
                 break;
+            case 2:
+                break;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F87EC_MarioBandstand);
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Thrown items
