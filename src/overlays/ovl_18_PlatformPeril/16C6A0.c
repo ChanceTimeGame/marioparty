@@ -579,8 +579,6 @@ void func_800F8B7C_PlatformPeril(void) {
     }
 }
 
-// loop exit layout, float register (masked 5)
-#ifdef NON_MATCHING
 /* Item (Koopa, Shy Guy, ...) object set-up (D_800FD8F4[D_800FE250]). */
 void func_800F8C2C_PlatformPeril(omObjData* obj) {
     PPItemWork* w;
@@ -592,10 +590,8 @@ void func_800F8C2C_PlatformPeril(omObjData* obj) {
     obj->func_ptr = func_800F6F60_PlatformPeril;
     obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
     for (i = D_800FE1D4_PlatformPeril - 1; i > 0; i--) {
-        if (D_800FE1D8_PlatformPeril[i]->trans.z - 200.0f < obj->trans.z && obj->trans.z < D_800FE1D8_PlatformPeril[i]->trans.z + 550.0f) {
-            if (obj->trans.y > 50.0f) {
-                obj->work[0] = i;
-            }
+        if (D_800FE1D8_PlatformPeril[i]->trans.z - 200.0f < obj->trans.z && obj->trans.z < D_800FE1D8_PlatformPeril[i]->trans.z + 550.0f && obj->trans.y > 50.0f) {
+            obj->work[0] = i;
             break;
         }
     }
@@ -655,9 +651,6 @@ void func_800F8C2C_PlatformPeril(omObjData* obj) {
     w->unk_54 = 1;
     D_800FE250_PlatformPeril++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F8C2C_PlatformPeril);
-#endif
 
 void func_800F90C0_PlatformPeril(void) {
     D_800FCDA0_PlatformPeril = 300.0f;
