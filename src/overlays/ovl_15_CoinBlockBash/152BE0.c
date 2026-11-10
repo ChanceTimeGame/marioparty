@@ -961,8 +961,6 @@ void func_800F9A98_CoinBlockBash(void) {
         p->unk_50 = 0;
     }
 }
-// NON_MATCHING: register allocation: pos/out swap s2/s3 (masked 4)
-#ifdef NON_MATCHING
 s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out) {
     CBBCoin* c;
     s32 i;
@@ -1008,22 +1006,23 @@ s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out) {
             func_80060F04(p->obj->work[0], 2, 3, 10);
         } else {
             if (az <= ax) {
-                if (c->pos.x < pos->x) {
+                if (pos->x > c->pos.x) {
                     out->x = r + c->pos.x;
                 } else {
                     out->x = c->pos.x - r;
                 }
             } else {
-                out->z = c->pos.z < pos->z ? r + c->pos.z : c->pos.z - r;
+                if (pos->z > c->pos.z) {
+                    out->z = r + c->pos.z;
+                } else {
+                    out->z = c->pos.z - r;
+                }
             }
             res = -1;
         }
     }
     return res;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F9CF0_CoinBlockBash);
-#endif
 // NON_MATCHING: delay-slot fill: hit = 0 lands in the active test's slot (one instruction short)
 #ifdef NON_MATCHING
 void func_800F9FE4_CoinBlockBash(void) {
