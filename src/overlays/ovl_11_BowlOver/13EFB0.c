@@ -492,8 +492,6 @@ void func_800F7C24_BowlOver(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F7C24_BowlOver);
 #endif
 
-// float conversion placement in the switch
-#ifdef NON_MATCHING
 void func_800F7D14_BowlOver(omObjData* obj) {
     f32 s;
 
@@ -514,13 +512,9 @@ void func_800F7D14_BowlOver(omObjData* obj) {
             s = 0.8f;
             break;
     }
-    s = s * 2.5;
-    func_80025830(obj->model[1], s, 1.0f, s);
+    func_80025830(obj->model[1], s * 2.5, 1.0f, s * 2.5);
     func_80025798(obj->model[1], obj->trans.x, 8.0f, obj->trans.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F7D14_BowlOver);
-#endif
 
 void func_800F7E20_BowlOver(omObjData* obj) {
     u8 port;
@@ -1040,11 +1034,8 @@ void func_800F9838_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
     func_800F9990_BowlOver(mdl, r, g, b);
 }
 
-// load scheduling (masked 2)
-#ifdef NON_MATCHING
 void func_800F9990_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
     unk2C0C0StructC0* m;
-    unk2C0C0Struct30* grp;
     unk2C0C0StructE0* v;
     s16 i;
     s16 j;
@@ -1055,9 +1046,8 @@ void func_800F9990_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
         return;
     }
     for (i = 0; i < m->unk_6A; i++) {
-        grp = &m->unk_80[i];
-        n = grp->unk_0C;
-        v = &m->unk_08[D_800F37F0][grp->unk_0A];
+        n = m->unk_80[i].unk_0C;
+        v = &m->unk_08[D_800F37F0][m->unk_80[i].unk_0A];
         for (j = 0; j < n; j++) {
             v->unk_0C.r = r;
             v->unk_0C.g = g;
@@ -1066,9 +1056,6 @@ void func_800F9990_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F9990_BowlOver);
-#endif
 
 void func_800F9A80_BowlOver(s16 cam, f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz) {
     CZoomM[cam] = zoom;
@@ -1322,7 +1309,8 @@ void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800FA1D8_BowlOver);
 #endif
 
-// register allocation (rand8 result)
+// register allocation (masked 2, raw 30): rand8 result copied to s0 before its andi, hi in a0 not a1;
+// tried lo local, seed % 127773 (M1c)
 #ifdef NON_MATCHING
 s32 func_800FA3D0_BowlOver(u32 seed) {
     u32 hi;
@@ -1331,7 +1319,8 @@ s32 func_800FA3D0_BowlOver(u32 seed) {
         seed = rand8() ^ guRandom() ^ 0xD826BC89;
     }
     hi = seed / 127773;
-    return hi * 2836 - (seed - hi * 127773) * 16807;
+    seed -= hi * 127773;
+    return hi * 2836 - seed * 16807;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800FA3D0_BowlOver);

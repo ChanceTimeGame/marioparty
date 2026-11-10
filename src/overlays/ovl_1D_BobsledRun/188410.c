@@ -799,14 +799,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800F78F4_
 #endif
 
 /* Bumping into the other sled: returns 0 (retail never returns 2). */
-// branch-likely delay slot of the bump test (register residue)
+// branch-likely delay slot of the bump test: retail copies mov.s $f12 into a bc1tl slot (one instruction
+// short, masked 5); tried nested if, !(a && b) (M1c)
 #ifdef NON_MATCHING
 s32 func_800F9138_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
     BRWork* work;
     BRWork* ow;
     omObjData* o;
     f32 speed;
-    f32 f;
     f32 nx;
     f32 nz;
     f32 ny;
@@ -824,12 +824,7 @@ s32 func_800F9138_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
     if (work->unk_50 & 6) {
         speed *= 0.6f;
     }
-    if (work->unk_38 != 1000.0f) {
-        f = work->unk_4C * work->unk_A4;
-    } else {
-        f = work->unk_A4;
-    }
-    speed = speed * f;
+    speed = speed * (work->unk_38 != 1000.0f ? work->unk_4C * work->unk_A4 : work->unk_A4);
     x += func_800AEAC0(work->unk_3C) * speed;
     z += func_800AEFD0(work->unk_3C) * speed;
     y += work->unk_48;
@@ -1618,7 +1613,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FB594_
 #endif
 
 /* Draw layer by distance to the other team's camera (1: top screen only, 2: bottom, 3: both). */
-// register allocation
+// register allocation (masked 0, raw 21): obj/layer swap s0/s1, dx..dz not tied to their loads;
+// tried declaration order, per-branch distance, operand order (M1c)
 #ifdef NON_MATCHING
 void func_800FB858_BobsledRun(omObjData* obj) {
     Vec3f* c;
@@ -1794,8 +1790,6 @@ void func_800FBE04_BobsledRun(omObjData* obj, Vec3f* normal) {
 
 /* Rotation of angle about axis, translated (ovl_11's func_800FA1D8_BowlOver; retail uses pos->z
    where pos->x would be expected). */
-// operand order of three commutative mul.s
-#ifdef NON_MATCHING
 void func_800FBF88_BobsledRun(Mat4 m, Vec3f* pos, Vec3f* axis, f32 angle) {
     f32 s;
     f32 c;
@@ -1812,6 +1806,9 @@ void func_800FBF88_BobsledRun(Mat4 m, Vec3f* pos, Vec3f* axis, f32 angle) {
     f32 xy;
     f32 xz;
     f32 yz;
+    f32 txy;
+    f32 txz;
+    f32 tyz;
     f32 py;
     f32 pz;
 
@@ -1834,24 +1831,21 @@ void func_800FBF88_BobsledRun(Mat4 m, Vec3f* pos, Vec3f* axis, f32 angle) {
     m[3][3] = 1.0f;
     m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[0][0] = t * xx + c;
-    xy = xy * t;
-    m[0][1] = xy + zs;
-    xz = xz * t;
-    m[0][2] = xz - ys;
-    m[1][0] = xy - zs;
+    txy = t * xy;
+    m[0][1] = txy + zs;
+    txz = t * xz;
+    m[0][2] = txz - ys;
+    m[1][0] = txy - zs;
     m[1][1] = t * yy + c;
-    yz = yz * t;
-    m[1][2] = yz + xs;
-    m[2][0] = xz + ys;
-    m[2][1] = yz - xs;
+    tyz = t * yz;
+    m[1][2] = tyz + xs;
+    m[2][0] = txz + ys;
+    m[2][1] = tyz - xs;
     m[2][2] = t * zz + c;
-    m[3][0] = pz * t * (1.0f - xx) + py * (zs - xy) - pz * (xz + ys);
-    m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
-    m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
+    m[3][0] = pz * t * (1.0f - xx) + py * (zs - txy) - pz * (txz + ys);
+    m[3][1] = -pz * (txy + zs) + py * t * (1.0f - yy) + pz * (xs - tyz);
+    m[3][2] = pz * (ys - txz) - py * (tyz + xs) + pz * t * (1.0f - zz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FBF88_BobsledRun);
-#endif
 
 /* omOutViewMulti with each camera rolled by D_800FF340[i]. */
 // the 350.0f near-plane constant is hoisted out of the loop
@@ -2051,7 +2045,7 @@ f32 func_800FCA48_BobsledRun(s32 team, f32 value) {
 }
 
 /* Mean of the last six stick samples, packed (x << 16) | y. */
-// register allocation
+// register allocation (masked 0, raw 15): x/i swap a0/a1; tried shift/mask reads, declaration order (M1c)
 #ifdef NON_MATCHING
 s32 func_800FCAC0_BobsledRun(omObjData* obj) {
     BRWork* work;
@@ -2066,7 +2060,9 @@ s32 func_800FCAC0_BobsledRun(omObjData* obj) {
         x += ((s16*)&work->unk_6C[i])[0];
         y = ((u16*)&work->unk_6C[i])[1] + y;
     }
-    return (((s16)x / 6) << 16) | (((s16)y / 6) & 0xFFFF);
+    x = (s16)x / 6;
+    y = (s16)y / 6;
+    return (x << 16) | (y & 0xFFFF);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FCAC0_BobsledRun);
@@ -2190,16 +2186,12 @@ void func_800FD164_BobsledRun(void) {
     func_8001897C(D_800FFAE2_BobsledRun, 0.0f, 1.0f, 0.0f);
 }
 
-// register allocation; the group id is stored before its copy
-#ifdef NON_MATCHING
-void func_800FD1BC_BobsledRun(s32 x, s32 y) {
-    s32 g;
+s16 func_800FD1BC_BobsledRun(s32 x, s32 y) {
+    s16 g;
     s32 px;
     s16 i;
 
-    /* retail's func_80064EF4 returned a full int (no extension before the store) */
-    g = ((s32(*)(s32, s32))func_80064EF4)(7, 5);
-    D_800FFAE4_BobsledRun[0] = g;
+    g = D_800FFAE4_BobsledRun[0] = func_80064EF4(7, 5);
     func_80067208(g, 0, D_800FFAE0_BobsledRun, 0);
     func_80067480(g, 0, 0xFFFF);
     func_800674BC(g, 0, 0x8000);
@@ -2220,10 +2212,8 @@ void func_800FD1BC_BobsledRun(s32 x, s32 y) {
         func_80067598(g, i, 0);
     }
     func_80067480(g, 2, 0x8000);
+    return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FD1BC_BobsledRun);
-#endif
 
 // register allocation; the group id is stored before its copy
 #ifdef NON_MATCHING

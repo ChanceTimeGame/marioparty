@@ -445,13 +445,12 @@ void func_800FE46C_ShellGame(omObjData* obj) {
         }
     }
 }
-// NON_MATCHING: block order of the two-state switch
-#ifdef NON_MATCHING
 void func_800FE5BC_ShellGame(omObjData* obj) {
     switch (D_800FEC5C_ShellGame) {
     case 0:
         D_800FEC5C_ShellGame++;
         D_800FF798_ShellGame = 20.0f;
+        break;
     case 1:
         obj->trans.x = obj->trans.x - func_800AEAC0(D_800FF79C_ShellGame) * D_800FF798_ShellGame;
         obj->trans.z = obj->trans.z - func_800AEFD0(D_800FF79C_ShellGame) * D_800FF798_ShellGame;
@@ -462,10 +461,8 @@ void func_800FE5BC_ShellGame(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE5BC_ShellGame);
-#endif
-// NON_MATCHING: retail keeps 5.0f in a saved FP register
+// NON_MATCHING: retail keeps 0.0f in saved $f20 and passes it to func_80009028's arg1 with mfc1, i.e. this
+// unit saw an f32 second parameter; the shared s32 prototype is right for the other callers (M1c)
 #ifdef NON_MATCHING
 void func_800FE6BC_ShellGame(omObjData* obj) {
     SGStageWork* w;
@@ -550,8 +547,6 @@ s32 func_800FE87C_ShellGame(omObjData* obj, omObjData* other) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE87C_ShellGame);
 #endif
-// NON_MATCHING: load order of D_800FEC40
-#ifdef NON_MATCHING
 void func_800FEB40_ShellGame(omObjData* obj) {
     SGPlayerWork* w;
     SGPlayerWork* ow;
@@ -562,11 +557,8 @@ void func_800FEB40_ShellGame(omObjData* obj) {
         ow = D_800FEC40_ShellGame->unk_50;
         a = func_800F7398_ShellGame(obj->trans.x - D_800FEC40_ShellGame->trans.x,
                                     obj->trans.z - D_800FEC40_ShellGame->trans.z);
-        obj->trans.x = func_800AEAC0(a) * (w->unk48 + ow->unk48) + D_800FEC40_ShellGame->trans.x;
-        obj->trans.z = func_800AEFD0(a) * (w->unk48 + ow->unk48) + D_800FEC40_ShellGame->trans.z;
+        obj->trans.x = D_800FEC40_ShellGame->trans.x + func_800AEAC0(a) * (w->unk48 + ow->unk48);
+        obj->trans.z = D_800FEC40_ShellGame->trans.z + func_800AEFD0(a) * (w->unk48 + ow->unk48);
         D_800FEC40_ShellGame = NULL;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FEB40_ShellGame);
-#endif

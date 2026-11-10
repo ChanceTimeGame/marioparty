@@ -297,7 +297,7 @@ void func_800F7048_CoinBlockBash(omObjData* obj);
 s32 func_800F7148_CoinBlockBash(s32 self, Vec* pos, f32 dx, f32 vy, f32 dz);
 CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj);
 void* func_800F766C_CoinBlockBash(omObjData* obj);
-s8 func_800F7674_CoinBlockBash(omObjData* obj);
+s16 func_800F7674_CoinBlockBash(omObjData* obj);
 void func_800F7680_CoinBlockBash(omObjData* obj, s16 motion, char* name);
 void func_800F77BC_CoinBlockBash(omObjData* obj, s32 motion);
 void func_800F78DC_CoinBlockBash(omObjData* obj, s32 a, s32 b);

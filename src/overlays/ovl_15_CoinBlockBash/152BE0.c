@@ -345,7 +345,7 @@ CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj) {
 void* func_800F766C_CoinBlockBash(omObjData* obj) {
     return obj->unk_50;
 }
-s8 func_800F7674_CoinBlockBash(omObjData* obj) {
+s16 func_800F7674_CoinBlockBash(omObjData* obj) {
     return ((CBBPlayerWork*)obj->unk_50)->unk_56;
 }
 void func_800F7680_CoinBlockBash(omObjData* obj, s16 motion, char* name) {
@@ -961,8 +961,6 @@ void func_800F9A98_CoinBlockBash(void) {
         p->unk_50 = 0;
     }
 }
-// NON_MATCHING: register allocation: pos/out swap s2/s3 (masked 4)
-#ifdef NON_MATCHING
 s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out) {
     CBBCoin* c;
     s32 i;
@@ -1008,22 +1006,23 @@ s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out) {
             func_80060F04(p->obj->work[0], 2, 3, 10);
         } else {
             if (az <= ax) {
-                if (c->pos.x < pos->x) {
+                if (pos->x > c->pos.x) {
                     out->x = r + c->pos.x;
                 } else {
                     out->x = c->pos.x - r;
                 }
             } else {
-                out->z = c->pos.z < pos->z ? r + c->pos.z : c->pos.z - r;
+                if (pos->z > c->pos.z) {
+                    out->z = r + c->pos.z;
+                } else {
+                    out->z = c->pos.z - r;
+                }
             }
             res = -1;
         }
     }
     return res;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F9CF0_CoinBlockBash);
-#endif
 // NON_MATCHING: delay-slot fill: hit = 0 lands in the active test's slot (one instruction short)
 #ifdef NON_MATCHING
 void func_800F9FE4_CoinBlockBash(void) {
@@ -1366,8 +1365,6 @@ void func_800FB490_CoinBlockBash(void) {
         }
     }
 }
-// NON_MATCHING: register allocation: port re-extended (one extra sra); logic identical
-#ifdef NON_MATCHING
 void func_800FB4F4_CoinBlockBash(omObjData* obj) {
     CBBPlayer* p;
     s16 port;
@@ -1402,9 +1399,6 @@ void func_800FB4F4_CoinBlockBash(omObjData* obj) {
         p->unk_88 = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB4F4_CoinBlockBash);
-#endif
 void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
     f32 dDrop;
     f32 dCoin;
@@ -2050,7 +2044,8 @@ void func_800FC2AC_CoinBlockBash(omObjData* obj) {
         func_800F96A0_CoinBlockBash(obj, p->mtx[p->unk_66][p->unk_68]);
     }
 }
-// NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10)
+// NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10);
+// retail addresses GwPlayer[i].character as sym+reg (lui at); tried &GwPlayer[i]->, (GwPlayer + i)-> (M1c)
 #ifdef NON_MATCHING
 s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big) {
     f32 scl[6] = { 1.0f, 1.0f, 1.0f, 0.8f, 0.9f, 0.7f };

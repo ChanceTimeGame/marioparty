@@ -1147,8 +1147,6 @@ void func_800F80DC_DKsJungleAdventure(void) {
         SetNextChainAndSpace(-1, 6, 0);
     }
 }
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800F8114_DKsJungleAdventure(void) {
     Vec3f sp10;
     Process* proc;
@@ -1173,15 +1171,13 @@ void func_800F8114_DKsJungleAdventure(void) {
     func_800A0D50(&sp10, pos);
     HuPrcChildLink(proc, func_8004D3F4(&sp10, destPos, pos, 25));
     HuPrcChildWatch();
-    func_800A0E80(&sp10, &work->facing->coords, pos);
+    dest = work->facing;
+    func_800A0E80(&sp10, &dest->coords, pos);
     HuPrcChildLink(proc, func_8004D1EC(rot, &sp10, rot, 10));
     HuPrcChildWatch();
     MBMotionSet(obj, -1, 2);
     EndProcess(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DKsJungleAdventure/2418D0", func_800F8114_DKsJungleAdventure);
-#endif
 
 // decomp-permuter
 void func_800F8248_DKsJungleAdventure(void)

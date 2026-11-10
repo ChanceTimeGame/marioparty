@@ -1610,7 +1610,8 @@ void func_800FBD7C_OpeningScene(void) {
     func_8004E184();
 }
 
-// retail copies the flags stack argument into a second callee-saved register (frame 72 vs 64; masked 11)
+// retail copies the flags stack argument into a second callee-saved register (frame 72 vs 64; masked 11);
+// retail tests arg3 & 2 in place on the original and keeps the copy for & 1; tried a late flags = arg3 & 1 (M1c)
 #ifdef NON_MATCHING
 s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* arg2, s32 arg3) {
     Vec3f sp10;
@@ -1649,13 +1650,13 @@ s32 func_800FBEA8_OpeningScene(OpeningModel* arg0) {
     }
     return 0;
 }
-// FPR numbering of the final two divisions (masked 0, raw 20)
-#ifdef NON_MATCHING
 void func_800FBEEC_OpeningScene(OpeningSprite* arg0, s32 arg1, u16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
     void* temp_v0;
     OpeningSpriteObj* temp_v1;
     f32 cx;
     f32 cy;
+    f32 sx;
+    f32 sy;
 
     cx = arg3 + (arg5 / 2);
     cy = arg4 + (arg6 / 2);
@@ -1670,11 +1671,10 @@ void func_800FBEEC_OpeningScene(OpeningSprite* arg0, s32 arg1, u16 arg2, s32 arg
     arg0->x = arg3;
     arg0->y = arg4;
     temp_v1 = func_800675F4(arg0->group, 0);
-    func_80067354(arg0->group, 0, (f32)arg5 / (f32)temp_v1->info->width, (f32)arg6 / (f32)temp_v1->info->height);
+    sx = (f32)arg5 / (f32)temp_v1->info->width;
+    sy = (f32)arg6 / (f32)temp_v1->info->height;
+    func_80067354(arg0->group, 0, sx, sy);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_OpeningScene/29B410", func_800FBEEC_OpeningScene);
-#endif
 void func_800FC0BC_OpeningScene(OpeningSprite* arg0) {
     func_80064D38(arg0->group);
     func_80067704(arg0->sprite);
