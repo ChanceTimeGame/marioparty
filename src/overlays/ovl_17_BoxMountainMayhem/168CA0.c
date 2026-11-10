@@ -338,7 +338,8 @@ void func_800F9C20_BoxMountainMayhem(omObjData* stack, s32 x, s32 level, s32 z, 
     }
 }
 
-// retail keeps the 0 return value in s2 (masked 13)
+// retail keeps the 0 return value in s2, ours rematerialises 0 (masked 13); a second `ret = 0`
+// after the hit gives masked 8 plus one extra move; tried moving the initial set
 #ifdef NON_MATCHING
 s32 func_800FA058_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
@@ -630,7 +631,7 @@ void func_800FAB60_BoxMountainMayhem(omObjData* obj, BMMPlayerWork* work, BMMPla
     func_80025798(obj->model[10], obj->trans.x, obj->trans.y + ext->unk_00, obj->trans.z);
 }
 
-// register allocation (masked 0)
+// register allocation: stick in $v1, retail $a0 (raw 4, masked 0); tried u8 stick, chained store, if/else
 #ifdef NON_MATCHING
 void func_800FAD84_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
@@ -952,7 +953,8 @@ void func_800FB788_BoxMountainMayhem(void)
   }
 }
 
-// register allocation (masked 0)
+// float register allocation: trans.x loaded into $f2, retail $f0 (masked 1; other raw lines are
+// NON_MATCHING data offsets); tried decl order, inlined squares
 #ifdef NON_MATCHING
 void func_800FB9B4_BoxMountainMayhem(void) {
     omObjData* p;

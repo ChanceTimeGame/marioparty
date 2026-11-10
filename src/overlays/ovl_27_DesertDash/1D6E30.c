@@ -490,7 +490,8 @@ void func_800FB3F8_DesertDash(u16 n) {
     }
 }
 
-// (u16)bit hoisted out of the loop; register allocation
+// (u16)bit hoisted out of the loop; register allocation (raw 56, masked 12);
+// tried inline 1 << t, (u16)v & bit
 #ifdef NON_MATCHING
 /* Hides the obstacles behind team t's camera, shows those ahead (bit t of the model flags). */
 void func_800FB4F8_DesertDash(u16 t, f32 z) {
