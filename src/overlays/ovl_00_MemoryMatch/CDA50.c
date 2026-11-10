@@ -101,8 +101,6 @@ void func_800F6858_MemoryMatch(omObjData* arg0) {
     }
 }
 
-// register allocation (masked 0, raw 2)
-#ifdef NON_MATCHING
 void func_800F68CC_MemoryMatch(omObjData* arg0) {
     s16 t;
     u16 i;
@@ -146,7 +144,8 @@ void func_800F68CC_MemoryMatch(omObjData* arg0) {
             GMesCreate(0);
         }
         if (t < 90) {
-            CZoom = ((f32)((f32)t / 90.0) * -7.5 + 78.32) * 20.0;
+            f = (f32)t / 90.0;
+            CZoom = (f * -7.5 + 78.32) * 20.0;
         }
         if (t < 40) {
             f = (f32)t / 40.0;
@@ -200,9 +199,6 @@ void func_800F68CC_MemoryMatch(omObjData* arg0) {
     }
     D_800FDE2C_MemoryMatch++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800F68CC_MemoryMatch);
-#endif
 void func_800F714C_MemoryMatch(omObjData* arg0) {
     func_800F9178_MemoryMatch();
     func_800F796C_MemoryMatch(arg0);
@@ -708,7 +704,8 @@ s16 func_800F84A8_MemoryMatch(s16 arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800F84A8_MemoryMatch);
 #endif
-// retail reloads every global and keeps a 0x18 frame (masked 18)
+// retail reloads every global, keeps a 0x18 frame and a dead li a0,5 (a deleted call?) (masked 18;
+// pool-B accesses are those reloads only, same referents)
 #ifdef NON_MATCHING
 void func_800F8654_MemoryMatch(omObjData* arg0) {
     omObjData* obj;
@@ -1503,18 +1500,18 @@ void func_800FAAC4_MemoryMatch(omObjData* arg0) {
     func_80017DB0(arg0);
 }
 
-// unk_50 load scheduling (masked 3)
-#ifdef NON_MATCHING
 void func_800FAB80_MemoryMatch(omObjData* arg0) {
     unkGlobalStruct_00* g;
+    unk_MemoryMatch_03* p;
 
     if (D_800FD884_MemoryMatch != 0) {
         func_80005A28(arg0);
         D_800FD884_MemoryMatch--;
         return;
     }
+    p = &(&D_800FE2C8_MemoryMatch)[arg0->work[0]];
     g = arg0->unk_50;
-    arg0->trans.y = (&D_800FE2C8_MemoryMatch)[arg0->work[0]].unk_08;
+    arg0->trans.y = p->unk_08;
     func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
     if (D_800FD880_MemoryMatch != 0) {
         if (D_800FD880_MemoryMatch == 45) {
@@ -1539,9 +1536,6 @@ void func_800FAB80_MemoryMatch(omObjData* arg0) {
     }
     func_80017DB0(arg0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800FAB80_MemoryMatch);
-#endif
 void func_800FAD18_MemoryMatch(u16 arg0) {
     if (arg0 == 0) {
         unk_MemoryMatch_03* p = &D_800FE2C8_MemoryMatch;
