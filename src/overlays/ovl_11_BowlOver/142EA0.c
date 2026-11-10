@@ -154,7 +154,7 @@ void func_800FAAF8_BowlOver(u8 mdl, f32 x, f32 y, f32 z)
   func_80025798(mdl, x, 5.0f, z);
 }
 
-// float register allocation and compare order
+// float register allocation (masked 0, raw 10): x/vz swap f6/f8; tried declaration order, branch order (M1c)
 #ifdef NON_MATCHING
 void func_800FABA0_BowlOver(omObjData* obj, f32* dx, f32* dz) {
     f32 vx;
@@ -174,16 +174,17 @@ void func_800FABA0_BowlOver(omObjData* obj, f32* dx, f32* dz) {
         vz = 0.0f;
         obj->trans.z = D_800FD5D4_BowlOver - 50.0f;
     }
-    lim = (vz + obj->trans.z) - D_800FD5D4_BowlOver;
-    if (!(x < 0.0f)) {
-        lim = -lim / 2.0f;
-        if (lim <= x) {
+    z = vz + obj->trans.z;
+    lim = z - D_800FD5D4_BowlOver;
+    if (x < 0.0f) {
+        lim = lim / 2.0f;
+        if (x <= lim) {
             vx = 0.0f;
             obj->trans.x = lim;
         }
     } else {
-        lim = lim / 2.0f;
-        if (x <= lim) {
+        lim = -lim / 2.0f;
+        if (lim <= x) {
             vx = 0.0f;
             obj->trans.x = lim;
         }

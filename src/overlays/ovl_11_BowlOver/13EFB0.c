@@ -1040,11 +1040,8 @@ void func_800F9838_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
     func_800F9990_BowlOver(mdl, r, g, b);
 }
 
-// load scheduling (masked 2)
-#ifdef NON_MATCHING
 void func_800F9990_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
     unk2C0C0StructC0* m;
-    unk2C0C0Struct30* grp;
     unk2C0C0StructE0* v;
     s16 i;
     s16 j;
@@ -1055,9 +1052,8 @@ void func_800F9990_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
         return;
     }
     for (i = 0; i < m->unk_6A; i++) {
-        grp = &m->unk_80[i];
-        n = grp->unk_0C;
-        v = &m->unk_08[D_800F37F0][grp->unk_0A];
+        n = m->unk_80[i].unk_0C;
+        v = &m->unk_08[D_800F37F0][m->unk_80[i].unk_0A];
         for (j = 0; j < n; j++) {
             v->unk_0C.r = r;
             v->unk_0C.g = g;
@@ -1066,9 +1062,6 @@ void func_800F9990_BowlOver(s16 mdl, u8 r, u8 g, u8 b) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F9990_BowlOver);
-#endif
 
 void func_800F9A80_BowlOver(s16 cam, f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz) {
     CZoomM[cam] = zoom;

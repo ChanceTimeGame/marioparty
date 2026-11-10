@@ -59,7 +59,8 @@ void func_800FE684_CoinBlockBash(void) {
 }
 
 /* The index of the model's object called name, or -1. */
-// NON_MATCHING: retail's frame has 8 more bytes of locals (unused)
+// NON_MATCHING: frame size only (masked 10, raw 12): retail has 8 bytes of locals at 0x10, ours
+// (s16 unused[2]) gives 16; body identical (M1c)
 #ifdef NON_MATCHING
 s16 func_800FE854_CoinBlockBash(unk2C0C0StructC0* model, char* name) {
     unk2C0C0Struct30* p = model->unk_80;
