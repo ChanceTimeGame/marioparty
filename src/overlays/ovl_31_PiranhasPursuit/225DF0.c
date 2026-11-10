@@ -1588,24 +1588,21 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800F
 #endif
 
 /* The plant's lunge at a splash, and back. */
-// NON_MATCHING: retail addresses the plant fields by their splat labels
-#ifdef NON_MATCHING
 void func_800FFB28_PiranhasPursuit(omObjData* obj) {
-    if (D_80101150_PiranhasPursuit.unk1C > 0.0) {
-        if (D_80101150_PiranhasPursuit.unk18 < D_80101150_PiranhasPursuit.unk1C) {
-            D_80101150_PiranhasPursuit.unk18 = D_80101150_PiranhasPursuit.unk18 + 40.0 / 3.0;
+    PPPlant* p = &D_80101150_PiranhasPursuit;
+
+    if (p->unk1C > 0.0) {
+        if (p->unk18 < p->unk1C) {
+            p->unk18 = p->unk18 + 40.0 / 3.0;
         } else {
-            D_80101150_PiranhasPursuit.unk1C = 0;
+            p->unk1C = 0;
         }
-    } else if (D_80101150_PiranhasPursuit.unk18 > 0.0) {
-        D_80101150_PiranhasPursuit.unk18 = D_80101150_PiranhasPursuit.unk18 - 40.0 / 3.0;
+    } else if (p->unk18 > 0.0) {
+        p->unk18 = p->unk18 - 40.0 / 3.0;
     } else {
-        D_80101150_PiranhasPursuit.unk18 = 0.0f;
+        p->unk18 = 0.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FFB28_PiranhasPursuit);
-#endif
 
 u16 func_800FFBD8_PiranhasPursuit(s32 file) {
     void* f;
