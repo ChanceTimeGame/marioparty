@@ -286,7 +286,8 @@ void func_800F79F4_BoxMountainMayhem(omObjData* obj) {
     }
 }
 
-// register allocation (masked 0)
+// register allocation: i in $v1 and table base in $a0, retail the reverse (raw 20, masked 1);
+// tried i reused for the int angle, decl order, a local base pointer
 #ifdef NON_MATCHING
 void func_800F7C30_BoxMountainMayhem(Vec* pos, omObjData* player, s8 count) {
     BMMBodyWork* work;
