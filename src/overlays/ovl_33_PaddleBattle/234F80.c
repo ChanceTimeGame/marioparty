@@ -509,15 +509,13 @@ const s32 D_800FEFCC_PaddleBattle[5] __attribute__((section(".rodata"))) = { 0x1
 
 /* Looks for `n` stick directions in a row going round from `dir` (newest first): 1 counter-
    clockwise, 2 clockwise, 0 neither. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 80 lines)
-#ifdef NON_MATCHING
 s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
     u8* pat;
     s16 i;
     s16 k;
-    s32 j;
+    s16 j;
 
-    pat = &D_800FE9FC_PaddleBattle.ccw[4 - dir];
+    pat = D_800FE9FC_PaddleBattle.ccw + 4 - dir;
     j = idx;
     k = n;
     for (i = 0; i < n * 8; i++) {
@@ -531,7 +529,7 @@ s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
             }
         }
     }
-    pat = &D_800FE9FC_PaddleBattle.cw[dir];
+    pat = D_800FE9FC_PaddleBattle.cw + dir;
     j = idx;
     k = n;
     for (i = 0; i < n * 8; i++) {
@@ -547,9 +545,6 @@ s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F89F0_PaddleBattle);
-#endif
 
 /* A rider: paddling (a stick circle is a stroke), the bump reaction, placed on its seat. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 141 lines)
