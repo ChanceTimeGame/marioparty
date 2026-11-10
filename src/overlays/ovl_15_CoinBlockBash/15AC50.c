@@ -80,36 +80,42 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FE8
 
 /* The part of model that draws its object called name, or (unk2C0C0Struct50*)-1. */
 // NON_MATCHING: register allocation of the found index (re-sign-extended twice in retail)
-#ifdef NON_MATCHING
-unk2C0C0Struct50* func_800FE8DC_CoinBlockBash(s16 model, char* name) {
-    unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
-    s16 id = func_800FE854_CoinBlockBash(m, name);
-    s16 count;
-    s16 i;
-    s16 j;
+// decomp-permuter
+unk2C0C0Struct50 *func_800FE8DC_CoinBlockBash(s16 model, char *name)
+{
+  unk2C0C0StructC0 *m = D_800F2B7C[model].unk_6C;
+  s16 id = func_800FE854_CoinBlockBash(m, name);
+  s16 count;
+  s16 i;
+  s16 j;
+  if (m->unk_A0 == ((unk2C0C0Struct50 *) (-1)))
+  {
+    return (unk2C0C0Struct50 *) (-1);
+  }
+  for (i = 0; i < m->unk_70; i++)
+  {
+    count = m->unk_A0[i].unk_00;
+    for (j = 0; j < count; j++)
+    {
+      if (m->unk_A0[i].unk_04[j] == id)
+      {
+        break;
+      }
+    }
 
-    if (m->unk_A0 == (unk2C0C0Struct50*)-1) {
-        return (unk2C0C0Struct50*)-1;
+    if (j != count)
+    {
+      break;
     }
-    for (i = 0; i < m->unk_70; i++) {
-        count = m->unk_A0[i].unk_00;
-        for (j = 0; j < count; j++) {
-            if (m->unk_A0[i].unk_04[j] == id) {
-                break;
-            }
-        }
-        if (j != count) {
-            break;
-        }
-    }
-    if (i == m->unk_70) {
-        return (unk2C0C0Struct50*)-1;
-    }
-    return &m->unk_A0[i];
+  }
+
+  if (i == m->unk_70)
+  {
+ do { } while (0);
+    return (unk2C0C0Struct50 *) (-1);
+  }
+  return &m->unk_A0[i];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FE8DC_CoinBlockBash);
-#endif
 
 // NON_MATCHING: retail keeps &D_80103222 in s6 across the block loop
 #ifdef NON_MATCHING
@@ -558,28 +564,29 @@ void func_800FFED0_CoinBlockBash(u8 count) {
 }
 
 // NON_MATCHING: scheduling of the slot address
-#ifdef NON_MATCHING
-s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags) {
-    CBBBill* fx;
-    s16 i;
+// decomp-permuter
+s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags)
+{
+  CBBBill *fx;
+  s16 i;
+  for (i = 0; i < D_80103258_CoinBlockBash; i++)
+  {
+    if (D_80103298_CoinBlockBash[i].dl == ((Gfx *) (-1)))
+    {
+      break;
+    }
+  }
 
-    for (i = 0; i < D_80103258_CoinBlockBash; i++) {
-        if (D_80103298_CoinBlockBash[i].dl == (Gfx*)-1) {
-            break;
-        }
-    }
-    if (i == D_80103258_CoinBlockBash) {
-        return -1;
-    }
-    fx = &D_80103298_CoinBlockBash[i];
-    fx->dl = NULL;
-    fx->sprite = sprite;
-    fx->flags = flags;
-    return i;
+  if (i == D_80103258_CoinBlockBash)
+  {
+    return -1;
+  }
+  ;
+  (&D_80103298_CoinBlockBash[i])->dl = 0;
+  (&D_80103298_CoinBlockBash[i])->sprite = sprite;
+  (&D_80103298_CoinBlockBash[i])->flags = flags;
+  return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_801000B8_CoinBlockBash);
-#endif
 
 /* A billboard that draws model's display list (its per-frame segment 1) instead of a sprite. */
 s16 func_80100160_CoinBlockBash(s16 model, u8 flags) {
