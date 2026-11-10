@@ -162,7 +162,7 @@ typedef struct DSDFocus {
 void func_800093FC(omObjData*, f32, f32, f32);
 s16 func_80024198(s32, void*, s32);
 void* func_80023668(s32);
-s16 func_8002451C(s32, void*, s32);
+s32 func_8002451C(s32, void*, s32);
 s16 func_80064EF4(s32, s32);
 void func_80067208(s16, s16, s16, u16);
 void func_800674BC(s16, s16, s32);
