@@ -1389,8 +1389,6 @@ void func_800FAF80_HandcarHavoc(omObjData* arg0) {
 }
 
 /* A team's camera: behind the car. */
-// NON_MATCHING: one reload of the camera yaw
-#ifdef NON_MATCHING
 void func_800FAF9C_HandcarHavoc(omObjData* obj, u16 team) {
     HHCam* c;
     HHCar* w;
@@ -1400,14 +1398,11 @@ void func_800FAF9C_HandcarHavoc(omObjData* obj, u16 team) {
     w = D_800FF618_HandcarHavoc[team]->unk_50;
     CRotM[team].x = c->rx = w->rot.x + w->rot.z - 25.0f;
     CRotM[team].y = c->ry = w->rot.y;
-    CenterM[team].x = D_800FF618_HandcarHavoc[team]->trans.x - func_800AEAC0(c->ry) * 300.0f;
+    CenterM[team].x = D_800FF618_HandcarHavoc[team]->trans.x - func_800AEAC0(CRotM[team].y) * 300.0f;
     CenterM[team].y = D_800FF618_HandcarHavoc[team]->trans.y;
     CenterM[team].z = D_800FF618_HandcarHavoc[team]->trans.z - func_800AEFD0(CRotM[team].y) * 300.0f;
     obj->func_ptr = func_800FB0EC_HandcarHavoc;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FAF9C_HandcarHavoc);
-#endif
 
 /* Follows the car: pitch from the slope, yaw from the track. */
 void func_800FB0EC_HandcarHavoc(omObjData* obj) {
@@ -1542,21 +1537,18 @@ void func_800FB81C_HandcarHavoc(omObjData* obj) {
     }
 }
 
-// NON_MATCHING: retail computes the camera index once
-#ifdef NON_MATCHING
 void func_800FB994_HandcarHavoc(omObjData* obj) {
     HHCam* c;
+    s32 cam;
 
     c = obj->unk_50;
-    CenterM[c->cam].x = func_800AEAC0(CRotM[c->cam].y - 90.0f) * 20.0f + CenterM[c->cam].x;
-    CenterM[c->cam].z = func_800AEFD0(CRotM[c->cam].y - 90.0f) * 20.0f + CenterM[c->cam].z;
+    cam = c->cam;
+    CenterM[cam].x = func_800AEAC0(CRotM[cam].y - 90.0f) * 20.0f + CenterM[cam].x;
+    CenterM[cam].z = func_800AEFD0(CRotM[cam].y - 90.0f) * 20.0f + CenterM[cam].z;
     if (--c->timer == 0) {
         obj->func_ptr = NULL;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FB994_HandcarHavoc);
-#endif
 
 /* Intro: instructions, then "Start". */
 void func_800FBA80_HandcarHavoc(omObjData* obj) {
