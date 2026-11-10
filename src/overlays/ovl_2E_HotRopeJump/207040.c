@@ -26,7 +26,8 @@ u16 D_800FE4E0_HotRopeJump[4] = { 0, 0, 0, 0 };
 u16 D_800FE4E8_HotRopeJump = 0;
 s16 D_800FE4EC_HotRopeJump[10] = { 0, 0x3000, 0x2000, 0, 0, 0, 0, 0, 0, 0 };
 
-// NON_MATCHING: register allocation: retail does not hoist D_800FE464's base (masked 22)
+// NON_MATCHING: the shuffle loop: retail reuses the hoisted -1 (s1) for the tbl[r] store; tried
+// do/while retry loops (masked 28, D_800FE464's base hoisted) (masked 17)
 #ifdef NON_MATCHING
 void func_800F65E0_HotRopeJump(void) {
     s32* tbl;
@@ -66,16 +67,19 @@ void func_800F65E0_HotRopeJump(void) {
     D_8010031C_HotRopeJump = D_800B8994;
     i = 0;
     tbl = D_800FE474_HotRopeJump;
-    do {
-    retry:
+next:
+    while (1) {
         r = rand8() & 3;
-        if (tbl[r] == -1) {
-            goto retry;
+        if (tbl[r] != -1) {
+            break;
         }
-        D_800FE464_HotRopeJump[i] = tbl[r];
-        i++;
-        tbl[r] = -1;
-    } while (i < 4);
+    }
+    D_800FE464_HotRopeJump[i] = tbl[r];
+    i++;
+    tbl[r] = -1;
+    if (i < 4) {
+        goto next;
+    }
     D_800B8964 = 1.6f;
     D_800B8968 = 0.175f;
     SetFadeInTypeAndTime(0, 16);
@@ -2141,8 +2145,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FD90C
 
 /* A flame's per-frame list: its matrix (facing the camera, D_801007D8) and its animated texture;
    the top two vertices sway with seg->anim. */
-// NON_MATCHING: retail writes the list through fixed offsets, not gfx++
-#ifdef NON_MATCHING
 void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim) {
     Matrix4f m;
     Vec d;
@@ -2170,18 +2172,17 @@ void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim
     MtxScale(m, mdl->unk_3C, mdl->unk_40, mdl->unk_44);
     guMtxCatF(m, D_801007D8_HotRopeJump, m);
     func_800A0A20(m, &seg->mtx[D_800F37F0]);
-    gfx = md->unk_00[D_800F37F0 + 1];
-    md->unk_00[0] = gfx;
-    gDPPipeSync(gfx++);
-    gSPSegment(gfx++, 2, osVirtualToPhysical(anim->unk0[(s16)seg->anim >> 2].unk0));
-    gSPDisplayList(gfx++, osVirtualToPhysical(md->unk_00[4]));
-    gSPMatrix(gfx++, osVirtualToPhysical(&seg->mtx[D_800F37F0]), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPDisplayList(gfx++, osVirtualToPhysical(md->unk_00[5]));
-    gDPPipeSync(gfx++);
-    gSPEndDisplayList(gfx++);
+    md->unk_00[0] = gfx = md->unk_00[D_800F37F0 + 1];
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 2, osVirtualToPhysical(anim->unk0[(s16)seg->anim >> 2].unk0));
+    gSPDisplayList(&gfx[2], osVirtualToPhysical(md->unk_00[4]));
+    gSPMatrix(&gfx[3], osVirtualToPhysical(&seg->mtx[D_800F37F0]), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(&gfx[4], osVirtualToPhysical(md->unk_00[5]));
+    gDPPipeSync(&gfx[5]);
+    gSPEndDisplayList(&gfx[6]);
     v = md->unk_08[D_800F37F0];
     a = (f32)((seg->anim & 0x3F) * 360) * 0.015625 + 90.0;
-    r = fabs(vtx->ob[0] * 0.4);
+    r = vtx->ob[0] * 0.4 < 0 ? -(vtx->ob[0] * 0.4) : vtx->ob[0] * 0.4;
     for (i = 0; i < 2; i++) {
         v->unk_00 = vtx->ob[0] + func_800AEFD0(a) * r + d.x;
         v->unk_02 = vtx->ob[1] + func_800AEAC0(a) * r + d.y;
@@ -2193,9 +2194,6 @@ void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim
         vtx++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FDFC4_HotRopeJump);
-#endif
 
 void func_800FE38C_HotRopeJump(void) {
     D_801007C4_HotRopeJump = 1;
