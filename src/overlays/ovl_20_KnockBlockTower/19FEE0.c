@@ -404,17 +404,17 @@ f32 func_800F74BC_KnockBlockTower(KBTNode* node) {
     return prev->obj->trans.y + 150.0f;
 }
 
-// register allocation: a0/v1 swapped in the list walks (masked 4)
+// register allocation: &vec set before the D_800F3FB0 load, prev->obj in v0 not a1 (raw 4, masked 2;
+// tried vp after the call, the o local in the second walk)
 #ifdef NON_MATCHING
 void func_800F7524_KnockBlockTower(omObjData* obj) {
     Vec3f vec;
     Vec3f* vp;
     KBTNode* prev;
     KBTNode* n;
+    omObjData* o;
     f32 below;
     f32 top;
-    f32 s;
-    f32 d;
 
     vp = &vec;
     func_800A0D00(vp, D_800F3FB0[0]->trans.x, 0.0f, D_800F3FB0[0]->trans.z);
@@ -434,9 +434,10 @@ void func_800F7524_KnockBlockTower(omObjData* obj) {
     }
     n = prev->next;
     if (n != NULL) {
+        o = prev->obj;
         below = -150.0f;
-        if (prev->obj != NULL) {
-            below = prev->obj->trans.y;
+        if (o != NULL) {
+            below = o->trans.y;
         }
         if (obj->trans.y < n->baseY + 150.0f && n->state == 2 && n->vel == 0.0f) {
             obj->trans.y += 5.0f;
@@ -489,13 +490,13 @@ void func_800F7524_KnockBlockTower(omObjData* obj) {
         }
         top = func_800F74BC_KnockBlockTower(n);
         func_80025798(obj->model[1], obj->trans.x, top + 1.0f, obj->trans.z);
-        d = obj->trans.y - top;
-        if (d > 200.0f) {
-            s = 0.6f;
+        top = obj->trans.y - top;
+        if (top > 200.0f) {
+            top = 0.6f;
         } else {
-            s = 0.8f - d / 2000.0001f;
+            top = 0.8f - top / 2000.0001f;
         }
-        func_80025830(obj->model[1], s, s, s);
+        func_80025830(obj->model[1], top, top, top);
     }
     if (n->state == 1) {
         n->state = 0;
