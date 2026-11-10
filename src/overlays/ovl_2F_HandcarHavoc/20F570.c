@@ -1566,10 +1566,9 @@ void func_800FBA80_HandcarHavoc(omObjData* obj) {
 }
 
 /* The end: messages, coins, the record, leaving. */
-// NON_MATCHING: register allocation; the winners array spills
-#ifdef NON_MATCHING
 void func_800FBB78_HandcarHavoc(omObjData* obj) {
     s32 pl[2];
+    HHCar* winner;
     HHCar* loser;
     s32 i;
     s32 snd;
@@ -1588,8 +1587,9 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
             break;
         case 2:
             if (GMesStatAllGet() == 0 || (GMesStatAllGet() & 2)) {
+                winner = D_800FF618_HandcarHavoc[D_80101C90_HandcarHavoc]->unk_50;
                 for (i = 0; i < 2; i++) {
-                    pl[i] = (u16)((HHCar*)D_800FF618_HandcarHavoc[D_80101C90_HandcarHavoc]->unk_50)->player[i];
+                    pl[i] = (u16)winner->player[i];
                 }
                 GwPlayer[pl[0]].coins_mg += 10;
                 GwPlayer[pl[1]].coins_mg += 10;
@@ -1605,12 +1605,12 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
                             GwPlayer[(u16)loser->player[i]].coins_mg -= 10;
                         }
                     }
-                    D_800FF5CC_HandcarHavoc.timer = 105;
+                    D_800FF5CC_HandcarHavoc = 105;
                     if ((u16)D_80101CA8_HandcarHavoc == 1) {
-                        D_800FF5CC_HandcarHavoc.delay = 30;
+                        D_800FF5CE_HandcarHavoc = 30;
                         snd = 0x37;
                     } else {
-                        D_800FF5CC_HandcarHavoc.delay = 0;
+                        D_800FF5CE_HandcarHavoc = 0;
                         snd = 0x36;
                     }
                     func_80060128(snd);
@@ -1627,11 +1627,11 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
             }
             break;
         case 4:
-            if (D_800FF5CC_HandcarHavoc.delay != 0 && --D_800FF5CC_HandcarHavoc.delay == 0) {
+            if (D_800FF5CE_HandcarHavoc != 0 && --D_800FF5CE_HandcarHavoc == 0) {
                 GMesCreate(12);
-                D_800FF5CC_HandcarHavoc.timer = 120;
+                D_800FF5CC_HandcarHavoc = 120;
             }
-            if (--D_800FF5CC_HandcarHavoc.timer == 0) {
+            if (--D_800FF5CC_HandcarHavoc == 0) {
                 D_80101CAA_HandcarHavoc = 5;
                 func_800726AC(0, 20);
             }
@@ -1644,7 +1644,7 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
         case 6:
             if (D_800FF5D0_HandcarHavoc == 0) {
                 GMesCreate(17);
-                D_800FF5CC_HandcarHavoc.timer = 90;
+                D_800FF5CC_HandcarHavoc = 90;
                 D_80101CAA_HandcarHavoc = 3;
                 break;
             }
@@ -1654,7 +1654,7 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
         case 7:
             if (D_800FF5D0_HandcarHavoc == 0) {
                 GMesCreate(16);
-                D_800FF5CC_HandcarHavoc.timer = 120;
+                D_800FF5CC_HandcarHavoc = 120;
                 D_80101CAA_HandcarHavoc = 3;
                 break;
             }
@@ -1670,9 +1670,6 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FBB78_HandcarHavoc);
-#endif
 
 void func_800FBF5C_HandcarHavoc(omObjData* obj) {
     if ((u16)D_800FF400_HandcarHavoc != 0 || D_800F5144 != 0) {
