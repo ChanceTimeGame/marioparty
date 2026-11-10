@@ -54,10 +54,8 @@ s32 D_800FDB94_TugOWar = 2; /* the pull's state: func_800F77EC_TugOWar's result 
 f32 D_800FDB98_TugOWar = 0.0f;
 
 /* Sets the team's motion on all three members (when it changes). */
-// register allocation of the changed flag (masked 2)
-#ifdef NON_MATCHING
 s16 func_800F71F0_TugOWar(s16 motion, s16 attr) {
-    s32 changed;
+    s16 changed;
     s8 i;
 
     changed = D_800FDB00_TugOWar != motion;
@@ -73,15 +71,10 @@ s16 func_800F71F0_TugOWar(s16 motion, s16 attr) {
     }
     return D_800FDB00_TugOWar;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F71F0_TugOWar);
-#endif
 
 /* Sets the solo player's motion (when it changes). */
-// register allocation of the changed flag (masked 2)
-#ifdef NON_MATCHING
 s16 func_800F731C_TugOWar(s16 motion, s16 attr) {
-    s32 changed;
+    s16 changed;
 
     changed = D_800FDB02_TugOWar != motion;
     if (changed == 0 && D_800FDB06_TugOWar != attr) {
@@ -94,9 +87,6 @@ s16 func_800F731C_TugOWar(s16 motion, s16 attr) {
     }
     return D_800FDB02_TugOWar;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F731C_TugOWar);
-#endif
 
 /* Starts the team's strain effects (model 4 of each member). */
 void func_800F73F4_TugOWar(void) {
