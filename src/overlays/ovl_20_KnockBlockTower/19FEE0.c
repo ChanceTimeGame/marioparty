@@ -90,7 +90,8 @@ void func_800F69F8_KnockBlockTower(omObjData* obj) {
 }
 
 /* Builds the tower: 5 or 6 blocks, two of them (type 1) bombs. */
-// list-head stores: retail addresses D_800FB650[0]'s fields by symbol, GCC reuses the base register (masked ~24)
+// list-head stores: retail addresses D_800FB650[0]'s type/next by symbol, GCC reuses the base register;
+// loop computes n + 1 at the loop head (masked 18; tried n = D for the obj store, n = n->next)
 #ifdef NON_MATCHING
 void func_800F6A10_KnockBlockTower(void) {
     KBTNode* n;
@@ -350,17 +351,18 @@ void func_800F7320_KnockBlockTower(omObjData* obj) {
 }
 
 /* Knocks the block `id` out of the tower. */
-// register allocation: the found node is copied through v1 first (masked 3)
+// register allocation: the found node is copied through v1 first (masked 1; tried a separate found
+// local)
 #ifdef NON_MATCHING
 void func_800F7398_KnockBlockTower(omObjData* obj, s32 id) {
     KBTPlayerWork* work = obj->unk_50;
     KBTNode* n;
     KBTNode* prev;
-    omObjData* o;
 
     KBTNode* next;
 
-    if ((n = func_800F72E8_KnockBlockTower(id)) == NULL) {
+    n = func_800F72E8_KnockBlockTower(id);
+    if (n == NULL) {
         return;
     }
     next = n->next;
@@ -374,8 +376,7 @@ void func_800F7398_KnockBlockTower(omObjData* obj, s32 id) {
     func_800258EC(obj->model[10], 4, 0);
     func_8001E2A8(work->unk_21[10], 0);
     func_8001E268(work->unk_21[10], 4, 4);
-    o = n->obj;
-    func_80025798(obj->model[10], o->trans.x, o->trans.y, o->trans.z + 200.0f);
+    func_80025798(obj->model[10], n->obj->trans.x, n->obj->trans.y, n->obj->trans.z + 200.0f);
     func_80025830(obj->model[10], 5.0f, 5.0f, 5.0f);
     PlaySound(0x2B2);
     n->obj->func_ptr = NULL;
@@ -560,7 +561,7 @@ void func_800F7B04_KnockBlockTower(KBTNode* node) {
     PlaySound(0x2B1);
 }
 
-// register allocation: v0/v1 in the final next test (masked 0)
+// register allocation: v0/v1 in the final next test (masked 0; tried a ret local, early return 0)
 #ifdef NON_MATCHING
 s32 func_800F7B90_KnockBlockTower(s32 idx) {
     KBTNode* n = D_800FB650_KnockBlockTower[0].next;
