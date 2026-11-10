@@ -611,8 +611,6 @@ void func_800F85A8_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = func_800F87F4_BumperBalls;
 }
 
-// delay-slot scheduling around the ball omSetTra calls (8 instructions long; logic-equivalent)
-#ifdef NON_MATCHING
 void func_800F87F4_BumperBalls(omObjData* object) {
     BumperBallsBoatWork* work = object->unk_50;
     omObjData* ball = D_800FCD2C_BumperBalls[work->player];
@@ -665,8 +663,11 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         }
         break;
     case 3:
-        omSetTra(ball, (work->side == 1) ? object->trans.x + 80.0f : object->trans.x - 80.0f,
-                 object->trans.y + work->dy, object->trans.z);
+        if (work->side == 1) {
+            omSetTra(ball, object->trans.x + 80.0f, object->trans.y + work->dy, object->trans.z);
+        } else {
+            omSetTra(ball, object->trans.x - 80.0f, object->trans.y + work->dy, object->trans.z);
+        }
         if (work->angle + work->speed >= 90.0f) {
             work->state = 2;
             func_800258EC(object->model[work->model], 4, 4);
@@ -685,19 +686,25 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         break;
     case 2:
         work->state = 4;
-        omSetTra(ball, (work->side == 1) ? object->trans.x + 80.0f : object->trans.x - 80.0f,
-                 object->trans.y, object->trans.z);
+        if (work->side == 1) {
+            omSetTra(ball, object->trans.x + 80.0f, object->trans.y, object->trans.z);
+        } else {
+            omSetTra(ball, object->trans.x - 80.0f, object->trans.y, object->trans.z);
+        }
         break;
     case 4:
         object->trans.x = object->trans.x - (func_800AEAC0(work->angle) * 4.0f + work->dx);
-        omSetTra(ball, (work->side == 1) ? object->trans.x + 80.0f : object->trans.x - 80.0f,
-                 object->trans.y, object->trans.z);
+        if (work->side == 1) {
+            omSetTra(ball, object->trans.x + 80.0f, object->trans.y, object->trans.z);
+        } else {
+            omSetTra(ball, object->trans.x - 80.0f, object->trans.y, object->trans.z);
+        }
         if (work->side == 1) {
             if (object->trans.x < work->endX) {
-                goto arrived;
+                func_800258EC(object->model[work->model], 4, 4);
+                work->state = 5;
             }
         } else if (object->trans.x > work->endX) {
-        arrived:
             func_800258EC(object->model[work->model], 4, 4);
             work->state = 5;
         }
@@ -712,9 +719,6 @@ void func_800F87F4_BumperBalls(omObjData* object) {
         work->angle -= 360.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800F87F4_BumperBalls);
-#endif
 
 void func_800F8D68_BumperBalls(omObjData* arg0) {
     switch (D_800FCFF0_BumperBalls) {

@@ -598,7 +598,7 @@ void func_800F86FC_GroundPound(omObjData* obj) {
     obj->func_ptr = NULL;
 }
 
-// register allocation: t0/t1, a1/a2 (masked 0)
+// register allocation: t0/t1, a1/a2 (masked 0); retail puts rows*cols in k's t0. Tried: decl order, u8 k, s32 count
 #ifdef NON_MATCHING
 void func_800F8744_GroundPound(void) {
     u8 order[16];

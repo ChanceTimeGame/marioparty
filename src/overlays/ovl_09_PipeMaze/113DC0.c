@@ -75,21 +75,19 @@ void func_800F6678_PipeMaze(void) {
 void func_800F673C_PipeMaze(void) {
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800F6744_PipeMaze(void) {
     s32 i;
     s32 r;
 
-    r = (rand8() * 5U) >> 7;
+    r = (rand8() * 10U) >> 8;
     for (i = 0; i < 8; i++) {
         D_800F9AB8_PipeMaze[i * 2 + 1][1] = ((u8*)D_800F9928_PipeMaze)[r * 8 + i];
     }
-    r = (rand8() * 5U) >> 7;
+    r = (rand8() * 10U) >> 8;
     for (i = 0; i < 8; i++) {
         D_800F9AB8_PipeMaze[i * 2 + 2][3] = ((u8*)D_800F9928_PipeMaze)[r * 8 + i];
     }
-    r = (rand8() * 5U) >> 7;
+    r = (rand8() * 10U) >> 8;
     for (i = 0; i < 8; i++) {
         D_800F9AB8_PipeMaze[i * 2 + 1][5] = ((u8*)D_800F9928_PipeMaze)[r * 8 + i];
     }
@@ -97,9 +95,6 @@ void func_800F6744_PipeMaze(void) {
         D_800F9AB8_PipeMaze[i][0] = D_800F9AB8_PipeMaze[i][2] = D_800F9AB8_PipeMaze[i][4] = D_800F9AB8_PipeMaze[i][6] = 2;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_PipeMaze/113DC0", func_800F6744_PipeMaze);
-#endif
 void func_800F68BC_PipeMaze(void) {
     s32 i;
     s32 j;
