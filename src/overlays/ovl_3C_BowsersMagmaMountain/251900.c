@@ -1196,38 +1196,40 @@ void func_800F826C_BowsersMagmaMountain(void) {
     SetNextChainAndSpace(-1, 0, 1);
 }
 
-// register allocation: retail copies the coin amount into a second callee-saved register before the coin calls (one extra move; masked 1, as DK's func_800F9470)
-#ifdef NON_MATCHING
-void func_800F8290_BowsersMagmaMountain(void) {
-    s16 player;
-    s16 win;
-    s32 coins;
-
-    player = GetCurrentPlayerIndex();
-    func_800405DC(player);
-    SetPlayerAnimation(-1, -1, 2);
-    if (_CheckFlag(0x42) == 0) {
-        win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-        LoadStringIntoWindow(win, (void*)0x239, -1, -1);
-        coins = 10;
-    } else {
-        win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-        LoadStringIntoWindow(win, (void*)0x23A, -1, -1);
-        coins = 20;
-    }
-    func_8006E070(win, 0);
-    ShowTextWindow(win);
-    PlaySound(0x432);
-    func_8004DBD4(win, player);
-    HideTextWindow(win);
-    func_80055960(player, coins);
-    ShowPlayerCoinChange(player, coins);
-    HuPrcSleep(30);
-    func_8003FEFC(player);
+// decomp-permuter
+void func_800F8290_BowsersMagmaMountain(void)
+{
+  s16 player;
+  s16 win;
+  s32 coins;
+  s32 new_var;
+  player = GetCurrentPlayerIndex();
+  func_800405DC(player);
+  SetPlayerAnimation(-1, -1, 2);
+  if (0 == _CheckFlag(0x42))
+  {
+    win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
+    LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
+    coins = 10;
+  }
+  else
+  {
+    new_var = 1;
+    win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
+    LoadStringIntoWindow(win, (void *) 0x23A, -new_var, -1);
+    coins = 20;
+  }
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
+  PlaySound(0x432);
+  func_8004DBD4(win, player);
+  HideTextWindow(win);
+  new_var = coins;
+  func_80055960(player, new_var);
+  ShowPlayerCoinChange(player, new_var);
+  HuPrcSleep(30);
+  func_8003FEFC(player);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_BowsersMagmaMountain/251900", func_800F8290_BowsersMagmaMountain);
-#endif
 
 void func_800F83C4_BowsersMagmaMountain(void) {
     GwCommon.boardWork[31]++;
