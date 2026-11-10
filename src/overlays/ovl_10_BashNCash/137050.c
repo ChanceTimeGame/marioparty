@@ -327,8 +327,6 @@ f32 func_800F7240_BashNCash(f32 *angle)
 }
 
 /* The nearest coin in flight within 400 units, or NULL. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 omObjData* func_800F72BC_BashNCash(omObjData* obj) {
     Vec3f v_s;
     Vec3f* v;
@@ -355,14 +353,11 @@ omObjData* func_800F72BC_BashNCash(omObjData* obj) {
             }
         }
     }
-    if (found != -1) {
-        return D_800EDE70[found];
+    if (found == -1) {
+        return NULL;
     }
-    return NULL;
+    return D_800EDE70[found];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F72BC_BashNCash);
-#endif
 
 s32 func_800F73F0_BashNCash(u16 player) {
     omObjData* obj;
@@ -1105,8 +1100,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F8FD4_B
 #endif
 
 /* Launches a free coin of the given value from the cash player towards the hitter. */
-// loop exit test and register allocation
-#ifdef NON_MATCHING
 u16 func_800F99A8_BashNCash(omObjData* cash, omObjData* hitter, s32 type) {
     Vec3f v;
     omObjData* coin;
@@ -1114,46 +1107,44 @@ u16 func_800F99A8_BashNCash(omObjData* cash, omObjData* hitter, s32 type) {
     BashCoinSlot* slot;
     s32 i;
 
-    if (D_800ED430 == 1) {
-        for (i = 0; i < D_800EE984; i++) {
-            coin = D_800EDE70[i];
-            cw = coin->unk_50;
-            if (cw->unk_54 == 0 && type == cw->unk_52) {
-                break;
-            }
-        }
-        if (i < D_800EE984) {
-            slot = &D_800FE630_BashNCash[coin->work[0]];
-            coin->trans.x = cash->trans.x;
-            coin->trans.y = cash->trans.y + 200.0f;
-            coin->trans.z = cash->trans.z;
-            func_80025798(coin->model[0], hitter->trans.x, hitter->trans.y, hitter->trans.z);
-            func_80025798(coin->model[1], hitter->trans.x, 0.0f, hitter->trans.z);
-            v.x = hitter->trans.x;
-            v.z = hitter->trans.z;
-            v.x -= cash->trans.x;
-            v.z -= cash->trans.z;
-            cw->unk_3C = func_800B0CD8(v.x, v.z);
-            if (_CheckFlag(0x45) != 0) {
-                func_80060618(0x45F, PLAYER_WORK(cash)->unk_58);
-                cw->unk_40 = 0.0f;
-                cw->unk_38 = -1.1f;
-            } else {
-                cw->unk_40 = 17.5f;
-                cw->unk_38 = -1.7f;
-            }
-            cw->unk_54 = 1;
-            slot->timer = 150;
-            func_800258EC(coin->model[0], 4, 0);
-            func_800258EC(coin->model[1], 4, 0);
-            return 1;
+    if (D_800ED430 != 1) {
+        return 0;
+    }
+    for (i = 0; i < D_800EE984; i++) {
+        coin = D_800EDE70[i];
+        cw = coin->unk_50;
+        if (cw->unk_54 == 0 && type == cw->unk_52) {
+            break;
         }
     }
-    return 0;
+    if (i >= D_800EE984) {
+        return 0;
+    }
+    slot = &D_800FE630_BashNCash[coin->work[0]];
+    coin->trans.x = cash->trans.x;
+    coin->trans.y = cash->trans.y + 200.0f;
+    coin->trans.z = cash->trans.z;
+    func_80025798(coin->model[0], hitter->trans.x, hitter->trans.y, hitter->trans.z);
+    func_80025798(coin->model[1], hitter->trans.x, 0.0f, hitter->trans.z);
+    v.x = hitter->trans.x;
+    v.z = hitter->trans.z;
+    v.x -= cash->trans.x;
+    v.z -= cash->trans.z;
+    cw->unk_3C = func_800B0CD8(v.x, v.z);
+    if (_CheckFlag(0x45) != 0) {
+        func_80060618(0x45F, PLAYER_WORK(cash)->unk_58);
+        cw->unk_40 = 0.0f;
+        cw->unk_38 = -1.1f;
+    } else {
+        cw->unk_40 = 17.5f;
+        cw->unk_38 = -1.7f;
+    }
+    cw->unk_54 = 1;
+    slot->timer = 150;
+    func_800258EC(coin->model[0], 4, 0);
+    func_800258EC(coin->model[1], 4, 0);
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F99A8_BashNCash);
-#endif
 
 // register allocation and scheduling (nmcmp: calls and stores equal)
 // decomp-permuter
