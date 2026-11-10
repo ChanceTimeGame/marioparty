@@ -1675,14 +1675,14 @@ void func_8010078C_MinigameInstructions(Ovl6FPlayerWork* work) {
         HuPrcVSleep();
     }
 }
-// the loop's 10.0f/100.0f are hoisted above the dead func_800AEAC0(0) call in retail, below it here; port copy (masked 14)
+// the loop's 10.0f/100.0f are hoisted above the dead func_800AEAC0(0) call in retail, below it here (masked 8); tried a while loop after the call
 #ifdef NON_MATCHING
 void func_801009B4_MinigameInstructions(Ovl6FPlayerWork* work) {
     f32 x;
     f32 y;
     f32 mag;
     s16 motion;
-    s32 port;
+    s16 port;
     u16 prev;
 
     if (work->unk_3E != 0) {
