@@ -345,7 +345,7 @@ CBBPlayer* func_800F7644_CoinBlockBash(omObjData* obj) {
 void* func_800F766C_CoinBlockBash(omObjData* obj) {
     return obj->unk_50;
 }
-s8 func_800F7674_CoinBlockBash(omObjData* obj) {
+s16 func_800F7674_CoinBlockBash(omObjData* obj) {
     return ((CBBPlayerWork*)obj->unk_50)->unk_56;
 }
 void func_800F7680_CoinBlockBash(omObjData* obj, s16 motion, char* name) {
@@ -1365,8 +1365,6 @@ void func_800FB490_CoinBlockBash(void) {
         }
     }
 }
-// NON_MATCHING: register allocation: port re-extended (one extra sra); logic identical
-#ifdef NON_MATCHING
 void func_800FB4F4_CoinBlockBash(omObjData* obj) {
     CBBPlayer* p;
     s16 port;
@@ -1401,9 +1399,6 @@ void func_800FB4F4_CoinBlockBash(omObjData* obj) {
         p->unk_88 = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FB4F4_CoinBlockBash);
-#endif
 void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
     f32 dDrop;
     f32 dCoin;
