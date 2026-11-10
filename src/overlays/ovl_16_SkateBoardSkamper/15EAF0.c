@@ -1431,10 +1431,9 @@ void func_800FB380_SkateBoardSkamper(omObjData* obj) {
 }
 
 /* A player object. */
-// scheduling (masked 2): retail loads w->unk_58 before the unk_38 == 1000.0f test
-#ifdef NON_MATCHING
 void func_800FBAD4_SkateBoardSkamper(omObjData* obj) {
     SbsPlayerWork* w = obj->unk_50;
+    s32 pl;
 
     switch (D_800ED430) {
         case 0:
@@ -1448,24 +1447,22 @@ void func_800FBAD4_SkateBoardSkamper(omObjData* obj) {
             }
             break;
         case 2:
-            if (_CheckFlag(0x2B) == 0 && w->unk_38 == 1000.0f && CRot.x <= 215.0f) {
-                if (w->unk_58 == D_800FDA0F_SkateBoardSkamper) {
-                    func_800184BC(obj, 13);
-                } else if (w->unk_53 == 2) {
-                    func_800184BC(obj, 14);
+            if (_CheckFlag(0x2B) == 0) {
+                pl = w->unk_58;
+                if (w->unk_38 == 1000.0f && CRot.x <= 215.0f) {
+                    if (pl == D_800FDA0F_SkateBoardSkamper) {
+                        func_800184BC(obj, 13);
+                    } else if (w->unk_53 == 2) {
+                        func_800184BC(obj, 14);
+                    }
                 }
             }
             break;
     }
     func_800FC758_SkateBoardSkamper(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_SkateBoardSkamper/15EAF0", func_800FBAD4_SkateBoardSkamper);
-#endif
 
 /* Raises a course tile model's far vertices (y > 400) to n steps of 10 and scrolls its texture. */
-// register allocation (masked 12): one value more live in the inner loop, so a saved register and an 8-byte frame
-#ifdef NON_MATCHING
 void func_800FBC38_SkateBoardSkamper(s16 model, s16 n) {
     unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
     unk2C0C0StructB0* b;
@@ -1483,19 +1480,16 @@ void func_800FBC38_SkateBoardSkamper(s16 model, s16 n) {
                 dst->unk_04 = n * 100 - 500;
                 switch (i) {
                     case 0:
-                        dst->unk_0A = (10 - n) << 9;
+                        dst->unk_0A = (10 - n) * 512;
                         break;
                     case 2:
-                        dst->unk_08 = (10 - n) << 10;
+                        dst->unk_08 = (10 - n) * 1024;
                         break;
                 }
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_SkateBoardSkamper/15EAF0", func_800FBC38_SkateBoardSkamper);
-#endif
 
 void func_800FBD7C_SkateBoardSkamper(omObjData* obj) {
     func_800FBC38_SkateBoardSkamper(obj->model[0], 10);

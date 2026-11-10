@@ -889,8 +889,6 @@ void func_800F7600_LuigisEngineRoom(void) {
     }
 }
 
-// register allocation: retail keeps mode in a2 and the first selector in a1 (masked 30, one fewer insn)
-#ifdef NON_MATCHING
 void func_800F7668_LuigisEngineRoom(LuigiPipe* p, s16 mode) {
     s32 i;
 
@@ -954,9 +952,6 @@ void func_800F7668_LuigisEngineRoom(LuigiPipe* p, s16 mode) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_LuigisEngineRoom/24C3C0", func_800F7668_LuigisEngineRoom);
-#endif
 
 void func_800F78C8_LuigisEngineRoom(s16 arg0, f32 arg1) {
     func_800A0D00((Vec3f*)&D_800F9D00_LuigisEngineRoom[arg0]->xScale, 1.0f, arg1, 1.0f);

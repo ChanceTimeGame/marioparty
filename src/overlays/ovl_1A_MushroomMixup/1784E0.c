@@ -199,23 +199,14 @@ void func_800F7188_MushroomMixup(s16 arg0) {
     PlaySound((s32) arg0);
 }
 
-// register allocation and scheduling (same calls, fields and branches)
-#ifdef NON_MATCHING
 u16 func_800F71A8_MushroomMixup(u8 model, u8 phase, u8 arg2, u8 colL, u8 colR) {
     MMColorTable tbl = D_800FC7B0_MushroomMixup;
     unk_ovl_2D_struct* m;
-    MMColor* c;
 
     m = &D_800F2B7C[model];
-    c = &tbl.c[colL];
-    func_80028180(model, D_800FC7DC_MushroomMixup, c->r, c->g, c->b, 1);
-    c = &tbl.c[colR];
-    func_80028180(model, D_800FC7EC_MushroomMixup, c->r, c->g, c->b, 0);
-    if (arg2) {
-        if (phase) {
-            m->unk_48 = m->unk_50;
-        }
-    } else {
+    func_80028180(model, D_800FC7DC_MushroomMixup, tbl.c[colL].r, tbl.c[colL].g, tbl.c[colL].b, 1);
+    func_80028180(model, D_800FC7EC_MushroomMixup, tbl.c[colR].r, tbl.c[colR].g, tbl.c[colR].b, 0);
+    if (!arg2) {
         switch (phase) {
         case 0:
             m->unk_4C = 1.5f;
@@ -240,15 +231,14 @@ u16 func_800F71A8_MushroomMixup(u8 model, u8 phase, u8 arg2, u8 colL, u8 colR) {
             }
             break;
         }
+    } else if (phase) {
+        m->unk_48 = m->unk_50;
     }
     m->unk_0A &= 0xFFFE;
     m->unk_48 = func_800369FC(&D_800ED554[m->unk_08], m->unk_0A, m->unk_48, m->unk_50, m->unk_4C);
     func_80025EB4(model, 1, 1);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F71A8_MushroomMixup);
-#endif
 
 u16 func_800F7574_MushroomMixup(void) {
     s32 index;
@@ -474,17 +464,15 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F75B0_MushroomMixup);
 #endif
 
-// register allocation, switch compare order
+// register allocation (masked 0, raw 9): both "D_800FC98C |= 1 << work[0]" build the bit in v0, retail in v1
 #ifdef NON_MATCHING
 void func_800F7FCC_MushroomMixup(omObjData* arg0) {
     MMMushroom* rec;
 
-    switch (D_800ED430) {
-    case 2:
+    if (D_800ED430 == 2) {
         func_800258EC(arg0->model[0], 0x1C00, 0x400);
         D_800F2B7C[arg0->model[0]].unk_6C->unk_28 = 1;
-        break;
-    case 1:
+    } else if (D_800ED430 == 1) {
         rec = &D_800FC9C0_MushroomMixup[arg0->work[0]];
         if ((D_800FC8A0_MushroomMixup == 0 || rec->state == 2) && !((D_800FC98C_MushroomMixup >> arg0->work[0]) & 1)) {
             if ((rec->color & 7) == D_800FC81C_MushroomMixup) {
@@ -512,14 +500,13 @@ void func_800F7FCC_MushroomMixup(omObjData* arg0) {
                 if (rec->speed > 0.0f && arg0->trans.y < -400.0f) {
                     rec->state = 1;
                 }
-                if (rec->topY < arg0->trans.y) {
+                if (arg0->trans.y > rec->topY) {
                     D_800FC98C_MushroomMixup |= 1 << arg0->work[0];
                     arg0->trans.y = rec->topY;
                     rec->state = 0;
                 }
             }
         }
-        break;
     }
 }
 #else
@@ -687,7 +674,7 @@ void func_800F8848_MushroomMixup(omObjData* arg0) {
     }
 }
 
-// retail recomputes a - b and keeps &d in a register; same result
+// register allocation (masked 2, raw 15): s0/s1/s2 hold other/arg0/dp in retail; declaration order does not move them
 /* A +-45 degree detour around the player the CPU is chasing (work unk_54). */
 #ifdef NON_MATCHING
 f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
@@ -697,27 +684,23 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
     f32 b;
     f32 off;
     f32 r;
+    Vec3f* dp;
 
     r = 0.0f;
     if (MM_PLAYER(arg0)->unk_54 != -1) {
+        dp = &d;
         other = D_800F3FB0[MM_PLAYER(arg0)->unk_54];
-        func_800A0D00(&d, x, 0.0f, z);
+        func_800A0D00(dp, x, 0.0f, z);
         d.x -= arg0->trans.x;
         d.y -= 0.0f;
         d.z -= arg0->trans.z;
         a = func_80029518(func_800B0CD8(d.x, d.z));
-        func_800A0D00(&d, other->trans.x, 0.0f, other->trans.z);
+        func_800A0D00(dp, other->trans.x, 0.0f, other->trans.z);
         d.x -= arg0->trans.x;
         d.y -= 0.0f;
         d.z -= arg0->trans.z;
         b = func_80029518(func_800B0CD8(d.x, d.z));
-        if (a - b < 0.0f) {
-            if (-(a - b) > 180.0f) {
-                off = -45.0f;
-            } else {
-                off = 45.0f;
-            }
-        } else if (a - b > 180.0f) {
+        if ((a - b < 0.0f ? -(a - b) : a - b) > 180.0f) {
             off = -45.0f;
         } else {
             off = 45.0f;
@@ -725,7 +708,7 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
         if (a - b < 0.0f) {
             off = -off;
         }
-        r = 0.0f + off;
+        r += off;
     }
     return r;
 }
@@ -940,12 +923,13 @@ void func_800F9510_MushroomMixup(omObjData* arg0, s32 arg1) {
 
 // register allocation, u16 vs s16 load of D_800FC996 (tested != 0)
 /* A player's object function during the rounds. */
+// register allocation (masked 0, raw 13): retail swaps s2/s3 (st and the ContBtnTrg base); declaring st first does not move them
 #ifdef NON_MATCHING
 void func_800F9548_MushroomMixup(omObjData* arg0) {
     MMPlayerWork* work;
     MMPlayerState* st;
     MMMushroom* rec;
-    u8 p;
+    s32 p;
 
     p = arg0->work[0];
     work = arg0->unk_50;
@@ -954,37 +938,37 @@ void func_800F9548_MushroomMixup(omObjData* arg0) {
     st->savBtnTrg = ContBtnTrg[GwPlayer[p].port];
     st->savStkX = ContStkX[GwPlayer[p].port];
     st->savStkY = ContStkY[GwPlayer[p].port];
-    if (func_800F8260_MushroomMixup(arg0)) {
-        func_800F82AC_MushroomMixup(arg0);
-        return;
-    }
-    func_800F8A58_MushroomMixup(arg0);
-    ContBtnTrg[GwPlayer[p].port] &= 0xBFFF;
-    if (D_800FC996_MushroomMixup != 0) {
-        ContBtn[GwPlayer[p].port] = 0;
-        ContBtnTrg[GwPlayer[p].port] = 0;
-        ContStkX[GwPlayer[p].port] = 0;
-        ContStkY[GwPlayer[p].port] = 0;
-        work->unk_40 = 0.0f;
-    }
-    if ((u8)(work->unk_53 - 2) < 7) {
-        rec = &D_800FC9C0_MushroomMixup[work->unk_53 - 2];
-        if ((rec->color & 7) != D_800FC81C_MushroomMixup && D_800FC8A0_MushroomMixup == 0 && rec->state == 2 &&
-            rec->speed < 0.0f) {
-            if (D_800FC710_MushroomMixup[arg0->work[0]] == 0) {
-                D_800FC710_MushroomMixup[arg0->work[0]] = 0xC;
-                func_80060F04(work->unk_58, 2, 3, 0xA);
-            } else {
-                D_800FC710_MushroomMixup[arg0->work[0]]--;
+    if (func_800F8260_MushroomMixup(arg0) == 0) {
+        func_800F8A58_MushroomMixup(arg0);
+        ContBtnTrg[GwPlayer[p].port] &= 0xBFFF;
+        if (D_800FC996_MushroomMixup != 0) {
+            ContBtn[GwPlayer[p].port] = 0;
+            ContBtnTrg[GwPlayer[p].port] = 0;
+            ContStkX[GwPlayer[p].port] = 0;
+            ContStkY[GwPlayer[p].port] = 0;
+            work->unk_40 = 0.0f;
+        }
+        if ((u8)(work->unk_53 - 2) < 7) {
+            rec = &D_800FC9C0_MushroomMixup[work->unk_53 - 2];
+            if ((rec->color & 7) != D_800FC81C_MushroomMixup && D_800FC8A0_MushroomMixup == 0 && rec->state == 2 &&
+                rec->speed < 0.0f) {
+                if (D_800FC710_MushroomMixup[arg0->work[0]] == 0) {
+                    D_800FC710_MushroomMixup[arg0->work[0]] = 0xC;
+                    func_80060F04(work->unk_58, 2, 3, 0xA);
+                } else {
+                    D_800FC710_MushroomMixup[arg0->work[0]]--;
+                }
             }
         }
+        func_80005A28(arg0);
+        ContBtn[GwPlayer[p].port] = st->savBtn;
+        ContBtnTrg[GwPlayer[p].port] = st->savBtnTrg;
+        ContStkX[GwPlayer[p].port] = st->savStkX;
+        ContStkY[GwPlayer[p].port] = st->savStkY;
+        func_800F8260_MushroomMixup(arg0);
+    } else {
+        func_800F82AC_MushroomMixup(arg0);
     }
-    func_80005A28(arg0);
-    ContBtn[GwPlayer[p].port] = st->savBtn;
-    ContBtnTrg[GwPlayer[p].port] = st->savBtnTrg;
-    ContStkX[GwPlayer[p].port] = st->savStkX;
-    ContStkY[GwPlayer[p].port] = st->savStkY;
-    func_800F8260_MushroomMixup(arg0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F9548_MushroomMixup);

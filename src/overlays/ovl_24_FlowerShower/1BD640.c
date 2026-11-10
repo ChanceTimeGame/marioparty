@@ -648,7 +648,7 @@ void func_800F8234_FlowerShower(omObjData* arg0) {
     *func_800F7A28_FlowerShower(arg0, 0x23, 2.0f, 180.0f, 0, 0xB4, 5, 8)->unk_68 = 7;
 }
 
-// register allocation (masked 5)
+// register allocation (masked 2): the D_800F2AF8/loop registers differ; for-loops over D_800EE984 / D_800F2BC0 drop pad[4] but not the residue
 #ifdef NON_MATCHING
 void func_800F8280_FlowerShower(omObjData* arg0) {
     f32 temp_f0;
@@ -660,7 +660,6 @@ void func_800F8280_FlowerShower(omObjData* arg0) {
     s32 controller;
     s32 saved_stick_x;
     s32 saved_stick_y;
-    s32 stick_x;
     volatile s32 pad[4]; /* retail reserves 16 otherwise-unused stack bytes */
     u8 temp_v0;
     u16* button_trg;
@@ -696,21 +695,17 @@ void func_800F8280_FlowerShower(omObjData* arg0) {
         button_trg = &ContBtnTrg[controller];
         *button_trg &= 0x1000;
         if (D_800FAD5C_FlowerShower >= 171) {
-            stick_x = -48;
             if (D_800FAD5C_FlowerShower >= 271) {
                 if (D_800FAD5C_FlowerShower >= 311) {
                     ContStkX[controller] = 30;
                     ContStkY[controller] = -18;
+                } else if (D_800FAD5C_FlowerShower < 291) {
+                    ContStkX[controller] = 46;
                 } else {
-                    stick_x = 46;
-                    if (D_800FAD5C_FlowerShower >= 291) {
-                        stick_x = 36;
-                    }
-                    goto set_stick_x;
+                    ContStkX[controller] = 36;
                 }
             } else {
-set_stick_x:
-                ContStkX[controller] = stick_x;
+                ContStkX[controller] = -48;
             }
             if (D_800FAD5C_FlowerShower == 240) {
                 func_80060128(0x1D);
@@ -1091,7 +1086,7 @@ void func_800F9224_FlowerShower(omObjData* arg0, s16* stickX, s16* stickY, s32* 
     *stickY = 0;
 }
 
-// multiply operand order (masked 0)
+// multiply operand order (masked 0, raw 2): v.x * r comes out r * v.x; r * v.x, px *= r and declaring r first do not fix it
 #ifdef NON_MATCHING
 void func_800F95F4_FlowerShower(omObjData* arg0) {
     s16 sx;

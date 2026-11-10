@@ -216,7 +216,7 @@ s16 func_800F8CA0_LimboDance(omObjData* obj);
 void func_800F9080_LimboDance(omObjData* obj);
 void func_800F922C_LimboDance(void);
 void func_800F929C_LimboDance(omObjData* obj);
-void func_800F97B8_LimboDance(s32 i, s16* models, s16* src, f32 x, u16 height);
+void func_800F97B8_LimboDance(s16 i, s16* models, s16* src, f32 x, u16 height);
 void func_800F9A28_LimboDance(omObjData* obj);
 s16 func_800F9C98_LimboDance(void);
 s16 func_800F9CFC_LimboDance(f32 x);
