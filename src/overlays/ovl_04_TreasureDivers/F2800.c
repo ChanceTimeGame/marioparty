@@ -295,8 +295,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", func_800FAB
 
 
 /* The outline's height at screen x. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 s16 func_800FB1D4_TreasureDivers(f32 x) {
     s8 prev;
     s8 cur;
@@ -305,9 +303,9 @@ s16 func_800FB1D4_TreasureDivers(f32 x) {
     TDPoint* q;
     f32 t;
 
-    i = 1;
-    prev = D_800FE778_TreasureDivers[0];
-    for (; i < D_800FE772_TreasureDivers;) {
+    i = 0;
+    prev = D_800FE778_TreasureDivers[i++];
+    while (i < D_800FE772_TreasureDivers) {
         cur = D_800FE778_TreasureDivers[i++];
         if ((prev >= 0) & (cur >= 0)) {
             if ((D_800FE774_TreasureDivers[prev].x <= x && x < D_800FE774_TreasureDivers[cur].x) ||
@@ -324,9 +322,6 @@ s16 func_800FB1D4_TreasureDivers(f32 x) {
     }
     return 104;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", func_800FB1D4_TreasureDivers);
-#endif
 
 /* The nearest free treasure whose box (grown by w, h) holds (x, y), or -1. */
 s16 func_800FB3A8_TreasureDivers(f32 x, f32 y, f32 w, f32 h) {
