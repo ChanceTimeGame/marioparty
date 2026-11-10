@@ -294,14 +294,15 @@ void func_800F6E58_HotRopeJump(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F6E58_HotRopeJump);
 #endif
 
-// NON_MATCHING: register allocation of the motion pointer (masked 0)
+// NON_MATCHING: instruction-identical (raw 0 in an all-C unit), but after the INCLUDE_ASM
+// neighbours above GCC emits the a/b initialiser templates into .text; unwrap with them
 #ifdef NON_MATCHING
 void func_800F6EEC_HotRopeJump(omObjData* obj, s32 player) {
     s32 a[5] = { 0x0F, 0x38, 0x39, 0x3A, 0x3B };
     s32 b[5] = { 0x10, 0x3C, 0x3D, 0x3E, 0x3F };
     s32 dir;
     s32 file;
-    s32* m;
+    s32 k;
     HRJPlayerWork* w;
 
     dir = D_800C59AC[GwPlayer[player].character].unk_00;
@@ -321,9 +322,9 @@ void func_800F6EEC_HotRopeJump(omObjData* obj, s32 player) {
     func_8001874C(obj, 1, dir | 1, 1, 0);
     func_8001874C(obj, 2, dir | 3, 1, 0);
     func_8001874C(obj, 6, dir | 5, 1, 0x13);
-    m = (rand8() & 1) + a;
-    func_8001874C(obj, 0xD, dir | m[0], 1, 0x78);
-    func_8001874C(obj, 0xE, dir | m[6], 1, 0x78);
+    k = rand8() & 1;
+    func_8001874C(obj, 0xD, dir | a[k], 1, 0x78);
+    func_8001874C(obj, 0xE, dir | b[k], 1, 0x78);
     func_8001874C(obj, 0x11, dir | 0x18, 0, 0);
     func_8001874C(obj, 0x15, dir | 0x62, 0, 0);
     func_8001874C(obj, 0x1E, dir | 0x63, 0, 0);
