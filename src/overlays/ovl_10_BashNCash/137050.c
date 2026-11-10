@@ -1155,9 +1155,10 @@ s32 func_800F9BAC_BashNCash(void)
 }
 
 /* The cash player was hit: knock out a 5-coin (or 1-coin) piece. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// scheduling: retail loads cash->work[0] before &D_800FE690 (masked 2; pool assigned after w, index local tried)
 #ifdef NON_MATCHING
 void func_800F9BDC_BashNCash(omObjData* cash, omObjData* hitter) {
+    BashCash* pool = &D_800FE690_BashNCash;
     BashPlayerWork* w;
     s32 coins;
 
@@ -1168,12 +1169,12 @@ void func_800F9BDC_BashNCash(omObjData* cash, omObjData* hitter) {
     }
     if (coins >= 5) {
         if (func_800F99A8_BashNCash(cash, hitter, 6)) {
-            if (D_800FE690_BashNCash.coins >= 5) {
-                D_800FE690_BashNCash.coins -= 5;
+            if (pool->coins >= 5) {
+                pool->coins -= 5;
             } else {
-                s32 rest = 5 - D_800FE690_BashNCash.coins;
+                s32 rest = 5 - pool->coins;
 
-                D_800FE690_BashNCash.coins = 0;
+                pool->coins = 0;
                 GwPlayer[w->unk_58].coins_mg -= rest;
             }
             if (coins == 5) {
@@ -1181,12 +1182,12 @@ void func_800F9BDC_BashNCash(omObjData* cash, omObjData* hitter) {
             }
         }
     } else if (func_800F99A8_BashNCash(cash, hitter, 3)) {
-        if (D_800FE690_BashNCash.coins != 0) {
-            D_800FE690_BashNCash.coins--;
+        if (pool->coins != 0) {
+            pool->coins--;
         } else {
             GwPlayer[w->unk_58].coins_mg--;
         }
-        if (coins - 1 == 0) {
+        if (--coins == 0) {
             D_800FE628_BashNCash = 1;
         }
     }
@@ -1204,33 +1205,35 @@ void func_800F9D60_BashNCash(omObjData* obj) {
 }
 
 /* A hammer player's swing: moves it and checks for a hit on the cash player. */
-// register allocation; retail keeps 0.0f in $f20 (stores swc1, not sw zero)
+// retail loads unk_04 twice around the post-increment (masked 14; t local, cast and 12U forms give one load)
 #ifdef NON_MATCHING
 void func_800F9DD0_BashNCash(omObjData* obj) {
     Vec3f v_s;
-    Vec3f* v = &v_s;
+    Vec3f* v;
     omObjData* cash;
     BashPlayerWork* w;
+    f32 zero;
+    BashCash* pool = &D_800FE690_BashNCash;
 
     if (func_80017A60(obj) == 0 && obj->work[1] != 0) {
-        cash = D_800FE690_BashNCash.obj;
+        v = &v_s;
+        cash = pool->obj;
         w = obj->unk_50;
-        D_800F5254 = 0.0f;
-        D_800ED6B8 = 0.0f;
+        zero = 0.0f;
+        D_800F5254 = zero;
+        D_800ED6B8 = zero;
         func_80002C48(obj, w->unk_3C, obj->trans.x, obj->trans.y, obj->trans.z);
         obj->trans.x = func_800AEAC0(w->unk_3C) * w->unk_40 + D_800ED6B8 + obj->trans.x;
         obj->trans.z = func_800AEFD0(w->unk_3C) * w->unk_40 + D_800F5254 + obj->trans.z;
-        D_800FE710_BashNCash[obj->work[0]].unk_04++;
-        if (D_800FE710_BashNCash[obj->work[0]].unk_04 >= 12 && D_800FE710_BashNCash[obj->work[0]].unk_04 < 23 &&
-            D_800FE690_BashNCash.unk_06 == 0) {
-            v->x = 0.0f;
-            v->y = 0.0f;
-            v->z = 0.0f;
+        if (D_800FE710_BashNCash[obj->work[0]].unk_04++ - 12U < 11 && pool->unk_06 == 0) {
+            v->x = zero;
+            v->y = zero;
+            v->z = zero;
             if (func_800F6FD0_BashNCash(obj, cash, v)) {
                 cash->work[1] = 1;
                 func_80018450(cash, 2);
                 func_800F9BDC_BashNCash(cash, obj);
-                D_800FE690_BashNCash.unk_06 = 60;
+                pool->unk_06 = 60;
                 func_800F9D60_BashNCash(cash);
             }
         }
