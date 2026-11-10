@@ -1287,8 +1287,6 @@ void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9EAC_CastAways);
 #endif
-// rodata order (C floats) and register allocation
-#ifdef NON_MATCHING
 void func_800FA198_CastAways(void) {
     Vec3f pos;
     Vec2f scr;
@@ -1335,9 +1333,6 @@ void func_800FA198_CastAways(void) {
     }
     D_800FBA08_CastAways--;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA198_CastAways);
-#endif
 // register allocation and block order
 #ifdef NON_MATCHING
 void func_800FA410_CastAways(void) {
