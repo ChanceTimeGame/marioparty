@@ -592,54 +592,36 @@ void func_800F740C_MariosRainbowCastle(void) {
     func_800587EC(0x56, 0, 4);
 }
 
-// register allocation: retail swaps s0/s2 (player+space vs obj); masked 0
-#ifdef NON_MATCHING
-void func_800F7430_MariosRainbowCastle(void) {
-    Vec3f dir;
-    Object* obj;
-    GW_PLAYER* player;
-    Object* model;
-    Vec3f* pos;
-    Vec3f* modelPos;
-    Vec3f* dest;
-    BoardSpace* space;
-
-    player = GetPlayerStruct(-1);
-    obj = player->player_obj;
-    model = D_800F8430_MariosRainbowCastle;
-    pos = &obj->coords;
-    func_8004B838(4.0f);
-    func_80056E30(2);
-    func_80056E48(&BoardSpaceGet(2)->coords);
-    func_800A0E80(&dir, &BoardSpaceGet(3)->coords, pos);
-    func_8004D1EC(&obj->unk_18, &dir, &obj->unk_18, 8);
-    HuPrcSleep(8);
-    modelPos = &model->coords;
-    func_800405DC(player->player_index);
-    space = BoardSpaceGet(3);
-    SetPlayerAnimation(-1, -1, 2);
-    obj->unk_34 = 40.0f;
-    obj->unk_38 = -10.0f;
-    func_8004D3F4(pos, &space->coords, pos, 8);
-    HuPrcSleep(16);
-    dest = &BoardSpaceGet(4)->coords;
-    func_8004D3F4(pos, dest, pos, 40);
-    func_8004D3F4(modelPos, dest, modelPos, 40);
-    HuPrcSleep(55);
-    SetPlayerOntoChain(-1, 7, 0);
-    GwSystem.unk_1A = 0x46;
-    if (GwCommon.boardWork[0] == 0) {
-        func_800587EC(0x57, 0, 2);
-    } else {
-        func_800587BC(0x57, 0, 3, 1);
-    }
-    SetEventReturnFlag(1);
-    SetBoardFeatureFlag(0x4F);
-    EndProcess(NULL);
+// decomp-permuter
+void func_800F7430_MariosRainbowCastle(void)
+{
+  Vec3f dir;
+  Object *obj;
+  GW_PLAYER *player;
+  Object *model;
+  Vec3f *pos;
+  Vec3f *modelPos;
+  Vec3f *dest;
+  BoardSpace *space;
+  player = GetPlayerStruct(-1);
+  obj = player->player_obj;
+ do { model = D_800F8430_MariosRainbowCastle; pos = &obj->coords; func_8004B838(4.0f); func_80056E30(2); func_80056E48(&BoardSpaceGet(2)->coords); func_800A0E80(&dir, &BoardSpaceGet(3)->coords, pos); func_8004D1EC(&obj->unk_18, &dir, &obj->unk_18, 8); HuPrcSleep(8); modelPos = &model->coords; func_800405DC(player->player_index); space = BoardSpaceGet(3); SetPlayerAnimation(-1, -1, 2); obj->unk_34 = 40.0f; obj->unk_38 = -10.0f; func_8004D3F4(pos, &space->coords, pos, 8); HuPrcSleep(16); dest = &BoardSpaceGet(4)->coords; func_8004D3F4(pos, dest, pos, 40); } while (0);
+  func_8004D3F4(modelPos, dest, modelPos, 40);
+  HuPrcSleep(55);
+  SetPlayerOntoChain(-1, 7, 0);
+  GwSystem.unk_1A = 0x46;
+  if (GwCommon.boardWork[0] == 0)
+  {
+    func_800587EC(0x57, 0, 2);
+  }
+  else
+  {
+    func_800587BC(0x57, 0, 3, 1);
+  }
+  SetEventReturnFlag(1);
+  SetBoardFeatureFlag(0x4F);
+  EndProcess(0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3B_MariosRainbowCastle/24FAB0", func_800F7430_MariosRainbowCastle);
-#endif
 
 void func_800F75E4_MariosRainbowCastle(Object* obj, Vec3f* target, Vec3f* vel, f32 accel, f32 maxSpeed) {
     Vec3f dir;
