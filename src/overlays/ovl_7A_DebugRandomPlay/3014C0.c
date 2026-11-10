@@ -354,7 +354,7 @@ void func_800F69FC_DebugRandomPlay(omObjData* arg0, u16 arg1) {
 void func_800F6BBC_DebugRandomPlay(void) {
 }
 
-// register allocation (masked 20, no other difference)
+// register allocation (raw 49, masked 20); tried digit-subtract locals, coins %= steps (kept), declaration order (M1c)
 #ifdef NON_MATCHING
 void func_800F6BC4_DebugRandomPlay(u16 arg0) {
     s16 coins;
@@ -363,12 +363,14 @@ void func_800F6BC4_DebugRandomPlay(u16 arg0) {
     coins = GwPlayer[arg0].coins;
     spr = func_80019060(D_800F8F94_DebugRandomPlay, 0, 1);
     func_80018E50(spr, coins / 100, 0);
+    coins %= 100;
     SetBasicSpritePos(spr, D_800F88F0_DebugRandomPlay[arg0] + 0x58, D_800F8900_DebugRandomPlay[arg0] + 0x20);
     spr = func_80019060(D_800F8F94_DebugRandomPlay, 0, 1);
-    func_80018E50(spr, coins % 100 / 10, 0);
+    func_80018E50(spr, coins / 10, 0);
+    coins %= 10;
     SetBasicSpritePos(spr, D_800F88F0_DebugRandomPlay[arg0] + 0x68, D_800F8900_DebugRandomPlay[arg0] + 0x20);
     spr = func_80019060(D_800F8F94_DebugRandomPlay, 0, 1);
-    func_80018E50(spr, coins % 100 % 10, 0);
+    func_80018E50(spr, coins, 0);
     SetBasicSpritePos(spr, D_800F88F0_DebugRandomPlay[arg0] + 0x78, D_800F8900_DebugRandomPlay[arg0] + 0x20);
 }
 #else

@@ -120,7 +120,7 @@ typedef struct MBLoop {
 /* What func_800FB99C reports for a track. */
 typedef struct MBBeatInfo {
     /* 0x00 */ s16 diff;
-    /* 0x02 */ s16 len;
+    /* 0x02 */ u16 len;
     /* 0x04 */ s32 idx;
     /* 0x08 */ s16 unk8;
 } MBBeatInfo;
@@ -174,7 +174,7 @@ void func_800F73E8_MarioBandstand(void);
 void func_800F7458_MarioBandstand(void);
 void func_800F74C8_MarioBandstand(omObjData*);
 void func_800F7760_MarioBandstand(omObjData*);
-void func_800F7B88_MarioBandstand(s16);
+void func_800F7B88_MarioBandstand(s32);
 void func_800F7C1C_MarioBandstand(s32);
 s32 func_800F7D58_MarioBandstand(void);
 void func_800F7F7C_MarioBandstand(omObjData*);
@@ -203,7 +203,7 @@ void func_800FB1D0_MarioBandstand(void);
 void func_800FB214_MarioBandstand(void);
 void func_800FB4D8_MarioBandstand(void);
 s16 func_800FB8EC_MarioBandstand(s32);
-s16 func_800FB99C_MarioBandstand(s32, MBBeatInfo*);
+s32 func_800FB99C_MarioBandstand(s32, MBBeatInfo*);
 void func_800FBB14_MarioBandstand(void);
 void func_800FBD1C_MarioBandstand(void);
 void func_800FBD8C_MarioBandstand(void);
@@ -212,14 +212,14 @@ void func_800FC4E0_MarioBandstand(void);
 void func_800FC744_MarioBandstand(omObjData*);
 s8 func_800FC854_MarioBandstand(s8);
 void func_800FC870_MarioBandstand(s32);
-void func_800FC880_MarioBandstand(s8);
+void func_800FC880_MarioBandstand(s32);
 s32 func_800FC8A8_MarioBandstand(s32);
 void func_800FC8B8_MarioBandstand(s32, MBBeatInfo*);
 void func_800FC930_MarioBandstand(f32, f32, f32, f32, f32, f32, f32);
 u32 func_800FC9D8_MarioBandstand(u32);
 u32 func_800FCAAC_MarioBandstand(void);
 #ifndef MB_1D3040
-s16 func_800FCAD4_MarioBandstand(omObjData*, s32, s32, s32, s16, s32);
+s16 func_800FCAD4_MarioBandstand(omObjData*, s32, s32, s32, u16, s16);
 #endif
 
 /* ---------------------------------------------------------------------------------------------

@@ -968,7 +968,7 @@ void func_800F960C_RunningOfTheBulb(omObjData* arg0) {
 void func_800F9648_RunningOfTheBulb(omObjData* arg0) {
 }
 
-// retail reloads the player pointer and flags; branch shape of the count
+// retail reloads the player pointer and flags and shares one n++ with a hoisted 2 (raw 18, masked 11); tried continue, one || test (hoists the 2 but CSEs the reloads) (M1c)
 #ifdef NON_MATCHING
 u16 func_800F9650_RunningOfTheBulb(void) {
     RotbPlayerWork* work;
@@ -1025,7 +1025,7 @@ void func_800F9724_RunningOfTheBulb(omObjData* arg0) {
     D_800EDE70[D_800EE984++] = arg0;
     arg0->func_ptr = &func_800F9C2C_RunningOfTheBulb;
 }
-// mul.s operand order (masked 0)
+// mul.s operand order in s * dist (raw 1, masked 0); tried inline call both orders, *= then += (M1c)
 #ifdef NON_MATCHING
 void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* ext;
@@ -1616,8 +1616,6 @@ void func_800FB738_RunningOfTheBulb(omObjData* arg0) {
     }
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 s32 func_800FB8EC_RunningOfTheBulb(omObjData* arg0, omObjData* arg1) {
     RotbPlayerWork* work;
     RotbPlayerExt* ext;
@@ -1647,7 +1645,8 @@ s32 func_800FB8EC_RunningOfTheBulb(omObjData* arg0, omObjData* arg1) {
                         ext->unk_00 |= 0x40;
                     }
                     if (ext->unk_30 != NULL) {
-                        func_800FA5B8_RunningOfTheBulb(ROTB_BODY(ext->unk_30)->unk_68.bulb);
+                        body = ROTB_BODY(ext->unk_30);
+                        func_800FA5B8_RunningOfTheBulb(body->unk_68.bulb);
                     }
                     ext->unk_2C = arg1;
                     func_800FA41C_RunningOfTheBulb(arg1);
@@ -1655,16 +1654,13 @@ s32 func_800FB8EC_RunningOfTheBulb(omObjData* arg0, omObjData* arg1) {
             } else {
                 ext->unk_00 |= 0x10;
             }
-        } else if (arg1 != D_800FE478_RunningOfTheBulb && !(body->unk_68.bulb->unk_00 & 0x10)) {
+        } else if (arg1 != D_800FE478_RunningOfTheBulb && !((bulb = body->unk_68.bulb)->unk_00 & 0x10)) {
             func_800FA44C_RunningOfTheBulb(arg1, work->unk_3C);
             PlaySound(0x32B);
         }
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FB8EC_RunningOfTheBulb);
-#endif
 void func_800FBAA4_RunningOfTheBulb(omObjData* arg0) {
     switch (D_800FE4B4_RunningOfTheBulb) {
     case 0:
