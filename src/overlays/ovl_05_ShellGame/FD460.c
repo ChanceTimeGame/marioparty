@@ -465,7 +465,8 @@ void func_800FE5BC_ShellGame(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE5BC_ShellGame);
 #endif
-// NON_MATCHING: retail keeps 5.0f in a saved FP register
+// NON_MATCHING: retail keeps 0.0f in saved $f20 and passes it to func_80009028's arg1 with mfc1, i.e. this
+// unit saw an f32 second parameter; the shared s32 prototype is right for the other callers (M1c)
 #ifdef NON_MATCHING
 void func_800FE6BC_ShellGame(omObjData* obj) {
     SGStageWork* w;

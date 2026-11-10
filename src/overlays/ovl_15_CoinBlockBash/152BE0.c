@@ -2044,7 +2044,8 @@ void func_800FC2AC_CoinBlockBash(omObjData* obj) {
         func_800F96A0_CoinBlockBash(obj, p->mtx[p->unk_66][p->unk_68]);
     }
 }
-// NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10)
+// NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10);
+// retail addresses GwPlayer[i].character as sym+reg (lui at); tried &GwPlayer[i]->, (GwPlayer + i)-> (M1c)
 #ifdef NON_MATCHING
 s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big) {
     f32 scl[6] = { 1.0f, 1.0f, 1.0f, 0.8f, 0.9f, 0.7f };
