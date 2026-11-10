@@ -75,8 +75,6 @@ void func_800F65E0_FlowerLotteryPeachBoard(void) {
     func_80023504(1, 100.0f, 100.0f, 300.0f);
 }
 
-// register allocation: win and the portMask pointer swap s6/s7 (masked 0)
-#ifdef NON_MATCHING
 s32 func_800F6740_FlowerLotteryPeachBoard(s32 win, u8* avail) {
     s16 buttons[4];
     s32 cpu = 0;
@@ -92,7 +90,7 @@ s32 func_800F6740_FlowerLotteryPeachBoard(s32 win, u8* avail) {
                 cpu = 1;
                 buttons[GwPlayer[i].port] = 0x400;
             } else {
-                func_8007155C(win, portMask[GwPlayer[i].port]);
+                func_8007155C(win, (s16)portMask[GwPlayer[i].port]);
                 buttons[GwPlayer[i].port] = -1;
             }
         } else {
@@ -137,14 +135,6 @@ s32 func_800F6740_FlowerLotteryPeachBoard(s32 win, u8* avail) {
     } while (avail[i] == 0);
     return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_FlowerLotteryPeachBoard/2888A0", func_800F6740_FlowerLotteryPeachBoard);
-#endif
-#ifndef NON_MATCHING
-/* the asm path's portMask template (the C path emits it as its local initialiser) */
-const u8 D_800F78C0_FlowerLotteryPeachBoard[4] __attribute__((section(".rodata"))) = { 1, 2, 4, 8 };
-#endif
-
 
 void func_800F6A48_FlowerLotteryPeachBoard(void) {
     char buf[8];
