@@ -221,7 +221,7 @@ void func_800FBB30_DeepSeaDivers(void);
 DSDWork* func_800FC058_DeepSeaDivers(omObjData*);
 void func_800FC148_DeepSeaDivers(void);
 DSDWork* func_800FC1C8_DeepSeaDivers(omObjData*);
-u16 func_800FC1F4_DeepSeaDivers(void);
+u32 func_800FC1F4_DeepSeaDivers(void);
 void func_800FC22C_DeepSeaDivers(omObjData*, f32*, f32*, f32*);
 void func_800FC2F8_DeepSeaDivers(f32*, f32*, f32, Vec2f*, s16, u16, f32*, f32*);
 s16 func_800FC644_DeepSeaDivers(f32*, f32*, s16, u16, f32*, f32*);

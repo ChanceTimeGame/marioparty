@@ -1673,15 +1673,11 @@ void func_800FC148_DeepSeaDivers(void) {
 DSDWork* func_800FC1C8_DeepSeaDivers(omObjData* obj) {
     return (DSDWork*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
 }
-#ifdef NON_MATCHING
-u16 func_800FC1F4_DeepSeaDivers(void) {
+u32 func_800FC1F4_DeepSeaDivers(void) {
     u8 hi = rand8();
 
     return (hi << 8) | rand8();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC1F4_DeepSeaDivers);
-#endif
 void func_800FC22C_DeepSeaDivers(omObjData* unused, f32* x, f32* y, f32* z) {
     if (*x < -2000.0) {
         *x = -2000.0f;
