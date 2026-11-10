@@ -60,8 +60,6 @@ void func_800F6828_MarioBandstand(void) {
     }
 }
 
-// NON_MATCHING: masked 20 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F68D4_MarioBandstand(void) {
     switch (D_800FD282_MarioBandstand) {
     case 1:
@@ -117,9 +115,6 @@ void func_800F68D4_MarioBandstand(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CCCF0", func_800F68D4_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 76 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -249,8 +244,6 @@ void func_800F6B04_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CCCF0", func_800F6B04_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 2 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F6F10_MarioBandstand(void) {
     if (D_800F5144 != 0 || D_800FCBF0_MarioBandstand != 0) {
         D_800C597C = D_800FD286_MarioBandstand;
@@ -258,6 +251,3 @@ void func_800F6F10_MarioBandstand(void) {
         omOvlReturnEx(1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CCCF0", func_800F6F10_MarioBandstand);
-#endif

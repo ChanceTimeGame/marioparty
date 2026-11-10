@@ -3,8 +3,6 @@
 
 u32 D_800FD190_MarioBandstand = 0;
 
-// NON_MATCHING: masked 1 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FC930_MarioBandstand(f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz) {
     func_800178A0(1);
     CZoom = zoom;
@@ -16,9 +14,6 @@ void func_800FC930_MarioBandstand(f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 
     Center.z = cz;
     D_800FD6C0_MarioBandstand = zoom;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1D3040", func_800FC930_MarioBandstand);
-#endif
 
 /* Park-Miller minimal standard generator (Schrage's method), seeded from rand8 and the count. */
 u32 func_800FC9D8_MarioBandstand(u32 seed) {
@@ -36,14 +31,9 @@ u32 func_800FC9D8_MarioBandstand(u32 seed) {
     return seed - lo * 16807;
 }
 
-// NON_MATCHING: masked 2 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 u32 func_800FCAAC_MarioBandstand(void) {
     return D_800FD190_MarioBandstand = func_800FC9D8_MarioBandstand(D_800FD190_MarioBandstand);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1D3040", func_800FCAAC_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 20 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING

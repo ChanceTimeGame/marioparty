@@ -71,8 +71,6 @@ u8 D_800FD170_MarioBandstand[32] = { 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x00, 0
    Stage props and the round's lights
    --------------------------------------------------------------------------------------------- */
 
-// NON_MATCHING: masked 8 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F6F70_MarioBandstand(void) {
     D_800FD2A0_MarioBandstand = 0.0f;
     D_800FD2A4_MarioBandstand = -0.01f;
@@ -81,9 +79,6 @@ void func_800F6F70_MarioBandstand(void) {
     D_800FD708_MarioBandstand = omAddObj(4, 0x2A, 0, -1, func_800F74C8_MarioBandstand);
     D_800FD718_MarioBandstand = omAddObj(8, 0x1C, 0, -1, func_800F8940_MarioBandstand);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F6F70_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 7 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -502,8 +497,6 @@ s32 func_800F7D58_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7D58_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 9 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F7F7C_MarioBandstand(omObjData* obj) {
     f32 s;
     s32 i;
@@ -523,9 +516,6 @@ void func_800F7F7C_MarioBandstand(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7F7C_MarioBandstand);
-#endif
 
 /* Recolours the crown model's vertices and brightens its "18mt000_IA44" texture (IA4: doubles
    each intensity nibble). */
@@ -1108,8 +1098,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F9
    Players
    --------------------------------------------------------------------------------------------- */
 
-// NON_MATCHING: masked 10 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F97D0_MarioBandstand(void) {
     s32 i;
 
@@ -1126,9 +1114,6 @@ void func_800F97D0_MarioBandstand(void) {
         D_800FD6D0_MarioBandstand[i] = omAddObj(8, 0x12, 0x2A, -1, func_800F98C4_MarioBandstand);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F97D0_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 73 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -1397,8 +1382,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA
 #endif
 
 /* The conductor (kind 0): the intro bow, then baton strokes on the beat. */
-// NON_MATCHING: masked 18 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FA4F8_MarioBandstand(omObjData* obj) {
     u16 m = obj->model[0];
     unk_ovl_2D_struct* mdl;
@@ -1454,9 +1437,6 @@ void func_800FA4F8_MarioBandstand(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA4F8_MarioBandstand);
-#endif
 
 // decomp-permuter
 void func_800FA790_MarioBandstand(s16 model, s16 motion, s16 mode, f32 speed)
@@ -1757,15 +1737,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB
    The song: note tracks read back from the audio driver, beat lists, the score sprites
    --------------------------------------------------------------------------------------------- */
 
-// NON_MATCHING: masked 3 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FB1D0_MarioBandstand(void) {
     D_800FD678_MarioBandstand = 0;
     D_800FD71C_MarioBandstand = omAddObj(8, 0, 0, -1, func_800FC744_MarioBandstand);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB1D0_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 52 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -2081,8 +2056,6 @@ void func_800FBB14_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FBB14_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 1 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FBD1C_MarioBandstand(void) {
     s16* p;
     s32 i;
@@ -2095,9 +2068,6 @@ void func_800FBD1C_MarioBandstand(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FBD1C_MarioBandstand);
-#endif
 
 /* Moves the conductor's cursor sprite toward the next beat's position on the score. */
 // NON_MATCHING: masked 200 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
@@ -2345,44 +2315,22 @@ void func_800FC744_MarioBandstand(omObjData *obj)
   obj->func_ptr = func_800FBF68_MarioBandstand;
 }
 
-// NON_MATCHING: masked 1 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 s8 func_800FC854_MarioBandstand(s8 i) {
     return D_800FD590_MarioBandstand[i];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FC854_MarioBandstand);
-#endif
 
-// NON_MATCHING: masked 1 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FC870_MarioBandstand(s32 dir) {
     D_800FD560_MarioBandstand = dir + 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FC870_MarioBandstand);
-#endif
 
-// NON_MATCHING: masked 4 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
-void func_800FC880_MarioBandstand(s8 i) {
+void func_800FC880_MarioBandstand(s32 i) {
     D_800FD560_MarioBandstand = D_800FD590_MarioBandstand[i] + 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FC880_MarioBandstand);
-#endif
 
-// NON_MATCHING: masked 1 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 s32 func_800FC8A8_MarioBandstand(s32 mask) {
     return mask & D_800FD678_MarioBandstand;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FC8A8_MarioBandstand);
-#endif
 
-// NON_MATCHING: masked 3 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FC8B8_MarioBandstand(s32 track, MBBeatInfo* info) {
     MBTrack* t = &D_800FD598_MarioBandstand[track];
 
@@ -2393,6 +2341,3 @@ void func_800FC8B8_MarioBandstand(s32 track, MBBeatInfo* info) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FC8B8_MarioBandstand);
-#endif
