@@ -29,7 +29,7 @@ void func_800F65E0_name_47(void) {
     }
 }
 
-// loop control: retail branches back on bnez with the decrement in the delay slot (masked 4)
+// loop control: retail branches back on bnez with the decrement in the delay slot (masked 4); tried do-while(n-- != 0), break-then-decrement, a goto loop
 #ifdef NON_MATCHING
 s32 func_800F66D0_name_47(s32 arg0, u8* arg1) {
     s16 sp18[4];

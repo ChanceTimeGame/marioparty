@@ -1546,7 +1546,7 @@ void func_800FA1CC_name_2A(omObjData *obj)
 }
 
 /* CPU control. */
-// register allocation (work/mate in s3/s4) and the -1 constant's delay slot
+// register allocation (work/mate in s3/s4) and the -1 constant's delay slot (masked 8, raw 20); declaration order has no effect
 #ifdef NON_MATCHING
 void func_800FA614_name_2A(omObjData* obj) {
     Vec from;

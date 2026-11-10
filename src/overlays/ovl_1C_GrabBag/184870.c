@@ -885,14 +885,14 @@ void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
     func_80025798(arg1->model[0], arg1->trans.x, 3.0f, arg1->trans.z);
 }
 
-// register allocation: work0/work1 in s3/s2 (masked 0)
+// register allocation: the two work loads issue in swapped order (masked 0, raw 4); tried declaration order, assignment order, initialised declarations
 #ifdef NON_MATCHING
 void func_800F9ED0_GrabBag(omObjData* arg0, omObjData* arg1) {
-    GrabBagPlayerWork* work1;
     GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
 
-    work0 = GB_PLAYER(arg0);
     work1 = GB_PLAYER(arg1);
+    work0 = GB_PLAYER(arg0);
     func_80017C0C(arg0, 8, (arg0->trans.x + arg1->trans.x) / 2.0f, (arg0->trans.y + arg1->trans.y) / 2.0f,
                   (arg0->trans.z + arg1->trans.z) / 2.0f, 0.0f, 0.0f);
     if (func_800FA184_GrabBag(arg0, arg1) == 1) {
