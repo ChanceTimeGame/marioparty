@@ -199,23 +199,14 @@ void func_800F7188_MushroomMixup(s16 arg0) {
     PlaySound((s32) arg0);
 }
 
-// register allocation and scheduling (same calls, fields and branches)
-#ifdef NON_MATCHING
 u16 func_800F71A8_MushroomMixup(u8 model, u8 phase, u8 arg2, u8 colL, u8 colR) {
     MMColorTable tbl = D_800FC7B0_MushroomMixup;
     unk_ovl_2D_struct* m;
-    MMColor* c;
 
     m = &D_800F2B7C[model];
-    c = &tbl.c[colL];
-    func_80028180(model, D_800FC7DC_MushroomMixup, c->r, c->g, c->b, 1);
-    c = &tbl.c[colR];
-    func_80028180(model, D_800FC7EC_MushroomMixup, c->r, c->g, c->b, 0);
-    if (arg2) {
-        if (phase) {
-            m->unk_48 = m->unk_50;
-        }
-    } else {
+    func_80028180(model, D_800FC7DC_MushroomMixup, tbl.c[colL].r, tbl.c[colL].g, tbl.c[colL].b, 1);
+    func_80028180(model, D_800FC7EC_MushroomMixup, tbl.c[colR].r, tbl.c[colR].g, tbl.c[colR].b, 0);
+    if (!arg2) {
         switch (phase) {
         case 0:
             m->unk_4C = 1.5f;
@@ -240,15 +231,14 @@ u16 func_800F71A8_MushroomMixup(u8 model, u8 phase, u8 arg2, u8 colL, u8 colR) {
             }
             break;
         }
+    } else if (phase) {
+        m->unk_48 = m->unk_50;
     }
     m->unk_0A &= 0xFFFE;
     m->unk_48 = func_800369FC(&D_800ED554[m->unk_08], m->unk_0A, m->unk_48, m->unk_50, m->unk_4C);
     func_80025EB4(model, 1, 1);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F71A8_MushroomMixup);
-#endif
 
 u16 func_800F7574_MushroomMixup(void) {
     s32 index;
