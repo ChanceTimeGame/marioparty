@@ -160,9 +160,7 @@ void func_800FDBF8_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
 
 /* Moves pos by (dx, dy, dz), stopped at the first collision face of any registered model other than
    `skip`. Returns 1 when something was hit. */
-// retail reloads D_80100A58 for the second component (masked 16)
-#ifdef NON_MATCHING
-s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+s32 func_800FDC94_CraneGame(f32* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     Vec to;
     Vec a;
     Vec b;
@@ -173,9 +171,9 @@ s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     s32 ret;
 
     D_80100A58_CraneGame = 1.1f;
-    to.x = dx + pos->x;
-    to.y = dy + pos->y;
-    to.z = dz + pos->z;
+    to.x = dx + pos[0];
+    to.y = dy + pos[1];
+    to.z = dz + pos[2];
     for (i = 0; i < D_80100A50_CraneGame; i++) {
         if (D_80100750_CraneGame[i].model == skip) {
             continue;
@@ -186,7 +184,7 @@ s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
         D_80100A54_CraneGame = D_80100750_CraneGame[i].verts;
         g = D_80100750_CraneGame[i].groups;
         for (j = 0; j < D_80100750_CraneGame[i].count; j++, g++) {
-            func_800FDBF8_CraneGame(g->mtx, pos->x, pos->y, pos->z, &a.x);
+            func_800FDBF8_CraneGame(g->mtx, pos[0], pos[1], pos[2], &a.x);
             func_800FDBF8_CraneGame(g->mtx, to.x, to.y, to.z, &b.x);
             b.x -= a.x;
             b.y -= a.y;
@@ -202,14 +200,11 @@ s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     } else {
         ret = 1;
     }
-    pos->x = dx * D_80100A58_CraneGame + pos->x;
-    pos->y = dy * D_80100A58_CraneGame + pos->y;
-    pos->z = dz * D_80100A58_CraneGame + pos->z;
+    pos[0] = dx * D_80100A58_CraneGame + pos[0];
+    pos[1] = dy * D_80100A58_CraneGame + pos[1];
+    pos[2] = dz * D_80100A58_CraneGame + pos[2];
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FDC94_CraneGame);
-#endif
 
 /* Whether the segment p + t * d (t in 0..1) passes within r of the origin. */
 s32 func_800FDF54_CraneGame(Vec* p, Vec* d, f32 r) {

@@ -675,7 +675,7 @@ void func_800F82D4_CraneGame(omObjData* obj) {
                         d.z = pos.z + func_800AEAC0(ang) * 5.0 * 10.0;
                     }
                     d.y = 600.0f;
-                    if (func_800FDC94_CraneGame(&d, 0.0f, -800.0f, 0.0f, -1) != 0 && low < d.y) {
+                    if (func_800FDC94_CraneGame(&d.x, 0.0f, -800.0f, 0.0f, -1) != 0 && low < d.y) {
                         low = d.y;
                         if (k == 0) {
                             break;
