@@ -1549,7 +1549,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FB6B4
 
 /* Builds the floor: a 2 x 12 x 32 vertex grid (per-frame copies, lit by func_800FB6B4) and its
    display list. Returns the model. */
-// NON_MATCHING: retail writes the list through fixed offsets, not gfx++ (different shape)
+// NON_MATCHING: register allocation: x and s swap v1/a0 in the vertex loop (masked 0)
 #ifdef NON_MATCHING
 s16 func_800FBABC_HotRopeJump(void) {
     unk65770Anim* tex;
@@ -1558,14 +1558,15 @@ s16 func_800FBABC_HotRopeJump(void) {
     unk2C0C0StructC0* m;
     unk2C0C0StructE0* v;
     unk2C0C0StructE0* src;
-    s16 model;
+    s32 model;
     s32 step;
     s32 x0;
     s32 s0;
-    s32 x;
-    s32 z;
     s32 s;
     s32 t;
+    s32 x;
+    s32 y;
+    s16 z;
     s32 half;
     s32 row;
     s32 col;
@@ -1577,21 +1578,22 @@ s16 func_800FBABC_HotRopeJump(void) {
 
     step = 60;
     tex = func_80067310(D_801007BC_HotRopeJump);
-    buf = func_80023668(0x2000 * sizeof(Gfx));
+    buf = gfx = func_80023668(0x2000 * sizeof(Gfx));
     model = D_801007BA_HotRopeJump = func_8002451C(0xC0, func_800FB6B4_HotRopeJump, 0);
     m = D_800F2B7C[model].unk_6C;
-    m->unk_04 = m->unk_08[0] = v = func_80023684(0x364 * sizeof(Vtx), m->unk_68);
+    v = m->unk_08[0] = m->unk_04 = func_80023684(0x364 * sizeof(Vtx), m->unk_68);
+    y = 0;
     x0 = -step * 12;
     s0 = 0;
     for (half = 0; half < 2; half++) {
         z = step * -16.0;
         t = 0;
-        for (row = 0; row < 32; row++) {
+        for (i = 0; i < 32; i++) {
             x = x0;
             s = s0;
             for (col = 0; col < 12; col++) {
                 v->unk_00 = x;
-                v->unk_02 = 0;
+                v->unk_02 = y;
                 v->unk_04 = z;
                 *(s16*)v->unk_06 = 0;
                 v->unk_08 = s;
@@ -1611,11 +1613,10 @@ s16 func_800FBABC_HotRopeJump(void) {
     for (i = 1; i < D_800F37DA; i++) {
         v = m->unk_08[i] = func_80023684(0x364 * sizeof(Vtx), m->unk_68);
         src = m->unk_08[0];
-        for (row = 0; row < 0x300; row++) {
+        for (col = 0; col < 0x300; col++) {
             *v++ = *src++;
         }
     }
-    gfx = buf;
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_1CYCLE);
     gSPClearGeometryMode(gfx++, 0x60600);
@@ -1635,14 +1636,14 @@ s16 func_800FBABC_HotRopeJump(void) {
     for (half = 0; half < 2; half++) {
         gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, 0);
         vtx += 12;
-        for (row = 1; row < 32; row++) {
-            cur = (row & 1) * 16;
-            prev = ((row - 1) & 1) * 16;
-            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur);
+        for (i = 1; i < 32; i++) {
+            prev = (i - 1) & 1;
+            cur = i & 1;
+            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur * 16);
             vtx += 12;
             for (col = 1; col < 12; col++) {
-                gSP2Triangles(gfx++, cur + col, prev + col - 1, cur + col - 1, 0, prev + col, prev + col - 1,
-                              cur + col, 0);
+                gSP2Triangles(gfx++, cur * 16 + col, prev * 16 + col - 1, cur * 16 + col - 1, 0, prev * 16 + col,
+                              prev * 16 + col - 1, cur * 16 + col, 0);
             }
         }
     }
