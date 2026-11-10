@@ -551,8 +551,6 @@ s32 func_800FE87C_ShellGame(omObjData* obj, omObjData* other) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE87C_ShellGame);
 #endif
-// NON_MATCHING: load order of D_800FEC40
-#ifdef NON_MATCHING
 void func_800FEB40_ShellGame(omObjData* obj) {
     SGPlayerWork* w;
     SGPlayerWork* ow;
@@ -563,11 +561,8 @@ void func_800FEB40_ShellGame(omObjData* obj) {
         ow = D_800FEC40_ShellGame->unk_50;
         a = func_800F7398_ShellGame(obj->trans.x - D_800FEC40_ShellGame->trans.x,
                                     obj->trans.z - D_800FEC40_ShellGame->trans.z);
-        obj->trans.x = func_800AEAC0(a) * (w->unk48 + ow->unk48) + D_800FEC40_ShellGame->trans.x;
-        obj->trans.z = func_800AEFD0(a) * (w->unk48 + ow->unk48) + D_800FEC40_ShellGame->trans.z;
+        obj->trans.x = D_800FEC40_ShellGame->trans.x + func_800AEAC0(a) * (w->unk48 + ow->unk48);
+        obj->trans.z = D_800FEC40_ShellGame->trans.z + func_800AEFD0(a) * (w->unk48 + ow->unk48);
         D_800FEC40_ShellGame = NULL;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FEB40_ShellGame);
-#endif
