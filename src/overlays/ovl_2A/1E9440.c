@@ -1448,75 +1448,102 @@ void func_800FA124_name_2A(void) {
 
 /* Keeps a player out of the hoop's post and the four corner posts. */
 // float register allocation (dx/dz in f22/f20, 0.0f reloaded)
-#ifdef NON_MATCHING
-void func_800FA1CC_name_2A(omObjData* obj) {
-    f32 dx;
-    f32 dy;
-    f32 dz;
-
-    dx = D_800FE048_name_2A->trans.x + 0.0f - obj->trans.x;
-    dy = D_800FE048_name_2A->trans.y + 250.0f - obj->trans.y;
-    dz = D_800FE048_name_2A->trans.z + -560.0f - obj->trans.z;
-    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 125.0f) {
-        if (dx >= 0.0f) {
-            obj->trans.x -= 30.0f;
-        } else {
-            obj->trans.x += 30.0f;
-        }
-        if (dz >= 0.0f) {
-            obj->trans.z -= 30.0f;
-        } else {
-            obj->trans.z += 30.0f;
-        }
+// decomp-permuter
+void func_800FA1CC_name_2A(omObjData *obj)
+{
+  f32 dx;
+  f32 dy;
+  f32 dz;
+  dx = (D_800FE048_name_2A->trans.x + 0.0f) - obj->trans.x;
+  dy = (D_800FE048_name_2A->trans.y + 250.0f) - obj->trans.y;
+  dz = (D_800FE048_name_2A->trans.z + (-560.0f)) - obj->trans.z;
+  if (func_800B1750(((dx * dx) + (dy * dy)) + (dz * dz)) < 125.0f)
+  {
+    if (dx >= 0.0f)
+    {
+      obj->trans.x -= 30.0f;
     }
-    dx = -430.0f - obj->trans.x;
-    dy = 170.0f - obj->trans.y;
-    dz = -560.0f - obj->trans.z;
-    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
-        if (dx >= 0.0f) {
-            obj->trans.x -= 30.0f;
-        } else {
-            obj->trans.x += 30.0f;
-        }
-        obj->trans.z += 30.0f;
+    else
+    {
+      obj->trans.x += 30.0f;
     }
-    dx = 430.0f - obj->trans.x;
-    dy = 170.0f - obj->trans.y;
-    dz = -560.0f - obj->trans.z;
-    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
-        if (dx >= 0.0f) {
-            obj->trans.x -= 30.0f;
-        } else {
-            obj->trans.x += 30.0f;
-        }
-        obj->trans.z += 30.0f;
+    if (dz >= 0.0f)
+    {
+      obj->trans.z -= 30.0f;
     }
-    dx = -610.0f - obj->trans.x;
-    dy = 170.0f - obj->trans.y;
-    dz = 50.0f - obj->trans.z;
-    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
-        obj->trans.x += 30.0f;
-        if (dz >= 0.0f) {
-            obj->trans.z -= 30.0f;
-        } else {
-            obj->trans.z += 30.0f;
-        }
+    else
+    {
+      obj->trans.z += 30.0f;
     }
-    dx = 610.0f - obj->trans.x;
-    dy = 170.0f - obj->trans.y;
-    dz = 50.0f - obj->trans.z;
-    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 90.0f) {
-        obj->trans.x -= 30.0f;
-        if (dz >= 0.0f) {
-            obj->trans.z -= 30.0f;
-        } else {
-            obj->trans.z += 30.0f;
-        }
+  }
+  dx = (-430.0f) - obj->trans.x;
+  dy = 170.0f - obj->trans.y;
+  dz = (-560.0f) - obj->trans.z;
+  if (func_800B1750(((dx * dx) + (dy * dy)) + (dz * dz)) < 90.0f)
+  {
+    if (dx >= 0.0f)
+    {
+      obj->trans.x -= 30.0f;
     }
+    else
+    {
+      obj->trans.x += 30.0f;
+    }
+    obj->trans.z += 30.0f;
+  }
+  dx = 430.0f - obj->trans.x;
+  dy = 170.0f - obj->trans.y;
+  dz = (-560.0f) - obj->trans.z;
+  if (func_800B1750(((dx * dx) + (dy * dy)) + (dz * dz)) < 90.0f)
+  {
+    if (dx >= 0.0f)
+    {
+      obj->trans.x -= 30.0f;
+    }
+    else
+    {
+      obj->trans.x += 30.0f;
+    }
+    if (dz)
+    {
+      obj->trans.z += 30.0f;
+    }
+    else
+    {
+      obj->trans.z += 30.0f;
+    }
+  }
+  dx = (-610.0f) - obj->trans.x;
+  dy = 170.0f - obj->trans.y;
+  dz = 50.0f - obj->trans.z;
+  if (func_800B1750(((dx * dx) + (dy * dy)) + (dz * dz)) < 90.0f)
+  {
+    obj->trans.x += 30.0f;
+    if (dz >= 0.0f)
+    {
+      obj->trans.z -= 30.0f;
+    }
+    else
+    {
+      obj->trans.z += 30.0f;
+    }
+  }
+  dx = 610.0f - obj->trans.x;
+  dy = 170.0f - obj->trans.y;
+  dz = 50.0f - obj->trans.z;
+  if (func_800B1750(((dx * dx) + (dy * dy)) + (dz * dz)) < 90.0f)
+  {
+    obj->trans.x -= 30.0f;
+    if (dz >= 0.0f)
+    {
+      obj->trans.z -= 30.0f;
+    }
+    else
+    {
+      obj->trans.z += 30.0f;
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA1CC_name_2A);
-#endif
 
 /* CPU control. */
 // register allocation (work/mate in s3/s4) and the -1 constant's delay slot
