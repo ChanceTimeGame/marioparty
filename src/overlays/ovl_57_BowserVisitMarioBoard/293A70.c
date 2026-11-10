@@ -176,61 +176,68 @@ void func_800F6BD0_name_57(void) {
     }
 }
 
-// register allocation: the star total sits in a1 instead of a0 (masked 0)
-#ifdef NON_MATCHING
-void func_800F6D48_name_57(void) {
-    s16 win;
-    s32 choice;
-    s32 total;
-    s32 i;
+// decomp-permuter
+void func_800F6D48_name_57(void)
+{
+  s16 win;
+  s32 choice;
+  s32 total;
+  s32 i;
+  win = CreateTextWindow(120, 60, 13, 7);
+  LoadStringIntoWindow(win, (void *) 0x119, -1, -1);
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
+  while (func_8006FCC0(win) != 0)
+  {
+    HuPrcVSleep();
+  }
 
-    win = CreateTextWindow(120, 60, 13, 7);
-    LoadStringIntoWindow(win, (void*)0x119, -1, -1);
+  choice = func_800F66F8_name_57(win);
+  HideTextWindow(win);
+  if (choice == 2)
+  {
+    D_800F7EC8_name_57 = 1;
+  }
+  else
+    if (choice == 0)
+  {
+    func_80055960(D_800F7FC0_name_57, -20);
+    func_8004D8A4();
+    win = CreateTextWindow(120, 100, 13, 1);
+    LoadStringIntoWindow(win, (void *) 0x11B, -1, -1);
     func_8006E070(win, 0);
     ShowTextWindow(win);
-    while (func_8006FCC0(win) != 0) {
-        HuPrcVSleep();
-    }
-    choice = func_800F66F8_name_57(win);
+    func_8004DBD4(win, D_800F7FC0_name_57);
     HideTextWindow(win);
-    if (choice == 2) {
-        D_800F7EC8_name_57 = 1;
-    } else if (choice == 0) {
-        func_80055960(D_800F7FC0_name_57, -20);
-        func_8004D8A4();
-        win = CreateTextWindow(120, 100, 13, 1);
-        LoadStringIntoWindow(win, (void*)0x11B, -1, -1);
-        func_8006E070(win, 0);
-        ShowTextWindow(win);
-        func_8004DBD4(win, D_800F7FC0_name_57);
-        HideTextWindow(win);
-        func_800F68B8_name_57();
-        func_80055994(D_800F7FC0_name_57, 1);
-        choice = CreateTextWindow(120, 60, 13, 5);
-        for (i = 0, total = 0; i < 4; i++) {
-            total += GwPlayer[i].stars;
-        }
-        total = (total - 1) % 6 + D_800F7EF4_name_57;
-        if (total != 0) {
-            LoadStringIntoWindow(choice, (void*)(s32)total, -1, -1);
-        }
-        win = choice;
-        func_8006E070(win, 0);
-        ShowTextWindow(win);
-        func_8004DBD4(win, D_800F7FC0_name_57);
-        HideTextWindow(win);
-    } else {
-        win = CreateTextWindow(120, 100, 10, 1);
-        LoadStringIntoWindow(win, (void*)0x11A, -1, -1);
-        func_8006E070(win, 0);
-        ShowTextWindow(win);
-        func_8004DBD4(win, D_800F7FC0_name_57);
-        HideTextWindow(win);
+    func_800F68B8_name_57();
+    func_80055994(D_800F7FC0_name_57, 1);
+    choice = CreateTextWindow(120, 60, 13, 5);
+    for (i = 0, total = 0; i <= (4 - 1); i++)
+    {
+      total += GwPlayer[i].stars;
     }
+
+    ;
+    if ((((total - 1) % 6) + D_800F7EF4_name_57) != 0)
+    {
+      LoadStringIntoWindow(choice, (void *) ((s32) (((total - 1) % 6) + D_800F7EF4_name_57)), -1, -1);
+    }
+    win = choice;
+    func_8006E070(win, 0);
+    ShowTextWindow(win);
+    func_8004DBD4(win, D_800F7FC0_name_57);
+    HideTextWindow(win);
+  }
+  else
+  {
+    win = CreateTextWindow(120, 100, 10, 1);
+    LoadStringIntoWindow(win, (void *) 0x11A, -1, -1);
+    func_8006E070(win, 0);
+    ShowTextWindow(win);
+    func_8004DBD4(win, D_800F7FC0_name_57);
+    HideTextWindow(win);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_57_BowserVisitMarioBoard/293A70", func_800F6D48_name_57);
-#endif
 
 void func_800F6FA4_name_57(void) {
     s32 i = 72;
