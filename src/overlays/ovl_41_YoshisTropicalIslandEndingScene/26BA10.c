@@ -184,25 +184,23 @@ void func_80102AE4_YoshisTropicalIslandEndingScene(omObjData* obj) {
     obj->work[0] = 0;
 }
 
-// register allocation: neg.s result in $f2 (masked 0)
-#ifdef NON_MATCHING
-void func_80102B18_YoshisTropicalIslandEndingScene(omObjData* obj) {
-    u8 idx = obj->work[0];
-    f32 angle = obj->rot.x;
-    f32 d;
-
-    angle += 5.0f;
-    /* retail: the wrap test is inverted (< instead of >=) */
-    if (angle < 360.0f) {
-        angle -= 360.0f;
-    }
-    d = -func_800AEAC0(angle);
-    D_80110448_YoshisTropicalIslandEndingScene[idx]->coords.y += d;
-    obj->rot.x = angle;
+// decomp-permuter
+void func_80102B18_YoshisTropicalIslandEndingScene(omObjData *obj)
+{
+  u8 idx = obj->work[0];
+  f32 angle = obj->rot.x;
+  f32 d;
+  f32 new_var;
+  angle += 5.0f;
+  if (angle < 360.0f)
+  {
+    angle -= 360.0f;
+  }
+  new_var = func_800AEAC0(angle);
+  d = -new_var;
+  D_80110448_YoshisTropicalIslandEndingScene[idx]->coords.y += d;
+  obj->rot.x = angle;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/26BA10", func_80102B18_YoshisTropicalIslandEndingScene);
-#endif
 
 omObjData* func_80102BAC_YoshisTropicalIslandEndingScene(u8 idx) {
     omObjData* obj = omAddObj(0x600, 0, 0, -1, func_80102B18_YoshisTropicalIslandEndingScene);
@@ -729,35 +727,35 @@ void func_80104C50_YoshisTropicalIslandEndingScene(Vec3f* pts, f32* times, f32 t
     out->z = func_80022D9C(v[2], v[3], t);
 }
 
-// addu operand order computing the point address (masked 0)
-#ifdef NON_MATCHING
-void func_80104D24_YoshisTropicalIslandEndingScene(s16 hmf, f32 len, f32 t, Vec3f* out) {
-    Vec3f v[4];
-    f32 times[4];
-    unk2C0C0StructC0* m = D_800F2B7C[hmf].unk_6C;
-    unk2C0C0StructA0* base = &m->unk_78[1];
-    unk2C0C0StructA0* pts;
-    s32 n = m->unk_6E;
-    s32 segs = n - 3;
-    f32 step = len / segs;
-    s32 seg = t / step;
-
-    if (seg + 1 >= segs) {
-        seg = n - 4;
-    } else if (seg < 0) {
-        seg = -1;
-    }
-    pts = &base[seg];
-    func_800A0D00(&v[0], pts[-1].unk_00, pts[-1].unk_02, pts[-1].unk_04);
-    times[0] = step * (seg - 1);
-    func_800A0D00(&v[1], pts[0].unk_00, pts[0].unk_02, pts[0].unk_04);
-    times[1] = step * seg;
-    func_800A0D00(&v[2], pts[1].unk_00, pts[1].unk_02, pts[1].unk_04);
-    times[2] = step * (seg + 1);
-    func_800A0D00(&v[3], pts[2].unk_00, pts[2].unk_02, pts[2].unk_04);
-    times[3] = step * (seg + 2);
-    func_80104C50_YoshisTropicalIslandEndingScene(v, times, t, out);
+// decomp-permuter
+void func_80104D24_YoshisTropicalIslandEndingScene(s16 hmf, f32 len, f32 t, Vec3f *out)
+{
+  Vec3f v[4];
+  f32 times[4];
+  unk2C0C0StructC0 *m = D_800F2B7C[hmf].unk_6C;
+  unk2C0C0StructA0 *base = &m->unk_78[1];
+  unk2C0C0StructA0 *pts;
+  s32 n = m->unk_6E;
+  s32 segs = n - 3;
+  f32 step = len / segs;
+  s32 seg = t / step;
+  if ((seg + 1) >= segs)
+  {
+    seg = n - 4;
+  }
+  else
+    if (seg < 0)
+  {
+    seg = -1;
+  }
+  pts = &base[seg];
+  func_800A0D00(&v[0], (&base[seg])[-1].unk_00, (&base[seg])[-1].unk_02, (&base[seg])[-1].unk_04);
+  times[0] = step * (seg - 1);
+  func_800A0D00(&v[1], (&base[seg])[0].unk_00, (&base[seg])[0].unk_02, (&base[seg])[0].unk_04);
+  times[1] = step * seg;
+  func_800A0D00(&v[2], (&base[seg])[1].unk_00, (&base[seg])[1].unk_02, (&base[seg])[1].unk_04);
+  times[2] = step * (seg + 1);
+  func_800A0D00(&v[3], (&base[seg])[2].unk_00, (&base[seg])[2].unk_02, (&base[seg])[2].unk_04);
+  times[3] = step * (seg + 2);
+  func_80104C50_YoshisTropicalIslandEndingScene(v, times, t, out);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/26BA10", func_80104D24_YoshisTropicalIslandEndingScene);
-#endif
