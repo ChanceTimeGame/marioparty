@@ -1817,44 +1817,44 @@ void func_800FC77C_OpeningScene(Vec3f* arg0, f32* arg1, f32 arg2, Vec3f* arg3) {
     arg3->y = func_80022D9C(ys, ts, arg2);
     arg3->z = func_80022D9C(zs, ts, arg2);
 }
-// one addu operand order (masked 0, raw 1)
-#ifdef NON_MATCHING
-void func_800FC850_OpeningScene(s16 arg0, f32 arg1, f32 arg2, Vec3f* arg3) {
-    Vec3f pts[4];
-    f32 ts[4];
-    f32 step;
-    unk2C0C0StructC0* model;
-    unk2C0C0StructA0* verts;
-    unk2C0C0StructA0* p;
-    s32 cnt;
-    s32 n;
-    s32 idx;
-
-    model = D_800F2B7C[arg0].unk_6C;
-    verts = model->unk_78 + 1;
-    cnt = model->unk_6E;
-    n = cnt - 3;
-    step = arg1 / (f32)n;
-    idx = (s32)(arg2 / step);
-    if ((idx + 1) >= n) {
-        idx = cnt - 4;
-    } else if (idx < 0) {
-        idx = -1;
-    }
-    p = &verts[idx];
-    func_800A0D00(&pts[0], p[-1].unk_00, p[-1].unk_02, p[-1].unk_04);
-    ts[0] = step * (f32)(idx - 1);
-    func_800A0D00(&pts[1], p[0].unk_00, p[0].unk_02, p[0].unk_04);
-    ts[1] = step * (f32)idx;
-    func_800A0D00(&pts[2], p[1].unk_00, p[1].unk_02, p[1].unk_04);
-    ts[2] = step * (f32)(idx + 1);
-    func_800A0D00(&pts[3], p[2].unk_00, p[2].unk_02, p[2].unk_04);
-    ts[3] = step * (f32)(idx + 2);
-    func_800FC77C_OpeningScene(pts, ts, arg2, arg3);
+// decomp-permuter
+void func_800FC850_OpeningScene(s16 arg0, f32 arg1, f32 arg2, Vec3f *arg3)
+{
+  Vec3f pts[4];
+  f32 ts[4];
+  f32 step;
+  unk2C0C0StructC0 *model;
+  unk2C0C0StructA0 *verts;
+  unk2C0C0StructA0 *p;
+  s32 cnt;
+  s32 n;
+  s32 idx;
+  model = D_800F2B7C[arg0].unk_6C;
+  verts = model->unk_78 + 1;
+  cnt = model->unk_6E;
+  n = cnt - 3;
+  step = arg1 / ((f32) n);
+  idx = (s32) (arg2 / step);
+  if ((idx + 1) >= n)
+  {
+    idx = cnt - 4;
+  }
+  else
+    if (idx < 0)
+  {
+    idx = -1;
+  }
+  ;
+  func_800A0D00(&pts[0], (&verts[idx])[-1].unk_00, (&verts[idx])[-1].unk_02, (&verts[idx])[-1].unk_04);
+  ts[0] = step * ((f32) (idx - 1));
+  func_800A0D00(&pts[1], (&verts[idx])[0].unk_00, (&verts[idx])[0].unk_02, (&verts[idx])[0].unk_04);
+  ts[1] = step * ((f32) idx);
+  func_800A0D00(&pts[2], (&verts[idx])[1].unk_00, (&verts[idx])[1].unk_02, (&verts[idx])[1].unk_04);
+  ts[2] = step * ((f32) (idx + 1));
+  func_800A0D00(&pts[3], (&verts[idx])[2].unk_00, (&verts[idx])[2].unk_02, (&verts[idx])[2].unk_04);
+  ts[3] = step * ((f32) (idx + 2));
+  func_800FC77C_OpeningScene(pts, ts, arg2, arg3);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_OpeningScene/29B410", func_800FC850_OpeningScene);
-#endif
 
 void func_800FCAB0_OpeningScene(omObjData* arg0) {
     f32 temp_f20;
