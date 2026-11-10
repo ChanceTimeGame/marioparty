@@ -693,12 +693,11 @@ void func_800F86AC_FaceLift(omObjData* obj) {
 const char D_800FC940_FaceLift[] = "\x82\x76\x82\x68\x82\x6D";
 const char D_800FC948_FaceLift[] = "\x82\x6B\x82\x6E\x82\x72\x82\x64";
 
-// register allocation (GMesCreate result)
-#ifdef NON_MATCHING
 void func_800F8A98_FaceLift(omObjData* obj) {
     s16 i;
     s16 j;
     u16 t;
+    s16 mes;
 
     if (D_800FC964_FaceLift > 0) {
         if (--D_800FC964_FaceLift == 0) {
@@ -712,10 +711,11 @@ void func_800F8A98_FaceLift(omObjData* obj) {
             } else {
                 for (i = 0; i < 4; i++) {
                     if (D_800FC9CA_FaceLift[i] != 0) {
-                        GMesMaxTimeGet(GMesCreate(6, D_800FC940_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0), 32000);
+                        mes = GMesCreate(6, D_800FC940_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0);
                     } else {
-                        GMesMaxTimeGet(GMesCreate(6, D_800FC948_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0), 32000);
+                        mes = GMesCreate(6, D_800FC948_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0);
                     }
+                    GMesMaxTimeGet(mes, 32000);
                 }
             }
             t = (D_800FCA0A_FaceLift == 0) ? 60 : 0;
@@ -723,10 +723,10 @@ void func_800F8A98_FaceLift(omObjData* obj) {
                 D_800FC9F8_FaceLift = t + 60;
             } else if (D_800FC9C8_FaceLift == 1) {
                 D_800FC9F8_FaceLift = t + 60;
-            } else if (D_800FC9C8_FaceLift != 0) {
-                D_800FC9F8_FaceLift = t + 50;
-            } else {
+            } else if (D_800FC9C8_FaceLift == 0) {
                 D_800FC9F8_FaceLift = t / 2 + 30;
+            } else {
+                D_800FC9F8_FaceLift = t + 50;
             }
             D_800FC962_FaceLift = 5;
             obj->func_ptr = func_800F8CE0_FaceLift;
@@ -734,9 +734,6 @@ void func_800F8A98_FaceLift(omObjData* obj) {
         D_800FC3D2_FaceLift = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F8A98_FaceLift);
-#endif
 void func_800F8CE0_FaceLift(omObjData* obj) {
     s16 i;
 
