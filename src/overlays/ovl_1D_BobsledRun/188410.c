@@ -2191,16 +2191,12 @@ void func_800FD164_BobsledRun(void) {
     func_8001897C(D_800FFAE2_BobsledRun, 0.0f, 1.0f, 0.0f);
 }
 
-// register allocation; the group id is stored before its copy
-#ifdef NON_MATCHING
-void func_800FD1BC_BobsledRun(s32 x, s32 y) {
-    s32 g;
+s16 func_800FD1BC_BobsledRun(s32 x, s32 y) {
+    s16 g;
     s32 px;
     s16 i;
 
-    /* retail's func_80064EF4 returned a full int (no extension before the store) */
-    g = ((s32(*)(s32, s32))func_80064EF4)(7, 5);
-    D_800FFAE4_BobsledRun[0] = g;
+    g = D_800FFAE4_BobsledRun[0] = func_80064EF4(7, 5);
     func_80067208(g, 0, D_800FFAE0_BobsledRun, 0);
     func_80067480(g, 0, 0xFFFF);
     func_800674BC(g, 0, 0x8000);
@@ -2221,10 +2217,8 @@ void func_800FD1BC_BobsledRun(s32 x, s32 y) {
         func_80067598(g, i, 0);
     }
     func_80067480(g, 2, 0x8000);
+    return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FD1BC_BobsledRun);
-#endif
 
 // register allocation; the group id is stored before its copy
 #ifdef NON_MATCHING
