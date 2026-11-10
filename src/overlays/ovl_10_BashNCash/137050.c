@@ -306,26 +306,28 @@ void func_800F711C_BashNCash(f32* dist, f32* angle) {
 
 /* The middle of the widest gap between three sorted angles. */
 // register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
-f32 func_800F7240_BashNCash(f32* angle) {
-    f32 gap;
-    f32 start;
-
-    gap = angle[1] - angle[0];
-    start = angle[0];
-    if (gap < angle[2] - angle[1]) {
-        gap = angle[2] - angle[1];
-        start = angle[1];
-    }
-    if (gap < angle[0] + 360.0f - angle[2]) {
-        gap = angle[0] + 360.0f - angle[2];
-        start = angle[2];
-    }
-    return start + gap / 2.0f;
+// decomp-permuter
+f32 func_800F7240_BashNCash(f32 *angle)
+{
+  f32 gap;
+  f32 start;
+  f32 new_var;
+  gap = angle[1] - angle[0];
+  start = angle[0];
+  new_var = angle[1];
+  if (gap < (angle[2] - new_var))
+  {
+    gap = angle[2] - new_var;
+    start = new_var;
+  }
+  new_var = angle[0];
+  if (gap < ((new_var + 360.0f) - angle[2]))
+  {
+    gap = (new_var + 360.0f) - angle[2];
+    start = angle[2];
+  }
+  return start + (gap / 2.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F7240_BashNCash);
-#endif
 
 /* The nearest coin in flight within 400 units, or NULL. */
 // register allocation and scheduling (nmcmp: calls and stores equal)
@@ -1157,13 +1159,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F99A8_B
 #endif
 
 // register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
-s32 func_800F9BAC_BashNCash(void) {
-    return D_800FE698_BashNCash + GwPlayer[D_800FE610_BashNCash].coins_mg;
+// decomp-permuter
+s32 func_800F9BAC_BashNCash(void)
+{
+  s32 new_var;
+  new_var = D_800FE610_BashNCash;
+  return D_800FE698_BashNCash + GwPlayer[new_var].coins_mg;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F9BAC_BashNCash);
-#endif
 
 /* The cash player was hit: knock out a 5-coin (or 1-coin) piece. */
 // register allocation and scheduling (nmcmp: calls and stores equal)
@@ -2089,46 +2091,47 @@ void func_800FC904_BashNCash(omObjData* obj) {
 }
 
 // register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
-void func_800FC9D4_BashNCash(omObjData* obj, s32 file, s8 value, Vec3f* pos, s32 slot) {
-    BashCoinSlot* s;
-    BashCoinWork* w;
-
-    s = &D_800FE630_BashNCash[slot];
-    obj->unk_50 = func_80023684(0x6C, 0x7918);
-    func_8009B770(obj->unk_50, 0, 0x6C);
-    obj->func_ptr = func_800FBCC8_BashNCash;
-    w = obj->unk_50;
-    func_800091BC(obj, file, 0x1A8D, 8);
-    obj->model[1] = func_800174F4(6, 0xA9D);
-    func_80009340(obj, 3, 0x2A, 0xA8D, 8);
-    func_8001E360(w->unk_24, 0xFF, 0xFF, 0xBE);
-    obj->work[2] = 0;
-    obj->trans.x = pos->x;
-    obj->trans.y = pos->y;
-    obj->trans.z = pos->z;
-    obj->scale.x = obj->scale.y = obj->scale.z = 2.0f;
-    func_800F6EE8_BashNCash(obj, 0.8f, 0.0f, 1);
-    w->unk_44 = 0.1f;
-    w->unk_48 = 30.0f;
-    w->unk_34 = 30.0f;
-    w->unk_5C = 0;
-    w->unk_3C = 60.0f;
-    w->unk_40 = D_800B8984;
-    w->unk_38 = 1000.0f;
-    w->unk_52 = value;
-    w->unk_60 = 0;
-    w->unk_4C = 0.5f;
-    w->unk_50 = 0;
-    w->unk_54 = 0;
-    w->unk_58 = 0.5f;
-    obj->work[0] = slot;
-    s->obj = obj;
-    s->unk_08 = 0;
+// decomp-permuter
+void func_800FC9D4_BashNCash(omObjData *obj, s32 file, s8 value, Vec3f *pos, s32 slot)
+{
+  BashCoinWork *new_var;
+  long new_var2;
+  BashCoinSlot *s;
+  BashCoinWork *w;
+  s = &D_800FE630_BashNCash[slot];
+  obj->unk_50 = func_80023684(0x6C, 0x7918);
+  func_8009B770(obj->unk_50, 0, 0x6C);
+  obj->func_ptr = func_800FBCC8_BashNCash;
+  w = obj->unk_50;
+  func_800091BC(obj, file, 0x1A8D, 8);
+  obj->model[1] = func_800174F4(6, 0xA9D);
+  func_80009340(obj, 3, 0x2A, 0xA8D, 8);
+  func_8001E360(w->unk_24, 0xFF, 0xFF, 0xBE);
+  new_var = w;
+  obj->work[2] = 0;
+  obj->trans.x = pos->x;
+  obj->trans.y = pos->y;
+  obj->trans.z = pos->z;
+  obj->scale.x = (obj->scale.y = (obj->scale.z = 2.0f));
+  func_800F6EE8_BashNCash(obj, 0.8f, 0.0f, 1);
+  new_var->unk_44 = 0.1f;
+  new_var->unk_48 = 30.0f;
+  new_var2 = value;
+  new_var->unk_34 = 30.0f;
+  new_var->unk_5C = 0;
+  new_var->unk_3C = 60.0f;
+  new_var->unk_40 = D_800B8984;
+  new_var->unk_38 = 1000.0f;
+  new_var->unk_52 = new_var2;
+  new_var->unk_60 = 0;
+  new_var->unk_4C = 0.5f;
+  new_var->unk_50 = 0;
+  new_var->unk_54 = 0;
+  new_var->unk_58 = 0.5f;
+  obj->work[0] = slot;
+  s->obj = obj;
+  s->unk_08 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FC9D4_BashNCash);
-#endif
 
 void func_800FCBA8_BashNCash(omObjData* obj) {
     Vec3f pos_s;
