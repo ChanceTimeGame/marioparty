@@ -538,8 +538,6 @@ const s32 D_800FD040_CrazyCutter[4] __attribute__((section(".rodata"))) = { 10, 
 const s32 D_800FD050_CrazyCutter[4] __attribute__((section(".rodata"))) = { 4, 3, 2, 1 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F731C_CrazyCutter);
 #endif
-// route search loop rotated (masked 23)
-#ifdef NON_MATCHING
 void func_800F8144_CrazyCutter(omObjData* obj) {
     CrazyCutterPlayer* st = obj->unk_50;
     s16 cur[2];
@@ -588,7 +586,12 @@ void func_800F8144_CrazyCutter(omObjData* obj) {
             pos.y = st->y + 10.0f;
             pos.z = D_800FCD00_CrazyCutter[st->player] + st->z - 8.0f;
             func_800F9694_CrazyCutter(&pos, cur, st->player);
-            for (i = 0; st->pathX[i] != -3; i++) {
+            i = 0;
+            while (1) {
+                if (st->pathX[i] == -3) {
+                    break;
+                }
+                i++;
             }
             st->pathX[i] = cur[0] + 1;
             st->pathY[i] = cur[1];
@@ -605,9 +608,6 @@ void func_800F8144_CrazyCutter(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F8144_CrazyCutter);
-#endif
 // float temporaries and register allocation (masked 90)
 #ifdef NON_MATCHING
 void func_800F8598_CrazyCutter(omObjData* obj) {
@@ -1027,15 +1027,13 @@ void func_800F9968_CrazyCutter(omObjData* parent, s32 player) {
     D_800FD4E8_CrazyCutter[st->player].scale = 0.1f;
     D_800FD4E8_CrazyCutter[st->player].unk8 = 0.0f;
 }
-// switch tail layout and register allocation (masked 96)
-#ifdef NON_MATCHING
 void func_800F9D98_CrazyCutter(omObjData* obj) {
-    s32 sprites[3] = { 0x10, 0x11, 0x12 };
-    CrazyCutterPiece* st = obj->unk_50;
     Vec3f from;
     Vec3f to;
     s16 a[2];
     s16 b[2];
+    s32 sprites[3] = { 0x10, 0x11, 0x12 };
+    CrazyCutterPiece* st = obj->unk_50;
 
     if (D_800FD488_CrazyCutter[st->player] == 0) {
         return;
@@ -1115,12 +1113,6 @@ void func_800F9D98_CrazyCutter(omObjData* obj) {
         st->angle = func_800FAF8C_CrazyCutter(&from, &to, 1);
     }
 }
-#else
-/* GCC cannot see the previous INCLUDE_ASM switch to .text */
-__asm__(".section .rodata");
-const s32 D_800FD0C8_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x10, 0x11, 0x12 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F9D98_CrazyCutter);
-#endif
 s32 func_800FA38C_CrazyCutter(s32 player) {
     s32 sprites[3] = { 0xC, 0xD, 0xE };
     s8 sprite;
