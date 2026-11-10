@@ -33,12 +33,6 @@ typedef struct HbCamKey {
     /* 0x20 */ u8 event; /* 1 message, 3/4 sounds */
 } HbCamKey; /* size = 0x24 */
 
-typedef struct HbCam {
-    /* 0x00 */ f32 zoom;
-    /* 0x04 */ Vec center;
-    /* 0x10 */ Vec rot;
-} HbCam; /* size = 0x1C */
-
 /* 10CD10 */
 void func_800F65E0_HotBobOmb(void);
 void func_800F66F8_HotBobOmb(omObjData* obj);
@@ -70,7 +64,7 @@ void func_800F7E84_HotBobOmb(omObjData* obj);
 void func_800F8A04_HotBobOmb(void);
 s32 func_800F8AB4_HotBobOmb(void);
 void func_800F8CC8_HotBobOmb(void);
-void func_800F8D4C_HotBobOmb(f32 t, HbCamKey* key, HbCam* out);
+void func_800F8D4C_HotBobOmb(f32 t, HbCamKey* key, HbCamKey* out);
 
 /* 10F6D0 */
 void func_800F8FA0_HotBobOmb(void);

@@ -632,10 +632,8 @@ void func_800F8A04_HotBobOmb(void) {
     D_800FA864_HotBobOmb = D_800FA1C8_HotBobOmb[0].center.y;
 }
 
-// masked
-#ifdef NON_MATCHING
 s32 func_800F8AB4_HotBobOmb(void) {
-    HbCam cam;
+    HbCamKey cam; /* only the camera fields are filled */
 
     func_800F8D4C_HotBobOmb(D_800FA3AC_HotBobOmb, D_800FA3B0_HotBobOmb, &cam);
     CZoom = cam.zoom;
@@ -682,9 +680,6 @@ s32 func_800F8AB4_HotBobOmb(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10CF70", func_800F8AB4_HotBobOmb);
-#endif
 
 void func_800F8CC8_HotBobOmb(void) {
     func_800178A0(1);
@@ -698,7 +693,7 @@ void func_800F8CC8_HotBobOmb(void) {
     func_8001D494(0, 33.0f, 80.0f, 4000.0f);
 }
 
-void func_800F8D4C_HotBobOmb(f32 t, HbCamKey* key, HbCam* out) {
+void func_800F8D4C_HotBobOmb(f32 t, HbCamKey* key, HbCamKey* out) {
     f32 u;
     f32 a;
     f32 b;
