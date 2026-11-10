@@ -27,7 +27,7 @@ f32 D_800FD3E0_BowlOver[3][16][2] = {
         { -150.3f, -181.0f }, { -10.08f, -209.7f }, { -104.8f, -40.0f }, { 36.9f, -40.0f },
     },
 };
-u16 D_800FD560_BowlOver[2] = { 0, 0 };
+s16 D_800FD560_BowlOver = 0;
 Vec3f D_800FD564_BowlOver[6] = {
     { 0.0f, 0.0f, -4750.0f },    { -100.0f, 0.0f, -4950.0f }, { 100.0f, 0.0f, -4950.0f },
     { -200.0f, 0.0f, -5150.0f }, { 0.0f, 0.0f, -5150.0f },    { 200.0f, 0.0f, -5150.0f },
@@ -59,7 +59,8 @@ void func_800FA4D0_BowlOver(omObjData* obj) {
     }
 }
 
-// register allocation
+// loop.c hoists &D_800FD3D0 into s4 where retail reloads it (masked 13); retail also passes func_80009028's
+// arg1 as the f32 0.0f of the trans chain (mfc1 a1,$f20): a cast call gives masked 12 but breaks the host
 #ifdef NON_MATCHING
 void func_800FA5A0_BowlOver(omObjData* obj) {
     BowlFloorWork* w;
@@ -229,31 +230,33 @@ void func_800FAC94_BowlOver(omObjData* obj, f32 dx, f32 dz) {
     }
 }
 
-// register allocation and float temporaries
-#ifdef NON_MATCHING
 void func_800FAE2C_BowlOver(omObjData* obj) {
     BowlPin* pin;
     BowlPin* hit;
     omObjData* other;
+    Vec3f v;
     Vec3f top;
     Vec3f d;
     f32 a;
     f32 dir;
-    f32 r;
+    f32 tilt;
     s16 i;
-    s16 snd;
+    s32 snd;
 
     pin = &D_800FD880_BowlOver[PIN_IDX(obj)];
     if (pin->unk_0E != 1) {
         return;
     }
+    tilt = pin->unk_00;
     dir = 360.0f - pin->unk_04;
-    a = pin->unk_00 * 0.017453289f;
-    top.y = cosf(a) * 130.0f;
-    r = sinf(a) * 130.0f;
+    a = tilt * 0.017453289f;
+    v.x = 0.0f;
+    v.y = cosf(a) * 130.0f;
+    v.z = sinf(a) * 130.0f;
     a = dir * 0.017453289f;
-    top.x = sinf(a) * r;
-    top.z = cosf(a) * r;
+    top.x = sinf(a) * v.z;
+    top.y = v.y;
+    top.z = cosf(a) * v.z;
     top.x += obj->trans.x;
     top.y += obj->trans.y;
     top.z += obj->trans.z;
@@ -278,15 +281,19 @@ void func_800FAE2C_BowlOver(omObjData* obj) {
             hit->unk_0F = 0;
             hit->unk_08 = 90.0f;
             pin->unk_08 = 90.0f;
-            snd = 0x25D;
-            if (D_800FD560_BowlOver[0] != 0) {
+            switch (D_800FD560_BowlOver) {
+            case 0:
+                snd = 0x25D;
+                break;
+            case 1:
                 snd = 0x25E;
-                if (D_800FD560_BowlOver[0] != 1) {
-                    snd = 0x25F;
-                }
+                break;
+            default:
+                snd = 0x25F;
+                break;
             }
             PlaySound(snd);
-            D_800FD560_BowlOver[0]++;
+            D_800FD560_BowlOver++;
             if (D_800FD860_BowlOver[0] == obj) {
                 func_80060F04(D_800FDC5A_BowlOver[1], 0x14, 0, 0x14);
             }
@@ -306,9 +313,6 @@ void func_800FAE2C_BowlOver(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FAE2C_BowlOver);
-#endif
 
 // register allocation and float temporaries
 #ifdef NON_MATCHING
@@ -339,16 +343,16 @@ void func_800FB230_BowlOver(omObjData* obj) {
                 pin->unk_0E = 1;
                 pin->unk_0F = 0;
                 pin->unk_08 = 90.0f;
-                if (D_800FD560_BowlOver[0] != 0) {
+                if (D_800FD560_BowlOver != 0) {
                     snd = 0x25E;
-                    if (D_800FD560_BowlOver[0] != 1) {
+                    if (D_800FD560_BowlOver != 1) {
                         snd = 0x25F;
                     }
                 } else {
                     snd = 0x25D;
                 }
                 PlaySound(snd);
-                D_800FD560_BowlOver[0]++;
+                D_800FD560_BowlOver++;
                 if (D_800FD860_BowlOver[0] == obj) {
                     func_80060F04(D_800FDC5A_BowlOver[1], 0x14, 0, 0x14);
                 }
