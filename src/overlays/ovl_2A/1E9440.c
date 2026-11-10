@@ -1994,8 +1994,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB8BC_name_2A);
 #endif
 
 /* After a goal: walk to the home spot (team 0) or away from it (team 1). */
-// float load scheduling in the nearest-player distance
-#ifdef NON_MATCHING
 void func_800FBB50_name_2A(omObjData* obj) {
     Vec from;
     Vec to;
@@ -2005,8 +2003,10 @@ void func_800FBB50_name_2A(omObjData* obj) {
     omObjData* other;
     f32 mag;
     f32 best;
-    f32 dx;
-    f32 dz;
+    f32 ox;
+    f32 tx;
+    f32 oz;
+    f32 tz;
     f32 d;
     s32 nearest;
     s32 i;
@@ -2027,8 +2027,11 @@ void func_800FBB50_name_2A(omObjData* obj) {
         for (i = 0; i < 4; i++) {
             other = D_800FE030_name_2A[i];
             if (obj != other) {
-                d = sqrtf((other->trans.x - obj->trans.x) * (other->trans.x - obj->trans.x) +
-                          (other->trans.z - obj->trans.z) * (other->trans.z - obj->trans.z));
+                ox = obj->trans.x;
+                tx = other->trans.x;
+                oz = obj->trans.z;
+                tz = other->trans.z;
+                d = sqrtf((tx - ox) * (tx - ox) + (tz - oz) * (tz - oz));
                 if (d < best) {
                     best = d;
                     nearest = i;
@@ -2070,9 +2073,6 @@ void func_800FBB50_name_2A(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FBB50_name_2A);
-#endif
 
 void func_800FBFC8_name_2A(omObjData* obj) {
     s32* timer = obj->unk_50;
