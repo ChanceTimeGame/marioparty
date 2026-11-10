@@ -1942,12 +1942,9 @@ s32 func_800FBAC0_MinigameHouse(s32 idx) {
     }
     return 1;
 }
-// register allocation; D_800ED60C base loaded after the index (masked 4)
-#ifdef NON_MATCHING
 void func_800FBB28_MinigameHouse(s32 port, s32 p, s16 spr) {
     Vec3f pos;
     Vec2f scr;
-    unkSpriteStruct* s;
     s32 prev;
     s32 save;
     s32 t;
@@ -2048,14 +2045,9 @@ void func_800FBB28_MinigameHouse(s32 port, s32 p, s16 spr) {
     Convert3DTo2D(0, &pos, &scr);
     scr.x += 10.0f;
     scr.y -= 24.0f;
-    s = D_800ED60C;
-    s += spr;
-    s->unk_0A = s->unk_0A + (scr.x - s->unk_0A) / 2.0f;
-    s->unk_0C = s->unk_0C + (scr.y - s->unk_0C) / 2.0f;
+    D_800ED60C[spr].unk_0A = D_800ED60C[spr].unk_0A + (scr.x - D_800ED60C[spr].unk_0A) / 2.0f;
+    D_800ED60C[spr].unk_0C = D_800ED60C[spr].unk_0C + (scr.y - D_800ED60C[spr].unk_0C) / 2.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FBB28_MinigameHouse);
-#endif
 void func_800FBFA4_MinigameHouse(s32 p, s32 spr) {
     Vec3f pos;
     Vec2f scr;
