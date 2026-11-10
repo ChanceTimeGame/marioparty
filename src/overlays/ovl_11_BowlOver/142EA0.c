@@ -737,8 +737,6 @@ void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 s
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FC598_BowlOver);
 #endif
 
-// float register allocation (x/y swapped)
-#ifdef NON_MATCHING
 void func_800FC9E0_BowlOver(omObjData* obj) {
     BowlPin* pin;
     s32 r;
@@ -766,7 +764,7 @@ void func_800FC9E0_BowlOver(omObjData* obj) {
         func_800258EC(obj->model[8], 4, 0);
         pin->unk_10 = 1;
     }
-    x = pin->unk_54[0] * pin->unk_7C[0] + obj->trans.x;
+    x = obj->trans.x + pin->unk_54[0] * pin->unk_7C[0];
     y = pin->unk_18[0] + 10.0f;
     z = obj->trans.z + 20.0f + pin->unk_68[0] * pin->unk_7C[0];
     if (z < -5200.0f) {
@@ -788,9 +786,6 @@ void func_800FC9E0_BowlOver(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FC9E0_BowlOver);
-#endif
 
 void func_800FCD54_BowlOver(omObjData* obj, u16 slot, s8 pin) {
     BowlFloorWork* w;
