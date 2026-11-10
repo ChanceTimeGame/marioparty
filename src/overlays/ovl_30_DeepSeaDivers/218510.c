@@ -1809,6 +1809,7 @@ s16 func_800FC644_DeepSeaDivers(f32* x, f32* y, s16 r, u16 flag, f32* outx, f32*
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC644_DeepSeaDivers);
 #endif
+// retail indexes with (s16)i but tests (u16)i < 9, and adds index + pts (masked 32). Tried: s16 i, if-form k, b before a, quotient temp
 #ifdef NON_MATCHING
 f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
     Vec* pts;
@@ -1824,12 +1825,16 @@ f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
     for (i = 0; i < 9; i++) {
         pts = D_800FFC80_DeepSeaDivers[i];
         for (j = 0; j < D_800FFCA4_DeepSeaDivers[i]; j++) {
-            k = (j + 1 < D_800FFCA4_DeepSeaDivers[i]) ? j + 1 : 0;
+            k = j + 1;
+            if (k >= D_800FFCA4_DeepSeaDivers[i]) {
+                k = 0;
+            }
             if ((pts[j].x * 5.0 <= x && x < pts[k].x * 5.0) || (x < pts[j].x * 5.0 && pts[k].x * 5.0 <= x)) {
-                a = &pts[j];
                 b = &pts[k];
+                a = &pts[j];
                 if (b->x - a->x != 0.0) {
-                    h = a->y * 5.0 + (f32)((x - a->x * 5.0) / (b->x - a->x * 5.0)) * (b->y - a->y) * 5.0;
+                    h = (x - a->x * 5.0) / (b->x - a->x * 5.0);
+                    h = a->y * 5.0 + h * (b->y - a->y) * 5.0;
                     if (((b->x - a->x >= 0.0f) & (h <= y)) && best < h) {
                         best = h;
                         found = 1;
@@ -1839,7 +1844,7 @@ f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
         }
     }
     if (found == 0) {
-        best = -2000.0f;
+        return -2000.0f;
     }
     return best;
 }
