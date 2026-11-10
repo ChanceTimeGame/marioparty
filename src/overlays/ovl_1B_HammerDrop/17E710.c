@@ -1222,12 +1222,14 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
     }
 }
 
-// Logic-equivalent spherical displacement conversion; stack/register allocation differs.
+// Logic-equivalent spherical displacement conversion. Control flow: retail keeps the dead
+// pitch <= 0.002f / >= -0.002f tests that GCC drops here (190 vs 174 instructions, masked 36; tried
+// wrap ternaries and Vec order, both kept, and an if/else pitch chain)
 #ifdef NON_MATCHING
 void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
+    Vec delta;
     Vec fromCopy;
     Vec toCopy;
-    Vec delta;
     f32 horizontal;
     f32 pitch;
     f32 yaw;
@@ -1260,17 +1262,10 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
             yaw -= 180.0f;
         }
         pitch = (f32) ((f64) func_800FA1AC_HammerDrop(delta.y / horizontal) * D_800FB658_HammerDrop);
-        if (yaw >= 360.0f) {
-            yaw -= 360.0f;
-        } else if (yaw < 0.0f) {
-            yaw += 360.0f;
-        }
-        pitch += 90.0f;
-        if (pitch >= 360.0f) {
-            pitch -= 360.0f;
-        } else if (pitch < 0.0f) {
-            pitch += 360.0f;
-        }
+        yaw = (yaw >= 360.0f) ? yaw - 360.0f : (yaw < 0.0f) ? yaw + 360.0f : yaw;
+        pitch = (pitch + 90.0f >= 360.0f) ? pitch + 90.0f - 360.0f
+              : (pitch + 90.0f < 0.0f)    ? pitch + 90.0f + 360.0f
+                                          : pitch + 90.0f;
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;

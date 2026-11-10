@@ -41,7 +41,9 @@ u8 D_800FCFD0_CrazyCutter[0x40] = {
     0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0xFF, 0xF0, 0x00,
 };
 
-// register allocation (masked 10)
+// register allocation: retail keeps i * 2 for the D_800FD588 store live across the call in a fifth
+// saved register (raw 32, masked 10; tried an s32 return for func_800FC024, D[i] = temp = call,
+// the call nested in func_800FC240's argument)
 #ifdef NON_MATCHING
 void func_800F65E0_CrazyCutter(void) {
     s32 i;
