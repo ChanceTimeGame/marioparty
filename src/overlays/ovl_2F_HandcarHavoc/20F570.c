@@ -1067,7 +1067,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9B5
 #endif
 
 /* The fallen car slides off and sinks; decides the race when both have fallen. */
-// NON_MATCHING: register allocation
+// NON_MATCHING: only residue is retail's VR4300 mul-fix nop between the mul.s of fallG*t*t (as in
+// func_800FA210); the unit-wide mul fix breaks func_800F7998, so likely a separate retail TU
 #ifdef NON_MATCHING
 void func_800F9DD8_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -1075,6 +1076,7 @@ void func_800F9DD8_HandcarHavoc(omObjData* obj) {
     f32 yaw;
     f32 dx;
     f32 dy;
+    f32 dz;
     f32 tx;
     f32 tz;
     f32 lx;
@@ -1092,7 +1094,8 @@ void func_800F9DD8_HandcarHavoc(omObjData* obj) {
     }
     dx = func_800AEAC0(yaw) * w->fallSide;
     dy = func_800AEAC0(w->fallAngle) * w->fallV0 * w->fallT - w->fallG * w->fallT * w->fallT;
-    omSetTra(obj, dx + obj->trans.x, dy + obj->trans.y, func_800AEFD0(yaw) * w->fallSide + obj->trans.z);
+    dz = func_800AEFD0(yaw) * w->fallSide;
+    omSetTra(obj, dx + obj->trans.x, dy + obj->trans.y, dz + obj->trans.z);
     func_80025798(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
     tx = func_800AEAC0(w->rot.y) * w->tilt;
     tz = func_800AEFD0(w->rot.y) * w->tilt;
