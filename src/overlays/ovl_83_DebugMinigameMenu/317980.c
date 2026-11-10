@@ -989,17 +989,15 @@ void func_800F944C_DebugMinigameMenu(s16 dir) {
     D_800FAC42_DebugMinigameMenu = n;
 }
 
-// register allocation (masked 2)
-#ifdef NON_MATCHING
 void func_800F94C8_DebugMinigameMenu(s16 dir) {
-    u16 found = 0;
-    u16 old = D_800FAC40_DebugMinigameMenu;
-    u16 next = old + dir;
     u16 p;
+    u16 found = 0;
+    u16 old;
     s32 j;
 
+    old = p = D_800FAC40_DebugMinigameMenu;
     do {
-        p = next;
+        p += dir;
         if ((s16)p >= 9) {
             p = 0;
         } else if ((s16)p < 0) {
@@ -1011,7 +1009,6 @@ void func_800F94C8_DebugMinigameMenu(s16 dir) {
                 break;
             }
         }
-        next = p + dir;
     } while (!found);
     D_800FAC40_DebugMinigameMenu = p;
     if ((s16)old == -1) {
@@ -1023,9 +1020,6 @@ void func_800F94C8_DebugMinigameMenu(s16 dir) {
     D_800FAC48_DebugMinigameMenu[(s16)old] = D_800FAC42_DebugMinigameMenu;
     D_800FAC42_DebugMinigameMenu = D_800FAC48_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_800F94C8_DebugMinigameMenu);
-#endif
 
 void func_800F95F8_DebugMinigameMenu(u16 x, u16 y, char* str, u16 color, u16 shadow) {
     fontcolor = shadow;
