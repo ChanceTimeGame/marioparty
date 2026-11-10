@@ -1384,12 +1384,14 @@ f32 func_800FAC38_CrazyCutter(s16* from, s16* to, s32 mode) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAC38_CrazyCutter);
 #endif
-// float registers; dead pitch compares folded (masked 70)
+// Control flow: retail keeps the dead pitch <= 0.002f / >= -0.002f tests that GCC drops here (as
+// func_800F9E98_HammerDrop; 205 vs 189 instructions, masked 42; tried wrap ternaries and Vec order,
+// both kept, and yaw = 0 after the pitch test)
 #ifdef NON_MATCHING
 f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
+    Vec3f delta;
     Vec3f fromV;
     Vec3f toV;
-    Vec3f delta;
     f32 horizontal;
     f32 pitch;
     f32 yaw;
@@ -1422,17 +1424,10 @@ f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
             yaw -= 180.0f;
         }
         pitch = func_800FAB0C_CrazyCutter(delta.y / horizontal) * 57.29577951308232;
-        if (yaw >= 360.0f) {
-            yaw -= 360.0f;
-        } else if (yaw < 0.0f) {
-            yaw += 360.0f;
-        }
-        pitch += 90.0f;
-        if (pitch >= 360.0f) {
-            pitch -= 360.0f;
-        } else if (pitch < 0.0f) {
-            pitch += 360.0f;
-        }
+        yaw = (yaw >= 360.0f) ? yaw - 360.0f : (yaw < 0.0f) ? yaw + 360.0f : yaw;
+        pitch = (pitch + 90.0f >= 360.0f) ? pitch + 90.0f - 360.0f
+              : (pitch + 90.0f < 0.0f)    ? pitch + 90.0f + 360.0f
+                                          : pitch + 90.0f;
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
