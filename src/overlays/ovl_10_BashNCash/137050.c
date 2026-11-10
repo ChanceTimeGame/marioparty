@@ -2372,15 +2372,16 @@ void func_800FD830_BashNCash(void) {
 }
 
 /* Coin counters: three digits, leading zeros hidden. */
-// the early-return test and register allocation
-#ifdef NON_MATCHING
 void func_800FD8E8_BashNCash(omObjData* obj) {
     s32 i;
     s32 coins;
     s32 d;
-    s16 x;
+    s32 x;
 
-    if (obj->work[1] == 0 || obj->work[1] != 1) {
+    if (obj->work[1] == 0) {
+        return;
+    }
+    if (obj->work[1] != 1) {
         return;
     }
     for (i = 0; i < 4; i++) {
@@ -2413,26 +2414,20 @@ void func_800FD8E8_BashNCash(omObjData* obj) {
         SetBasicSpritePos(D_800FE5D8_BashNCash[i][0], D_800FE3FC_BashNCash[i][0] + x, D_800FE3FC_BashNCash[i][1]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FD8E8_BashNCash);
-#endif
 
-// s16 index conversions and register allocation
-#ifdef NON_MATCHING
 void func_800FDBB4_BashNCash(omObjData* obj) {
     s16 face[4][2] = { { 56, 24 }, { 264, 24 }, { 56, 202 }, { 264, 202 } };
     s16 coin[4][2] = { { 39, 38 }, { 247, 38 }, { 39, 216 }, { 247, 216 } };
-    s32 i;
-    s32 spr;
+    s16 i;
+    s16 spr;
 
     for (i = 0; i < 4; i++) {
-        D_800FE5F0_BashNCash[i] = func_80019060(InitSprite(GwPlayer[(s16)i].character + 0x6E), 0, 1);
-        SetBasicSpritePos(D_800FE5F0_BashNCash[i], face[(s16)i][0], face[(s16)i][1]);
+        spr = InitSprite(GwPlayer[i].character + 0x6E);
+        SetBasicSpritePos(D_800FE5F0_BashNCash[i] = func_80019060(spr, 0, 1), face[i][0], face[i][1]);
     }
     spr = InitSprite(0x74);
     for (i = 0; i < 4; i++) {
-        D_800FE5F8_BashNCash[i] = func_80019060(spr, 0, 1);
-        SetBasicSpritePos(D_800FE5F8_BashNCash[i], coin[i][0], coin[i][1]);
+        SetBasicSpritePos(D_800FE5F8_BashNCash[i] = func_80019060(spr, 0, 1), coin[i][0], coin[i][1]);
     }
     spr = InitSprite(0x87);
     for (i = 0; i < 4; i++) {
@@ -2448,13 +2443,6 @@ void func_800FDBB4_BashNCash(omObjData* obj) {
     obj->func_ptr = func_800FD8E8_BashNCash;
     func_800FD830_BashNCash();
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE520_BashNCash);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE530_BashNCash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FDBB4_BashNCash);
-#endif
 
 /* The next start position of a hammer player (skipping the cash player's slot 0). */
 u16 func_800FDED0_BashNCash(void) {
