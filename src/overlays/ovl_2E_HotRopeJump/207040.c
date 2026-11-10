@@ -1275,7 +1275,8 @@ void func_800FA9DC_HotRopeJump(omObjData* obj) {
 #define HRJ_MTX_HALF(m, i) (((u16*)(m))[i])
 
 /* World position -> screen position (x, y) and depth (z), through camera cam's view matrix. */
-// NON_MATCHING: register allocation
+// NON_MATCHING: register allocation: sz and the 0.01744 constant swap f22/f24 (masked 0); out is
+// written as f32[] so the store does not let GCC keep D_800F3FA8 cached
 #ifdef NON_MATCHING
 void func_800FAB34_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
     Mtx mtx;
@@ -1296,10 +1297,10 @@ void func_800FAB34_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
     sz = fabsf(sz / cosf(D_800C3110[cam].unk_40 * 0.017444444444444446 / 2.0));
     if (sz != 0.0) {
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->x = (s16)(vp->unk58 / 4.0 * sx / sz / 1.3333334f) + vp->unk60 / 4.0;
+        ((f32*)out)[0] = (s16)(vp->unk58 / 4.0 * sx / sz / 1.3333334f) + vp->unk60 / 4.0;
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->y = (s16)(vp->unk5A / 4.0 * -sy / sz) + vp->unk62 / 4.0;
-        out->z = sz;
+        ((f32*)out)[1] = (s16)(vp->unk5A / 4.0 * -sy / sz) + vp->unk62 / 4.0;
+        ((f32*)out)[2] = sz;
     }
 }
 #else
@@ -1308,7 +1309,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FAB34
 
 /* func_800FAB34 through the current CZoom/CRot/Center camera; z becomes how far the point lies
    outside a box of scaleX x scaleY around it (0 when inside). */
-// NON_MATCHING: register allocation
+// NON_MATCHING: register allocation (dist and the 2.0 constant swap f20/f22) and the &Center load
+// scheduled before the eye.x products (masked 6)
 #ifdef NON_MATCHING
 void func_800FADDC_HotRopeJump(s32 cam, Vec* pos, Vec* out, f32 scaleX, f32 scaleY) {
     Mtx view;
@@ -1325,8 +1327,10 @@ void func_800FADDC_HotRopeJump(s32 cam, Vec* pos, Vec* out, f32 scaleX, f32 scal
     f32 sy;
     f32 sz;
     f32 dist;
+    Mtx* m;
 
     c = &D_800C3110[cam];
+    m = &mtx;
     rx = CRot.x;
     ry = CRot.y;
     eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
@@ -1339,18 +1343,19 @@ void func_800FADDC_HotRopeJump(s32 cam, Vec* pos, Vec* out, f32 scaleX, f32 scal
     up.y = func_800AEFD0(rx);
     up.z = func_800AEFD0(ry) * func_800AEAC0(rx);
     guLookAt(&view, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
-    guTranslate(&mtx, pos->x, pos->y, pos->z);
-    guMtxCatL(&mtx, &view, &mtx);
+    guTranslate(m, pos->x, pos->y, pos->z);
+    guMtxCatL(m, &view, m);
     sx = (s32)((HRJ_MTX_HALF(&mtx, 12) << 16) | HRJ_MTX_HALF(&mtx, 28)) >> 16;
     sy = (s32)((HRJ_MTX_HALF(&mtx, 13) << 16) | HRJ_MTX_HALF(&mtx, 29)) >> 16;
     sz = (s32)((HRJ_MTX_HALF(&mtx, 14) << 16) | HRJ_MTX_HALF(&mtx, 30)) >> 16;
-    dist = fabsf(sz * func_800AEAC0(D_800C3110[cam].unk_40 / 2.0) / func_800AEFD0(D_800C3110[cam].unk_40 / 2.0));
+    dist = func_800AEAC0(D_800C3110[cam].unk_40 / 2.0);
+    dist = fabsf(sz * dist / func_800AEFD0(D_800C3110[cam].unk_40 / 2.0));
     if (dist != 0.0) {
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->x = (s16)(vp->unk58 / 4.0 * sx / dist / 1.3333334f) + vp->unk60 / 4.0;
+        ((f32*)out)[0] = (s16)(vp->unk58 / 4.0 * sx / dist / 1.3333334f) + vp->unk60 / 4.0;
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->y = (s16)(vp->unk5A / 4.0 * -sy / dist) + vp->unk62 / 4.0;
-        out->z = dist;
+        ((f32*)out)[1] = (s16)(vp->unk5A / 4.0 * -sy / dist) + vp->unk62 / 4.0;
+        ((f32*)out)[2] = dist;
     }
     if (dist != 0.0f) {
         sc[0] = sx * sz / dist * (1.0f / scaleX);
