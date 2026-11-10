@@ -766,7 +766,7 @@ f32 func_800F98A4_GrabBag(omObjData* arg0) {
     }
     return angle;
 }
-// register allocation: float temporaries (masked 0)
+// register allocation: float temporaries in the distance test (masked 0, raw 9); tried declaration order, dz reuse, assignment in the test
 #ifdef NON_MATCHING
 f32 func_800F9A1C_GrabBag(omObjData* arg0) {
     f32 targetZ;
@@ -885,14 +885,14 @@ void func_800F9DF0_GrabBag(omObjData* arg0, omObjData* arg1) {
     func_80025798(arg1->model[0], arg1->trans.x, 3.0f, arg1->trans.z);
 }
 
-// register allocation: work0/work1 in s3/s2 (masked 0)
+// register allocation: the two work loads issue in swapped order (masked 0, raw 4); tried declaration order, assignment order, initialised declarations
 #ifdef NON_MATCHING
 void func_800F9ED0_GrabBag(omObjData* arg0, omObjData* arg1) {
-    GrabBagPlayerWork* work1;
     GrabBagPlayerWork* work0;
+    GrabBagPlayerWork* work1;
 
-    work0 = GB_PLAYER(arg0);
     work1 = GB_PLAYER(arg1);
+    work0 = GB_PLAYER(arg0);
     func_80017C0C(arg0, 8, (arg0->trans.x + arg1->trans.x) / 2.0f, (arg0->trans.y + arg1->trans.y) / 2.0f,
                   (arg0->trans.z + arg1->trans.z) / 2.0f, 0.0f, 0.0f);
     if (func_800FA184_GrabBag(arg0, arg1) == 1) {
@@ -979,9 +979,10 @@ s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA184_GrabBag);
 #endif
-// register allocation: bag/model-table base registers (masked 6)
-#ifdef NON_MATCHING
 s32 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
+    omObjData* bag;
+    unk_ovl_2D_struct* model;
+    GrabBagBagWork* bagWork;
     GrabBagPlayerWork* work0;
     GrabBagPlayerWork* work1;
     u8 kind;
@@ -1004,14 +1005,14 @@ s32 func_800FA304_GrabBag(omObjData* arg0, omObjData* arg1) {
     work1->score -= amount;
     work0->total = amount + work0->total;
     work1->total -= amount;
-    if (!(D_800F2B7C[D_800EDE70[kind]->model[0]].unk_20 & 4) || GB_BAG(D_800EDE70[kind])->unk_5C != 0) {
+    bag = D_800EDE70[kind];
+    model = &D_800F2B7C[bag->model[0]];
+    bagWork = GB_BAG(bag);
+    if (!(model->unk_20 & 4) || bagWork->unk_5C != 0) {
         kind += 3;
     }
     return kind;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA304_GrabBag);
-#endif
 void func_800FA424_GrabBag(omObjData* arg0) {
     GrabBagPlayerWork* work;
 
@@ -1063,8 +1064,6 @@ void func_800FA658_GrabBag(omObjData* arg0) {
     ContBtnTrg[work->port] &= 0x7FFF;
     ContBtnTrg[work->port] &= 0xBFFF;
 }
-// float register allocation at the shared return (masked 3)
-#ifdef NON_MATCHING
 f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     f32 target;
     f32 diff;
@@ -1075,22 +1074,16 @@ f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
         return target;
     }
     if (diff <= -180.0f) {
-        return arg0 + arg3;
-    }
-    if ((diff <= 180.0f) & (diff >= 0.0f)) {
-        return arg0 + arg3;
-    }
-    if (diff > 180.0f) {
-        return arg0 - arg3;
-    }
-    if ((diff > -180.0f) & (diff < 0.0f)) {
-        return arg0 - arg3;
+        target = arg0 + arg3;
+    } else if ((diff <= 180.0f) & (diff >= 0.0f)) {
+        target = arg0 + arg3;
+    } else if (diff > 180.0f) {
+        target = arg0 - arg3;
+    } else if ((diff > -180.0f) & (diff < 0.0f)) {
+        target = arg0 - arg3;
     }
     return target;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA780_GrabBag);
-#endif
 void func_800FA8F4_GrabBag(omObjData* arg0) {
     GrabBagPos facePos[4] = { { 56, 24 }, { 264, 24 }, { 56, 202 }, { 264, 202 } };
     GrabBagPos bagPos[4] = { { 39, 38 }, { 247, 38 }, { 39, 216 }, { 247, 216 } };

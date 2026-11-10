@@ -1546,7 +1546,7 @@ void func_800FA1CC_name_2A(omObjData *obj)
 }
 
 /* CPU control. */
-// register allocation (work/mate in s3/s4) and the -1 constant's delay slot
+// register allocation (work/mate in s3/s4) and the -1 constant's delay slot (masked 8, raw 20); declaration order has no effect
 #ifdef NON_MATCHING
 void func_800FA614_name_2A(omObjData* obj) {
     Vec from;
@@ -1994,8 +1994,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FB8BC_name_2A);
 #endif
 
 /* After a goal: walk to the home spot (team 0) or away from it (team 1). */
-// float load scheduling in the nearest-player distance
-#ifdef NON_MATCHING
 void func_800FBB50_name_2A(omObjData* obj) {
     Vec from;
     Vec to;
@@ -2005,8 +2003,10 @@ void func_800FBB50_name_2A(omObjData* obj) {
     omObjData* other;
     f32 mag;
     f32 best;
-    f32 dx;
-    f32 dz;
+    f32 ox;
+    f32 tx;
+    f32 oz;
+    f32 tz;
     f32 d;
     s32 nearest;
     s32 i;
@@ -2027,8 +2027,11 @@ void func_800FBB50_name_2A(omObjData* obj) {
         for (i = 0; i < 4; i++) {
             other = D_800FE030_name_2A[i];
             if (obj != other) {
-                d = sqrtf((other->trans.x - obj->trans.x) * (other->trans.x - obj->trans.x) +
-                          (other->trans.z - obj->trans.z) * (other->trans.z - obj->trans.z));
+                ox = obj->trans.x;
+                tx = other->trans.x;
+                oz = obj->trans.z;
+                tz = other->trans.z;
+                d = sqrtf((tx - ox) * (tx - ox) + (tz - oz) * (tz - oz));
                 if (d < best) {
                     best = d;
                     nearest = i;
@@ -2070,9 +2073,6 @@ void func_800FBB50_name_2A(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FBB50_name_2A);
-#endif
 
 void func_800FBFC8_name_2A(omObjData* obj) {
     s32* timer = obj->unk_50;
@@ -2283,13 +2283,10 @@ void func_800FC990_name_2A(omObjData* obj, Vec* out) {
 }
 
 /* `player` catches the ball. */
-// index-before-base order of the player pointer (one sll)
-#ifdef NON_MATCHING
 void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     N2ABallWork* work = obj->unk_50;
     N2ABallExt* ext = work->unk_68;
-    omObjData** p = D_800FE030_name_2A + player;
-    N2APlayerWork* pw = (*p)->unk_50;
+    N2APlayerWork* pw = D_800FE030_name_2A[player]->unk_50;
     s32* flags;
 
     func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 0);
@@ -2297,7 +2294,7 @@ void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     flags = &D_800FDF60_name_2A[player];
     func_800FD85C_name_2A(flags, 0x4000, 1);
     func_800FD85C_name_2A(flags, 0x8000, 1);
-    func_8000A634(*p, obj);
+    func_8000A634(D_800FE030_name_2A[player], obj);
     pw->unk_50 &= ~0x100;
     pw->unk_A4 = 0.8f;
     ext->unk_48 = player;
@@ -2308,9 +2305,6 @@ void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     func_800258EC(D_800FE02C_name_2A->model[0], 4, 0);
     func_800258EC(D_800FE02C_name_2A->model[1], 4, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC9EC_name_2A);
-#endif
 
 void func_800FCB5C_name_2A(omObjData* obj) {
     Vec from;
@@ -2561,19 +2555,16 @@ void func_800FD670_name_2A(omObjData* obj) {
     }
 }
 
-// float load scheduling
-#ifdef NON_MATCHING
 f32 func_800FD7D8_name_2A(omObjData* obj) {
     f32 hx = D_800FE048_name_2A->trans.x + 0.0f;
     f32 hy = D_800FE048_name_2A->trans.y + 350.0f;
     f32 hz = D_800FE048_name_2A->trans.z + -560.0f;
+    f32 ox = obj->trans.x;
+    f32 oy = obj->trans.y;
+    f32 oz = obj->trans.z;
 
-    return D_800FDF50_name_2A = (hx - obj->trans.x) * (hx - obj->trans.x) + (hy - obj->trans.y) * (hy - obj->trans.y) +
-                                (hz - obj->trans.z) * (hz - obj->trans.z);
+    return D_800FDF50_name_2A = (hx - ox) * (hx - ox) + (hy - oy) * (hy - oy) + (hz - oz) * (hz - oz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD7D8_name_2A);
-#endif
 
 s32 func_800FD850_name_2A(s32 flags, s32 mask) {
     return (flags & mask) != 0;
@@ -2588,7 +2579,8 @@ void func_800FD85C_name_2A(s32* flags, s32 mask, s32 set) {
 }
 
 /* out = (distance, -, yaw) from `from` to `to`. */
-// retail keeps the dead pitch range compares (as ovl_1B/ovl_0D's twin); float registers
+// retail keeps the dead pitch range compares (as ovl_1B/ovl_0D's twin; 17 instructions) and schedules
+// the 180.0f load after the compare (masked 24, raw 24); y/eps locals as MP2 RollCall's twin
 #ifdef NON_MATCHING
 void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -2597,7 +2589,8 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
-    f32 length;
+    f32 y;
+    f32 eps;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -2615,10 +2608,12 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
+        y = delta.y;
+        eps = 0.0001f;
+        yaw = horizontal;
         pitch = 180.0f;
-        yaw = 0.0f;
-        if (!(delta.y > 0.0001f) && (delta.y < 0.0001f)) {
-            pitch = 0.0f;
+        if (!(y > eps) && y < eps) {
+            pitch = horizontal;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -2639,23 +2634,19 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
-    length = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
+    horizontal = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
     out->z = yaw;
-    out->x = length;
+    out->x = horizontal;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD880_name_2A);
 #endif
 
 /* atan(x) by a continued fraction. */
-// f64 register allocation (as ovl_0D's twin)
-#ifdef NON_MATCHING
 f32 func_800FDBF4_name_2A(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 base;
-    f64 frac;
     s32 sign;
     s32 i;
 
@@ -2680,23 +2671,15 @@ f32 func_800FDBF4_name_2A(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            base = 1.5707963267948966;
-            frac = x / (sum + 1.0f);
-            goto done;
+            return 1.5707963267948966 - (x / (sum + 1.0f));
         }
         if (sign < 0) {
-            frac = x / (sum + 1.0f);
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - (x / (sum + 1.0f));
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FDBF4_name_2A);
-#endif
 
 void func_800FDD44_name_2A(void) {
 }

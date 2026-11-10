@@ -407,8 +407,7 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FCFB4_UnusedMinigame0);
 #endif
-// register allocation (masked 0)
-#ifdef NON_MATCHING
+
 void func_800FD430_UnusedMinigame0(void) {
     s32 i;
     s32 k;
@@ -429,16 +428,13 @@ void func_800FD430_UnusedMinigame0(void) {
     }
     for (i = 0; i < 3; i++) {
         HuMemDirectFree(D_80108C50_UnusedMinigame0[i]);
-        for (k = 0; k < 4; k++) {
-            HuMemDirectFree(D_8010B070_UnusedMinigame0[k][i]);
-            HuMemDirectFree(D_8010B0D0_UnusedMinigame0[k][i]);
-            HuMemDirectFree(D_8010B0D0_UnusedMinigame0[k + 4][i]);
+        for (j = 0; j < 4; j++) {
+            HuMemDirectFree(D_8010B070_UnusedMinigame0[j][i]);
+            HuMemDirectFree(D_8010B0D0_UnusedMinigame0[j][i]);
+            HuMemDirectFree(D_8010B0D0_UnusedMinigame0[j + 4][i]);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FD430_UnusedMinigame0);
-#endif
 void func_800FD5E0_UnusedMinigame0(void) {
     s32 i;
     s32 j;
@@ -570,7 +566,7 @@ void func_800FDA50_UnusedMinigame0(UM0Tile* t, s32 match) {
         }
     }
 }
-// argument narrowing order (retail narrows col/row twice)
+// argument narrowing order: retail narrows col/row twice, GCC CSEs them (masked 41, raw 36); tried implicit narrowing, s16 locals after the call
 #ifdef NON_MATCHING
 s32 func_800FDC1C_UnusedMinigame0(s32 col, s32 row) {
     UM0Tile** p;

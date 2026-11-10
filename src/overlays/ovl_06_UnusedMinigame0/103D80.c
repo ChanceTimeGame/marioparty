@@ -258,7 +258,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 #endif
 
 /* Whether board cell (x, z) is empty (0 off the board). */
-// NON_MATCHING: register allocation (masked 4)
+// NON_MATCHING: register allocation, retail keeps raw x and a sign-extended z live (masked 4, raw 11); tried early-return/ret-local shapes, a flag local; s32 params break the prototype
 #ifdef NON_MATCHING
 s32 func_800FBAA0_UnusedMinigame0(s16 x, s16 z) {
     if (((u16)x >= 8) | (z < 0)) {
@@ -604,7 +604,7 @@ const u32 D_80103B54_UnusedMinigame0 __attribute__((section(".rodata"))) = 0;
 #endif
 
 /* Points camera 0 at Center from CRot / CZoom. */
-// NON_MATCHING: scheduling of the Center address load (masked 4)
+// NON_MATCHING: scheduling of the Center address load (masked 4, raw 8); a Vec* local for Center is worse
 #ifdef NON_MATCHING
 void func_800FCD68_UnusedMinigame0(void) {
     Vec eye;

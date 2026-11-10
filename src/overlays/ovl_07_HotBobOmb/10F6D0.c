@@ -21,11 +21,9 @@ void func_800F8FA0_HotBobOmb(void) {
     func_80018C90(D_800FA9B6_HotBobOmb);
 }
 
-// one extra move after the coins load and an 8-byte larger frame (masked residue only from those)
-#ifdef NON_MATCHING
 void func_800F902C_HotBobOmb(void) {
     s32 i;
-    s16 coins;
+    s32 coins;
     s32 gain;
 
     switch (D_800FA8CC_HotBobOmb) {
@@ -116,15 +114,8 @@ void func_800F902C_HotBobOmb(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F902C_HotBobOmb);
-#endif
 
-// register allocation around r + 390 (masked 0)
-#ifdef NON_MATCHING
 void func_800F94AC_HotBobOmb(void) {
-    s32 r;
-
     func_800F8FA0_HotBobOmb();
     D_800FA988_HotBobOmb = 2;
     D_800FA98C_HotBobOmb = 0x8000;
@@ -139,9 +130,8 @@ void func_800F94AC_HotBobOmb(void) {
     D_800FA880_HotBobOmb[1] = GwPlayer[1].port;
     D_800FA880_HotBobOmb[2] = GwPlayer[2].port;
     D_800FA880_HotBobOmb[3] = GwPlayer[3].port;
-    r = func_800F680C_HotBobOmb() % 211;
-    D_800FA9BC_HotBobOmb = D_800FA9A8_HotBobOmb = r + 390;
-    D_800FA194_HotBobOmb = (r + 390) / 15;
+    D_800FA9BC_HotBobOmb = D_800FA9A8_HotBobOmb = func_800F680C_HotBobOmb() % 211 + 390;
+    D_800FA194_HotBobOmb = D_800FA9A8_HotBobOmb / 15;
     D_800FA924_HotBobOmb = 0;
     D_800FA8A0_HotBobOmb[0] = 0;
     D_800FA8A0_HotBobOmb[1] = 0;
@@ -153,23 +143,23 @@ void func_800F94AC_HotBobOmb(void) {
     D_800FA994_HotBobOmb = 0;
     D_800FA8D0_HotBobOmb = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F94AC_HotBobOmb);
-#endif
 
-// register allocation, one extra move (masked 1)
+// register allocation, table load in v1 not v0 (masked 0, raw 2); tried early returns, else-if, ret reuse
 #ifdef NON_MATCHING
 s32 func_800F9610_HotBobOmb(s32 player) {
     s32 n;
+    s32 temp;
     s32 ret;
 
     n = D_800FA8A0_HotBobOmb[player];
     if (n <= 0 && D_800FA924_HotBobOmb <= 0) {
         ret = 1;
     } else {
+        temp = D_800FA8D0_HotBobOmb;
         ret = 0;
-        if (D_800FA8D0_HotBobOmb == 0) {
-            ret = D_800FA3C0_HotBobOmb[D_800FA994_HotBobOmb][n] != 0;
+        if (temp == 0) {
+            temp = D_800FA3C0_HotBobOmb[D_800FA994_HotBobOmb][n];
+            ret = temp != 0;
         }
     }
     return ret;
@@ -241,7 +231,7 @@ void func_800F9814_HotBobOmb(s32 port) {
     D_800FA5B4_HotBobOmb[port]++;
 }
 
-// masked
+// sign tests: GCC if-converts dy/dx = +-1 to slti/negu/ori where retail branches (masked 20, raw 59); tried if/else, the s8 parameters directly
 #ifdef NON_MATCHING
 s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
     s32 x;
