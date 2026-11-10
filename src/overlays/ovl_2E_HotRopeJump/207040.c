@@ -807,7 +807,7 @@ void func_800F8968_HotRopeJump(f32 x, f32 y, f32 z) {
     func_800F8F04_HotRopeJump(id, 4.0f);
 }
 
-// NON_MATCHING: register allocation of the hit point
+// NON_MATCHING: register allocation of the hit point (t/dy swap f4/f6) and ret in a2 not v0 (masked 7, 2 instructions long); tried explicit returns, declaration order
 #ifdef NON_MATCHING
 s32 func_800F8A14_HotRopeJump(omObjData* obj) {
     HRJSeg* seg;
@@ -836,10 +836,8 @@ s32 func_800F8A14_HotRopeJump(omObjData* obj) {
         dy -= obj->trans.y + 50.0;
         dz -= obj->trans.z;
         if (dx * dx + dy * dy + dz * dz <= 2500.0) {
-            return 1;
-        }
-        ret = 0;
-        if (225.0 - D_801004BC_HotRopeJump * 7.5 <= seg->angle && seg->angle <= 270.0f) {
+            ret = 1;
+        } else if (seg->angle >= 225.0 - D_801004BC_HotRopeJump * 7.5 && seg->angle <= 270.0f) {
             ret = 2;
         }
     }
@@ -1118,7 +1116,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F9080
 
 /* Draws the billboards: each one's matrix (facing the camera unless unk_08) and display list, into
    the billboard model's list for this frame. */
-// NON_MATCHING: scheduling of the view-matrix copy
+// NON_MATCHING: scheduling of the view-matrix copy and the fx->unk_04 load (raw 10, masked 6); tried operand order, &D_800C3110->unk_138 + i * 2, i * 128
 #ifdef NON_MATCHING
 void func_800FA2F4_HotRopeJump(void) {
     Mtx view;
@@ -1651,8 +1649,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FBABC
 
 
 /* The two torches: flame models at the ends of the floor, each with a light. */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 void func_800FC0B4_HotRopeJump(omObjData* obj) {
     s16 pos[2][4] = { { 0, 150, -600, 0 }, { 0, 150, 600, 180 } };
     HRJSeg* seg;
@@ -1670,8 +1666,7 @@ void func_800FC0B4_HotRopeJump(omObjData* obj) {
     func_8009B770(seg, 0, 13 * sizeof(HRJSeg));
     for (i = 0; i < 2; i++, seg++) {
         tex = func_80067310(D_801007CC_HotRopeJump);
-        seg->model = func_800FD90C_HotRopeJump(D_800FE650_HotRopeJump, tex, func_80067310(D_801007CE_HotRopeJump));
-        obj->model[i] = seg->model;
+        obj->model[i] = seg->model = func_800FD90C_HotRopeJump(D_800FE650_HotRopeJump, tex, func_80067310(D_801007CE_HotRopeJump));
         mdl = &D_800F2B7C[seg->model];
         seg->pos.x = seg->base.x = pos[i][0];
         seg->pos.y = seg->base.y = pos[i][1];
@@ -1702,11 +1697,6 @@ void func_800FC0B4_HotRopeJump(omObjData* obj) {
     D_80100830_HotRopeJump.z = CRot.z = 0.0f;
     D_80100848_HotRopeJump = CZoom = 1000.0f;
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", D_800FE998_HotRopeJump);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FC0B4_HotRopeJump);
-#endif
 
 /* The torches: the intro camera move and light, then each flame's light and list. */
 // NON_MATCHING: register allocation and block layout
@@ -1797,7 +1787,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FC428
 
 /* The rope: 13 flame models with lights, placed at random, that then gather into the turning
    rope (func_800FCE98). */
-// NON_MATCHING: register allocation
+// NON_MATCHING: retail's frame is 24 bytes larger, and f0/f2 swap in the two int-to-float conversions (masked 26); tried t = i - 6; t /= 6.0f
 #ifdef NON_MATCHING
 void func_800FCAC0_HotRopeJump(omObjData* obj) {
     HRJSeg* seg;
@@ -1816,8 +1806,7 @@ void func_800FCAC0_HotRopeJump(omObjData* obj) {
     seg = D_80100854_HotRopeJump;
     for (i = 0; i < 13;) {
         tex = func_80067310(D_801007D0_HotRopeJump);
-        seg->model = func_800FD90C_HotRopeJump(D_800FE6F4_HotRopeJump, tex, func_80067310(D_801007D2_HotRopeJump));
-        obj->model[i] = seg->model;
+        obj->model[i] = seg->model = func_800FD90C_HotRopeJump(D_800FE6F4_HotRopeJump, tex, func_80067310(D_801007D2_HotRopeJump));
         mdl = &D_800F2B7C[seg->model];
         mdl->unk_6C->unk_80->unk_14 |= 0x71010000;
         mdl->unk_6C->unk_80->unk_14 &= ~0x2000;

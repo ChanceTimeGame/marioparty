@@ -289,14 +289,11 @@ void func_800FF354_ChanceTime(void) {
     
 }
 
-// register allocation: case 7 compares the copy of the coin count (masked 0)
-#ifdef NON_MATCHING
 void func_800FF3F0_ChanceTime(void) {
-    char unused[0x18]; /* retail's frame has 0x18 unreferenced bytes */
     s32 max;
     s16 win;
     s16 n;
-    s32 c;
+    s16 c;
 
     max = 0;
     D_80101320_ChanceTime = 0;
@@ -365,6 +362,3 @@ void func_800FF3F0_ChanceTime(void) {
 /* unreferenced, after the "%d" above (the asm carries them otherwise) */
 const char D_801016A8_ChanceTime[] = "";
 const char D_801016AC_ChanceTime[] = "";
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_ChanceTime/DD760", func_800FF3F0_ChanceTime);
-#endif

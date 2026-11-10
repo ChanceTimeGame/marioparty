@@ -326,7 +326,7 @@ void func_800F6B3C_UnknownBooStealScene(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_65_UnknownBooStealScene/2B74A0", func_800F6B3C_UnknownBooStealScene);
 #endif
 
-// register allocation: i/coin-rank/j registers rotated (masked 0)
+// register allocation: the -1 constant and the D_800F9620 base swap s2/s3 (raw 5, masked 0); tried declaration order, operand order, while loops
 #ifdef NON_MATCHING
 void func_800F7278_UnknownBooStealScene(void) {
     s32 starRankCount[4];
@@ -355,13 +355,13 @@ void func_800F7278_UnknownBooStealScene(void) {
         D_800F9620_UnknownBooStealScene[i] = -1;
     }
     for (i = 0; i < 4; i++) {
-        rank = func_8004FEBC(i);
+        j = func_8004FEBC(i);
     starSlot:
-        if (D_800F9610_UnknownBooStealScene[rank] != -1) {
-            rank++;
+        if (D_800F9610_UnknownBooStealScene[j] != -1) {
+            j++;
             goto starSlot;
         }
-        D_800F9610_UnknownBooStealScene[rank] = i;
+        D_800F9610_UnknownBooStealScene[j] = i;
         coinRank = 0;
         for (j = 0; j < 4; j++) {
             if (i != j) {
@@ -387,7 +387,7 @@ void func_800F7278_UnknownBooStealScene(void) {
     if (rank == D_800F9638_UnknownBooStealScene) {
         starRankCount[rank]--;
     }
-    j = rand8() % starRankCount[D_800F9638_UnknownBooStealScene];
+    coinRank = rand8() % starRankCount[D_800F9638_UnknownBooStealScene];
     for (i = 0; i < 4; i++) {
         if (i == D_800F9601_UnknownBooStealScene) {
             continue;
@@ -395,8 +395,8 @@ void func_800F7278_UnknownBooStealScene(void) {
         if (D_800F9638_UnknownBooStealScene != func_8004FEBC(i)) {
             continue;
         }
-        if (j != 0) {
-            j--;
+        if (coinRank != 0) {
+            coinRank--;
             continue;
         }
         D_800F9634_UnknownBooStealScene = i;
@@ -415,8 +415,6 @@ void func_800F7278_UnknownBooStealScene(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_65_UnknownBooStealScene/2B74A0", func_800F7278_UnknownBooStealScene);
 #endif
 
-// register allocation: s5/s6 swapped (masked 0)
-#ifdef NON_MATCHING
 s32 func_800F7648_UnknownBooStealScene(s32 win, u8* options) {
     s16 buttons[4];
     s32 presses = 0;
@@ -431,7 +429,7 @@ s32 func_800F7648_UnknownBooStealScene(s32 win, u8* options) {
                 presses = D_800F9630_UnknownBooStealScene + 1;
                 buttons[GwPlayer[D_800F9601_UnknownBooStealScene].port] = 0x400;
             } else {
-                func_8007155C(win, portMask[GwPlayer[i].port]);
+                func_8007155C(win, (s16)portMask[GwPlayer[i].port]);
                 buttons[GwPlayer[i].port] = -1;
             }
         } else {
@@ -467,14 +465,7 @@ s32 func_800F7648_UnknownBooStealScene(s32 win, u8* options) {
     } while (options[i] == 0);
     return i;
 }
-#else
-/* the C's local portMask template; an explicit section, as GCC loses track of it after INCLUDE_ASM */
-const char D_800F95A0_UnknownBooStealScene[] __attribute__((section(".rodata"))) = "\x01\x02\x04\x08";
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_65_UnknownBooStealScene/2B74A0", func_800F7648_UnknownBooStealScene);
-#endif
 
-// constant hoisting: retail keeps 0x400 in s8, this C keeps -1 (masked 5)
-#ifdef NON_MATCHING
 s32 func_800F78E0_UnknownBooStealScene(s32 win, s32 mode, u8* options) {
     s16 buttons[4];
     s32 presses = 0;
@@ -488,7 +479,7 @@ s32 func_800F78E0_UnknownBooStealScene(s32 win, s32 mode, u8* options) {
                 presses += presses < i;
                 buttons[GwPlayer[i].port] = 0x400;
             } else {
-                func_8007155C(win, portMask[GwPlayer[i].port]);
+                func_8007155C(win, (s16)portMask[GwPlayer[i].port]);
                 buttons[GwPlayer[i].port] = -1;
             }
         } else {
@@ -521,9 +512,6 @@ s32 func_800F78E0_UnknownBooStealScene(s32 win, s32 mode, u8* options) {
     } while (options[i] == 0);
     return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_65_UnknownBooStealScene/2B74A0", func_800F78E0_UnknownBooStealScene);
-#endif
 
 // delay-slot fill: one redundant move a0,s5 before func_80055994 (masked 1, one extra instruction)
 #ifdef NON_MATCHING

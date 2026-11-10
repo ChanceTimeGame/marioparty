@@ -538,7 +538,7 @@ void func_80105148_MinigameInstructions(Ovl6FPlayerWork* work) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2E8220", func_80105148_MinigameInstructions);
 #endif
-// the walk-out loop keeps the 30.0f compare constant in a register (retail reloads it each frame; masked 11)
+// the walk-out loop keeps the 30.0f compare constant in a register (retail reloads it each frame; masked 11); tried operand order, split -= 12.0f store
 #ifdef NON_MATCHING
 void func_80105464_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
@@ -742,8 +742,6 @@ void func_80105E64_MinigameInstructions(Ovl6FPlayerWork* work) {
     func_80025798(work->unk_4E, px, func_800AEAC0(tilt) * 20.0f + work->unk_10, pz);
     func_800257E4(work->unk_4E, work->unk_20, work->unk_24, 0.0f);
 }
-// GCC reuses the -180.0f register for CZoom - -180.0f where retail rematerialises the constant (masked 2)
-#ifdef NON_MATCHING
 void func_801060DC_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;
@@ -761,6 +759,10 @@ void func_801060DC_MinigameInstructions(Ovl6FPlayerWork* work) {
         func_80020EA0(work->unk_70, D_8010EE00_MinigameInstructions[chr][0], work->unk_4E, (u8*)"21_kimoti_1b-atama_3");
         func_80025830(work->unk_4E, 0.28f, 0.28f, 0.28f);
         func_80025798(work->unk_70, -1000.0f, 0.0f, 0.0f);
+        work->unk_08 = (work->unk_38 * 30) + 40;
+        pos.x = work->unk_00 = -50.0f;
+        pos.y = work->unk_04 = 150.0f;
+        work->unk_14 = -180.0f;
     } else {
         work->unk_4E = LoadFormFile((D_8010E964_MinigameInstructions[chr] << 16) | 0x9F, 0x299);
         work->unk_50 = func_80023FC8(work->unk_4E);
@@ -768,11 +770,11 @@ void func_801060DC_MinigameInstructions(Ovl6FPlayerWork* work) {
         work->unk_52 = LoadFormFile((D_8010E964_MinigameInstructions[chr] << 16) | 3, 0x1D);
         work->unk_54 = LoadFormFile((D_8010E964_MinigameInstructions[chr] << 16) | 0x7E, 0x1D);
         func_80025830(work->unk_4E, 0.28f, 0.28f, 0.28f);
+        work->unk_08 = (work->unk_38 * 30) + 40;
+        pos.x = work->unk_00 = -50.0f;
+        pos.y = work->unk_04 = 150.0f;
+        work->unk_14 = -180.0f;
     }
-    work->unk_08 = (work->unk_38 * 30) + 40;
-    pos.x = work->unk_00 = -50.0f;
-    pos.y = work->unk_04 = 150.0f;
-    work->unk_14 = -180.0f;
     func_8001DD24(0, CZoom - -180.0f, (Vec3f*)&pos, &out);
     work->unk_0C = out.x;
     work->unk_10 = out.y;
@@ -780,9 +782,6 @@ void func_801060DC_MinigameInstructions(Ovl6FPlayerWork* work) {
     func_800257E4(work->unk_4E, 0.0f, 0.0f, 0.0f);
     work->unk_B4 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2E8220", func_801060DC_MinigameInstructions);
-#endif
 void func_80106358_MinigameInstructions(Ovl6FPlayerWork* work) {
     s16 port;
 

@@ -330,7 +330,7 @@ void func_800F71F8_name_57(void) {
 }
 
 /* Bowser and the star giver swap places: one turns around the pivot D_800F7EDC opposite the other. */
-// register allocation / scheduling: retail keeps the angle and radians in f20, 200.0f in f22, and loads &D_800F7EDC before the constant (masked 8)
+// register allocation / scheduling: retail keeps the angle and radians in f20, 200.0f in f22, and loads &D_800F7EDC before the constant (masked 8); tried angle reused for radians, d *= then rad = d
 #ifdef NON_MATCHING
 void func_800F74E8_name_57(f32 angle) {
     f32 rad;
