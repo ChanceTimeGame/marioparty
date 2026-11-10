@@ -860,88 +860,106 @@ f32 func_800FB4E8_BoxMountainMayhem(f32 dist) {
     return res;
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-f32 func_800FB598_BoxMountainMayhem(void) {
-    omObjData* p;
-    omObjData* stack;
-    f32 best;
-    f32 h;
-    f32 a;
-    s32 x;
-    s32 z;
-    s32 cx;
-    s32 cz;
-    s32 i;
-    s32 k;
-    u8 n;
-
-    best = 0.0f;
-    for (i = 0; i < 4; i++) {
-        p = D_800FC278_BoxMountainMayhem[i];
-        if (p == NULL || p->work[1] != 0) {
-            continue;
-        }
-        x = (750.0f - p->trans.x) / 150.0f;
-        z = (p->trans.z + 750.0f) / 150.0f;
-        if ((x >= 4) | (z >= 4)) {
-            continue;
-        }
-        for (k = 0; k < 6; k++) {
-            cx = x + D_800FC064_BoxMountainMayhem[k][0];
-            if (cx < 4) {
-                cz = z + D_800FC064_BoxMountainMayhem[k][1];
-                if (cz < 4) {
-                    stack = D_800FC1F8_BoxMountainMayhem[cz][cx];
-                    if (stack != NULL && (n = stack->work[0]) >= 2) {
-                        h = n * 150.0f - p->trans.y;
-                        if (h > 0.0f) {
-                            a = func_800B0CD8(h, D_800FC070_BoxMountainMayhem[k]);
-                            if (best < a) {
-                                best = a;
-                            }
-                        }
-                    }
-                }
+// decomp-permuter
+f32 func_800FB598_BoxMountainMayhem(void)
+{
+  omObjData *p;
+  omObjData *stack;
+  f32 best;
+  f32 h;
+  f32 a;
+  s32 x;
+  s32 z;
+  s32 cx;
+  s32 cz;
+  s32 i;
+  s32 k;
+  u8 n;
+  best = 0.0f;
+  for (i = 0; i < 4; i++)
+  {
+    p = D_800FC278_BoxMountainMayhem[i];
+    if ((p == 0) || (p->work[1] != 0))
+    {
+      continue;
+    }
+    x = (750.0f - p->trans.x) / 150.0f;
+    z = (p->trans.z + 750.0f) / 150.0f;
+    if ((x >= 4) | (z >= 4))
+    {
+      continue;
+    }
+    for (k = 0; k < 6; k++)
+    {
+      cx = x + D_800FC064_BoxMountainMayhem[k][0];
+      if (cx < 4)
+      {
+        cz = z + D_800FC064_BoxMountainMayhem[k][1];
+        if (cz < 4)
+        {
+          stack = D_800FC1F8_BoxMountainMayhem[cz][cx];
+          if ((stack != 0) && ((n = stack->work[0]) >= 2))
+          {
+            h = n * 150.0f;
+            h = h - p->trans.y;
+            if (h > 0.0f)
+            {
+              a = func_800B0CD8(h, D_800FC070_BoxMountainMayhem[k]);
+              if (best < a)
+              {
+                best = a;
+              }
             }
+          }
         }
+      }
     }
-    return 0.0f - best;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800FB598_BoxMountainMayhem);
-#endif
 
-// float register allocation (masked 4)
-#ifdef NON_MATCHING
-void func_800FB788_BoxMountainMayhem(void) {
-    f32 a;
-    f32 d;
-    f32 zoom;
+  }
 
-    a = 0.0f - CRot.x;
-    Center.y = func_800AEAC0(a) * 1105.5f + 308.0f;
-    d = func_800AEFD0(a) * 781.7066f;
-    Center.x = 525.0f - d;
-    Center.z = d + -525.0f;
-    if (a > 85.0f) {
-        zoom = (90.0f - a) * 51.0f + 700.0f;
-    } else if (a > 80.0f) {
-        zoom = (85.0f - a) * 38.4f + 955.0f;
-    } else if (a > 72.0f) {
-        zoom = (80.0f - a) * 50.375f + 1147.0f;
-    } else if (a > 62.0f) {
-        zoom = (72.0f - a) * 30.9f + 1550.0f;
-    } else {
-        return;
-    }
-    if (zoom < CZoom) {
-        CZoom = zoom;
-    }
+  return 0.0f - best;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800FB788_BoxMountainMayhem);
-#endif
+
+// decomp-permuter
+void func_800FB788_BoxMountainMayhem(void)
+{
+  f32 a;
+  f32 d;
+  f32 zoom;
+  a = 0.0f - CRot.x;
+  d = func_800AEAC0(a) * 1105.5f;
+  Center.y = d + 308.0f;
+  d = func_800AEFD0(a) * 781.7066f;
+  Center.x = 525.0f - d;
+  Center.z = d + (-525.0f);
+  if (a > 85.0f)
+  {
+    zoom = ((90.0f - a) * 51.0f) + 700.0f;
+  }
+  else
+    if (a > 80.0f)
+  {
+    zoom = ((85.0f - a) * 38.4f) + 955.0f;
+  }
+  else
+    if (a > 72.0f)
+  {
+    zoom = ((80.0f - a) * 50.375f) + 1147.0f;
+  }
+  else
+    if (a > 62.0f)
+  {
+    zoom = ((72.0f - a) * 30.9f) + 1550.0f;
+  }
+  else
+  {
+    return;
+  }
+  if (zoom < CZoom)
+  {
+    CZoom = zoom;
+  }
+}
 
 // register allocation (masked 0)
 #ifdef NON_MATCHING
