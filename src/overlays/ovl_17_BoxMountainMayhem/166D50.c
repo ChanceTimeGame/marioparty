@@ -145,29 +145,32 @@ void func_800F739C_BoxMountainMayhem(omObjData* obj, BMMBodyWork* work, BMMBoxEx
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F739C_BoxMountainMayhem);
 #endif
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800F76F4_BoxMountainMayhem(f32 x, f32 y, f32 z, s32 count) {
-    Vec pos;
-    f32 angle;
-    s16 n;
-
-    pos.x = x;
-    pos.y = y;
-    pos.z = z;
-    while (count != 0) {
-        angle = (s32)(func_800FBD2C_BoxMountainMayhem() % 360);
-        n = D_800FC288_BoxMountainMayhem;
-        if (n < 12) {
-            D_800FC288_BoxMountainMayhem = n + 1;
-            func_800F8350_BoxMountainMayhem(D_800FC248_BoxMountainMayhem[n], &pos, angle);
-        }
-        count--;
+// decomp-permuter
+void func_800F76F4_BoxMountainMayhem(f32 x, f32 y, f32 z, s32 count)
+{
+  omObjData *new_var;
+  Vec pos;
+  f32 angle;
+  int new_var2;
+  s16 n;
+  pos.x = x;
+  pos.y = y;
+  pos.z = z;
+  while (count != 0)
+  {
+    new_var2 = func_800FBD2C_BoxMountainMayhem() % 360;
+    n = D_800FC288_BoxMountainMayhem;
+    angle = (s32) new_var2;
+    if (n < 12)
+    {
+      D_800FC288_BoxMountainMayhem = n + 1;
+      new_var = D_800FC248_BoxMountainMayhem[n];
+      func_800F8350_BoxMountainMayhem(new_var, &pos, angle);
     }
+    count--;
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F76F4_BoxMountainMayhem);
-#endif
 
 // 0x88888889 hoisted out of the retry loop, float registers (masked 24)
 #ifdef NON_MATCHING
@@ -489,31 +492,34 @@ s32 func_800F8400_BoxMountainMayhem(Vec* from, Vec* out, f32* dist) {
     return count;
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-s32 func_800F84D0_BoxMountainMayhem(void) {
-    omObjData* obj;
-    s32 count;
-    s32 n;
-    s32 i;
+// decomp-permuter
+s32 func_800F84D0_BoxMountainMayhem(void)
+{
+  omObjData *obj;
+  s32 count;
+  s32 n;
+  s32 i;
+  if (_CheckFlag(0x2B) != 0)
+  {
+    n = 12;
+  }
+  else
+  {
+    n = 6;
+  }
+  count = n;
+  count = D_800FC288_BoxMountainMayhem < count;
+  for (i = 0; i < n; i++)
+  {
+    obj = D_800FC248_BoxMountainMayhem[i];
+    if (obj != 0)
+    {
+      count += ((BMMBodyWork *) obj->unk_50)->unk_54 != 0;
+    }
+  }
 
-    if (_CheckFlag(0x2B) != 0) {
-        n = 12;
-    } else {
-        n = 6;
-    }
-    count = D_800FC288_BoxMountainMayhem < n;
-    for (i = 0; i < n; i++) {
-        obj = D_800FC248_BoxMountainMayhem[i];
-        if (obj != NULL) {
-            count += BMM_BODY(obj)->unk_54 != 0;
-        }
-    }
-    return count;
+  return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F84D0_BoxMountainMayhem);
-#endif
 
 // register allocation throughout (masked 118; control flow and operations checked against the asm)
 #ifdef NON_MATCHING
