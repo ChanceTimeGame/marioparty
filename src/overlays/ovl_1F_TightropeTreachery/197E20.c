@@ -121,8 +121,6 @@ void func_800F6BC8_TightropeTreachery(omObjData* obj) {
 }
 
 /* The walker's collision callback: a bomb hit knocks it back and the bomb explodes. */
-// register allocation: retail reuses the return value's 1 for the flag tests (masked 4)
-#ifdef NON_MATCHING
 s32 func_800F6C44_TightropeTreachery(omObjData* obj, omObjData* other) {
     TTPlayerWork* w = obj->unk_50;
     TTBomb* bomb = ((TTItemWork*)other->unk_50)->bomb;
@@ -133,7 +131,10 @@ s32 func_800F6C44_TightropeTreachery(omObjData* obj, omObjData* other) {
     }
     w->unk_AE = 60;
     w->unk_50 &= 0x200;
-    if (D_800FE2B4_TightropeTreachery == 1 || D_800FE2B7_TightropeTreachery == 1) {
+    if (D_800FE2B4_TightropeTreachery == 1) {
+        return 1;
+    }
+    if (D_800FE2B7_TightropeTreachery == 1) {
         return 1;
     }
     {
@@ -162,9 +163,6 @@ s32 func_800F6C44_TightropeTreachery(omObjData* obj, omObjData* other) {
     other->trans.x = other->trans.y = other->trans.z = 1000.0f;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/197E20", func_800F6C44_TightropeTreachery);
-#endif
 
 /* The walker (the player of group 0). */
 void func_800F6E80_TightropeTreachery(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z) {
