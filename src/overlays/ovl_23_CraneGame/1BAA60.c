@@ -83,35 +83,35 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FD3D0_C
 #endif
 
 /* Retail stores the group count from the low byte of unk_6A (a byte read at +1). */
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800FD604_CraneGame(CGCol* e, s16 model) {
-    unk2C0C0StructC0* m;
-    unk2C0C0Struct30* g30;
-    CGColGroup* g;
-    s32 size;
-    s32 i;
+// decomp-permuter
+void func_800FD604_CraneGame(CGCol *e, s16 model)
+{
+  unk2C0C0StructC0 *m;
+  unk2C0C0Struct30 *g30;
+  CGColGroup *g;
+  s32 size;
+  s32 i;
+  m = D_800F2B7C[model].unk_6C;
+  e->model = model;
+  e->unk2 = 4;
+  size = m->unk_6E * (sizeof(unk2C0C0StructA0));
+  e->verts = HuMemDirectMalloc(size);
+  func_80023A38(m->unk_78, e->verts, size);
+  e->count = (u8) m->unk_6A;
+  size = e->count;
+  e->groups = HuMemDirectMalloc(size * (sizeof(CGColGroup)));
+  for (i = 0; i < m->unk_6A; i++)
+  {
+    g30 = &m->unk_80[i];
+    g = &e->groups[i];
+    g->radius = sqrtf(((g30->unk_50 * g30->unk_50) + (g30->unk_52 * g30->unk_52)) + (g30->unk_54 * g30->unk_54));
+    g->n = g30->unk_04;
+    g->faces = HuMemDirectMalloc(g->n * (sizeof(CGColFace)));
+    size = g->n;
+    func_800FD7B4_CraneGame(e->verts, g->faces, g30->unk_34, size);
+  }
 
-    m = D_800F2B7C[model].unk_6C;
-    e->model = model;
-    e->unk2 = 4;
-    size = m->unk_6E * sizeof(unk2C0C0StructA0);
-    e->verts = HuMemDirectMalloc(size);
-    func_80023A38(m->unk_78, e->verts, size);
-    e->count = (u8)m->unk_6A;
-    e->groups = HuMemDirectMalloc(e->count * sizeof(CGColGroup));
-    for (i = 0; i < m->unk_6A; i++) {
-        g30 = &m->unk_80[i];
-        g = &e->groups[i];
-        g->radius = sqrtf(g30->unk_50 * g30->unk_50 + g30->unk_52 * g30->unk_52 + g30->unk_54 * g30->unk_54);
-        g->n = g30->unk_04;
-        g->faces = HuMemDirectMalloc(g->n * sizeof(CGColFace));
-        func_800FD7B4_CraneGame(e->verts, g->faces, g30->unk_34, g->n);
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FD604_CraneGame);
-#endif
 
 #define CG_ABS(x) ((x) < 0.0f ? -(x) : (x))
 
