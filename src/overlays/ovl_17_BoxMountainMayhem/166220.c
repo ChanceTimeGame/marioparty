@@ -241,66 +241,80 @@ void func_800F6A00_BoxMountainMayhem(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166220", func_800F6A00_BoxMountainMayhem);
 #endif
 
-// register allocation (masked 0): the GwPlayer coins_mg index
-#ifdef NON_MATCHING
-void func_800F6ECC_BoxMountainMayhem(void) {
-    BMMPlayerWork* work;
-    omObjData* obj;
-    s32 i;
-    s32 count;
-    s32 done;
-    f32 angle;
-    u16 motion;
+// decomp-permuter
+void func_800F6ECC_BoxMountainMayhem(void)
+{
+  BMMPlayerWork *work;
+  omObjData *obj;
+  s32 i;
+  s32 count;
+  s32 done;
+  f32 angle;
+  u16 motion;
+  D_800FC0EC_BoxMountainMayhem--;
+  count = 0;
+  done = 0;
+  for (i = 0; i < 4; i++)
+  {
+    obj = D_800FC278_BoxMountainMayhem[i];
+    if (obj == 0)
+    {
+      continue;
+    }
+    work = (BMMPlayerWork *) obj->unk_50;
+    work->unk_40 = 0.0f;
+    angle = work->unk_3C;
+    count++;
+    if (angle == (-45.0f))
+    {
+      done++;
+      continue;
+    }
+    if (angle < (-45.0f))
+    {
+      work->unk_3C = angle + 20.0f;
+    }
+    else
+      if (angle > 135.0f)
+    {
+      work->unk_3C = (angle += 20.0f);
+      if (angle > 180.0f)
+      {
+        work->unk_3C = angle - 360.0f;
+      }
+    }
+    else
+    {
+      work->unk_3C -= 20.0f;
+    }
+    if ((work->unk_3C > (-65.0f)) && (work->unk_3C < (-25.0f)))
+    {
+      work->unk_3C = -45.0f;
+    }
+  }
 
-    D_800FC0EC_BoxMountainMayhem--;
-    count = 0;
-    done = 0;
-    for (i = 0; i < 4; i++) {
-        obj = D_800FC278_BoxMountainMayhem[i];
-        if (obj == NULL) {
-            continue;
+  if (count == done)
+  {
+    for (i = 0; i < 4; i++)
+    {
+      obj = D_800FC278_BoxMountainMayhem[i];
+      if (obj != 0)
+      {
+        motion = 14;
+        work = (BMMPlayerWork *) obj->unk_50;
+        if (((u16) GwPlayer[work->unk_58].coins_mg) != 0)
+        {
+          motion = 13;
         }
-        work = BMM_PLAYER(obj);
-        work->unk_40 = 0.0f;
-        angle = work->unk_3C;
-        count++;
-        if (angle == -45.0f) {
-            done++;
-            continue;
-        }
-        if (angle < -45.0f) {
-            work->unk_3C = angle + 20.0f;
-        } else if (angle > 135.0f) {
-            work->unk_3C = angle += 20.0f;
-            if (angle > 180.0f) {
-                work->unk_3C = angle - 360.0f;
-            }
-        } else {
-            work->unk_3C -= 20.0f;
-        }
-        if (work->unk_3C > -65.0f && work->unk_3C < -25.0f) {
-            work->unk_3C = -45.0f;
-        }
+        func_800184BC(obj, motion);
+        func_80017DB0(obj);
+      }
     }
-    if (count == done) {
-        for (i = 0; i < 4; i++) {
-            obj = D_800FC278_BoxMountainMayhem[i];
-            if (obj != NULL) {
-                motion = 14;
-                if ((u16)GwPlayer[BMM_PLAYER(obj)->unk_58].coins_mg != 0) {
-                    motion = 13;
-                }
-                func_800184BC(obj, motion);
-                func_80017DB0(obj);
-            }
-        }
-        GMesCreate(D_800FC0E6_BoxMountainMayhem != 0 ? 2 : 0x10);
-        D_800FC0E4_BoxMountainMayhem = 5;
-    }
+
+    GMesCreate((D_800FC0E6_BoxMountainMayhem != 0) ? (2) : (0x10));
+    D_800FC0E4_BoxMountainMayhem = 5;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166220", func_800F6ECC_BoxMountainMayhem);
-#endif
 
 void func_800F70C0_BoxMountainMayhem(omObjData* obj) {
     if (D_800F5144 != 0 || D_800FBFC0_BoxMountainMayhem != 0) {
