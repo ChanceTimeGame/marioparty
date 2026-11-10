@@ -801,7 +801,7 @@ void func_800F7C48_StaffScene(StaffModel* m) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F7C48_StaffScene);
 #endif
-// register allocation (one float kept in a GPR by retail)
+// register allocation only (masked 0): d and the folded 2*v/60 constants swap $f0/$f2; tried d accumulating the result, d declared last
 #ifdef NON_MATCHING
 void func_800F7DB4_StaffScene(StaffModel* m) {
     Vec3f* p;
@@ -818,13 +818,16 @@ void func_800F7DB4_StaffScene(StaffModel* m) {
     p = &m->pos;
     d = D_800FD378_StaffScene.y - p->y;
     vy = -25.0f;
-    ay = 2.0f * d / 3600.0f - 2.0f * vy / 60.0f;
+    d = 2.0f * d / 3600.0f;
+    ay = d - 2.0f * vy / 60.0f;
     d = D_800FD378_StaffScene.x - p->x;
     vx = 35.0f;
-    ax = 2.0f * d / 3600.0f - 2.0f * vx / 60.0f;
+    d = 2.0f * d / 3600.0f;
+    ax = d - 2.0f * vx / 60.0f;
     d = D_800FD378_StaffScene.z - p->z;
     vz = -12.0f;
-    az = 2.0f * d / 3600.0f - 2.0f * vz / 60.0f;
+    d = 2.0f * d / 3600.0f;
+    az = d - 2.0f * vz / 60.0f;
     ry = &m->rot.y;
     i = 60;
     do {
