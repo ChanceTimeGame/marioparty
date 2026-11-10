@@ -163,7 +163,7 @@ void func_8006BB08(omObjData* obj, u16 mode) {
     }
 }
 
-// loop counter init order (masked 0 apart from D_800E4130+N relocs)
+// register allocation: obj and j swap s5/s6 (masked 0)
 #ifdef NON_MATCHING
 void func_8006BC38(omObjData* obj) {
     Unk6C470Work* w = obj->unk_50;
@@ -203,7 +203,7 @@ void func_8006BC38(omObjData* obj) {
     func_80025930(idx, 0x70000000, 0x70000000);
     func_8001E268(sprite, 4, 0);
     func_80025830(idx, w->unk28E * 3.0f, w->unk28E * 3.0f, w->unk28E * 3.0f);
-    for (i = 0, j = 3, k = 13; i < 10; i++, j++, k++) {
+    for (j = 3, k = 13, i = 0; i < 10; i++, j++, k++) {
         if (D_800E4130[3] < 0) {
             sprite = ReadImgPackand(0x21, w->unk286, 8);
             D_800E4130[3] = sprite;
