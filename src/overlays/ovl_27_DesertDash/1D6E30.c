@@ -258,21 +258,19 @@ void func_800FA724_DesertDash(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FA724_DesertDash);
 #endif
 
-// register allocation and the i*800 grouping (not finished)
+// masked 2: GCC regroups i * 800 - 200 + rand as i * 800 + (rand - 200); retail adds (i * 800 - 200) + rand
 #ifdef NON_MATCHING
 /* The desert scenery: 16 random cacti/rocks (D_800FC4F8) and the obstacles. */
 void func_800FA9E0_DesertDash(omObjData* obj) {
     DDScenery* e;
     u16 i;
-    s32 k;
 
     obj->func_ptr = func_800FACD0_DesertDash;
     for (e = D_800FC4F8_DesertDash, i = 0; i < 16; i++, e++) {
         e->x = func_800FA1A0_DesertDash(400) + 600;
         e->y = 0.0f;
-        k = i * 800;
-        e->z = -(k - 200 + func_800FA1A0_DesertDash(400));
-        if (k > 6000 && (i & 3)) {
+        e->z = -(i * 800 - 200 + func_800FA1A0_DesertDash(400));
+        if (i * 800 > 6000 && (i & 3)) {
             e->x *= 1.5;
         }
         if (i & 1) {
