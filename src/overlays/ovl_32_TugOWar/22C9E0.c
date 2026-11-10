@@ -22,12 +22,10 @@ f32 D_800FDAFC_TugOWar = 0.0f;
 const char D_800FDC30_TugOWar[] __attribute__((section(".rodata"))) = "\x82\x72\x82\x73\x82\x60\x82\x71\x82\x73";
 
 /* Minigame setup: the solo player is the one of group 0, the other three are the team. */
-// logic-equivalent; loop/switch shape and register allocation differ (masked 28)
-#ifdef NON_MATCHING
 void func_800F65E0_TugOWar(void) {
     s16 i;
     s16 j;
-    s32 human;
+    s16 human;
 
     D_800FDFB3_TugOWar = _CheckFlag(0x45);
     for (i = 0; i < 4; i++) {
@@ -45,12 +43,12 @@ void func_800F65E0_TugOWar(void) {
     case 3:
         D_800FDFAE_TugOWar[0] = 3;
         break;
+    case 0:
     default:
         D_800FDFAE_TugOWar[0] = 0;
         break;
     }
-    j = 0;
-    for (i = 1; i < 4; i++) {
+    for (i = 1, j = 0; i < 4; i++) {
         if (D_800FDFAE_TugOWar[0] == j) {
             j++;
         }
@@ -83,7 +81,11 @@ void func_800F65E0_TugOWar(void) {
     func_800FAC28_TugOWar();
     omAddObj(0x32, 0, 0, -1, func_800F69C0_TugOWar);
     omAddObj(0, 0, 0, -1, func_800FADC0_TugOWar);
-    SetFadeInTypeAndTime(D_800FDFB3_TugOWar != 0 ? 3 : 0, 0x10);
+    if (D_800FDFB3_TugOWar == 0) {
+        SetFadeInTypeAndTime(0, 0x10);
+    } else {
+        SetFadeInTypeAndTime(3, 0x10);
+    }
     /* with no human player, one side (at random) pulls at 3/4 strength */
     if (guRandom() & 1) {
         D_800FDFB4_TugOWar = 0;
@@ -100,9 +102,6 @@ void func_800F65E0_TugOWar(void) {
         D_800FDFB4_TugOWar = 2;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22C9E0", func_800F65E0_TugOWar);
-#endif
 
 /* The game flow: instructions, the timer, the result and the exit. */
 // logic-equivalent; branch layout of the result cases differs (masked 34)
