@@ -953,35 +953,43 @@ void func_800F90A4_UnknownResultsScreen(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F90A4_UnknownResultsScreen);
 #endif
 
-// scheduling of the parameter extension (masked 4)
-#ifdef NON_MATCHING
-void func_800F9A98_UnknownResultsScreen(s16 steps) {
-    s16 i;
-    f32 f;
-
-    for (i = 0; i < 4; i++) {
-        if (!((D_800FA0D0_UnknownResultsScreen[i] >= 0) ? (steps < D_800FA0D0_UnknownResultsScreen[i])
-                                                         : (steps < -D_800FA0D0_UnknownResultsScreen[i]))) {
-            if (D_800FA0D0_UnknownResultsScreen[i] >= 0) {
-                D_800FA580_UnknownResultsScreen[i] = 1;
-            } else {
-                D_800FA580_UnknownResultsScreen[i] = -1;
-            }
-        } else {
-            f = (f32)D_800FA0D0_UnknownResultsScreen[i] / steps;
-            if (D_800FA0D0_UnknownResultsScreen[i] >= 0) {
-                f += 0.5f;
-            } else {
-                f -= 0.5f;
-            }
-            D_800FA580_UnknownResultsScreen[i] = f;
-        }
-        D_800FA588_UnknownResultsScreen[i] = 0;
+// decomp-permuter
+void func_800F9A98_UnknownResultsScreen(s16 steps)
+{
+  int new_var;
+  s16 i;
+  f32 f;
+  for (i = 0; i < 4; i++)
+  {
+    new_var = steps;
+    if (!((D_800FA0D0_UnknownResultsScreen[i] >= 0) ? (steps < D_800FA0D0_UnknownResultsScreen[i]) : (new_var < (-D_800FA0D0_UnknownResultsScreen[i]))))
+    {
+      if (D_800FA0D0_UnknownResultsScreen[i] >= 0)
+      {
+        D_800FA580_UnknownResultsScreen[i] = 1;
+      }
+      else
+      {
+        D_800FA580_UnknownResultsScreen[i] = -1;
+      }
     }
+    else
+    {
+      f = ((f32) D_800FA0D0_UnknownResultsScreen[i]) / new_var;
+      if (D_800FA0D0_UnknownResultsScreen[i] >= 0)
+      {
+        f += 0.5f;
+      }
+      else
+      {
+        f -= 0.5f;
+      }
+      D_800FA580_UnknownResultsScreen[i] = f;
+    }
+    D_800FA588_UnknownResultsScreen[i] = 0;
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F9A98_UnknownResultsScreen);
-#endif
 
 s8 func_800F9BCC_UnknownResultsScreen(void) {
     s8 upDone = 0;
