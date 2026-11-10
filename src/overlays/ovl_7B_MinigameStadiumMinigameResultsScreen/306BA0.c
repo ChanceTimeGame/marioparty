@@ -104,27 +104,28 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9310_MinigameStadiumMinigameResultsScreen);
 #endif
 
-// register allocation: retail keeps 0x2DD and the table base in s4/s5 (masked ~0 bar CSE)
+// scheduling: the index shift of &D_800FB0F0[c] comes before the table base (raw 2, masked 2);
+// `D_800FB0F0 + c` tried
 #ifdef NON_MATCHING
 void func_800F9654_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     u8 c;
     s16* dir;
-    s32 file;
+    s32 mode;
 
     c = GwPlayer[res->index].character;
+    mode = 0x2DD;
     dir = &D_800FB0F0[c];
-    res->model = LoadFormFile((*dir << 16) | 0x9F, 0x2DD);
+    res->model = LoadFormFile((*dir << 16) | 0x9F, mode);
     res->mot[0] = func_80023FC8(res->model);
-    res->mot[1] = LoadFormFile((*dir << 16) | 0x74, 0x2DD);
-    res->mot[2] = LoadFormFile((*dir << 16) | 0xF, 0x2DD);
+    res->mot[1] = LoadFormFile((*dir << 16) | 0x74, mode);
+    res->mot[2] = LoadFormFile((*dir << 16) | 0xF, mode);
     if (c == 5) {
-        file = (D_800FB0F0[5] << 16) | 0x3E;
+        res->mot[3] = LoadFormFile((D_800FB0F0[5] << 16) | 0x3E, mode);
     } else {
-        file = (D_800FB0F0[c] << 16) | 0x3F;
+        res->mot[3] = LoadFormFile((D_800FB0F0[c] << 16) | 0x3F, mode);
     }
-    res->mot[3] = LoadFormFile(file, 0x2DD);
-    res->mot[4] = LoadFormFile((D_800FB0F0[c] << 16) | 5, 0x2DD);
-    res->model2 = func_800174C0(D_800FB0FC_MinigameStadiumMinigameResultsScreen[c] | 0xC0000, 0x2DD);
+    res->mot[4] = LoadFormFile((D_800FB0F0[c] << 16) | 5, mode);
+    res->model2 = func_800174C0(D_800FB0FC_MinigameStadiumMinigameResultsScreen[c] | 0xC0000, mode);
     func_80025798(res->model2, D_800FB0E0[res->index], 0.0f, 100.0f);
     func_80025830(res->model2, 1.0f, 1.0f, 1.0f);
     func_800258EC(res->model2, 4, 0);
