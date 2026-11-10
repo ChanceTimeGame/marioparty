@@ -195,17 +195,17 @@ void func_800F6C98_GrabBag(omObjData* arg0) {
     func_80025830(arg0->model[1], 4.0f, 4.0f, 4.0f);
     func_8001E360(work->unk_22, 0xFF, 0xFF, 0xBE);
 }
-// register allocation: work in a1, model-table base loaded early (masked 4)
-#ifdef NON_MATCHING
 void func_800F6E90_GrabBag(omObjData* arg0) {
     GrabBagBagWork* work;
+    unk_ovl_2D_struct* model;
     omObjData* player;
     f32 dx;
     f32 dz;
     f32 tilt;
 
     D_800FB220_GrabBag = work = arg0->unk_50;
-    if (D_800F2B7C[arg0->model[0]].unk_20 & 4) {
+    model = &D_800F2B7C[arg0->model[0]];
+    if (model->unk_20 & 4) {
         work->unk_5C = 0;
         work->unk_3C = 0.0f;
         work->unk_44 = 0.1f;
@@ -268,6 +268,3 @@ void func_800F6E90_GrabBag(omObjData* arg0) {
     func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
     func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y + 24.0f, arg0->trans.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/1837D0", func_800F6E90_GrabBag);
-#endif
