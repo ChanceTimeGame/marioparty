@@ -351,8 +351,6 @@ void func_800F78A8_MusicalMushroom(omObjData* obj, MMCpu* cpu) {
     }
 }
 
-// loop back-edge is bnez where retail has bnezl (masked 1)
-#ifdef NON_MATCHING
 s32 func_800F79FC_MusicalMushroom(omObjData* obj, MMPlayerWork* work) {
     Vec3f v;
     Vec3f* p = &v;
@@ -371,11 +369,11 @@ s32 func_800F79FC_MusicalMushroom(omObjData* obj, MMPlayerWork* work) {
     p->x -= obj->trans.x;
     p->y -= 0.0f;
     p->z -= obj->trans.z;
-    return func_800A1200(p) < work->unk_48 + 300.0f;
+    if (func_800A1200(p) < work->unk_48 + 300.0f) {
+        return 1;
+    }
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F79FC_MusicalMushroom);
-#endif
 
 // decomp-permuter
 f32 func_800F7B84_MusicalMushroom(omObjData *obj, f32 x1, f32 z1, f32 x2, f32 z2, f32 step)
@@ -653,22 +651,16 @@ u8 func_800F8830_MusicalMushroom(u16 i) {
 
     return work->unk_38 == 1000.0f && (flags & 6);
 }
-// result kept in v1 instead of v0 (masked 4)
-#ifdef NON_MATCHING
 s32 func_800F8898_MusicalMushroom(u16 i, s32 bell) {
     omObjData* pobj = D_800F3FB0[i];
     MMPlayerWork* work = pobj->unk_50;
     s32 flags = func_80017A60(pobj);
-    s32 ret = 0;
 
     if (work->unk_38 == 1000.0f && (flags & 6) && !(work->unk_50 & 7)) {
-        ret = 1;
+        return 1;
     }
-    return ret;
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F8898_MusicalMushroom);
-#endif
 
 void func_800F8910_MusicalMushroom(omObjData* obj) {
     Vec3f v;
