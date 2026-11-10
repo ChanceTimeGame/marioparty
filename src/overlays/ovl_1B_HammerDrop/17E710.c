@@ -948,29 +948,25 @@ update_shadow:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F896C_HammerDrop);
 #endif
 
-// Two register/scheduling differences; the retry count increment moves before the second test (masked 2).
-#ifdef NON_MATCHING
 void func_800F9228_HammerDrop(void) {
     omObjData* item;
     s32 attempts = 0;
-    s32 roll;
     s32 choice;
 
     while (1) {
-        roll = (rand8() & 0xFF) % 40;
-        if (roll < 21) {
+        choice = (rand8() & 0xFF) % 40;
+        if (choice < 21) {
             choice = 0;
+        } else if (choice < 30) {
+            choice = 1;
         } else {
             choice = 2;
-            if (roll < 30) {
-                choice = 1;
-            }
         }
         item = D_800EDE70[choice];
         if (func_800F9E68_HammerDrop(HAMMER_ITEM_WORK(item)->item->unk_44, 1) != 0) {
             item = D_800EDE70[choice + 3];
-            attempts++;
             if (func_800F9E68_HammerDrop(HAMMER_ITEM_WORK(item)->item->unk_44, 1) != 0) {
+                attempts++;
                 if (attempts > 0xFFFE) {
                     osSyncPrintf(D_800FB620_HammerDrop);
                     while (1) {}
@@ -982,9 +978,6 @@ void func_800F9228_HammerDrop(void) {
     }
     func_800F95E8_HammerDrop(item);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9228_HammerDrop);
-#endif
 
 // Logic-equivalent item construction; retail copies the two data tables to packed stack locals.
 #ifdef NON_MATCHING

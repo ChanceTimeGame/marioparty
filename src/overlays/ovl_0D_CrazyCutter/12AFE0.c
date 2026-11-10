@@ -172,8 +172,6 @@ s32 func_800FC9F4_CrazyCutter(s32 arg0, s32 arg1, s32 arg2, u8* arg3, u8 arg4) {
 
 /* Returns the first palette index whose alpha bit is clear; with none, clears one and returns the
    last index. Retail's fallback index is (n - 1) * n, past the palette (kept as retail). */
-// fallback return recomputed in retail (masked 3)
-#ifdef NON_MATCHING
 s32 func_800FCA20_CrazyCutter(u8* pal, u16 fmt) {
     u16 n;
     u16 i;
@@ -188,11 +186,8 @@ s32 func_800FCA20_CrazyCutter(u8* pal, u16 fmt) {
         }
     }
     pal[(n - 1) * i * 2 + 1] &= ~1;
-    return n - 1;
+    return (u16)(n - 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/12AFE0", func_800FCA20_CrazyCutter);
-#endif
 
 /* As func_800FC70C_CrazyCutter, but only counts the masked pixels that differ from the
    transparent index. */
