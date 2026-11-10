@@ -394,6 +394,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F70
 void func_800F72D0_DeepSeaDivers(omObjData* obj) {
     func_800FF730_DeepSeaDivers(obj);
 }
+// scheduling: retail places the sra of k*16 after the D_801003F8 load (masked 2)
 #ifdef NON_MATCHING
 void func_800F72EC_DeepSeaDivers(void) {
     Vtx* v;
@@ -418,15 +419,10 @@ void func_800F72EC_DeepSeaDivers(void) {
         v[3].v.tc[0] = 0x1E00;
         v[4].v.tc[0] = 0x2800;
         v[0].v.tc[1] = v[1].v.tc[1] = v[2].v.tc[1] = v[3].v.tc[1] = v[4].v.tc[1] = i * 0x300;
-        v[0].v.cn[0] = 0;
-        v[0].v.cn[0] = v[1].v.cn[0] = v[2].v.cn[0] = v[3].v.cn[0] = 0;
-        v = &D_801003F8_DeepSeaDivers[k];
-        v[0].v.cn[1] = 0;
-        v[0].v.cn[1] = v[1].v.cn[1] = v[2].v.cn[1] = v[3].v.cn[1] = 0;
-        v = &D_801003F8_DeepSeaDivers[k];
-        v[0].v.cn[2] = v[1].v.cn[2] = v[2].v.cn[2] = v[3].v.cn[2] = v[4].v.cn[2] = 0;
-        v = &D_801003F8_DeepSeaDivers[k];
-        v[0].v.cn[3] = v[1].v.cn[3] = v[2].v.cn[3] = v[3].v.cn[3] = v[4].v.cn[3] = 0;
+        v[0].v.cn[0] = v[1].v.cn[0] = v[2].v.cn[0] = v[3].v.cn[0] = v[0].v.cn[0] = 0;
+        D_801003F8_DeepSeaDivers[k].v.cn[1] = D_801003F8_DeepSeaDivers[k + 1].v.cn[1] = D_801003F8_DeepSeaDivers[k + 2].v.cn[1] = D_801003F8_DeepSeaDivers[k + 3].v.cn[1] = D_801003F8_DeepSeaDivers[k].v.cn[1] = 0;
+        D_801003F8_DeepSeaDivers[k].v.cn[2] = D_801003F8_DeepSeaDivers[k + 1].v.cn[2] = D_801003F8_DeepSeaDivers[k + 2].v.cn[2] = D_801003F8_DeepSeaDivers[k + 3].v.cn[2] = D_801003F8_DeepSeaDivers[k + 4].v.cn[2] = 0;
+        D_801003F8_DeepSeaDivers[k].v.cn[3] = D_801003F8_DeepSeaDivers[k + 1].v.cn[3] = D_801003F8_DeepSeaDivers[k + 2].v.cn[3] = D_801003F8_DeepSeaDivers[k + 3].v.cn[3] = D_801003F8_DeepSeaDivers[k + 4].v.cn[3] = 0;
     }
 }
 #else
@@ -1857,15 +1853,14 @@ f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FCAE8_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 s16 func_800FCDC8_DeepSeaDivers(f32 x, f32 y, f32 w, f32 h) {
     omObjData* obj;
     DSDWork* dw;
     f64 dx;
     f64 dy;
     f32 d;
-    f32 best = 999.0f;
     s16 ret = -1;
+    f32 best = 999.0f;
     s16 i;
 
     for (i = 0; i < D_801017A0_DeepSeaDivers; i++) {
@@ -1887,9 +1882,6 @@ s16 func_800FCDC8_DeepSeaDivers(f32 x, f32 y, f32 w, f32 h) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FCDC8_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FCF54_DeepSeaDivers(omObjData* obj, f32 vx, f32 vy) {
     omObjData* o;
