@@ -2110,8 +2110,6 @@ void func_800FCCB0_KeyPaWay(omObjData* obj) {
         break;
     }
 }
-// register allocation and float load order in the retry test (masked 14)
-#ifdef NON_MATCHING
 f32 func_800FDA7C_KeyPaWay(omObjData* obj, f32 x, f32 z, f32 angle, f32 range) {
     f32 dist[8];
     f32 ang[8];
@@ -2149,34 +2147,32 @@ f32 func_800FDA7C_KeyPaWay(omObjData* obj, f32 x, f32 z, f32 angle, f32 range) {
     D_800FF522_KeyPaWay = 0;
     work = KPW_PLAYER(obj);
     n = 0;
-    i = 0;
-retry:
-    do {
-        if (func_800FE1F0_KeyPaWay(ang[i], a) <= angle && dist[i] <= range) {
+    while (TRUE) {
+        i = 0;
+        do {
+            if (func_800FE1F0_KeyPaWay(ang[i], a) <= angle && dist[i] <= range) {
+                break;
+            }
+            i++;
+        } while (i < 8);
+        if (i == 8) {
+            nx = func_800AEAC0(a) * work->unk_40 + obj->trans.x;
+            nz = func_800AEFD0(a) * work->unk_40 + obj->trans.z;
+            if (work->unk_48 + -700.0f <= nx && nx <= 700.0f - work->unk_48 && work->unk_48 + -1000.0f <= nz &&
+                nz <= 1000.0f - work->unk_48) {
+                break;
+            }
+        }
+        D_800FF522_KeyPaWay++;
+        if (++n == 36) {
+            D_800FF51E_KeyPaWay = 1;
             break;
         }
-        i++;
-    } while (i < 8);
-    if (i == 8) {
-        nx = func_800AEAC0(a) * work->unk_40 + obj->trans.x;
-        nz = func_800AEFD0(a) * work->unk_40 + obj->trans.z;
-        if (work->unk_48 + -700.0f <= nx && nx <= 700.0f - work->unk_48 && work->unk_48 + -1000.0f <= nz &&
-            nz <= 1000.0f - work->unk_48) {
-            goto done;
-        }
-    }
-    D_800FF522_KeyPaWay++;
-    if (++n == 36) {
-        D_800FF51E_KeyPaWay = 1;
-    } else {
         a += 10.0f;
-        i = 0;
         if (a > 180.0f) {
             a -= 360.0f;
         }
-        goto retry;
     }
-done:
     if (a < 0.0f) {
         a += 360.0f;
     }
@@ -2185,9 +2181,6 @@ done:
     }
     return a;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2C_KeyPaWay/1F62C0", func_800FDA7C_KeyPaWay);
-#endif
 u16 func_800FDE64_KeyPaWay(f32 x, f32 z, f32 range, omObjData* out[]) {
     omObjData* p;
     f32 dx;
