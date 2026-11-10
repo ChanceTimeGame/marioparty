@@ -82,7 +82,7 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
     }
 }
 
-// register allocation (masked 23)
+// register allocation (masked 10): retail keeps an unused constant 2 in fp through the model loop and swaps cell/n; tried chained n store, 1 + k
 #ifdef NON_MATCHING
 void func_800F935C_BoxMountainMayhem(omObjData* obj) {
     BMMStageWork* work;
@@ -96,15 +96,15 @@ void func_800F935C_BoxMountainMayhem(omObjData* obj) {
     s32 k;
     s32 i;
 
-    work = func_80023684(sizeof(BMMStageWork), 0x7918);
-    obj->unk_50 = work;
+    obj->unk_50 = func_80023684(sizeof(BMMStageWork), 0x7918);
+    work = obj->unk_50;
     func_8009B770(work, 0, sizeof(BMMStageWork));
-    ext = func_80023684(sizeof(BMMStackExt), 0x7918);
-    work->unk_28 = ext;
+    work->unk_28 = func_80023684(sizeof(BMMStackExt), 0x7918);
+    ext = work->unk_28;
     func_8009B770(ext, 0, sizeof(BMMStackExt));
-    for (i = 0; i < 4; i++) {
-        ext->unk_10[i] = -1;
-        ext->unk_00[i] = 0.0f;
+    for (x = 0; x < 4; x++) {
+        ext->unk_10[x] = -1;
+        ext->unk_00[x] = 0.0f;
     }
     z = D_800FC188_BoxMountainMayhem[D_800FC1B0_BoxMountainMayhem][1];
     x = D_800FC188_BoxMountainMayhem[D_800FC1B0_BoxMountainMayhem][0];
@@ -182,7 +182,7 @@ void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
     D_800FC138_BoxMountainMayhem[z][x][0] = n;
 }
 
-// register allocation (masked 2)
+// register allocation (masked 2): the cell copy adds m after D+1 (retail) vs before; tried [m + 1] and &[z][x][1]
 #ifdef NON_MATCHING
 void func_800F9840_BoxMountainMayhem(void) {
     u16 kinds[30];
@@ -462,7 +462,7 @@ void func_800FA3F0_BoxMountainMayhem(void) {
     }
 }
 
-// register allocation of the character/D_800C59AC loads (masked 6)
+// register allocation (masked 7): retail loads D_800C59AC[chr].unk_04 before the stack args and keeps v in a2; tried s32 chr, dir assigned in the call, an inline ternary
 #ifdef NON_MATCHING
 void func_800FA498_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;

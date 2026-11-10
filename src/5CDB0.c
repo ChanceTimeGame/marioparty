@@ -260,7 +260,7 @@ void func_8005C6F8(void) {
     }
 }
 
-// register allocation: s4-s7 permuted between arrows, bs, sys and shown (masked 1)
+// register allocation: s4/s5 swapped between arrows and bs (masked 0, raw 15); tried declaration order and a second BoardSpace local
 #ifdef NON_MATCHING
 void func_8005C834(void) {
     u16 chain;
@@ -356,7 +356,7 @@ restart:
         player->next_space = space;
         curSpace = GetAbsSpaceIndexFromChainSpaceIndex(chain, space);
         bs = BoardSpaceGet(curSpace);
-        if (bs->unk2 & 0x8000) {
+        if ((u16)bs->unk2 & 0x8000) {
             func_80060468(0x127, 0);
             SetPlayerAnimation(-1, 2, 0);
             player->player_obj->unk_34 = 40.0f;
