@@ -1224,7 +1224,7 @@ void func_800FA9D0_UnusedMinigame0(UM0State* s) {
 }
 
 /* The first move towards the cheapest leaf, or NULL at the root. */
-// NON_MATCHING: branch layout; retail keeps an empty 16-byte frame
+// NON_MATCHING: register allocation of the table base/index after the search loop (masked 0, raw 5); tried s reuse in the loop, *(base + bi)
 #ifdef NON_MATCHING
 UM0State* func_800FABF0_UnusedMinigame0(void) {
     u8 best = 0xFF;
@@ -1232,20 +1232,24 @@ UM0State* func_800FABF0_UnusedMinigame0(void) {
     s32 i;
     s8 c;
     UM0State* s;
+    UM0State* parent;
 
     for (i = 0; i < D_80103DB0_UnusedMinigame0; i++) {
-        c = D_80103DAC_UnusedMinigame0[i]->cost;
+        s = D_80103DAC_UnusedMinigame0[i];
+        c = s->cost;
         if (c < best) {
             best = c;
             bi = i;
         }
     }
     s = D_80103DAC_UnusedMinigame0[bi];
-    if (s->parent == NULL) {
+    parent = s->parent;
+    if (parent == NULL) {
         return NULL;
     }
-    while (s->parent->parent != NULL) {
+    while (parent->parent != NULL) {
         s = s->parent;
+        parent = s->parent;
     }
     return s;
 }
