@@ -1,7 +1,5 @@
 #include "MusicalMushroom.h"
 
-// register allocation: v1/v0 in the D_800FB4DC decrement (masked 0)
-#ifdef NON_MATCHING
 void func_800F9660_MusicalMushroom(omObjData* obj) {
     s32 i;
     s32 failed;
@@ -29,7 +27,7 @@ void func_800F9660_MusicalMushroom(omObjData* obj) {
                 if (D_800FB4DC_MusicalMushroom < 0x10) {
                     D_800FB4D4_MusicalMushroom = 1;
                 }
-                if (--D_800FB4DC_MusicalMushroom != 0) {
+                if (D_800FB4DC_MusicalMushroom-- != 0) {
                     break;
                 }
                 GMesCreate(0);
@@ -158,9 +156,6 @@ void func_800F9660_MusicalMushroom(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11F890", func_800F9660_MusicalMushroom);
-#endif
 
 void func_800F9D70_MusicalMushroom(omObjData* arg0) {
     u32 temp_v1_2;
