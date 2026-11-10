@@ -90,8 +90,6 @@ void func_800F691C_BoxMountainMayhem(void) {
     }
 }
 
-// register allocation (masked 0): the GwPlayer coins_mg index
-#ifdef NON_MATCHING
 void func_800F6A00_BoxMountainMayhem(void) {
     BMMPlayerWork* work;
     omObjData* obj;
@@ -192,7 +190,8 @@ void func_800F6A00_BoxMountainMayhem(void) {
                 if (obj == NULL) {
                     continue;
                 }
-                coins = GwPlayer[BMM_PLAYER(obj)->unk_58].coins_mg;
+                work = BMM_PLAYER(obj);
+                coins = GwPlayer[work->unk_58].coins_mg;
                 count += coins;
                 if (coins != 0) {
                     D_800FC0EA_BoxMountainMayhem = 105;
@@ -237,9 +236,6 @@ void func_800F6A00_BoxMountainMayhem(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166220", func_800F6A00_BoxMountainMayhem);
-#endif
 
 // decomp-permuter
 void func_800F6ECC_BoxMountainMayhem(void)
@@ -322,3 +318,6 @@ void func_800F70C0_BoxMountainMayhem(omObjData* obj) {
         omOvlReturnEx(1);
     }
 }
+
+/* Zero padding after func_800F6A00's jump table in retail .rodata. */
+const u32 D_800FC0B4_BoxMountainMayhem[3] = { 0, 0, 0 };
