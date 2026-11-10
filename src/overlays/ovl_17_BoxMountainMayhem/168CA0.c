@@ -692,8 +692,6 @@ f32 func_800FAF98_BoxMountainMayhem(Vec* from, Vec* to) {
     return func_800B0CD8(dz, dx);
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32 dist, u16* buttons) {
     BMMPlayerExt* ext;
     f32 a;
@@ -705,10 +703,13 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
     b = 0;
     a = func_800FAF98_BoxMountainMayhem(from, to);
     reach = work->unk_64 + work->unk_48 + 75.0f + 40.0f;
-    if (dist <= reach * reach) {
-        b = ((s32)(func_800FBD2C_BoxMountainMayhem() & 0xFF) >= D_800FC010_BoxMountainMayhem[ext->unk_0C]) << 14;
+    reach *= reach;
+    if (dist <= reach) {
+        reach = func_800FBD2C_BoxMountainMayhem() & 0xFF;
+        b = (reach >= D_800FC010_BoxMountainMayhem[ext->unk_0C]) << 14;
     } else if (dist < 65025.0f) {
-        if ((s32)(func_800FBD2C_BoxMountainMayhem() & 0x3FF) < D_800FC010_BoxMountainMayhem[ext->unk_0C]) {
+        reach = func_800FBD2C_BoxMountainMayhem() & 0x3FF;
+        if (reach < D_800FC010_BoxMountainMayhem[ext->unk_0C]) {
             b = 0x4000;
         }
         t = a + 22.5f;
@@ -717,7 +718,9 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
         } else if (t > 360.0f) {
             t -= 360.0f;
         }
-        if ((s32)(t / 45.0f) & 1) {
+        t /= 45.0f;
+        reach = t;
+        if (reach & 1) {
             a += 45.0f;
             if (a > 360.0f) {
                 a -= 360.0f;
@@ -729,11 +732,9 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
     }
     return a;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800FAFC8_BoxMountainMayhem);
-#endif
 
-// register allocation (masked 0)
+// ContBtn load goes to $v0 then andi into $a0; retail loads into $a0 (raw 5, masked 1);
+// tried temp r for both roles, u16 r, reusing n
 #ifdef NON_MATCHING
 void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
@@ -748,6 +749,7 @@ void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
     s32 n;
     s32 move;
     s32 target;
+    s32 r;
 
     work = BMM_PLAYER(obj);
     ext = work->unk_E4;
@@ -776,7 +778,8 @@ void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
         }
     }
     if (ext->unk_08 != target) {
-        target &= -((s32)(func_800FBD2C_BoxMountainMayhem() & 0x1FF) >= D_800FC010_BoxMountainMayhem[ext->unk_0C]);
+        r = func_800FBD2C_BoxMountainMayhem() & 0x1FF;
+        target &= -(r >= D_800FC010_BoxMountainMayhem[ext->unk_0C]);
     }
     ext->unk_08 = target;
     switch (target) {
@@ -791,7 +794,8 @@ void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
     case 0:
         break;
     }
-    buttons |= ContBtn[work->unk_56] & 0x1FFF;
+    r = ContBtn[work->unk_56] & 0x1FFF;
+    buttons |= r;
     buttons ^= ext->unk_06 & buttons & 0x4000;
     ContBtnTrg[work->unk_56] = ContBtn[work->unk_56] = buttons;
     ContBtnTrg[work->unk_56] = buttons & (buttons ^ ext->unk_06);
