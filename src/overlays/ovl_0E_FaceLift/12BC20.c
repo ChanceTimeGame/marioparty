@@ -975,8 +975,6 @@ void func_800F9BC8_FaceLift(void) {
         }
     }
 }
-// scheduling (Center base load)
-#ifdef NON_MATCHING
 void func_800F9EE4_FaceLift(omObjData* obj) {
     Vec3f eye;
     Vec3f at;
@@ -985,7 +983,7 @@ void func_800F9EE4_FaceLift(omObjData* obj) {
     f32 ry = CRot.y;
     s16 i;
 
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -999,9 +997,6 @@ void func_800F9EE4_FaceLift(omObjData* obj) {
         func_8001D57C(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F9EE4_FaceLift);
-#endif
 // missing mov.s/move in the abs tests
 #ifdef NON_MATCHING
 s32 func_800FA058_FaceLift(s16 player, Vec3f* pos) {

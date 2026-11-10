@@ -6,7 +6,8 @@
 #define CC_PAL16(pal, i) (((u16*)(pal))[i])
 
 /* Converts a sprite frame's image into a one-byte-per-pixel mask (0xFF where opaque). */
-// register allocation (masked 9)
+// register allocation, and buf + off + x recomputed per store in case 8 (raw 20, masked 6; tried
+// &pal[c], a dst temp, (buf + off)[x])
 #ifdef NON_MATCHING
 u8* func_800FC4F0_CrazyCutter(s16 grpIdx, s16 idx, s32* width, s32* height) {
     unk65770Obj* spr;
