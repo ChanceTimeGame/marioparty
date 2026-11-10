@@ -1315,7 +1315,8 @@ void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800FA1D8_BowlOver);
 #endif
 
-// register allocation (rand8 result)
+// register allocation (masked 2, raw 30): rand8 result copied to s0 before its andi, hi in a0 not a1;
+// tried lo local, seed % 127773 (M1c)
 #ifdef NON_MATCHING
 s32 func_800FA3D0_BowlOver(u32 seed) {
     u32 hi;
@@ -1324,7 +1325,8 @@ s32 func_800FA3D0_BowlOver(u32 seed) {
         seed = rand8() ^ guRandom() ^ 0xD826BC89;
     }
     hi = seed / 127773;
-    return hi * 2836 - (seed - hi * 127773) * 16807;
+    seed -= hi * 127773;
+    return hi * 2836 - seed * 16807;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800FA3D0_BowlOver);
