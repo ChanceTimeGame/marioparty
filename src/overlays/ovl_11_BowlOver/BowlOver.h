@@ -286,7 +286,7 @@ void func_800FAE2C_BowlOver(omObjData* obj);
 void func_800FB230_BowlOver(omObjData* obj);
 void func_800FB650_BowlOver(omObjData* obj, BowlJump* jump, u8* sx, u8* sy);
 void func_800FBB30_BowlOver(omObjData* obj);
-void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 slot, u16 pin);
+void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin);
 void func_800FC9E0_BowlOver(omObjData* obj);
 void func_800FCD54_BowlOver(omObjData* obj, u16 slot, s8 pin);
 void func_800FCFA0_BowlOver(void);

@@ -686,7 +686,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FBB30_Bo
 
 // register allocation
 #ifdef NON_MATCHING
-void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 slot, u16 pin) {
+void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin) {
     BowlPlayerWork* w;
     s16 i;
     u16 img;
@@ -844,8 +844,6 @@ void func_800FCFA0_BowlOver(void) {
     }
 }
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800FD07C_BowlOver(omObjData* obj) {
     s32 p;
     u8 chr;
@@ -859,12 +857,7 @@ void func_800FD07C_BowlOver(omObjData* obj) {
     D_800FD5AC_BowlOver[p] = GwPlayer[p].coins;
     func_800FC598_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[1], D_800FD850_BowlOver[0], 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FD07C_BowlOver);
-#endif
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800FD118_BowlOver(omObjData* obj) {
     s32 p;
     u8 chr;
@@ -878,12 +871,7 @@ void func_800FD118_BowlOver(omObjData* obj) {
     D_800FD5AC_BowlOver[p] = GwPlayer[p].coins;
     func_800FC598_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[2], D_800FD850_BowlOver[1], 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FD118_BowlOver);
-#endif
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800FD1B8_BowlOver(omObjData* obj) {
     s32 p;
     u8 chr;
@@ -897,9 +885,6 @@ void func_800FD1B8_BowlOver(omObjData* obj) {
     D_800FD5AC_BowlOver[p] = GwPlayer[p].coins;
     func_800FC598_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[3], D_800FD850_BowlOver[2], 2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FD1B8_BowlOver);
-#endif
 
 void func_800FD258_BowlOver(omObjData* obj) {
     func_800FCD54_BowlOver(obj, D_800FD850_BowlOver[3], 3);
