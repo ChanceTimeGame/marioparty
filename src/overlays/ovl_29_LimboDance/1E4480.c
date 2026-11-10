@@ -668,16 +668,19 @@ void func_800FDD5C_LimboDance(s16 id, u8 flags) {
 }
 
 // NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
-Vtx* func_800FDDA0_LimboDance(s16 id, s32 frame) {
-    if (id == -1) {
-        return NULL;
-    }
-    return D_80103298[id].unk_10[frame];
+// decomp-permuter
+Vtx *func_800FDDA0_LimboDance(s16 id, s32 frame)
+{
+  LDBillboard *new_var2;
+  s16 new_var;
+  new_var = id;
+  if (new_var == (-1))
+  {
+    return 0;
+  }
+  new_var2 = &(*(&D_80103298[new_var]));
+  return new_var2->unk_10[frame];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E4480", func_800FDDA0_LimboDance);
-#endif
 
 void func_800FDDEC_LimboDance(s16 id, u8 r, u8 g, u8 b, s32 a) {
     LDBillboard* bb;
