@@ -241,19 +241,18 @@ void func_800F6F34_AdventureModeSetup(omObjData* arg0) {
     work->unk_90 = work->unk_94 = work->unk_98 = 0.0f;
     work->unk_B1 = -1;
 }
-// register allocation: the result is built in v1 and moved to v0 (masked 1, one extra move)
-#ifdef NON_MATCHING
-s32 func_800F70CC_AdventureModeSetup(s32 arg0) {
-    s32 ret = 1;
-
-    if (arg0 < 7) {
-        ret = arg0 < 1;
-    }
-    return ret;
+// decomp-permuter
+s32 func_800F70CC_AdventureModeSetup(s32 arg0)
+{
+  s32 ret = 1;
+  int new_var;
+  new_var = arg0 < 7;
+  if (new_var)
+  {
+    ret = (new_var = arg0 < 1);
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6A_AdventureModeSetup/2BF1D0", func_800F70CC_AdventureModeSetup);
-#endif
 void func_800F70E4_AdventureModeSetup() {
     while (TRUE) {
         if (D_801025C0_AdventureModeSetup != 0) {
@@ -3597,29 +3596,29 @@ void func_80100BF8_AdventureModeSetup(omObjData *arg0) {
 }
 
 
-// register allocation: the post-increment's old value lands in v0 here, v1 in retail (masked 0, raw 5)
-#ifdef NON_MATCHING
-void func_80100C88_AdventureModeSetup(omObjData* arg0) {
-    s32 idx;
-    s32 i;
-    unkAMSetupSprites3* p = &D_80102500_AdventureModeSetup[D_80101AE0_AdventureModeSetup];
+// decomp-permuter
+void func_80100C88_AdventureModeSetup(omObjData *arg0)
+{
+  s32 idx;
+  omObjData *new_var;
+  unkAMSetupSprites3 *p = &D_80102500_AdventureModeSetup[D_80101AE0_AdventureModeSetup];
+  s32 i;
+  for (i = 0; i < 3; i++)
+  {
+    p->sprite[i] = func_80019060((s16) D_801025F4_AdventureModeSetup[i], 0, 1);
+    arg0->work[2] = p->sprite[i];
+    idx = p->sprite[i];
+    func_80018C90(idx);
+    func_80067354(arg0->work[2], 0, 0.0f, 0.0f);
+  }
 
-    for (i = 0; i < 3; i++) {
-        p->sprite[i] = func_80019060((s16)D_801025F4_AdventureModeSetup[i], 0, 1);
-        arg0->work[2] = p->sprite[i];
-        func_80018C90(p->sprite[i]);
-        func_80067354(arg0->work[2], 0, 0.0f, 0.0f);
-    }
-    idx = D_80101AE0_AdventureModeSetup;
-    D_80101AE0_AdventureModeSetup = idx + 1;
-    arg0->work[0] = idx;
-    arg0->work[1] = 0;
-    arg0->work[3] = 0;
-    arg0->func_ptr = func_80100958_AdventureModeSetup;
+  idx = D_80101AE0_AdventureModeSetup;
+  D_80101AE0_AdventureModeSetup = idx + 1;
+  arg0->work[0] = idx;
+  arg0->work[1] = 0;
+  (new_var = arg0)->work[3] = 0;
+  new_var->func_ptr = func_80100958_AdventureModeSetup;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6A_AdventureModeSetup/2BF1D0", func_80100C88_AdventureModeSetup);
-#endif
 void func_80100D84_AdventureModeSetup() {
     omAddObj(0xBE, 0U, 0U, -1, func_80100BF8_AdventureModeSetup);
     D_80101FD8_AdventureModeSetup[0] = omAddObj(0xC8, 0U, 0U, -1, func_80100C88_AdventureModeSetup);
@@ -3688,30 +3687,31 @@ void func_801010E0_AdventureModeSetup(omObjData* arg0) {
     arg0->func_ptr = 0;
 }
 
-// register allocation: the post-increment's old value lands in v0 here, v1 in retail (masked 0, raw 5)
-#ifdef NON_MATCHING
-void func_80101170_AdventureModeSetup(omObjData* arg0) {
-    s32 idx;
-    s32 i;
-    unkAMSetupSprites5* p = &AMSD_SPR5[D_80101AE4_AdventureModeSetup];
+// decomp-permuter
+void func_80101170_AdventureModeSetup(omObjData *arg0)
+{
+  s32 idx;
+  s32 i;
+  unkAMSetupSprites5 *p = &D_80102530_AdventureModeSetup[D_80101AE4_AdventureModeSetup];
+  s32 new_var;
+  for (i = 0; i < 5; i++)
+  {
+    new_var = func_80019060((s16) D_801025FA_AdventureModeSetup[i], 0, 1);
+    p->sprite[i] = new_var;
+    arg0->work[2] = p->sprite[i];
+    func_80018C90(p->sprite[i]);
+    func_80067354(arg0->work[2], 0, 0.0f, 0.0f);
+    idx = arg0->work[2];
+    func_80067384(idx, 0, 0x3E80);
+  }
 
-    for (i = 0; i < 5; i++) {
-        p->sprite[i] = func_80019060((s16)D_801025FA_AdventureModeSetup[i], 0, 1);
-        arg0->work[2] = p->sprite[i];
-        func_80018C90(p->sprite[i]);
-        func_80067354(arg0->work[2], 0, 0.0f, 0.0f);
-        func_80067384(arg0->work[2], 0, 0x3E80);
-    }
-    idx = D_80101AE4_AdventureModeSetup;
-    D_80101AE4_AdventureModeSetup = idx + 1;
-    arg0->work[0] = idx;
-    arg0->work[1] = 0;
-    arg0->work[3] = 0;
-    arg0->func_ptr = func_80100E48_AdventureModeSetup;
+  idx = D_80101AE4_AdventureModeSetup;
+  D_80101AE4_AdventureModeSetup = idx + 1;
+  arg0->work[0] = idx;
+  arg0->work[1] = 0;
+  arg0->work[3] = 0;
+  arg0->func_ptr = func_80100E48_AdventureModeSetup;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6A_AdventureModeSetup/2BF1D0", func_80101170_AdventureModeSetup);
-#endif
 void func_80101274_AdventureModeSetup() {
     omAddObj(0xBE, 0U, 0U, -1, &func_801010E0_AdventureModeSetup);
     D_80101FE8_AdventureModeSetup[0] = omAddObj(0xC8, 0U, 0U, -1, &func_80101170_AdventureModeSetup);
