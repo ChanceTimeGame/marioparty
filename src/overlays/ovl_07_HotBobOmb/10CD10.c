@@ -63,16 +63,13 @@ void func_800F6800_HotBobOmb(s32 seed) {
     D_800F9D30_HotBobOmb = seed;
 }
 
-// masked
-#ifdef NON_MATCHING
-s32 func_800F680C_HotBobOmb(void) {
-    u32 t = D_800F9D30_HotBobOmb * 4 + 2;
-
-    return D_800F9D30_HotBobOmb = (t * (t + 1)) >> 2;
+// decomp-permuter
+s32 func_800F680C_HotBobOmb(void)
+{
+  u32 t = (D_800F9D30_HotBobOmb * 4) + 2;
+ do { } while (0);
+  return D_800F9D30_HotBobOmb = (t * (t + 1)) >> 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10CD10", func_800F680C_HotBobOmb);
-#endif
 
 /* Zero tail of .rodata: retail pads the unit to 16 bytes here. */
 const s32 D_800FA608_HotBobOmb[2] = { 0, 0 };
