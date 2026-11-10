@@ -798,11 +798,6 @@ void func_800FDF58_LimboDance(void) {
 #ifdef NON_MATCHING
 void func_800FE3CC_LimboDance(void) {
     Mtx view;
-#ifdef TARGET_PC
-    /* retail puts this stack matrix's address in the display list; the host draws the list after
-       the function returns, so it lives in static storage there */
-    static
-#endif
     Mtx proj;
     Matrix4f mf;
     Matrix4f tmp;

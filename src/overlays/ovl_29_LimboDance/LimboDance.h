@@ -74,7 +74,7 @@ typedef struct LDBillboard {
     /* 0x00 */ Gfx* unk_00;    /* display list, (Gfx*)-1 = free */
     /* 0x04 */ Gfx* unk_04[3]; /* per-frame material lists (D_800F37F0 picks one) */
     /* 0x10 */ Vtx* unk_10[3]; /* per-frame vertices */
-    /* 0x1C */ PB_PTR32 unk_1C;
+    /* 0x1C */ s32 unk_1C;
     /* 0x20 */ s8 unk_20;
     /* 0x21 */ char unk_21;
     /* 0x22 */ u16 unk_22; /* sprite (D_800EC700 index) */
@@ -175,11 +175,7 @@ extern u8 D_800F37DA;
 extern unk65770Anim* D_800EC700[256];
 
 void func_80023A38(void* src, void* dst, s32 size); /* copy */
-#ifdef TARGET_PC
-s16 func_80024198(u32, Gfx*, s32);
-#else
 s32 func_80024198(u32, Gfx*, s32);
-#endif
 s16 func_8001755C(s32);
 f32 func_80025D40(s16);
 void func_80060440(s16, s16);

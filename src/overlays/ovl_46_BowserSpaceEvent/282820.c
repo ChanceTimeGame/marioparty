@@ -87,11 +87,7 @@ void func_800F6744_BowserSpaceEvent(void) {
 }
 
 void func_800F677C_BowserSpaceEvent(void) {
-#ifdef TARGET_PC
-    char sp10[16]; /* retail: one char that sprintf overruns (harmless in the N64 frame) */
-#else
     char sp10;
-#endif
     s32 windowID;
     s32 var_s0;
 
@@ -283,11 +279,7 @@ void func_800F6AF8_BowserSpaceEvent(void) {
 }
 
 void func_800F7044_BowserSpaceEvent(void) {
-#ifdef TARGET_PC
-    char sp10[16]; /* retail: one char that sprintf overruns (harmless in the N64 frame) */
-#else
     char sp10;
-#endif
     s32 windowID;
     s32 var_a2;
     s32 var_s0_2;
@@ -373,11 +365,7 @@ void func_800F7044_BowserSpaceEvent(void) {
 }
 
 void func_800F7410_BowserSpaceEvent(void) {
-#ifdef TARGET_PC
-    char sp10[16]; /* retail: one char that sprintf overruns (harmless in the N64 frame) */
-#else
     char sp10;
-#endif
     s32 var_a1_2;
     s32 var_s2;
     s32 var_s1;
@@ -557,11 +545,7 @@ void func_800F7410_BowserSpaceEvent(void) {
 }
 
 void func_800F7BFC_BowserSpaceEvent(void) {
-#ifdef TARGET_PC
-    char sp10[16]; /* retail: one char that sprintf overruns (harmless in the N64 frame) */
-#else
     char sp10;
-#endif
     s32 var_a1_2;
     s32 temp_s1;
     s32 tempVar;
@@ -676,11 +660,7 @@ void func_800F7BFC_BowserSpaceEvent(void) {
 }
 
 void func_800F80EC_BowserSpaceEvent(void) {
-#ifdef TARGET_PC
-    char sp10[16]; /* retail: one char that sprintf overruns (harmless in the N64 frame) */
-#else
     char sp10;
-#endif
     s32 var_a1_2;
     s32 var_s1;
     s32 var_s2;
@@ -922,17 +902,6 @@ void func_800F8B1C_BowserSpaceEvent(void) {
         func_800F8DC0_BowserSpaceEvent();
         func_80054654();
         func_80070ED4();
-#ifdef TARGET_PC
-        {
-            /* --dev-built-minigames: an event whose minigame the host does not build returns to
-               the board instead (cases 2-5 call minigames 16, 14, 51 and 19). */
-            static const s16 pbEventMg[6] = { -1, -1, 16, 14, 51, 19 };
-            if (D_800F8ED0_BowserSpaceEvent >= 2 && D_800F8ED0_BowserSpaceEvent <= 5 &&
-                !pb_dev_minigame_allowed(pbEventMg[D_800F8ED0_BowserSpaceEvent])) {
-                D_800F8ED0_BowserSpaceEvent = 0;
-            }
-        }
-#endif
         switch (D_800F8ED0_BowserSpaceEvent) {
             case 0:
                 omOvlReturnEx(1);

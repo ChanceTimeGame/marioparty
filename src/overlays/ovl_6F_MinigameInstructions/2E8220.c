@@ -2529,11 +2529,7 @@ void func_8010C8CC_MinigameInstructions(Ovl6FPlayerWork* work) {
 }
 /* D_8010F538[i]'s low half; the header's D_8010F538_LO16 addresses it as a halfword pointer,
    retail as a field at +2 of each word (one base register). */
-#ifdef TARGET_PC
-#define OVL6F_F538_LO16(i) ((s16)D_8010F538_MinigameInstructions[i])
-#else
 #define OVL6F_F538_LO16(i) (((Ovl6FPairS16*)D_8010F538_MinigameInstructions)[i].unk_02)
-#endif
 
 void func_8010CC54_MinigameInstructions(Ovl6FPlayerWork* work) {
     s16 port;
@@ -2603,11 +2599,7 @@ void func_8010CC54_MinigameInstructions(Ovl6FPlayerWork* work) {
     }
 }
 /* D_8010F548's low half (retail's D_8010F54A label). */
-#ifdef TARGET_PC
-#define OVL6F_F54A ((s16)D_8010F548_MinigameInstructions)
-#else
 #define OVL6F_F54A (((s16*)&D_8010F548_MinigameInstructions)[1])
-#endif
 
 void func_8010D200_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;

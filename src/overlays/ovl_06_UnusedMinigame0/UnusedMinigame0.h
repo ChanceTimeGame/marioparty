@@ -156,11 +156,7 @@ typedef struct UM0CameraView {
    --------------------------------------------------------------------------------------------- */
 
 f64 func_8009B618(f64, f64); /* fmod */
-#ifdef TARGET_PC
-extern s32 D_800EE738; /* the rotation word before D_800EE73C */
-#else
 extern UM0CameraView D_800EE73C;
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Overlay .bss (shared by the units)

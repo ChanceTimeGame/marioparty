@@ -124,7 +124,7 @@ DecisionTreeNonLeafNode D_800F88E4_BowsersMagmaMountain[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x00012814 } },
 };
 DecisionTreeNonLeafNode D_800F8914_BowsersMagmaMountain[5] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F88E4_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F88E4_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x00010000 } },
     { 0x05000000, { (void*)0x2 }, { 0x00010505 } },
     { 0x05000000, { (void*)0x4 }, { 0x00010A05 } },
@@ -149,8 +149,8 @@ DecisionTreeNonLeafNode D_800F89B0_BowsersMagmaMountain[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x0001503C } },
 };
 DecisionTreeNonLeafNode D_800F89E0_BowsersMagmaMountain[6] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8980_BowsersMagmaMountain } },
-    { 0x03000000, { (void*)0x3 }, { (PB_UPTR32)D_800F89B0_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8980_BowsersMagmaMountain } },
+    { 0x03000000, { (void*)0x3 }, { (u32)D_800F89B0_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x00011E28 } },
     { 0x05000000, { (void*)0x2 }, { 0x0001141E } },
     { 0x05000000, { (void*)0x4 }, { 0x00010A14 } },
@@ -161,10 +161,10 @@ DecisionTreeNonLeafNode D_800F8A28_BowsersMagmaMountain[2] = {
     { 0x00000000, { (void*)0x0 }, { 0x00011E0A } },
 };
 DecisionTreeNonLeafNode D_800F8A40_BowsersMagmaMountain[6] = {
-    { 0x02000000, { (void*)0x1 }, { (PB_UPTR32)D_800F8914_BowsersMagmaMountain } },
-    { 0x02000000, { (void*)0x2 }, { (PB_UPTR32)D_800F8950_BowsersMagmaMountain } },
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F89E0_BowsersMagmaMountain } },
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8A28_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x1 }, { (u32)D_800F8914_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x2 }, { (u32)D_800F8950_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F89E0_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8A28_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x00012814 } },
     { 0x00000000, { (void*)0x0 }, { 0x00011E0A } },
 };
@@ -175,7 +175,7 @@ DecisionTreeNonLeafNode D_800F8A88_BowsersMagmaMountain[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x00003C32 } },
 };
 DecisionTreeNonLeafNode D_800F8AB8_BowsersMagmaMountain[5] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8A88_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8A88_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x0000281E } },
     { 0x05000000, { (void*)0x2 }, { 0x00002814 } },
     { 0x05000000, { (void*)0x4 }, { 0x00003214 } },
@@ -200,8 +200,8 @@ DecisionTreeNonLeafNode D_800F8B54_BowsersMagmaMountain[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x0000643C } },
 };
 DecisionTreeNonLeafNode D_800F8B84_BowsersMagmaMountain[6] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8B54_BowsersMagmaMountain } },
-    { 0x03000000, { (void*)0xF }, { (PB_UPTR32)D_800F8B24_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8B54_BowsersMagmaMountain } },
+    { 0x03000000, { (void*)0xF }, { (u32)D_800F8B24_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x00001428 } },
     { 0x05000000, { (void*)0x2 }, { 0x0000141E } },
     { 0x05000000, { (void*)0x4 }, { 0x00000A14 } },
@@ -212,10 +212,10 @@ DecisionTreeNonLeafNode D_800F8BCC_BowsersMagmaMountain[2] = {
     { 0x00000000, { (void*)0x0 }, { 0x00003228 } },
 };
 DecisionTreeNonLeafNode D_800F8BE4_BowsersMagmaMountain[6] = {
-    { 0x02000000, { (void*)0x3 }, { (PB_UPTR32)D_800F8AB8_BowsersMagmaMountain } },
-    { 0x02000000, { (void*)0xC }, { (PB_UPTR32)D_800F8AF4_BowsersMagmaMountain } },
-    { 0x02000000, { (void*)0x10 }, { (PB_UPTR32)D_800F8B84_BowsersMagmaMountain } },
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8BCC_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x3 }, { (u32)D_800F8AB8_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0xC }, { (u32)D_800F8AF4_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x10 }, { (u32)D_800F8B84_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8BCC_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x00002814 } },
     { 0x00000000, { (void*)0x0 }, { 0x00001E0A } },
 };
@@ -232,8 +232,8 @@ DecisionTreeNonLeafNode D_800F8C5C_BowsersMagmaMountain[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x0001503C } },
 };
 DecisionTreeNonLeafNode D_800F8C8C_BowsersMagmaMountain[6] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8C2C_BowsersMagmaMountain } },
-    { 0x03000000, { (void*)0x7 }, { (PB_UPTR32)D_800F8C5C_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8C2C_BowsersMagmaMountain } },
+    { 0x03000000, { (void*)0x7 }, { (u32)D_800F8C5C_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x00011428 } },
     { 0x05000000, { (void*)0x2 }, { 0x0001141E } },
     { 0x05000000, { (void*)0x4 }, { 0x00010A14 } },
@@ -252,9 +252,9 @@ DecisionTreeNonLeafNode D_800F8D04_BowsersMagmaMountain[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x00012828 } },
 };
 DecisionTreeNonLeafNode D_800F8D34_BowsersMagmaMountain[7] = {
-    { 0x02000000, { (void*)0x40 }, { (PB_UPTR32)D_800F8C8C_BowsersMagmaMountain } },
-    { 0x02000000, { (void*)0x38 }, { (PB_UPTR32)D_800F8CD4_BowsersMagmaMountain } },
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F8D04_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x40 }, { (u32)D_800F8C8C_BowsersMagmaMountain } },
+    { 0x02000000, { (void*)0x38 }, { (u32)D_800F8CD4_BowsersMagmaMountain } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F8D04_BowsersMagmaMountain } },
     { 0x05000000, { (void*)0x1 }, { 0x0001281E } },
     { 0x05000000, { (void*)0x2 }, { 0x00012814 } },
     { 0x05000000, { (void*)0x4 }, { 0x00013214 } },
@@ -403,10 +403,10 @@ extern Object* D_800F9164_BowsersMagmaMountain;    // koopa
 extern Object* D_800F9168_BowsersMagmaMountain;    // toad model
 extern Object* D_800F9170_BowsersMagmaMountain[7]; // toads
 extern Object* D_800F918C_BowsersMagmaMountain;    // boo
-extern PB_PTR32 D_800F9190_BowsersMagmaMountain;
-extern PB_PTR32 D_800F9194_BowsersMagmaMountain;
-extern PB_PTR32 D_800F9198_BowsersMagmaMountain;
-extern PB_PTR32 D_800F919C_BowsersMagmaMountain;
+extern s32 D_800F9190_BowsersMagmaMountain;
+extern s32 D_800F9194_BowsersMagmaMountain;
+extern s32 D_800F9198_BowsersMagmaMountain;
+extern s32 D_800F919C_BowsersMagmaMountain;
 extern Object* D_800F91A0_BowsersMagmaMountain;    // rock model
 
 extern s16 D_800EE320;
@@ -615,7 +615,7 @@ void func_800F6C10_BowsersMagmaMountain(void) {
         string_id = 1258;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     PlaySound(1125);
     WaitForTextConfirmation(str->unk8);
@@ -644,7 +644,7 @@ void func_800F6C10_BowsersMagmaMountain(void) {
         string_id = 1259;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     WaitForTextConfirmation(str->unk8);
     func_80071E80(str->unk8, 1);

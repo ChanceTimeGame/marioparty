@@ -76,11 +76,7 @@ void func_800F9C50_ShyGuySays(u16*);
 void func_800F7680_ShyGuySays(s16*, u16);
 void func_800F702C_ShyGuySays(omObjData*, f32);
 /* retail calls func_80064EF4 unprototyped in func_800FA77C (int result narrowed to s16) */
-#ifdef TARGET_PC
-#define func_80064EF4_s32 func_80064EF4
-#else
 #define func_80064EF4_s32 ((s32 (*)(s32, s32))func_80064EF4)
-#endif
 void func_800F82B0_ShyGuySays(omObjData*);
 
 

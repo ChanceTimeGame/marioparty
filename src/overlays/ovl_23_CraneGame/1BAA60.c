@@ -521,14 +521,6 @@ void func_800FEB08_CraneGame(void) {
                     pts[k][0] = D_80100AC0_CraneGame[i][0];
                     pts[k][2] = D_80100AC0_CraneGame[i][2];
                 }
-#ifdef TARGET_PC
-                /* Retail reads pts[1] even when only one point was queued (uninitialised); the
-                   claw object always queues two, but give the host a defined value. */
-                if (k < 2) {
-                    pts[1][0] = pts[0][0];
-                    pts[1][2] = pts[0][2];
-                }
-#endif
                 if (pts[0][2] >= pts[1][2]) {
                     a = 1;
                     b = 0;

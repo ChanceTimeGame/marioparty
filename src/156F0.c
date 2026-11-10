@@ -1,8 +1,6 @@
 #include "common.h"
 #include "libc/stdarg.h"
-#ifndef TARGET_PC /* host: the C library's strlen (pb_host.h) */
 u32 strlen(const char*);
-#endif
 
 /* Text window manager: an 18-entry window list sorted by priority, 4-bit window textures,
    a printf-style text renderer and a choice cursor. */
@@ -35,13 +33,8 @@ typedef struct ChoiceRect {
     /* 0x06 */ s16 y1;
 } ChoiceRect;
 
-#ifdef TARGET_PC /* ROM offsets linked as symbol addresses (pb_host.h) */
-#define D_31BFE0 PB_ROM_ADDR(0x31BFE0)
-#define D_31C7E0 PB_ROM_ADDR(0x31C7E0)
-#else
 extern u8 D_31BFE0[];
 extern u8 D_31C7E0[];
-#endif
 u8* D_800C1910 = NULL; /* 8x8 1-bit font */
 u8* D_800C1914 = NULL; /* window background texture */
 u8* D_800C1918 = NULL; /* window palette */
@@ -73,11 +66,7 @@ extern s16 D_800F3968;
 extern Win D_800F3B88[18];
 extern s16 D_800F5248;
 
-#ifdef TARGET_PC
-s16 func_8002451C(u32, void (*)(Gfx**, Mtx*, camera*), u8); /* host: matches the definition */
-#else
 s32 func_8002451C(s32, void (*)(void), s32);
-#endif
 void func_80023888(void*);
 void func_8009B960(char*, char*);
 
@@ -113,7 +102,7 @@ void func_80014AF0(void) {
     size = D_31C7E0 - D_31BFE0;
     D_800C1910 = func_80023684(size, 0x7918);
     dmaRead(D_31BFE0, D_800C1910, size);
-    D_800ED724 = func_8002451C(0, PB_HOSTCAST(void (*)(Gfx**, Mtx*, camera*), func_80014F7C), 6);
+    D_800ED724 = func_8002451C(0, func_80014F7C, 6);
 }
 
 s16 func_80014C0C(s16 prio) {

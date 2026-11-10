@@ -1,8 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host build: the unified 64-bit host edition (games/mp1/src/port/include) replaces
- * this header. N64 builds never define TARGET_PC and compile the original below unchanged. */
-#include <PR/R4300.h>
-#else /* !TARGET_PC */
 /**************************************************************************
  *									  *
  *		 Copyright (C) 1995, Silicon Graphics, Inc.		  *
@@ -456,4 +451,3 @@
 #define	FPCSR_RM_RM	0x00000003	/* round to negative infinity */
 
 #endif /* __R4300_H */
-#endif /* !TARGET_PC */

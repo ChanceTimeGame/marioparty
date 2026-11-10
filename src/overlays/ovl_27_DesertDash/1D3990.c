@@ -893,22 +893,14 @@ void func_800F9434_DesertDash(void) {
 /* The player object keeps its team in work[0..3]: the pointer, big-endian, on the N64; the host
    keeps the team index there (a pointer does not fit). */
 void func_800F9450_DesertDash(omObjData* obj, DDTeam* team) {
-#ifdef TARGET_PC
-    obj->work[0] = team - D_800FC318_DesertDash;
-#else
     obj->work[0] = (u32)team >> 24;
     obj->work[1] = (u32)team >> 16;
     obj->work[2] = (u32)team >> 8;
     obj->work[3] = (u32)team;
-#endif
 }
 
 DDTeam* func_800F9470_DesertDash(omObjData* obj) {
-#ifdef TARGET_PC
-    return &D_800FC318_DesertDash[obj->work[0]];
-#else
     return (DDTeam*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 
 void func_800F949C_DesertDash(omObjData* obj, s32 motion, f32 speed) {

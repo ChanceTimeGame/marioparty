@@ -70,13 +70,8 @@ typedef struct BgWork {
 } BgWork; /* 0x54 */
 
 /* N64: the column's flags read as the word they start (flags << 16 | player << 8 | slot) */
-#ifdef TARGET_PC
-#define COL_FLAGS_TEST(w, m, v) (((w)->flags & ((m) >> 16)) == ((v) >> 16))
-#define RES_FLAGS_TEST(p, m, v) (((p)->flags & (m)) == (v))
-#else
 #define COL_FLAGS_TEST(w, m, v) ((*(s32*)(w) & (m)) == (v))
 #define RES_FLAGS_TEST(p, m, v) ((*(s32*)(p) & (m)) == (v))
-#endif
 
 /* .data */
 extern f32 D_800FB000_MinigameStadiumMinigameResultsScreen[4 * 4 * 3]; /* each column's coin slots */

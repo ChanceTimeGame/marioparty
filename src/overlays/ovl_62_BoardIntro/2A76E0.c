@@ -2,11 +2,7 @@
 
 void func_8004F1D0(void);
 /* Retail passes the window id unextended here (it was called without the s16 prototype). */
-#ifdef TARGET_PC
-#define WAIT_TEXT(w) WaitForTextConfirmation(w)
-#else
 #define WAIT_TEXT(w) ((void (*)())WaitForTextConfirmation)(w)
-#endif
 void func_800FC018_BoardIntro(void);
 s32 func_800415E8(s32);
 void func_80040590(s32);
@@ -469,7 +465,7 @@ void func_800FC768_BoardIntro(void) {
     for (i = 0; i < 4; i++) {
         func_800FC620_BoardIntro();
         func_8006DA5C(D_800FDB80_BoardIntro, D_800C5218[GwPlayer[i].character], i);
-        LoadStringIntoWindow(D_800FDB80_BoardIntro, (void*)(PB_PTR32)(i + 0x249), -1, -1);
+        LoadStringIntoWindow(D_800FDB80_BoardIntro, (void*)(s32)(i + 0x249), -1, -1);
         func_8006E070(D_800FDB80_BoardIntro, 0);
         func_80071C8C(D_800FDB80_BoardIntro, 1);
         func_8004E0E8(D_800FDB80_BoardIntro);
@@ -489,7 +485,6 @@ void func_800FC768_BoardIntro(void) {
 /* Not a function: the two nops padding .text to its 16-byte end. 2A2500's asm addresses a .data
    table at 0x800FCD30 from index 1 (base 0x800FCD2C), and splat named that address after the
    second nop. Emit the padding with the label so the address and the text size stay retail's. */
-#ifndef TARGET_PC
 __asm__(".section .text\n"
         "    .set noreorder\n"
         "    nop\n"
@@ -499,4 +494,3 @@ __asm__(".section .text\n"
         "    nop\n"
         "    .size func_800FCD2C_BoardIntro, . - func_800FCD2C_BoardIntro\n"
         "    .set reorder\n");
-#endif

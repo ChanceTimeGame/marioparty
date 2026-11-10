@@ -1,50 +1,5 @@
 #include "common.h"
 
-#ifdef TARGET_PC
-/*
- * PartyBoard host (games/mp1/host/B980_HOST_PORT.md): this unit keeps al handles and heap
- * allocations in s32 and declares the al library with its own N64 layouts. On the host the al
- * prototypes and structures come from the unified PR/libaudio.h, the N64-only declarations below
- * are hidden, handles are PB_PTR32, and every al call goes through a macro that gives it its real
- * pointer types. The retail code drives its ALCSPlayer with the alSeqp* entry points (the N64
- * functions only touch the prefix the two players share); the host calls the alCSP* ones.
- * Players and sequences are allocated with sizeof the host structure, not the N64 size.
- */
-#include "PR/libaudio.h"
-#include "alhost.h"
-typedef ALHeap FXD0_Unk2;
-#define alSeqpDelete(p) alCSPDelete((ALCSPlayer*)(p))
-#define alSeqpSetBank(p, b) alCSPSetBank((ALCSPlayer*)(p), (ALBank*)(b))
-#define alSeqpSetSeq(p, q) alCSPSetSeq((ALCSPlayer*)(p), (ALCSeq*)(q))
-#define alSeqpSetVol(p, v) alCSPSetVol((ALCSPlayer*)(p), (v))
-#define alSeqpPlay(p) alCSPPlay((ALCSPlayer*)(p))
-#define alSeqpStop(p) alCSPStop((ALCSPlayer*)(p))
-#define alSeqpGetState(p) alCSPGetState((ALCSPlayer*)(p))
-#define alSeqpSetTempo(p, t) alCSPSetTempo((ALCSPlayer*)(p), (t))
-#define alSeqpGetChlProgram(p, c) alCSPGetChlProgram((ALCSPlayer*)(p), (c))
-#define alSeqpGetChlVol(p, c) alCSPGetChlVol((ALCSPlayer*)(p), (c))
-#define alSeqpGetChlPan(p, c) alCSPGetChlPan((ALCSPlayer*)(p), (c))
-#define alSeqpGetChlFXMix(p, c) alCSPGetChlFXMix((ALCSPlayer*)(p), (c))
-#define alSeqpSetChlFXMix(p, c, v) alCSPSetChlFXMix((ALCSPlayer*)(p), (c), (v))
-#define alCSPGetTempo(p) (alCSPGetTempo)((ALCSPlayer*)(p))
-#define alCSPNew(p, c) (alCSPNew)((ALCSPlayer*)(p), (c))
-#define alCSeqNew(q, d) (alCSeqNew)((ALCSeq*)(q), (u8*)(d))
-#define alSndpDelete(p) (alSndpDelete)((ALSndPlayer*)(p))
-#define alSndpSetPitch(p, v) (alSndpSetPitch)((ALSndPlayer*)(p), (v))
-#define alSndpSetVol(p, v) (alSndpSetVol)((ALSndPlayer*)(p), (v))
-#define alSndpSetFXMix(p, v) (alSndpSetFXMix)((ALSndPlayer*)(p), (v))
-#define alSndpSetPan(p, v) (alSndpSetPan)((ALSndPlayer*)(p), (v))
-#define alSndpGetSound(p) (alSndpGetSound)((ALSndPlayer*)(p))
-#define alSndpGetState(p) (alSndpGetState)((ALSndPlayer*)(p))
-#define alSndpDeallocate(p, id) (alSndpDeallocate)((ALSndPlayer*)(p), (id))
-#define alSndpStop(p) (alSndpStop)((ALSndPlayer*)(p))
-#define alSndpAllocate(p, snd) (alSndpAllocate)((ALSndPlayer*)(p), (ALSound*)(snd))
-#define alSndpSetPriority(p, id, pri) (alSndpSetPriority)((ALSndPlayer*)(p), (id), (pri))
-#define alSndpSetSound(p, id) (alSndpSetSound)((ALSndPlayer*)(p), (id))
-#define alSndpPlay(p) (alSndpPlay)((ALSndPlayer*)(p))
-#define alHeapDBAlloc(f, l, hp, n, sz) ((PB_PTR32)(alHeapDBAlloc)(NULL, (l), (hp), (n), (sz)))
-#define alHeapInit(hp, base, len) (alHeapInit)((hp), (u8*)(base), (s32)(intptr_t)(len))
-#endif
 
 s32 func_8000B13C(void);
 s32 func_8000B210(void);
@@ -52,13 +7,11 @@ extern OSMesg D_800CD9C8;
 extern OSMesgQueue D_800CDA90;
 extern s8 D_800ECB2C;
 void func_800130A4(Addr*);
-#ifndef TARGET_PC
 void alSeqpDelete(s32);
 void alSndpDelete(s32);
-#endif
-extern PB_PTR32 D_800CDAD4;
+extern s32 D_800CDAD4;
 extern s32 D_800CDAEC;
-extern PB_PTR32 D_800CEA8C;
+extern s32 D_800CEA8C;
 extern s32 D_800CEAA0;
 extern s32 D_800CDACC;
 extern s32 D_800CDAEC;
@@ -75,7 +28,7 @@ typedef struct FXDO_Unk {
 } FXDO_Unk; //unk size
 
 typedef struct unkB980Struct1 {
-    /* 0x00 */ PB_PTR32 unk_00; /* script position */
+    /* 0x00 */ s32 unk_00; /* script position */
     /* 0x04 */ s32 unk_04;
     /* 0x08 */ s16 unk_08;
     /* 0x0A */ s16 unk_0A;
@@ -99,8 +52,8 @@ typedef struct unkB980Struct1 {
     /* 0x32 */ s16 unk_32;
     /* 0x34 */ s16 unk_34;
     /* 0x36 */ s16 unk_36;
-    /* 0x38 */ PB_PTR32 unk_38;
-    /* 0x3C */ PB_PTR32 unk_3C;
+    /* 0x38 */ s32 unk_38;
+    /* 0x3C */ s32 unk_3C;
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ s16 unk_44;
     /* 0x46 */ s16 unk_46;
@@ -114,7 +67,7 @@ typedef struct unkB980Struct1 {
 } unkB980Struct1; //sizeof 0x54
 
 typedef struct unkB980Struct2 {
-    /* 0x00 */ PB_PTR32 unk_00; /* the voice's sound */
+    /* 0x00 */ s32 unk_00; /* the voice's sound */
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ s32 unk_08;
     /* 0x0C */ s32 unk_0C;
@@ -142,22 +95,18 @@ extern unkB980Struct2* D_800CEA94;
 extern s32 D_800CEAA4;
 extern unkB980Struct1* D_800CEAC0;
 
-#ifndef TARGET_PC
 typedef struct FXD0_Unk2 {
     void* FXD0_header;
     void* unk_04;
     s32 unk_08;
 } FXD0_Unk2;
-#endif
 
 extern FXD0_Unk2 D_800CDAA8;
 
 void func_8001249C(s16, u8);
 s32 func_8000AFF8(s32, s32, s32);
-#ifndef TARGET_PC
 s32 alHeapDBAlloc(s32, s32, FXD0_Unk2*, s32, s32);
-#endif
-PB_PTR32 func_8000AFA0(s32);
+s32 func_8000AFA0(s32);
 
 typedef struct B980ArgCfg {
     /* 0x00 */ char unk_00[4];
@@ -180,22 +129,13 @@ typedef struct B980ArgCfg {
 typedef struct B980Cfg1898 {
     /* 0x00 */ s32 unk_00;
     /* 0x04 */ char unk_04[0x1C];
-#ifdef TARGET_PC
-    /* 0x20 */ s32 unk_20; /* host: pbB980Record */
-#else
-    /* 0x20 */ PB_PTR32 unk_20;
-#endif
+    /* 0x20 */ s32 unk_20;
 } B980Cfg1898;
 
 /* The view at 0x800C18A0 (file_1ACF0_struct's layout with N64-width pointers). */
 typedef struct B980Cfg18A0 {
-#ifdef TARGET_PC
-    /* 0x00 */ s32 unk_00; /* host: pbB980HeapBase */
-    /* 0x04 */ s32 unk_04; /* host: pbB980HeapLen */
-#else
     /* 0x00 */ Addr* unk_00;
     /* 0x04 */ Addr* unk_04;
-#endif
     /* 0x08 */ s32 unk_08[16];
     /* 0x48 */ s32 unk_48;
     /* 0x4C */ s32 unk_4C;
@@ -211,9 +151,7 @@ typedef struct B980Cnt {
 } B980Cnt;
 
 s32 func_80061FA0(OSIoMesg*, s32, s32, s32, void*, s32, OSMesgQueue*);
-#ifndef TARGET_PC
 void alHeapInit(FXD0_Unk2*, Addr*, Addr*);
-#endif
 s32 func_80012CF0(Addr*, FXD0_Unk2*);
 void func_80013010(Addr*);
 s32 func_8000AE50(void);
@@ -261,24 +199,6 @@ struct {
     },
     1, { 0, 0, 0 }, { 0, 0 },
 };
-#ifdef TARGET_PC
-#define D_800C1874 (*(Addr*)&B980Config.w[0])
-#define D_800C1878 (&B980Config.w[1])
-#define D_800C1880 (&B980Config.w[3])
-#define D_800C1888 (&B980Config.w[5])
-#define D_800C188C (&B980Config.w[6])
-#define D_800C1890 (&B980Config.w[7])
-#define D_800C1898 (*(B980Cfg1898*)&B980Config.w[9])
-#define D_800C18A0 (*(B980Cfg18A0*)&B980Config.w[11])
-#define D_800C18A8 (B980Config.w[13])
-#define D_800C18AC (&B980Config.w[14])
-#define D_800C18B4 (&B980Config.w[16])
-/* D_800C18B8 (0x800C18B8) holds a pointer: B980_RECORD on the host */
-#define D_800C18D4 (&B980Config.w[24])
-#define D_800C18DC (&B980Config.w[26])
-#define D_800C18E0 (&B980Config.w[27])
-#define D_800C18F4 (B980Config.D_800C18F4)
-#else
 /* N64: distinct objects, as retail's code addresses them; undefined_syms.txt places each label
    at its offset in D_800C1870. */
 extern Addr D_800C1874;
@@ -292,26 +212,15 @@ extern B980Cfg18A0 D_800C18A0;
 extern s32 D_800C18A8;
 extern s32 D_800C18AC[];
 extern s32 D_800C18B4[];
-extern PB_PTR32 D_800C18B8;
+extern s32 D_800C18B8;
 extern s32 D_800C18D4[];
 extern s32 D_800C18DC[];
 extern s32 D_800C18E0[];
 extern u8 D_800C18F4;
-#endif
-#ifdef TARGET_PC
-Addr* pbB980HeapBase;
-Addr* pbB980HeapLen;
-PB_PTR32 pbB980Record;
-#define B980_HEAP_BASE pbB980HeapBase
-#define B980_HEAP_LEN pbB980HeapLen
-#define B980_RECORD pbB980Record
-#else
 #define B980_HEAP_BASE D_800C18A0.unk_00
 #define B980_HEAP_LEN D_800C18A0.unk_04
 #define B980_RECORD D_800C1898.unk_20
-#endif
 
-#ifndef TARGET_PC
 typedef struct ALSeqpConfig {
     /* 0x00 */ s32 maxVoices;
     /* 0x04 */ s32 maxEvents;
@@ -322,7 +231,6 @@ typedef struct ALSeqpConfig {
     /* 0x14 */ void* updateOsc;
     /* 0x18 */ void* stopOsc;
 } ALSeqpConfig;
-#endif
 
 typedef struct B980SeqEnt {
     /* 0x00 */ s32 offset;
@@ -360,24 +268,20 @@ typedef struct B980Osc {
     } data;
 } B980Osc; // sizeof 0x14
 
-#ifndef TARGET_PC
 void alCSPNew(s32, ALSeqpConfig*);
 void alSeqFileNew(B980SeqHdr*, s32);
 void alBnkfNew(s32, s32);
-#endif
 s32 func_8000C808(B980Osc** oscState, f32* initVal, u8 oscType, u8 oscRate, u8 oscDepth, u8 oscDelay);
 f32 func_8000D618(u8);
 f32 alCents2Ratio(s32);
 s32 func_8000CCC0(B980Osc* osc, f32* updateVal);
 void func_8000D600(B980Osc*);
 
-#ifndef TARGET_PC
 typedef struct ALSndpConfig {
     /* 0x00 */ s32 maxSounds;
     /* 0x04 */ s32 maxEvents;
     /* 0x08 */ FXD0_Unk2* heap;
 } ALSndpConfig;
-#endif
 
 typedef struct B980SndHdr {
     /* 0x00 */ s32 count;
@@ -391,10 +295,6 @@ typedef struct B980SndHdr {
     /* 0x20 */ s32 unk_20;
 } B980SndHdr; // sizeof 0x24
 
-#ifdef TARGET_PC
-typedef ALWaveTable B980Wave;
-typedef ALSound B980Sound;
-#else
 // ALWaveTable
 typedef struct B980Wave {
     /* 0x00 */ s32 base;
@@ -414,7 +314,6 @@ typedef struct B980Sound {
     /* 0x0D */ u8 sampleVolume;
     /* 0x0E */ u8 flags;
 } B980Sound; // sizeof 0x10
-#endif
 
 void func_80010110(s16);
 
@@ -437,7 +336,7 @@ typedef struct B980SfxExt {
 } B980SfxExt;
 
 typedef struct B980SndParam {
-    /* 0x00 */ PB_PTR32 sound;
+    /* 0x00 */ s32 sound;
     /* 0x04 */ f32 pitch;
     /* 0x08 */ s32 flags;
     /* 0x0C */ s16 id;
@@ -452,11 +351,6 @@ typedef struct B980SndParam {
     /* 0x18 */ u8 unk_18;
 } B980SndParam;
 
-#ifdef TARGET_PC
-typedef ALInstrument B980Inst;
-typedef ALBank B980Bank;
-typedef ALBankFile B980BankFile;
-#else
 // ALInstrument / ALBank / ALBankFile
 typedef struct B980Inst {
     /* 0x00 */ u8 volume;
@@ -484,10 +378,8 @@ typedef struct B980BankFile {
     /* 0x02 */ s16 bankCount;
     /* 0x04 */ B980Bank* bankArray[1];
 } B980BankFile;
-#endif
 
 extern s16 D_800CEAB6;
-#ifndef TARGET_PC
 void alSndpSetPitch(s32, f32);
 void alSndpSetVol(s32, s16);
 void alSndpSetFXMix(s32, u8);
@@ -496,7 +388,6 @@ s16 alSndpGetSound(s32);
 s32 alSndpGetState(s32);
 void alSndpDeallocate(s32, s16);
 void alSndpStop(s32);
-#endif
 void func_8001165C(void);
 void func_8000F4E0(void);
 void func_8000DE5C(s16);
@@ -564,12 +455,10 @@ extern s8 D_800CEAF6;
 void func_8000F238(void);
 void func_8000E818(s16*, s16*, s16, s16);
 s16 func_8000E448(B980SndParam*, s32);
-#ifndef TARGET_PC
 s16 alSndpAllocate(s32, s32);
 void alSndpSetPriority(s32, s16, u8);
 void alSndpSetSound(s32, s16);
 void alSndpPlay(s32);
-#endif
 void func_8000F780(s16, s16, s8);
 void func_8000F844(s16);
 void func_8000F294(s16, s8);
@@ -578,7 +467,7 @@ B980SfxEnt* func_8000DF98(s16, B980SndParam*);
 B980Sound* func_8000E2D0(B980BankFile*, u8, u8, u8);
 B980Sound* func_8000E340(B980BankFile*, s16);
 
-void func_800643D0(PB_PTR32, ALSndpConfig*); /* the sound player handle; s32 on the N64 */
+void func_800643D0(s32, ALSndpConfig*); /* the sound player handle; s32 on the N64 */
 s32 func_8000DA04(s32);
 s32 func_8000DA7C(void);
 s32 func_8000DB24(B980SndHdr*);
@@ -589,7 +478,7 @@ s32 func_8000F078(void);
 s32 func_8000F118(void);
 extern void* D_800CEA88;
 extern B980SeqHdr* D_800CEA90;
-extern PB_PTR32 D_800CEA98;
+extern s32 D_800CEA98;
 extern f32 D_800CEAA8;
 extern f32 D_800CEAAC;
 extern s16 D_800CEAB0;
@@ -601,9 +490,9 @@ extern s8 D_800CEABA;
 extern s32* D_800CEABC;
 extern s8 D_800CEABB;
 s32 func_8000B7EC(s32);
-extern PB_PTR32 D_800CDAD0;
-extern PB_PTR32 D_800CDAD8;
-extern PB_PTR32 D_800CDADC;
+extern s32 D_800CDAD0;
+extern s32 D_800CDAD8;
+extern s32 D_800CDADC;
 extern B980SeqHdr* D_800CDAE0;
 extern B980BankEnt* D_800CDAE4;
 extern s32 D_800CDAE8;
@@ -613,7 +502,6 @@ extern B980Osc D_800CDB24[];
 extern s32 D_800CD9C0;
 extern s16 D_800CDAFC;
 extern s16 D_800CDB00;
-#ifndef TARGET_PC
 void alSeqpSetBank(s32, s32);
 void alCSeqNew(s32, s32);
 void alSeqpSetSeq(s32, s32);
@@ -621,9 +509,7 @@ void alSeqpSetVol(s32, s16);
 void alSeqpPlay(s32);
 void alSeqpStop(s32);
 s32 alSeqpGetState(s32);
-#endif
 void func_8000B844(void);
-#ifndef TARGET_PC
 void alSeqpSetTempo(s32, s32);
 s32 alCSPGetTempo(s32);
 s32 alSeqpGetChlProgram(s32, u8);
@@ -631,96 +517,9 @@ u8 alSeqpGetChlVol(s32, u8);
 u8 alSeqpGetChlPan(s32, u8);
 u8 alSeqpGetChlFXMix(s32, u8);
 void alSeqpSetChlFXMix(s32, u8, s32);
-#endif
 s16 func_8000BEEC(s16, s32, s32);
 s32 func_8000C144(void);
 
-#ifdef TARGET_PC
-/* Host: the ROM headers this unit DMAs are big-endian; they are swapped to host order right
-   after each DMA. Banks are rebuilt from their big-endian images by the audio component's loaders
-   (alhost.h) into host heaps that are reset per load: one music bank and one sound-effect bank
-   are live at a time, as the N64 reuses one image buffer for each. Wavetable bases stay ROM
-   offsets: the DMA callback (138F0.c func_80013360) reads samples through PI DMA. The script
-   table's two patched offsets become host pointers in pbScriptTbl. */
-static u64 pbMusicHeapMem[0x100000 / 8];
-static u64 pbSfxHeapMem[0x100000 / 8];
-static ALHeap pbMusicHeap;
-static ALHeap pbSfxHeap;
-static ALBankFile* pbMusicBankFile;
-static PB_PTR32 pbScriptTbl[2];
-
-static u16 pbBe16(const void* p) {
-    const u8* b = p;
-    return (u16)((b[0] << 8) | b[1]);
-}
-
-static void pbSwap16(void* p) {
-    u8* b = p;
-    u8 t = b[0];
-    b[0] = b[1];
-    b[1] = t;
-}
-
-static void pbSwap32(void* p) {
-    u8* b = p;
-    u8 t = b[0];
-    b[0] = b[3];
-    b[3] = t;
-    t = b[1];
-    b[1] = b[2];
-    b[2] = t;
-}
-
-/* A sequence-bank header ('S1': count {offset, len} pairs; 'S2': the pairs, then count
-   B980BankEnt) or a sound list ('T1'..'T3': count B980SfxEnt), `size` bytes of it loaded. */
-static void pbSeqHdrSwap(B980SeqHdr* p, s32 size) {
-    s32 i;
-
-    pbSwap16(&p->magic);
-    pbSwap16(&p->count);
-    if ((p->magic & 0xFF00) == 0x5400) {
-        for (i = 0; i * 8 + 12 <= size; i++) {
-            pbSwap16((u8*)&p->seq[i] + 4);
-            pbSwap16((u8*)&p->seq[i] + 6);
-        }
-    } else if (p->magic == 0x5332 && size >= p->count * 24 + 4) {
-        B980BankEnt* bank = (B980BankEnt*)&p->seq[p->count];
-        for (i = 0; i < p->count; i++) {
-            pbSwap32(&p->seq[i].offset);
-            pbSwap32(&p->seq[i].len);
-            pbSwap32(&bank[i].ctl);
-            pbSwap32(&bank[i].ctlSize);
-            pbSwap32(&bank[i].tbl);
-        }
-    } else if (p->magic != 0x5332) {
-        for (i = 0; i * 8 + 12 <= size; i++) {
-            pbSwap32(&p->seq[i].offset);
-            pbSwap32(&p->seq[i].len);
-        }
-    }
-}
-
-/* alSeqFileNew on the header's own 32-bit layout: the offsets stay ROM addresses. */
-static void pbSeqFileNew(B980SeqHdr* p, s32 base) {
-    s32 i;
-
-    for (i = 0; i < p->count; i++) {
-        p->seq[i].offset += base;
-    }
-}
-
-/* alBnkfNew of the music bank: rebuilt into pbMusicHeap. */
-static void pbMusicBnkfNew(PB_PTR32 image, s32 size, s32 tbl) {
-    alHeapInit(&pbMusicHeap, pbMusicHeapMem, sizeof(pbMusicHeapMem));
-    pbMusicBankFile = alHostBnkfLoad((void*)image, size, (u8*)(uintptr_t)tbl, &pbMusicHeap);
-}
-
-/* alCSeqNew: the compact sequence's header words are big-endian in the loaded image. */
-static void pbCSeqNew(PB_PTR32 seq, PB_PTR32 data) {
-    alHostCSeqSwapHeader((void*)data);
-    (alCSeqNew)((ALCSeq*)seq, (u8*)data);
-}
-#endif
 
 void func_8000AD80(s32 devAddr, void* vAddr, s32 size) {
     OSIoMesg mesg;
@@ -757,10 +556,6 @@ s32 func_8000AE50(void) {
     D_800CDAC8->unk_04 = 0;
     if (D_800C1898.unk_00 != 0) {
         func_8000AD80(D_800C1898.unk_00, D_800CDAC8, 8);
-#ifdef TARGET_PC
-        pbSwap32(D_800CDAC8->unk_00);
-        pbSwap32(&D_800CDAC8->unk_04);
-#endif
         if (*(s32*)D_800CDAC8->unk_00 != 0x46584430) {
             D_800CDAC8->unk_04 = 0;
         }
@@ -774,10 +569,6 @@ s32 func_8000AE50(void) {
                 return 1;
             }
             func_8000AD80(idx, (void*)B980_RECORD, 0x208);
-#ifdef TARGET_PC
-            /* the record is libaudio's effect parameter list (ALSynConfig.params): s32 words */
-            pb_swap32_array((void*)B980_RECORD, 0x208 / 4);
-#endif
             return 0;
         }
     } else if (D_800C18B4[0] < 6) {
@@ -789,8 +580,8 @@ s32 func_8000AE50(void) {
     func_8000AFF8(0, 0, 0x20);
     return 100;
 }
-PB_PTR32 func_8000AFA0(s32 arg0) {
-    PB_PTR32 temp_v0 = alHeapDBAlloc(0, 0, &D_800CDAA8, 1, arg0);
+s32 func_8000AFA0(s32 arg0) {
+    s32 temp_v0 = alHeapDBAlloc(0, 0, &D_800CDAA8, 1, arg0);
 
     if (temp_v0 == 0) {
         func_8000AFF8(0, 0, 1);
@@ -913,11 +704,7 @@ s32 func_8000B2F0() {
 }
 
 s32 func_8000B2FC() {
-#ifdef TARGET_PC
-    return D_800CDAA8.len - (s32)(D_800CDAA8.cur - D_800CDAA8.base);
-#else
     return D_800CDAA8.unk_08 - (D_800CDAA8.unk_04 - D_800CDAA8.FXD0_header);
-#endif
 }
 
 s32 func_8000B31C(void) {
@@ -972,11 +759,7 @@ s32 func_8000B3E8(void) {
     D_800CDAEC = 0;
     D_800CDAF4 = 0.0f;
     D_800CDB02 = 0x7FFF;
-#ifdef TARGET_PC
-    D_800CDAD4 = func_8000AFA0(sizeof(ALCSPlayer));
-#else
     D_800CDAD4 = func_8000AFA0(0x7C);
-#endif
     if (D_800CDAD4 == 0) {
         return 1;
     }
@@ -1002,11 +785,7 @@ s32 func_8000B3E8(void) {
                 return 1;
             }
             seqMax = 0;
-#ifdef TARGET_PC
-            pbSeqFileNew(D_800CDAE0, ((B980Rom*)&D_800C1874)->seq);
-#else
             alSeqFileNew(D_800CDAE0, ((B980Rom*)&D_800C1874)->seq);
-#endif
             for (i = 0; i < count; i++) {
                 if (seqMax < D_800CDAE0->seq[i].len) {
                     seqMax = D_800CDAE0->seq[i].len;
@@ -1056,21 +835,13 @@ s32 func_8000B3E8(void) {
     if (bankSize == 0 || seqMax == 0) {
         return 0;
     }
-#ifdef TARGET_PC
-    if ((D_800CDADC = func_8000AFA0(sizeof(ALCSeq))) == 0
-#else
     if ((D_800CDADC = func_8000AFA0(0xF8)) == 0
-#endif
         || (D_800CDAD8 = func_8000AFA0(seqMax + (seqMax & 1))) == 0
         || (D_800CDAD0 = func_8000AFA0(bankSize + (bankSize & 1))) == 0) {
         return 1;
     }
     func_8000AD80(ctlAddr, (void*)D_800CDAD0, size + (size & 1));
-#ifdef TARGET_PC
-    pbMusicBnkfNew(D_800CDAD0, size + (size & 1), tblAddr);
-#else
     alBnkfNew(D_800CDAD0, tblAddr);
-#endif
     D_800CDAE8 = ctlAddr;
     D_800CDB04 = &D_800CDB10;
     link = &D_800CDB10;
@@ -1095,9 +866,6 @@ s32 func_8000B7EC(s32 size) {
         return 1;
     }
     func_8000AD80(((B980Rom*)&D_800C1874)->seq, p, size);
-#ifdef TARGET_PC
-    pbSeqHdrSwap(p, size);
-#endif
     return 0;
 }
 
@@ -1143,11 +911,7 @@ void func_8000B844(void) {
             } else {
                 func_8000AD80(ctlAddr, (void*)D_800CDAD0, size);
             }
-#ifdef TARGET_PC
-            pbMusicBnkfNew(D_800CDAD0, bankEnt->ctlSize, tblAddr);
-#else
             alBnkfNew(D_800CDAD0, tblAddr);
-#endif
             D_800CDAE8 = ctlAddr;
             return;
         }
@@ -1170,13 +934,8 @@ void func_8000B844(void) {
         func_8000AD80(addr, (void*)D_800CDAD8, size + (size & 1));
         return;
     }
-#ifdef TARGET_PC
-    alSeqpSetBank(D_800CDAD4, pbMusicBankFile != NULL ? pbMusicBankFile->bankArray[bank] : NULL);
-    pbCSeqNew(D_800CDADC, D_800CDAD8);
-#else
     alSeqpSetBank(D_800CDAD4, ((s32*)D_800CDAD0)[bank + 1]);
     alCSeqNew(D_800CDADC, D_800CDAD8);
-#endif
     alSeqpSetSeq(D_800CDAD4, D_800CDADC);
     if (D_800CDAF0 & 8) {
         alSeqpSetVol(D_800CDAD4, 0);
@@ -1952,11 +1711,7 @@ s32 func_8000D65C(void) {
     cfg.maxSounds = D_800CEA9C;
     cfg.maxEvents = D_800C18DC[2];
     cfg.heap = &D_800CDAA8;
-#ifdef TARGET_PC
-    D_800CEA8C = func_8000AFA0(sizeof(ALSndPlayer));
-#else
     D_800CEA8C = func_8000AFA0(0x54);
-#endif
     if (D_800CEA8C == 0) {
         return 1;
     }
@@ -2020,11 +1775,6 @@ s32 func_8000D65C(void) {
                 return 1;
             }
             func_8000AD80(addr, hdr, size);
-#ifdef TARGET_PC
-            for (i = 0; i < (s32)(sizeof(B980SndHdr) / 4); i++) {
-                pbSwap32((s32*)hdr + i);
-            }
-#endif
             hdr->ctl = D_800C1888[0] + hdr->ctl;
             hdr->tbl = D_800C1888[0] + hdr->tbl;
             if ((i = func_8000DB24(hdr)) != 0) {
@@ -2066,9 +1816,6 @@ s32 func_8000DA04(s32 size) {
         D_800CEA90->magic = 0;
     } else {
         func_8000AD80(D_800C1888[0], D_800CEA90, size);
-#ifdef TARGET_PC
-        pbSeqHdrSwap(D_800CEA90, size);
-#endif
     }
     return 0;
 }
@@ -2086,24 +1833,10 @@ s32 func_8000DA7C(void) {
         return 2;
     }
     func_8000AD80(D_800C188C[0], D_800CEA88, size);
-#ifdef TARGET_PC
-    if (pbBe16(D_800CEA88) != 0x4231) {
-        return 1;
-    }
-    /* The 'B1' bank is an al bank file whose revision word is 'B1'. */
-    ((u8*)D_800CEA88)[0] = AL_BANK_VERSION >> 8;
-    ((u8*)D_800CEA88)[1] = AL_BANK_VERSION & 0xFF;
-    alHeapInit(&pbSfxHeap, pbSfxHeapMem, sizeof(pbSfxHeapMem));
-    D_800CEA88 = alHostBnkfLoad(D_800CEA88, size, (u8*)(uintptr_t)D_800C188C[2], &pbSfxHeap);
-    if (D_800CEA88 == NULL) {
-        return 2;
-    }
-#else
     if (*(s16*)D_800CEA88 != 0x4231) {
         return 1;
     }
     alBnkfNew((s32)D_800CEA88, D_800C188C[2]);
-#endif
     return 0;
 }
 
@@ -2124,13 +1857,6 @@ s32 func_8000DB24(B980SndHdr* hdr) {
     }
     D_800C188C[0] = hdr->ctl;
     func_8000AD80(D_800C188C[0], D_800CEA88, size);
-#ifdef TARGET_PC
-    alHeapInit(&pbSfxHeap, pbSfxHeapMem, sizeof(pbSfxHeapMem));
-    D_800CEA88 = alHostSoundArrayLoad(D_800CEA88, size, hdr->count, (u8*)(uintptr_t)hdr->tbl, &pbSfxHeap);
-    if (D_800CEA88 == NULL) {
-        return 2;
-    }
-#else
     for (i = 0; i < hdr->count; i++) {
         snd = &((B980Sound*)D_800CEA88)[i];
         if (snd->flags == 0) {
@@ -2148,7 +1874,6 @@ s32 func_8000DB24(B980SndHdr* hdr) {
             }
         }
     }
-#endif
     return 0;
 }
 
@@ -2184,15 +1909,8 @@ s32 func_8000DCCC(B980SndHdr* hdr) {
     }
     hdr->unk_14 += D_800C1888[0];
     func_8000AD80(hdr->unk_14, D_800CEABC, size);
-#ifdef TARGET_PC
-    pbSwap32(&D_800CEABC[0]);
-    pbSwap32(&D_800CEABC[1]);
-    pbScriptTbl[0] = (PB_PTR32)D_800CEABC + D_800CEABC[0];
-    pbScriptTbl[1] = (PB_PTR32)D_800CEABC + D_800CEABC[1];
-#else
     D_800CEABC[0] = (s32)D_800CEABC + D_800CEABC[0];
     D_800CEABC[1] = (s32)D_800CEABC + D_800CEABC[1];
-#endif
     D_800CEAC0 = (unkB980Struct1*)func_8000AFA0(D_800CEA9C * sizeof(unkB980Struct1));
     if (D_800CEAC0 == NULL) {
         return 1;
@@ -2250,11 +1968,7 @@ void func_8000DE5C(s16 idx) {
 B980SfxEnt *func_8000DF98(s16 id, B980SndParam *param)
 {
   B980SfxEnt *ent;
-#ifdef TARGET_PC
-  PB_PTR32 new_var;
-#else
   int new_var;
-#endif
   B980SfxEnt *e;
   B980SfxExt *ext;
   param->id = id;
@@ -2270,9 +1984,9 @@ B980SfxEnt *func_8000DF98(s16 id, B980SndParam *param)
   switch (D_800CEA90->magic)
   {
     case 0x5431:
-      new_var = (((PB_PTR32) D_800CEA90) + (id * 8)) + 4;
+      new_var = (((s32) D_800CEA90) + (id * 8)) + 4;
       ent = (B980SfxEnt *) new_var;
-      param->sound = (PB_PTR32) func_8000E2D0(D_800CEA88, ent->b0, ent->b1, ent->b2);
+      param->sound = (s32) func_8000E2D0(D_800CEA88, ent->b0, ent->b1, ent->b2);
       param->pitch = ((f32) ent->rate) / ((f32) D_800C18A8);
       param->unk_13 = ent->b3;
       break;
@@ -2280,8 +1994,8 @@ B980SfxEnt *func_8000DF98(s16 id, B980SndParam *param)
     case 0x5432:
 
     case 0x5433:
-      ent = (e = (B980SfxEnt *) ((((PB_PTR32) D_800CEA90) + (id * 8)) + 4));
-      param->sound = (PB_PTR32) (&((B980Sound *) D_800CEA88)[e->flags & 0x1FFF]);
+      ent = (e = (B980SfxEnt *) ((((s32) D_800CEA90) + (id * 8)) + 4));
+      param->sound = (s32) (&((B980Sound *) D_800CEA88)[e->flags & 0x1FFF]);
       if (e->flags & 0x8000)
     {
       param->flags |= 0x10;
@@ -2322,7 +2036,7 @@ B980SfxEnt *func_8000DF98(s16 id, B980SndParam *param)
 
     default:
       ent = 0;
-      param->sound = (PB_PTR32) func_8000E340(D_800CEA88, id);
+      param->sound = (s32) func_8000E340(D_800CEA88, id);
       param->pitch = 1.0f;
       param->unk_13 = 0x50;
       break;
@@ -2861,11 +2575,7 @@ void func_8000F780(s16 script, s16 idx, s8 mode) {
     p->unk_04 = 0;
     p->unk_08 = script;
     if (script >= 0) {
-#ifdef TARGET_PC
-        p->unk_00 = pbBe16((u16*)pbScriptTbl[0] + script) + (PB_PTR32)D_800CEABC;
-#else
         p->unk_00 = ((u16*)D_800CEABC[0])[script] + (s32)D_800CEABC;
-#endif
         p->unk_0C = 0;
         p->unk_1A = 0;
         p->unk_1C = 0;
@@ -2885,7 +2595,7 @@ void func_8000F844(s16 idx) {
     unkB980Struct1* seq;
     unkB980Struct2* voice;
     u8* p;
-    PB_PTR32 tbl;
+    s32 tbl;
     s16 id;
     s16 n;
     s16 r;
@@ -3019,13 +2729,8 @@ void func_8000F844(s16 idx) {
                 p += 4;
                 break;
             case 0xA4:
-#ifdef TARGET_PC
-                tbl = pbScriptTbl[1];
-                seq->unk_3C = seq->unk_38 = pbBe16((u16*)tbl + p[0]) + tbl;
-#else
                 tbl = D_800CEABC[1];
                 seq->unk_3C = seq->unk_38 = ((u16*)tbl)[p[0]] + tbl;
-#endif
                 seq->unk_44 = (p[1] << 8) + p[2];
                 seq->unk_46 = (p[3] << 8) + p[4];
                 seq->unk_4C = 0;
@@ -3059,7 +2764,7 @@ void func_8000F844(s16 idx) {
         }
     }
     seq->unk_0C--;
-    seq->unk_00 = (PB_PTR32)p;
+    seq->unk_00 = (s32)p;
     func_80010148(voice, seq);
     func_80010734(voice, seq);
     func_8001085C(voice, seq);
@@ -3526,11 +3231,6 @@ void func_80011164(s16 idx) {
     unkB980Struct1* seq;
     s16 n;
 
-#ifdef TARGET_PC
-    if (idx < 0 || idx >= D_800CEA9C) { /* retail passes -1 (a failed play's handle): reads before the array */
-        return;
-    }
-#endif
     voice = &D_800CEA94[idx];
     if (voice->unk_16 < 0) {
         return;
@@ -3631,11 +3331,6 @@ s32 func_800115BC(void) {
 s32 func_800115C8(s16 idx) {
     unkB980Struct2* voice = &D_800CEA94[idx];
 
-#ifdef TARGET_PC
-    if (idx < 0 || idx >= D_800CEA9C) { /* retail passes -1 (a failed play's handle): reads before the array */
-        return 0;
-    }
-#endif
     if ((D_800CEAA4 & 1) && voice->unk_0C != 0) {
         return 0x100;
     }
@@ -3685,11 +3380,6 @@ void func_800117AC(s16 idx) {
     unkB980Struct1* seq;
     s16 n;
 
-#ifdef TARGET_PC
-    if (idx < 0 || idx >= D_800CEA9C) { /* retail passes -1 (a failed play's handle): reads before the array */
-        return;
-    }
-#endif
     if (!(D_800CEAA4 & 0x8000)) {
         return;
     }
@@ -3833,11 +3523,6 @@ void func_80011D48(s16 idx, s16 angle, f32 dist) {
     s8 minVol;
     unkB980Struct2* voice;
 
-#ifdef TARGET_PC
-    if (idx < 0 || idx >= D_800CEA9C) { /* retail passes -1 (a failed play's handle): reads before the array */
-        return;
-    }
-#endif
     st = &D_800CEAC4[idx];
     voice = &D_800CEA94[idx];
     if (voice->unk_0C != 1) {
@@ -3962,11 +3647,6 @@ void func_80012260(s16 arg0, f32 arg1) {
 }
 
 void func_80012394(s16 idx, f32 a, f32 b) {
-#ifdef TARGET_PC
-    if (idx < 0 || idx >= D_800CEA9C) { /* retail passes -1 (a failed play's handle): reads before the array */
-        return;
-    }
-#endif
     D_800CEAC4[idx].unk_00 = a;
     D_800CEAC4[idx].unk_04 = b;
     if (b < 0.0f) {
@@ -3977,11 +3657,6 @@ void func_80012394(s16 idx, f32 a, f32 b) {
 void func_800123DC(s16 arg0, s8 arg1) {
     unkB980Struct2* voice = &D_800CEA94[arg0];
 
-#ifdef TARGET_PC
-    if (arg0 < 0 || arg0 >= D_800CEA9C) { /* retail passes -1 (a failed play's handle): reads before the array */
-        return;
-    }
-#endif
     if (voice->unk_0C != 1) {
         return;
     }

@@ -3,11 +3,10 @@
 #define __GRAPHICS_H
 
 #include "PR/os.h"
-#include "pb_host.h"
 
 void func_8001AB84(void**, u16, u16); // Init graphics frame buffer pool                        
 void func_8001ABAC(u64**); // Set gThreadStacks
-void func_8001ABE8(PB_PTR32*); // Set graphics state
+void func_8001ABE8(s32*); // Set graphics state
 void func_8001ABF4(u32); // Set unk swap chain state
 void func_8001A7DC(void*); // Swap Chain Loop
 

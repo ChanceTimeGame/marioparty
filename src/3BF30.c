@@ -7,25 +7,15 @@
 /* Frame buffers, RDP/RSP buffers and the microcode table (text, data pairs; the texts sit in the
    main .data blob at 0x800B1760, which stays asm). The host has no fixed N64 RAM: it gets its own
    buffers, and its graphics bridge does not use the microcode addresses. */
-#ifdef TARGET_PC
-static u16 pbFrameBuffers[3][320 * 240];
-static u64 pbRspBuf0[0x400 / sizeof(u64)];
-static u64 pbRspBuf1[0x6000 / sizeof(u64)];
-static u64 pbRspBuf2[0x3C00 / sizeof(u64)];
-void* D_800C4250[] = { pbFrameBuffers[0], pbFrameBuffers[1], pbFrameBuffers[2] };
-u64* D_800C425C[] = { pbRspBuf0, pbRspBuf1, pbRspBuf2, pbRspBuf2 };
-PB_PTR32 D_800C426C[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000 };
-#else
 extern u8 D_800B1830[], D_800C87E0[], D_800C8C00[], D_800C9020[], D_800C9430[], D_800C97C0[];
 void* D_800C4250[] = { (void*)0x80360000, (void*)0x80385800, (void*)0x803AB000 };
 u64* D_800C425C[] = { (u64*)0x803F6000, (u64*)0x803F6400, (u64*)0x803FC400, (u64*)0x803FC400 };
-PB_PTR32 D_800C426C[] = {
-    (PB_PTR32)D_800B1830, (PB_PTR32)D_800C87E0, 0x800B2BC0, (PB_PTR32)D_800C8C00, 0x800B3F50, (PB_PTR32)D_800C9020,
-    0x800B50E0, (PB_PTR32)D_800C9430, 0x800B69A0, (PB_PTR32)D_800C97C0,
-    (PB_PTR32)D_800B1830, (PB_PTR32)D_800C87E0, 0x800B2BC0, (PB_PTR32)D_800C8C00, 0x800B3F50, (PB_PTR32)D_800C9020,
+s32 D_800C426C[] = {
+    (s32)D_800B1830, (s32)D_800C87E0, 0x800B2BC0, (s32)D_800C8C00, 0x800B3F50, (s32)D_800C9020,
+    0x800B50E0, (s32)D_800C9430, 0x800B69A0, (s32)D_800C97C0,
+    (s32)D_800B1830, (s32)D_800C87E0, 0x800B2BC0, (s32)D_800C8C00, 0x800B3F50, (s32)D_800C9020,
     1000,
 };
-#endif
 s32 D_800C42B0 = 0;
 f32 D_800C42B4[3] = { 0.0f, 0.0f, 0.0f };
 
@@ -36,11 +26,7 @@ typedef struct {
     s32 unk08;
 } unk3BF30SchedClient;
 
-#ifdef TARGET_PC /* ROM offsets linked as symbol addresses (pb_host.h) */
-#define D_31C7E0 PB_ROM_ADDR(0x31C7E0)
-#else
 extern u8 D_31C7E0[];
-#endif
 extern s32 D_800C32B0;
 extern OSMesgQueue D_800ED538;
 extern u8 D_800ED552;
@@ -56,17 +42,13 @@ s16 func_80013E84(void);
 void func_80014220(void);
 void func_8001429C(void);
 void func_8001A0F0(void);
-void func_8001A600(void** arg1, s32 arg2, s32 arg3, u64** arg4, PB_PTR32* arg5);
+void func_8001A600(void** arg1, s32 arg2, s32 arg3, u64** arg4, s32* arg5);
 void func_8001ABF4(u32 arg0);
 void func_80060F70(s16 arg0, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
 void func_80061354(void);
 void func_800613A0(void);
 void func_80061F60(void);
-#ifdef TARGET_PC
-void func_800637C0(u8, u8); /* host: matches the definition */
-#else
 void func_800637C0(s32, s32);
-#endif
 void func_80063F40(void);
 void func_8006CBB0(void);
 void func_8003B5EC(s16 arg0);
@@ -84,8 +66,8 @@ void func_8003B330(void) {
     lastFrame = 0;
     done = 0;
     func_8003B5EC(3);
-    MakePermHeap(PB_N64_RAM(0x80140000, 0x1A0000), PB_N64_RAM_SIZE(0x1A0000));
-    MakeTempHeap(PB_N64_RAM(0x80120000, 0x20000), PB_N64_RAM_SIZE(0x20000));
+    MakePermHeap(((void *)0x80140000), 0x1A0000);
+    MakeTempHeap(((void *)0x80120000), 0x20000);
     if (osTvType == OS_TV_NTSC) {
         func_800637C0(2, 1);
     } else {
@@ -109,7 +91,7 @@ void func_8003B330(void) {
     HuPrcCreate(func_8001A0F0, 1, 0, 0);
     while (done == 0) {
         osRecvMesg(&D_800ED538, &sp528, OS_MESG_BLOCK);
-        switch ((s32)PB_HOSTCAST(PB_PTR32, sp528)) {
+        switch ((s32)sp528) {
             case 1:
                 func_80061354();
                 temp_s1 = func_80061228(0xC8, 0, 0);

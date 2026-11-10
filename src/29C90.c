@@ -252,12 +252,7 @@ void func_80029AEC(unk_ovl_2D_struct* m, Matrix4f mtx) {
     unk2C0C0Struct40* xf;
 
     D_800ECB14 = m->unk_20;
-#ifdef TARGET_PC
-    /* unk_Struct00's unk_138, by field: its host offset differs (PB_PTR32 words before it). */
-    guMtxL2F(mtx, &((unk_Struct00*)D_800F32A0)->unk_138 + D_800F3FA8 * 2);
-#else
     guMtxL2F(mtx, (Mtx*)((u8*)D_800F32A0 + D_800F3FA8 * 0x80 + 0x138));
-#endif
     if (m->unk_24 != 0.0f || m->unk_28 != 0.0f || m->unk_2C != 0.0f) {
         MtxTranslate(mtx, m->unk_24, m->unk_28, m->unk_2C);
     }

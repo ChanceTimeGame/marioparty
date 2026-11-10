@@ -2,12 +2,7 @@
 
 /* 2A2500 .data: the sign-turning object. Declared as an array: retail reloads it after its own store. */
 /* D_800FCD98_BoardIntro[1..3] (2A2500's data), split off by splat. */
-#ifdef TARGET_PC
-extern omObjData* D_800FCD98_BoardIntro[4];
-#define D_800FCD9C_BoardIntro (&D_800FCD98_BoardIntro[1])
-#else
 extern omObjData* D_800FCD9C_BoardIntro[1];
-#endif
 /* Camera path points; splat split it into D_800FD7D0 ([0]) and D_800FD7DC ([1]..[3]). [3] is unused. */
 extern Vec3f D_800FD7D0_BoardIntro[4];
 extern Vec3f D_800FD800_BoardIntro;

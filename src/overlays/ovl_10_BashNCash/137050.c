@@ -1733,12 +1733,7 @@ void func_800FB940_BashNCash(omObjData* obj, Vec3f* pos) {
     u32 flags;
 
     w = obj->unk_50;
-#ifdef TARGET_PC
-    /* retail reads the u16 flags and the bytes after them as one big-endian word */
-    flags = ((u32)w->unk_50 << 16) | ((u32)w->unk_52 << 8) | w->unk_53;
-#else
     flags = *(u32*)&w->unk_50;
-#endif
     if ((flags & 0x204000) == 0x4000) {
         for (i = 0; i < D_800F2BC0; i++) {
             player = D_800F3FB0[i];

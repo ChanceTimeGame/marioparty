@@ -172,11 +172,7 @@ extern s16 D_800F3778;
    from C its own object (games/mp1/host/tools/gen_ovl.py), so C never indexes from one label into
    the next; the one retail loop that does (D_800FBB04 over D_800FBB06) is a host view. */
 extern s16 D_800FBB04_CastAways[2];
-#ifdef TARGET_PC
-#define D_800FBB06_CastAways (D_800FBB04_CastAways[1])
-#else
 extern s16 D_800FBB06_CastAways;
-#endif
 extern s16 D_800FBB40_CastAways;
 extern s16 D_800FBB42_CastAways;
 extern s16 D_800FBB44_CastAways;
@@ -232,11 +228,7 @@ f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 CastAwaysAnimData* func_800202E8(s16, s16);
 s16 func_80009E4C(s16, s16, s8, s8);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 s16 func_800FABE4_CastAways(u16);
 s32 func_800F75BC_CastAways(CastAwaysItemSet*, s32);
 void func_800F7A38_CastAways(omObjData*);

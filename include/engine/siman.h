@@ -23,7 +23,7 @@ typedef struct {
 } unkMesg;
 
 typedef struct {
-    PB_PTR32 unk0[4]; /* the nnsched client (next, msgQ, mask): 24 bytes on the host, so this must be
+    s32 unk0[4]; /* the nnsched client (next, msgQ, mask): 24 bytes on the host, so this must be
                          pointer-wide or unkMsg (the SI thread's receive slot) overlaps its mask */
     unkMesg* unkMsg;
 } unkMesgWrapper;
@@ -42,9 +42,5 @@ extern OSMesgQueue D_800F3370;
 
 // TODO: Put this in correct header
 void func_800639F8(unkMesgWrapper*, OSMesgQueue*, s32); // nnsched func
-#ifdef TARGET_PC
-/* Host: eeprom.c and pad.c call it unprototyped on the N64. */
-s32 RequestSIFunction(unkMesg *siMessg, HuSiFunc func, void *arg, s32 type);
-#endif
 
 #endif

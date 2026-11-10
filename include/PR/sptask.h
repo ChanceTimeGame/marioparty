@@ -1,8 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host build: the unified 64-bit host edition (games/mp1/src/port/include) replaces
- * this header. N64 builds never define TARGET_PC and compile the original below unchanged. */
-#include <PR/sptask.h>
-#else /* !TARGET_PC */
 /**************************************************************************
  *									  *
  *		 Copyright (C) 1995, Silicon Graphics, Inc.		  *
@@ -204,4 +199,3 @@ extern OSYieldResult	osSpTaskYielded(OSTask *tp);
 #endif
 
 #endif /* !_SPTASK_H */
-#endif /* !TARGET_PC */

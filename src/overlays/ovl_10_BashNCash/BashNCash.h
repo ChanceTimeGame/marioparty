@@ -47,11 +47,7 @@ typedef struct BashCash {
 } BashCash; /* size = 0x14 (N64) */
 
 /* Retail also reaches BashCash::coins through its own label. */
-#ifdef TARGET_PC
-#define D_800FE698_BashNCash (D_800FE690_BashNCash.coins)
-#else
 extern u16 D_800FE698_BashNCash;
-#endif
 
 /* A coin knocked out of the suit (D_800FE630_BashNCash[8]). */
 typedef struct BashCoinSlot {

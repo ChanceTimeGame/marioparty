@@ -82,7 +82,7 @@ void func_80045D1C(omObjData* obj) {
         func_80045BE0(w);
     }
 }
-PB_PTR32 func_80045D84(s16 type, s16 y, s8 mode) {
+s32 func_80045D84(s16 type, s16 y, s8 mode) {
     LabelWin* w = MallocTemp(sizeof(LabelWin));
 
     if (w != NULL) {
@@ -100,10 +100,10 @@ PB_PTR32 func_80045D84(s16 type, s16 y, s8 mode) {
             w->extra = NULL;
         }
     }
-    return (PB_PTR32)w;
+    return (s32)w;
 }
 
-void func_80045E6C(PB_PTR32 arg0) {
+void func_80045E6C(s32 arg0) {
     LabelWin* w = (LabelWin*)arg0;
 
     if (w != NULL) {

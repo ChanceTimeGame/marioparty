@@ -52,9 +52,9 @@ void func_800FA374_FaceLift(s16, s16);
 void func_800F8FCC_FaceLift(omObjData*);
 void func_800F9988_FaceLift(Gfx**);
 void func_800FAA38_FaceLift(omObjData*);
-void func_800FACD8_FaceLift(Gfx**, PB_PTR32);
+void func_800FACD8_FaceLift(Gfx**, s32);
 
-extern PB_PTR32 D_800FCA18_FaceLift; /* 64-byte aligned colour buffer in a heap block */
+extern s32 D_800FCA18_FaceLift; /* 64-byte aligned colour buffer in a heap block */
 extern u16 D_800FC3D0_FaceLift;
 extern u16 D_800F5144;
 extern s16 D_800FC960_FaceLift;
@@ -177,10 +177,10 @@ void func_800F9BC8_FaceLift(void);
 extern Gfx D_800FC7E8_FaceLift[];
 extern Gfx D_800FC830_FaceLift[];
 extern Gfx D_800FC870_FaceLift[];
-void func_8003A060(Gfx**, PB_PTR32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003A060(Gfx**, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 void func_800FACB8_FaceLift(Gfx**);
 void func_800FAB24_FaceLift(omObjData*);
-void func_800FAEE0_FaceLift(PB_PTR32);
+void func_800FAEE0_FaceLift(s32);
 void func_800FB1B4_FaceLift(omObjData*);
 void func_800FB29C_FaceLift(omObjData*);
 void func_800FB724_FaceLift(omObjData*);

@@ -239,17 +239,10 @@ CGClaw* func_800F704C_CraneGame(omObjData* arg0) {
 
     temp_v0 = HuMemDirectMalloc(sizeof(CGClaw));
     D_80100BC0_CraneGame[D_80100FC0_CraneGame] = temp_v0;
-#ifdef TARGET_PC
-    arg0->work[0] = 0;
-    arg0->work[1] = 0;
-    arg0->work[2] = (u16)D_80100FC0_CraneGame >> 8;
-    arg0->work[3] = (u16)D_80100FC0_CraneGame;
-#else
     arg0->work[0] = (u32)temp_v0 >> 0x18;
     arg0->work[1] = (u32)temp_v0 >> 0x10;
     arg0->work[2] = (u32)temp_v0 >> 8;
     arg0->work[3] = (u32)temp_v0;
-#endif
     temp_v0->unk0 = 0;
     temp_v0->unk2 = 0;
     temp_v0->unk8 = 0;
@@ -278,11 +271,7 @@ void func_800F7138_CraneGame(void) {
 
 /* Unpacks func_800F704C's claw pointer (the host: its index). */
 CGClaw* func_800F71B8_CraneGame(omObjData* arg0) {
-#ifdef TARGET_PC
-    return D_80100BC0_CraneGame[(arg0->work[2] << 8) | arg0->work[3]];
-#else
     return (CGClaw*) ((arg0->work[0] << 0x18) | (arg0->work[1] << 0x10) | (arg0->work[2] << 8) | arg0->work[3]);
-#endif
 }
 
 s32 func_800F71E4_CraneGame(omObjData* arg0) {

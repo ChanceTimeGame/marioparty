@@ -543,7 +543,7 @@ void func_800F750C_DebugRandomPlay(void) {
 
     func_8006EB40(D_800F8FBC_DebugRandomPlay);
     func_8006EB80();
-    func_8006DA5C(D_800F8FBC_DebugRandomPlay, (void*)(PB_PTR32)(D_800F7DB0_DebugRandomPlay[D_800F8FB8_DebugRandomPlay].mes >> 16), 0);
+    func_8006DA5C(D_800F8FBC_DebugRandomPlay, (void*)(s32)(D_800F7DB0_DebugRandomPlay[D_800F8FB8_DebugRandomPlay].mes >> 16), 0);
     /* "<minigame name>" in SJIS brackets */
     sprintf(buffer, "\x82\xc2\x82\xab\x81\x4a\x82\xcd\x81\x75\x87\x40\x81\x76");
     func_8007149C(D_800F8FC0_DebugRandomPlay, (u8*) buffer);

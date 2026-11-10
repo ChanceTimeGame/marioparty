@@ -1,10 +1,6 @@
 #include "common.h"
 
-#ifdef TARGET_PC
-void func_80052CCC(s32, u8); /* host: matches the definition */
-#else
 void func_80052CCC(s32, s32);
-#endif
 s32 D_800C52D0[] = { 0xA0114, 0xA0115, 0xA0116, 0xA0117, 0xA0118, 0xA0119, 0xA011A, 0xA011B, 0, 0xA0100 };
 s16 D_800C52F8 = 0;
 /* Button sequence for func_8003EDDC: up up down down left right left right B A. */
@@ -65,31 +61,13 @@ void func_8004D0B0(s16);
 
 /* The menu windows below called func_8006D010 unprototyped (int return: no sign extension after
    the call). Every use passes the id on as an s16, so the s16 the function returns survives. */
-#ifdef TARGET_PC
-/* Host: call through the real s16 type (x86-64 does not extend a short return value). */
-#define CreateMenuWindow(x, y, w, h, a, b) ((s32)func_8006D010(x, y, w, h, a, b))
-#else
 #define CreateMenuWindow ((s32 (*)(s16, s16, s16, s16, s32, s16))func_8006D010)
-#endif
 
 
 typedef struct unk51200 {
 /* 0x00 */ Object* obj;
-#ifdef TARGET_PC
-/* Two structs share this view: func_80048224's (a Process* at 0x04, mystery_struct_ret_func_80048224)
-   and func_80050E10's unkMallocStruct (an s16 at 0x04). The union keeps unk8 at that struct's
-   host offset and unk4 at unkMallocStruct's. */
-union {
-    struct {
-        u16 unk4;
-        s16 unk6;
-    };
-    Process* unk4p;
-};
-#else
 /* 0x04 */ u16 unk4;
 /* 0x06 */ s16 unk6;
-#endif
 /* 0x08 */ s16 unk8;
 /* 0x0A */ s16 unkA;
 } unk51200;
@@ -172,10 +150,10 @@ void func_80050A7C(unk_Struct02* arg0) {
 
 s32 func_80050A98(s32 arg0) {
     s32 var_s0;
-    PB_PTR32 temp_s1;
+    s32 temp_s1;
     unk_Struct02* temp_s3;
-    PB_PTR32 temp_s4; /* PartyBoard: a func_80045D84 window handle (pointer) */
-    PB_PTR32 temp_s5;
+    s32 temp_s4;
+    s32 temp_s5;
     u16* temp_s0;
 
     temp_s1 = func_8003EDDC((s32*)D_800C52FC);
@@ -248,7 +226,7 @@ void func_80050BE0(Object* arg0, s16 arg1) {
     }
 }
 
-void func_80050D1C(s16 arg0, PB_PTR32 arg1) {
+void func_80050D1C(s16 arg0, s32 arg1) {
     func_8006EB40(arg0);
     LoadStringIntoWindow(arg0, (void*)arg1, -1, -1);
 }
@@ -288,16 +266,8 @@ Process* func_80050E10(s16 arg0, s32* arg1) {
 
 void func_800484C4(Object*, s16);
 Process* func_80050E10(s16, s32*);
-#ifdef TARGET_PC
-void func_80071788(s32, s16); /* host: matches the definition */
-#else
 void func_80071788(s16, s32);
-#endif
-#ifdef TARGET_PC
-void func_80072108(s16, s16); /* host: matches the definition */
-#else
 void func_80072108(s16, s32);
-#endif
 extern s16 D_800D8374;
 extern s16 D_800D8376;
 
@@ -353,11 +323,7 @@ s32 func_80050E7C(s32 arg0) {
             func_80071788(var_s1, 2);
         }
         /* retail passes the full s16 here (lh): this caller saw an s32 parameter, the callee takes s8 */
-#ifdef TARGET_PC
-        temp_v0_2 = func_8006FCF0(var_s1, D_800D8374, 0);
-#else
         temp_v0_2 = ((s32 (*)(s16, s32, s32)) func_8006FCF0)(var_s1, D_800D8374, 0);
-#endif
         if (temp_v0_2 >= 0) {
             D_800D8374 = temp_v0_2;
         }
@@ -412,11 +378,7 @@ s32 func_80051198(s32 arg0)
   s16 v;
   s32 win;
   GW_SYSTEM *system = &GwSystem;
-#ifdef TARGET_PC
-  win = func_8006D010(0x5A, 0x50, 0xA2, 0x22, 0, 0);
-#else
   win = ((s32 (*)(s16, s16, s16, s16, s32, s16)) func_8006D010)(0x5A, 0x50, 0xA2, 0x22, 0, 0);
-#endif
   func_8006E0A4(win, 5);
   func_8006E154(win, 0);
   LoadStringIntoWindow(win, (void *) 0x160, -1, -1);
@@ -479,11 +441,7 @@ s32 func_80051428(s32 arg0)
   s32 win;
   s8 new_var;
   GW_SYSTEM *system = &GwSystem;
-#ifdef TARGET_PC
-  win = func_8006D010(0x87, 0x46, 0x34, 0x30, 0, 0);
-#else
   win = ((s32 (*)(s16, s16, s16, s16, s32, s16)) func_8006D010)(0x87, 0x46, 0x34, 0x30, 0, 0);
-#endif
   func_8006E0A4(win, 5);
   func_8006E154(win, 0);
   LoadStringIntoWindow(win, (void *) 0x169, -1, -1);
@@ -815,7 +773,7 @@ INCLUDE_ASM("asm/nonmatchings/51200", func_80051AE0);
 // retail holds the return value 1 in s2 across the loop; this returns it with li (masked 5)
 #ifdef NON_MATCHING
 s32 func_80052614(s32 arg0) {
-    PB_PTR32 id = func_80045D84(8, 0xBC, 0);
+    s32 id = func_80045D84(8, 0xBC, 0);
 
     do {
         HuPrcVSleep();
@@ -854,7 +812,7 @@ s16 func_800526D8(s16 arg0, s32 arg1) {
     return 0;
 }
 void func_800527A0(void) {
-    s32 arg = (s32)PB_HOSTCAST(PB_PTR32, HuPrcCurrentGet()->user_data);
+    s32 arg = (s32)(HuPrcCurrentGet()->user_data);
     s16 state = 1;
     s16 paused = func_800559A8();
     unk_Struct02* sprite;
@@ -902,7 +860,7 @@ void func_80052934(s32 arg0) {
     D_800D8376 = 0;
     parent = HuPrcCurrentGet();
     proc = omAddPrcObj(func_800527A0, 0xEFFF, 0, 0);
-    proc->user_data = (void*)PB_HOSTCAST(PB_PTR32, arg0);
+    proc->user_data = (void*)arg0;
     omPrcSetStatBit(proc, 0x80);
     HuPrcChildLink(parent, proc);
     HuPrcChildWatch();

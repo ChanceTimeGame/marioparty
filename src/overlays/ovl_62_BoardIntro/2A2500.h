@@ -21,11 +21,7 @@ void func_8004F584(s32);
 s32 func_8004F628(s32, u16, s16, s16);
 /* Defined with s16 coordinates (4E530.c); retail calls it with s32 values and no narrowing at the
    call, so the matching build declares s32 parameters. The host uses the real prototype. */
-#ifdef TARGET_PC
-void func_8004F754(s32, s16, s16);
-#else
 void func_8004F754(s32, s32, s32);
-#endif
 void func_8004F7C0(s32, f32, f32);
 
 void func_800F677C_BoardIntro(omObjData*);
@@ -51,11 +47,7 @@ void func_80055810(s32, s32, s32);
 extern char* D_800C5218[]; /* character names */
 
 /* Retail passes the s32 window id unnarrowed (an unprototyped call); the host calls it normally. */
-#ifdef TARGET_PC
-#define WaitForTextConfirmation_s32(win) WaitForTextConfirmation(win)
-#else
 #define WaitForTextConfirmation_s32(win) ((void (*)())WaitForTextConfirmation)(win)
-#endif
 
 /* Name-letter objects (func_800F677C), indexed by letter; work[0] holds index + 1. */
 extern omObjData* D_800FCD30_BoardIntro[16];

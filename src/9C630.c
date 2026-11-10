@@ -27,11 +27,9 @@ f64 func_8009BA30(s32 type, char* name, f64 arg1, f64 arg2, f64 retval) {
     return exc.retval;
 }
 
-#ifndef TARGET_PC
 /* func_8009BA30 was its own object: retail has two nops of padding before the hand asm below
    (the asm-only unit carried them in func_8009BA30.s). */
 __asm__(".section .text\n.set noreorder\nnop\nnop\n.set reorder\n");
-#endif
 
 // __muldi3: hand-written asm in the original library
 INCLUDE_ASM("asm/nonmatchings/9C630", func_8009BAA4);

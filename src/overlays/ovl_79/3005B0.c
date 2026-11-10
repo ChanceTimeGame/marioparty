@@ -3,11 +3,7 @@
 
 /* retail calls func_8006FCF0 unprototyped here: the s16 cursor is passed as is, not narrowed to
    the prototype's s8. The host calls it normally. */
-#ifdef TARGET_PC
-#define func_8006FCF0_unproto(win, cur, arg) func_8006FCF0(win, cur, arg)
-#else
 #define func_8006FCF0_unproto(win, cur, arg) ((s32 (*)())func_8006FCF0)(win, cur, arg)
-#endif
 
 extern TextWindow* D_800ED4B0;
 
@@ -270,7 +266,7 @@ loop:
     HideTextWindow(win1);
     if ((D_800F7448_name_79 != 1) & (D_800F7448_name_79 != 3)) {
         win1 = CreateTextWindow(0x32, 0x3C, D_800F74C0_name_79[D_800F74F4_name_79], 3);
-        LoadStringIntoWindow(win1, (void*)(PB_PTR32)D_800F7490_name_79[D_800F74F4_name_79], -1, -1);
+        LoadStringIntoWindow(win1, (void*)(s32)D_800F7490_name_79[D_800F74F4_name_79], -1, -1);
         func_8006E070(win1, 0);
         ShowTextWindow(win1);
         PlaySound(0x437);

@@ -90,11 +90,7 @@ void func_80021EC0(s16, f32, f32, f32);
 s16 func_8000BEBC(s16);
 void func_800191F8(u16);
 void func_8001249C(s16, u8);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 extern unk34D80Struct80* D_800ED554;
 extern s16 ContBtn[];
 extern s8 ContStkY[];

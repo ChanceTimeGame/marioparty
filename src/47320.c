@@ -21,26 +21,13 @@ extern unkCommonStruct0 D_800D6518[];
 /* One block of three on the N64 (0x68 apart; func_800477AC indexes D_800D6518[i]): splat labelled
    elements [1] and [2] and each element's unk_14 (+0x14). On hosts the void* in the struct moves
    unk_14 and widens the stride, so the inner labels are views of the one object. */
-#ifdef TARGET_PC
-#define D_800D6580 (&D_800D6518[1])
-#define D_800D65E8 (&D_800D6518[2])
-#define D_800D652C (D_800D6518[0].unk_14)
-#define D_800D6594 (D_800D6518[1].unk_14)
-#define D_800D65FC (D_800D6518[2].unk_14)
-#else
 extern unkCommonStruct0 D_800D6580[];
 extern unkCommonStruct0 D_800D65E8[];
 extern s16 D_800D652C[];
 extern s16 D_800D6594[];
 extern s16 D_800D65FC[];
-#endif
 extern s8 D_800D6510;
-#ifdef TARGET_PC
-/* splat's label for D_800D6490[0].unk_14 (+0x14 on the N64; the void* before it moves it on hosts) */
-#define D_800D64A4 (D_800D6490[0].unk_14)
-#else
 extern s16 D_800D64A4[];
-#endif
 extern s32 D_800D64FC;
 extern s32 D_800F383C;
 extern s32 D_800D64FC;

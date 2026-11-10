@@ -374,7 +374,7 @@ s32 func_800F75BC_CastAways(CastAwaysItemSet* arg0, s32 arg1) {
     s32 pad[1]; // Original function has an otherwise-unused 8-byte stack frame.
 
     for (slotIndex = 0; slotIndex < arg0->count; slotIndex++) {
-        u8* slots = (u8*)(((arg1 & 0xFF) * 8) + (PB_UPTR32)arg0 + 0x66);
+        u8* slots = (u8*)(((arg1 & 0xFF) * 8) + (u32)arg0 + 0x66);
         if (slots[slotIndex] == 0) {
             slots[slotIndex] = 1;
             return (s16)slotIndex;

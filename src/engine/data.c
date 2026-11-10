@@ -138,16 +138,10 @@ void DataInit(void* fs_rom_loc) {
     D_800D12F0 = fs_rom_loc;
     archiveHeader = &D_800D1310;
     dmaRead(fs_rom_loc, archiveHeader, 16); // ExecRomCopy
-#ifdef TARGET_PC
-    pb_swap32_array(archiveHeader, 4);
-#endif
     D_800D12F4 = archiveHeader->dir;
     dir_table_size = archiveHeader->dir * 4;
     D_800D12F8 = (s32 *)HuMemDirectMalloc(dir_table_size);
     dmaRead(fs_rom_loc + 4, D_800D12F8, dir_table_size);
-#ifdef TARGET_PC
-    pb_swap32_array(D_800D12F8, dir_table_size / 4);
-#endif
     D_800D12FC = D_800D12F0;
     D_800D1300 = D_800D12F4;
     D_800D1304 = D_800D12F8;
@@ -168,9 +162,6 @@ void DataInfoRead(s32 type, s32 index, HuFileInfo* info) {
     }
 
     dmaRead(info->bytes, archiveHeader, 16); // ExecRomCopy
-#ifdef TARGET_PC
-    pb_swap32_array(archiveHeader, 4);
-#endif
     info->bytes += 8;
     info->size = archiveHeader->dir;
     info->compType = archiveHeader->offsets[0];
@@ -231,9 +222,6 @@ void *DataDecode(s32 type, s32 index) {
     ret = HuMemDirectMalloc((info.size + 1) & -2);
     if (ret != NULL) {
         DecodeFile(info.bytes, ret, info.size, info.compType);
-#ifdef TARGET_PC
-        pb_gfx_raw(ret, info.size); /* the bridge copies its contents as N64 bytes */
-#endif
     }
     return ret;
 }
@@ -249,9 +237,6 @@ void* DataDecodeTemp(s32 type, s32 index) {
     ret = MallocTemp((info.size + 1) & -2);
     if (ret != NULL) {
         DecodeFile(info.bytes, ret, info.size, info.compType);
-#ifdef TARGET_PC
-        pb_gfx_raw(ret, info.size); /* the bridge copies its contents as N64 bytes */
-#endif
     }
     return ret;
 }
@@ -291,18 +276,12 @@ void DataDirInit(u32 arg0, u32 arg1) {
         test = &D_800D1310;
         
         dmaRead(sp10.bytes, test, 0x10);
-#ifdef TARGET_PC
-        pb_swap32_array(test, 4);
-#endif
         dir = test->dir;
         
         D_800D1300 = dir;
         tableSize = dir * 4;
         D_800D1304 = HuMemDirectMalloc(tableSize);
         dmaRead(sp10.bytes + 4, D_800D1304, tableSize);
-#ifdef TARGET_PC
-        pb_swap32_array(D_800D1304, tableSize / 4);
-#endif
     }
 }
 
@@ -384,37 +363,6 @@ s32 FileReadBuf(s8 *arg0, s32 arg1, s32 arg2, HuFileInfoD *arg3) {
     return i;
 }
 
-#ifdef TARGET_PC
-/* Host edition: the N64 code keeps the target address in the s32 parameter arg2; here it is a
-   pointer-width local. Same logic. */
-void FileSeek(HuFileInfoD *info, s32 arg1, s32 arg2) {
-    uintptr_t pos;
-
-    switch (arg2) {
-        case 0:
-            pos = (uintptr_t)(info->bytes + arg1);
-            break;
-        case 1:
-            pos = (uintptr_t)(info->bytesCopy + info->unkE + arg1);
-            break;
-        case 2:
-            pos = (uintptr_t)(info->bytes + info->size + arg1);
-            break;
-        default:
-            return;
-    }
-    pos = (pos < (uintptr_t)info->bytes) ? (uintptr_t)info->bytes : pos;
-    pos = (pos >= (uintptr_t)(info->bytes + info->size)) ? (uintptr_t)(info->bytes + info->size - 1) : pos;
-
-    if ((pos < (uintptr_t)info->bytesCopy) || (pos >= (uintptr_t)(info->bytesCopy + 0x400))) {
-        info->unkC = 1;
-        info->unkE = pos & 1;
-        info->bytesCopy = (u8 *)(pos - info->unkE);
-    } else {
-        info->unkE = pos - (uintptr_t)info->bytesCopy;
-    }
-}
-#else
 void FileSeek(HuFileInfoD *info, s32 arg1, s32 arg2) {
     switch (arg2) {
         case 0:
@@ -440,4 +388,3 @@ void FileSeek(HuFileInfoD *info, s32 arg1, s32 arg2) {
         info->unkE = arg2 - (u32)info->bytesCopy;
     }
 }
-#endif

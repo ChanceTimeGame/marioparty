@@ -2,7 +2,6 @@
 
 void func_800AF2E0(f32, f32*, f32*);
 
-#ifndef TARGET_PC /* the host's guMtxIdentF / guMtxIdent are in host_sdk.c */
 /* guMtxIdentF */
 void func_800A2A50(Matrix4f mf) {
     mf[0][0] = mf[1][1] = mf[2][2] = mf[3][3] = 1.0f;
@@ -17,7 +16,6 @@ void func_800A2B40(Mtx* m) {
     m->m[0][0] = m->m[1][1] = 0x10000;
     m->m[0][2] = m->m[1][3] = 1;
 }
-#endif
 
 /* guRotateF (Hudson): angle through func_800AF2E0 (sin, cos), any axis */
 void func_800A2BF0(Matrix4f mf, f32 a, Vec3f* axis) {

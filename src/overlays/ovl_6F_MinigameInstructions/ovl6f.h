@@ -91,7 +91,7 @@ typedef struct Ovl6FMinigameInfo {
     /* 0x00 */ s32 overlay;  /* omOvlCallEx/omOvlGotoEx overlay id */
     /* 0x04 */ u8 unk_04;    /* D_8010F760 (0 = one player, else four) */
     /* 0x08 */ s32 unk_08;   /* DataRead id of the preview image (func_800F94E8) */
-    /* 0x0C */ u16 unk_0C;   /* message id: (void*)(PB_PTR32) for LoadStringIntoWindow */
+    /* 0x0C */ u16 unk_0C;   /* message id: (void*)(s32) for LoadStringIntoWindow */
     /* 0x0E */ s16 unk_0E;
     /* 0x10 */ u8 unk_10;    /* lbu (func_800F6B14) */
 } Ovl6FMinigameInfo; /* size = 0x14 */
@@ -161,19 +161,11 @@ void func_80027AC8(s16, u8*, u8*);
 void func_80028498(s16, s16, s16);
 void func_8002859C(s16, s16, char*);
 void func_80039644(s16, u8, u8);
-#ifdef TARGET_PC
-void func_800396B0(s16, s32); /* host: matches the definition */
-#else
 void func_800396B0(s16, u8); /* callers andi 0xFF */
-#endif
-void func_8003A060(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls,
+void func_8003A060(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls,
                    s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt,
                    s32 shifts, s32 shiftt);
-#ifdef TARGET_PC
-void func_800593AC(s16); /* the definition */
-#else
 void func_800593AC(s32); /* as func_800F6610 matched with it */
-#endif
 Process* func_8005DCD8(process_func, u16, s32, s32, Process*);
 void func_8006035C(s16, s8);
 void func_80060440(s16, s16);
@@ -230,11 +222,6 @@ extern const u8 D_8010F050_MinigameInstructions[]; /* SJIS string passed to func
 extern const char D_8010F268_MinigameInstructions[]; /* "item_hook" (2DF200 rodata) */
 extern const char D_8010F360_MinigameInstructions[]; /* "item_hook" (2E8220 rodata) */
 
-/* ---------------------------------------------------------------------------------------------
-   .bss (ovl_6F_bss.bss.s, 0x8010F400..0x8010F780). Inner labels of one object are #define views
-   under TARGET_PC (gen_ovl.py merges them into the object) and keep their labels on the N64.
-   Prefer the object spelling (D_8010F410[i].unk_14[j]); n64chkf folds the split-label relocs.
-   --------------------------------------------------------------------------------------------- */
 extern s16 D_8010F400_MinigameInstructions;
 extern s16 D_8010F402_MinigameInstructions;
 extern omObjData* D_8010F404_MinigameInstructions;
@@ -243,19 +230,11 @@ extern u16 D_8010F40A_MinigameInstructions; /* sprite id: only lhu */
 /* Two message blocks (0x68 apart; func_800F8980 builds one per text line). On hosts the void* at
    0x10 moves unk_14 and widens the stride, so the inner labels are views. */
 extern unkCommonStruct0 D_8010F410_MinigameInstructions[2];
-#ifdef TARGET_PC
-#define D_8010F418_MinigameInstructions (D_8010F410_MinigameInstructions[0].unk_08)
-#define D_8010F424_MinigameInstructions (D_8010F410_MinigameInstructions[0].unk_14)
-#define D_8010F464_MinigameInstructions (D_8010F410_MinigameInstructions[0].unk_54)
-#define D_8010F468_MinigameInstructions (D_8010F410_MinigameInstructions[0].unk_58)
-#define D_8010F480_MinigameInstructions (D_8010F410_MinigameInstructions[1].unk_08)
-#else
 extern s16 D_8010F418_MinigameInstructions;
 extern s16 D_8010F424_MinigameInstructions[16];
 extern f32 D_8010F464_MinigameInstructions;
 extern f32 D_8010F468_MinigameInstructions;
 extern s16 D_8010F480_MinigameInstructions;
-#endif
 extern s16 D_8010F4E0_MinigameInstructions; /* _CheckFlag(0x45) */
 extern s16 D_8010F4E2_MinigameInstructions;
 extern void* D_8010F4E4_MinigameInstructions; /* func_80023684(0x1040) work buffer */
@@ -263,22 +242,14 @@ extern s16 D_8010F4E8_MinigameInstructions;
 extern s16 D_8010F4EA_MinigameInstructions; /* func_800F7C58 state */
 /* One minigame's state (range func_80104320..: indexed by work->unk_3E or unk_38). */
 extern s16 D_8010F4F0_MinigameInstructions[2]; /* models; D_8010F4F2 is [1] */
-#ifdef TARGET_PC
-#define D_8010F4F2_MinigameInstructions (D_8010F4F0_MinigameInstructions[1])
-#else
 extern s16 D_8010F4F2_MinigameInstructions;
-#endif
 extern s16 D_8010F4F4_MinigameInstructions;
 extern s16 D_8010F4F6_MinigameInstructions[4]; /* per player state */
 extern s16 D_8010F4FE_MinigameInstructions[3]; /* per side (2 used) */
 extern f32 D_8010F504_MinigameInstructions[2];
 /* Another minigame's state (range F). */
 extern Ovl6FPairS16 D_8010F50C_MinigameInstructions[2]; /* model pairs; D_8010F50E is [0].unk_02 */
-#ifdef TARGET_PC
-#define D_8010F50E_MinigameInstructions (D_8010F50C_MinigameInstructions[0].unk_02)
-#else
 extern s16 D_8010F50E_MinigameInstructions;
-#endif
 extern f32 D_8010F514_MinigameInstructions[2];
 extern f32 D_8010F51C_MinigameInstructions[2];
 extern f32 D_8010F524_MinigameInstructions[2];
@@ -286,18 +257,10 @@ extern f32 D_8010F52C_MinigameInstructions;
 extern f32 D_8010F530_MinigameInstructions[2];
 /* Per player stick value, stored as a word (sw) and read back as its low half (lh at +2). */
 extern s32 D_8010F538_MinigameInstructions[4];
-#ifdef TARGET_PC
-#define D_8010F538_LO16(i) ((s16)D_8010F538_MinigameInstructions[i])
-#else
 #define D_8010F538_LO16(i) (((s16*)&D_8010F538_MinigameInstructions[i])[1])
-#endif
 /* A model id kept as a word (LoadFormFile() & 0xFFFF); retail reads its low half as D_8010F54A. */
 extern s32 D_8010F548_MinigameInstructions;
-#ifdef TARGET_PC
-#define D_8010F54A_MinigameInstructions ((s16)D_8010F548_MinigameInstructions)
-#else
 extern s16 D_8010F54A_MinigameInstructions;
-#endif
 extern Ovl6FPlayerWork* D_8010F750_MinigameInstructions[4]; /* four-player demos only */
 extern s16 D_8010F760_MinigameInstructions; /* D_8010E4F0[].unk_04: 0 = one player */
 extern s16 D_8010F762_MinigameInstructions;

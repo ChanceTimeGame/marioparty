@@ -14,17 +14,10 @@ typedef struct OptionsSongEntry {
     /* 0x09 */ s8 unk_09;
 } OptionsSongEntry; // sizeof 0x0C
 
-#ifdef TARGET_PC /* ROM offsets linked as symbol addresses (pb_host.h) */
-#define D_15396A0 PB_ROM_ADDR(0x15396A0)
-#define D_1778BC0 PB_ROM_ADDR(0x1778BC0)
-#define D_1832AE0 PB_ROM_ADDR(0x1832AE0)
-#define D_1BB8460 PB_ROM_ADDR(0x1BB8460)
-#else
 extern Addr D_15396A0;
 extern Addr D_1778BC0;
 extern Addr D_1832AE0;
 extern Addr D_1BB8460;
-#endif
 
 s32 func_80059550(s16 index);
 s32 func_80059CE8(void* str, s16 win);
@@ -34,12 +27,8 @@ void func_8006073C(void);
 void func_80010C30(Addr*, s32, s32, s32);
 void func_8000BE98(Addr*, Addr*, s32, s32, s32);
 void func_800F66FC_OptionsHouse(void* arg0);
-#ifdef TARGET_PC
-#define func_8006D010_s32 func_8006D010
-#else
 /* retail's prototype returned an int: the result is re-extended at every use */
 #define func_8006D010_s32 ((s32 (*)(s16, s16, s16, s16, s32, s16))func_8006D010)
-#endif
 void func_800F7020_OptionsHouse(void);
 void func_800F73B0_OptionsHouse(s16 arg0, s16 arg1);
 void func_800F74C0_OptionsHouse(void);
@@ -208,7 +197,7 @@ void func_800F6750_OptionsHouse(void) {
             if (msg != -1) {
                 PlaySound(0xF5);
             }
-            func_800F66FC_OptionsHouse((void*)(PB_PTR32)D_800F7FE4_OptionsHouse[cur].msg);
+            func_800F66FC_OptionsHouse((void*)(s32)D_800F7FE4_OptionsHouse[cur].msg);
         }
         msg = D_800F7FE4_OptionsHouse[cur].msg;
         func_800F66C4_OptionsHouse(D_800F7FE4_OptionsHouse[cur].cam);
@@ -421,12 +410,7 @@ void func_800F73B0_OptionsHouse(s16 arg0, s16 arg1) {
     }
     HuPrcSleep(1);
     data = func_8000B2BC();
-#ifdef TARGET_PC
-    /* host: data views B980's 32-bit block; file_1ACF0_struct's pointers are wider here */
-    ((s32*)data)[0x40 / 4] = arg1 + 20;
-#else
     data->unk_40 = arg1 + 20;
-#endif
     if (D_800F8012_OptionsHouse == 0) {
         func_80010C30(&D_1832AE0, 0, 0, 0);
         func_8000BE98(&D_15396A0, &D_1778BC0, 0, 0, 0);
@@ -595,7 +579,7 @@ void func_800F7604_OptionsHouse(void) {
             sprintf(buf, "\x08\x11\x0A\x08\x12\x0A\x08\x13\x0A\x08\x14\x0A\x08\x15\x0A\x08\x16");
             for (i = 0; i < 6; i++) {
                 if (row * 6 + i < count) {
-                    func_8006DA5C(win, (void*)(PB_PTR32)D_800F805C_OptionsHouse[row * 6 + i].msg, i);
+                    func_8006DA5C(win, (void*)(s32)D_800F805C_OptionsHouse[row * 6 + i].msg, i);
                 } else {
                     func_8006DA5C(win, "", i);
                 }
@@ -652,7 +636,7 @@ void func_800F7ACC_OptionsHouse(void) {
         sel = _CheckFlag(0x10) == 0;
         if (prev != sel) {
             func_8006EB40(win);
-            func_8006DA5C(win, (void*)(PB_PTR32)(sel + 0x456), 0);
+            func_8006DA5C(win, (void*)(s32)(sel + 0x456), 0);
             LoadStringIntoWindow(win, (void*)0x455, -1, -1);
         }
         prev = sel;

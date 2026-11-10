@@ -173,11 +173,7 @@ extern BRHist D_800FF9E0_BobsledRun;
 /* The progress bar's two sprite groups: track pieces, then the flag. Retail addresses the flag as
    its own label inside D_800FFAD4's 4 bytes (undefined_syms.txt); the host reads it from there. */
 extern u16 D_800FFAD4_BobsledRun;
-#ifdef TARGET_PC
-#define D_800FFAD6_BobsledRun ((&D_800FFAD4_BobsledRun)[1])
-#else
 extern u16 D_800FFAD6_BobsledRun;
-#endif
 extern u16 D_800FFAD8_BobsledRun;
 extern u16 D_800FFADA_BobsledRun;
 extern u16 D_800FFADC_BobsledRun;
@@ -254,11 +250,7 @@ void func_80037178(s16, Vec3f*);
 void func_800594E4(s16, u16);
 void func_80060440(s16, s16);
 void func_8006073C(void);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 void func_800AF2E0(f32, f32*, f32*);
 
 /* ---------------------------------------------------------------------------------------------

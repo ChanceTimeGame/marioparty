@@ -1,11 +1,7 @@
 #include "common.h"
 #include "PR/os.h"
 
-#ifdef TARGET_PC
-extern void func_8003B330(void); /* host: matches the definition */
-#else
 extern void func_8003B330(void* arg);
-#endif
 
 extern OSThread gInitThread;
 extern u8 gThread1Stack[];
@@ -22,11 +18,7 @@ void ultraMain() {
 }
 
 void thread1_idle(void* arg) {
-#ifdef TARGET_PC
-    osCreateThread(&gMainThread, 3, (void (*)(void*))func_8003B330, arg, gThread3Stack, 2);
-#else
     osCreateThread(&gMainThread, 3, &func_8003B330, arg, gThread3Stack, 2);
-#endif
     osStartThread(&gMainThread);
     osSetIntMask(0x3FFF01);
     osSetThreadPri(NULL, 0);

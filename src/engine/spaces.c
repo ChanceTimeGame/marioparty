@@ -164,18 +164,8 @@ INCLUDE_ASM("asm/nonmatchings/engine/spaces", RenderSpaces);
 /* Get pointer to space data section */
 /* The board-space file is big-endian and read in place: the host swaps each halfword and float as
    it reads it (BE16/BEF32 are plain loads on the N64). */
-#ifdef TARGET_PC
-#define BE16(p) pb_bswap16(*(u16*)(p))
-static f32 BEF32(const void* p) {
-   u32 w = pb_bswap32(*(const u32*)p);
-   f32 f;
-   memcpy(&f, &w, sizeof(f));
-   return f;
-}
-#else
 #define BE16(p) (*(u16*)(p))
 #define BEF32(p) (*(f32*)(p))
-#endif
 
 u8 *GetSpaceDataStream(u8 *byteSteam, s32 metaDataOffset) {
    u16* pDataOffset = (u16*) &byteSteam[metaDataOffset];
@@ -394,7 +384,7 @@ void BoardSpaceStepAnim(void) {
    f32 fval;
 
    process = HuPrcCurrentGet();
-   space = BoardSpaceGet((s32)PB_HOSTCAST(PB_PTR32, process->user_data));
+   space = BoardSpaceGet((s32)(process->user_data));
 
    fval = 1.4f;
    if (D_800C4FD0 != NULL) {
@@ -418,7 +408,7 @@ void BoardSpaceStepAnim(void) {
 void SetSpaceStepAnim(s16 spaceIndex) {
    Process *process;
    process = omAddPrcObj(BoardSpaceStepAnim, 0xEF00, 0, 0);
-   process->user_data = (void *)PB_HOSTCAST(PB_PTR32, (s32)spaceIndex);
+   process->user_data = (void *)((s32)spaceIndex);
 }
 
 /* Space process */
@@ -428,7 +418,7 @@ void SpaceDisappearAnim(void) {
    f32 fval;
 
    process = HuPrcCurrentGet();
-   space = BoardSpaceGet((s32)PB_HOSTCAST(PB_PTR32, process->user_data));
+   space = BoardSpaceGet((s32)(process->user_data));
 
    fval = 1.0f;
    if (D_800C4FD0 != NULL) {
@@ -452,7 +442,7 @@ void SpaceDisappearAnim(void) {
 void SetSpaceDisappearAnim(s16 spaceIndex) {
    Process *process;
    process = omAddPrcObj(SpaceDisappearAnim, 0xEF00, 0, 0);
-   process->user_data = (void *)PB_HOSTCAST(PB_PTR32, (s32)spaceIndex);
+   process->user_data = (void *)((s32)spaceIndex);
 }
 
 /* Space process */
@@ -462,7 +452,7 @@ void SpaceSpawnAnim(void) {
    f32 fval;
 
    process = HuPrcCurrentGet();
-   space = BoardSpaceGet((s32)PB_HOSTCAST(PB_PTR32, process->user_data));
+   space = BoardSpaceGet((s32)(process->user_data));
 
    fval = 0.0f;
    if (D_800C4FD0 != NULL) {
@@ -486,7 +476,7 @@ void SpaceSpawnAnim(void) {
 void SetSpaceSpawnAnim(s16 spaceIndex) {
    Process *process;
    process = omAddPrcObj(SpaceSpawnAnim, 0xEF00, 0, 0);
-   process->user_data = (void *)PB_HOSTCAST(PB_PTR32, (s32)spaceIndex);
+   process->user_data = (void *)((s32)spaceIndex);
 }
 
 void SetSpaceEventList(s16 index, EventListEntry *eventList) {

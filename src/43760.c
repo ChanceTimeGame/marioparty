@@ -23,12 +23,7 @@ extern s16 D_800D645A;
 extern s16 D_800D645C;
 extern s16 D_800D645E;
 extern s16 D_800D6460;
-#ifdef TARGET_PC
-/* Host view: a split label inside the object before it (one host object, not two). */
-#define D_800D6404 (*(u16*)((u8*)D_800D6400 + 4))
-#else
 extern u16 D_800D6404;
-#endif
 extern s8 D_800D6459;
 extern s8 D_800D6438[4][5];
 extern s8 D_800D644C[4];
@@ -36,11 +31,7 @@ extern s8 D_800D6462[5];
 extern s8 D_800D6467;
 
 s32 func_80054730(s32);
-#ifdef TARGET_PC
-s16 func_8005949C(s16); /* host: matches the definition */
-#else
 s16 func_8005949C(s32);
-#endif
 void func_80047D48(void);
 void func_80043544(void);
 void func_8004367C(void);
@@ -81,11 +72,7 @@ u8 D_800C4E24[5] = { 0x1E, 0x28, 0x2B, 0x30, 0x32 };
 u8 D_800C4E2C[10] = { 0x0A, 0x11, 0x12, 0x16, 0x20, 0x24, 0x33, 0x34, 0x35, 0x37 };
 u8 D_800C4E38[25] = { 0x04, 0x05, 0x08, 0x0C, 0x0E, 0x0F, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1B, 0x1D, 0x1F, 0x22, 0x23, 0x27, 0x29, 0x2C, 0x2D, 0x2E, 0x2F, 0x38, 0x07, 0x09 };
 u8 D_800C4E54[] = { 25, 10, 5, 13 };
-#ifdef TARGET_PC
-#define D_800C4DCF (D_800C4DD0 - 1)
-#else
 extern u8 D_800C4DCF[]; /* undefined_syms.txt */
-#endif
 
 extern s32 D_800ECE10;
 void func_80042BAC(omObjData* obj);
@@ -167,7 +154,7 @@ void func_80042BAC(omObjData* obj) {
                         obj->work[3] = 60;
                         func_8006EB80();
                         func_8006DA1C(D_800D6400[obj->work[1]].unk_00, 0, 4);
-                        LoadStringIntoWindow(D_800D6400[obj->work[1]].unk_00, (void*)PB_HOSTCAST(PB_PTR32, (D_800D6454[obj->work[1]] + 0x324)), -2, 4);
+                        LoadStringIntoWindow(D_800D6400[obj->work[1]].unk_00, (void*)(D_800D6454[obj->work[1]] + 0x324), -2, 4);
                         func_8006E288(D_800D6400[obj->work[1]].unk_00, 1);
                         func_8006E2B8(D_800D6400[obj->work[1]].unk_00, 0xA0, 0xA0, 0xA0);
                         func_800714F0(D_800D6400[obj->work[1]].unk_00, 0xFE, 0xFF, 0xD0);
@@ -309,52 +296,6 @@ void func_800437B8(void) {
     }
 }
 
-#ifdef TARGET_PC
-/* --dev-minigame: a forced minigame's type (1 = 1v3, 2 = 2v2, 0 = other) from the roulette lists,
-   and teams of that shape. The space colours set the teams for the type they implied
-   (func_80054868), so a forced 2v2 game could get lopsided teams and leave a slot empty. Teams
-   that already have the shape are kept. */
-s32 pb_dev_minigame_type(s32 mg) {
-    s32 i;
-
-    for (i = 0; i < (s32)sizeof(D_800C4D1C); i++) {
-        if (D_800C4D1C[i] == mg + 1) {
-            return 2;
-        }
-    }
-    for (i = 0; i < (s32)sizeof(D_800C4D00); i++) {
-        if (D_800C4D00[i] == mg + 1) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void pb_dev_minigame_teams(s32 type) {
-    s32 n0 = 0;
-    s32 i;
-
-    for (i = 0; i < 4; i++) {
-        n0 += GwPlayer[i].group == 0;
-        if (GwPlayer[i].group > 1) {
-            n0 = -1;
-            break;
-        }
-    }
-    if ((type == 2 && n0 != 2) || (type == 1 && n0 != 1)) {
-        for (i = 0; i < 4; i++) {
-            GwPlayer[i].group = type == 2 ? i >> 1 : i != 0;
-        }
-    }
-    if (type == 1) {
-        for (i = 0; i < 4; i++) {
-            if (GwPlayer[i].group == 0) {
-                D_800ECE10 = i;
-            }
-        }
-    }
-}
-#endif
 
 // register allocation and hoisting of sel*5 around the exclusion test (masked 13)
 #ifdef NON_MATCHING
@@ -367,9 +308,6 @@ void func_8004388C(s32 arg0) {
     unk43760* p;
     omObjData* obj;
 
-#ifdef TARGET_PC
-    s32 pbTries;
-#endif
 
     sel = 3;
     if (arg0 == -1) {
@@ -378,32 +316,6 @@ void func_8004388C(s32 arg0) {
             sel = 3;
         }
     }
-#ifdef TARGET_PC
-    /* --dev-built-minigames: a type with no built minigame (2v2, so far) offers the
-       four-player list instead; the teams are then simply not used. */
-    for (j = 0; j < D_800C4E10[sel]; j++) {
-        if (pb_dev_minigame_allowed(lists[sel][j] - 1)) {
-            break;
-        }
-    }
-    if (j == D_800C4E10[sel]) {
-        sel = 0;
-        /* --dev-minigame: the forced minigame's own type, even when the space colours say otherwise */
-        if (pb_dev_minigame_forced()) {
-            s32 k;
-            for (k = 0; k < 4; k++) {
-                for (j = 0; j < D_800C4E10[k]; j++) {
-                    if (pb_dev_minigame_allowed(lists[k][j] - 1)) {
-                        sel = k;
-                        k = 4;
-                        break;
-                    }
-                }
-            }
-            pb_dev_minigame_teams(sel);
-        }
-    }
-#endif
     D_800D6459 = sel;
     for (i = 0; i < D_800C4D3C[sel]; i++) {
         p = &D_800D6400[i];
@@ -416,24 +328,8 @@ void func_8004388C(s32 arg0) {
         func_800717C0(p->unk_00);
         func_8006DEC8(p->unk_00, p->unk_08 / 2, p->unk_0A / 2);
         func_8006E154(p->unk_00, 0);
-#ifdef TARGET_PC
-        pbTries = 0;
-#endif
         while (1) {
             D_800D6454[i] = lists[sel][(u8)(rand8() % D_800C4E10[sel])];
-#ifdef TARGET_PC
-            /* --dev-built-minigames: offer only minigames the host builds. When the built ones run
-               out (repeats, recent picks, coin rules), take any built one; with none of this type
-               built, the pick is retail's. */
-            if (++pbTries < 4000) {
-                if (!pb_dev_minigame_allowed(D_800D6454[i] - 1)) {
-                    continue;
-                }
-                if (pbTries > 2000) {
-                    break;
-                }
-            }
-#endif
             for (j = 0; j < i; j++) {
                 if (j != i && D_800D6454[j] == D_800D6454[i]) {
                     break;
@@ -489,7 +385,7 @@ void func_8004388C(s32 arg0) {
             break;
         }
         func_8006EB80();
-        LoadStringIntoWindow(p->unk_00, (void*)PB_HOSTCAST(PB_PTR32, (D_800D6454[i] + 0x324)), -2, 4);
+        LoadStringIntoWindow(p->unk_00, (void*)(D_800D6454[i] + 0x324), -2, 4);
         func_8006E288(p->unk_00, D_800C4DCF[D_800D6454[i]]);
         func_8006E070(p->unk_00, 0);
     }
@@ -936,7 +832,7 @@ void func_800448F4(omObjData* obj) {
                         obj->work[3] = 60;
                         func_8006EB80();
                         func_8006DA1C(D_800D6400[obj->work[1]].unk_00, 0, 4);
-                        LoadStringIntoWindow(D_800D6400[obj->work[1]].unk_00, (void*)PB_HOSTCAST(PB_PTR32, (D_800D6454[obj->work[1]] + 0x324)), -2, 4);
+                        LoadStringIntoWindow(D_800D6400[obj->work[1]].unk_00, (void*)(D_800D6454[obj->work[1]] + 0x324), -2, 4);
                         func_8006E288(D_800D6400[obj->work[1]].unk_00, 1);
                         func_8006E2B8(D_800D6400[obj->work[1]].unk_00, 0xA0, 0xA0, 0xA0);
                         func_800714F0(D_800D6400[obj->work[1]].unk_00, 0xFE, 0xFF, 0xD0);
@@ -1026,7 +922,7 @@ void func_8004501C(s32 arg0) {
             }
         } while (j != i);
         func_8006EB80();
-        LoadStringIntoWindow(p->unk_00, (void*)PB_HOSTCAST(PB_PTR32, (D_800D6454[i] + 0x324)), -2, 4);
+        LoadStringIntoWindow(p->unk_00, (void*)(D_800D6454[i] + 0x324), -2, 4);
         func_8006E288(p->unk_00, D_800C4DCF[D_800D6454[i]]);
         func_8006E070(p->unk_00, 0);
     }

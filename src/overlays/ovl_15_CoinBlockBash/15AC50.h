@@ -83,15 +83,6 @@ extern Vtx* D_80103284_CoinBlockBash[3];
 extern CBBBill* D_80103298_CoinBlockBash;
 
 /* Retail reads the low halves of these words as their own symbols. */
-#ifdef TARGET_PC
-#define D_80103222_CoinBlockBash ((s16)D_80103220_CoinBlockBash)
-#define D_8010323E_CoinBlockBash ((s16)D_8010323C_CoinBlockBash)
-#define D_80103242_CoinBlockBash ((s16)D_80103240_CoinBlockBash)
-#define D_80103246_CoinBlockBash ((s16)D_80103244_CoinBlockBash)
-#define CBB_SPRITE(i) ((s16)D_80103248_CoinBlockBash[i])
-#define D_80103252_CoinBlockBash ((s16)D_80103248_CoinBlockBash[2])
-#define D_80103256_CoinBlockBash ((s16)D_80103248_CoinBlockBash[3])
-#else
 extern s16 D_80103222_CoinBlockBash;
 extern s16 D_8010323E_CoinBlockBash;
 extern s16 D_80103242_CoinBlockBash;
@@ -100,7 +91,6 @@ extern s16 D_8010324A_CoinBlockBash;
 extern s16 D_80103252_CoinBlockBash;
 extern s16 D_80103256_CoinBlockBash;
 #define CBB_SPRITE(i) ((&D_8010324A_CoinBlockBash)[(i) * 2])
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Unit functions

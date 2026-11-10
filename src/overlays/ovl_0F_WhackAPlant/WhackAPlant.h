@@ -192,11 +192,7 @@ s32 func_80017A60(omObjData* obj);
 void func_80025BB8(s16, s16);
 omObjData* func_8005DB5C(s16 grp, u16 idx);
 /* Retail calls it with an s16 pot index (no zero-extension of the lh); same value on the host. */
-#ifdef TARGET_PC
-#define func_8005DB5C_s16(grp, idx) func_8005DB5C((grp), (idx))
-#else
 #define func_8005DB5C_s16(grp, idx) ((omObjData* (*)(s16, s16))func_8005DB5C)((grp), (idx))
-#endif
 void func_8005DB84(s16 grp, s32 bit);
 void func_8001E268(s16, u8, u8);
 void func_8001E2A8(s16, u16);
@@ -250,11 +246,7 @@ extern u16 D_800FB710_WhackAPlant;
 extern u16 D_800FB712_WhackAPlant;
 /* Camera block: D_800FB714 is a Vec3f over splat's D_800FB714/D_800FB718 labels. */
 extern Vec3f D_800FB714_WhackAPlant;
-#ifdef TARGET_PC
-#define D_800FB718_WhackAPlant (D_800FB714_WhackAPlant.y)
-#else
 extern f32 D_800FB718_WhackAPlant;
-#endif
 extern u16 D_800FB720_WhackAPlant; /* player index; its low byte read as u8 */
 extern Vec3f D_800FB724_WhackAPlant;
 extern u16 D_800FB730_WhackAPlant;

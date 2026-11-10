@@ -70,9 +70,5 @@ typedef struct EndingEmitterWork {
 /* D_80110300[1] read as a scalar: retail's codegen here keeps it cached across a struct-field
  * store (GCC's scalar-vs-struct alias rule), which an array element does not. The N64 build names
  * splat's label for the element; the host reads the element itself. */
-#ifdef TARGET_PC
-#define D_80110304_SCALAR (D_80110300_YoshisTropicalIslandEndingScene[1])
-#else
 extern omObjData* D_80110304_YoshisTropicalIslandEndingScene;
 #define D_80110304_SCALAR D_80110304_YoshisTropicalIslandEndingScene
-#endif

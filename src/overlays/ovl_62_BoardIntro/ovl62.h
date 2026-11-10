@@ -15,13 +15,8 @@ extern Object* D_800FCD70_BoardIntro;
    their own labels. On the host the low half is the word's value. */
 extern s32 D_800FCD74_BoardIntro;
 extern s32 D_800FCD78_BoardIntro[4];
-#ifdef TARGET_PC
-#define D_800FCD76_BoardIntro ((s16)D_800FCD74_BoardIntro)
-#define D_800FCD7A_BoardIntro ((s16)D_800FCD78_BoardIntro[0])
-#else
 extern s16 D_800FCD76_BoardIntro;
 extern s16 D_800FCD7A_BoardIntro;
-#endif
 /* Four models; splat split [1] off as D_800FCD8C and [2..3] as D_800FCD90 (N64 aliases only). */
 extern Object* D_800FCD88_BoardIntro[4];
 extern s32 D_800FCDA8_BoardIntro;

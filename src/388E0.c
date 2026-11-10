@@ -83,11 +83,7 @@ void func_80038864(unk388E0Struct80*);
 unk388E0Struct80* func_80038720(unk2C0C0StructC0*, s16);
 void func_80039A4C(s16);
 void func_800399F0(s16);
-#ifdef TARGET_PC
-s32 func_8009B850(const void*, const void*); /* host: one host prototype for the SDK-region unit 9C440 (unverified) */
-#else
 s32 func_8009B850(unk2C0C0Struct70*, u8*);
-#endif
 void func_8009B960(void*, void*);
 
 extern s8 D_800ED565;
@@ -216,16 +212,9 @@ unk2C0C0Struct70* func_8003813C(unk2C0C0StructC0* arg0, s16 arg1) {
 }
 
 
-#ifdef TARGET_PC
-/* Host: 24740.c uses the result of this void function (v0 left by the tail call). */
-unk2C0C0Struct70* func_80038178(unk2C0C0StructC0* arg0, u8* arg1) {
-    return func_80038194(arg0, arg1);
-}
-#else
 void func_80038178(unk2C0C0StructC0* arg0, u8* arg1) {
     func_80038194(arg0, arg1);
 }
-#endif
 unk2C0C0Struct70* func_80038194(unk2C0C0StructC0* arg0, u8* arg1) {
     u16 temp_s2;
     u16 i;
@@ -473,10 +462,6 @@ void func_80038888(u8* arg0, unk2C0C0StructC0* arg1, unk388E0Struct80* arg2) {
             *dst = c;
         }
     }
-#ifdef TARGET_PC
-    /* The palette is stored as host-endian u16 RGBA5551: tell the graphics bridge to swap it. */
-    pb_gfx_native16(arg2->unk_24, count * sizeof(u16));
-#endif
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/388E0", func_80038888);

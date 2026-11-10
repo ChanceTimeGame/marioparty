@@ -112,11 +112,7 @@ s32 func_800F9A24_GroundPound(omObjData* obj, f32 angle);
 s32 func_800F9F18_GroundPound(u32 seed);
 f32 func_80025E70(s16);
 void func_800090C4(omObjData* obj, u8 idx, u8 val);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 extern s32 D_800FA2D8_GroundPound;
 extern f32 D_800FA2DC_GroundPound;
 extern u8 D_800C5982;

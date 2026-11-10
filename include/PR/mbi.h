@@ -1,8 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host build: the unified 64-bit host edition (games/mp1/src/port/include) replaces
- * this header. N64 builds never define TARGET_PC and compile the original below unchanged. */
-#include <PR/mbi.h>
-#else /* !TARGET_PC */
 #ifndef _MBI_H_
 #define	_MBI_H_
 
@@ -101,4 +96,3 @@
 #endif
 
 #endif /* !_MBI_H_ */
-#endif /* !TARGET_PC */

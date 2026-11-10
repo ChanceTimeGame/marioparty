@@ -37,11 +37,7 @@ extern s32 D_80101870_AdventureModeSetup[][4];
 extern s32 D_801018B0_AdventureModeSetup[][8]; /* neighbour table */
 extern s32 D_80101A40_AdventureModeSetup;
 extern s32 D_80101ADC_AdventureModeSetup;
-#ifndef TARGET_PC
 extern u16 D_80101ADE_AdventureModeSetup; /* the low half of D_80101ADC (undefined_syms alias) */
-#else
-#define D_80101ADE_AdventureModeSetup ((u16)D_80101ADC_AdventureModeSetup)
-#endif
 extern s32 D_80101AE4_AdventureModeSetup;
 extern s32 D_80101E4C_AdventureModeSetup;
 extern f32 D_80101E50_AdventureModeSetup;
@@ -73,27 +69,16 @@ extern omObjData* D_80101FF8_AdventureModeSetup;
    .y/.z, read as overlapping Vec3f views. On the host those labels are views of the two objects. */
 extern Vec3f D_80102000_AdventureModeSetup;
 extern Vec3f D_8010200C_AdventureModeSetup;
-#ifndef TARGET_PC
 extern Vec3f D_80102004_AdventureModeSetup;
 extern Vec3f D_80102010_AdventureModeSetup;
-#else
-#define D_80102004_AdventureModeSetup (*(Vec3f*)&D_80102000_AdventureModeSetup.y)
-#define D_80102010_AdventureModeSetup (*(Vec3f*)&D_8010200C_AdventureModeSetup.y)
-#endif
 extern Vec3f D_80102018_AdventureModeSetup;
 extern unk_Struct00 D_80102410_AdventureModeSetup;
 extern unk_D80102450_AdventureModeSetup D_80102450_AdventureModeSetup;
 /* D_80102410 is a 0x40 record (fields to unk30.z) and D_80102450 a 0x40 struct: splat's
    D_80102448, D_80102474 and D_80102478 are their fields. On the host they are views. */
-#ifndef TARGET_PC
 extern f32 D_80102448_AdventureModeSetup;
 extern f32 D_80102474_AdventureModeSetup;
 extern f32 D_80102478_AdventureModeSetup;
-#else
-#define D_80102448_AdventureModeSetup (D_80102410_AdventureModeSetup.unk30.z)
-#define D_80102474_AdventureModeSetup (D_80102450_AdventureModeSetup.unk24)
-#define D_80102478_AdventureModeSetup (D_80102450_AdventureModeSetup.unk28)
-#endif
 extern s16 D_801025B4_AdventureModeSetup;
 extern s32 D_801025B8_AdventureModeSetup;
 extern s32 D_801025BC_AdventureModeSetup;
@@ -104,11 +89,7 @@ extern s32 D_801025CC_AdventureModeSetup;
 extern void* D_801025D0_AdventureModeSetup;
 extern unk_Struct02* D_801025D4_AdventureModeSetup;
 extern u16 D_801025D8_AdventureModeSetup[];     // seems wrong... used as u16, s16*
-#ifndef TARGET_PC
 extern s16 D_801025DA_AdventureModeSetup;
-#else
-#define D_801025DA_AdventureModeSetup (*(s16*)&D_801025D8_AdventureModeSetup[1]) /* [1] of the pair */
-#endif
 extern f32 D_801025DC_AdventureModeSetup;
 extern f32 D_801025E0_AdventureModeSetup;
 extern f32 D_801025E4_AdventureModeSetup;
@@ -205,17 +186,9 @@ typedef struct AMSObjWork {
 extern f32 D_80101E40_AdventureModeSetup;
 extern f32 D_80101E44_AdventureModeSetup;
 extern f32 D_80101E48_AdventureModeSetup;
-#ifndef TARGET_PC
 extern f32 D_80102014_AdventureModeSetup;
-#else
-#define D_80102014_AdventureModeSetup (D_8010200C_AdventureModeSetup.z)
-#endif
 
-#ifdef TARGET_PC
-s16 func_8005B470(s16);
-#else
 s32 func_8005B470(s16); /* retail's call has no extension of the result (an int return) */
-#endif
 void func_80071FF4(s32, u8);
 void func_801015D0_AdventureModeSetup(void);
 void func_80101274_AdventureModeSetup();
@@ -250,11 +223,7 @@ extern s32 D_80101E7C_AdventureModeSetup;
 extern f32 D_80101E80_AdventureModeSetup;
 extern f32 D_80101E84_AdventureModeSetup;
 s32 func_800F9030_AdventureModeSetup(s32, s32);
-#ifdef TARGET_PC
-void func_80052CCC(s32, u8); /* host: matches the definition */
-#else
 void func_80052CCC(s32, s32);
-#endif
 /* ---- end fork B ---- */
 /* ---- fork C ---- */
 extern s32 D_80101A64_AdventureModeSetup;
@@ -377,7 +346,6 @@ typedef struct unkAMSetupState {
     /* 0x20 */ s32 coins[4]; /* low half = start coins */
 } unkAMSetupState;
 
-#ifndef TARGET_PC
 extern s32 D_8010206C_AdventureModeSetup;
 extern unkAMSetupStruct01 D_80102580_AdventureModeSetup;
 extern s32 D_80102584_AdventureModeSetup;
@@ -386,18 +354,6 @@ extern unkAMSetupStruct01 D_8010259C_AdventureModeSetup;
 extern s32 D_801025A0_AdventureModeSetup;
 extern u16 D_801025A2_AdventureModeSetup;
 extern s32 D_801025A4_AdventureModeSetup;
-#else
-#define PB_AMS_AT(T, base, off) (*(T*)((u8*)&(base) + (off)))
-#define D_8010206C_AdventureModeSetup PB_AMS_AT(s32, D_80102028_AdventureModeSetup, 0x44)
-#define D_80102580_AdventureModeSetup PB_AMS_AT(unkAMSetupStruct01, D_80102570_AdventureModeSetup, 0x10)
-#define D_80102584_AdventureModeSetup PB_AMS_AT(s32, D_80102570_AdventureModeSetup, 0x14)
-#define D_80102588_AdventureModeSetup PB_AMS_AT(s32, D_80102570_AdventureModeSetup, 0x18)
-#define D_8010259C_AdventureModeSetup PB_AMS_AT(unkAMSetupStruct01, D_80102570_AdventureModeSetup, 0x2C)
-#define D_801025A0_AdventureModeSetup PB_AMS_AT(s32, D_80102570_AdventureModeSetup, 0x30)
-/* the low half of D_801025A0's word: offset 0 of it on a little-endian host */
-#define D_801025A2_AdventureModeSetup ((u16)D_801025A0_AdventureModeSetup)
-#define D_801025A4_AdventureModeSetup PB_AMS_AT(s32, D_80102570_AdventureModeSetup, 0x34)
-#endif
 
 #define AMS_ACTIVE (AMS_SEL.joined)
 #define AMSD_ACTIVE (AMS_SEL.joined)

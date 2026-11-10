@@ -1059,13 +1059,8 @@ void func_800FA4A4_UnusedMinigame0(void) {
     s16 i;
     UM0State* st;
 
-#ifdef TARGET_PC
-    D_80103DA4_UnusedMinigame0 = HuMemDirectMalloc(10000 * sizeof(UM0State));
-    D_80103DAC_UnusedMinigame0 = HuMemDirectMalloc(10000 * sizeof(UM0State*));
-#else
     D_80103DA4_UnusedMinigame0 = HuMemDirectMalloc(0x927C0);
     D_80103DAC_UnusedMinigame0 = HuMemDirectMalloc(0x9C40);
-#endif
     func_801025B8_UnusedMinigame0(board);
     for (i = 0; i < n; i++) {
         if (!func_800FACA0_UnusedMinigame0(board, &x, &z)) {

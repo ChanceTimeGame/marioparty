@@ -212,9 +212,7 @@ void func_800FE368_TreasureDivers(void);
 extern s32 D_800FE430_TreasureDivers;
 extern s32 D_800FE434_TreasureDivers;
 extern u32 D_800FE438_TreasureDivers; /* the seed */
-#ifndef TARGET_PC
 extern u16 D_800FE43A_TreasureDivers; /* the seed's low half (a split label) */
-#endif
 extern s32 D_800FE43C_TreasureDivers;
 extern s32 D_800FE440_TreasureDivers;
 extern s32 D_800FE444_TreasureDivers[3];
@@ -260,12 +258,7 @@ extern omObjData* D_800FED08_TreasureDivers[];
 extern s16 D_800FED30_TreasureDivers;
 extern TDWork* D_800FED40_TreasureDivers[256];
 extern Matrix4f D_800FF140_TreasureDivers;
-#ifdef TARGET_PC
-/* Split label: the view matrix's [3][2] (D_800FF140 + 0x38); a separate host object reads 0. */
-#define D_800FF178_TreasureDivers (D_800FF140_TreasureDivers[3][2])
-#else
 extern f32 D_800FF178_TreasureDivers;
-#endif
 extern s16 D_800FF180_TreasureDivers;
 extern TDBoat D_800FF188_TreasureDivers[3];
 extern omObjData* D_800FF248_TreasureDivers;

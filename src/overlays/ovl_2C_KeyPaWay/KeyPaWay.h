@@ -382,26 +382,11 @@ void func_800FE858_KeyPaWay(omObjData*);
 void func_800FE8EC_KeyPaWay(omObjData*);
 void func_800FEA28_KeyPaWay(omObjData*);
 
-/* ---------------------------------------------------------------------------------------------
-   .data (1F62C0.data.s, 0x800FF270..0x800FF3B0; still asm). Inner labels of one object are
-   #define views under TARGET_PC and keep their labels on the N64; prefer the object spelling
-   (n64chkf compares linked addresses). When the data moves to C, the inner labels become
-   undefined_syms.txt aliases.
-   --------------------------------------------------------------------------------------------- */
 extern f32 D_800FF270_KeyPaWay[5][2]; /* (x, z) start per group-1 object (func_800FA450 arg1) */
 extern Vec3f D_800FF298_KeyPaWay[4];  /* func_800F8CC4 start positions */
 extern Vec3f D_800FF2C8_KeyPaWay[4];  /* indexed by D_800FF50C[i] (func_800F92B8) */
 extern s32 D_800FF2F8_KeyPaWay[6];    /* form file per character (| 0x400000) */
 extern f32 D_800FF310_KeyPaWay[3][3][2]; /* (x, z) grid: [KPWPlayerExt.unk_16][unk_18] */
-#ifdef TARGET_PC
-#define D_800FF274_KeyPaWay (D_800FF270_KeyPaWay[0][1])
-#define D_800FF29C_KeyPaWay (D_800FF298_KeyPaWay[0].y)
-#define D_800FF2A0_KeyPaWay (D_800FF298_KeyPaWay[0].z)
-#define D_800FF314_KeyPaWay (D_800FF310_KeyPaWay[0][0][1])
-#define D_800FF318_KeyPaWay (D_800FF310_KeyPaWay[0][1][0])
-#define D_800FF31C_KeyPaWay (D_800FF310_KeyPaWay[0][1][1])
-#define D_800FF330_KeyPaWay (D_800FF310_KeyPaWay[1][1][0])
-#else
 extern f32 D_800FF274_KeyPaWay;
 extern f32 D_800FF29C_KeyPaWay;
 extern f32 D_800FF2A0_KeyPaWay;
@@ -409,7 +394,6 @@ extern f32 D_800FF314_KeyPaWay;
 extern f32 D_800FF318_KeyPaWay;
 extern f32 D_800FF31C_KeyPaWay;
 extern f32 D_800FF330_KeyPaWay;
-#endif
 /* func_800F7840 (the key) */
 extern f32 D_800FF358_KeyPaWay;
 extern f32 D_800FF35C_KeyPaWay;
@@ -420,11 +404,7 @@ extern f32 D_800FF36C_KeyPaWay;
 extern u16 D_800FF370_KeyPaWay[2]; /* {30, 30}; [1] is %lo(D_800FF370 + 2) */
 /* func_800F8CC4: a word counter (lw/sw, = 1) whose low half retail reads as D_800FF376 (lhu). */
 extern s32 D_800FF374_KeyPaWay;
-#ifdef TARGET_PC
-#define D_800FF376_KeyPaWay ((u16)D_800FF374_KeyPaWay)
-#else
 extern u16 D_800FF376_KeyPaWay;
-#endif
 extern u16 D_800FF378_KeyPaWay; /* func_800F9A90 */
 extern u16 D_800FF37A_KeyPaWay;
 extern omObjData* D_800FF37C_KeyPaWay; /* first group-1 object that loaded the shared model */
@@ -439,11 +419,6 @@ extern u16 D_800FF3A4_KeyPaWay; /* five unreferenced halfwords follow */
 /* .rodata (1F62C0, INCLUDE_RODATA): SJIS string passed to func_8007B168. */
 extern const u8 D_800FF3B0_KeyPaWay[];
 
-/* ---------------------------------------------------------------------------------------------
-   .bss (ovl_2C_bss.bss.s, 0x800FF500..0x800FF5B0). Inner labels of one object are #define views
-   under TARGET_PC (gen_ovl.py merges them into the object) and keep their labels on the N64.
-   Types: lh read -> s16, lhu-only -> u16, sh-only -> free (kept u16 unless known).
-   --------------------------------------------------------------------------------------------- */
 extern u16 D_800FF500_KeyPaWay; /* func_800FBAD4 */
 extern u16 D_800FF502_KeyPaWay;
 extern u16 D_800FF504_KeyPaWay; /* func_800FBC98 timer; func_800FE744 frames */
@@ -477,13 +452,8 @@ extern omObjData* D_800FF55C_KeyPaWay; /* unkKeyPaWayStruct work */
 extern omObjData* D_800FF560_KeyPaWay; /* KPWStageWork work */
 /* Camera eye: D_800FF568/D_800FF56C are its y/z (retail takes their addresses: &D_800FF564.y). */
 extern Vec3f D_800FF564_KeyPaWay;
-#ifdef TARGET_PC
-#define D_800FF568_KeyPaWay (D_800FF564_KeyPaWay.y)
-#define D_800FF56C_KeyPaWay (D_800FF564_KeyPaWay.z)
-#else
 extern f32 D_800FF568_KeyPaWay;
 extern f32 D_800FF56C_KeyPaWay;
-#endif
 extern f32 D_800FF570_KeyPaWay;
 extern omObjData* D_800FF574_KeyPaWay; /* camera process, KPWCameraWork */
 extern u16 D_800FF578_KeyPaWay; /* game state */
@@ -491,11 +461,7 @@ extern omObjData* D_800FF57C_KeyPaWay; /* the key's carrier (a player object) */
 extern u16 D_800FF580_KeyPaWay;
 /* Camera target: D_800FF588 is its y. */
 extern Vec3f D_800FF584_KeyPaWay;
-#ifdef TARGET_PC
-#define D_800FF588_KeyPaWay (D_800FF584_KeyPaWay.y)
-#else
 extern f32 D_800FF588_KeyPaWay;
-#endif
 extern omObjData* D_800FF590_KeyPaWay; /* the key (KPWBodyWork, unk_68.key) */
 extern omObjData** D_800FF594_KeyPaWay; /* func_8005DB44(0): the four players (KPWPlayerWork) */
 extern Vec3f D_800FF598_KeyPaWay; /* camera up */

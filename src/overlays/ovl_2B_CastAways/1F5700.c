@@ -267,17 +267,6 @@ f32 func_800FB858_CastAways(omObjData* arg0) {
 }
 
 void func_800FB884_CastAways(void) {
-#ifdef TARGET_PC
-    f32* view = &D_800EE738.x;
-
-    view[0] = 0.0f;
-    view[1] = 900.0f;
-    view[-1] = 0.0f;
-    D_800C3110->unk_40 = 45.0f;
-    view[2] = 45.0f;
-    view[3] = 20000.0f;
-    view[4] = 10000.0f;
-#else
     D_800EE73C.x = 0.0f;
     D_800EE73C.z = 900.0f;
     ((f32*)&D_800EE73C)[-1] = 0.0f;
@@ -285,7 +274,6 @@ void func_800FB884_CastAways(void) {
     D_800EE73C.fov = 45.0f;
     D_800EE73C.far = 20000.0f;
     D_800EE73C.near = 10000.0f;
-#endif
     func_8001D420(0, &D_800FBB80_CastAways, &D_800FBB70_CastAways, D_800FBB9C_CastAways);
     func_8001D57C(0);
 }

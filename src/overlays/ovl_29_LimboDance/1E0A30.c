@@ -1240,12 +1240,8 @@ s16 func_800F9C98_LimboDance(void) {
 
     b = D_800FF068_LimboDance;
     for (i = 0; i < D_800FF064_LimboDance; i++, b++) {
-#ifdef TARGET_PC
-        if (!(b->active == 1 && b->state == 0)) {
-#else
         /* retail tests active and state as one word */
         if (*(s32*)&b->active != 0x10000) {
-#endif
             break;
         }
     }

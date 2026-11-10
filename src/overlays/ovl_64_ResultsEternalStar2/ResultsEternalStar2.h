@@ -63,15 +63,9 @@ void MBModelClose(void);
 /* Retail called these unprototyped (arguments arrive promoted, not narrowed to the definition's
    s16/s8: func_8004F754's x, func_80054744's index, func_800596DC's u16 value); the host calls
    them normally. */
-#ifdef TARGET_PC
-#define func_8004F754_unproto(spr, x, y) func_8004F754(spr, x, y)
-#define func_80054744_unproto(a, b) func_80054744(a, b)
-#define func_800596DC_unproto(a, b) func_800596DC(a, b)
-#else
 #define func_8004F754_unproto(spr, x, y) ((void (*)())func_8004F754)(spr, x, y)
 #define func_80054744_unproto(a, b) ((void (*)())func_80054744)(a, b)
 #define func_800596DC_unproto(a, b) ((void (*)())func_800596DC)(a, b)
-#endif
 
 /* .data */
 extern s32 D_800FC0C0_ResultsEternalStar2; /* sound pacing for the falling coins */

@@ -211,12 +211,7 @@ typedef struct unkStructSize14 {
 /* D_800C59AC: objmain.c's objmainChr D_800C59A8[6] read from each entry's `chr` field (+4).
    unk_00 is the big-endian word (chr, unk06) -- the character's file directory as chr << 16 --
    unk_04 is file0 and unk_08 file1. The host has no such word: a view is built from the entries. */
-#ifndef TARGET_PC
 extern unkStructSize14 D_800C59AC[];
-#else
-unkStructSize14* pb_objmainChrView(void);
-#define D_800C59AC (pb_objmainChrView())
-#endif
 
 typedef struct jump_buf
 {
@@ -244,9 +239,6 @@ typedef struct Process {
 /* 0x2C */ jmp_buf prc_jump;
 /* 0x88 */ process_func destructor;
 /* 0x8C */ void *user_data;
-#ifdef TARGET_PC
-           void *host; /* host: the process's fiber (engine/process.c); prc_jump is unused */
-#endif
 } Process; //sizeof 0x90
 
 typedef struct ProcessHeader { //?
@@ -285,10 +277,10 @@ typedef struct unk_Struct00 {
     /* 0x064 */ s16 unk64;
     /* 0x066 */ char pad66[0x72];
     /* 0x0D8 */ Vec4f unkD8;
-    /* 0x0E8 */ PB_PTR32 unkE8; /* PartyBoard: E8/F0/F4 hold callbacks, EC their argument */
-    /* 0x0EC */ PB_PTR32 unkEC;
-    /* 0x0F0 */ PB_PTR32 unkF0;
-    /* 0x0F4 */ PB_PTR32 unkF4;
+    /* 0x0E8 */ s32 unkE8;
+    /* 0x0EC */ s32 unkEC;
+    /* 0x0F0 */ s32 unkF0;
+    /* 0x0F4 */ s32 unkF4;
     /* 0x0F8 */ Mtx unkF8;
     /* 0x138 */ Mtx unk_138;
     /* 0x178 */ char unk_178[0x380]; // more matrices?
@@ -410,7 +402,7 @@ typedef struct unk_800ECDE0 {
 /* 0x1C */ u8 unk_1C;
 /* 0x1D */ u8 unk_1D;
 /* 0x1E */ s16 unk_1E;
-/* 0x20 */ PB_PTR32 unk_20; /* PartyBoard: holds a key-frame list pointer */
+/* 0x20 */ s32 unk_20;
 } unk_800ECDE0;
 
 // typedef struct viewAngle {
@@ -650,7 +642,7 @@ typedef struct unk2C0C0Struct60 {
     /* 0x1C */ s16 unk_1C;
     /* 0x1E */ char unk_1E[2];
     /* 0x20 */ void* unk_20;
-    /* 0x24 */ PB_PTR32 unk_24; /* the palette (u16*) */
+    /* 0x24 */ s32 unk_24; /* the palette (u16*) */
 } unk2C0C0Struct60; //sizeof 0x28
 
 typedef struct unk2C0C0Struct70 {
@@ -780,9 +772,9 @@ typedef struct unk2C0C0StructC0 {
     /* 0xA0 */ unk2C0C0Struct50* unk_A0;
     /* 0xA4 */ unk2C0C0Struct80* unk_A4;
     /* 0xA8 */ unk2C0C0Struct90* unk_A8;
-    /* 0xAC */ PB_PTR32 unk_AC; /* PartyBoard: AC/B0/B4 hold unk34D80Struct80 pointers */
-    /* 0xB0 */ PB_PTR32 unk_B0;
-    /* 0xB4 */ PB_PTR32 unk_B4;
+    /* 0xAC */ s32 unk_AC;
+    /* 0xB0 */ s32 unk_B0;
+    /* 0xB4 */ s32 unk_B4;
     /* 0xB8 */ unk2C0C0StructB8* unk_B8;
     /* 0xBC */ unk2C0C0Struct70* unk_BC;
     /* 0xC0 */ f32 unk_C0;
@@ -948,10 +940,10 @@ typedef struct DecisionTreeNonLeafNode {
     u32 type;
     union {
         void (*func) ();
-        PB_UPTR32 data; /* PartyBoard: also holds a function pointer */
+        u32 data;
     } node_data1;
     union {
-        PB_UPTR32 data; /* PartyBoard: also holds a node pointer */
+        u32 data;
         s32 *node_data;
     } node_data2;
 } DecisionTreeNonLeafNode;

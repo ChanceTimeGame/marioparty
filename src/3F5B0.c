@@ -2,9 +2,6 @@
 s16 D_800C4C30[7] = { 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C };
 s32 D_800C4C40[] = { 0xA0000, 0xA0000, 0xA0000, 0xA0000, 0xA0000, 0xA0001 };
 s32 D_800C4C58[] = { 0xA0004, 0xA0005, 0xA0006, 0xA0007, 0xA0008, 0xA0009 };
-#ifdef TARGET_PC
-s32 LoadFormBinary(void*, u32); /* engine/ovlman.h; unprototyped here on the N64 */
-#endif
 
 typedef struct DiceProcWork {
     /* 0x00 */ s32 player;
@@ -15,27 +12,15 @@ void func_80039ACC(s16);
 void func_80047694(s32);
 s32 func_80047B68(void);
 void func_800471FC(void);
-#ifdef TARGET_PC
-void func_80052C44(s32, s16, s16, s16, u16); /* host: matches the definition */
-#else
 void func_80052C44(s32, s32, s32, s32, s32);
-#endif
 s32 func_80041644(s32);
 s32 func_80041664(s32);
 extern s16 D_800EE320;
 
 
-#ifdef TARGET_PC
-s16 func_80038D5C(unk2C0C0StructC0*, u16, s16, char*); /* host: matches the definition */
-#else
 s16 func_80038D5C(unk2C0C0StructC0*, u16, s32, char*);
-#endif
 void func_8003967C(s16, u8);
-#ifdef TARGET_PC
-void func_800396B0(s16, s32); /* host: matches the definition */
-#else
 void func_800396B0(s16, u8);
-#endif
 s32 func_8004606C(void);
 
 
@@ -204,12 +189,7 @@ s16 RunDecisionTree(DecisionTreeNonLeafNode* currentNode) {
         case 0:
             break;
         }
-#ifdef TARGET_PC
-        /* N64: a KSEG0 node pointer is negative as s32. Packed outcomes use bits 0-16 only. */
-        if ((phi_s1->node_data2.data >> 24) != 0) {
-#else
         if ((s32)phi_s1->node_data2.data < 0) {
-#endif
             phi_s1 = (DecisionTreeNonLeafNode*)phi_s1->node_data2.data - 1;
         } else {
             if (GetPlayerStruct(-1)->cpu_difficulty_copy == 0) {
@@ -227,11 +207,11 @@ s16 RunDecisionTree(DecisionTreeNonLeafNode* currentNode) {
     }
 }
 
-void func_8003ECB0(u16 arg0, u16 arg1, PB_PTR32 arg2, u8 arg3, u8 arg4) {
+void func_8003ECB0(u16 arg0, u16 arg1, s32 arg2, u8 arg3, u8 arg4) {
     fontcolor = arg4;
-    print8((arg0 + 1), (arg1 + 1), PB_HOSTCAST(char*, arg2));
+    print8((arg0 + 1), (arg1 + 1), arg2);
     fontcolor = arg3;
-    print8(arg0, arg1, PB_HOSTCAST(char*, arg2));
+    print8(arg0, arg1, arg2);
 }
 
 
@@ -257,7 +237,7 @@ void func_8003ED30(void) {
     }
 }
 
-PB_PTR32 func_8003EDDC(s32* sequence) {
+s32 func_8003EDDC(s32* sequence) {
     Process* process = omAddPrcObj(func_8003ED30, 0xEFFF, 0, 0x40);
     ButtonSeqWork* work = HuMemMemoryAlloc(process->heap, sizeof(ButtonSeqWork));
 
@@ -265,12 +245,12 @@ PB_PTR32 func_8003EDDC(s32* sequence) {
     work->sequence = (u16*)sequence;
     work->index = 0;
     work->process = process;
-    return (PB_PTR32)work;
+    return (s32)work;
 }
-void func_8003EE3C(PB_PTR32 work) {
+void func_8003EE3C(s32 work) {
     EndProcess(((ButtonSeqWork*)work)->process);
 }
-s32 func_8003EE58(PB_PTR32 work) {
+s32 func_8003EE58(s32 work) {
     return ((ButtonSeqWork*)work)->index == -1;
 }
 void func_8003EE68(s16 x, s16 y) {
@@ -278,7 +258,7 @@ void func_8003EE68(s16 x, s16 y) {
     GW_PLAYER* player;
 
     sprintf(pfStrBuf, "   GAME COIN  ?  R  B  Y  !  M  K");
-    func_8003ECB0(x * 8, y * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
     for (i = 0; i < 4; ) {
         player = GetPlayerStruct(i);
         i++;
@@ -286,44 +266,44 @@ void func_8003EE68(s16 x, s16 y) {
                 (s8)player->happening_count, (s8)player->red_count, (s8)player->blue_count,
                 (s8)player->minigame_count, (s8)player->chance_count, (s8)player->mushroom_count,
                 (s8)player->bowser_count);
-        func_8003ECB0(x * 8, (y + i) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+        func_8003ECB0(x * 8, (y + i) * 8, (s32)pfStrBuf, 15, 9);
     }
 }
 void func_8003EF98(s16 x, s16 y) {
     sprintf(pfStrBuf, "KM: %d", D_800F2CDC);
-    func_8003ECB0(x * 8, y * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
 }
 void func_8003F008(s16 x, s16 y) {
     sprintf(pfStrBuf, "STAR:%2d", GetSumOfPlayerStars());
-    func_8003ECB0(x * 8, y * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
 }
 void func_8003F07C(s16 x, s16 y) {
     sprintf(pfStrBuf, "1   :%2d", D_800F65B8);
-    func_8003ECB0(x * 8, y * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "1VS3:%2d", D_800F37A8);
-    func_8003ECB0(x * 8, (y + 1) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 1) * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "2VS2:%2d", D_800EE986);
-    func_8003ECB0(x * 8, (y + 2) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 2) * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "4   :%2d", D_800F64C6);
-    func_8003ECB0(x * 8, (y + 3) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 3) * 8, (s32)pfStrBuf, 15, 9);
 }
 void func_8003F1C0(s16 x, s16 y) {
     sprintf(pfStrBuf, "+ :%2d", D_800F3298);
-    func_8003ECB0(x * 8, y * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "- :%2d", D_800F3180);
-    func_8003ECB0(x * 8, (y + 1) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 1) * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "S+:%2d", D_800ECC20);
-    func_8003ECB0(x * 8, (y + 2) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 2) * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "S-:%2d", D_800ED3C0);
-    func_8003ECB0(x * 8, (y + 3) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 3) * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "WA:%2d", D_800F65D8);
-    func_8003ECB0(x * 8, (y + 4) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 4) * 8, (s32)pfStrBuf, 15, 9);
     sprintf(pfStrBuf, "YO:%2d", D_800F37E8);
-    func_8003ECB0(x * 8, (y + 5) * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, (y + 5) * 8, (s32)pfStrBuf, 15, 9);
 }
 void func_8003F384(s16 x, s16 y) {
     sprintf(pfStrBuf, "MAP: %d    TURN: %d", GwSystem.curBoardIndex + 1, GwSystem.currentTurn);
-    func_8003ECB0(x * 8, y * 8, (PB_PTR32)pfStrBuf, 15, 9);
+    func_8003ECB0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
 }
 void func_8003F400(omObjData* obj) {
     DiceBlockWork* work = &D_800D62D0[obj->work[3]];

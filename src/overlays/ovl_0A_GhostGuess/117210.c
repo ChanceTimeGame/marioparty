@@ -453,11 +453,7 @@ void func_800F79D4_GhostGuess(omObjData* arg0) {
         arg0->func_ptr = func_800F6AAC_GhostGuess;
         break;
     }
-#ifdef TARGET_PC
-    func_800FB514_GhostGuess();
-#else
     ((void (*)(omObjData*))func_800FB514_GhostGuess)(arg0); /* retail passes the object */
-#endif
 }
 void func_800F7FD8_GhostGuess(f32 x, f32 y, f32 z, s32 arg3) {
     omObjData* player = D_800FBBE4_GhostGuess;
@@ -1341,11 +1337,7 @@ void func_800FB2D0_GhostGuess(s32 arg0, s32 arg1) {
                 if ((u8)a >= 0xFF) {
                     a = 0xFF;
                 }
-#ifdef TARGET_PC
-                ((u8*)px)[3] = a; /* texel bytes are big-endian in memory */
-#else
                 *px = (hi << 8) | (u8)a;
-#endif
             }
         }
     } while (i != 128);

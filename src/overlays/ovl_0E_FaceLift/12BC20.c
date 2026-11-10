@@ -908,13 +908,8 @@ void func_800F9800_FaceLift(omObjData* obj) {
     }
 }
 void func_800F9988_FaceLift(Gfx** gfx) {
-#ifdef TARGET_PC
-    gDPSetDepthImage((*gfx)++, PB_N64_ZBUFFER);
-    gDPSetColorImage((*gfx)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, PB_N64_ZBUFFER);
-#else
     gDPSetDepthImage((*gfx)++, 0x003D0800);
     gDPSetColorImage((*gfx)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, 0x003D0800);
-#endif
     gSPDisplayList((*gfx)++, D_800FC7E8_FaceLift);
 }
 // scheduling (one nop)
@@ -961,13 +956,13 @@ void func_800F9B38_FaceLift(omObjData* obj) {
 }
 void func_800F9BC8_FaceLift(void) {
     unk65770Obj* spr;
-    PB_PTR32* img;
+    s32* img;
     s16 i;
     s16 y;
     s16 x;
 
     spr = func_800675F4(D_800ED60C[D_800FC960_FaceLift].unk_04, 0);
-    img = (PB_PTR32*)&spr->unk4C->unk0[spr->unk52];
+    img = (s32*)&spr->unk4C->unk0[spr->unk52];
     gSPDisplayList(D_800F37DC++, D_800FC830_FaceLift);
     gDPSetTextureLUT(D_800F37DC++, G_TT_RGBA16);
     gDPLoadTLUT_pal256(D_800F37DC++, spr->unk4C->unkC);
@@ -1207,7 +1202,7 @@ void func_800FAA64_FaceLift(omObjData* obj) {
 
     obj->unk_50 = func_80023684(0x25840, 0x7918);
     D_800FCA1C_FaceLift = func_8002451C(0, func_800FACB8_FaceLift, 6);
-    D_800FCA18_FaceLift = (PB_PTR32)(((PB_UPTR32)obj->unk_50 + 0x40) & ~0x3F);
+    D_800FCA18_FaceLift = (s32)(((u32)obj->unk_50 + 0x40) & ~0x3F);
     obj->func_ptr = func_800FAB24_FaceLift;
     obj->work[0] = 0;
     for (i = 0; i < 4; i++) {
@@ -1238,7 +1233,7 @@ void func_800FACB8_FaceLift(Gfx** gfx) {
     func_800FACD8_FaceLift(gfx, D_800FCA18_FaceLift);
 }
 
-void func_800FACD8_FaceLift(Gfx** gfx, PB_PTR32 buf) {
+void func_800FACD8_FaceLift(Gfx** gfx, s32 buf) {
     s16 x;
     s16 y;
 
@@ -1252,7 +1247,7 @@ void func_800FACD8_FaceLift(Gfx** gfx, PB_PTR32 buf) {
     }
     gDPSetColorImage((*gfx)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, 0x02000000);
 }
-void func_800FAEE0_FaceLift(PB_PTR32 buf) {
+void func_800FAEE0_FaceLift(s32 buf) {
     s16 x;
     s16 y;
 

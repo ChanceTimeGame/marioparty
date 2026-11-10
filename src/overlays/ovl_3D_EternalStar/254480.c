@@ -31,10 +31,10 @@ s16 (*D_800F8D6C_EternalStar[16])() = {func_800F753C_EternalStar, func_800F7564_
    the host. Same bytes on the N64. */
 DecisionTreeNonLeafNode D_800F8DAC_EternalStar[4] = { { 0x05000000, {(void*) 0x00000001}, {0x00015541} }, { 0x05000000, {(void*) 0x00000002}, {0x00015A46} }, { 0x05000000, {(void*) 0x00000004}, {0x00015F4B} }, { 0x00000000, {0x00000000}, {0x00016450} } };
 DecisionTreeNonLeafNode D_800F8DDC_EternalStar[2] = { { 0x06000000, {func_800F7B6C_EternalStar}, {0x00016464} },               { 0x00000000, {0x00000000},           {0x00006464} } };
-DecisionTreeNonLeafNode D_800F8DF4_EternalStar[3] = { { 0x02000000, {(void*) 0x00000004},   {(PB_UPTR32) D_800F8DAC_EternalStar} },  { 0x06000000, {func_800F7BA0_EternalStar}, {0x00016464} }, { 0x00000000, {0x00000000}, {0x00006464} } };
+DecisionTreeNonLeafNode D_800F8DF4_EternalStar[3] = { { 0x02000000, {(void*) 0x00000004},   {(u32) D_800F8DAC_EternalStar} },  { 0x06000000, {func_800F7BA0_EternalStar}, {0x00016464} }, { 0x00000000, {0x00000000}, {0x00006464} } };
 DecisionTreeNonLeafNode D_800F8E18_EternalStar[2] = { { 0x06000000, {func_800F7BD4_EternalStar}, {0x00016464} },               { 0x00000000, {0x00000000},           {0x00006464} } };
-DecisionTreeNonLeafNode D_800F8E30_EternalStar[3] = { { 0x02000000, {(void*) 0x00000010},   {(PB_UPTR32) D_800F8DAC_EternalStar} },  { 0x06000000, {func_800F7C08_EternalStar}, {0x00016464} }, { 0x00000000, {0x00000000}, {0x00006464} } };
-DecisionTreeNonLeafNode D_800F8E54_EternalStar[3] = { { 0x02000000, {(void*) 0x00000040},   {(PB_UPTR32) D_800F8DAC_EternalStar} },  { 0x06000000, {func_800F7C3C_EternalStar}, {0x00016464} }, { 0x00000000, {0x00000000}, {0x00006464} } };
+DecisionTreeNonLeafNode D_800F8E30_EternalStar[3] = { { 0x02000000, {(void*) 0x00000010},   {(u32) D_800F8DAC_EternalStar} },  { 0x06000000, {func_800F7C08_EternalStar}, {0x00016464} }, { 0x00000000, {0x00000000}, {0x00006464} } };
+DecisionTreeNonLeafNode D_800F8E54_EternalStar[3] = { { 0x02000000, {(void*) 0x00000040},   {(u32) D_800F8DAC_EternalStar} },  { 0x06000000, {func_800F7C3C_EternalStar}, {0x00016464} }, { 0x00000000, {0x00000000}, {0x00006464} } };
 s16 D_800F8E78_EternalStar[] = {0x0002, 0x0002, 0x0002, 0x0000};
 s16 D_800F8E80_EternalStar[] = {0x000D, 0x000D, 0x000D, 0x0000};
 s16 D_800F8E88_EternalStar[] = {0x0005, 0x000A, 0x0013, 0x0000};
@@ -335,7 +335,7 @@ void func_800F6BD8_EternalStar(void) {
         var_a1 = 0x4F0;
     }
 
-    LoadStringIntoWindow(temp_s0->unk_08, (void*)(PB_PTR32)var_a1, -1, -1);
+    LoadStringIntoWindow(temp_s0->unk_08, (void*)(s32)var_a1, -1, -1);
     func_80071C8C(temp_s0->unk_08, 1);
     PlaySound(0xF0);
     WaitForTextConfirmation(temp_s0->unk_08);
@@ -348,7 +348,7 @@ void func_800F6BD8_EternalStar(void) {
         var_a1_2 = 0x4F1;
     }
 
-    LoadStringIntoWindow(temp_s0->unk_08, (void*)(PB_PTR32)var_a1_2, -1, -1);
+    LoadStringIntoWindow(temp_s0->unk_08, (void*)(s32)var_a1_2, -1, -1);
     func_80071C8C(temp_s0->unk_08, 1);
     WaitForTextConfirmation(temp_s0->unk_08);
     func_80071E80(temp_s0->unk_08, 1);

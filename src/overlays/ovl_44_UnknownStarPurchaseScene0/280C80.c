@@ -209,7 +209,7 @@ void func_800F6C44_UnknownStarPurchaseScene0(void) {
             }
             msg = D_800F75EC_UnknownStarPurchaseScene0[D_800F76A0_UnknownStarPurchaseScene0] + (total - 1) % 6;
             if (msg != 0) {
-                LoadStringIntoWindow(win2, PB_HOSTCAST(void*, PB_HOSTCAST(PB_PTR32, msg)), -1, -1);
+                LoadStringIntoWindow(win2, (msg), -1, -1);
             }
             win = (s16)win2;
         } else {

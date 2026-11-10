@@ -1,7 +1,4 @@
 #include "common.h"
-#ifdef TARGET_PC
-#include "PR/gbi_ex.h" /* RT64 interpolation tags */
-#endif
 s32 D_800C5B50 = 0x100;
 s32 D_800C5B54[4] = { 12, 6, 20, 0 };
 s32 D_800C5B64[] = { 1, 0, 3 };
@@ -38,7 +35,7 @@ s16 D_800C5CB8[] = {
 };
 
 typedef struct unk69010Frame {
-    /* 0x00 */ PB_UPTR32 timg; /* unk65770AnimC.unk0, the pixels (a pointer: wide on the host) */
+    /* 0x00 */ u32 timg; /* unk65770AnimC.unk0, the pixels (a pointer: wide on the host) */
     /* 0x04 */ u16 width;
     /* 0x06 */ u16 height;
     /* 0x08 */ u16 centerX;
@@ -49,7 +46,7 @@ typedef struct unk69010Sheet {
     /* 0x00 */ unk69010Frame* frames;
     /* 0x04 */ void* unk_04; /* unk65770Anim.unk4 and unk8 (pointers) */
     /* 0x08 */ void* unk_08;
-    /* 0x0C */ PB_UPTR32 palette; /* unk65770Anim.unkC */
+    /* 0x0C */ u32 palette; /* unk65770Anim.unkC */
     /* 0x10 */ char unk_10[8];
     /* 0x18 */ u16 format;
     /* 0x1A */ u8 unk_1A;
@@ -92,208 +89,22 @@ extern s32 D_800F5444;
 extern s32 D_800F5448;
 extern s32 D_800F5454;
 extern void* D_800F54B4;
-#ifdef TARGET_PC
-extern void *pb_sprite_quad_end; /* 65770.c */
-#endif
 
 void func_8003B0AC(unk3AC60Struct1* arg0, f64 arg1, f64 arg2, f64 arg3);
 void func_8003B190(unk3AC60Struct0* arg0, unk3AC60Struct1* arg1, unk3AC60Struct2* arg2);
 void guMtxIdent(Mtx* m);
 
-void func_8003A060(Gfx**, PB_PTR32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-void func_8003A28C(Gfx**, PB_PTR32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-void func_8003A4EC(Gfx**, PB_PTR32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-void func_8003A828(Gfx**, PB_PTR32, s32, u32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-void func_8003AA98(Gfx**, PB_PTR32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-void func_8003AE00(Gfx**, PB_PTR32, s32, u32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003A060(Gfx**, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003A28C(Gfx**, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003A4EC(Gfx**, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003A828(Gfx**, s32, s32, u32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003AA98(Gfx**, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003AE00(Gfx**, s32, s32, u32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 void func_80069394(Gfx** arg0, unk69010Sprite* arg1);
 void func_8006B014(Gfx** arg0, unk69010Sprite* arg1, u16 arg2, u16 arg3, u16 arg4, u16 arg5, u16 arg6, u16 arg7, u16 arg8, u16 arg9, u16 arg10);
 void func_8006B464(Gfx** arg0, unk69010Sprite* arg1, u16 arg2, u16 arg3, u16 arg4, u16 arg5, u16 arg6, u16 arg7, u16 arg8, u16 arg9, u16 arg10);
 
 // decomp-permuter
-#ifdef TARGET_PC
-#include "sprite65770.h"
-extern Vp D_800C5B40; /* 65770.c: the sprite layer's full-screen viewport */
-
-/* Widescreen (RT64 "expand"): RT64 widens any viewport that spans the screen, and the sprite layer's
-   ortho camera cannot tell it apart from 3D, so every 2D element (message boxes, HUD, menus) was
-   stretched ~1.33x and moved out over the 3D scene (as MP2's message box over Toad). A sprite keeps
-   its 4:3 size and place (viewport origin CENTER) unless its group spans the screen this frame (a
-   background, often tiled): that still stretches (origin NONE), as the owner chose for full-screen
-   pictures (ovl_6F). The same in MP2 (games/mp2/src/84FF0.c). */
-#define PB_SPR_WIDE_MAX 512
-static unk69010Sprite* pb_spr_wide[PB_SPR_WIDE_MAX];
-static s32 pb_spr_wide_count;
-/* The origin last set in each of the layer's two streams (65770.c func_8006677C: sprites flagged
-   0x4000 draw inline, the rest in the list func_80066B3C replays later). Both start at NONE;
-   setting it only when it changes keeps the layer's display list within its retail size, as
-   MP2 84FF0.c (emitting it per sprite overran MP2's and crashed in HuMemMemoryAlloc). */
-static u16 pb_spr_origin[2];
-/* And the x offset (quarter pixels) set with it: the player cards' shift to the screen sides. */
-static s16 pb_spr_offset[2];
-/* The sprites shifted this frame and by how much (the player cards' groups, 54120.c). */
-f32 pb_hud_card_shift(s32 group);
-#define PB_SPR_SHIFT_MAX 64
-static unk69010Sprite* pb_spr_shift_spr[PB_SPR_SHIFT_MAX];
-static s16 pb_spr_shift_q[PB_SPR_SHIFT_MAX];
-static s32 pb_spr_shift_count;
-
-void pb_spr_classify(void)
-{
-  s16 g;
-  s16 i;
-
-  pb_spr_wide_count = 0;
-  pb_spr_shift_count = 0;
-  pb_spr_origin[0] = pb_spr_origin[1] = G_EX_ORIGIN_NONE;
-  pb_spr_offset[0] = pb_spr_offset[1] = 0;
-  if (!pb_widescreen())
-  {
-    return;
-  }
-  for (g = 0; g < 256; g++)
-  {
-    unk65770Grp* grp = D_800EE330[g];
-    f32 minX = 1e9f;
-    f32 maxX = -1e9f;
-    if (grp == NULL)
-    {
-      continue;
-    }
-    for (i = 0; i < grp->count; i++)
-    {
-      unk69010Sprite* spr = (unk69010Sprite*) grp->obj[i];
-      unk69010Frame* frame;
-      f32 x0;
-      f32 x1;
-      if (spr == NULL || spr->sheet == NULL || !(spr->scaleX > 0.0f) || !(spr->scaleY > 0.0f))
-      {
-        continue;
-      }
-      frame = &spr->sheet->frames[spr->frame];
-      x0 = spr->x - frame->centerX * spr->scaleX; /* unrotated extent: enough to spot a backdrop */
-      x1 = spr->x + (frame->width - frame->centerX) * spr->scaleX;
-      if (x1 < 0.0f || x0 > 320.0f)
-      {
-        continue;
-      }
-      if (x0 < minX)
-      {
-        minX = x0;
-      }
-      if (x1 > maxX)
-      {
-        maxX = x1;
-      }
-    }
-    {
-      f32 shift = pb_hud_card_shift(g);
-      for (i = 0; shift != 0.0f && i < grp->count && pb_spr_shift_count < PB_SPR_SHIFT_MAX; i++)
-      {
-        if (grp->obj[i] != NULL)
-        {
-          pb_spr_shift_spr[pb_spr_shift_count] = (unk69010Sprite*) grp->obj[i];
-          pb_spr_shift_q[pb_spr_shift_count++] = (s16) (shift * 4.0f);
-        }
-      }
-    }
-    if (minX <= 10.0f && maxX >= 310.0f)
-    {
-      for (i = 0; i < grp->count && pb_spr_wide_count < PB_SPR_WIDE_MAX; i++)
-      {
-        if (grp->obj[i] != NULL)
-        {
-          pb_spr_wide[pb_spr_wide_count++] = (unk69010Sprite*) grp->obj[i];
-        }
-      }
-    }
-  }
-}
-
-static void pb_spr_align(Gfx** g, unk69010Sprite* spr)
-{
-  s32 i;
-  s32 wide = 0;
-
-  if (!pb_widescreen())
-  {
-    return;
-  }
-  for (i = 0; i < pb_spr_wide_count; i++)
-  {
-    if (pb_spr_wide[i] == spr)
-    {
-      wide = 1;
-      break;
-    }
-  }
-  {
-    u16 origin = wide ? G_EX_ORIGIN_NONE : G_EX_ORIGIN_CENTER;
-    s32 stream = (spr->flags & 0x4000) ? 0 : 1;
-    u16* cur = &pb_spr_origin[stream];
-    s16 offset = 0;
-
-    for (i = 0; !wide && i < pb_spr_shift_count; i++)
-    {
-      if (pb_spr_shift_spr[i] == spr)
-      {
-        offset = pb_spr_shift_q[i];
-        break;
-      }
-    }
-    if (*cur == origin && pb_spr_offset[stream] == offset)
-    {
-      return;
-    }
-    if (pb_spr_offset[stream] != offset)
-    {
-      /* sprites drawn as rectangles (unscaled, unrotated: most of a card) follow the rectangle
-         alignment, not the viewport's */
-      if (offset != 0)
-      {
-        /* RT64 keeps NONE-origin rectangles inside 4:3: anchor to the side the card moves to. LEFT
-           measures from the view's left edge (4:3 place + e + shift), RIGHT from its right edge (the
-           macro takes quarter pixels; offset is shift * 4). */
-        s16 e4 = (s16) (160.0f * (pb_wide_scale() - 1.0f) * 4.0f);
-        if (offset < 0)
-        {
-          gEXSetRectAlign((*g)++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_LEFT, e4 + offset, 0, e4 + offset, 0);
-        }
-        else
-        {
-          gEXSetRectAlign((*g)++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, offset - e4 - 320 * 4, 0, offset - e4 - 320 * 4, 0);
-        }
-        /* the layer's 0..320 scissor (65770.c) is the 4:3 area for rectangles: open it to the view's
-           sides while a card is drawn */
-        gEXSetScissorAlign((*g)++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, -320, 0, 0, 0, 320, 240); /* pixels: the macro scales */
-      }
-      else
-      {
-        gEXSetRectAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
-        gEXSetScissorAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0, 0, 0, 320, 240);
-      }
-      gDPSetScissor((*g)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
-    }
-    *cur = origin;
-    pb_spr_offset[stream] = offset;
-    gEXSetViewportAlign((*g)++, origin, offset, 0);
-    gSPViewport((*g)++, &D_800C5B40);
-  }
-}
-
-/* After the sprite layer: the default origin again, with the layer's viewport reloaded under it, since
-   what follows may draw through it without setting one. */
-void pb_spr_align_end(Gfx** g)
-{
-  if (pb_widescreen())
-  {
-    gEXSetViewportAlign((*g)++, G_EX_ORIGIN_NONE, 0, 0);
-    gSPViewport((*g)++, &D_800C5B40);
-    gEXSetRectAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
-    gEXSetScissorAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0, 0, 0, 320, 240); /* the next scissor */
-  }
-}
-#endif
 
 void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
 {
@@ -371,9 +182,6 @@ void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
     return;
   }
   gfx = *arg0;
-#ifdef TARGET_PC
-  pb_spr_align(&gfx, arg1);
-#endif
   switch (arg1->sheet->format)
   {
     case 0x4:
@@ -617,17 +425,9 @@ void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
 // register allocation: flip/dt get t1/t2/t3 swapped with hoisted temporaries; the masked residue (6) is
 // only the u16 read of D_800EE314/D_800ED0F8, which retail's object relocates against the split bss labels
 // D_800EE316/D_800ED0FA (same address once linked)
-#ifdef TARGET_PC
-/* Host: whether the sprite takes the quad path, decided once (it is tested in three places) */
-#define SPRITE_QUAD pbQuad
-#else
 #define SPRITE_QUAD (fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000)
-#endif
 #ifdef NON_MATCHING
 void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
-#ifdef TARGET_PC
-    s32 pbQuad;
-#endif
     Matrix4f mf;
     unk3AC60Struct0 pos;
     Gfx* gfx;
@@ -679,16 +479,6 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
         arg1->unk_2C = (f32)(arg1->unk_3C - arg1->unk_38) / (frame->width * scaleX);
         arg1->unk_30 = (f32)(arg1->unk_3E - arg1->unk_3A) / (frame->height * scaleY);
     }
-#ifdef TARGET_PC
-    pbQuad = fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000
-        /* Frame interpolation: a moving sprite takes the quad path, whose matrix RT64 can
-           interpolate; texture rectangles stay at the game's 30 fps (host_interp.c). */
-        || (D_800F54B4 != NULL &&
-            (u8 *)D_800F54B4 + (D_800F5448 + 2) * 2 * sizeof(Vtx) + sizeof(Mtx) <= (u8 *)pb_sprite_quad_end &&
-            pb_sprite_quad(arg1, arg1->x, arg1->y, scaleX, scaleY,
-                          (s32)(((u32)(u16)arg1->unk_38 << 16) | (u16)arg1->unk_3A),
-                          (s32)(((u32)(u16)arg1->unk_3C << 16) | (u16)arg1->unk_3E)));
-#endif
     if (SPRITE_QUAD) {
         vtx = D_800F54B4;
         mtx = (Mtx*)&vtx[(D_800F5448 + 2) * 2];
@@ -799,15 +589,6 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
         func_8003B0AC((unk3AC60Struct1*)mf, arg1->x - 160, 120 - arg1->y, arg1->rot);
         guMtxIdent(mtx);
         func_8003B190(&pos, (unk3AC60Struct1*)mf, (unk3AC60Struct2*)mtx);
-#ifdef TARGET_PC
-        /* RT64: match this sprite across frames by its address; the scale is baked into the
-           vertices, so they are interpolated too. Popped at the end of the function. */
-        gEXMatrixGroup(gfx++, 0x50000000u | (u32)(((uintptr_t)arg1 >> 3) & 0x0FFFFFFFu),
-                       G_EX_INTERPOLATE_SIMPLE, G_EX_PUSH, G_MTX_MODELVIEW, G_EX_COMPONENT_INTERPOLATE,
-                       G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE,
-                       G_EX_COMPONENT_AUTO, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_AUTO, G_EX_ORDER_LINEAR,
-                       G_EX_EDIT_NONE, G_EX_ASPECT_AUTO, G_EX_COMPONENT_AUTO, G_EX_COMPONENT_AUTO);
-#endif
         gSPMatrix(gfx++, osVirtualToPhysical(mtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     } else {
         if (arg1->flags & 0x10000) {
@@ -892,11 +673,6 @@ void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {
             }
         }
     }
-#ifdef TARGET_PC
-    if (pbQuad) {
-        gEXPopMatrixGroup(gfx++, G_MTX_MODELVIEW);
-    }
-#endif
     gDPPipeSync(gfx++);
     *arg0 = gfx;
 }

@@ -595,15 +595,11 @@ void func_800F7538_BoardIntro(void) {
 /* Retail reloads D_800FCD88 after each store through it: the original read it as a struct member
    (a store into a struct may alias another struct's field, not a scalar global). The matching
    build reaches the same symbol through a one-field struct; the host reads the global directly. */
-#ifdef TARGET_PC
-#define D_800FCD88_RELOAD (D_800FCD88_BoardIntro[0])
-#else
 typedef struct ObjectRef {
     Object* p;
 } ObjectRef;
 extern ObjectRef D_800FCD88_ref __asm__("D_800FCD88_BoardIntro");
 #define D_800FCD88_RELOAD (D_800FCD88_ref.p)
-#endif
 
 void func_800F7858_BoardIntro(omObjData* obj) {
     obj->trans.y += obj->scale.y;
@@ -738,7 +734,7 @@ void func_800F8090_BoardIntro(void) {
         func_8004F4D4(GwPlayer[i].player_obj, 2, 2);
     }
     win = CreateTextWindow(30, 42, D_800FD608_BoardIntro[D_801102B0], D_800FD610_BoardIntro[D_801102B0]);
-    LoadStringIntoWindow(win, (void*)(PB_PTR32)D_800FD3AC_BoardIntro[D_801102B0], -1, -1);
+    LoadStringIntoWindow(win, (void*)(s32)D_800FD3AC_BoardIntro[D_801102B0], -1, -1);
     func_8006E070(win, 0);
     ShowTextWindow(win);
     PlaySound(0x432);
@@ -900,9 +896,9 @@ void func_800F8334_BoardIntro(void) {
         }
         func_8006DA5C(win, D_800C5218[GwPlayer[i].character], i);
         if (D_801102B0 == 7) {
-            LoadStringIntoWindow(win, (void*)(PB_PTR32)(i + 0x257), -1, -1);
+            LoadStringIntoWindow(win, (void*)(s32)(i + 0x257), -1, -1);
         } else {
-            LoadStringIntoWindow(win, (void*)(PB_PTR32)(i + 0x249), -1, -1);
+            LoadStringIntoWindow(win, (void*)(s32)(i + 0x249), -1, -1);
         }
         func_8006E070(win, 0);
         ShowTextWindow(win);

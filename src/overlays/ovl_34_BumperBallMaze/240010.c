@@ -33,9 +33,7 @@ typedef struct BumperBallMazeAnglePair {
    the host is a view (BumperBallMaze.h). */
 extern BumperBallMazeAnglePair D_800FAE20_BumperBallMaze[];
 #include "BumperBallMaze.h"
-#ifndef TARGET_PC
 extern f32 D_800FAE5C_BumperBallMaze[];
-#endif
 #define BBM_FAR(row) ((BumperBallMazeAnglePair*) &D_800FAE5C_BumperBallMaze[(row) * 30])
 extern unk2C0C0Struct70* D_800FB168_BumperBallMaze; /* the water texture */
 extern Gfx* D_800FB170_BumperBallMaze[8];           /* per-screen display lists */

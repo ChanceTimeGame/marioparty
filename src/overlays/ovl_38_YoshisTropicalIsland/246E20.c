@@ -74,7 +74,7 @@ DecisionTreeNonLeafNode D_800F80D0_YoshisTropicalIsland[4] = {
     { 0x00000000, {(void*)0x0}, {0xA} },
 };
 DecisionTreeNonLeafNode D_800F8100_YoshisTropicalIsland[5] = {
-    { 0x04000000, {(void*)0x510000}, {(PB_UPTR32)D_800F80D0_YoshisTropicalIsland} },
+    { 0x04000000, {(void*)0x510000}, {(u32)D_800F80D0_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x3232} },
     { 0x05000000, {(void*)0x2}, {0x2832} },
     { 0x05000000, {(void*)0x4}, {0x1E32} },
@@ -93,15 +93,15 @@ DecisionTreeNonLeafNode D_800F816C_YoshisTropicalIsland[4] = {
     { 0x00000000, {(void*)0x0}, {0x15046} },
 };
 DecisionTreeNonLeafNode D_800F819C_YoshisTropicalIsland[6] = {
-    { 0x06000000, {(void (*)())func_800F75F8_YoshisTropicalIsland}, {(PB_UPTR32)D_800F813C_YoshisTropicalIsland} },
-    { 0x06000000, {(void (*)())func_800F7618_YoshisTropicalIsland}, {(PB_UPTR32)D_800F816C_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F75F8_YoshisTropicalIsland}, {(u32)D_800F813C_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F7618_YoshisTropicalIsland}, {(u32)D_800F816C_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x13C3C} },
     { 0x05000000, {(void*)0x2}, {0x13C32} },
     { 0x05000000, {(void*)0x4}, {0x13232} },
     { 0x00000000, {(void*)0x0}, {0x13232} },
 };
 DecisionTreeNonLeafNode D_800F81E4_YoshisTropicalIsland[5] = {
-    { 0x04000000, {(void*)0x500000}, {(PB_UPTR32)D_800F819C_YoshisTropicalIsland} },
+    { 0x04000000, {(void*)0x500000}, {(u32)D_800F819C_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x3C32} },
     { 0x05000000, {(void*)0x2}, {0x463C} },
     { 0x05000000, {(void*)0x4}, {0x5A46} },
@@ -126,16 +126,16 @@ DecisionTreeNonLeafNode D_800F8280_YoshisTropicalIsland[4] = {
     { 0x00000000, {(void*)0x0}, {0x1323C} },
 };
 DecisionTreeNonLeafNode D_800F82B0_YoshisTropicalIsland[7] = {
-    { 0x06000000, {(void (*)())func_800F75D8_YoshisTropicalIsland}, {(PB_UPTR32)D_800F8220_YoshisTropicalIsland} },
-    { 0x06000000, {(void (*)())func_800F75F8_YoshisTropicalIsland}, {(PB_UPTR32)D_800F8250_YoshisTropicalIsland} },
-    { 0x06000000, {(void (*)())func_800F7618_YoshisTropicalIsland}, {(PB_UPTR32)D_800F8280_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F75D8_YoshisTropicalIsland}, {(u32)D_800F8220_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F75F8_YoshisTropicalIsland}, {(u32)D_800F8250_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F7618_YoshisTropicalIsland}, {(u32)D_800F8280_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x1463C} },
     { 0x05000000, {(void*)0x2}, {0x13228} },
     { 0x05000000, {(void*)0x4}, {0x1281E} },
     { 0x00000000, {(void*)0x0}, {0x12D1E} },
 };
 DecisionTreeNonLeafNode D_800F8304_YoshisTropicalIsland[5] = {
-    { 0x04000000, {(void*)0x510000}, {(PB_UPTR32)D_800F82B0_YoshisTropicalIsland} },
+    { 0x04000000, {(void*)0x510000}, {(u32)D_800F82B0_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x5555} },
     { 0x05000000, {(void*)0x2}, {0x5A5A} },
     { 0x05000000, {(void*)0x4}, {0x5F5A} },
@@ -154,13 +154,13 @@ DecisionTreeNonLeafNode D_800F8370_YoshisTropicalIsland[4] = {
     { 0x00000000, {(void*)0x0}, {0x15F5A} },
 };
 DecisionTreeNonLeafNode D_800F83A0_YoshisTropicalIsland[11] = {
-    { 0x03000000, {(void*)0x2}, {(PB_UPTR32)D_800F8094_YoshisTropicalIsland} },
-    { 0x03000000, {(void*)0x8}, {(PB_UPTR32)D_800F8100_YoshisTropicalIsland} },
-    { 0x03000000, {(void*)0x20}, {(PB_UPTR32)D_800F81E4_YoshisTropicalIsland} },
-    { 0x03000000, {(void*)0x200}, {(PB_UPTR32)D_800F8304_YoshisTropicalIsland} },
+    { 0x03000000, {(void*)0x2}, {(u32)D_800F8094_YoshisTropicalIsland} },
+    { 0x03000000, {(void*)0x8}, {(u32)D_800F8100_YoshisTropicalIsland} },
+    { 0x03000000, {(void*)0x20}, {(u32)D_800F81E4_YoshisTropicalIsland} },
+    { 0x03000000, {(void*)0x200}, {(u32)D_800F8304_YoshisTropicalIsland} },
     { 0x04000000, {(void*)0x500000}, {0x6464} },
-    { 0x06000000, {(void (*)())func_800F75F8_YoshisTropicalIsland}, {(PB_UPTR32)D_800F8340_YoshisTropicalIsland} },
-    { 0x06000000, {(void (*)())func_800F7618_YoshisTropicalIsland}, {(PB_UPTR32)D_800F8370_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F75F8_YoshisTropicalIsland}, {(u32)D_800F8340_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F7618_YoshisTropicalIsland}, {(u32)D_800F8370_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x15A5A} },
     { 0x05000000, {(void*)0x2}, {0x15A5A} },
     { 0x05000000, {(void*)0x4}, {0x15A5A} },
@@ -173,7 +173,7 @@ DecisionTreeNonLeafNode D_800F8424_YoshisTropicalIsland[4] = {
     { 0x00000000, {(void*)0x0}, {0x5046} },
 };
 DecisionTreeNonLeafNode D_800F8454_YoshisTropicalIsland[5] = {
-    { 0x04000000, {(void*)0x510000}, {(PB_UPTR32)D_800F8424_YoshisTropicalIsland} },
+    { 0x04000000, {(void*)0x510000}, {(u32)D_800F8424_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x281E} },
     { 0x05000000, {(void*)0x2}, {0x3228} },
     { 0x05000000, {(void*)0x4}, {0x463C} },
@@ -186,9 +186,9 @@ DecisionTreeNonLeafNode D_800F8490_YoshisTropicalIsland[4] = {
     { 0x00000000, {(void*)0x0}, {0x1465A} },
 };
 DecisionTreeNonLeafNode D_800F84C0_YoshisTropicalIsland[7] = {
-    { 0x03000000, {(void*)0x10}, {(PB_UPTR32)D_800F8454_YoshisTropicalIsland} },
+    { 0x03000000, {(void*)0x10}, {(u32)D_800F8454_YoshisTropicalIsland} },
     { 0x04000000, {(void*)0x510000}, {0x5F5F} },
-    { 0x06000000, {(void (*)())func_800F7638_YoshisTropicalIsland}, {(PB_UPTR32)D_800F8490_YoshisTropicalIsland} },
+    { 0x06000000, {(void (*)())func_800F7638_YoshisTropicalIsland}, {(u32)D_800F8490_YoshisTropicalIsland} },
     { 0x05000000, {(void*)0x1}, {0x15F5A} },
     { 0x05000000, {(void*)0x2}, {0x15A5A} },
     { 0x05000000, {(void*)0x4}, {0x1465A} },
@@ -290,10 +290,10 @@ extern Object* D_800F870C_YoshisTropicalIsland;
 extern Object* D_800F8710_YoshisTropicalIsland;
 extern Object* D_800F8714_YoshisTropicalIsland;    /* model for D_800F8718 */
 extern Object* D_800F8718_YoshisTropicalIsland[7];
-extern PB_PTR32 D_800F8734_YoshisTropicalIsland;   /* label windows (func_80045D84) */
-extern PB_PTR32 D_800F8738_YoshisTropicalIsland;
-extern PB_PTR32 D_800F873C_YoshisTropicalIsland;
-extern PB_PTR32 D_800F8740_YoshisTropicalIsland;
+extern s32 D_800F8734_YoshisTropicalIsland;   /* label windows (func_80045D84) */
+extern s32 D_800F8738_YoshisTropicalIsland;
+extern s32 D_800F873C_YoshisTropicalIsland;
+extern s32 D_800F8740_YoshisTropicalIsland;
 
 extern s16 D_800EE320;
 

@@ -52,11 +52,7 @@ typedef struct TRWork {
 } TRWork; /* size = 0x6C */
 
 /* Retail tests the big-endian word at 0x50 (flags, unk_52, unk_53) in one load. */
-#ifdef TARGET_PC
-#define TR_WORD50(w) (((u32)(w)->unk_50 << 16) | ((u32)(w)->unk_52 << 8) | (w)->unk_53)
-#else
 #define TR_WORD50(w) (*(u32*)&(w)->unk_50)
-#endif
 
 typedef struct TRColVtx {
     s16 x, y, z;

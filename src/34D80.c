@@ -84,48 +84,6 @@ s16 func_800341E8(u8* arg0, unk2C0C0StructC0* arg1) {
 s16 func_800342BC(u8* arg0) {
     return func_800341E8(arg0, NULL);
 }
-#ifdef TARGET_PC
-/* Host: an MTNX motion file is used in place and is big-endian. Swap its header (s16 at 0x0A,
-   section offsets at 0x0C/0x10/0x14, the record-offset table at 0x18), its s16 and f32 sections
-   and each unk34D80Struct60 record (4 bytes, six s16) once, after the copy. The u8 section stays. */
-static s32 pb_mtnx_end(unk34D80Struct40* m, s32 size, s32 start) {
-    s32 end = size;
-    s32 i;
-    if (m->unk_0C > start && m->unk_0C < end) end = m->unk_0C;
-    if (m->unk_10 > start && m->unk_10 < end) end = m->unk_10;
-    if (m->unk_14 > start && m->unk_14 < end) end = m->unk_14;
-    for (i = 0; i < m->unk_09; i++) {
-        if (m->unk_18[i] > start && m->unk_18[i] < end) end = m->unk_18[i];
-    }
-    return end;
-}
-
-static void pb_mtnx_swap(unk34D80Struct40* m, s32 size) {
-    u8* base = (u8*)m;
-    s32 i, j;
-    m->unk_0A = (s16)pb_bswap16((u16)m->unk_0A);
-    m->unk_0C = (s32)pb_bswap32((u32)m->unk_0C);
-    m->unk_10 = (s32)pb_bswap32((u32)m->unk_10);
-    m->unk_14 = (s32)pb_bswap32((u32)m->unk_14);
-    pb_swap32_array(m->unk_18, m->unk_09);
-    /* A section can start at or past the copied size: Hammer Drop crashed here (2026-10-17) on a
-       file whose f32 section starts beyond it. Swap only what lies inside the copy. */
-    if (m->unk_10 > 0 && m->unk_10 < size) {
-        pb_swap16_array(base + m->unk_10, (size_t)(pb_mtnx_end(m, size, m->unk_10) - m->unk_10) / 2);
-    }
-    if (m->unk_14 > 0 && m->unk_14 < size) {
-        pb_swap32_array(base + m->unk_14, (size_t)(pb_mtnx_end(m, size, m->unk_14) - m->unk_14) / 4);
-    }
-    for (i = 0; i < m->unk_09; i++) {
-        for (j = 0; j < i; j++) {
-            if (m->unk_18[j] == m->unk_18[i]) break; /* a record shared by two entries: once */
-        }
-        if (j == i && m->unk_18[i] >= 0 && m->unk_18[i] + 16 <= size) {
-            pb_swap16_array(base + m->unk_18[i] + 4, 6);
-        }
-    }
-}
-#endif
 
 s16 func_800342E0(unk2C0C0StructC0* arg0, u8* arg1, s16 arg2) {
     unk34D80Struct40* temp_v0;
@@ -141,17 +99,10 @@ s16 func_800342E0(unk2C0C0StructC0* arg0, u8* arg1, s16 arg2) {
         return func_800344BC(&D_800ED554[arg2], arg0) != 0;
     }
 
-#ifdef TARGET_PC
-    temp_s0 = (s32)pb_bswap32((u32)var_a1[1]) + 4;
-#else
     temp_s0 = var_a1[1] + 4;
-#endif
     temp_v0 = func_80023684(temp_s0, D_800F0A28);
 
     func_80023A38(arg1, temp_v0, temp_s0);
-#ifdef TARGET_PC
-    pb_mtnx_swap(temp_v0, temp_s0);
-#endif
     func_80034E04(&D_800ED554[arg2], temp_v0);
 
     return 1;
@@ -299,7 +250,6 @@ s32 func_800344BC(unk34D80Struct80* arg0, unk2C0C0StructC0* arg1) {
     return 1;
 }
 
-// decomp-permuter (TARGET_PC blocks re-inserted: host byte order)
 s32 func_80034974(unk34D80Struct80 *arg0, s16 arg1, u8 *arg2)
 {
   unk34D80Struct60 *p;
@@ -337,12 +287,7 @@ s32 func_80034974(unk34D80Struct80 *arg0, s16 arg1, u8 *arg2)
       arg0->unk_0C[D_800D6020++] = (arg2[0] << 8) + arg2[1];
       if (1)
       {
-#ifdef TARGET_PC
-        /* host: unsigned, so a byte >= 0x80 shifted into bit 31 is defined */
-        u.i = (s32)(((u32)arg2[2] << 24) + (arg2[3] << 16) + (arg2[4] << 8) + arg2[5]);
-#else
         u.i = (((arg2[2] << 24) + (arg2[3] << 16)) + (arg2[4] << 8)) + arg2[5];
-#endif
         arg0->unk_10[D_800D6022++] = scale * u.f;
       }
       arg2 += 6;
@@ -371,17 +316,6 @@ s32 func_80034974(unk34D80Struct80 *arg0, s16 arg1, u8 *arg2)
     for (i = 0; i < p->unk_0E; i++)
     {
       arg0->unk_0C[D_800D6020++] = (arg2[0] << 8) + arg2[1];
-#ifdef TARGET_PC
-      /* host: three big-endian floats; the N64 copies the bytes into native floats */
-      {
-        s32 k;
-        for (k = 0; k < 3; k++) {
-          const u8* b = &arg2[2 + k * 4];
-          u.i = (s32)(((u32)b[0] << 24) | ((u32)b[1] << 16) | ((u32)b[2] << 8) | b[3]);
-          var_a3[k] = u.f;
-        }
-      }
-#else
       ((u8 *) var_a3)[0] = arg2[2];
       ((u8 *) var_a3)[1] = arg2[3];
       ((u8 *) var_a3)[2] = arg2[4];
@@ -394,7 +328,6 @@ s32 func_80034974(unk34D80Struct80 *arg0, s16 arg1, u8 *arg2)
       ((u8 *) var_a3)[9] = arg2[11];
       ((u8 *) var_a3)[10] = arg2[12];
       ((u8 *) var_a3)[11] = arg2[13];
-#endif
       var_a3[0] = scale * var_a3[0];
       var_a3 += 3;
       D_800D6022 += 3;
@@ -424,15 +357,10 @@ s32 func_80034C28(unk2C0C0StructC0* arg0, s16 arg1, u8* arg2) {
     arg2 += 8;
 
     for (var_a3 = i = 0; i < temp_s0; i++) {
-#ifdef TARGET_PC
-        /* host: the big-endian word as the N64 reads it back through s32 */
-        temp_s3->unk_0C[i] = (s32)(((u32)arg2[0] << 24) | ((u32)arg2[1] << 16) | ((u32)arg2[2] << 8) | arg2[3]);
-#else
         ((u8*) &temp_s3->unk_0C[i])[0] = arg2[0];
         ((u8*) &temp_s3->unk_0C[i])[1] = arg2[1];
         ((u8*) &temp_s3->unk_0C[i])[2] = arg2[2];
         ((u8*) &temp_s3->unk_0C[i])[3] = arg2[3];
-#endif
 
         temp_s3->unk_08[i] = (arg2[4] << 8) + arg2[5];
         var_a3 += temp_s3->unk_08[i];
@@ -467,7 +395,7 @@ s32 func_80034E04(unk34D80Struct80* arg0, unk34D80Struct40* arg1) {
     return 1;
 }
 
-void func_80034ED8(unk2C0C0StructC0* arg0, f32 arg1, PB_PTR32 arg2_, s32 arg3) {
+void func_80034ED8(unk2C0C0StructC0* arg0, f32 arg1, s32 arg2_, s32 arg3) {
     unk34D80Struct80* arg2 = (unk34D80Struct80*) arg2_;
     unk2C0C0Struct40* p40;
     unk2C0C0Struct40* q;
@@ -1214,26 +1142,13 @@ typedef struct unk34D80Menu {
     /* 0x2A */ char unk_2A[0xA];
 } unk34D80Menu; // sizeof 0x34
 
-#ifdef TARGET_PC
-/* Host view: a split label inside the object before it (one host object, not two). */
-#define D_800EE9A2 ((unk34D80Light*)((u8*)&D_800EE9A0 + 2))
-#else
 extern unk34D80Light D_800EE9A2[];
-#endif
 extern s16 D_800F33E8;
 extern unk34D80Menu D_800F3B88[];
 
-#ifdef TARGET_PC
-s16 func_80014C0C(s16); /* host: matches the definition */
-#else
 s16 func_80014C0C(s32);
-#endif
 void func_80014DF4(s16);
-#ifdef TARGET_PC
-u8* func_80015970(s16, s16, s16, s16, s16, void (*)(s16)); /* host: matches the definition */
-#else
 void func_80015970(s16, s32, s32, s32, s32, void*);
-#endif
 void func_8001636C(char*, ...);
 s16 func_80016C84(void);
 void func_8002346C(s16, s32, s32);
@@ -1270,7 +1185,7 @@ void func_800373C0(void) {
             break;
         case 1:
             if (ContBtnTrg[0] & 0x8000) {
-                func_80015970(D_800C41A2 = func_80014C0C(90), 240, 48, 64, 12, PB_HOSTCAST(void (*)(s16), func_8003796C));
+                func_80015970(D_800C41A2 = func_80014C0C(90), 240, 48, 64, 12, func_8003796C);
             }
             break;
         case 2:
@@ -1364,7 +1279,7 @@ void func_8003796C(void) {
 }
 
 void func_80037C40(void) {
-    func_80015970(D_800C41A4 = func_80014C0C(100), 16, 16, 288, 24, PB_HOSTCAST(void (*)(s16), func_800373C0));
+    func_80015970(D_800C41A4 = func_80014C0C(100), 16, 16, 288, 24, func_800373C0);
 }
 
 void func_80037C90(void) {

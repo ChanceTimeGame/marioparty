@@ -103,10 +103,10 @@ extern Object* D_800FA33C_DKsJungleAdventure;    // boo model
 extern Object* D_800FA340_DKsJungleAdventure[2]; // boos
 extern Object* D_800FA348_DKsJungleAdventure;    // coin gate model
 extern Object* D_800FA34C_DKsJungleAdventure[2]; // coin gates
-extern PB_PTR32 D_800FA354_DKsJungleAdventure;
-extern PB_PTR32 D_800FA358_DKsJungleAdventure;
-extern PB_PTR32 D_800FA35C_DKsJungleAdventure;
-extern PB_PTR32 D_800FA360_DKsJungleAdventure;
+extern s32 D_800FA354_DKsJungleAdventure;
+extern s32 D_800FA358_DKsJungleAdventure;
+extern s32 D_800FA35C_DKsJungleAdventure;
+extern s32 D_800FA360_DKsJungleAdventure;
 extern f32 D_800FA364_DKsJungleAdventure;
 extern f32 D_800FA368_DKsJungleAdventure;
 extern s16 D_800FA36C_DKsJungleAdventure;

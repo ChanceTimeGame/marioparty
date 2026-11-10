@@ -51,26 +51,14 @@ void func_800F922C_UnknownBooStealScene(void);
 void func_800F93A4_UnknownBooStealScene(void);
 
 void func_80071788(s32, s16);
-#ifdef TARGET_PC
-void func_8004DBD4(s32, s32); /* host: matches the definition */
-#else
 void func_8004DBD4(s32, u8);
-#endif
 void func_80055994(s32, s32);
 void func_80055810(s32, s32, s32);
 extern char* D_800C5218[]; /* character names */
 
 /* Retail stores func_80023FC8's result without sign-extending it (an int-returning declaration). */
-#ifdef TARGET_PC
-#define func_80023FC8_s32(id) func_80023FC8(id)
-#else
 #define func_80023FC8_s32(id) ((s32 (*)(s16))func_80023FC8)(id)
-#endif
 
 /* Retail calls func_8006FCF0 unprototyped here: the window id and cursor are passed as s16 values
    promoted to int (sll/sra 16), not narrowed to the prototype's s8. The host calls it normally. */
-#ifdef TARGET_PC
-#define func_8006FCF0_unproto(win, cur, arg) func_8006FCF0(win, cur, arg)
-#else
 #define func_8006FCF0_unproto(win, cur, arg) ((s32 (*)())func_8006FCF0)(win, cur, arg)
-#endif

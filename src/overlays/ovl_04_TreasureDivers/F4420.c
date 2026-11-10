@@ -224,11 +224,7 @@ s32 func_800FCA70_TreasureDivers(s32 target, s32 cur, s32 step) {
 /* The overlay's own random number in [0, n) (n = 0: the whole low half of the seed). */
 u16 func_800FCAF0_TreasureDivers(u32 n) {
     D_800FE438_TreasureDivers = (D_800FE438_TreasureDivers * 0x19971204 + 0x19760831) >> 16;
-#ifdef TARGET_PC
-    return n != 0 ? D_800FE438_TreasureDivers % n : (u16)D_800FE438_TreasureDivers;
-#else
     return n != 0 ? D_800FE438_TreasureDivers % n : D_800FE43A_TreasureDivers;
-#endif
 }
 
 void func_800FCB58_TreasureDivers(omObjData* obj) {

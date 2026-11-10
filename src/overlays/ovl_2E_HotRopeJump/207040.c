@@ -135,11 +135,7 @@ void func_800F6C50_HotRopeJump(omObjData* obj) {
 
 /* Retail keeps two writable state pairs in .rodata (D_800FE6E0, D_800FE784); the host needs
    them writable, so only the N64 build places them there. */
-#ifdef TARGET_PC
-#define HRJ_RODATA_RW
-#else
 #define HRJ_RODATA_RW __attribute__((section(".rodata")))
-#endif
 
 /* D_800FE500: [0] the RDP/RSP reset list, [23] the geometry/clip reset, [31] both. */
 const Gfx D_800FE500_HotRopeJump[] = {
@@ -327,12 +323,7 @@ void func_800F6EEC_HotRopeJump(omObjData* obj, s32 player) {
     func_8001874C(obj, 6, dir | 5, 1, 0x13);
     m = (rand8() & 1) + a;
     func_8001874C(obj, 0xD, dir | m[0], 1, 0x78);
-#ifdef TARGET_PC
-    /* retail: m[6] is b[r] (a at sp+0x18, b at sp+0x30); a separate host array is not there */
-    func_8001874C(obj, 0xE, dir | b[m - a], 1, 0x78);
-#else
     func_8001874C(obj, 0xE, dir | m[6], 1, 0x78);
-#endif
     func_8001874C(obj, 0x11, dir | 0x18, 0, 0);
     func_8001874C(obj, 0x15, dir | 0x62, 0, 0);
     func_8001874C(obj, 0x1E, dir | 0x63, 0, 0);
@@ -870,22 +861,14 @@ void func_800F8C08_HotRopeJump(void) {
 /* Keeps the player's HRJPlayer in omObjData::work as a big-endian word; on the host the work bytes
    cannot hold a pointer, so they hold its index (only D_80100328_HotRopeJump entries are stored). */
 void func_800F8C68_HotRopeJump(omObjData* obj, HRJPlayer* p) {
-#ifdef TARGET_PC
-    obj->work[0] = p - D_80100328_HotRopeJump;
-#else
     obj->work[0] = (u32)p >> 24;
     obj->work[1] = (u32)p >> 16;
     obj->work[2] = (u32)p >> 8;
     obj->work[3] = (u32)p;
-#endif
 }
 
 HRJPlayer* func_800F8C88_HotRopeJump(omObjData* obj) {
-#ifdef TARGET_PC
-    return &D_80100328_HotRopeJump[obj->work[0]];
-#else
     return (HRJPlayer*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 
 void func_800F8CB4_HotRopeJump(u8 count) {
@@ -1138,11 +1121,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F9080
 // NON_MATCHING: scheduling of the view-matrix copy
 #ifdef NON_MATCHING
 void func_800FA2F4_HotRopeJump(void) {
-#ifdef TARGET_PC
-    static Mtx view; /* the list ends with a matrix load from it: retail's is on the stack */
-#else
     Mtx view;
-#endif
     Matrix4f m;
     Matrix4f m2;
     Matrix4f bb;
@@ -1295,11 +1274,7 @@ void func_800FA9DC_HotRopeJump(omObjData* obj) {
 }
 
 /* Halfword i of an N64-layout Mtx (integer halves 0..15, fractions 16..31); see src/65770.c. */
-#ifdef TARGET_PC
-#define HRJ_MTX_HALF(m, i) ((u16)(((u32*)(m))[(i) >> 1] >> (((i) & 1) ? 0 : 16)))
-#else
 #define HRJ_MTX_HALF(m, i) (((u16*)(m))[i])
-#endif
 
 /* World position -> screen position (x, y) and depth (z), through camera cam's view matrix. */
 // NON_MATCHING: register allocation
@@ -2092,11 +2067,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FCE98
 
 /* Vertices copied per frame: retail copies 10 from a 9-vertex table (the 10th is the next data,
    unused by the lists); the host copies the 9 it has. */
-#ifdef TARGET_PC
-#define HRJ_FLAME_VTX 9
-#else
 #define HRJ_FLAME_VTX 10
-#endif
 
 /* A flame model: a five-vertex base quad (anim's texture, segment 2) and a four-vertex top
    (tex), with per-frame display lists (func_800FDFC4). Returns the model. */

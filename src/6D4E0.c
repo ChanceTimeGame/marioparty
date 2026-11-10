@@ -61,12 +61,7 @@ typedef struct RumbleState {
 extern OSPfs D_800E4140[4];
 extern RumbleState D_800E42E0[4];
 /* splat label for &D_800E42E0[0].unk2; func_8006CC18 addresses that field through it */
-#ifdef TARGET_PC
-/* Host view: a split label inside the object before it (one host object, not two). */
-#define D_800E42E2 ((RumbleState*)((u8*)D_800E42E0 + 2))
-#else
 extern RumbleState D_800E42E2[];
-#endif
 extern functionListEntry D_800E4310;
 extern functionListEntry D_800E431C;
 extern s16 D_800E4328;
@@ -158,16 +153,6 @@ TWStyle D_800C6088[4] = {
     { 720896, 720897, 230, 90, 22, 14, 192, 56, 0, 48, 1 },
     { 720913, 720914, 230, 90, 28, 21, 192, 56, 0, 48, 1 },
 };
-#ifdef TARGET_PC
-/* splat labels for fields of element 0, indexed with the base's stride */
-#define D_800C5DF5 ((TWColor*)&D_800C5DF4[0].g)
-#define D_800C5DF6 ((TWColor*)&D_800C5DF4[0].b)
-#define D_800C5E15 ((TWColor*)&D_800C5E14[0].g)
-#define D_800C5E16 ((TWColor*)&D_800C5E14[0].b)
-#define D_800C6035 ((TWMask*)&D_800C6034[0].b)
-#define D_800C603D ((TWColor*)&D_800C603C[0].g)
-#define D_800C603E ((TWColor*)&D_800C603C[0].b)
-#else
 /* splat labels for fields of element 0 (undefined_syms.txt); retail indexes them as arrays */
 extern TWColor D_800C5DF5[];
 extern TWColor D_800C5DF6[];
@@ -176,25 +161,14 @@ extern TWColor D_800C5E16[];
 extern TWMask D_800C6035[];
 extern TWColor D_800C603D[];
 extern TWColor D_800C603E[];
-#endif
 
 /* splat labels for D_800F2CF0[1..3] and ContDStkTrg[1..3] */
-#ifdef TARGET_PC
-/* Host views: controller ports 1..3 read through these labels, which must alias the arrays. */
-#define D_800F2CF2 (((u16*)D_800F2CF0)[1])
-#define D_800F2CF4 (((u16*)D_800F2CF0)[2])
-#define D_800F2CF6 (((u16*)D_800F2CF0)[3])
-#define D_800EC6EC (ContDStkTrg[1])
-#define D_800EC6EE (ContDStkTrg[2])
-#define D_800EC6F0 (ContDStkTrg[3])
-#else
 extern u16 D_800F2CF2;
 extern u16 D_800F2CF4;
 extern u16 D_800F2CF6;
 extern u16 D_800EC6EC;
 extern u16 D_800EC6EE;
 extern u16 D_800EC6F0;
-#endif
 
 typedef struct TWInput {
     /* 0x00 */ s16 v[4];
@@ -203,19 +177,10 @@ typedef struct TWInput {
 
 extern TWInput D_800EE1D0[32];
 /* splat labels for the fields of D_800EE1D0[0] */
-#ifdef TARGET_PC
-/* Views: separate host objects would not alias the queue (CPU players' window input was lost
-   and ovl_47's prompt waited forever on a CPU turn). */
-#define D_800EE1D2 ((TWInput*)((u8*)D_800EE1D0 + 2))
-#define D_800EE1D4 ((TWInput*)((u8*)D_800EE1D0 + 4))
-#define D_800EE1D6 ((TWInput*)((u8*)D_800EE1D0 + 6))
-#define D_800EE1D8 ((TWInput*)((u8*)D_800EE1D0 + 8))
-#else
 extern TWInput D_800EE1D2[];
 extern TWInput D_800EE1D4[];
 extern TWInput D_800EE1D6[];
 extern TWInput D_800EE1D8[];
-#endif
 extern u8 D_800F64F8;
 extern Process* D_800F2BC4;
 typedef struct FontFile {
@@ -432,11 +397,6 @@ void func_8006CEA0(void)
     {
       D_800F37D4 = func_80014614(0x7A);
       D_800F3294 = func_80014614(0x86);
-#ifdef TARGET_PC
-      /* the font files' header words are big-endian; the glyph and palette bytes stay raw */
-      pb_swap32_array(D_800F37D4, 3);
-      pb_swap32_array(D_800F3294, 3);
-#endif
     }
     D_800F2BC4 = omAddPrcObj(func_8006F9B0, 0x1001, 0x800, 0);
     omPrcSetStatBit(D_800F2BC4, 0xA0);
@@ -600,17 +560,12 @@ void LoadStringIntoWindow(s16 win_id, void* string_id, s16 a, s16 b) {
     
     textWindow->unk_34 = 1;
     
-#ifdef TARGET_PC
-    /* N64: pointers are KSEG0 (> 0x80000000). Host: string ids are small table indices. */
-    if ((uintptr_t) string_id >= 0x100000) {
-#else
     if ((u32) string_id > 0x80000000U) { //is a pointer
-#endif
         textWindow->usingStringIDBool = 0;
         textWindow->stringPtr = string_id;
     } else {
         textWindow->usingStringIDBool = 1;
-        text = func_8005B7E8((u32)PB_HOSTCAST(PB_UPTR32, string_id)); //get string from index
+        text = func_8005B7E8((u32)string_id); //get string from index
         textWindow->string = text;
         textWindow->stringPtr = text;
     }
@@ -677,18 +632,14 @@ void func_8006DA5C(s16 arg0, void* arg1, s8 arg2) {
         }
     }
     
-#ifdef TARGET_PC
-    if ((uintptr_t) arg1 >= 0x100000) { /* a pointer, see above */
-#else
     if (0x80000000U < (u32) arg1) { //if arg1 is stringID
-#endif
         textWindow->unk_7B[arg2] = 0;
         textWindow->unk_88[arg2] = arg1;
         return;
     }
     
     textWindow->unk_7B[arg2] = 1;
-    textWindow->unk_88[arg2] = func_8005B7E8((s32)PB_HOSTCAST(PB_PTR32, arg1));
+    textWindow->unk_88[arg2] = func_8005B7E8((s32)arg1);
 }
 
 s16 func_8006DB3C(s16 arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4) {
@@ -1847,27 +1798,6 @@ void func_80071788(s32 arg0, s16 arg1) {
     textWindow->unk_F4[arg1].unk0 = 2;
 }
 
-#ifdef TARGET_PC
-/* mp1host --autoplay: is controller 1 driving a choice whose cursor rests on a disabled entry?
-   A is refused there and a player would move the cursor first (Peach's Flower Lottery starts on
-   seed 1 even when it is taken), so autoplay presses Down instead. */
-s32 pb_window_choice_blocked(void) {
-    TextWindow* tw;
-    s16 i;
-
-    if (D_800ED4B0 == NULL) {
-        return 0;
-    }
-    for (i = 0; i < 14; i++) {
-        tw = &D_800ED4B0[i];
-        if (tw->unk_00 == 6 && (tw->unk_6E == 1 || tw->unk_6E == 2) && (tw->unk_01 & 1) && !(tw->unk_06 & 2) &&
-            tw->unk_11 >= 0 && tw->unk_11 < tw->unk_10 && tw->unk_F4[(s32)tw->unk_11].unk0 == 2) {
-            return 1;
-        }
-    }
-    return 0;
-}
-#endif
 
 void func_800717C0(s32 arg0) {
     TextWindow* tw = &D_800ED4B0[arg0];

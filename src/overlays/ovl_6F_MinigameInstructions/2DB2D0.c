@@ -1,8 +1,5 @@
 #include "ovl6f.h"
 
-#ifdef TARGET_PC
-#define OVL6F_WIDE_X (pb_widescreen() ? 1.8f : 1.0f)
-#endif
 
 void func_800F6610_MinigameInstructions(void) {
     omObjData* obj;
@@ -15,21 +12,6 @@ void func_800F6610_MinigameInstructions(void) {
     func_80060088();
     func_8006CEA0();
     omSysPauseEnableFlag = 1;
-#ifdef TARGET_PC
-    /* --dev-minigame: routes other than the roulette (Mini-Game Island, board events) play the
-       forced minigame too, so a 1P overlay the roulette never offers can be tested. */
-    if (pb_dev_minigame_forced() && !pb_dev_minigame_allowed(GwSystem.unk_1E)) {
-        for (i = 0; i < 56; i++) {
-            if (pb_dev_minigame_allowed(i)) {
-                GwSystem.unk_1E = i;
-                break;
-            }
-        }
-    }
-    if (pb_dev_minigame_forced()) {
-        pb_dev_minigame_teams(pb_dev_minigame_type(GwSystem.unk_1E));
-    }
-#endif
     D_8010F766_MinigameInstructions = GwSystem.unk_1E;
     D_8010F760_MinigameInstructions = D_8010E4F0_MinigameInstructions[GwSystem.unk_1E].unk_04;
     if (_CheckFlag(0x2B) != 0) {
@@ -181,23 +163,13 @@ void func_800F6B14_MinigameInstructions(void) {
     in.y = 281.0f;
     func_8001DD24(0, CZoom, (Vec3f*) &in, &out);
     func_80025798(deco, out.x, out.y, 57.0f);
-#ifdef TARGET_PC
-    /* Host widescreen: the two cloud layers are finite meshes sized for 4:3, so their sides
-       ended at the 4:3 edges. Stretch them sideways (flat clouds; 1.8 covers up to ~2.4:1). */
-    func_80025830(deco, 2.1f * OVL6F_WIDE_X, 2.1f, 2.1f);
-#else
     func_80025830(deco, 2.1f, 2.1f, 2.1f);
-#endif
     deco = LoadFormFile(0xB000B, 0x299);
     in.x = 160.0f;
     in.y = 280.0f;
     func_8001DD24(0, CZoom + -130.0f, (Vec3f*) &in, &out);
     func_80025798(deco, out.x, out.y, -130.0f);
-#ifdef TARGET_PC
-    func_80025830(deco, 2.2f * OVL6F_WIDE_X, 2.2f, 2.2f);
-#else
     func_80025830(deco, 2.2f, 2.2f, 2.2f);
-#endif
     if (D_8010F4E0_MinigameInstructions == 0 && _CheckFlag(0x2D) == 0) {
         alpha = 255;
         do {
@@ -459,14 +431,14 @@ void func_800F7C58_MinigameInstructions(void) {
             b = 2;
             for (i = 0; i < 4; i++) {
                 if (GwPlayer[i].group == 0) {
-                    func_8006DA5C(win, (void*) (PB_PTR32) (GwPlayer[i].character + 0x2C), a);
+                    func_8006DA5C(win, (void*) (s32) (GwPlayer[i].character + 0x2C), a);
                 } else {
-                    func_8006DA5C(win, (void*) (PB_PTR32) (GwPlayer[i].character + 0x2C), b);
+                    func_8006DA5C(win, (void*) (s32) (GwPlayer[i].character + 0x2C), b);
                 }
             }
         } else {
             for (i = 0; i < 4; i++) {
-                func_8006DA5C(win, (void*) (PB_PTR32) (GwPlayer[i].character + 0x2C), GwPlayer[i].group);
+                func_8006DA5C(win, (void*) (s32) (GwPlayer[i].character + 0x2C), GwPlayer[i].group);
             }
         }
     } else if (D_8010F760_MinigameInstructions == 3) {
@@ -480,11 +452,11 @@ void func_800F7C58_MinigameInstructions(void) {
                 chr = GwPlayer[i].character;
                 t = b++;
             }
-            func_8006DA5C(win, (void*) (PB_PTR32) (chr + 0x2C), t);
+            func_8006DA5C(win, (void*) (s32) (chr + 0x2C), t);
         }
     } else {
         for (i = 0; i < 4; i++) {
-            func_8006DA5C(win, (void*) (PB_PTR32) (GwPlayer[i].character + 0x2C), GwPlayer[i].group);
+            func_8006DA5C(win, (void*) (s32) (GwPlayer[i].character + 0x2C), GwPlayer[i].group);
         }
     }
     if (D_8010F760_MinigameInstructions != 0) {
@@ -501,7 +473,7 @@ void func_800F7C58_MinigameInstructions(void) {
     omAddPrcObj(func_800F84B0_MinigameInstructions, 0x3F00, 0x800, 0);
     HuPrcSleep(30);
     func_8006E288(win, 1);
-    LoadStringIntoWindow(win, (void*) (PB_PTR32) func_800F885C_MinigameInstructions(D_8010F766_MinigameInstructions), -1, -1);
+    LoadStringIntoWindow(win, (void*) (s32) func_800F885C_MinigameInstructions(D_8010F766_MinigameInstructions), -1, -1);
     while (D_8010E950_MinigameInstructions == 0) {
         HuPrcVSleep();
     }
@@ -581,21 +553,21 @@ void func_800F7C58_MinigameInstructions(void) {
         if (D_8010F4EA_MinigameInstructions != prev) {
             func_8006EB40(win);
             if (D_8010F4EA_MinigameInstructions == 0) {
-                LoadStringIntoWindow(win, (void*) (PB_PTR32) func_800F8910_MinigameInstructions(D_8010F766_MinigameInstructions), -1, -1);
+                LoadStringIntoWindow(win, (void*) (s32) func_800F8910_MinigameInstructions(D_8010F766_MinigameInstructions), -1, -1);
             }
             if (D_8010F4EA_MinigameInstructions == 1) {
-                LoadStringIntoWindow(win, (void*) (PB_PTR32) func_800F885C_MinigameInstructions(D_8010F766_MinigameInstructions), -1, -1);
+                LoadStringIntoWindow(win, (void*) (s32) func_800F885C_MinigameInstructions(D_8010F766_MinigameInstructions), -1, -1);
             }
             if (extra == 0) {
                 if (D_8010F4EA_MinigameInstructions == 2) {
-                    LoadStringIntoWindow(win, (void*) (PB_PTR32) D_8010E4F0_MinigameInstructions[(s16) D_8010F766_MinigameInstructions].unk_0C, -1, -1);
+                    LoadStringIntoWindow(win, (void*) (s32) D_8010E4F0_MinigameInstructions[(s16) D_8010F766_MinigameInstructions].unk_0C, -1, -1);
                 }
             } else {
                 if (D_8010F4EA_MinigameInstructions == 3) {
-                    LoadStringIntoWindow(win, (void*) (PB_PTR32) D_8010E4F0_MinigameInstructions[(s16) D_8010F766_MinigameInstructions].unk_0C, -1, -1);
+                    LoadStringIntoWindow(win, (void*) (s32) D_8010E4F0_MinigameInstructions[(s16) D_8010F766_MinigameInstructions].unk_0C, -1, -1);
                 }
                 if (D_8010F4EA_MinigameInstructions == 4) {
-                    LoadStringIntoWindow(win, (void*) (PB_PTR32) (u16) D_8010E4F0_MinigameInstructions[(s16) D_8010F766_MinigameInstructions].unk_0E, -1, -1);
+                    LoadStringIntoWindow(win, (void*) (s32) (u16) D_8010E4F0_MinigameInstructions[(s16) D_8010F766_MinigameInstructions].unk_0E, -1, -1);
                 }
             }
             while (func_8006FCC0(win) != 0) {
@@ -1053,7 +1025,7 @@ void func_800F94E8_MinigameInstructions(s16 model, s16 idx) {
         }
         tHi = h - ((maxY - baseY) / rangeY) * h;
         gDPSetTextureLUT(gfx++, G_TT_NONE);
-        func_8003A060(&gfx, (PB_PTR32) img, G_IM_FMT_RGBA, G_IM_SIZ_16b, w, h, (u32) sHi, (u32) tHi, (u32) sLo,
+        func_8003A060(&gfx, (s32) img, G_IM_FMT_RGBA, G_IM_SIZ_16b, w, h, (u32) sHi, (u32) tHi, (u32) sLo,
                       (u32) tLo, 0, 2, 2, 0, 0, 0, 0);
         gSPVertex(gfx++, vtxStart, mesh->unk_34[i].unk_00, 0);
         if (mesh->unk_34[i].unk_00 == 3) {

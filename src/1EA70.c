@@ -1,7 +1,4 @@
 #include "common.h"
-#ifdef TARGET_PC
-void func_800238F0(s16); /* engine/mallocblock.c; unprototyped here on the N64 */
-#endif
 
 typedef unk34D80Struct80 unk1EA70Struct18; /* D_800ED554 entries (common_structs.h) */
 
@@ -86,27 +83,11 @@ void func_80020654(unk2C0C0StructC0* arg0, s16 arg1, s16 arg2);
 void func_80020DCC(s32 arg0, u8* arg1);
 s32 func_80021C50(s16 arg0, s16 arg1, s16 arg2);
 void func_80021EA0(void);
-#ifdef TARGET_PC
-s16 func_80024198(u32, Gfx*, s32); /* host: matches the definition */
-#else
 s32 func_80024198(s32, s32, s32);
-#endif
-#ifdef TARGET_PC
-s16 func_8002451C(u32, void (*)(Gfx**, Mtx*, camera*), u8); /* host: matches the definition */
-#else
 s16 func_8002451C(s32, void (*)(s32, u8*), s32);
-#endif
-#ifdef TARGET_PC
-s16 func_80038D5C(unk2C0C0StructC0*, u16, s16, char*); /* host: matches the definition */
-#else
 s16 func_80038D5C(unk2C0C0StructC0*, u16, s32, char*);
-#endif
 void func_800399F0(s16);
-#ifdef TARGET_PC
-s32 func_8009B850(const void*, const void*); /* host: one host prototype for the SDK-region unit 9C440 (unverified) */
-#else
 s32 func_8009B850(u8*, u8**);
-#endif
 void func_800A0B90(Matrix4f, void*);
 void DataCloseTemp(void*);
 void guMtxCatF(float m[4][4], float n[4][4], float r[4][4]);
@@ -166,13 +147,7 @@ void func_8001DE70(s16 arg0) {
     D_800EE312 = arg0;
     for (i = 0; i < D_800F37DA; i++) {
         *(&D_800ED0A0 + i) = func_80023684(arg0 << 7, 0x7530);
-#ifdef TARGET_PC
-        /* 32 commands a sprite: retail sized it in bytes (0x100), and a host Gfx is 16 bytes, so
-         * Yoshi's board overran the buffer into the next block's header (ovl_4E crash) */
-        *(&D_800F33A8 + i) = func_80023684((arg0 << 5) * sizeof(Gfx), 0x7530);
-#else
         *(&D_800F33A8 + i) = func_80023684(arg0 << 8, 0x7530);
-#endif
     }
     D_800ECDE0 = func_80023684(arg0 * sizeof(*D_800ECDE0), 0x7530);
     for (i = 0; i < arg0; i++) {
@@ -293,7 +268,7 @@ void func_8001E40C(s16 index, s8 arg1, s8 arg2, s8 arg3, u8 arg4, u8 arg5, u8 ar
     }
 }
 
-void func_8001E534(s16 index, PB_PTR32 arg1) {
+void func_8001E534(s16 index, s32 arg1) {
     if (index != -1) {
         func_8001E268(index, 0x40, 0x40);
         D_800ECDE0[index].unk_20 = arg1;
@@ -569,7 +544,7 @@ void func_80020544(s16 arg0, s16 arg1, unk1EA70StructC* arg2, s16 arg3) {
     D_800F2C20 = arg2->unk_04;
     D_800ED5E6 = 0;
     for (i = 0; i < anim->unk_02; i += arg1) {
-        func_80034ED8(model, i, (PB_PTR32) anim, 1);
+        func_80034ED8(model, i, (s32) anim, 1);
         D_800F33D4 = 0;
         func_80020654(model, 0, arg3);
     }
@@ -677,7 +652,7 @@ unk1EA70Struct48* func_80020CFC(s16 arg0, char* arg1) {
 
     obj = &D_800F2B7C[arg0];
     ret = func_80023684(sizeof(unk1EA70Struct48), obj->unk_6C->unk_68 + 1);
-    idx = func_8002451C(0, PB_HOSTCAST(void (*)(Gfx**, Mtx*, camera*), func_80020DCC), 2);
+    idx = func_8002451C(0, func_80020DCC, 2);
     ret->unk_02 = idx;
     D_800F2B7C[idx].unk_BC = ret;
     ret->unk_44 = obj->unk_6C;
@@ -1020,14 +995,14 @@ void func_80021EC0(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
         idx = D_800ED4A8->unk_00[func_80021794(D_800ED4A8, 0, arg1, arg2, arg3, 4)].unk_1C;
         func_80025930(D_800ECDE0[idx].unk_00, 0x70000000, 0x70000000);
         func_80025F60(D_800ECDE0[idx].unk_00, 0x1400);
-        func_8001E534(idx, (PB_PTR32) D_800C323C);
+        func_8001E534(idx, (s32) D_800C323C);
         D_800ECDE0[idx].unk_10 |= 0x100;
     } else if (arg0 == 1) {
         func_80021AF4(D_800ED4A8, 12.0f, 12.0f, 12.0f);
         idx = D_800ED4A8->unk_00[func_80021794(D_800ED4A8, 0, arg1, arg2, arg3, 4)].unk_1C;
         func_80025930(D_800ECDE0[idx].unk_00, 0x70000000, 0x70000000);
         func_80025F60(D_800ECDE0[idx].unk_00, 0x1400);
-        func_8001E534(idx, (PB_PTR32) D_800C3278);
+        func_8001E534(idx, (s32) D_800C3278);
         D_800ECDE0[idx].unk_10 |= 0x100;
     } else {
         for (i = 0; i < 4; i++) {
@@ -1052,16 +1027,16 @@ void func_80021EC0(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
             func_80025F60(D_800ECDE0[idx].unk_00, 0x1400);
             switch (i) {
                 case 0:
-                    func_8001E534(spr, (PB_PTR32) D_800C3228);
+                    func_8001E534(spr, (s32) D_800C3228);
                     break;
                 case 1:
-                    func_8001E534(spr, (PB_PTR32) D_800C323C);
+                    func_8001E534(spr, (s32) D_800C323C);
                     break;
                 case 2:
-                    func_8001E534(spr, (PB_PTR32) D_800C3250);
+                    func_8001E534(spr, (s32) D_800C3250);
                     break;
                 case 3:
-                    func_8001E534(spr, (PB_PTR32) D_800C3264);
+                    func_8001E534(spr, (s32) D_800C3264);
                     break;
             }
             func_80021A00(D_800ED4A8, slot, i * 4);

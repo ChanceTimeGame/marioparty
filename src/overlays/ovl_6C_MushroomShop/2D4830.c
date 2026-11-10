@@ -135,7 +135,7 @@ void func_800F688C_MushroomShop(void) {
             }
             func_8006EB40(D_800F8D70_MushroomShop);
             func_8006E288(D_800F8D70_MushroomShop, 7);
-            LoadStringIntoWindow(D_800F8D70_MushroomShop, (void*)(PB_PTR32)D_800F8A00_MushroomShop[cur].msg, -1, -1);
+            LoadStringIntoWindow(D_800F8D70_MushroomShop, (void*)(s32)D_800F8A00_MushroomShop[cur].msg, -1, -1);
         }
         prevMsg = D_800F8A00_MushroomShop[cur].msg;
         func_800F6778_MushroomShop(D_800F8A00_MushroomShop[cur].cam);
@@ -355,11 +355,7 @@ s16 func_800F7500_MushroomShop(s16 item) {
 // register choice of one temporary at the first call (masked 0, raw 2)
 #ifdef NON_MATCHING
 void func_800F76A0_MushroomShop(void) {
-#ifdef TARGET_PC
-    char buf[16]; /* retail's 8 bytes hold "%5d" of a price */
-#else
     char buf[8];
-#endif
     Vec3f pos;
     Vec3f camPos;
     Vec3f camRot;
@@ -432,7 +428,7 @@ top:
             }
             sel = 14;
         }
-        if (func_80059CE8((void*)(PB_PTR32)msg, D_800F8D70_MushroomShop) == 0) {
+        if (func_80059CE8((void*)(s32)msg, D_800F8D70_MushroomShop) == 0) {
         exit:
             func_800191F8(spr);
             func_80067704(sprFile);
@@ -524,9 +520,9 @@ top:
                 D_800ED610 = &camPos;
                 D_800ED72C = &camRot;
                 D_800F8D70_MushroomShop = func_80059C28();
-                LoadStringIntoWindow(D_800F8D70_MushroomShop, (void*)(PB_PTR32)D_800F8A50_MushroomShop[sel].descMsg, -1, -1);
+                LoadStringIntoWindow(D_800F8D70_MushroomShop, (void*)(s32)D_800F8A50_MushroomShop[sel].descMsg, -1, -1);
                 func_8006EB40(win);
-                func_8006DA5C(win, (void*)(PB_PTR32)D_800F8A50_MushroomShop[sel].nameMsg, 0);
+                func_8006DA5C(win, (void*)(s32)D_800F8A50_MushroomShop[sel].nameMsg, 0);
                 sprintf(buf, "%5d", D_800F8A50_MushroomShop[sel].price);
                 func_8006DA5C(win, buf, 1);
                 LoadStringIntoWindow(win, "\x11\x0A\x20\x29\x78\x12", -1, -1);

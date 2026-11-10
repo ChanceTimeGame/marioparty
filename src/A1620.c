@@ -1,6 +1,5 @@
 #include "common.h"
 
-#ifndef TARGET_PC /* the host's guMtxF2L is in host_sdk.c */
 /* guMtxF2L (Hudson's -O0 version: halves stored separately) */
 void func_800A0A20(Matrix4f mf, void* m) {
     s32 i;
@@ -42,7 +41,6 @@ void func_800A0B90(Matrix4f mf, void* m) {
             af += 2;
         }
 }
-#endif
 
 void func_800A0D00(Vec3f* v, f32 x, f32 y, f32 z) {
     v->x = x;

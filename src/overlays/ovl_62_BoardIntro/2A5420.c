@@ -1,11 +1,7 @@
 #include "ovl62b.h"
 
 /* retail addresses the model id as D_800FCD74+2 (CSE keeps the address in a register) */
-#ifdef TARGET_PC
-#define MDL74 D_800FCD76_BoardIntro
-#else
 #define MDL74 (((s16*)&D_800FCD74_BoardIntro)[1])
-#endif
 extern Vec3f D_800FD690_BoardIntro[2]; /* camera path: start, end (+8 bytes unused) */
 
 /* .data */

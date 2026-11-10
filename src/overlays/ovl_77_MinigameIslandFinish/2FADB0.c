@@ -464,7 +464,7 @@ void func_800F6D68_MinigameIslandFinish(void) {
         func_8004EE14(0, &PLAYER->coords, 0xA, HOST);
         HuPrcSleep(0xA);
         win = CreateTextWindow(0x1E, 0x3C, D_800F9138_MinigameIslandFinish[GwPlayer[0].character], 3);
-        LoadStringIntoWindow(win, (void*)(PB_PTR32)D_800F9120_MinigameIslandFinish[GwPlayer[0].character], -1, -1);
+        LoadStringIntoWindow(win, (void*)(s32)D_800F9120_MinigameIslandFinish[GwPlayer[0].character], -1, -1);
         func_8006E070(win, 0);
         ShowTextWindow(win);
         PlaySound(0x432);
@@ -558,7 +558,7 @@ void func_800F6D68_MinigameIslandFinish(void) {
         win = CreateTextWindow(0x50, 0x3C, 0xF, 2);
         msg = 0x49A;
     last:
-        LoadStringIntoWindow(win, (void*)(PB_PTR32)msg, -1, -1);
+        LoadStringIntoWindow(win, (void*)(s32)msg, -1, -1);
         func_8006E070(win, 0);
         ShowTextWindow(win);
         func_8004DBD4(win, 0);

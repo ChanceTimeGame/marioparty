@@ -212,7 +212,7 @@ void func_800F6D48_name_57(void) {
         }
         total = (total - 1) % 6 + D_800F7EF4_name_57;
         if (total != 0) {
-            LoadStringIntoWindow(choice, (void*)(PB_PTR32)total, -1, -1);
+            LoadStringIntoWindow(choice, (void*)(s32)total, -1, -1);
         }
         win = choice;
         func_8006E070(win, 0);

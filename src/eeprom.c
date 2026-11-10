@@ -129,13 +129,7 @@ s32 _ReadEeprom(UnkEep* arg0) {
     return 0;
 }
 
-#ifdef TARGET_PC
-/* Host: 59E80.c uses the result of this void function: on the N64 it is v0 as the tail call
-   RequestSIFunction left it. Return that explicitly. */
-s32 ReadEeprom(s32 eepromAbsAddr, u8* src, s16 size) {
-#else
 void ReadEeprom(s32 eepromAbsAddr, u8* src, s16 size) {
-#endif
     #define HUDSON_HEADER_SIZE 8
     unkMesg sp10;
     UnkEep sp20;
@@ -144,11 +138,7 @@ void ReadEeprom(s32 eepromAbsAddr, u8* src, s16 size) {
     sp20.src = src;
     sp20.size = size;
 
-#ifdef TARGET_PC
-    return RequestSIFunction(&sp10, (void*)_ReadEeprom, (void*)&sp20, 1);
-#else
     RequestSIFunction(&sp10, (void*)_ReadEeprom, (void*)&sp20, 1);
-#endif
     #undef HUDSON_HEADER_SIZE
 }
 

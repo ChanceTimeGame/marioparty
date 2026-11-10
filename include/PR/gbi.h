@@ -1,8 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host build: the unified 64-bit host edition (games/mp1/src/port/include) replaces
- * this header. N64 builds never define TARGET_PC and compile the original below unchanged. */
-#include <PR/gbi.h>
-#else /* !TARGET_PC */
 /**************************************************************************
  *									  *
  *		 Copyright (C) 1994, Silicon Graphics, Inc.		  *
@@ -4577,4 +4572,3 @@ typedef union {
 
 
 #endif /* _GBI_H_ */
-#endif /* !TARGET_PC */

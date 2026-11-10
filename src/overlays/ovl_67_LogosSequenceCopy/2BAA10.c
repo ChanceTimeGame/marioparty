@@ -15,7 +15,7 @@ s32 D_800F6F70_LogosSequenceCopy = 0;
 s32 D_800F6F74_LogosSequenceCopy[] = {0x00110000, 0x00110001, 0x00110002};
 
 typedef struct UnkStruct {
-    PB_PTR32 unk_00[4]; /* an nnsched client: pointer-wide, as it is 24 bytes on the host */
+    s32 unk_00[4]; /* an nnsched client: pointer-wide, as it is 24 bytes on the host */
 } UnkStruct; //sizeof 0x10
 
 void func_800F6610_LogosSequenceCopy(unkLogoStruct* arg0, s16 arg1, s16 arg2, s16 arg3, u16 arg4) {
@@ -171,7 +171,7 @@ s32 func_800F6CEC_LogosSequenceCopy(void) {
     u8 sp30[0x20];
     s32 sp50;
     s16 i;
-    s32* leoRam = PB_N64_ADDR(s32*, 0x80400000);
+    s32* leoRam = ((s32*)0x80400000);
 
     osCreateMesgQueue(&D_800F6F90_LogosSequenceCopy, &D_800F6FA8_LogosSequenceCopy, 1);
     i = 30;
@@ -194,15 +194,15 @@ s32 func_800F6CEC_LogosSequenceCopy(void) {
     if (bcmp(sp30, "ELBE", 4) != 0) {
         return -1;
     }
-    sp50 = func_800F6C94_LogosSequenceCopy((s32)(PB_PTR32)leoRam, 0x31, 1);
+    sp50 = func_800F6C94_LogosSequenceCopy((s32)(s32)leoRam, 0x31, 1);
     if (sp50 != 0) {
         return sp50;
     }
-    sp50 = func_800F6C94_LogosSequenceCopy((s32)(PB_PTR32)leoRam, leoRam[0], leoRam[1]);
+    sp50 = func_800F6C94_LogosSequenceCopy((s32)(s32)leoRam, leoRam[0], leoRam[1]);
     if (sp50 != 0) {
         return sp50;
     }
-    LeoBootGame(PB_N64_ADDR(void*, 0x80400000));
+    LeoBootGame(((void*)0x80400000));
     return -1;
 }
 s32 func_8000B358(void);

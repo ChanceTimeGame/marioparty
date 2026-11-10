@@ -1,16 +1,7 @@
 #ifndef INCLUDE_ASM_H
 #define INCLUDE_ASM_H
 
-#if defined(TARGET_PC)
-/* PartyBoard host build: no MIPS assembly. Every unit compiled on the host has C for its
-   functions (NON_MATCHING), so these expand to nothing. */
-#ifndef INCLUDE_ASM
-#define INCLUDE_ASM(FOLDER, NAME)
-#endif
-#ifndef INCLUDE_RODATA
-#define INCLUDE_RODATA(FOLDER, NAME)
-#endif
-#elif !defined(SPLAT) && !defined(M2CTX) && !defined(PERMUTER)
+#if   !defined(SPLAT) && !defined(M2CTX) && !defined(PERMUTER)
 #ifndef INCLUDE_ASM
 #define INCLUDE_ASM(FOLDER, NAME) \
     __asm__( \

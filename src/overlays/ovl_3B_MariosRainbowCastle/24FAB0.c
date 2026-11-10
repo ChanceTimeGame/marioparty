@@ -46,7 +46,7 @@ DecisionTreeNonLeafNode D_800F7FAC_MariosRainbowCastle[2] = {
     { 0x0, { (void*)0x0 }, { 0x4646 } },
 };
 DecisionTreeNonLeafNode D_800F7FC4_MariosRainbowCastle[3] = {
-    { 0x04000000, { (void*)0x0 }, { (PB_UPTR32)D_800F7FAC_MariosRainbowCastle } },
+    { 0x04000000, { (void*)0x0 }, { (u32)D_800F7FAC_MariosRainbowCastle } },
     { 0x07000000, { (void*)0xB }, { 0x2828 } },
     { 0x0, { (void*)0x0 }, { 0x3232 } },
 };
@@ -56,7 +56,7 @@ DecisionTreeNonLeafNode D_800F7FE8_MariosRainbowCastle[3] = {
     { 0x0, { (void*)0x0 }, { 0x463C } },
 };
 DecisionTreeNonLeafNode D_800F800C_MariosRainbowCastle[4] = {
-    { 0x07000000, { (void*)0xB }, { (PB_UPTR32)D_800F7FE8_MariosRainbowCastle } },
+    { 0x07000000, { (void*)0xB }, { (u32)D_800F7FE8_MariosRainbowCastle } },
     { 0x05000000, { (void*)0x1 }, { 0x2828 } },
     { 0x05000000, { (void*)0x6 }, { 0x3C3C } },
     { 0x0, { (void*)0x0 }, { 0x5046 } },
@@ -67,9 +67,9 @@ DecisionTreeNonLeafNode D_800F803C_MariosRainbowCastle[3] = {
     { 0x0, { (void*)0x0 }, { 0x463C } },
 };
 DecisionTreeNonLeafNode D_800F8060_MariosRainbowCastle[6] = {
-    { 0x03000000, { (void*)0x1 }, { (PB_UPTR32)D_800F7FC4_MariosRainbowCastle } },
-    { 0x03000000, { (void*)0x8 }, { (PB_UPTR32)D_800F800C_MariosRainbowCastle } },
-    { 0x07000000, { (void*)0xB }, { (PB_UPTR32)D_800F803C_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x1 }, { (u32)D_800F7FC4_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x8 }, { (u32)D_800F800C_MariosRainbowCastle } },
+    { 0x07000000, { (void*)0xB }, { (u32)D_800F803C_MariosRainbowCastle } },
     { 0x05000000, { (void*)0x1 }, { 0x1E28 } },
     { 0x05000000, { (void*)0x6 }, { 0x3C3C } },
     { 0x0, { (void*)0x0 }, { 0x5046 } },
@@ -85,7 +85,7 @@ DecisionTreeNonLeafNode D_800F80CC_MariosRainbowCastle[3] = {
     { 0x0, { (void*)0x0 }, { 0x141E } },
 };
 DecisionTreeNonLeafNode D_800F80F0_MariosRainbowCastle[4] = {
-    { 0x04000000, { (void*)0x10000 }, { (PB_UPTR32)D_800F80CC_MariosRainbowCastle } },
+    { 0x04000000, { (void*)0x10000 }, { (u32)D_800F80CC_MariosRainbowCastle } },
     { 0x05000000, { (void*)0x1 }, { 0x2832 } },
     { 0x05000000, { (void*)0x6 }, { 0x463C } },
     { 0x0, { (void*)0x0 }, { 0x5A46 } },
@@ -99,7 +99,7 @@ DecisionTreeNonLeafNode D_800F8138_MariosRainbowCastle[2] = {
     { 0x0, { (void*)0x0 }, { 0x3C3C } },
 };
 DecisionTreeNonLeafNode D_800F8150_MariosRainbowCastle[3] = {
-    { 0x04000000, { (void*)0x10000 }, { (PB_UPTR32)D_800F8138_MariosRainbowCastle } },
+    { 0x04000000, { (void*)0x10000 }, { (u32)D_800F8138_MariosRainbowCastle } },
     { 0x07000000, { (void*)0xB }, { 0x1423 } },
     { 0x0, { (void*)0x0 }, { 0xA1E } },
 };
@@ -109,7 +109,7 @@ DecisionTreeNonLeafNode D_800F8174_MariosRainbowCastle[3] = {
     { 0x0, { (void*)0x0 }, { 0xA } },
 };
 DecisionTreeNonLeafNode D_800F8198_MariosRainbowCastle[5] = {
-    { 0x04000000, { (void*)0x10000 }, { (PB_UPTR32)D_800F8174_MariosRainbowCastle } },
+    { 0x04000000, { (void*)0x10000 }, { (u32)D_800F8174_MariosRainbowCastle } },
     { 0x07000000, { (void*)0xB }, { 0x2828 } },
     { 0x05000000, { (void*)0x1 }, { 0x3C3C } },
     { 0x05000000, { (void*)0x6 }, { 0x2828 } },
@@ -123,12 +123,12 @@ DecisionTreeNonLeafNode D_800F81D4_MariosRainbowCastle[5] = {
     { 0x0, { (void*)0x0 }, { 0x14 } },
 };
 DecisionTreeNonLeafNode D_800F8210_MariosRainbowCastle[8] = {
-    { 0x03000000, { (void*)0x1 }, { (PB_UPTR32)D_800F80A8_MariosRainbowCastle } },
-    { 0x03000000, { (void*)0x4 }, { (PB_UPTR32)D_800F80F0_MariosRainbowCastle } },
-    { 0x03000000, { (void*)0x10 }, { (PB_UPTR32)D_800F8120_MariosRainbowCastle } },
-    { 0x03000000, { (void*)0x40 }, { (PB_UPTR32)D_800F8150_MariosRainbowCastle } },
-    { 0x03000000, { (void*)0x80 }, { (PB_UPTR32)D_800F8198_MariosRainbowCastle } },
-    { 0x03000000, { (void*)0x200 }, { (PB_UPTR32)D_800F81D4_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x1 }, { (u32)D_800F80A8_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x4 }, { (u32)D_800F80F0_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x10 }, { (u32)D_800F8120_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x40 }, { (u32)D_800F8150_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x80 }, { (u32)D_800F8198_MariosRainbowCastle } },
+    { 0x03000000, { (void*)0x200 }, { (u32)D_800F81D4_MariosRainbowCastle } },
     { 0x04000000, { (void*)0x0 }, { 0x514 } },
     { 0x0, { (void*)0x0 }, { 0x5F50 } },
 };
@@ -220,10 +220,10 @@ extern Object* D_800F8434_MariosRainbowCastle;
 extern Object* D_800F8438_MariosRainbowCastle;
 extern Object* D_800F843C_MariosRainbowCastle;
 extern Object* D_800F8440_MariosRainbowCastle[];
-extern PB_PTR32 D_800F8444_MariosRainbowCastle;
-extern PB_PTR32 D_800F8448_MariosRainbowCastle;
-extern PB_PTR32 D_800F844C_MariosRainbowCastle;
-extern PB_PTR32 D_800F8450_MariosRainbowCastle;
+extern s32 D_800F8444_MariosRainbowCastle;
+extern s32 D_800F8448_MariosRainbowCastle;
+extern s32 D_800F844C_MariosRainbowCastle;
+extern s32 D_800F8450_MariosRainbowCastle;
 
 void func_800F6610_MariosRainbowCastle(void) {
     Object* temp_v0;

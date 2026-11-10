@@ -38,11 +38,7 @@ extern char* D_800FA49C_DebugMinigameMenu[3];
 extern s32 D_800FA4A8_DebugMinigameMenu;
 extern s32 D_800FA4AC_DebugMinigameMenu;
 /* D_800FA4AE: the low half of s32 D_800FA4AC. */
-#ifdef TARGET_PC
-#define D_800FA4AE_DebugMinigameMenu ((s16)D_800FA4AC_DebugMinigameMenu)
-#else
 extern s16 D_800FA4AE_DebugMinigameMenu;
-#endif
 extern s32 D_800FA4B0_DebugMinigameMenu;
 extern s32 D_800FA4B4_DebugMinigameMenu;
 
@@ -75,11 +71,7 @@ extern u16 D_800FAE0C_DebugMinigameMenu[4]; /* hold time */
 extern u16 D_800FAE14_DebugMinigameMenu[4]; /* repeat delay */
 
 /* D_800F3779: the low byte of s16 D_800F3778 (the number of controllers). */
-#ifdef TARGET_PC
-#define D_800F3779 ((u8)D_800F3778)
-#else
 extern u8 D_800F3779;
-#endif
 
 extern u32 D_800C5968;
 extern s16 D_800C596C;

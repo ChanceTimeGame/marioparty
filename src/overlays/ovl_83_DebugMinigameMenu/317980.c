@@ -505,11 +505,7 @@ void func_800F75CC_DebugMinigameMenu(omObjData* arg0) {
         if ((D_800FAE00_DebugMinigameMenu[i] & 0x90) && D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].skip == 0) {
             if (D_800FA4A8_DebugMinigameMenu == 0) {
                 omAddObj(2, 0, 0, -1, func_800F8A24_DebugMinigameMenu);
-#ifdef TARGET_PC
-                D_800FA4A8_DebugMinigameMenu = 1;
-#else
                 *(u8*)&D_800FA4A8_DebugMinigameMenu = 1; /* retail: the word's high byte (any nonzero) */
-#endif
                 func_80018C90(D_800FAD96_DebugMinigameMenu);
                 arg0->func_ptr = func_800F855C_DebugMinigameMenu;
                 func_800F9400_DebugMinigameMenu(1);

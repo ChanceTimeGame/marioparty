@@ -124,11 +124,7 @@ void func_800F69D0_SlotMachine(omObjData* obj) {
     obj->model[19] = func_800174C0(D_800FE124_SlotMachine[0] | 0x140000, 0xD9);
     /* Retail passed an f32 1.0f (func_80009028 stores the bits into a float field): call it that
        way on the N64 only; the host passes the same bits to the s32 definition. */
-#ifndef TARGET_PC
     ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(obj, 1.0f, -450.0f, -1000.0f, 450.0f, 1000.0f);
-#else
-    func_80009028(obj, 0x3F800000, -450.0f, -1000.0f, 450.0f, 1000.0f);
-#endif
     func_80009090(obj);
     func_800FC090_SlotMachine(obj->model[1]);
     func_80025798(obj->model[3], 0.0f, 280.0f, -70.0f);

@@ -463,13 +463,7 @@ void func_800FB5D4_PiranhasPursuit(s16* models) {
         p->pos.x = p->pos.y = p->pos.z = 0.0f;
         p->rot.x = p->rot.y = p->rot.z = 0.0f;
         p->scale.x = p->scale.y = p->scale.z = 1.0f;
-#ifdef TARGET_PC
-        /* retail also clears the word after unk38: the next piece's unk0/unk2 (cleared again next
-           pass), and after the last piece 4 bytes past the allocation */
-        p->unk34 = p->unk38 = 0.0f;
-#else
         p->unk34 = p->unk38 = (&p->unk38)[1] = 0.0f;
-#endif
     }
     models[0] = func_800174C0(0x450001, 0x9D);
     models[1] = func_800174C0(0x450002, 0x9D);
@@ -806,13 +800,8 @@ void func_800FC7F0_PiranhasPursuit(omObjData* obj) {
 void func_800FC9C4_PiranhasPursuit(Gfx* g, PPDrop* d, u16 frame) {
     s32 i;
 
-#ifdef TARGET_PC
-    gSPDisplayList(g++, D_80100358_PiranhasPursuit);
-    gSPDisplayList(g++, D_80100398_PiranhasPursuit);
-#else
     gSPDisplayList(g++, osVirtualToPhysical(D_80100358_PiranhasPursuit));
     gSPDisplayList(g++, osVirtualToPhysical(D_80100398_PiranhasPursuit));
-#endif
     for (i = 0; i < 64; i++, d++) {
         gSPVertex(g++, d->v[frame], 2, 0);
         gSPLine3D(g++, 0, 1, 0);

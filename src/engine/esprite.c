@@ -17,11 +17,7 @@ void func_80064B70(void);
 void func_80068398(void);
 void func_80066DC4(s16, s16, s16, s16);
 void func_80067284(s16, s16, f32);
-#ifdef TARGET_PC
-u8 func_80067328(s16, s16); /* host: returns u8: x86-64 leaves the upper bits of a narrow return undefined */
-#else
 s32 func_80067328(s16, s16);
-#endif
 
 
 void func_80018870(void) {
@@ -61,22 +57,6 @@ void func_8001897C(s16 arg0, f32 r, f32 g, f32 b) {
     u16* color = pal->colors;
     s32 i;
 
-#ifdef TARGET_PC
-    /* Host: the palette holds the file's big-endian RGBA5551 (func_800678A4 copies it byte by
-       byte, and the graphics bridge copies textures as bytes), so scale the swapped value. */
-    for (i = 0; i < pal->count; i++) {
-        u16 c = pb_bswap16(*color);
-        u16 g5 = (c >> 6) & 0x1F;
-        u16 b5 = (c >> 1) & 0x1F;
-        u16 a1 = c & 1;
-        u32 r2 = (c >> 11) * r;
-        u32 g2 = g5 * g;
-        u32 b2 = b5 * b;
-
-        *color = pb_bswap16((u16)(a1 | ((r2 << 11) | (g2 << 6) | (b2 << 1))));
-        color++;
-    }
-#else
     for (i = 0; i < pal->count; i++) {
         u16 g5 = (*color >> 6) & 0x1F;
         u16 b5 = (*color >> 1) & 0x1F;
@@ -88,7 +68,6 @@ void func_8001897C(s16 arg0, f32 r, f32 g, f32 b) {
         *color = a1 | ((r2 << 11) | (g2 << 6) | (b2 << 1));
         color++;
     }
-#endif
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/engine/esprite", func_8001897C);

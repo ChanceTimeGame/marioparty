@@ -148,7 +148,7 @@ void func_800F6988_ResultsEternalStar2(void) {
     func_8006EB40(D_800FC66C_ResultsEternalStar2->unk8);
     func_8006E070(D_800FC66C_ResultsEternalStar2->unk8, 0);
     LoadStringIntoWindow(D_800FC66C_ResultsEternalStar2->unk8,
-                         (void*)(PB_PTR32)D_800FC274_ResultsEternalStar2[D_800FC150_ResultsEternalStar2 + D_800FC154_ResultsEternalStar2], -1, -1);
+                         (void*)(s32)D_800FC274_ResultsEternalStar2[D_800FC150_ResultsEternalStar2 + D_800FC154_ResultsEternalStar2], -1, -1);
 }
 void func_800F6C70_ResultsEternalStar2(void) {
     s32 i;
@@ -253,13 +253,7 @@ void func_800F7324_ResultsEternalStar2(void) {
     }
     D_800FC618_ResultsEternalStar2 = func_80064EF4(1, 5);
     func_80066DC4((s16)D_800FC618_ResultsEternalStar2, 0, 0, 0);
-#ifdef TARGET_PC
-    /* An 8-entry table indexed by board: retail reads boards 8..10 from the next table. */
-    file = DataRead(GwSystem.curBoardIndex < 8 ? D_800FC224_ResultsEternalStar2[GwSystem.curBoardIndex]
-                                               : D_800FC244_ResultsEternalStar2[GwSystem.curBoardIndex - 8]);
-#else
     file = DataRead(D_800FC224_ResultsEternalStar2[GwSystem.curBoardIndex]);
-#endif
     D_800FC61C_ResultsEternalStar2 = func_800678A4(file);
     DataClose(file);
     func_80067208((s16)D_800FC618_ResultsEternalStar2, 0, (s16)D_800FC61C_ResultsEternalStar2, 0);
@@ -731,11 +725,7 @@ void func_800F9250_ResultsEternalStar2(void) {
 const char D_800FC3D4_ResultsEternalStar2[] = "%5d";
 
 void func_800F95F8_ResultsEternalStar2(void) {
-#ifdef TARGET_PC
-    u8 sp10[16]; /* retail's u8[5] takes "%5d"'s sixth byte (the NUL) in frame padding */
-#else
     u8 sp10[5];
-#endif
     s32 i;
     s32 var_s2;
 
@@ -757,11 +747,7 @@ void func_800F95F8_ResultsEternalStar2(void) {
     }
 }
 void func_800F972C_ResultsEternalStar2(void) {
-#ifdef TARGET_PC
-    u8 sp10[16]; /* retail's u8[5] takes "%5d"'s sixth byte (the NUL) in frame padding */
-#else
     u8 sp10[5];
-#endif
     s32 i;
     s32 var_s2;
 
@@ -1046,7 +1032,7 @@ void func_800FA61C_ResultsEternalStar2(void) {
             for (i = 0; i < 3; i++) {
                 win[i] = CreateTextWindow(0x51, 0x78, 3, 1);
                 func_8006DE20((s16)win[i], 1.0f, 1.0f);
-                LoadStringIntoWindow((s16)win[i], (void*)(PB_PTR32)D_800FC374_ResultsEternalStar2[i], -1, -1);
+                LoadStringIntoWindow((s16)win[i], (void*)(s32)D_800FC374_ResultsEternalStar2[i], -1, -1);
                 func_8006E070((s16)win[i], 0);
                 func_80071598((s16)win[i]);
                 while (func_8006FCC0((s16)win[i]) != 0) {

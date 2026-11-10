@@ -255,23 +255,6 @@ extern f32 D_80102534_CoinBlockBash;
 extern CBBBlock D_80102538_CoinBlockBash;
 /* Retail addresses the block's fields as separate symbols (no shared base): the N64 build keeps
    splat's labels, the host views the one object. */
-#ifdef TARGET_PC
-#define D_8010253A_CoinBlockBash (D_80102538_CoinBlockBash.unk_02)
-#define D_8010253C_CoinBlockBash (D_80102538_CoinBlockBash.unk_04)
-#define D_8010253E_CoinBlockBash (D_80102538_CoinBlockBash.unk_06)
-#define D_80102540_CoinBlockBash (D_80102538_CoinBlockBash.unk_08)
-#define D_80102542_CoinBlockBash (D_80102538_CoinBlockBash.unk_0A)
-#define D_80102544_CoinBlockBash (D_80102538_CoinBlockBash.unk_0C)
-#define D_80102545_CoinBlockBash (D_80102538_CoinBlockBash.unk_0D)
-#define D_80102546_CoinBlockBash (D_80102538_CoinBlockBash.unk_0E)
-#define D_80102548_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.x)
-#define D_8010254C_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.y)
-#define D_80102550_CoinBlockBash (D_80102538_CoinBlockBash.unk_10.z)
-#define D_80102554_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C.x)
-#define D_80102558_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C.y)
-#define D_8010255C_CoinBlockBash (D_80102538_CoinBlockBash.unk_1C.z)
-#define D_8010256C_CoinBlockBash (D_80102538_CoinBlockBash.unk_34)
-#else
 extern s16 D_8010253A_CoinBlockBash;
 extern s16 D_8010253C_CoinBlockBash;
 extern s16 D_8010253E_CoinBlockBash;
@@ -287,7 +270,6 @@ extern f32 D_80102554_CoinBlockBash;
 extern f32 D_80102558_CoinBlockBash;
 extern f32 D_8010255C_CoinBlockBash;
 extern Matrix4f D_8010256C_CoinBlockBash;
-#endif
 extern s16 D_801025AC_CoinBlockBash;
 extern CBBPlayer D_801025B0_CoinBlockBash[4];
 extern CBBFx D_80102870_CoinBlockBash[40];

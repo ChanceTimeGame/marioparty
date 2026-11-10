@@ -126,12 +126,7 @@ typedef struct unkStruct_zz {
     char unk_04[0x44];
 } unkStruct_zz;
 
-#ifdef TARGET_PC
-/* Host view: a split label inside the object before it (one host object, not two). */
-#define D_800D9378 ((unkStruct_zz*)((u8*)D_800D9370 + 8))
-#else
 extern unkStruct_zz D_800D9378[];
-#endif
 
 s32 RequestSIFunction(unkMesg * siMessg, HuSiFunc func, void * arg, s32 type);
 void func_800618A4(OSPfs* arg0);
@@ -435,7 +430,7 @@ s32 dmaRead(u8* src, void* dest, s32 size) {
 
     osCreateMesgQueue(&queue, msg, 1);
     osInvalDCache(dest, ((u32)(size + 15) >> 4) << 4);
-    ret = func_80061FA0(&ioMsg, OS_MESG_PRI_NORMAL, OS_READ, (u32)PB_HOSTCAST(PB_UPTR32, src), dest, size, &queue);
+    ret = func_80061FA0(&ioMsg, OS_MESG_PRI_NORMAL, OS_READ, (u32)src, dest, size, &queue);
     if (ret == 0) {
         osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
     }
@@ -452,7 +447,7 @@ s32 HuRomDmaCodeRead(void* src, void* dest, s32 size) {
     alignedSize = ((u32)(size + 15) >> 4) << 4;
     osInvalICache(dest, alignedSize);
     osInvalDCache(dest, alignedSize);
-    ret = func_80061FA0(&ioMsg, OS_MESG_PRI_NORMAL, OS_READ, (u32)PB_HOSTCAST(PB_UPTR32, src), dest, size, &queue);
+    ret = func_80061FA0(&ioMsg, OS_MESG_PRI_NORMAL, OS_READ, (u32)src, dest, size, &queue);
     if (ret == 0) {
         osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
     }
@@ -603,16 +598,8 @@ void func_80062524(s16 arg0, u8* arg1) {
 #define FILL_COLOR_RGBA5551(r, g, b, a) ((GPACK_RGBA5551(r, g, b, a) << 16) | GPACK_RGBA5551(r, g, b, a))
 
 
-/* Retail scissors the font pass to 319x339, past the 240-line screen. On the host RT64 keeps the
-   frame's 2D rectangles at 4:3 in widescreen only when every scissor of the frame is 4:3, so the
-   oversized one stretched the message boxes; use the screen instead. */
-#ifdef TARGET_PC
-#define PF_SCISSOR_W 320
-#define PF_SCISSOR_H 240
-#else
 #define PF_SCISSOR_W 319
 #define PF_SCISSOR_H 339
-#endif
 
 Gfx *pfDrawFonts(Gfx *gfx) {
     u16 count;

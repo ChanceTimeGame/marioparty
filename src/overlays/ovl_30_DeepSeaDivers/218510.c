@@ -557,11 +557,7 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
             if (!(GwPlayer[w->unk44].flags & 1)) {
                 sx = ContStkX[pl->unk_56];
                 sy = ContStkY[pl->unk_56];
-#ifdef TARGET_PC
-            } else if ((dw->unk2 & 1) && !(dw->unk2 & 0xC)) {
-#else
             } else if ((dw->unk2 & 1) && !(*(s32*)&dw->unk0 & 0xC)) {
-#endif
                 /* The diver holds on: follow it along the surface. */
                 sy = 0;
                 if (fabsf(diver->trans.x - obj->trans.x) >= 200.0) {
@@ -1646,22 +1642,10 @@ DSDWork* func_800FC058_DeepSeaDivers(omObjData* obj) {
     DSDWork* w = HuMemDirectMalloc(sizeof(DSDWork));
 
     D_801017B0_DeepSeaDivers[D_80101BD4_DeepSeaDivers] = w;
-#ifdef TARGET_PC
-    /* Retail leaves unk4/unk6 (the radii) unset until the object's first frame, and
-       func_800FCF54 reads a diver's before then: the N64 heap held small values there; host
-       garbage pushed the first diver to the x clamp (invisible, camera followed it down). */
-    func_8009B770(w, 0, sizeof(DSDWork));
-    /* The host keeps the table index in work[]: a pointer does not fit in four bytes. */
-    obj->work[0] = 0;
-    obj->work[1] = 0;
-    obj->work[2] = (u16)D_80101BD4_DeepSeaDivers >> 8;
-    obj->work[3] = D_80101BD4_DeepSeaDivers;
-#else
     obj->work[0] = (u32)w >> 24;
     obj->work[1] = (u32)w >> 16;
     obj->work[2] = (u32)w >> 8;
     obj->work[3] = (u32)w;
-#endif
     w->unk0 = 0;
     w->unk2 = 0;
     w->unk8 = 0;
@@ -1687,11 +1671,7 @@ void func_800FC148_DeepSeaDivers(void) {
     }
 }
 DSDWork* func_800FC1C8_DeepSeaDivers(omObjData* obj) {
-#ifdef TARGET_PC
-    return D_801017B0_DeepSeaDivers[(obj->work[2] << 8) | obj->work[3]];
-#else
     return (DSDWork*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 #ifdef NON_MATCHING
 u16 func_800FC1F4_DeepSeaDivers(void) {

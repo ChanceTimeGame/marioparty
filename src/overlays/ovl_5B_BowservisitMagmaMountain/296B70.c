@@ -36,11 +36,7 @@ void func_800F65E0_BowservisitMagmaMountain(void) {
 }
 
 void func_800F66C4_BowservisitMagmaMountain(void) { //fix me: remove gotos
-#ifdef TARGET_PC
-    char sp10[16]; /* retail: one char that sprintf overruns (harmless in the N64 frame) */
-#else
     char sp10;
-#endif
     f32 temp_f20;
     f32 temp_f20_2;
     f32 var_f22;

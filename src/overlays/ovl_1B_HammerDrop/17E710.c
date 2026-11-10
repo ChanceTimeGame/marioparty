@@ -134,12 +134,7 @@ void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
     work->unk_48 = 50.0f;
     work->unk_38 = 1000.0f;
     work->unk_50 = 0;
-#ifdef TARGET_PC
-    /* Retail treats the low big-endian byte of unk_B0 as the byte at offset 0xB1. */
-    work->unk_B0 = (work->unk_B0 & 0x00FF) | 0xFF00;
-#else
     ((s8*) &work->unk_B0)[1] = -1;
-#endif
     work->unk_DC = func_800F9C1C_HammerDrop;
     work->unk_3C = yaw.v[arg1];
     func_80008FE8(arg0, 25.0f);
@@ -972,9 +967,6 @@ void func_800F9228_HammerDrop(void) {
             if (func_800F9E68_HammerDrop(HAMMER_ITEM_WORK(item)->item->unk_44, 1) != 0) {
                 if (attempts > 0xFFFE) {
                     osSyncPrintf(D_800FB620_HammerDrop);
-#ifdef TARGET_PC
-                    pb_layer_fatal("ovl_1B HammerDrop: no item after 0xFFFE attempts (retail hangs)");
-#endif
                     while (1) {}
                 }
                 continue;

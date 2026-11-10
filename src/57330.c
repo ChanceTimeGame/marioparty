@@ -11,24 +11,12 @@ Process* func_80041F24(s32);
 Process* func_800444DC(void);
 Process* func_80044680(s32);
 void func_800466C0(void);
-#ifdef TARGET_PC
-s16 func_80046710(void); /* host: returns s16: x86-64 leaves the upper bits of a narrow return undefined */
-#else
 s32 func_80046710(void);
-#endif
 Process* func_80047E54(void);
 void func_8004D4A8(s16, s32);
 void func_8004D6FC(s16, f32);
-#ifdef TARGET_PC
-void func_8004DBD4(s32, s32); /* host: matches the definition */
-#else
 void func_8004DBD4(s32, u8);
-#endif
-#ifdef TARGET_PC
-void func_80052C44(s32, s16, s16, s16, u16); /* host: matches the definition */
-#else
 void func_80052C44(s32, s32, s32, s32, s32);
-#endif
 s32 func_80054730(s32);
 extern s32 D_800D86E8;
 void func_80056F40(void);
@@ -48,11 +36,7 @@ s8 func_8000C4A0(void);
 
 extern s16 D_800EE320;
 extern s16 D_800F2A78;
-#ifdef TARGET_PC
-void func_8003D20C(void*); /* host: takes a pointer; the port number travels in it */
-#else
 void func_8003D20C(s32);
-#endif
 void func_80052934(s32);
 
 
@@ -299,17 +283,7 @@ void func_80056B78(void) {
                     break;
             }            
         }
-#ifdef TARGET_PC
-        if (pb_dev_turns() > 0) {
-            gameStatus->maxTurns = pb_dev_turns(); /* mp1host --dev-turns */
-        }
-#endif
         gameStatus->saveSetting = 0;
-#ifdef TARGET_PC
-        if (pb_dev_save() >= 0) {
-            gameStatus->saveSetting = pb_dev_save(); /* mp1host --dev-save */
-        }
-#endif
         gameStatus->minigameExplanation = 0;
         gameStatus->messageSpeed = 1;
         
@@ -538,9 +512,9 @@ void func_8005727C(void) {
     BoardSpace* spc;
     s16 spaceIdx;
     s16 win;
-    PB_PTR32 h1; /* PartyBoard: a func_80045D84 window handle (pointer) */
-    PB_PTR32 h2;
-    PB_PTR32 h3;
+    s32 h1;
+    s32 h2;
+    s32 h3;
     s32 n;
     s32 j;
     s32 i;
@@ -570,14 +544,6 @@ void func_8005727C(void) {
                     case 2:
                         SetBoardFeatureFlag(0);
                         SetBoardFeatureFlag(0x40);
-#ifdef TARGET_PC
-                        /* Quick saves: the same EEPROM write, without the "saving" box and
-                           the "saved" box that waits for A (the write takes no time here). */
-                        if (pb_quick_saves()) {
-                            func_8005B3B0();
-                            break;
-                        }
-#endif
                         win = CreateTextWindow(0x58, 0x6C, 0xD, 1);
                         func_8006E154(win, 0);
                         LoadStringIntoWindow(win, (void*)0x178, -1, -1);
@@ -994,7 +960,7 @@ void func_800582E4(void) {
     HuPrcVSleep();
     func_8004A520();
     func_8004B5C4(3.0f);
-    func_800591E0(PB_HOSTCAST(void*, PB_HOSTCAST(PB_PTR32, GwPlayer[GwSystem.curPlayerIndex].port))); //TODO: what arg type should this take?
+    func_800591E0(((GwPlayer[GwSystem.curPlayerIndex].port))); //TODO: what arg type should this take?
     func_80056AF4();
     omOvlReturnEx(1);
     omOvlKill();
@@ -1032,11 +998,11 @@ void func_8005835C(void) {
         continue;
     view:
         func_80041F84(cur);
-        func_8003D20C(PB_HOSTCAST(void*, PB_HOSTCAST(PB_PTR32, port)));
+        func_8003D20C((port));
         goto done;
     start:
         func_80041F84(i);
-        func_800591E0((void*)PB_HOSTCAST(PB_PTR32, port));
+        func_800591E0((void*)port);
         func_80041FE0(i);
         continue;
     stick:

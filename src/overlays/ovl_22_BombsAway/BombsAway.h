@@ -316,7 +316,6 @@ extern BaSplash D_80100B70_BombsAway[6];
    (no shared base register), which field access through the block may not reproduce: the N64
    build declares the labels (splat defines them in the bss), the host views the block. Record
    fields (D_80100152, D_80100504, ...) have no N64 declaration: index the record arrays. */
-#ifndef TARGET_PC
 extern s16 D_80100144_BombsAway;
 extern s16 D_80100146_BombsAway;
 extern f32 D_80100344_BombsAway;
@@ -343,51 +342,6 @@ extern f32 D_801007B8_BombsAway;
 extern s16 D_80100B12_BombsAway;
 extern s16 D_80100776_BombsAway; /* undefined_syms.txt: D_80100774 + 2 */
 extern s16 D_8010077A_BombsAway; /* undefined_syms.txt: D_80100778 + 2 */
-#else
-#define D_80100144_BombsAway (D_80100140_BombsAway.unk_04)
-#define D_80100146_BombsAway (D_80100140_BombsAway.unk_06)
-#define D_80100152_BombsAway (D_80100150_BombsAway[0].unk_02)
-#define D_80100198_BombsAway (D_80100150_BombsAway[0].unk_48)
-#define D_80100344_BombsAway (D_80100328_BombsAway.unk_1C)
-#define D_80100354_BombsAway (D_80100328_BombsAway.unk_2C)
-#define D_80100358_BombsAway (D_80100328_BombsAway.unk_30)
-#define D_8010035C_BombsAway (D_80100328_BombsAway.unk_34)
-#define D_80100360_BombsAway (D_80100328_BombsAway.unk_38)
-#define D_80100364_BombsAway (D_80100328_BombsAway.unk_38.y)
-#define D_80100368_BombsAway (D_80100328_BombsAway.unk_38.z)
-#define D_8010036C_BombsAway (D_80100328_BombsAway.unk_44)
-#define D_801003B8_BombsAway (D_80100328_BombsAway.unk_90)
-#define D_80100438_BombsAway (D_80100328_BombsAway.unk_110[0])
-#define D_8010043C_BombsAway (D_80100328_BombsAway.unk_110[1])
-#define D_80100440_BombsAway (D_80100328_BombsAway.unk_110[2])
-#define D_80100444_BombsAway (D_80100328_BombsAway.unk_110[3])
-#define D_80100458_BombsAway (D_80100328_BombsAway.unk_130)
-#define D_801004F0_BombsAway (D_801004E0_BombsAway.unk_10)
-#define D_80100504_BombsAway (D_80100500_BombsAway[0].unk_04)
-#define D_80100508_BombsAway (D_80100500_BombsAway[0].unk_08)
-#define D_8010050C_BombsAway (D_80100500_BombsAway[0].unk_0C)
-#define D_80100510_BombsAway (D_80100500_BombsAway[0].unk_10)
-#define D_801005A4_BombsAway (D_801005A0_BombsAway[0].unk_04)
-#define D_8010069A_BombsAway (D_80100698_BombsAway[0].unk_02)
-#define D_8010069C_BombsAway (D_80100698_BombsAway[0].unk_04)
-#define D_801006A0_BombsAway (D_80100698_BombsAway[0].unk_08)
-#define D_80100706_BombsAway (&D_80100700_BombsAway[3])
-#define D_80100794_BombsAway (D_80100790_BombsAway.unk_00.y)
-#define D_80100798_BombsAway (D_80100790_BombsAway.unk_00.z)
-#define D_8010079C_BombsAway (D_80100790_BombsAway.unk_0C)
-#define D_801007A8_BombsAway (D_80100790_BombsAway.unk_18)
-#define D_801007B8_BombsAway (D_80100790_BombsAway.unk_28)
-#define D_80100800_BombsAway (D_801007E0_BombsAway[0].unk_20)
-#define D_80100992_BombsAway (D_80100990_BombsAway[0].unk_02)
-#define D_80100994_BombsAway (D_80100990_BombsAway[0].unk_04)
-#define D_80100998_BombsAway (D_80100990_BombsAway[0].unk_08)
-#define D_80100B12_BombsAway (D_80100B10_BombsAway[1])
-#define D_80100776_BombsAway (((s16*)&D_80100774_BombsAway)[1])
-#define D_8010077A_BombsAway (((s16*)&D_80100778_BombsAway)[1])
-#define D_800FFA80_BombsAway (D_800FFA7C_BombsAway[0][1])
-#define D_800FFAAD_BombsAway (D_800FFAAC_BombsAway[0][1])
-#define D_800FFB2E_BombsAway ((u16)D_800FFB2C_BombsAway)
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Functions

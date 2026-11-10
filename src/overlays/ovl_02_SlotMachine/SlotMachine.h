@@ -9,7 +9,6 @@
 #include "common.h"
 #include "sprite65770.h"
 #include "engine/math.h"
-#include "pb_host.h"
 
 /* ---------------------------------------------------------------------------------------------
    Structs
@@ -230,14 +229,7 @@ extern unk2C0C0Struct70* D_800F37AC; /* src/388E0.c: 128 texture records */
 extern u8 D_800F64F8;
 extern s8 omSysPauseEnableFlag;
 
-/* N64 framebuffer 0 (320 x 240 x 16 bits; D_800C4250[0]), copied by func_800F99E0. The host has
-   no such framebuffer contents: it reads PB_N64_RAM's zeroed block. Retail used the constant
-   address (a bare lui, its %lo folded into the load), not a symbol. */
-#ifndef TARGET_PC
 #define D_80360000 ((u16*)0x80360000)
-#else
-#define D_80360000 ((u16*)PB_N64_RAM(0x80360000, 0x25800))
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Overlay .data (definitions in the owning unit)

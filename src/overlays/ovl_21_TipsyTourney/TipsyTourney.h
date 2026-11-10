@@ -96,12 +96,7 @@ extern f32 D_800B8994;
 extern f32 D_800ED6B8;
 extern f32 D_800F5254;
 extern u8 D_800F64F8;
-#ifdef TARGET_PC
-/* low byte of the s32 D_800ED430 (split label) */
-#define D_800ED433 ((u8)D_800ED430)
-#else
 extern u8 D_800ED433;
-#endif
 extern Vec3f CenterM[];
 extern Vec3f CRotM[];
 extern f32 CZoomM[];
@@ -117,12 +112,8 @@ f32 func_80029518(f32);
 void func_80037178(s16, Vec3f*);
 s32 func_80004D1C(omObjData*, Vec4f*, f32);
 f32 func_800051D4(omObjData*, f32, f32, f32, Vec3f*);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
-void func_8003A060(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
+void func_8003A060(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
                    s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
 
 /* ---------------------------------------------------------------------------------------------

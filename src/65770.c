@@ -57,10 +57,6 @@ extern s16 D_800F329E;
 
 extern Gfx* D_800E4120;
 void func_80068410(Gfx** gfx, unk65770Obj* obj);
-#ifdef TARGET_PC
-void pb_spr_classify(void);
-void pb_spr_align_end(Gfx** g);
-#endif
 void func_80023888(void*);
 extern f32 D_800E4124;
 extern unk65770Anim* D_800EC700[256];
@@ -68,11 +64,7 @@ extern u16 D_800ED3EC;
 extern s8 D_800F384E;
 void func_80067E38(unk65770Obj* obj);
 void func_80068124(unk65770Obj* obj);
-#ifdef TARGET_PC
-s16 func_8002451C(u32, void (*)(Gfx**, Mtx*, camera*), u8); /* host: matches the definition */
-#else
 s16 func_8002451C(s32, void*, s32);
-#endif
 f64 func_8009B618(f64, f64);
 void func_8003B6E4(void*, u32);
 void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam);
@@ -97,9 +89,9 @@ void func_80064B70(void) {
     D_800EE978[0] = D_800EE978[1] = D_800EE978[2] = D_800F54B4 = NULL;
     D_800F37CC = 0;
     guOrtho(&D_800E40E0, -160.0f, 160.0f, -120.0f, 120.0f, 0.0f, 2000.0f, 1.0f);
-    D_800F2BD8 = func_8002451C(0, PB_HOSTCAST(void (*)(Gfx**, Mtx*, camera*), func_8006677C), 0);
+    D_800F2BD8 = func_8002451C(0, func_8006677C, 0);
     func_80025F10(D_800F2BD8, 1);
-    D_800F329E = func_8002451C(0, PB_HOSTCAST(void (*)(Gfx**, Mtx*, camera*), func_80066B3C), 6);
+    D_800F329E = func_8002451C(0, func_80066B3C, 6);
     func_800676BC();
 }
 unk65770Grp* func_80064C94(s16 num, u16 attr) {
@@ -650,9 +642,6 @@ void func_80065BF8(void) {
 INCLUDE_ASM("asm/nonmatchings/65770", func_80065BF8);
 #endif
 
-#ifdef TARGET_PC
-void *pb_sprite_quad_end; /* end of this frame's quad buffer (69010.c checks the fit) */
-#endif
 void func_800666D4(void) {
     if (D_800EE978[D_800F37F0] != NULL) {
         func_80023728(D_800EE978[D_800F37F0]);
@@ -663,9 +652,6 @@ void func_800666D4(void) {
         D_800EE978[D_800F37F0] = NULL;
     }
     D_800F54B4 = D_800EE978[D_800F37F0];
-#ifdef TARGET_PC
-    pb_sprite_quad_end = D_800F54B4 != NULL ? (u8 *)D_800F54B4 + D_800F37CC : NULL;
-#endif
 }
 void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
     unk65770Obj* obj;
@@ -676,9 +662,6 @@ void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
 
     D_800F37CC = 0;
     func_80065BF8();
-#ifdef TARGET_PC
-    pb_spr_classify(); /* 69010.c: widescreen backdrops */
-#endif
     obj = func_80065700();
     func_800666D4();
     gSPViewport((*gfx)++, &D_800C5B40);
@@ -727,9 +710,6 @@ void func_8006677C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
     } else if (D_800E4120 != NULL) {
         gSPEndDisplayList(end);
     }
-#ifdef TARGET_PC
-    pb_spr_align_end(gfx); /* 69010.c */
-#endif
     gDPSetTextureLUT((*gfx)++, G_TT_NONE);
     gSPMatrix((*gfx)++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
     gSPMatrix((*gfx)++, mtx + 1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -748,9 +728,6 @@ void func_80066B3C(Gfx** gfx, Mtx* mtx, unk_Struct00* cam) {
         gDPSetBlendColor((*gfx)++, 0, 0, 0, 1);
         gDPSetAlphaCompare((*gfx)++, G_AC_THRESHOLD);
         gSPDisplayList((*gfx)++, D_800E4120);
-#ifdef TARGET_PC
-        pb_spr_align_end(gfx);
-#endif
         gDPSetTextureLUT((*gfx)++, G_TT_NONE);
         gSPMatrix((*gfx)++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
         gSPMatrix((*gfx)++, mtx + 1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -765,11 +742,7 @@ void func_80066DC4(s16 grpIdx, s16 idx, s16 x, s16 y) {
 }
 /* Halfword i of an N64-layout Mtx (integer halves 0..15, fractions 16..31). The host keeps the
    32-bit words in host byte order, so a u16 index would read the other half of each word. */
-#ifdef TARGET_PC
-#define MTX_HALF(m, i) ((u16)(((u32*)(m))[(i) >> 1] >> (((i) & 1) ? 0 : 16)))
-#else
 #define MTX_HALF(m, i) (((u16*)(m))[i])
-#endif
 void func_80066DF4(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z) {
     Mtx mtx;
     unk65770Obj* obj = D_800EE330[grpIdx]->obj[idx];
@@ -1217,10 +1190,6 @@ void func_80068124(unk65770Obj* obj) {
     flags = obj->unk20 = obj->unk56 ^ obj->unk48;
     if (obj->unk4C != NULL && !(flags & 0x8000) &&
         (obj->unk1C != 0.0 || (flags & 0x3C0000) || (flags & 0x30000) == 0x30000
-#ifdef TARGET_PC
-         /* Frame interpolation: any sprite may take the quad path while it moves (69010.c) */
-         || pb_sprite_quad_budget()
-#endif
         )) {
         anim = obj->unk4C;
         frame = &anim->unk0[obj->unk52];

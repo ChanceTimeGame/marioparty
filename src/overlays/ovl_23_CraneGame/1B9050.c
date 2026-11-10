@@ -330,11 +330,7 @@ void func_800FC4F4_CraneGame(s16 model) {
     D_80100704_CraneGame = func_80023684(0x4000, (s16)m->unk_68);
     D_8010074C_CraneGame = 0;
     for (i = 0; i < (m->unk_6A & 0x3F); i++) {
-#ifdef TARGET_PC
-        offs[i] = gp - base;
-#else
         offs[i] = ((u32)gp - (u32)base) >> 3;
-#endif
         grp[i].start = D_8010074C_CraneGame;
         func_800FC800_CraneGame(&m->unk_80[i], m->unk_78, m->unk_6E);
         func_800FC9B0_CraneGame();
@@ -451,11 +447,7 @@ void func_800FC9B0_CraneGame(void) {
             }
             sum = 0;
             for (j = 0; j < n; j++, f++) {
-#ifdef TARGET_PC
-                sum += D_801006FC_CraneGame[*f & 0x7FFF];
-#else
                 sum += D_801006FC_CraneGame[*f];
-#endif
             }
             q->key = key-- + (sum * 100) / n;
         }

@@ -142,11 +142,7 @@ typedef struct N2ACamWork {
 
 /* D_800FDF60[i] for a player index that may be -1 (nobody has held the ball yet). Retail reads
    the unused bss word before the array (always 0 there); the host must not. */
-#ifdef TARGET_PC
-#define N2A_HOLDER_FLAGS(i) ((i) >= 0 ? D_800FDF60_name_2A[i] : 0)
-#else
 #define N2A_HOLDER_FLAGS(i) (D_800FDF60_name_2A[i])
-#endif
 
 #define N2A_PLAYER(obj) ((N2APlayerWork*)(obj)->unk_50)
 #define N2A_BALL(obj) ((N2ABallWork*)(obj)->unk_50)
@@ -224,11 +220,7 @@ void func_800284E4(s16);
 void func_800370D4(s16);
 void func_80021E58(void);
 void func_80021EC0(s16, f32, f32, f32);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 /* src/6C470.c: the result spotlights */
 void func_8006B9B0(omObjData* obj, f32 x, f32 y, f32 z);
 void func_8006B9C0(omObjData* obj, f32 x, f32 y, f32 z);
@@ -2465,10 +2457,6 @@ void func_800FD254_name_2A(omObjData* obj) {
     }
     if (D_800FDF58_name_2A == 0) {
         D_800FE024_name_2A = 4;
-#ifdef TARGET_PC
-        /* Time up with the ball free: retail writes D_800FDF60[-1], unused bss before the array. */
-        if (ext->unk_48 != -1)
-#endif
         {
             func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x4000, 0);
             func_800FD85C_name_2A(&D_800FDF60_name_2A[ext->unk_48], 0x8000, 1);

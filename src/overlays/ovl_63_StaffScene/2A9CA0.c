@@ -61,11 +61,7 @@ extern f32 D_800FE190_StaffScene[3]; /* fov, near, far */
 extern f32 D_800FE19C_StaffScene;    /* the fov last applied */
 
 /* Halfword i of an N64-layout Mtx (65770.c's MTX_HALF) */
-#ifdef TARGET_PC
-#define MTX_HALF(m, i) ((u16)(((u32*)(m))[(i) >> 1] >> (((i) & 1) ? 0 : 16)))
-#else
 #define MTX_HALF(m, i) (((u16*)(m))[i])
-#endif
 
 void func_800FC554_StaffScene(StaffCamera*);
 void func_800FC5B0_StaffScene(omObjData*);
@@ -1194,7 +1190,7 @@ void func_800F8894_StaffScene(void) {
                 maxw = 0;
                 for (i = 0; i < *rows && n < r->count; i++, n++) {
                     func_8006E984(tw[i]);
-                    LoadStringIntoWindow(win[i], (void*)(PB_PTR32)*names, 0, 0);
+                    LoadStringIntoWindow(win[i], (void*)(s32)*names, 0, 0);
                     names++;
                     func_80066DC4(tw[i]->unk_44, 0, 320, 0);
                     l = func_8006D93C(tw[i]->stringPtr) + 1;

@@ -198,17 +198,8 @@ void func_80025BB8(s16, s16);
 void func_8006035C(s16, s8);
 /* func_80009028 with its s32 argument given as a float: retail passed an f32 there (O32 puts it in
    a1); the host passes the same bits as the s32 the definition takes. */
-#ifdef TARGET_PC
-#define FUNC_80009028_F(obj, y, x0, z0, x1, z1)                                                  \
-    do {                                                                                          \
-        union { f32 f; s32 i; } u_;                                                               \
-        u_.f = (y);                                                                               \
-        func_80009028((obj), u_.i, (x0), (z0), (x1), (z1));                                       \
-    } while (0)
-#else
 #define FUNC_80009028_F(obj, y, x0, z0, x1, z1)                                                  \
     ((void (*)(omObjData*, f32, f32, f32, f32, f32))(void*)func_80009028)((obj), (y), (x0), (z0), (x1), (z1))
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions

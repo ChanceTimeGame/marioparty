@@ -53,7 +53,7 @@ DecisionTreeNonLeafNode D_800F9998_DKsJungleAdventure[2] = {
 DecisionTreeNonLeafNode D_800F99B0_DKsJungleAdventure[5] = {
     { 0x01000000, { (void*)0x28 }, { 0x16450 } },
     { 0x01000000, { (void*)0x1E }, { 0x15F46 } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9998_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9998_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x3F }, { 0x14632 } },
     { 0x0, { (void*)0x0 }, { 0x11E28 } },
 };
@@ -64,14 +64,14 @@ DecisionTreeNonLeafNode D_800F99EC_DKsJungleAdventure[2] = {
 DecisionTreeNonLeafNode D_800F9A04_DKsJungleAdventure[5] = {
     { 0x01000000, { (void*)0x28 }, { 0x1645A } },
     { 0x01000000, { (void*)0x1E }, { 0x15F50 } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F99EC_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F99EC_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x1F }, { 0x14632 } },
     { 0x0, { (void*)0x0 }, { 0x11E32 } },
 };
 DecisionTreeNonLeafNode D_800F9A40_DKsJungleAdventure[5] = {
     { 0x02000000, { (void*)0x1 }, { 0x6450 } },
-    { 0x02000000, { (void*)0x2 }, { (PB_UPTR32)D_800F99B0_DKsJungleAdventure } },
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F9A04_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x2 }, { (u32)D_800F99B0_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F9A04_DKsJungleAdventure } },
     { 0x01000000, { (void*)0x14 }, { 0x15F46 } },
     { 0x0, { (void*)0x0 }, { 0x1503C } },
 };
@@ -86,19 +86,19 @@ DecisionTreeNonLeafNode D_800F9A94_DKsJungleAdventure[2] = {
 DecisionTreeNonLeafNode D_800F9AAC_DKsJungleAdventure[4] = {
     { 0x02000000, { (void*)0x7E }, { 0x1645A } },
     { 0x01000000, { (void*)0x1E }, { 0x5F50 } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9A7C_DKsJungleAdventure } },
-    { 0x0, { (void*)0x0 }, { (PB_UPTR32)D_800F9A94_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9A7C_DKsJungleAdventure } },
+    { 0x0, { (void*)0x0 }, { (u32)D_800F9A94_DKsJungleAdventure } },
 };
 DecisionTreeNonLeafNode D_800F9ADC_DKsJungleAdventure[2] = {
-    { 0x04000000, { (void*)0x10000 }, { (PB_UPTR32)D_800F9A40_DKsJungleAdventure } },
-    { 0x0, { (void*)0x0 }, { (PB_UPTR32)D_800F9AAC_DKsJungleAdventure } },
+    { 0x04000000, { (void*)0x10000 }, { (u32)D_800F9A40_DKsJungleAdventure } },
+    { 0x0, { (void*)0x0 }, { (u32)D_800F9AAC_DKsJungleAdventure } },
 };
 DecisionTreeNonLeafNode D_800F9AF4_DKsJungleAdventure[2] = {
     { 0x03000000, { (void*)0x18 }, { 0x1141E } },
     { 0x0, { (void*)0x0 }, { 0x16450 } },
 };
 DecisionTreeNonLeafNode D_800F9B0C_DKsJungleAdventure[3] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F9AF4_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F9AF4_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x7 }, { 0x15F50 } },
     { 0x0, { (void*)0x0 }, { 0x11E28 } },
 };
@@ -107,9 +107,9 @@ DecisionTreeNonLeafNode D_800F9B30_DKsJungleAdventure[2] = {
     { 0x0, { (void*)0x0 }, { 0x10028 } },
 };
 DecisionTreeNonLeafNode D_800F9B48_DKsJungleAdventure[5] = {
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F9B0C_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F9B0C_DKsJungleAdventure } },
     { 0x02000000, { (void*)0x2 }, { 0x6450 } },
-    { 0x02000000, { (void*)0x1 }, { (PB_UPTR32)D_800F9B30_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x1 }, { (u32)D_800F9B30_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x200 }, { 0x1463C } },
     { 0x0, { (void*)0x0 }, { 0x10028 } },
 };
@@ -119,7 +119,7 @@ DecisionTreeNonLeafNode D_800F9B84_DKsJungleAdventure[3] = {
     { 0x0, { (void*)0x0 }, { 0x16450 } },
 };
 DecisionTreeNonLeafNode D_800F9BA8_DKsJungleAdventure[4] = {
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9B84_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9B84_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x7 }, { 0x16450 } },
     { 0x03000000, { (void*)0x7 }, { 0x11432 } },
     { 0x0, { (void*)0x0 }, { 0x12846 } },
@@ -130,7 +130,7 @@ DecisionTreeNonLeafNode D_800F9BD8_DKsJungleAdventure[2] = {
 };
 DecisionTreeNonLeafNode D_800F9BF0_DKsJungleAdventure[4] = {
     { 0x01000000, { (void*)0x1E }, { 0x6450 } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9BD8_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9BD8_DKsJungleAdventure } },
     { 0x03000000, { (void*)0xF }, { 0x5A46 } },
     { 0x0, { (void*)0x0 }, { 0x1E32 } },
 };
@@ -139,15 +139,15 @@ DecisionTreeNonLeafNode D_800F9C20_DKsJungleAdventure[2] = {
     { 0x0, { (void*)0x0 }, { 0x3232 } },
 };
 DecisionTreeNonLeafNode D_800F9C38_DKsJungleAdventure[5] = {
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F9BA8_DKsJungleAdventure } },
-    { 0x02000000, { (void*)0x2 }, { (PB_UPTR32)D_800F9BF0_DKsJungleAdventure } },
-    { 0x02000000, { (void*)0x1 }, { (PB_UPTR32)D_800F9C20_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F9BA8_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x2 }, { (u32)D_800F9BF0_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x1 }, { (u32)D_800F9C20_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x118 }, { 0x5046 } },
     { 0x0, { (void*)0x0 }, { 0x514 } },
 };
 DecisionTreeNonLeafNode D_800F9C74_DKsJungleAdventure[2] = {
-    { 0x04000000, { (void*)0x110000 }, { (PB_UPTR32)D_800F9B48_DKsJungleAdventure } },
-    { 0x0, { (void*)0x0 }, { (PB_UPTR32)D_800F9C38_DKsJungleAdventure } },
+    { 0x04000000, { (void*)0x110000 }, { (u32)D_800F9B48_DKsJungleAdventure } },
+    { 0x0, { (void*)0x0 }, { (u32)D_800F9C38_DKsJungleAdventure } },
 };
 DecisionTreeNonLeafNode D_800F9C8C_DKsJungleAdventure[2] = {
     { 0x03000000, { (void*)0x7F }, { 0x16450 } },
@@ -155,13 +155,13 @@ DecisionTreeNonLeafNode D_800F9C8C_DKsJungleAdventure[2] = {
 };
 DecisionTreeNonLeafNode D_800F9CA4_DKsJungleAdventure[4] = {
     { 0x01000000, { (void*)0x1E }, { 0x16450 } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9C8C_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9C8C_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x7F }, { 0x16450 } },
     { 0x0, { (void*)0x0 }, { 0x11428 } },
 };
 DecisionTreeNonLeafNode D_800F9CD4_DKsJungleAdventure[5] = {
     { 0x02000000, { (void*)0x20 }, { 0x5F50 } },
-    { 0x02000000, { (void*)0x40 }, { (PB_UPTR32)D_800F9CA4_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x40 }, { (u32)D_800F9CA4_DKsJungleAdventure } },
     { 0x01000000, { (void*)0x37 }, { 0x1463C } },
     { 0x01000000, { (void*)0x1E }, { 0x13228 } },
     { 0x0, { (void*)0x0 }, { 0x1141E } },
@@ -172,18 +172,18 @@ DecisionTreeNonLeafNode D_800F9D10_DKsJungleAdventure[2] = {
 };
 DecisionTreeNonLeafNode D_800F9D28_DKsJungleAdventure[4] = {
     { 0x01000000, { (void*)0x1E }, { 0x6450 } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9D10_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9D10_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x3 }, { 0x5F50 } },
     { 0x0, { (void*)0x0 }, { 0xA1E } },
 };
 DecisionTreeNonLeafNode D_800F9D58_DKsJungleAdventure[3] = {
-    { 0x02000000, { (void*)0x20 }, { (PB_UPTR32)D_800F9D28_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x20 }, { (u32)D_800F9D28_DKsJungleAdventure } },
     { 0x02000000, { (void*)0x40 }, { 0x15F50 } },
     { 0x0, { (void*)0x0 }, { 0x1428 } },
 };
 DecisionTreeNonLeafNode D_800F9D7C_DKsJungleAdventure[2] = {
-    { 0x04000000, { (void*)0x200000 }, { (PB_UPTR32)D_800F9CD4_DKsJungleAdventure } },
-    { 0x0, { (void*)0x0 }, { (PB_UPTR32)D_800F9D58_DKsJungleAdventure } },
+    { 0x04000000, { (void*)0x200000 }, { (u32)D_800F9CD4_DKsJungleAdventure } },
+    { 0x0, { (void*)0x0 }, { (u32)D_800F9D58_DKsJungleAdventure } },
 };
 DecisionTreeNonLeafNode D_800F9D94_DKsJungleAdventure[2] = {
     { 0x03000000, { (void*)0x4 }, { 0x2832 } },
@@ -200,15 +200,15 @@ DecisionTreeNonLeafNode D_800F9DD0_DKsJungleAdventure[3] = {
     { 0x0, { (void*)0x0 }, { 0x5046 } },
 };
 DecisionTreeNonLeafNode D_800F9DF4_DKsJungleAdventure[5] = {
-    { 0x03000000, { (void*)0x10 }, { (PB_UPTR32)D_800F9DAC_DKsJungleAdventure } },
-    { 0x03000000, { (void*)0x80 }, { (PB_UPTR32)D_800F9DD0_DKsJungleAdventure } },
+    { 0x03000000, { (void*)0x10 }, { (u32)D_800F9DAC_DKsJungleAdventure } },
+    { 0x03000000, { (void*)0x80 }, { (u32)D_800F9DD0_DKsJungleAdventure } },
     { 0x05000000, { (void*)0x1 }, { 0x1E28 } },
     { 0x05000000, { (void*)0x6 }, { 0x3C32 } },
     { 0x0, { (void*)0x0 }, { 0x5A46 } },
 };
 DecisionTreeNonLeafNode D_800F9E30_DKsJungleAdventure[3] = {
-    { 0x02000000, { (void*)0x16 }, { (PB_UPTR32)D_800F9D94_DKsJungleAdventure } },
-    { 0x02000000, { (void*)0x68 }, { (PB_UPTR32)D_800F9DF4_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x16 }, { (u32)D_800F9D94_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x68 }, { (u32)D_800F9DF4_DKsJungleAdventure } },
     { 0x0, { (void*)0x0 }, { 0x6450 } },
 };
 DecisionTreeNonLeafNode D_800F9E54_DKsJungleAdventure[3] = {
@@ -217,7 +217,7 @@ DecisionTreeNonLeafNode D_800F9E54_DKsJungleAdventure[3] = {
     { 0x0, { (void*)0x0 }, { 0x514 } },
 };
 DecisionTreeNonLeafNode D_800F9E78_DKsJungleAdventure[2] = {
-    { 0x03000000, { (void*)0x30 }, { (PB_UPTR32)D_800F9E54_DKsJungleAdventure } },
+    { 0x03000000, { (void*)0x30 }, { (u32)D_800F9E54_DKsJungleAdventure } },
     { 0x0, { (void*)0x0 }, { 0x6450 } },
 };
 DecisionTreeNonLeafNode D_800F9E90_DKsJungleAdventure[3] = {
@@ -226,9 +226,9 @@ DecisionTreeNonLeafNode D_800F9E90_DKsJungleAdventure[3] = {
     { 0x0, { (void*)0x0 }, { 0x514 } },
 };
 DecisionTreeNonLeafNode D_800F9EB4_DKsJungleAdventure[6] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F9E78_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F9E78_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x4F }, { 0x5A46 } },
-    { 0x03000000, { (void*)0x30 }, { (PB_UPTR32)D_800F9E90_DKsJungleAdventure } },
+    { 0x03000000, { (void*)0x30 }, { (u32)D_800F9E90_DKsJungleAdventure } },
     { 0x05000000, { (void*)0x1 }, { 0x1E32 } },
     { 0x05000000, { (void*)0x6 }, { 0xA1E } },
     { 0x0, { (void*)0x0 }, { 0x14 } },
@@ -238,13 +238,13 @@ DecisionTreeNonLeafNode D_800F9EFC_DKsJungleAdventure[2] = {
     { 0x0, { (void*)0x0 }, { 0x1428 } },
 };
 DecisionTreeNonLeafNode D_800F9F14_DKsJungleAdventure[3] = {
-    { 0x01000000, { (void*)0x1E }, { (PB_UPTR32)D_800F9EFC_DKsJungleAdventure } },
+    { 0x01000000, { (void*)0x1E }, { (u32)D_800F9EFC_DKsJungleAdventure } },
     { 0x03000000, { (void*)0x3F0 }, { 0x1428 } },
     { 0x0, { (void*)0x0 }, { 0xA1E } },
 };
 DecisionTreeNonLeafNode D_800F9F38_DKsJungleAdventure[3] = {
-    { 0x02000000, { (void*)0x10 }, { (PB_UPTR32)D_800F9EB4_DKsJungleAdventure } },
-    { 0x02000000, { (void*)0x7 }, { (PB_UPTR32)D_800F9F14_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x10 }, { (u32)D_800F9EB4_DKsJungleAdventure } },
+    { 0x02000000, { (void*)0x7 }, { (u32)D_800F9F14_DKsJungleAdventure } },
     { 0x0, { (void*)0x0 }, { 0x14 } },
 };
 s16 D_800F9F5C_DKsJungleAdventure[] = { 0x48, 0x45, -1, 0x0 };
@@ -637,7 +637,7 @@ void func_800F6CD8_DKsJungleAdventure(void) {
         string_id = 1258;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     PlaySound(1125);
     WaitForTextConfirmation(str->unk8);
@@ -666,7 +666,7 @@ void func_800F6CD8_DKsJungleAdventure(void) {
         string_id = 1259;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     WaitForTextConfirmation(str->unk8);
     func_80071E80(str->unk8, 1);

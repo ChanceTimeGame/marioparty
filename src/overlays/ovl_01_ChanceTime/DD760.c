@@ -243,7 +243,7 @@ void func_800FED28_ChanceTime(void) {
     func_8006DA5C(win, D_80101330_ChanceTime[left], 0);
     func_8006DA5C(win, D_80101330_ChanceTime[right], 1);
     func_8006DA5C(win, D_80101348_ChanceTime[kind], 2);
-    LoadStringIntoWindow(win, (void*)PB_HOSTCAST(PB_PTR32, msg), -1, -1);
+    LoadStringIntoWindow(win, (void*)msg, -1, -1);
     func_8006E070(win, 0);
     WaitForTextConfirmation(win);
     D_80101320_ChanceTime = 1;

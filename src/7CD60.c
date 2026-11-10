@@ -101,30 +101,13 @@ void func_8007CFCC(s16* block, s32* scale, s32 plane);
 void func_8007D470(s16* block, s32 nbasis, s32 dc, s32 plane);
 void func_8007DA48(s16* block, unkStruct_D_800E6EC8* info, s32 plane);
 
-#ifdef TARGET_PC
-/* Host: the HVQ2 stream is big-endian; its 32-bit bit-buffer words, the u16 fixed-length codes
-   and the header fields are read as such (the N64 reads them natively). */
-static inline u32 pbBe32(const void* p) {
-    const u8* b = p;
-    return ((u32)b[0] << 24) | ((u32)b[1] << 16) | ((u32)b[2] << 8) | b[3];
-}
-
-static inline u16 pbBe16(const void* p) {
-    const u8* b = p;
-    return (u16)((b[0] << 8) | b[1]);
-}
-#endif
 
 static inline u8 getBit(BitStream *buf)
 {
     u32 ret;
     if (buf->bit == 0)
     {
-#ifdef TARGET_PC
-        buf->value = pbBe32(buf->pos++);
-#else
         buf->value = *buf->pos++;
-#endif
         buf->bit = 1 << 31;
     }
     ret = (buf->value & buf->bit) != 0;
@@ -425,11 +408,7 @@ void func_8007CFCC(s16* block, s32* scale, s32 plane) {
     s32 max;
     s32 v;
 
-#ifdef TARGET_PC
-    code = pbBe16(D_800E4E6C[plane]);
-#else
     code = *(u16*)D_800E4E6C[plane];
-#endif
     D_800E4E6C[plane] += 2;
     step = (code & 1) + 1;
     pitch = ((code >> 1) & 1) + 1;
@@ -890,32 +869,6 @@ void func_8007F54C(void* code, u16* outbuf, u32 outbufWidth, u16* workbuf) {
     u16 blocks_h, blocks_w;
     u16 *dc_ptr, *scale_ptr;
     HVQ2Header *header = code;
-#ifdef TARGET_PC
-    HVQ2Header host_header;
-    {
-        const u8* h = code;
-        s32 i;
-
-        memcpy(&host_header, h, sizeof(host_header));
-        host_header.width = pbBe16(h + 16);
-        host_header.height = pbBe16(h + 18);
-        host_header.nest_start_x = pbBe16(h + 20);
-        host_header.nest_start_y = pbBe16(h + 22);
-        host_header.unk_value = pbBe32(h + 24);
-        /* basisnum_offset[2], basnum_run_offset[2], then dc, dc_run, scale and fix [3] each */
-        for (i = 0; i < 2; i++) {
-            host_header.basisnum_offset[i] = pbBe32(h + 32 + i * 4);
-            host_header.basnum_run_offset[i] = pbBe32(h + 40 + i * 4);
-        }
-        for (i = 0; i < 3; i++) {
-            host_header.dc_offset[i] = pbBe32(h + 48 + i * 4);
-            host_header.dc_run_offset[i] = pbBe32(h + 60 + i * 4);
-            host_header.scale_offset[i] = pbBe32(h + 72 + i * 4);
-            host_header.fix_offset[i] = pbBe32(h + 84 + i * 4);
-        }
-        header = &host_header;
-    }
-#endif
     blocks_w = header->width >> 2;
     blocks_h = header->height >> 2;
     D_800E7A30 = outbufWidth;
@@ -960,10 +913,6 @@ void func_8007F54C(void* code, u16* outbuf, u32 outbufWidth, u16* workbuf) {
     func_8007CA90();
     func_8007CE28((u8*) &D_800E6EB8[header->nest_start_x + (header->nest_start_y * D_800E7A3C)]);
     func_8007F2FC(outbuf);
-#ifdef TARGET_PC
-    /* The decoder stores host-endian u16 RGBA5551 texels: tell the graphics bridge to swap them. */
-    pb_gfx_native16(outbuf, (size_t)outbufWidth * header->height * sizeof(u16));
-#endif
 }
 
 

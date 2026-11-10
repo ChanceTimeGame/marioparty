@@ -578,11 +578,7 @@ f32 func_800F85E4_TestingRoom(omObjData* arg0, f32 x, f32 y, f32 z, Vec3f* n) {
     probe.x = x + D_800ED6B8;
     probe.y = y;
     probe.z = z + D_800F5254;
-#ifdef TARGET_PC
-    func_80004D1C(arg0, &probe, D_800B8988);
-#else
     ((s32 (*)())func_80004D1C)(arg0, &probe, D_800B8988);
-#endif
     mdl = *D_800F2AF8[D_800B8954]->model;
     verts = (TRColVtx*)D_800F2B7C[mdl].unk_6C->unk_78;
     func_8002AE24(mdl, &D_800EDEC0, func_80002060, &probe);

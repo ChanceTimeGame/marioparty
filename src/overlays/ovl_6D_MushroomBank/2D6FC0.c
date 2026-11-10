@@ -78,11 +78,7 @@ void func_800F6714_MushroomBank(u16* arg0, s8* arg1, s16 arg2) {
 void func_800F67B0_MushroomBank(void) {
     Vec3f pos;
     Vec2f scr;
-#ifdef TARGET_PC
-    char buf[16]; /* retail's 8 bytes hold " ;%3d " and "<%5d" */
-#else
     char buf[8];
-#endif
     u16 digits[2][6];
     s32 prevCam;
     s32 sprFile;
@@ -195,7 +191,7 @@ void func_800F67B0_MushroomBank(void) {
                 PlaySound(0xF5);
             }
             func_8006EB40(D_800F8B94_MushroomBank);
-            LoadStringIntoWindow(D_800F8B94_MushroomBank, (void*)(PB_PTR32)D_800F8998_MushroomBank[cur].msg, -1, -1);
+            LoadStringIntoWindow(D_800F8B94_MushroomBank, (void*)(s32)D_800F8998_MushroomBank[cur].msg, -1, -1);
             if ((cur == 2) | (prev == 2)) {
                 delay = 12;
             }
@@ -313,7 +309,7 @@ void func_800F6E38_MushroomBank(void) {
                 func_80070D90(D_800F8B94_MushroomBank);
             } else {
                 D_800F8B94_MushroomBank = func_80059C28();
-                LoadStringIntoWindow(D_800F8B94_MushroomBank, (void*)(PB_PTR32)D_800F8998_MushroomBank[cur].msg, -1, -1);
+                LoadStringIntoWindow(D_800F8B94_MushroomBank, (void*)(s32)D_800F8998_MushroomBank[cur].msg, -1, -1);
             }
         }
         prevMsg = D_800F8998_MushroomBank[cur].msg;
@@ -696,9 +692,9 @@ void func_800F7BC0_MushroomBank(void) {
             func_80070D90(D_800F8B94_MushroomBank);
             prev = sel;
             D_800F8B94_MushroomBank = func_80059C28();
-            LoadStringIntoWindow(D_800F8B94_MushroomBank, (void*)(PB_PTR32)D_800F89C0_MushroomBank[sel].nameMsg, -1, -1);
+            LoadStringIntoWindow(D_800F8B94_MushroomBank, (void*)(s32)D_800F89C0_MushroomBank[sel].nameMsg, -1, -1);
             func_8006EB40(win);
-            LoadStringIntoWindow(win, (void*)(PB_PTR32)D_800F89C0_MushroomBank[sel].descMsg, -1, -1);
+            LoadStringIntoWindow(win, (void*)(s32)D_800F89C0_MushroomBank[sel].descMsg, -1, -1);
         }
         pos.x = D_800F8BA8_MushroomBank->trans.x + D_800F89C0_MushroomBank[sel].pos.x;
         pos.y = D_800F8BA8_MushroomBank->trans.y + D_800F89C0_MushroomBank[sel].pos.y;
@@ -744,15 +740,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_MushroomBank/2D6FC0", func_800F7BC
 #endif
 /* The star count talk: coins, stars and stars still needed for 100, then a message by count. */
 void func_800F85D8_MushroomBank(void) {
-#ifdef TARGET_PC
-    char coins[16]; /* retail: three 8-byte buffers */
-    char stars[16];
-    char left[16];
-#else
     char coins[8];
     char stars[8];
     char left[8];
-#endif
 
     func_800F66DC_MushroomBank(3);
     func_80025C20(D_800F8BA0_MushroomBank->model[0], D_800F8BA0_MushroomBank->motion[1], 0, 10, 2);

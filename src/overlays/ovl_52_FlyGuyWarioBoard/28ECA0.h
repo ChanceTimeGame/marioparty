@@ -27,11 +27,7 @@ s32 func_800F7070_FlyGuyWarioBoard(s32, u8*);
 void func_80071788(s32, s16);
 /* func_8006FCF0 is called unprototyped in retail (the s16 cursor reaches it as an int);
    the host calls it normally. */
-#ifdef TARGET_PC
-#define func_8006FCF0_unproto(win, cur, arg) func_8006FCF0(win, cur, arg)
-#else
 #define func_8006FCF0_unproto(win, cur, arg) ((s32 (*)())func_8006FCF0)(win, cur, arg)
-#endif
 extern omObjData* D_800F8074_FlyGuyWarioBoard;
 extern omObjData* D_800F8078_FlyGuyWarioBoard;
 extern Vec3f D_800F8084_FlyGuyWarioBoard;

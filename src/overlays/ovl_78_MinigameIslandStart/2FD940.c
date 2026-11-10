@@ -43,11 +43,7 @@ void func_8004F584(s32);
 s32 func_8004F628(s32, u16, s16, s16);
 /* Defined with s16 coordinates (4E530.c); retail calls it with s32 values and no narrowing at the
    call, so the matching build declares s32 parameters. The host uses the real prototype. */
-#ifdef TARGET_PC
-void func_8004F754(s32, s16, s16);
-#else
 void func_8004F754(s32, s32, s32);
-#endif
 void func_8004F790(s32 arg0, u8 arg1);
 void func_8004F800(s32, s32);
 void func_8004F898(s32, u8, u8, u8);

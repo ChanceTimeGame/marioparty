@@ -9,9 +9,7 @@
 
 typedef s32 func_ptr(void);
 void HuPrcSleep(s32);
-#ifndef TARGET_PC /* host: from <math.h>, which pb_host.h includes */
 f32 sinf(f32);
-#endif
 void func_8006EEB8(s16, u8, u8, s16, s16);
 void func_8006F3BC(s16, s16, s16, s16, s16);
 s32 func_8006E93C(TextWindow*);
@@ -39,9 +37,7 @@ void func_80028510(s16, s16, u8, u8, u8);
 void func_80028BE0(s32);
 u16 func_800594FC(s16);
 void func_800603F0(s32);
-#ifndef TARGET_PC /* host: from <math.h>, which pb_host.h includes */
 f32 fabsf(f32);
-#endif
 void func_80026174(s16, s16, f32);
 u16 func_8005FD5C(void);
 void func_8000960C(s32);
@@ -102,9 +98,7 @@ void func_80021CDC(s16, s16, s32);
 void func_800500A4(void);
 void func_80050160(void);
 s16 func_80060618(s16, s16);
-#ifndef TARGET_PC /* host: from <math.h>, which pb_host.h includes */
 f32 cosf(f32);
-#endif
 omObjData* func_8004EA8C(Object*, Vec3f*, s32, Vec3f*);
 s32 func_8004F018(Object*);
 s32 func_8004F40C(Object*, s32, s32);
@@ -121,9 +115,9 @@ void func_8006EB80(void);
 void func_8007149C(u8*, u8*);
 void func_80018CF8(s32, s32);
 s16 func_8007186C(s32);
-PB_PTR32 func_8003EDDC(s32*);
-void func_8003EE3C(PB_PTR32);
-s32 func_8003EE58(PB_PTR32);
+s32 func_8003EDDC(s32*);
+void func_8003EE3C(s32);
+s32 func_8003EE58(s32);
 unk_Struct02* func_8005077C(s16);
 void func_80050A7C(unk_Struct02*);
 void func_80053454(unk_Struct02*);
@@ -196,8 +190,8 @@ void func_80058910(s16, s16);
 void func_800211BC(s16, u8);
 u8 func_80052F6C(s16 index);
 s16 GetCurrentPlayerIndex(void);
-void func_80045E6C(PB_PTR32);
-PB_PTR32 func_80045D84(s16, s16, s8);
+void func_80045E6C(s32);
+s32 func_80045D84(s16, s16, s8);
 s16 RunDecisionTree(DecisionTreeNonLeafNode*);
 void func_8004CD84(Vec3f*);
 Process* func_8004D1EC(Vec3f*, Vec3f*, Vec3f*, s32);
@@ -251,12 +245,6 @@ void func_8004F2EC(void);
 void func_8004F5F0(void);
 void func_80067704(s16);
 void func_80067384(s16, s16, u16);
-#ifdef TARGET_PC
-/* Host: the game's coroutine setjmp/longjmp (an SDK-region asm unit, own jmp_buf with sp/func)
-   must not bind to the C library's. engine/process.c needs a host implementation (fibers). */
-#define setjmp pb_n64_setjmp
-#define longjmp pb_n64_longjmp
-#endif
 s32 setjmp(jmp_buf* jump_buf);
 s32 longjmp(jmp_buf* jump_buf, s32 val);
 s32 HuMemMemoryAllocSizeGet(s32 value);
@@ -305,9 +293,7 @@ void func_8006E070(s16, s32);
 u16 func_800174F4(s32, s32);
 void func_8001775C(omObjData*, u16, s32);
 void func_800264F8(s16 arg0, s16 arg1, f32 arg2, char* arg3, char* arg4, s32 arg5);
-#ifndef TARGET_PC /* host: from <math.h>, which pb_host.h includes */
 f32 sinf(f32);
-#endif
 void func_8001D420(s16, Vec3f*, Vec3f*, Vec3f*);
 void func_8001D57C(s16);
 void func_8001DFC0();
@@ -358,7 +344,7 @@ void omOvlGotoEx(s32, s16, u16);
 void omOvlHisChg(s16 arg0, s32 overlay, s16 event, s16 stat);
 void ExecBoardScene(board_overlay_entrypoint* arg0, s16 arg1);
 void func_8006B870(void);
-PB_PTR32 func_8006B8A4(s16, s16, s16, s16, u16);
+s32 func_8006B8A4(s16, s16, s16, s16, u16);
 f64 fabs(f64 f);
 u8 rand8(void);
 void func_80017660(u8, f32, f32, f32, f32);
@@ -437,9 +423,7 @@ void* func_8009B770(void*, u8, u32);
 void func_80009500(void);
 s32 func_800642FC(unkMesg * siMessg, HuSiFunc func, void * arg, s32 type);
 void func_800090B8(u16);
-#ifndef TARGET_PC /* host: from <math.h>, which pb_host.h includes */
 f32 sqrtf(f32);
-#endif
 void* HuMemDirectMalloc(s32 size);
 s16 func_80060288(void);
 void func_80018C90(u16);
@@ -484,11 +468,7 @@ void func_8005B838(void* arg0);
 s16 func_8006D99C(u8* arg0, s16 arg1);
 void* func_8005B7E8(s32 stringIndex);
 void func_800230D0(s32);
-#ifdef TARGET_PC
-u8 func_8001AAC4(PB_PTR32, u16, s32, OSMesgQueue*, s32); /* host: the definition takes the display list as s32 */
-#else
 void func_8001AAC4(Gfx*, u16, s32, OSMesgQueue*, s32);
-#endif
 s16 func_8001CD00(u8*);
 void func_8001D40C();
 void func_8001D7DC(s16, Gfx**);
@@ -518,7 +498,7 @@ s32 func_8003305C(unk2C0C0StructC0*, s16, Matrix4f, Matrix4f);
 void func_800339E0(unk2C0C0StructC0*, s16);
 void func_80033CBC(unk2C0C0StructC0*, s16);
 void func_80033FB0(Gfx**, s16, s32);
-void func_80034ED8(unk2C0C0StructC0*, f32, PB_PTR32, s32);
+void func_80034ED8(unk2C0C0StructC0*, f32, s32, s32);
 void func_8003589C(unk2C0C0StructC0*, s32, s32);
 void func_80037CE0(void);
 void func_80039D10(unk2C0C0StructC0*);
@@ -539,9 +519,7 @@ u32 MtxReset(Matrix4f, Matrix4f);
 void MtxScale(Matrix4f, f32, f32, f32);
 void MtxTranslate(Matrix4f, f32, f32, f32);
 void osSyncPrintf(const char*, ...);
-#ifndef TARGET_PC /* host: PR/os.h declares it returning uintptr_t */
 u32 osVirtualToPhysical(void*);
-#endif
 void func_80031D78(unk2C0C0StructC0* arg0, s16 arg1);
 s16 print8(u16, u16, char*);
 s16 GetCurrentPlayerIndex(void);

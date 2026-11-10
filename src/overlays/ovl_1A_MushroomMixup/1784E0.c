@@ -121,9 +121,7 @@ void func_800F6CF4_MushroomMixup(void) {
 }
 
 void func_800F6DF4_MushroomMixup(void) {
-#ifndef TARGET_PC
     f32 cam[3][4]; /* set and never read (retail keeps the stores) */
-#endif
     MMPlayerState* st;
     s32 i;
 
@@ -168,7 +166,6 @@ void func_800F6DF4_MushroomMixup(void) {
     Center.x = 4.0f;
     Center.y = 188.0f;
     Center.z = -219.0f;
-#ifndef TARGET_PC
     cam[0][0] = 48.0f;
     cam[0][1] = 4002.0f;
     cam[0][2] = 5932.0f;
@@ -178,7 +175,6 @@ void func_800F6DF4_MushroomMixup(void) {
     cam[2][0] = 0.0f;
     cam[2][1] = -1.0f;
     cam[2][2] = 0.0f;
-#endif
 }
 
 void func_800F7088_MushroomMixup(u16 arg0) {

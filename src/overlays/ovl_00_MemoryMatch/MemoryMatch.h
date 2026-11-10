@@ -158,15 +158,6 @@ typedef struct unk_MemoryMatch_03 {
 extern unk_MemoryMatch_02 D_800FDF10_MemoryMatch[16];
 extern unk_MemoryMatch_03 D_800FE2C8_MemoryMatch;
 /* Splat labels of D_800FE2C8's fields (retail addresses each as its own symbol). */
-#ifdef TARGET_PC
-#define D_800FE2CA_MemoryMatch (D_800FE2C8_MemoryMatch.unk_02)
-#define D_800FE2CC_MemoryMatch (D_800FE2C8_MemoryMatch.unk_04)
-#define D_800FE2D0_MemoryMatch (D_800FE2C8_MemoryMatch.unk_08)
-#define D_800FE2D4_MemoryMatch (D_800FE2C8_MemoryMatch.unk_0C)
-#define D_800FE2D8_MemoryMatch (D_800FE2C8_MemoryMatch.unk_10)
-#define D_800FE2DC_MemoryMatch (D_800FE2C8_MemoryMatch.unk_14)
-#define D_800FE2E0_MemoryMatch (D_800FE2C8_MemoryMatch.unk_18)
-#else
 extern s16 D_800FE2CA_MemoryMatch;
 extern s16 D_800FE2CC_MemoryMatch;
 extern f32 D_800FE2D0_MemoryMatch;
@@ -174,7 +165,6 @@ extern f32 D_800FE2D4_MemoryMatch;
 extern f32 D_800FE2D8_MemoryMatch;
 extern f32 D_800FE2DC_MemoryMatch;
 extern s16 D_800FE2E0_MemoryMatch;
-#endif
 extern s16 D_800FDE40_MemoryMatch;
 extern s16 D_800FDE42_MemoryMatch[2];
 extern s16 D_800FDE46_MemoryMatch[2];
@@ -263,12 +253,6 @@ extern s8 ContStkY[];
 extern s16 D_800FE1DA_MemoryMatch;
 extern s16 D_800FE1DE_MemoryMatch;
 extern s16 D_800FE1E0_MemoryMatch;
-#ifdef TARGET_PC
-#define D_800FE1DB_MemoryMatch ((u8)D_800FE1DA_MemoryMatch)
-#define D_800FE1DF_MemoryMatch ((u8)D_800FE1DE_MemoryMatch)
-#define D_800FE1E1_MemoryMatch ((u8)D_800FE1E0_MemoryMatch)
-#else
 extern u8 D_800FE1DB_MemoryMatch;
 extern u8 D_800FE1DF_MemoryMatch;
 extern u8 D_800FE1E1_MemoryMatch;
-#endif

@@ -115,13 +115,8 @@ SlotWork* func_800F7734_SlotMachine(omObjData* unused, omObjData* obj) {
 }
 /* Retail called these sprite and image helpers without a prototype (implicit int: the caller
    extends or masks the result), so on the N64 they are called as returning s32. */
-#ifndef TARGET_PC
 #define SLOT_UNPROTO(f) ((s32 (*)())(f))
 #define SLOT_8001E1D0(a, b) ((s32 (*)(s16, s32))func_8001E1D0)(a, b)
-#else
-#define SLOT_UNPROTO(f) f
-#define SLOT_8001E1D0(a, b) func_8001E1D0(a, b)
-#endif
 
 // register allocation: the image index and func_800FC050 % 480 sit in other registers (masked 33,
 // mostly branch offsets after one missing move)
@@ -1273,21 +1268,10 @@ SlotWork* func_800FBE84_SlotMachine(omObjData* obj) {
 
     w = HuMemDirectMalloc(sizeof(SlotWork));
     D_800FFCC8_SlotMachine[D_800FEC78_SlotMachine++] = w;
-#ifdef TARGET_PC
-    {
-        u32 id = D_800FEC78_SlotMachine - 1;
-
-        obj->work[0] = id >> 24;
-        obj->work[1] = id >> 16;
-        obj->work[2] = id >> 8;
-        obj->work[3] = id;
-    }
-#else
     obj->work[0] = (u32)w >> 24;
     obj->work[1] = (u32)w >> 16;
     obj->work[2] = (u32)w >> 8;
     obj->work[3] = (u32)w;
-#endif
     w->unk_00 = 0;
     w->unk_02 = 0;
     w->unk_08 = 0;
@@ -1311,11 +1295,7 @@ void func_800FBF6C_SlotMachine(void) {
     }
 }
 SlotWork* func_800FBFEC_SlotMachine(omObjData* obj) {
-#ifdef TARGET_PC
-    return D_800FFCC8_SlotMachine[(obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]];
-#else
     return (SlotWork*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 void func_800FC018_SlotMachine(void) {
     D_800FECCC_SlotMachine *= rand8();

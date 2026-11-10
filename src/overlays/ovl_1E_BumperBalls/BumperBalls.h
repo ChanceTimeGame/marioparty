@@ -178,11 +178,7 @@ typedef struct BumperBallsAnglePair {
    (= D_800FCD40 + 0x30; far edge of row r = D_800FCD70[2r]), which on the host is a view of
    D_800FCD40; func_800FC618 uses BB_WAVE_FAR (rows of 12 from the same address). */
 extern BumperBallsAnglePair D_800FCD40_BumperBalls[6][12];
-#ifdef TARGET_PC
-#define D_800FCD70_BumperBalls ((BumperBallsAnglePair(*)[6]) &D_800FCD40_BumperBalls[0][6])
-#else
 extern BumperBallsAnglePair D_800FCD70_BumperBalls[][6];
-#endif
 #define BB_WAVE_FAR ((BumperBallsAnglePair(*)[12]) &D_800FCD40_BumperBalls[0][6])
 extern unk2C0C0Struct70* D_800FCF80_BumperBalls; /* 47mt003_DEF (water) */
 extern unk2C0C0Struct70* D_800FCF84_BumperBalls; /* 47mt002_IA44 (under-layer) */

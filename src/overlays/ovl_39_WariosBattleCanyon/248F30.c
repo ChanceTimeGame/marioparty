@@ -448,7 +448,7 @@ void func_800F6CD8_WariosBattleCanyon(void) {
         string_id = 1258;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     PlaySound(1125);
     WaitForTextConfirmation(str->unk8);
@@ -477,7 +477,7 @@ void func_800F6CD8_WariosBattleCanyon(void) {
         string_id = 1259;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     WaitForTextConfirmation(str->unk8);
     func_80071E80(str->unk8, 1);
@@ -812,7 +812,7 @@ void func_800F7A3C_WariosBattleCanyon(void) {
     s32 cannon;
     Object* obj;
 
-    cannon = (s32)(PB_PTR32)HuPrcCurrentGet()->user_data;
+    cannon = (s32)(s32)HuPrcCurrentGet()->user_data;
     HuPrcSleep(90);
     obj = func_800F79D4_WariosBattleCanyon(cannon);
     func_800A0D50(&obj->coords, &BoardSpaceGet(D_800F9884_WariosBattleCanyon[cannon])->coords);
@@ -822,7 +822,7 @@ void func_800F7A3C_WariosBattleCanyon(void) {
 void func_800F7AA4_WariosBattleCanyon(s32 cannon) {
     Object* obj;
 
-    omAddPrcObj(func_800F7A3C_WariosBattleCanyon, 0x4800, 0, 0)->user_data = (void*)(PB_PTR32)cannon;
+    omAddPrcObj(func_800F7A3C_WariosBattleCanyon, 0x4800, 0, 0)->user_data = (void*)(s32)cannon;
     obj = func_800F79D4_WariosBattleCanyon(cannon);
     func_800A0D50(&obj->coords, &BoardSpaceGet(D_800F987C_WariosBattleCanyon[cannon])->coords);
 }
@@ -957,7 +957,7 @@ s16 func_800F7DCC_WariosBattleCanyon(s32 target) {
 void func_800F80B4_WariosBattleCanyon(void) {
     s32 target;
 
-    target = (s32)(PB_PTR32)HuPrcCurrentGet()->user_data;
+    target = (s32)(s32)HuPrcCurrentGet()->user_data;
     while (func_80072718() != 0) {
         HuPrcVSleep();
     }
@@ -967,7 +967,7 @@ void func_800F80B4_WariosBattleCanyon(void) {
 
 void func_800F8110_WariosBattleCanyon(s32 target) {
     D_800F9AD8_WariosBattleCanyon = -1;
-    omAddPrcObj(func_800F80B4_WariosBattleCanyon, 0x4800, 0, 0)->user_data = (void*)(PB_PTR32)target;
+    omAddPrcObj(func_800F80B4_WariosBattleCanyon, 0x4800, 0, 0)->user_data = (void*)(s32)target;
 }
 
 s16 func_800F8158_WariosBattleCanyon(void) {

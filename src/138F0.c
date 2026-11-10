@@ -10,11 +10,7 @@ typedef struct AMConfig {
     /* 0x38 */ s32 maxVoices;
     /* 0x3C */ s32 maxUpdates;
     /* 0x40 */ s32 fxType;
-#ifdef TARGET_PC
-    /* 0x44 */ s32 params; /* a view of B980's config block: the pointer is host-only (pbB980Record) */
-#else
     /* 0x44 */ s32* params;
-#endif
     /* 0x48 */ s32 maxACMDSize;
     /* 0x4C */ s32 numDMABuffers;
     /* 0x50 */ s32 dmaBufferLength;
@@ -74,10 +70,6 @@ typedef struct DMAState {
 extern u8 D_800CEB00[];
 extern OSMesgQueue* D_800D0B10; /* scheduler command queue; its address is also the stack top */
 extern AMAudioMgr D_800D0B18;
-#ifdef TARGET_PC
-/* host_bss.c gives each label twice its N64 span (0x288 here) */
-_Static_assert(sizeof(AMAudioMgr) <= 2 * 0x288, "AMAudioMgr outgrew its host_bss.c block");
-#endif
 extern DMAState D_800D0DA0;
 extern u32 D_800D0DA8; /* audFrameCt */
 extern s32 D_800D0DAC; /* nextDMA */
@@ -109,11 +101,7 @@ void func_80063A5C(void*);
 void func_800130E8(void* arg);
 u32 func_80013234(AudioInfo* info, AudioInfo* lastInfo);
 void func_80013358(AudioInfo* info);
-#ifdef TARGET_PC
-intptr_t func_80013360(intptr_t addr, s32 len, void* state); /* host: ALDMAproc is pointer-width */
-#else
 s32 func_80013360(s32 addr, s32 len, void* state);
-#endif
 ALDMAproc func_8001350C(void* state);
 void func_80013524(void);
 void func_8001365C(s32 arg0, s32 remove);
@@ -139,14 +127,7 @@ s32 func_80012CF0(AMConfig* amc, ALHeap* heap) {
     D_800D0DBC = D_800D0DC4 - 0x10;
     D_800D0DC0 = D_800D0DC4 + 0x100;
     c.fxType = (amc->fxType < 7) ? (u8)amc->fxType : 6;
-#ifdef TARGET_PC
-    {
-        extern PB_PTR32 pbB980Record; /* B980.c */
-        c.params = (s32*)pbB980Record;
-    }
-#else
     c.params = amc->params;
-#endif
     c.maxVVoices = amc->maxVoices;
     c.maxPVoices = amc->maxVoices;
     c.maxUpdates = amc->maxUpdates;
@@ -223,7 +204,7 @@ void func_800130E8(void* arg) {
 
     do {
         osRecvMesg(&D_800D0B18.audioFrameMsgQ, &msg, OS_MESG_BLOCK);
-        switch ((u32)PB_HOSTCAST(PB_UPTR32, msg)) {
+        switch ((u32)msg) {
             case 1:
                 if (func_80013234(D_800D0B18.audioInfo[D_800D0DA8 % 3], lastInfo)) {
                     osRecvMesg(&D_800D0B18.audioReplyMsgQ, (OSMesg*)&reply, OS_MESG_BLOCK);
@@ -263,19 +244,9 @@ u32 func_80013234(AudioInfo* info, AudioInfo* lastInfo) {
     }
     cmdp = alAudioFrame(D_800D0B18.ACMDList[D_800D0DB8], &cmdLen, audioPtr, info->frameSamples);
     t = &info->task;
-#ifdef TARGET_PC
-    /* Host: the mixer runs each audio command as al emits it (games/mp1/src/port/audio), so the
-       PCM is already in audioPtr and the Acmd list stays empty: cmdLen is always 0. Skip only when
-       the synthesizer had nothing to do (retail's cmdLen 0), and send the task otherwise so the
-       reply, and with it the osAiSetNextBuffer chain above, still runs. */
-    if (D_800D0B18.g.drvr.head == NULL) {
-        return 0;
-    }
-#else
     if (cmdLen == 0) {
         return 0;
     }
-#endif
     func_800136C4(t, &info->msg, cmdp);
     osSendMesg(D_800D0B10, t, OS_MESG_BLOCK);
     D_800D0DB8 ^= 1;
@@ -285,13 +256,7 @@ u32 func_80013234(AudioInfo* info, AudioInfo* lastInfo) {
 void func_80013358(AudioInfo* info) {
 }
 
-#ifdef TARGET_PC
-/* Host: ALDMAproc returns a RAM address (pointer-width). addr is a ROM offset (32 bits). */
-intptr_t func_80013360(intptr_t romAddr, s32 len, void* state) {
-    s32 addr = (s32)romAddr;
-#else
 s32 func_80013360(s32 addr, s32 len, void* state) {
-#endif
     void* foundBuffer;
     s32 delta;
     s32 addrEnd;
@@ -402,7 +367,7 @@ void func_800136C4(AMTask* t, AMAudioMsg* msg, Acmd* cmdp) {
     t->list.t.data_size = (cmdp - D_800D0B18.ACMDList[D_800D0DB8]) * sizeof(Acmd);
     t->list.t.type = 2; /* M_AUDTASK */
     t->list.t.ucode_boot = D_800B1760;
-    t->list.t.ucode_boot_size = (PB_PTR32)D_800B1830 - (PB_PTR32)D_800B1760;
+    t->list.t.ucode_boot_size = (s32)D_800B1830 - (s32)D_800B1760;
     t->list.t.flags = 0;
     t->list.t.ucode = D_800B7B30;
     t->list.t.ucode_data = D_800C9BB0;

@@ -58,11 +58,7 @@ void func_800F65E0_SkateBoardSkamper(void) {
     func_80060088();
     func_8000942C();
     func_800178A0(1);
-#ifdef TARGET_PC
-    func_800178E8();
-#else
     ((s16 (*)(s32))func_800178E8)(1); /* retail passes a stray 1 */
-#endif
     func_80017660(0, 0.0f, 0.0f, 320.0f, 240.0f);
     func_800176C4(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
     func_8001D494(0, 20.0f, 80.0f, 8000.0f);
@@ -1019,16 +1015,7 @@ void func_800F9D80_SkateBoardSkamper(omObjData* obj) {
     *func_800F9B1C_SkateBoardSkamper(obj, 0x37, -225.0f, 600.0f, 0.0f, 6, 4)->unk_68 = 3;
 }
 
-#ifdef TARGET_PC
-/* Retail reads D_800FDA24..D_800FDA74 one past their end (index 4, after the 0 that ends a row)
-   once the course counter wraps: that is the next table's first entry. */
-static f32 SbsTileZ(f32* row, f32* next, s32 i) {
-    return (i < 4) ? row[i] : next[i - 4];
-}
-#define SBS_TILE_Z(row, next, i) SbsTileZ(row, next, i)
-#else
 #define SBS_TILE_Z(row, next, i) (row)[i]
-#endif
 
 /* The moving course tile: rises out of the ground in front of the boulder (D_800FDA10) and, once
    fully up, hands over to the next tile slot and moves to its next z. */
@@ -1690,16 +1677,9 @@ f32 func_800FC054_SkateBoardSkamper(omObjData* obj, f32 angle, f32 x, f32 y, f32
         if (floor != -1) {
             w->unk_53 = floor;
         }
-#ifdef TARGET_PC
-        /* floor is always set when floorY is in range; the host never reads before the work. */
-        if (floor >= 0 && (w->unk_00[floor] & 8)) {
-            func_80009438();
-        }
-#else
         if (w->unk_00[floor] & 8) {
             func_80009438();
         }
-#endif
         y = floorY;
         w->unk_38 = 1000.0f;
     } else {

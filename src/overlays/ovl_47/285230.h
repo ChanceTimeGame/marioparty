@@ -18,17 +18,9 @@ extern Object* D_800F6F24_name_47;
 extern Object* D_800F6F28_name_47;
 /* the choice result as a word; retail also reads its low half (big-endian +2) as s16 */
 extern s32 D_800F6EE0_name_47;
-#ifdef TARGET_PC
-#define D_800F6EE2_name_47 ((s16)D_800F6EE0_name_47)
-#else
 extern s16 D_800F6EE2_name_47;
-#endif
 
 
 /* Retail calls func_8006FCF0 unprototyped here: the window id and cursor are passed as s16 values
    promoted to int (sll/sra 16), not narrowed to the prototype's s8. The host calls it normally. */
-#ifdef TARGET_PC
-#define func_8006FCF0_unproto(win, cur, arg) func_8006FCF0(win, cur, arg)
-#else
 #define func_8006FCF0_unproto(win, cur, arg) ((s32 (*)())func_8006FCF0)(win, cur, arg)
-#endif

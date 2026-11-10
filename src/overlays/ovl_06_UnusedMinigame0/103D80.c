@@ -140,20 +140,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 UM0Work* func_800FB568_UnusedMinigame0(omObjData* obj) {
     UM0Work* w = HuMemDirectMalloc(sizeof(UM0Work));
 
-#ifdef TARGET_PC
-    /* the host keeps the D_801098C0 index in work[] (a pointer does not fit) */
-    obj->work[0] = (u32)D_80108B80_UnusedMinigame0 >> 24;
-    obj->work[1] = (u32)D_80108B80_UnusedMinigame0 >> 16;
-    obj->work[2] = (u32)D_80108B80_UnusedMinigame0 >> 8;
-    obj->work[3] = D_80108B80_UnusedMinigame0;
-    D_801098C0_UnusedMinigame0[D_80108B80_UnusedMinigame0++] = w;
-#else
     D_801098C0_UnusedMinigame0[D_80108B80_UnusedMinigame0++] = w;
     obj->work[0] = (u32)w >> 24;
     obj->work[1] = (u32)w >> 16;
     obj->work[2] = (u32)w >> 8;
     obj->work[3] = (u32)w;
-#endif
     w->unk0 = 0;
     w->unk2 = 0;
     w->unk8 = 0;
@@ -179,11 +170,7 @@ void func_800FB650_UnusedMinigame0(void) {
 }
 
 UM0Work* func_800FB6D0_UnusedMinigame0(omObjData* obj) {
-#ifdef TARGET_PC
-    return D_801098C0_UnusedMinigame0[(obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]];
-#else
     return (UM0Work*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 
 /* A 16-bit random number. */
@@ -635,25 +622,12 @@ void func_800FCD68_UnusedMinigame0(void) {
     up.x = func_800AEAC0(ry) * func_800AEAC0(rx);
     up.y = func_800AEFD0(rx);
     up.z = func_800AEFD0(ry) * func_800AEAC0(rx);
-#ifdef TARGET_PC
-    {
-        f32* view = (f32*)&D_800EE738 + 1;
-
-        view[0] = eye.x;
-        view[1] = eye.z;
-        view[-1] = CRot.y;
-        view[2] = D_800C3110->unk_40;
-        view[3] = 20000.0f;
-        view[4] = 10000.0f;
-    }
-#else
     D_800EE73C.x = eye.x;
     D_800EE73C.z = eye.z;
     ((f32*)&D_800EE73C)[-1] = CRot.y;
     D_800EE73C.fov = D_800C3110->unk_40;
     D_800EE73C.far = 20000.0f;
     D_800EE73C.near = 10000.0f;
-#endif
     func_8001D420(0, (Vec3f*)&eye, (Vec3f*)&at, (Vec3f*)&up);
     func_8001D57C(0);
 }

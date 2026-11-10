@@ -227,10 +227,7 @@ Gfx D_800C4140[] = {
 };
 /* Retail indexes this as D_800C4174[0..3] (undefined_syms.txt): entry 0 is the last word of
    D_800C4140 (0). The host keeps a real four-entry table. */
-PB_PTR32 D_800C4178[] = { (PB_PTR32)D_800C3D40, (PB_PTR32)D_800C3940, (PB_PTR32)D_800C3540 };
-#ifdef TARGET_PC
-PB_PTR32 D_800C4174[] = { 0, (PB_PTR32)D_800C3D40, (PB_PTR32)D_800C3940, (PB_PTR32)D_800C3540 };
-#endif
+s32 D_800C4178[] = { (s32)D_800C3D40, (s32)D_800C3940, (s32)D_800C3540 };
 
 #define ABS_S(x) ((x) < 0 ? -(x) : (x))
 
@@ -975,7 +972,7 @@ Gfx* func_8002D614(s16 arg0, Gfx* arg1, Gfx* arg2) {
         if (var_fp != 0) {
             gDPFullSync(D_800F37DC++);
             gSPEndDisplayList(D_800F37DC++);
-            func_8001AAC4(PB_HOSTCAST(PB_PTR32, var_s7), D_800EE754, 0, NULL, 0);
+            func_8001AAC4(var_s7, D_800EE754, 0, NULL, 0);
             var_s7 = D_800F37DC;
         }
 
@@ -1224,7 +1221,7 @@ void func_8002E488(unk2C0C0StructC0* arg0, u32* arg1) {
     u16 var_s1;
     u16 var_s2;
     u8* var_t0;
-    PB_PTR32 var_a0; /* a palette address (s32 on the N64) */
+    s32 var_a0; /* a palette address (s32 on the N64) */
     s16 i;
 
     if (D_800F3292 == 0) {
@@ -1364,7 +1361,7 @@ void func_8002E488(unk2C0C0StructC0* arg0, u32* arg1) {
             D_800F328C = temp_a3->unk_24;
 
             if (temp_s4->unk_03 != -1) {
-                var_t0 = (u8*) PB_HOSTCAST(PB_PTR32, (temp_s4->unk_03 << 24)); /* a segmented address */
+                var_t0 = (u8*) (temp_s4->unk_03 << 24); /* a segmented address */
                 *arg1 |= 0x40000;
             } else {
                 var_t0 = temp_a3->unk_24;
@@ -1893,7 +1890,7 @@ void func_80031F14(unk2C0C0Struct70* arg0, s32 arg1, s32 arg2) {
 void guLookAtHilite (Mtx*, LookAt*, Hilite*, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, s32, s32);
 void func_80032C98(unk2C0C0StructC0* arg0, s16 arg1) {
     unk2C0C0Struct90* temp_a0;
-    PB_PTR32 timg;
+    s32 timg;
     Mtx sp50;
 
     gDPPipeSync(D_800F37DC++);

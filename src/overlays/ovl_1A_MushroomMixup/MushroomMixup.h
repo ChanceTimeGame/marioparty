@@ -135,11 +135,7 @@ void func_800090C4(omObjData* obj, u8 idx, u8 val);
 void func_8001E268(s16 index, u8 arg1, u8 arg2);
 void func_8001E2A8(s16, u16);
 f32 func_80029518(f32);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 void func_80027AC8(s16 arg0, u8* arg1, u8* arg2);
 void func_80028180(s16 arg0, char* arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
 f32 func_800369FC(unk34D80Struct80*, s16, f32, f32, f32);
@@ -276,63 +272,6 @@ extern f32 D_800FC9B8_MushroomMixup;
 extern MMMushroom D_800FC9C0_MushroomMixup[NUM_OF_MUSHROOMS];
 /* The init functions (func_800FBFB0...) and a few readers address record fields as separate
    relocations, which only per-label externs reproduce on the N64; the host has the one array. */
-#ifdef TARGET_PC
-#define D_800FC9C6_MushroomMixup (D_800FC9C0_MushroomMixup[0].color)
-#define D_800FC9C8_MushroomMixup (D_800FC9C0_MushroomMixup[0].state)
-#define D_800FC9CC_MushroomMixup (D_800FC9C0_MushroomMixup[0].speed)
-#define D_800FC9D0_MushroomMixup (D_800FC9C0_MushroomMixup[0].topY)
-#define D_800FC9D4_MushroomMixup (D_800FC9C0_MushroomMixup[0].pos.x)
-#define D_800FC9D8_MushroomMixup (D_800FC9C0_MushroomMixup[0].pos.y)
-#define D_800FC9DC_MushroomMixup (D_800FC9C0_MushroomMixup[0].pos.z)
-#define D_800FC9E4_MushroomMixup (D_800FC9C0_MushroomMixup[1])
-#define D_800FC9EA_MushroomMixup (D_800FC9C0_MushroomMixup[1].color)
-#define D_800FC9EC_MushroomMixup (D_800FC9C0_MushroomMixup[1].state)
-#define D_800FC9F0_MushroomMixup (D_800FC9C0_MushroomMixup[1].speed)
-#define D_800FC9F4_MushroomMixup (D_800FC9C0_MushroomMixup[1].topY)
-#define D_800FC9F8_MushroomMixup (D_800FC9C0_MushroomMixup[1].pos.x)
-#define D_800FC9FC_MushroomMixup (D_800FC9C0_MushroomMixup[1].pos.y)
-#define D_800FCA00_MushroomMixup (D_800FC9C0_MushroomMixup[1].pos.z)
-#define D_800FCA08_MushroomMixup (D_800FC9C0_MushroomMixup[2])
-#define D_800FCA0E_MushroomMixup (D_800FC9C0_MushroomMixup[2].color)
-#define D_800FCA10_MushroomMixup (D_800FC9C0_MushroomMixup[2].state)
-#define D_800FCA14_MushroomMixup (D_800FC9C0_MushroomMixup[2].speed)
-#define D_800FCA18_MushroomMixup (D_800FC9C0_MushroomMixup[2].topY)
-#define D_800FCA1C_MushroomMixup (D_800FC9C0_MushroomMixup[2].pos.x)
-#define D_800FCA20_MushroomMixup (D_800FC9C0_MushroomMixup[2].pos.y)
-#define D_800FCA24_MushroomMixup (D_800FC9C0_MushroomMixup[2].pos.z)
-#define D_800FCA2C_MushroomMixup (D_800FC9C0_MushroomMixup[3])
-#define D_800FCA32_MushroomMixup (D_800FC9C0_MushroomMixup[3].color)
-#define D_800FCA34_MushroomMixup (D_800FC9C0_MushroomMixup[3].state)
-#define D_800FCA38_MushroomMixup (D_800FC9C0_MushroomMixup[3].speed)
-#define D_800FCA3C_MushroomMixup (D_800FC9C0_MushroomMixup[3].topY)
-#define D_800FCA40_MushroomMixup (D_800FC9C0_MushroomMixup[3].pos.x)
-#define D_800FCA44_MushroomMixup (D_800FC9C0_MushroomMixup[3].pos.y)
-#define D_800FCA48_MushroomMixup (D_800FC9C0_MushroomMixup[3].pos.z)
-#define D_800FCA50_MushroomMixup (D_800FC9C0_MushroomMixup[4])
-#define D_800FCA56_MushroomMixup (D_800FC9C0_MushroomMixup[4].color)
-#define D_800FCA58_MushroomMixup (D_800FC9C0_MushroomMixup[4].state)
-#define D_800FCA5C_MushroomMixup (D_800FC9C0_MushroomMixup[4].speed)
-#define D_800FCA60_MushroomMixup (D_800FC9C0_MushroomMixup[4].topY)
-#define D_800FCA64_MushroomMixup (D_800FC9C0_MushroomMixup[4].pos.x)
-#define D_800FCA68_MushroomMixup (D_800FC9C0_MushroomMixup[4].pos.y)
-#define D_800FCA6C_MushroomMixup (D_800FC9C0_MushroomMixup[4].pos.z)
-#define D_800FCA74_MushroomMixup (D_800FC9C0_MushroomMixup[5])
-#define D_800FCA7A_MushroomMixup (D_800FC9C0_MushroomMixup[5].color)
-#define D_800FCA7C_MushroomMixup (D_800FC9C0_MushroomMixup[5].state)
-#define D_800FCA80_MushroomMixup (D_800FC9C0_MushroomMixup[5].speed)
-#define D_800FCA84_MushroomMixup (D_800FC9C0_MushroomMixup[5].topY)
-#define D_800FCA88_MushroomMixup (D_800FC9C0_MushroomMixup[5].pos.x)
-#define D_800FCA8C_MushroomMixup (D_800FC9C0_MushroomMixup[5].pos.y)
-#define D_800FCA90_MushroomMixup (D_800FC9C0_MushroomMixup[5].pos.z)
-#define D_800FCA98_MushroomMixup (D_800FC9C0_MushroomMixup[6])
-#define D_800FCA9E_MushroomMixup (D_800FC9C0_MushroomMixup[6].color)
-#define D_800FCAA0_MushroomMixup (D_800FC9C0_MushroomMixup[6].state)
-#define D_800FCAA4_MushroomMixup (D_800FC9C0_MushroomMixup[6].speed)
-#define D_800FCAA8_MushroomMixup (D_800FC9C0_MushroomMixup[6].topY)
-#define D_800FCAAC_MushroomMixup (D_800FC9C0_MushroomMixup[6].pos.x)
-#define D_800FCAB0_MushroomMixup (D_800FC9C0_MushroomMixup[6].pos.y)
-#define D_800FCAB4_MushroomMixup (D_800FC9C0_MushroomMixup[6].pos.z)
-#else
 extern s16 D_800FC9C6_MushroomMixup;
 extern u16 D_800FC9C8_MushroomMixup;
 extern f32 D_800FC9CC_MushroomMixup;
@@ -388,7 +327,6 @@ extern f32 D_800FCAA8_MushroomMixup;
 extern f32 D_800FCAAC_MushroomMixup;
 extern f32 D_800FCAB0_MushroomMixup;
 extern f32 D_800FCAB4_MushroomMixup;
-#endif
 extern u16 D_800FCABC_MushroomMixup; /* the winner (4 = none); read as s16 */
 
 #endif

@@ -252,21 +252,11 @@ extern s16 D_8010113C_PiranhasPursuit;
 /* Splash offset x, y, z, then the plant's grow step: one f32[4] that retail also addresses by
    its splat labels; the host has only the array. */
 extern f32 D_80101140_PiranhasPursuit[4];
-#ifdef TARGET_PC
-#define D_80101144_PiranhasPursuit (D_80101140_PiranhasPursuit[1])
-#define D_80101148_PiranhasPursuit (D_80101140_PiranhasPursuit[2])
-#define D_8010114C_PiranhasPursuit (D_80101140_PiranhasPursuit[3])
-#else
 extern f32 D_80101144_PiranhasPursuit;
 extern f32 D_80101148_PiranhasPursuit;
 extern f32 D_8010114C_PiranhasPursuit;
-#endif
 extern PPPlant D_80101150_PiranhasPursuit;
-#ifdef TARGET_PC
-#define D_8010117C_PiranhasPursuit (D_80101150_PiranhasPursuit.unk2C)
-#else
 extern s16 D_8010117C_PiranhasPursuit; /* D_80101150.unk2C */
-#endif
 extern PPAnimMtx* D_801012C4_PiranhasPursuit;
 extern s16 D_801012C8_PiranhasPursuit; /* 1: runner caught, 2: done */
 extern s16 D_801012CA_PiranhasPursuit; /* plant reached the goal */

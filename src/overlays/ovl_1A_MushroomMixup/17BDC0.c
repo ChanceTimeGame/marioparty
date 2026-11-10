@@ -208,12 +208,8 @@ void func_800FA53C_MushroomMixup(omObjData* arg0, MMMushroom* rec, s32 file, s32
     work->unk_05 = idx + 2;
     rec->colIdx = work->unk_05;
     func_80009000(arg0, 4, 0.0f);
-#ifdef TARGET_PC
-    func_800F70F0_MushroomMixup(arg0->model[0], rec->color & 7);
-#else
     /* retail passed the id as a u16 (lhu): this unit's declaration differed from the definition */
     ((void (*)(u16, u32))func_800F70F0_MushroomMixup)(arg0->model[0], rec->color & 7);
-#endif
     func_80025B34(arg0->model[0]);
 }
 #else

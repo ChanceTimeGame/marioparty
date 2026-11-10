@@ -1,8 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host build: the unified 64-bit host edition (games/mp1/src/port/include) replaces
- * this header. N64 builds never define TARGET_PC and compile the original below unchanged. */
-#include <PR/abi.h>
-#else /* !TARGET_PC */
 #ifndef _ABI_H_
 #define	_ABI_H_
 
@@ -410,4 +405,3 @@ typedef short ENVMIX_STATE[40];
 #endif /* _LANGUAGE_C */
 
 #endif /* !_ABI_H_ */
-#endif /* !TARGET_PC */

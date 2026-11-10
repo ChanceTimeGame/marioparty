@@ -14,7 +14,6 @@
    object for them; the asm keeps its labels (.data aliases are in undefined_syms.txt). */
 
 #include "common.h"
-#include "pb_host.h"
 #include "engine/pad.h"
 
 /* ---------------------------------------------------------------------------------------------

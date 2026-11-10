@@ -1,6 +1,5 @@
 #include "PR/gu.h"
 #include "engine/graphics.h"
-#include "pb_host.h"
 
 u8 D_800C30C0 = 0;
 u8 D_800C30C1 = 0;
@@ -17,7 +16,7 @@ Gfx D_800C30C8[] = {
 };
 
 typedef struct {
-    PB_PTR32 unk00; /* PartyBoard: a display list address */
+    s32 unk00;
     u16 unk04;
     s32 unk08;
     OSMesgQueue *unk0C;
@@ -53,7 +52,7 @@ extern s32 D_800ED0C4;
 extern void *nextFrameBuffer;
 extern void *currFrameBuffer;
 
-extern PB_PTR32 *gUCodeAddresses; /* PartyBoard: a table of ucode addresses */
+extern s32 *gUCodeAddresses;
 extern u32 D_800D5FF0; // message count?
 
 
@@ -68,7 +67,7 @@ extern u32 D_800F383C; // Unk
 extern OSMesgQueue D_800ED3C8; // Another system's message queue
 
 /* Initialize Graphics SwapChain */
-void func_8001A600(void **arg1, s32 arg2, s32 arg3, u64 **arg4, PB_PTR32 *arg5) {
+void func_8001A600(void **arg1, s32 arg2, s32 arg3, u64 **arg4, s32 *arg5) {
     func_8001AB84(arg1, arg2, arg3);
     func_8001ABAC(arg4);
     func_8001ABE8(arg5);
@@ -122,11 +121,7 @@ void *func_8001A750(void) {
 void func_8001A7DC(void* arg0) {
     unkSchedStruct sp10;
     OSMesgQueue mesgQueue;
-#ifdef TARGET_PC
-    OSMesg sp38[8]; /* host: 0x20 bytes held 8 N64 messages; host messages are 8 bytes each */
-#else
     unkGraphicsMessage2 sp38;
-#endif
     graphicsMessage* recvdMesg;
     void* pAvailableFrameBuffer; // available frameBuffer
     s32 var_s4;
@@ -166,7 +161,7 @@ void func_8001A7DC(void* arg0) {
             osRecvMesg(&gSwapChainMesgQueue, (OSMesg) &recvdMesg, 1);
             gSPSegment(dl++, frameBufferSegmentID, pAvailableFrameBuffer);
             gSPBranchList(dl++, recvdMesg->unk00);
-            pSwapChain->mesgQueue.fullqueue = (void *) PB_HOSTCAST(PB_PTR32, recvdMesg->unk08);
+            pSwapChain->mesgQueue.fullqueue = (void *) (recvdMesg->unk08);
             pTask->t.dram_stack = gThread3Stack;
             pTask->t.output_buff = gThreadOutStack;
             pTask->t.output_buff_size = gThreadOutStackSize;
@@ -182,7 +177,7 @@ void func_8001A7DC(void* arg0) {
             osSetIntMask(intMask);
 
             if (recvdMesg->unk0C != NULL) {
-                osSendMesg(recvdMesg->unk0C, (OSMesg) PB_HOSTCAST(PB_PTR32, recvdMesg->unk10), 1);
+                osSendMesg(recvdMesg->unk0C, (OSMesg) (recvdMesg->unk10), 1);
             }
         } while (!((s32) recvdMesg->unk08 & 1)); } while (FALSE);
     
@@ -202,17 +197,13 @@ void func_8001A7DC(void* arg0) {
 /* Retrieve graphics OSMesg from ring buffer */
 graphicsMessage* func_8001AA70(void) {
     if (ringBufferIndex >= 0x20) {
-#ifdef TARGET_PC
-        ringBufferIndex = 0; /* host: the C library NULL is a pointer */
-#else
         ringBufferIndex = NULL;
-#endif
     }
     return &gMesgRingBuffer[ringBufferIndex++];
 }
 
 /* Send graphics OSMesg */
-u8 func_8001AAC4(PB_PTR32 arg0, u16 arg1, s32 arg2, OSMesgQueue *arg3, s32 arg4) {
+u8 func_8001AAC4(s32 arg0, u16 arg1, s32 arg2, OSMesgQueue *arg3, s32 arg4) {
     graphicsMessage* mesg;
     u32 intMask;
 
@@ -257,7 +248,7 @@ void func_8001ABAC(u64 **threadStacks) {
 }
 
 /* Set pointer to swapchain task's ucode addresses */
-void func_8001ABE8(PB_PTR32 *uCodeAdresses) {
+void func_8001ABE8(s32 *uCodeAdresses) {
     gUCodeAddresses = uCodeAdresses;
 }
 

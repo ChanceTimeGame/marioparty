@@ -89,25 +89,13 @@ unk72D90Struct2 D_800C6268[57] = {
 extern void guLookAt(Mtx*, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 extern void guPerspective(Mtx*, u16*, f32, f32, f32, f32, f32);
 void* func_80023668(s32);
-#ifdef TARGET_PC
-#include <string.h> /* host: the C library's strlen; PR/os.h declares osVirtualToPhysical */
-#else
 u32 osVirtualToPhysical(void*);
 u32 strlen(const char*);
-#endif
 void* func_80014614(s32);
 void DataCloseTemp(void*);
-#ifdef TARGET_PC
-void func_800238F0(s16); /* host: matches the definition */
-#else
 void func_800238F0(s32);
-#endif
-#ifdef TARGET_PC
-s16 func_8002451C(u32, void (*)(Gfx**, Mtx*, camera*), u8); /* host: returns s16 */
-#else
 s32 func_8002451C(s32, void (*)(Gfx**), s32);
-#endif
-void func_8003A060(Gfx**, PB_PTR32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003A060(Gfx**, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 s16 func_8006DB3C(s16, s32, s16, s16, s16);
 s16 func_8006DD8C(s16, s16);
 void func_80071598(s16);
@@ -117,9 +105,9 @@ s32 func_8007281C(Gfx**);
 void func_800728F4(Gfx**, u8, s32*);
 s32 func_800729C8(Gfx**);
 s32 func_80072B5C(Gfx**);
-void func_80072C34(Gfx**, PB_PTR32);
+void func_80072C34(Gfx**, s32);
 void func_80072E1C(Gfx**);
-void func_80072E5C(Gfx**, PB_PTR32);
+void func_80072E5C(Gfx**, s32);
 s32 func_80073008(Gfx**);
 s32 func_800730E4(Gfx**);
 Gfx* func_80073100(Gfx*, Vtx*);
@@ -185,7 +173,7 @@ extern char D_800CBAD0[];
 extern char D_800CBAD8[];
 extern char D_800CBAE4[];
 extern Gfx* D_800E4340;
-extern PB_PTR32 D_800E4344;
+extern s32 D_800E4344;
 extern s8 D_800E4348;
 extern Gfx* D_800E434C;
 extern s16 D_800E4350;
@@ -217,7 +205,7 @@ extern s8 D_800F3FFC;
 extern f32 D_800F5024;
 extern u8 D_800F50B8;
 extern Mtx D_800F5340[];
-extern PB_PTR32 D_800F545C;
+extern s32 D_800F545C;
 extern s8 omSysPauseEnableFlag;
 extern s16 D_800F64F4;
 extern s16 D_800F6548;
@@ -442,7 +430,7 @@ s32 func_80072B5C(Gfx** arg0) {
 
     if (D_800F5024 == 0.0f) {
         D_800C6104 = HuMemDirectMalloc(153664);
-        D_800F545C = (PB_PTR32) (D_800C6104 + 63) & ~63;
+        D_800F545C = (s32) (D_800C6104 + 63) & ~63;
         func_80072C34(arg0, D_800F545C);
         return 1;
     }
@@ -456,7 +444,7 @@ s32 func_80072B5C(Gfx** arg0) {
     return 1;
 }
 
-void func_80072C34(Gfx** arg0, PB_PTR32 arg1) {
+void func_80072C34(Gfx** arg0, s32 arg1) {
     s16 i;
     s16 j;
 
@@ -477,7 +465,7 @@ void func_80072E1C(Gfx** arg0) {
     func_80072E5C(arg0, D_800F545C);
 }
 
-void func_80072E5C(Gfx** arg0, PB_PTR32 arg1) {
+void func_80072E5C(Gfx** arg0, s32 arg1) {
     s16 i;
     s16 j;
 
@@ -592,7 +580,7 @@ Gfx* func_80073100(Gfx* arg0, Vtx* arg1) {
 s32 func_80073560(Gfx** arg0) {
     f32 temp_f22;
     f32 temp_f24;
-    PB_PTR32 var_s8; /* s32 on the N64: a framebuffer address */
+    s32 var_s8; /* s32 on the N64: a framebuffer address */
     s16 i;
     s16 j;
 
@@ -610,19 +598,9 @@ s32 func_80073560(Gfx** arg0) {
     gDPSetTextureFilter((*arg0)++, G_TF_BILERP);
     gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-#ifdef TARGET_PC
-    /* D_800ECB1C is currFrameBuffer under a second name, and the copy goes through the depth
-       buffer at 0x803D0800 (pb_host.h PB_N64_ZBUFFER). */
-    {
-        extern void* currFrameBuffer;
-        var_s8 = (PB_PTR32)currFrameBuffer;
-    }
-    gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, PB_N64_ZBUFFER);
-#else
     var_s8 = D_800ECB1C;
 
     gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, 0x003D0800);
-#endif
     gSPDisplayList((*arg0)++, D_800C6178);
     gDPSetCombineMode((*arg0)++, G_CC_DECALRGB, G_CC_DECALRGB);
     gDPSetRenderMode((*arg0)++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
@@ -638,11 +616,7 @@ s32 func_80073560(Gfx** arg0) {
 
     gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, 0x02000000);
 
-#ifdef TARGET_PC
-    var_s8 = (PB_PTR32)PB_N64_ZBUFFER;
-#else
     var_s8 = 0x803D0800;
-#endif
     for (i = 0; i < temp_f22 * (f32)SCREEN_HEIGHT + 15.0f; i += 16) {
         for (j = 0; j < temp_f22 * (f32)SCREEN_WIDTH + 31.0f; j += 32) {
             func_8003A060(arg0, var_s8 + (j + i * SCREEN_WIDTH) * 2, 0, 2, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 32, 16, 0, 2, 2, 0, 0, 0, 0);
@@ -718,65 +692,6 @@ void* func_80074124(s32 arg0) {
     return data;
 }
 
-#ifdef TARGET_PC
-#include "PR/gbi_ex.h"
-#include "PR/gu.h"
-/* Host widescreen: the iris wipe blacks out what is outside its circle with fill rectangles. The
-   top and bottom ones span the screen and RT64 widens them; the side ones do not, so the scene
-   showed beside the 4:3 area while the circle was small. Black quads from the view's edge to the
-   circle's band, in an ortho space RT64 widens (as MP2 51630.c's edge quads), close the gap. */
-static Vtx pbWipeVtx[2][8];
-static s32 pbWipeBuf;
-static Mtx pbWipeMtx[2];
-static s32 pbWipeMtxInit;
-static Vp pbWipeVp = { { { 640, 480, 511, 0 }, { 640, 480, 511, 0 } } };
-
-static void pbWipeQuad(Gfx** g, Vtx* v, f32 x0, f32 x1, f32 y0, f32 y1) {
-    s32 k;
-
-    for (k = 0; k < 4; k++) {
-        v[k].v.ob[0] = (s16) ((k == 1 || k == 2) ? x1 : x0);
-        v[k].v.ob[1] = (s16) ((k >= 2) ? y1 : y0);
-        v[k].v.ob[2] = 0;
-        v[k].v.flag = 0;
-        v[k].v.tc[0] = v[k].v.tc[1] = 0;
-        v[k].v.cn[0] = v[k].v.cn[1] = v[k].v.cn[2] = 0;
-        v[k].v.cn[3] = 0xFF;
-    }
-    gSPVertex((*g)++, v, 4, 0);
-    gSP2Triangles((*g)++, 0, 1, 2, 0, 0, 2, 3, 0);
-}
-
-static void pbWipeSides(Gfx** g, s32 left, s32 right, s32 top, s32 bottom) {
-    f32 e = 160.0f * (pb_wide_scale() - 1.0f);
-    Vtx* v;
-
-    if (e <= 0.0f || bottom <= top) {
-        return;
-    }
-    if (!pbWipeMtxInit) {
-        guOrtho(&pbWipeMtx[0], 0.0f, 320.0f, 240.0f, 0.0f, -10.0f, 10.0f, 1.0f);
-        guMtxIdent(&pbWipeMtx[1]);
-        pbWipeMtxInit = 1;
-    }
-    pbWipeBuf ^= 1;
-    v = pbWipeVtx[pbWipeBuf];
-    gEXPushViewport((*g)++);
-    gEXPushProjectionMatrix((*g)++);
-    gEXPushGeometryMode((*g)++);
-    gSPViewport((*g)++, &pbWipeVp);
-    gSPMatrix((*g)++, &pbWipeMtx[0], G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
-    gSPMatrix((*g)++, &pbWipeMtx[1], G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPClearGeometryMode((*g)++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH | G_CULL_BOTH | G_FOG | G_LIGHTING |
-                                     G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD);
-    pbWipeQuad(g, &v[0], -e - 8.0f, left < 0 ? (f32) left : 0.0f, top, bottom);
-    pbWipeQuad(g, &v[4], right > 320 ? (f32) right : 320.0f, 328.0f + e, top, bottom);
-    gSPPopMatrix((*g)++, G_MTX_MODELVIEW);
-    gEXPopGeometryMode((*g)++);
-    gEXPopProjectionMatrix((*g)++);
-    gEXPopViewport((*g)++);
-}
-#endif
 
 void func_8007420C(Gfx** arg0, f32 arg1, f32 arg2) {
     s16 var_t1;
@@ -832,11 +747,6 @@ void func_8007420C(Gfx** arg0, f32 arg1, f32 arg2) {
     if (var_t4 < SCREEN_WIDTH) {
         gDPScisFillRectangle((*arg0)++, var_t4, var_t1, SCREEN_WIDTH, var_t2);
     }
-#ifdef TARGET_PC
-    if (pb_widescreen()) {
-        pbWipeSides(arg0, var_t3, var_t4, var_t1, var_t2);
-    }
-#endif
 }
 
 s32 func_80074C20(Gfx** arg0) {
@@ -1347,11 +1257,7 @@ s32 GMesCreate(s16 arg0, ...) {
             break;
         case 6:
         case 7:
-#ifdef TARGET_PC
-            temp_a2->unk_10 = va_arg(args, void*); /* a pointer argument: 8 bytes on the host */
-#else
             temp_a2->unk_10 = va_arg(args, s32);
-#endif
             temp_a2->unk_54 = va_arg(args, s32);
             temp_a2->unk_58 = va_arg(args, s32);
             temp_a2->unk_5C = va_arg(args, f64);
@@ -2778,8 +2684,8 @@ void func_8007B210(void) {
     D_800E4340 = func_80023668(153664);
     sp10 = D_800E434C = func_80023668(6400);
 
-    D_800E4344 = ((PB_PTR32) D_800E4340 + 63) & ~63;
-    D_800E4350 = func_8002451C(0, PB_HOSTCAST(void (*)(Gfx**, Mtx*, camera*), &func_8007B420), 6);
+    D_800E4344 = ((s32) D_800E4340 + 63) & ~63;
+    D_800E4350 = func_8002451C(0, (&func_8007B420), 6);
 
     gSPDisplayList(sp10++, D_800C6108);
     func_80072C34(&sp10, D_800E4344);
@@ -2803,7 +2709,7 @@ void func_8007B310(void) {
     Gfx* sp10;
 
     sp10 = D_800E434C = func_80023668(6400);
-    D_800E4352 = func_8002451C(0, PB_HOSTCAST(void (*)(Gfx**, Mtx*, camera*), &func_8007B458), 0);
+    D_800E4352 = func_8002451C(0, (&func_8007B458), 0);
 
     gSPDisplayList(sp10++, D_800C6108);
     gDPSetCombineMode(sp10++, G_CC_MODULATEI_PRIM, G_CC_MODULATEI_PRIM);
@@ -2882,17 +2788,17 @@ void func_8007B52C(void) {
                 var_s2 = 2;
                 for (i = 0; i < MAX_PLAYERS; i++) {
                     if (GwPlayer[i].group == 0) {
-                        func_8006DA5C(temp_v0, (void*) (PB_PTR32) GwPlayer[i].character + 44, var_s3);
-                        func_8006DA5C(var_s6, (void*) (PB_PTR32) GwPlayer[i].character + 44, var_s3++);
+                        func_8006DA5C(temp_v0, (void*) (s32) GwPlayer[i].character + 44, var_s3);
+                        func_8006DA5C(var_s6, (void*) (s32) GwPlayer[i].character + 44, var_s3++);
                     } else {
-                        func_8006DA5C(temp_v0, (void*) (PB_PTR32) GwPlayer[i].character + 44, var_s2);
-                        func_8006DA5C(var_s6, (void*) (PB_PTR32) GwPlayer[i].character + 44, var_s2++);
+                        func_8006DA5C(temp_v0, (void*) (s32) GwPlayer[i].character + 44, var_s2);
+                        func_8006DA5C(var_s6, (void*) (s32) GwPlayer[i].character + 44, var_s2++);
                     }
                 }
             } else {
                 for (i = 0; i < MAX_PLAYERS; i++) {
-                    func_8006DA5C(temp_v0, (void*) (PB_PTR32) GwPlayer[i].character + 44, GwPlayer[i].group);
-                    func_8006DA5C(var_s6, (void*) (PB_PTR32) GwPlayer[i].character + 44, GwPlayer[i].group);
+                    func_8006DA5C(temp_v0, (void*) (s32) GwPlayer[i].character + 44, GwPlayer[i].group);
+                    func_8006DA5C(var_s6, (void*) (s32) GwPlayer[i].character + 44, GwPlayer[i].group);
                 }
             }
         } else {
@@ -2901,25 +2807,25 @@ void func_8007B52C(void) {
                 var_s2 = 1;
                 for (i = 0; i < MAX_PLAYERS; i++) {
                     if (GwPlayer[i].group == 0) {
-                        func_8006DA5C(temp_v0, (void*) (PB_PTR32) GwPlayer[i].character + 44, var_s3++);
+                        func_8006DA5C(temp_v0, (void*) (s32) GwPlayer[i].character + 44, var_s3++);
                     } else {
-                        func_8006DA5C(var_s6, (void*) (PB_PTR32) GwPlayer[i].character + 44, var_s2++);
+                        func_8006DA5C(var_s6, (void*) (s32) GwPlayer[i].character + 44, var_s2++);
                     }
                 }
             } else {
                 for (i = 0; i < MAX_PLAYERS; i++) {
-                    func_8006DA5C(temp_v0, (void*) (PB_PTR32) GwPlayer[i].character + 44, i);
+                    func_8006DA5C(temp_v0, (void*) (s32) GwPlayer[i].character + 44, i);
                 }
             }
         }
 
-        LoadStringIntoWindow(var_s6, (void*) (PB_PTR32) D_800C6268[temp_fp].unk_04, -1, -1);
+        LoadStringIntoWindow(var_s6, (void*) (s32) D_800C6268[temp_fp].unk_04, -1, -1);
     } else {
         D_800F64F4 = -1;
         var_s6 = -1;
     }
 
-    LoadStringIntoWindow(temp_v0, (void*) (PB_PTR32) D_800C6268[temp_fp].unk_02, -1, -1);
+    LoadStringIntoWindow(temp_v0, (void*) (s32) D_800C6268[temp_fp].unk_02, -1, -1);
 
     temp_v0_12 = DataRead(0xB001B);
     D_800F3182 = func_800678A4(temp_v0_12);

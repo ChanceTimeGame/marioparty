@@ -49,11 +49,7 @@ typedef struct DSDWork {
 } DSDWork; /* size = 0x60 */
 
 /* The low byte of DSDWork.unk0 / DSDFx.flags, read by retail as a byte at offset 1. */
-#ifdef TARGET_PC
-#define DSD_LO8(f) ((s8)(f))
-#else
 #define DSD_LO8(f) (((s8*)&(f))[1])
-#endif
 
 /* A player object's work (func_80023684(0xE8)): src/99E0.c's MgWork layout, the fields this
    overlay touches; its pointers sit where MgWork's do. */

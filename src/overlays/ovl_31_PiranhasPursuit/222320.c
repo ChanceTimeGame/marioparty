@@ -363,12 +363,7 @@ void func_800F7320_PiranhasPursuit(omObjData* obj, s32 player) {
     func_800187D0(obj, 0x23, dir | 0x56, 1, 0x13);
     m = &a.v[rand8() & 1];
     func_800187D0(obj, 0xD, dir | m[0], 1, 0x78);
-#ifdef TARGET_PC
-    /* retail: m[6] is b[r] (a at sp+0x18, b at sp+0x30); a separate host array is not there */
-    func_800187D0(obj, 0xE, dir | b.v[m - a.v], 1, 0x78);
-#else
     func_800187D0(obj, 0xE, dir | m[6], 1, 0x78);
-#endif
     omSetRot(obj, 0.0f, 90.0f, 0.0f);
     func_800184BC(obj, 0);
     func_80017DB0(obj);
@@ -1117,22 +1112,14 @@ void func_800F9BF0_PiranhasPursuit(void) {
 /* Keeps the player's PPPlayer in omObjData::work as a big-endian word; on the host the work bytes
    cannot hold a pointer, so they hold its index (only D_80100CE0 entries are stored). */
 void func_800F9CBC_PiranhasPursuit(omObjData* obj, PPPlayer* p) {
-#ifdef TARGET_PC
-    obj->work[0] = p - D_80100CE0_PiranhasPursuit;
-#else
     obj->work[0] = (u32)p >> 24;
     obj->work[1] = (u32)p >> 16;
     obj->work[2] = (u32)p >> 8;
     obj->work[3] = (u32)p;
-#endif
 }
 
 PPPlayer* func_800F9CDC_PiranhasPursuit(omObjData* obj) {
-#ifdef TARGET_PC
-    return &D_80100CE0_PiranhasPursuit[obj->work[0]];
-#else
     return (PPPlayer*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 
 void func_800F9D08_PiranhasPursuit(void) {

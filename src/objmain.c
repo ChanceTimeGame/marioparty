@@ -7,11 +7,7 @@ extern u8 D_800F64E8[];
 extern u8 D_800F3388[];
 extern u16 D_800F338C[];
 extern u16 D_800ECC24[];
-#ifdef TARGET_PC
-void func_8006CE64(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_8006CE64(u8, s16, s16, s16);
-#endif
 
 
 typedef struct omSndFade {
@@ -22,17 +18,10 @@ typedef struct omSndFade {
     /* 0xD0 */ u8 flags[13];
 } omSndFade; // sizeof 0xE0
 
-#ifdef TARGET_PC /* ROM offsets linked as symbol addresses (pb_host.h) */
-#define D_15396A0 PB_ROM_ADDR(0x15396A0)
-#define D_1778BC0 PB_ROM_ADDR(0x1778BC0)
-#define D_1832AE0 PB_ROM_ADDR(0x1832AE0)
-#define D_1BB8460 PB_ROM_ADDR(0x1BB8460)
-#else
 extern Addr D_15396A0;
 extern Addr D_1778BC0;
 extern Addr D_1832AE0;
 extern Addr D_1BB8460;
-#endif
 
 void func_800117AC(s16);
 void func_8001165C(void);
@@ -145,21 +134,6 @@ objmainChr D_800C59A8[6] = {
     { 0, 0, 1, 0, 0x9F, 0x9E, 1.0f }, { 1, 0, 2, 0, 0x9F, 0x9E, 1.0f }, { 2, 0, 6, 0, 0x9F, 0x9E, 1.0f },
     { 3, 0, 3, 0, 0x9F, 0x9E, 0.9f }, { 4, 0, 4, 0, 0x9F, 0x9E, 0.8f }, { 5, 0, 5, 0, 0x9F, 0x9E, 0.7f },
 };
-#ifdef TARGET_PC
-/* D_800C59AC (common_structs.h): retail reads entry i from its `chr` field as an unkStructSize14 */
-unkStructSize14* pb_objmainChrView(void) {
-    static unkStructSize14 view[6];
-    s32 i;
-
-    for (i = 0; i < 6; i++) {
-        view[i].unk_00 = (s32)(((u32)(u16)D_800C59A8[i].chr << 16) | (u16)D_800C59A8[i].unk06);
-        view[i].unk_04 = D_800C59A8[i].file0;
-        view[i].unk_08 = D_800C59A8[i].file1;
-        memcpy(view[i].unk_0C, &D_800C59A8[i].scale, sizeof(f32));
-    }
-    return view;
-}
-#endif
 u8 D_800C5A20 = 0;
 u8 D_800C5A21 = 0;
 omDBGMenuItem D_800C5A24[6] = {
@@ -184,18 +158,10 @@ extern s16 D_800D89BE;
 extern s16 D_800D89C0;
 extern omSaftyFrameColor saftyFrameColor;
 
-#ifdef TARGET_PC
-void saftyFrameFlashSet(s8, s8, s8, s8, u8, u8, u8, u8, u8); /* host: matches the definition */
-#else
 void saftyFrameFlashSet(s32, s32, s32, s32, s32, s32, s32, s32, s32);
-#endif
 void saftyFrameFlashReset(void);
 void saftyFrameReset(void);
-#ifdef TARGET_PC
-void saftyFrameSet(s8, s8, s8); /* host: matches the definition */
-#else
 void saftyFrameSet(s32, s32, s32);
-#endif
 void pfWinClose(void);
 void pfWinKill(s16);
 void func_80070ED4(void);
@@ -234,22 +200,10 @@ s16 pfWinCreate(s32, s32, s32, s32, s32);
 s32 func_8003B710(void);
 s32 func_8003B730(void);
 void func_800255DC(void);
-#ifdef TARGET_PC
-void func_8001AB84(void**, u16, u16); /* host: matches the definition */
-#else
 void func_8001AB84(void*, u8, s32);
-#endif
-#ifdef TARGET_PC
-void func_80023B40(void* (*)(s32), void (*)(void*), u16, u16, u16, u8); /* host: matches the definition */
-#else
 void func_80023B40(void* (*)(s32), void (*)(void*), u16, u16, s32, s32);
-#endif
 void func_8002B6C8(void);
-#ifdef TARGET_PC
-void func_80025658(void*, void*); /* host: matches the definition */
-#else
 void func_80025658(s32, s32);
-#endif
 void MakeTempHeap(void*, s32);
 void func_8006CD0C(s16);
 void func_80018870(void);
@@ -866,17 +820,9 @@ void omMain(void) {
 
     if (D_800C5972 != 0) {
         fontcolor = 14;
-#ifdef TARGET_PC /* host: long is 64-bit; the values are s32 */
-        sprintf(pfStrBuf, "%8X(%d)", func_8003B710(), func_8003B730());
-#else
         sprintf(pfStrBuf, "%8lX(%ld)", func_8003B710(), func_8003B730());
-#endif
         print8(16, 24, pfStrBuf);
-#ifdef TARGET_PC
-        sprintf(pfStrBuf, "OVL:%d(%d<%d)", omovlhisidx, D_800F09F4, D_800C5968);
-#else
         sprintf(pfStrBuf, "OVL:%d(%ld<%ld)", omovlhisidx, D_800F09F4, D_800C5968);
-#endif
         print8(24, 32, pfStrBuf);
         sprintf(pfStrBuf, "OBJ:%d/%d", D_800ED56C, D_800ED550);
         print8(24, 40, pfStrBuf);
@@ -913,11 +859,7 @@ void omMain(void) {
                 func_8001AB84(D_800C4250, D_800F3705, 2);
                 func_80023B40(HuMemDirectMalloc, HuMemDirectFree, D_800F3F30, D_800ED726, D_800F64EC, D_800F3705);
                 func_8002B6C8();
-#ifdef TARGET_PC
-                func_80025658(PB_HOSTCAST(void*, 0x02000000), PB_N64_ZBUFFER);
-#else
-                func_80025658(PB_HOSTCAST(void*, 0x02000000), PB_HOSTCAST(void*, 0x3D0800));
-#endif
+                func_80025658(0x02000000, 0x3D0800);
                 InitCameras(1);
             }
             D_800C5994 = 0;
@@ -952,7 +894,7 @@ void omMain(void) {
                 D_800C59A2 = 0;
                 D_800C5A21 = 0;
             }
-            MakeTempHeap(PB_N64_RAM(0x80120000, 0x20000), PB_N64_RAM_SIZE(0x20000));
+            MakeTempHeap(((void *)0x80120000), 0x20000);
             for (i = 0; i < 4; i++) {
                 func_8006CD0C(i);
             }
@@ -1645,28 +1587,13 @@ u16 func_80060AB4(void) {
 void func_80060AF0(void) {
     file_1ACF0_struct* data = func_8000B2BC();
 
-#ifdef TARGET_PC
-    /* host: data views B980's 32-bit block; file_1ACF0_struct's pointers are wider here */
-#define PB_B980W(off) (((s32*)data)[(off) / 4])
-    PB_B980W(0x40) = D_800C599A + 20;
-#else
     data->unk_40 = D_800C599A + 20;
-#endif
     if (D_800C599E == 0) {
-#ifdef TARGET_PC
-        PB_B980W(0x4C) = 32;
-#else
         data->unk_4C = 32;
-#endif
         func_80010C30(&D_1832AE0, 0, 0, 0);
         func_8000BE98(&D_15396A0, &D_1778BC0, 0, 0, 0);
     } else {
-#ifdef TARGET_PC
-        PB_B980W(0x4C) = 45;
-#undef PB_B980W
-#else
         data->unk_4C = 45;
-#endif
         func_80010C30(&D_1BB8460, 0, 0, 0);
         func_8000BE98(&D_1778BC0, &D_1832AE0, 0, 0, 0);
     }

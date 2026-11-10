@@ -16,11 +16,7 @@ void func_80055B50(s32, s32);
 void func_80055B64(void);
 /* The camera paths: retail reads the start Vec as the end Vec's [-1] (adjacent .data objects, one
    base register: D_801011FC/D_80101208, D_80101214/D_80101220); the host names the object. */
-#ifdef TARGET_PC
-#define CT_PREV(cur, prev) (prev)
-#else
 #define CT_PREV(cur, prev) ((&(cur))[-1])
-#endif
 
 
 void func_8005049C(void);
@@ -30,11 +26,7 @@ extern s16 D_800EE984;
 extern omObjData* D_800F2AF8[];
 extern s8 omSysPauseEnableFlag;
 /* Retail calls func_80055A40 unprototyped with two arguments (-1, -1); the host calls it normally. */
-#ifdef TARGET_PC
-#define func_80055A40_unproto(a, b) func_80055A40(a)
-#else
 #define func_80055A40_unproto(a, b) ((void (*)())func_80055A40)(a, b)
-#endif
 
 
 u16 func_8004F234(void);
@@ -169,12 +161,8 @@ void func_800F65E0_ChanceTime(void) {
     D_80101840_ChanceTime[0] = omAddObj(0xC, 2, 0, -1, &func_800FCC18_ChanceTime);
     D_80101840_ChanceTime[1] = omAddObj(0xC, 2, 0, -1, &func_800FD7DC_ChanceTime);
     if (D_801011F0_ChanceTime == 0) {
-#ifdef TARGET_PC
-        D_80101848_ChanceTime = omAddObj(0xC, 2, 0, -1, &func_800FE554_ChanceTime);
-#else
         /* retail: D_80101848 through the D_80101840 base (s0 + 8) */
         D_80101840_ChanceTime[2] = omAddObj(0xC, 2, 0, -1, &func_800FE554_ChanceTime);
-#endif
     } else {
         D_80101848_ChanceTime = omAddObj(0xC, 2, 0, -1, &func_800FE9D8_ChanceTime);
     }
@@ -305,14 +293,10 @@ INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_01_ChanceTime/D51E0", D_801013C8_C
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_ChanceTime/D51E0", func_800F6B00_ChanceTime);
 #endif
 void func_800F7108_ChanceTime(omObjData* obj) {
-#ifndef TARGET_PC
     omObjData* objs[3];
     CTReel* reels[3];
-#endif
     CTPlayerWork* work;
-#ifndef TARGET_PC
     s16 i;
-#endif
     u16 btn;
     f32 angle;
     s8 port;
@@ -321,23 +305,17 @@ void func_800F7108_ChanceTime(omObjData* obj) {
     btn = 0;
     angle = -1.0f;
     work = CT_PWORK(obj);
-#ifndef TARGET_PC
     /* Dead locals. [2] is D_80101848 (the third panel) read through D_80101840; the panels'
        reels are read from the omObjData itself (offset 0x28), not from its work. */
     for (i = 0; i < 3; i++) {
         objs[i] = D_80101840_ChanceTime[i];
         reels[i] = ((CTObjWork*)objs[i])->unk_28;
     }
-#endif
     D_80101AA6_ChanceTime[work->unk_56] = ContBtn[work->unk_56];
     D_80101ACA_ChanceTime[work->unk_56] = ContStkX[work->unk_56];
     D_80101A98_ChanceTime[work->unk_56] = ContStkY[work->unk_56];
     D_80101AC2_ChanceTime[work->unk_56] = ContBtnTrg[work->unk_56];
-#ifdef TARGET_PC
-    if ((GwPlayer[work->unk_58].flags & 1) || pb_autoplay_steer()) {
-#else
     if (GwPlayer[work->unk_58].flags & 1) {
-#endif
         if (D_80101266_ChanceTime == 0) {
             if (D_801011F0_ChanceTime == 0) {
                 D_801016FA_ChanceTime = 1;

@@ -2,12 +2,8 @@
 #include "316440.h"
 #include "engine/process.h"
 
-#ifdef TARGET_PC
-#define WAIT_TEXT(w) WaitForTextConfirmation(w)
-#else
 /* Retail passes the window id unextended here (it was called without the s16 prototype). */
 #define WAIT_TEXT(w) ((void (*)())WaitForTextConfirmation)(w)
-#endif
 
 void func_80052DC8(s16, void*);
 void func_8003FC94(void);
@@ -345,7 +341,7 @@ void func_800F6EF0_MiniGameStadiumStartCopy(void) {
             win = CreateTextWindow(0x1E, 0x46, 8, 1);
         }
         func_8006DA5C(win, D_800C5218[GwPlayer[i].character], i);
-        LoadStringIntoWindow(win, (void*)(PB_PTR32)(i + 0x502), -1, -1);
+        LoadStringIntoWindow(win, (void*)(s32)(i + 0x502), -1, -1);
         func_8006E070(win, 0);
         ShowTextWindow(win);
         PlaySound(0x437);

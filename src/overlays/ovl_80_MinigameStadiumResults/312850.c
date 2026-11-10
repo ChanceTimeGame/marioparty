@@ -14,12 +14,8 @@ void func_8004157C(void);
 s32 func_800415E8(s32);
 void func_800427E4(void);
 extern char* D_800C5218[]; /* character names */
-#ifdef TARGET_PC
-#define GMesFontMesCreate_unproto(a, b, c, d, e) GMesFontMesCreate(a, b, c, d, e)
-#else
 /* Retail called it unprototyped: the result is used as a word, not narrowed to s16. */
 #define GMesFontMesCreate_unproto(a, b, c, d, e) ((s32 (*)())GMesFontMesCreate)(a, b, c, d, e)
-#endif
 
 void func_800F666C_MinigameStadiumResults(void);
 void func_800F6720_MinigameStadiumResults(void);

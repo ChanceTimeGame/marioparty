@@ -87,11 +87,7 @@ void func_800FAD10_YoshisTropicalIslandEndingScene(omObjData* obj) {
 
 /* Named so the unit's .rodata stays 8-byte aligned: a li.d literal makes the KMC assembler pad
  * .rodata to 16 bytes, and 266C80's .rodata starts 8 bytes after this unit's. */
-#ifndef TARGET_PC
 #define DTOR_RODATA __attribute__((section(".rodata")))
-#else
-#define DTOR_RODATA
-#endif
 const f64 D_8010F060_YoshisTropicalIslandEndingScene DTOR_RODATA = M_DTOR;
 const f64 D_8010F068_YoshisTropicalIslandEndingScene DTOR_RODATA = M_DTOR;
 
@@ -667,11 +663,9 @@ const Vec3f D_8010F114_YoshisTropicalIslandEndingScene[4] = {
     { 312.5f, 0.0f, 1635.0f },
     { 0.0f, 820.0f, 1135.0f },
 };
-#ifndef TARGET_PC
 /* Bridge until 266C80 is C: its asm names the table's .y/.z columns by splat's labels. Remove when
  * func_8010151C reads D_8010F114_..[i].y/.z. */
 asm(".globl D_8010F118_YoshisTropicalIslandEndingScene\n"
     "D_8010F118_YoshisTropicalIslandEndingScene = D_8010F114_YoshisTropicalIslandEndingScene + 4\n"
     ".globl D_8010F11C_YoshisTropicalIslandEndingScene\n"
     "D_8010F11C_YoshisTropicalIslandEndingScene = D_8010F114_YoshisTropicalIslandEndingScene + 8\n");
-#endif

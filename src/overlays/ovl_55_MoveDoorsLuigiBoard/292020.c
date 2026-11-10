@@ -36,11 +36,7 @@ typedef struct {
 
 /* func_8006FCF0 is called unprototyped in retail: the s16 cursor reaches it promoted to int
    (sll/sra 16), not narrowed to the prototype's s8. The host calls it normally. */
-#ifdef TARGET_PC
-#define func_8006FCF0_unproto(win, cur, arg) func_8006FCF0(win, cur, arg)
-#else
 #define func_8006FCF0_unproto(win, cur, arg) ((s32 (*)())func_8006FCF0)(win, cur, arg)
-#endif
 
 void func_800F65E0_MoveDoorsLuigiBoard(void) {
     D_800F7820_MoveDoorsLuigiBoard = GwSystem.curPlayerIndex;

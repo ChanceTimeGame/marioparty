@@ -5,7 +5,7 @@ s32 D_800C4220[] = { 2, 2, 2, 3 };
 u32 D_800C4230[] = { 3, 1, 0, 0 };
 u32 D_800C4240[] = { 2, 1, 0, 0 };
 
-void func_8003A060(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
+void func_8003A060(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
     Gfx* gfx = *arg0;
 
     gDPSetTextureImage(gfx++, fmt, siz, width, timg);
@@ -19,7 +19,7 @@ void func_8003A060(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 h
     *arg0 = gfx;
 }
 
-void func_8003A28C(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 arg5, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt, s32 rtile, s32 tmem) {
+void func_8003A28C(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 arg5, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt, s32 rtile, s32 tmem) {
     Gfx* gfx = *arg0;
 
     gDPSetTextureImage(gfx++, fmt, siz, width, timg);
@@ -33,9 +33,9 @@ void func_8003A28C(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 a
     *arg0 = gfx;
 }
 
-void func_8003A4EC(Gfx** arg0, PB_PTR32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
+void func_8003A4EC(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
     Gfx* gfx = *arg0;
-    PB_PTR32 timg = arg1 + ((width * ult) << (siz - 1));
+    s32 timg = arg1 + ((width * ult) << (siz - 1));
 
     gDPSetTextureImage(gfx++, fmt, D_800C4220[siz], 1, timg);
     gDPSetTile(gfx++, fmt, D_800C4220[siz], 0, 0x0000, G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);
@@ -48,9 +48,9 @@ void func_8003A4EC(Gfx** arg0, PB_PTR32 arg1, s32 fmt, s32 siz, s32 width, s32 h
     *arg0 = gfx;
 }
 
-void func_8003A828(Gfx** arg0, PB_PTR32 arg1, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
+void func_8003A828(Gfx** arg0, s32 arg1, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
     Gfx* gfx = *arg0;
-    PB_PTR32 timg = arg1 + ((width * ult) >> 1);
+    s32 timg = arg1 + ((width * ult) >> 1);
 
     gDPSetTextureImage(gfx++, fmt, G_IM_SIZ_16b, 1, timg);
     gDPSetTile(gfx++, fmt, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);
@@ -63,9 +63,9 @@ void func_8003A828(Gfx** arg0, PB_PTR32 arg1, s32 fmt, u32 width, s32 height, s3
     *arg0 = gfx;
 }
 
-void func_8003AA98(Gfx** arg0, PB_PTR32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt, s32 rtile, s32 tmem) {
+void func_8003AA98(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt, s32 rtile, s32 tmem) {
     Gfx* gfx = *arg0;
-    PB_PTR32 timg = arg1 + ((width * ult) << (siz - 1));
+    s32 timg = arg1 + ((width * ult) << (siz - 1));
 
     gDPSetTextureImage(gfx++, fmt, D_800C4220[siz], 1, timg);
     gDPSetTile(gfx++, fmt, D_800C4220[siz], 0, tmem, G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);
@@ -78,9 +78,9 @@ void func_8003AA98(Gfx** arg0, PB_PTR32 arg1, s32 fmt, s32 siz, s32 width, s32 h
     *arg0 = gfx;
 }
 
-void func_8003AE00(Gfx** arg0, PB_PTR32 arg1, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt, s32 rtile, s32 tmem) {
+void func_8003AE00(Gfx** arg0, s32 arg1, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt, s32 rtile, s32 tmem) {
     Gfx* gfx = *arg0;
-    PB_PTR32 timg = arg1 + ((width * ult) >> 1);
+    s32 timg = arg1 + ((width * ult) >> 1);
 
     gDPSetTextureImage(gfx++, fmt, G_IM_SIZ_16b, 1, timg);
     gDPSetTile(gfx++, fmt, G_IM_SIZ_16b, 0, tmem, G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);
@@ -107,27 +107,6 @@ void func_8003B0AC(unk3AC60Struct1* arg0, f64 arg1, f64 arg2, f64 arg3) {
 void func_8003B190(unk3AC60Struct0* arg0, unk3AC60Struct1* arg1, unk3AC60Struct2* arg2) {
     arg1->unk_30 = arg0->unk_00 * arg1->unk_00 + arg1->unk_30 + arg0->unk_04 * arg1->unk_10;
     arg1->unk_34 = arg0->unk_00 * arg1->unk_04 + arg1->unk_34 + arg0->unk_04 * arg1->unk_14;
-#ifdef TARGET_PC
-    {
-        /* Host: an Mtx holds host s32 words (integer and fraction halves packed as guMtxF2L
-           does), so N64 halfword k of a word is host halfword k ^ 1. Retail's s16 field writes
-           swapped every pair (x and y traded places in every rotated 2D sprite). */
-        s16 *m = (s16 *)arg2;
-        m[0 ^ 1] = (s32) (arg1->unk_00 * 65536.0f) >> 16;
-        m[1 ^ 1] = (s32) (arg1->unk_04 * 65536.0f) >> 16;
-        m[4 ^ 1] = (s32) (arg1->unk_10 * 65536.0f) >> 16;
-        m[5 ^ 1] = (s32) (arg1->unk_14 * 65536.0f) >> 16;
-        m[12 ^ 1] = (s32) (arg1->unk_30 * 65536.0f) >> 16;
-        m[13 ^ 1] = (s32) (arg1->unk_34 * 65536.0f) >> 16;
-        m[16 ^ 1] = arg1->unk_00 * 65536;
-        m[17 ^ 1] = arg1->unk_04 * 65536;
-        m[20 ^ 1] = arg1->unk_10 * 65536;
-        m[21 ^ 1] = arg1->unk_14 * 65536;
-        m[28 ^ 1] = arg1->unk_30 * 65536;
-        m[29 ^ 1] = arg1->unk_34 * 65536;
-        return;
-    }
-#endif
     arg2->unk_00 = (s32) (arg1->unk_00 * 65536.0f) >> 16;
     arg2->unk_02 = (s32) (arg1->unk_04 * 65536.0f) >> 16;
     arg2->unk_08 = (s32) (arg1->unk_10 * 65536.0f) >> 16;

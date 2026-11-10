@@ -125,12 +125,10 @@ typedef struct MBBeatInfo {
     /* 0x08 */ s16 unk8;
 } MBBeatInfo;
 
-#ifndef TARGET_PC
 /* N64 sizes the asm allocates and strides by. */
 typedef char MBSizeCheck[(sizeof(MBProp) == 0x14 && sizeof(MBCoin) == 0x20 && sizeof(MBItem) == 0x2C &&
                           sizeof(MBPlayerCpu) == 0x14 && sizeof(MBPlayerWork) == 0xE8 &&
                           sizeof(MBTrack) == 0x38 && sizeof(MBBeatInfo) == 0xC) ? 1 : -1];
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Main-code declarations missing from include/

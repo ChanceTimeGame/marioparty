@@ -1,7 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host: the C library's <string.h>; this N64 edition is for the matching build. */
-#include <string.h>
-#else
 #ifndef _STRING_H
 #define _STRING_H
 /*
@@ -63,4 +59,3 @@ void *memcpy(void *,const void *,size_t);
 
 #endif
 
-#endif /* TARGET_PC */

@@ -81,18 +81,10 @@ unkStructSize0x5C* func_800F87A8_BuriedTreasure(omObjData* arg0) {
 
     D_800FC188_BuriedTreasure[D_800FC140_BuriedTreasure] = temp_v0 = HuMemDirectMalloc(sizeof(unkStructSize0x5C));
 
-#ifdef TARGET_PC
-    /* host: a pointer does not fit the four work bytes; keep the slot in D_800FC188 instead */
-    arg0->work[0] = (u32) D_800FC140_BuriedTreasure >> 24;
-    arg0->work[1] = (u32) D_800FC140_BuriedTreasure >> 16;
-    arg0->work[2] = (u32) D_800FC140_BuriedTreasure >> 8;
-    arg0->work[3] = (u32) D_800FC140_BuriedTreasure;
-#else
     arg0->work[0] = ((u32) temp_v0 >> 24);
     arg0->work[1] = ((u32) temp_v0 >> 16);
     arg0->work[2] = ((u32) temp_v0 >> 8);
     arg0->work[3] = (u32) temp_v0;
-#endif
 
     temp_v0->unk_00 = 0;
     temp_v0->unk_02 = 0;
@@ -121,11 +113,7 @@ void func_800F8894_BuriedTreasure(void) {
 }
 
 unkStructSize0x5C* func_800F8914_BuriedTreasure(omObjData* arg0) {
-#ifdef TARGET_PC
-    return D_800FC188_BuriedTreasure[(arg0->work[0] << 24) | (arg0->work[1] << 16) | (arg0->work[2] << 8) | arg0->work[3]];
-#else
     return (unkStructSize0x5C*) ((arg0->work[0] << 24) | (arg0->work[1] << 16) | (arg0->work[2] << 8) | arg0->work[3]);
-#endif
 }
 
 u32 func_800F8940_BuriedTreasure(void) {

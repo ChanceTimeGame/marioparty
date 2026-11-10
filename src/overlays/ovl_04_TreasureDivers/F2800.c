@@ -15,21 +15,10 @@ TDWork* func_800FA4A8_TreasureDivers(omObjData* obj) {
     TDWork* w = HuMemDirectMalloc(sizeof(TDWork));
 
     D_800FED40_TreasureDivers[D_800FF180_TreasureDivers] = w;
-#ifdef TARGET_PC
-    /* Retail leaves unk4/unk6 unset until first use (ovl_30 read them early: host heap garbage
-       pushed a diver off-screen); the host starts every work zeroed. */
-    func_8009B770(w, 0, sizeof(TDWork));
-    /* The host keeps the table index in work[]: a pointer does not fit in four bytes. */
-    obj->work[0] = 0;
-    obj->work[1] = 0;
-    obj->work[2] = (u16)D_800FF180_TreasureDivers >> 8;
-    obj->work[3] = D_800FF180_TreasureDivers;
-#else
     obj->work[0] = (u32)w >> 24;
     obj->work[1] = (u32)w >> 16;
     obj->work[2] = (u32)w >> 8;
     obj->work[3] = (u32)w;
-#endif
     w->unk0 = 0;
     w->unk2 = 0;
     w->unk8 = 0;
@@ -56,11 +45,7 @@ void func_800FA594_TreasureDivers(void) {
 }
 
 TDWork* func_800FA614_TreasureDivers(omObjData* obj) {
-#ifdef TARGET_PC
-    return D_800FED40_TreasureDivers[(obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]];
-#else
     return (TDWork*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
-#endif
 }
 
 u32 func_800FA640_TreasureDivers(void) {

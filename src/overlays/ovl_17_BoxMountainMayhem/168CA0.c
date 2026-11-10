@@ -837,9 +837,6 @@ f32 func_800FB4E8_BoxMountainMayhem(f32 dist) {
     s32 i;
     s32 k;
 
-#ifdef TARGET_PC
-    k = 0;
-#endif
     prev = D_800FC020_BoxMountainMayhem;
     res = 10;
     if (!(prev <= dist)) {

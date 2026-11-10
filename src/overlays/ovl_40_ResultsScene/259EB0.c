@@ -143,7 +143,7 @@ void func_800F6988_ResultsScene(void) {
     func_8006EB40(D_800FC5FC_ResultsScene->unk8);
     func_8006E070(D_800FC5FC_ResultsScene->unk8, 0);
     LoadStringIntoWindow(D_800FC5FC_ResultsScene->unk8,
-                         (void*)(PB_PTR32)D_800FC204_ResultsScene[D_800FC0E0_ResultsScene + D_800FC0E4_ResultsScene], -1, -1);
+                         (void*)(s32)D_800FC204_ResultsScene[D_800FC0E0_ResultsScene + D_800FC0E4_ResultsScene], -1, -1);
 }
 void func_800F6C70_ResultsScene(void) {
     s32 i;
@@ -248,13 +248,7 @@ void func_800F7324_ResultsScene(void) {
     }
     D_800FC5A8_ResultsScene = func_80064EF4(1, 5);
     func_80066DC4((s16)D_800FC5A8_ResultsScene, 0, 0, 0);
-#ifdef TARGET_PC
-    /* An 8-entry table indexed by board: retail reads boards 8..10 from the next table. */
-    file = DataRead(GwSystem.curBoardIndex < 8 ? D_800FC1B4_ResultsScene[GwSystem.curBoardIndex]
-                                               : D_800FC1D4_ResultsScene[GwSystem.curBoardIndex - 8]);
-#else
     file = DataRead(D_800FC1B4_ResultsScene[GwSystem.curBoardIndex]);
-#endif
     D_800FC5AC_ResultsScene = func_800678A4(file);
     DataClose(file);
     func_80067208((s16)D_800FC5A8_ResultsScene, 0, (s16)D_800FC5AC_ResultsScene, 0);
@@ -726,11 +720,7 @@ void func_800F9250_ResultsScene(void) {
 const char D_800FC364_ResultsScene[] = "%5d";
 
 void func_800F95F8_ResultsScene(void) {
-#ifdef TARGET_PC
-    u8 sp10[16]; /* retail's u8[5] takes "%5d"'s sixth byte (the NUL) in frame padding */
-#else
     u8 sp10[5];
-#endif
     s32 i;
     s32 var_s2;
 
@@ -752,11 +742,7 @@ void func_800F95F8_ResultsScene(void) {
     }
 }
 void func_800F972C_ResultsScene(void) {
-#ifdef TARGET_PC
-    u8 sp10[16]; /* retail's u8[5] takes "%5d"'s sixth byte (the NUL) in frame padding */
-#else
     u8 sp10[5];
-#endif
     s32 i;
     s32 var_s2;
 
@@ -1039,7 +1025,7 @@ void func_800FA61C_ResultsScene(void) {
             for (i = 0; i < 3; i++) {
                 win[i] = CreateTextWindow(0x51, 0x78, 3, 1);
                 func_8006DE20((s16)win[i], 1.0f, 1.0f);
-                LoadStringIntoWindow((s16)win[i], (void*)(PB_PTR32)D_800FC304_ResultsScene[i], -1, -1);
+                LoadStringIntoWindow((s16)win[i], (void*)(s32)D_800FC304_ResultsScene[i], -1, -1);
                 func_8006E070((s16)win[i], 0);
                 func_80071598((s16)win[i]);
                 while (func_8006FCC0((s16)win[i]) != 0) {

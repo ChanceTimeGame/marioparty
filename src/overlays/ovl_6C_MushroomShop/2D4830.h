@@ -63,25 +63,14 @@ void func_8005963C(s16, u16);
 void func_80059B74(s16);
 void func_80060F04(s16, s16, s16, s16);
 TextWindow* func_8006DD60(s16);
-#ifdef TARGET_PC /* host: match the definitions */
-s16 func_8005949C(s16);
-s16 func_80038D5C(unk2C0C0StructC0*, u16, s16, char*);
-void func_800396B0(s16, s32);
-#else
 s16 func_8005949C(s32);
 s16 func_80038D5C(unk2C0C0StructC0*, u16, s32, char*);
 void func_800396B0(s16, u8);
-#endif
 
 extern s16 D_800F384C;
 extern Vec3f* D_800ED610;
 extern Vec3f* D_800ED72C;
-#ifdef TARGET_PC
-extern s16 D_800F3B70[];
-#define D_800F3B74 (D_800F3B70[2]) /* splat label inside 72D90.c's s16 array */
-#else
 extern s16 D_800F3B74;
-#endif
 extern u8 D_800C4E14[], D_800C4E24[], D_800C4E2C[], D_800C4E38[];
 
 /* .data */
@@ -99,11 +88,7 @@ extern Process* D_800F8D74_MushroomShop;
 extern unkCommonStruct0 D_800F8D78_MushroomShop[];
 /* splat labels for fields of the font objects (unk_14 at +0x14, unk_34 at +0x34 on the N64). On
    hosts the void* before them moves both, so they are views of the one object there. */
-#ifdef TARGET_PC
-#define D_800F8D8C_MushroomShop (D_800F8D78_MushroomShop[0].unk_14)
-#else
 extern s16 D_800F8D8C_MushroomShop[];
-#endif
 extern s16 D_800F8DE0_MushroomShop;
 extern s16 D_800F8DE2_MushroomShop;
 extern u16 D_800F8DE4_MushroomShop;
@@ -113,12 +98,7 @@ extern s16 D_800F8DF0_MushroomShop[4];     /* tile-animation ids of the last she
 extern s16 D_800F8DF8_MushroomShop[2];     /* description lines: font ids */
 extern s16 D_800F8DFC_MushroomShop[2];     /* description lines: widths */
 extern unkCommonStruct0 D_800F8E00_MushroomShop;
-#ifdef TARGET_PC
-#define D_800F8E14_MushroomShop (D_800F8E00_MushroomShop.unk_14)
-#define D_800F8E34_MushroomShop (D_800F8E00_MushroomShop.unk_34)
-#else
 extern s16 D_800F8E14_MushroomShop[16];
 extern s16 D_800F8E34_MushroomShop[16];
-#endif
 
 #endif

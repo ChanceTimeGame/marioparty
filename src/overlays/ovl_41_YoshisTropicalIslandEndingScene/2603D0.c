@@ -391,12 +391,7 @@ void func_800F759C_YoshisTropicalIslandEndingScene(void) {
         } else {
             MODEL[i] = MBModelCreate(ids[i - 3], NULL);
         }
-#ifdef TARGET_PC
-        /* retail reads ids[i - 3] for the players too (stack words below the array) */
-        if (i < 3 || ids[i - 3] != 8)
-#else
         if (ids[i - 3] != 8)
-#endif
         {
             func_80025B34(*MODEL[i]->unk_3C->unk_40);
         }

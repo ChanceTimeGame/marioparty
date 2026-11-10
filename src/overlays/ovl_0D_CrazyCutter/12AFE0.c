@@ -3,11 +3,7 @@
 
 /* Sprite palettes stay in the file's big-endian byte order on the host too (65770.c copies them
    byte by byte), so a 16-bit entry is read from its two bytes there. */
-#ifdef TARGET_PC
-#define CC_PAL16(pal, i) ((u16)((((u8*)(pal))[(i) * 2] << 8) | ((u8*)(pal))[(i) * 2 + 1]))
-#else
 #define CC_PAL16(pal, i) (((u16*)(pal))[i])
-#endif
 
 /* Converts a sprite frame's image into a one-byte-per-pixel mask (0xFF where opaque). */
 // register allocation (masked 9)
@@ -44,14 +40,9 @@ u8* func_800FC4F0_CrazyCutter(s16 grpIdx, s16 idx, s32* width, s32* height) {
                     } else {
                         c >>= 4;
                     }
-#ifdef TARGET_PC
-                    dst = buf + img->unk4 * y + x;
-                    if (CC_PAL16(pal, c) >= 0x80) {
-#else
                     pp = c + pal;
                     dst = buf + img->unk4 * y + x;
                     if (*pp >= 0x80) {
-#endif
                         *dst = 0xFF;
                     } else {
                         *dst = 0;
@@ -273,9 +264,7 @@ s32 func_800FCC64_CrazyCutter(u32 arg0, s32 arg1, u32 arg2, u8* arg3, s32 arg4) 
 /* Retail has one nop between func_800FCC64 and func_800FCCC8, and func_800FCAAC takes the address
    of that nop (D_800FCCC4) as its 8-bit pixel test: running the nop first is harmless. The host
    uses func_800FCCC8 directly. */
-#ifndef TARGET_PC
 __asm__(".globl D_800FCCC4_CrazyCutter\n.type D_800FCCC4_CrazyCutter,@function\nD_800FCCC4_CrazyCutter:\n.word 0\n");
-#endif
 
 s32 func_800FCCC8_CrazyCutter(s32 arg0, s32 arg1, s32 arg2, u8* arg3, u8 arg4) {
     return arg4 != *(arg3 + (arg2 * arg1) + arg0);

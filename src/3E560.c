@@ -278,11 +278,7 @@ Object* MBModelCreate(u8 id, void* arg1) {
     if (m != NULL) {
         m->id = id;
         if (arg1 != NULL) {
-#ifdef TARGET_PC
-            mtncnt = (u16)*(s32*)arg1; /* retail reads the low half of the count word (big-endian) */
-#else
             mtncnt = ((u16*)arg1)[1];
-#endif
             arg1 = (s32*)arg1 + 1;
         }
         obj = m->obj = omAddObj(0x4000, 1, mtncnt, -1, func_8003DE60);

@@ -2,27 +2,15 @@
 #include "engine/process.h"
 
 void func_8001DFC0(void);
-#ifdef TARGET_PC
-void func_80025658(void*, void*); /* host: matches the definition */
-#else
 void func_80025658(s32, s32);
-#endif
 void func_8002B6C8(void);
 void pfClsScr(void);
 void omMain(void);
 void func_80018B2C(void);
 void func_8001E5A0(s32);
 void func_800247FC(void*, s32);
-#ifdef TARGET_PC
-void func_80052CCC(s32, u8); /* host: matches the definition */
-#else
 void func_80052CCC(s32, s32);
-#endif
-#ifdef TARGET_PC
-void func_800594E4(s16, u16); /* host: matches the definition */
-#else
 void func_800594E4(s32, s32);
-#endif
 extern s8 D_800ED558[];
 extern s16 D_800F3778;
 extern s32 D_800ED538;
@@ -35,29 +23,17 @@ void func_80010C30(Addr*, s32, s32, s32);
 void func_8001A3DC(void);
 void func_8001A428(void);
 void func_8001A454(void);
-#ifdef TARGET_PC
-void func_80023B40(void* (*)(s32), void (*)(void*), u16, u16, u16, u8); /* host: matches the definition */
-#else
 void func_80023B40(void* (*)(s32), void (*)(void*), u16, u16, s32, s32);
-#endif
 void func_8003B710(void);
 s32 func_8005B0C4(void);
 void func_8005B6D0(Addr*);
 void pfInit(void);
 void func_80072190(void);
-#ifdef TARGET_PC /* ROM offsets linked as symbol addresses (pb_host.h) */
-#define D_1778BC0 PB_ROM_ADDR(0x1778BC0)
-#define D_1832AE0 PB_ROM_ADDR(0x1832AE0)
-#define D_1BB8460 PB_ROM_ADDR(0x1BB8460)
-#define D_1CECC60 PB_ROM_ADDR(0x1CECC60)
-#define D_1CED490 PB_ROM_ADDR(0x1CED490)
-#else
 extern Addr D_1778BC0;
 extern Addr D_1832AE0;
 extern Addr D_1BB8460;
 extern Addr D_1CECC60;
 extern Addr D_1CED490;
-#endif
 extern s16 D_800C599E;
 extern s16 D_800C59A0;
 extern f32 CZoomM[4];
@@ -69,11 +45,7 @@ extern u16 D_800F3F30;
 extern Vec3f CenterM[4];
 extern u16 D_800F64EC;
 extern Vec3f CRotM[6];
-#ifdef TARGET_PC /* ROM offsets linked as symbol addresses (pb_host.h) */
-#define D_FCB860 PB_ROM_ADDR(0xFCB860)
-#else
 extern Addr D_FCB860;
-#endif
 
 void func_8001A0F0(void) {
     file_1ACF0_struct* temp_s1;
@@ -121,27 +93,10 @@ void func_8001A0F0(void) {
     func_8000BE98(&D_1778BC0, &D_1832AE0, 0, 0, 0);
     D_800C59A0 = 1;
     D_800C599E = 1;
-#ifdef TARGET_PC
-    /* Host: temp_s1 views B980's 32-bit config block (B980Config); file_1ACF0_struct's pointer
-       fields are 8 bytes here, so write the words at their N64 offsets. The values are ROM offsets. */
-    ((s32*)temp_s1)[0x24 / 4] = (s32)(intptr_t)&D_1CECC60;
-    ((s32*)temp_s1)[0x28 / 4] = (s32)(intptr_t)&D_1CED490;
-    ((s32*)temp_s1)[0x40 / 4] = 0x14;
-#else
     temp_s1->unk_24 = &D_1CECC60;
     temp_s1->unk_28 = &D_1CED490;
     temp_s1->unk_40 = 0x14;
-#endif
-#ifdef TARGET_PC
-    {
-        /* Host: the N64 gives the sound engine a fixed 512 KiB at 0x802E0000. The host al
-           structures are larger, so it gets a static buffer of twice that. */
-        static u64 pbAudioHeap[0x100000 / 8];
-        func_8000B00C(0x6E, 0, pbAudioHeap, (s32)sizeof(pbAudioHeap));
-    }
-#else
     func_8000B00C(0x6E, 0, (void*)0x802E0000, 0x80000);
-#endif
     
     if (_CheckFlag(0x10) != 0) {
         func_8000B364(0);
@@ -162,11 +117,7 @@ void func_8001A3DC(void) {
         HuPrcVSleep();
         func_8002B6C8();
         func_8001DFC0();
-#ifdef TARGET_PC
-        func_80025658(PB_HOSTCAST(void*, 0x02000000), PB_N64_ZBUFFER);
-#else
-        func_80025658(PB_HOSTCAST(void*, 0x02000000), PB_HOSTCAST(void*, 0x3D0800));
-#endif
+        func_80025658(0x02000000, 0x3D0800);
         pfClsScr();        
     }
 }

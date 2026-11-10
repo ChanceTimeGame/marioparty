@@ -114,7 +114,7 @@ s16 func_8005BAB0(void* str) {
             } else {
                 LoadStringIntoWindow(win, (void*)0x4AB, -1, -1);
             }
-            func_800718DC(win, (void*)PB_HOSTCAST(PB_PTR32, (D_800C5820[index].flag + 0x325)), 0);
+            func_800718DC(win, (void*)(D_800C5820[index].flag + 0x325), 0);
         }
     } else {
         LoadStringIntoWindow(win, str, -1, -1);

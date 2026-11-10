@@ -520,7 +520,7 @@ u8* func_8001C2E8(s32 arg0, u8* arg1, u8* arg2) {
         }
         arg1 += 4;
         arg1 += (arg1[0] << 24) + (arg1[1] << 16) + (arg1[2] << 8) + arg1[3] + 4;
-        arg1 += (PB_PTR32) arg1 & 1;
+        arg1 += (s32) arg1 & 1;
     }
 
     return NULL;
@@ -528,7 +528,7 @@ u8* func_8001C2E8(s32 arg0, u8* arg1, u8* arg2) {
 
 u8* func_8001C378(u8* arg0) {
     arg0 += (arg0[1] << 16) + (arg0[2] << 8) + arg0[3] + 4;
-    arg0 += (PB_PTR32) arg0 & 1;
+    arg0 += (s32) arg0 & 1;
 
     return arg0;
 }

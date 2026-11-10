@@ -529,7 +529,7 @@ void func_800F8500_TipsyTourney(void) {
     gDPSetTextureLUT(D_800F37DC++, G_TT_RGBA16);
     gDPLoadTLUT_pal256(D_800F37DC++, spr->unk4C->unkC);
     for (i = 0; i < 6; i++) {
-        func_8003A060(&D_800F37DC, (PB_PTR32)(frame->unk0 + i * 0x320), G_IM_FMT_CI, G_IM_SIZ_8b, 80, 60, 0, 0, 80, 10,
+        func_8003A060(&D_800F37DC, (s32)(frame->unk0 + i * 0x320), G_IM_FMT_CI, G_IM_SIZ_8b, 80, 60, 0, 0, 80, 10,
                       0, 2, 2, 0, 0, 0, 0);
         for (y = i * 10; y < 240; y += 60) {
             for (x = 0; x < 320; x += 80) {

@@ -441,12 +441,7 @@ s32 func_800FFBB8_CoinBlockBash(s32 time) {
         }
         idx[1] = i;
         for (k = 0; k < 2; k++) {
-#ifdef TARGET_PC
-            /* retail tests idx[i], i being a drop index (0..8): past the array, stack contents */
-            if (idx[k] == 9) {
-#else
             if (idx[i] == 9) {
-#endif
                 return 1;
             }
             c = CBB_DROPS[idx[k]].coin;
@@ -845,11 +840,7 @@ void func_801004E8_CoinBlockBash(void) {
 // NON_MATCHING: scheduling of the view-matrix copy (as ovl_2E func_800FA2F4)
 #ifdef NON_MATCHING
 void func_80101748_CoinBlockBash(void) {
-#ifdef TARGET_PC
-    static Mtx view; /* the list ends with a matrix load from it: retail's is on the stack */
-#else
     Mtx view;
-#endif
     Matrix4f m;
     Matrix4f m2;
     Matrix4f bb;

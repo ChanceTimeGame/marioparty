@@ -1,8 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host build: the unified 64-bit host edition (games/mp1/src/port/include) replaces
- * this header. N64 builds never define TARGET_PC and compile the original below unchanged. */
-#include <PR/gu.h>
-#else /* !TARGET_PC */
 #ifndef _GU_H_
 #define _GU_H_
 
@@ -269,4 +264,3 @@ void guSprite2DInit(uSprite *SpritePointer,
 		    int SourceImageOffsetT);
 
 #endif /* !_GU_H_ */
-#endif /* !TARGET_PC */

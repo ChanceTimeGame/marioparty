@@ -2052,13 +2052,8 @@ s32 func_800FCAC0_BobsledRun(omObjData* obj) {
     y = 0;
     x = 0;
     for (i = 0; i < 6; i++) {
-#ifdef TARGET_PC
-        x += (s16)(work->unk_6C[i] >> 16);
-        y += (u16)work->unk_6C[i];
-#else
         x += ((s16*)&work->unk_6C[i])[0];
         y = ((u16*)&work->unk_6C[i])[1] + y;
-#endif
     }
     return (((s16)x / 6) << 16) | (((s16)y / 6) & 0xFFFF);
 }
@@ -2191,12 +2186,8 @@ void func_800FD1BC_BobsledRun(s32 x, s32 y) {
     s32 px;
     s16 i;
 
-#ifdef TARGET_PC
-    g = func_80064EF4(7, 5);
-#else
     /* retail's func_80064EF4 returned a full int (no extension before the store) */
     g = ((s32(*)(s32, s32))func_80064EF4)(7, 5);
-#endif
     D_800FFAE4_BobsledRun[0] = g;
     func_80067208(g, 0, D_800FFAE0_BobsledRun, 0);
     func_80067480(g, 0, 0xFFFF);
@@ -2230,12 +2221,8 @@ void func_800FD36C_BobsledRun(s32 x, s32 y) {
     s32 px;
     s16 i;
 
-#ifdef TARGET_PC
-    g = func_80064EF4(7, 5);
-#else
     /* retail's func_80064EF4 returned a full int (no extension before the store) */
     g = ((s32(*)(s32, s32))func_80064EF4)(7, 5);
-#endif
     D_800FFAE4_BobsledRun[1] = g;
     func_80067208(g, 0, D_800FFAE2_BobsledRun, 0);
     func_80067480(g, 0, 0xFFFF);

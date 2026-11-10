@@ -1,7 +1,3 @@
-#ifdef TARGET_PC
-/* PartyBoard host: the C library's <stdarg.h>; this N64 edition is for the matching build. */
-#include <stdarg.h>
-#else
 #ifndef _STDARG_H
 #define _STDARG_H
 /* ---------------------------------------- */
@@ -123,4 +119,3 @@ typedef __gnuc_va_list va_list;
 
 #endif /* defined (_STDARG_H) || defined (_VARARGS_H) */
 #endif
-#endif /* TARGET_PC */

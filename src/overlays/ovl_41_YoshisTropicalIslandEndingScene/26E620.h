@@ -15,15 +15,9 @@ typedef struct EndingCamera {
     /* 0x2C */ f32 fov;
 } EndingCamera;
 extern EndingCamera D_801101C0_YoshisTropicalIslandEndingScene;
-#ifdef TARGET_PC
-#define D_801101E4_YoshisTropicalIslandEndingScene (D_801101C0_YoshisTropicalIslandEndingScene.near)
-#define D_801101E8_YoshisTropicalIslandEndingScene (D_801101C0_YoshisTropicalIslandEndingScene.far)
-#define D_801101EC_YoshisTropicalIslandEndingScene (D_801101C0_YoshisTropicalIslandEndingScene.fov)
-#else
 extern f32 D_801101E4_YoshisTropicalIslandEndingScene;
 extern f32 D_801101E8_YoshisTropicalIslandEndingScene;
 extern f32 D_801101EC_YoshisTropicalIslandEndingScene;
-#endif
 
 /* 26E620.c's last .rodata word, read by 2721F0.c (func_80109294) */
 

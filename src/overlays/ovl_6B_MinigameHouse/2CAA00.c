@@ -44,12 +44,8 @@ s32 func_800FB108_MinigameHouse(s16);
 void func_800FB238_MinigameHouse(void);
 s32 func_800FA92C_MinigameHouse(s32*);
 extern const char D_801002BC_MinigameHouse[]; /* "%d"; also used by func_800F8860 and func_800FD2D0 */
-#ifdef TARGET_PC
-#define D010 func_8006D010
-#else
 /* retail called func_8006D010 here as returning int: the result is extended at each use */
 #define D010 ((s32 (*)(s16, s16, s16, s16, s32, s16))func_8006D010)
-#endif
 
 
 /* The head of 42E40.c's SpriteAnimWork (func_800429CC's result); no pointers before 0x10. */
@@ -120,7 +116,7 @@ extern s16 D_8010062E_MinigameHouse;
 extern s16 D_80100630_MinigameHouse;
 
 
-void func_8003A060(Gfx** arg0, PB_PTR32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
+void func_8003A060(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
 
 
 /* Menu choice: target point, camera index, message. */
@@ -184,12 +180,7 @@ extern u16 D_800F5144;
 extern u8 D_800ECC22;
 extern Vec3f* D_800ED610;
 extern Vec3f* D_800ED72C;
-#ifdef TARGET_PC
-extern s16 D_800F3B70[];
-#define D_800F3B74 (D_800F3B70[2]) /* splat label inside 72D90.c's s16 array */
-#else
 extern s16 D_800F3B74;
-#endif
 
 /* .data */
 extern Vec3f D_800FFEC0_MinigameHouse[];
@@ -211,11 +202,7 @@ extern u16 D_80100588_MinigameHouse[4];
 extern u16* D_80100590_MinigameHouse;
 extern s32 D_80100594_MinigameHouse;
 extern unkCommonStruct0 D_80100598_MinigameHouse;
-#ifdef TARGET_PC
-#define D_801005AC_MinigameHouse (D_80100598_MinigameHouse.unk_14)
-#else
 extern s16 D_801005AC_MinigameHouse[];
-#endif
 extern s16 D_80100600_MinigameHouse;
 extern s16 D_80100602_MinigameHouse;
 extern u16 D_80100604_MinigameHouse;
@@ -482,7 +469,7 @@ void func_800F6BAC_MinigameHouse(void) {
             }
             func_8006EB40(D_8010055C_MinigameHouse);
             func_8006E288(D_8010055C_MinigameHouse, 7);
-            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)(PB_PTR32)D_800FFFEC_MinigameHouse[cur].msg, -1, -1);
+            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)(s32)D_800FFFEC_MinigameHouse[cur].msg, -1, -1);
         }
         prevMsg = D_800FFFEC_MinigameHouse[cur].msg;
         if (prevCam != D_800FFFEC_MinigameHouse[cur].cam) {
@@ -677,7 +664,7 @@ void func_800F7274_MinigameHouse(s16 model, s16 idx) {
         tLo = h - ((minY - baseY) / rangeY) * h;
         tHi = h - ((maxY - baseY) / rangeY) * h;
         gDPSetTextureLUT(gfx++, G_TT_NONE);
-        func_8003A060(&gfx, (PB_PTR32) D_80100610_MinigameHouse, G_IM_FMT_RGBA, G_IM_SIZ_16b, w, h, (u32) sLo, (u32) tHi,
+        func_8003A060(&gfx, (s32) D_80100610_MinigameHouse, G_IM_FMT_RGBA, G_IM_SIZ_16b, w, h, (u32) sLo, (u32) tHi,
                       (u32) sHi, (u32) tLo, 0, 2, 2, 0, 0, 0, 0);
         gSPVertex(gfx++, vtxStart, mesh->unk_34[i].unk_00, 0);
         if (mesh->unk_34[i].unk_00 == 3) {
@@ -1273,7 +1260,7 @@ void func_800F8860_MinigameHouse(void) {
     } else {
         msg = 0x81;
     }
-    LoadStringIntoWindow(w2, (void*)(PB_PTR32)msg, -1, -1);
+    LoadStringIntoWindow(w2, (void*)(s32)msg, -1, -1);
     while (func_8006FCC0(w2) != 0) {
         HuPrcVSleep();
     }
@@ -1335,11 +1322,7 @@ char* func_800F9D64_MinigameHouse(s32 arg0) {
 
     str = func_8005B7E8(arg0 + 0x325);
     p = (char*)str;
-#ifdef TARGET_PC
-    len = func_8006D93C(str);
-#else
     len = (s16)((s32 (*)(u8*))func_8006D93C)(str); /* retail: called as returning int */
-#endif
     if (func_80059400(arg0) != 0 || func_8005949C(arg0) != 0) {
         n = 0;
         while (*p != 0) {
@@ -1349,11 +1332,7 @@ char* func_800F9D64_MinigameHouse(s32 arg0) {
             }
             p++;
         }
-#ifdef TARGET_PC
-        width = func_8006D99C(str, 0);
-#else
         width = (s16)((s32 (*)(u8*, s16))func_8006D99C)(str, 0); /* retail: called as returning int */
-#endif
     } else {
         for (n = 0; n < len; n++) {
             D_80100410_MinigameHouse[n] = 0xC3;
@@ -1843,7 +1822,7 @@ again:
             }
             sel = 0;
             func_800F9FF4_MinigameHouse(D_80100634_MinigameHouse, 0, buf);
-        } else if (func_80059CE8((void*)(PB_PTR32)msg, D_8010055C_MinigameHouse) == 0) {
+        } else if (func_80059CE8((void*)(s32)msg, D_8010055C_MinigameHouse) == 0) {
             func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[0], 0, 10, 2);
             func_80025EB4(D_8010060C_MinigameHouse->model[1], 0, 4);
             func_80070D90(D_80100634_MinigameHouse);
@@ -2313,13 +2292,13 @@ omObjData* func_800FCB78_MinigameHouse(void) {
 void func_800FCC38_MinigameHouse(s16 win, s32 kind) {
     switch (kind) {
     case 0:
-        LoadStringIntoWindow(win, (void*)(PB_PTR32)((D_800C5722 & 0xF) + 0x5E), -1, -1);
+        LoadStringIntoWindow(win, (void*)(s32)((D_800C5722 & 0xF) + 0x5E), -1, -1);
         break;
     case 1:
-        LoadStringIntoWindow(win, (void*)(PB_PTR32)((D_800C5722 & 0x10) ? 0x63 : 0x62), -1, -1);
+        LoadStringIntoWindow(win, (void*)(s32)((D_800C5722 & 0x10) ? 0x63 : 0x62), -1, -1);
         break;
     default:
-        LoadStringIntoWindow(win, (void*)(PB_PTR32)((D_800C5722 & (8 << kind)) ? 0x65 : 0x64), -1, -1);
+        LoadStringIntoWindow(win, (void*)(s32)((D_800C5722 & (8 << kind)) ? 0x65 : 0x64), -1, -1);
         break;
     }
 }
@@ -2355,7 +2334,7 @@ void func_800FCE7C_MinigameHouse(omObjData* obj) {
     if (w != NULL) {
         if (w->unk_11 != (s8)obj->work[0]) {
             func_8006EB40(D_8010055C_MinigameHouse);
-            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)(PB_PTR32)(w->unk_11 + 0x59), -1, -1);
+            LoadStringIntoWindow(D_8010055C_MinigameHouse, (void*)(s32)(w->unk_11 + 0x59), -1, -1);
         }
         obj->work[0] = w->unk_11;
     }
@@ -2737,7 +2716,7 @@ all_ready:
     buf[(5 - humans) * 2] = 0;
     func_8006DA5C(D_80100634_MinigameHouse, (void*)0x4C, 0);
     for (i = humans, j = 1; i < 4; i++, j++) {
-        func_8006DA5C(D_80100634_MinigameHouse, (void*)(PB_PTR32)(GwPlayer[i].character + 0x4D), j);
+        func_8006DA5C(D_80100634_MinigameHouse, (void*)(s32)(GwPlayer[i].character + 0x4D), j);
     }
     func_800FA7C0_MinigameHouse(buf);
 cpu:
@@ -2754,7 +2733,7 @@ cpu:
         func_800674F4(w->unk_44, 3, 0xE3, 0x64, 0);
         func_800674F4(w->unk_44, 4, 0xD7, 0x2E, 0x42);
         ids[j] = D_800C5724[i];
-        LoadStringIntoWindow(wins[j], (void*)(PB_PTR32)(ids[j] + 0x53), -1, -1);
+        LoadStringIntoWindow(wins[j], (void*)(s32)(ids[j] + 0x53), -1, -1);
 
         while (func_8006FCC0(wins[j]) != 0) {
             HuPrcVSleep();
@@ -2811,7 +2790,7 @@ cpu:
         if (ids[cur] != D_800C5724[cur + humans]) {
             PlaySound(0xF5);
             func_8006EB40(wins[cur]);
-            LoadStringIntoWindow(wins[cur], (void*)(PB_PTR32)(D_800C5724[cur + humans] + 0x53), -1, -1);
+            LoadStringIntoWindow(wins[cur], (void*)(s32)(D_800C5724[cur + humans] + 0x53), -1, -1);
         }
         ids[cur] = D_800C5724[cur + humans];
         func_800F6A10_MinigameHouse(6, 0xC1, cur * 14 + 0x45);
@@ -2874,7 +2853,7 @@ rules2:
             buf[(5 - humans) * 2] = 0;
             func_8006DA5C(D_80100634_MinigameHouse, (void*)0x4C, 0);
             for (i = humans, j = 1; i < 4; i++, j++) {
-                func_8006DA5C(D_80100634_MinigameHouse, (void*)(PB_PTR32)(GwPlayer[i].character + 0x4D), j);
+                func_8006DA5C(D_80100634_MinigameHouse, (void*)(s32)(GwPlayer[i].character + 0x4D), j);
             }
             LoadStringIntoWindow(D_80100634_MinigameHouse, buf, -1, -1);
             for (j = 0x20; j < 0x100; j += 0x20) {

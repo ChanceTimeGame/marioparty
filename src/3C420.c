@@ -76,11 +76,7 @@ void func_8003B994(unk_8003B8D4Struct* arg0, unk_ProcessUserData08* arg1, s16 ar
 
     temp_a0 = arg0->unk02 + 1;
     arg0->unk02 = temp_a0;
-#ifdef TARGET_PC
-    temp_v0 = MallocTemp((s16)temp_a0 * sizeof(*temp_v0)); /* a pointer list: 4 bytes per entry on the N64 */
-#else
     temp_v0 = MallocTemp((temp_a0 << 0x10) >> 0xE);
-#endif
     temp_v0_2 = arg0->unk04;
     var_a0 = temp_v0;
     if (temp_v0_2 != NULL) {
@@ -158,7 +154,7 @@ void func_8003BB48(void) {
         if (fade < 0) {
             if (repeat == 0) {
                 if ((ret = osRecvMesg(&w->unk10, &msg, OS_MESG_NOBLOCK)) == -1) {
-                    msg = (OSMesg)PB_HOSTCAST(PB_PTR32, ret);
+                    msg = (OSMesg)ret;
                 }
                 if (w->unk00 & 1) {
                     repeat = 8;
@@ -167,7 +163,7 @@ void func_8003BB48(void) {
                 msg = (OSMesg)-1;
                 repeat--;
             }
-            switch ((s32)PB_HOSTCAST(PB_PTR32, msg)) {
+            switch ((s32)msg) {
                 case -2:
                     w->unk0C++;
                     if (w->unk0C >= w->unk02) {
@@ -198,8 +194,8 @@ void func_8003BB48(void) {
                 case -1:
                     break;
                 default:
-                    if ((s32)PB_HOSTCAST(PB_PTR32, msg) < w->unk02) {
-                        w->unk0C = (s32)PB_HOSTCAST(PB_PTR32, msg);
+                    if ((s32)msg < w->unk02) {
+                        w->unk0C = (s32)msg;
                     }
                     break;
             }
@@ -242,7 +238,7 @@ INCLUDE_ASM("asm/nonmatchings/3C420", func_8003BB48);
 #endif
 s32 func_8003BE84(unk_8003B8D4Struct* arg0, s32 arg1) {
     if (arg0->unk08 != NULL) {
-        return osSendMesg(&arg0->unk10, (OSMesg)PB_HOSTCAST(PB_PTR32, arg1), OS_MESG_NOBLOCK);
+        return osSendMesg(&arg0->unk10, (OSMesg)arg1, OS_MESG_NOBLOCK);
     }
     return -1;
 }

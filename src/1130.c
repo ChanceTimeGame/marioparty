@@ -45,16 +45,8 @@ char* D_800B8A50[] = {
 extern Vec3f D_800CD9B0;
 
 void func_8000A534(void*, f32);
-#ifdef TARGET_PC
-void func_8001E268(s16, u8, u8); /* host: matches the definition */
-#else
 void func_8001E268(u8, s32, s32);
-#endif
-#ifdef TARGET_PC
-void func_8001E3B4(s16); /* host: matches the definition */
-#else
 void func_8001E3B4(u8);
-#endif
 f32 func_80025D18(s16);
 f32 func_80025E70(s16);
 
@@ -186,40 +178,20 @@ void func_80007A50(omObjData*);
 void func_800093FC(omObjData*, f32, f32, f32);
 s32 func_80009C90(omObjData*, s16, s16);
 void func_80009D48(s16*, s16*);
-#ifdef TARGET_PC
-s16 func_80009E4C(s16, s16, s8, s8); /* host: returns s16 */
-#else
 s32 func_80009E4C(s8, s32, s8, s8);
-#endif
 void func_8000A6F4(omObjData*);
 s32 func_80017A60(omObjData*);
 void func_8001802C(omObjData*);
 
 int abs(int);
-#ifdef TARGET_PC
-void func_800090D8(omObjData*, u8, u8); /* host: matches the definition */
-#else
 void func_800090D8(omObjData*, s32, s32);
-#endif
 void func_800096B0(PlayerWork*, s32);
 void func_8000A988(omObjData*, f32, f32);
 void func_8000ACE4(omObjData*, omObjData*);
-#ifdef TARGET_PC
-void func_80017C0C(omObjData*, u8, f32, f32, f32, f32, f32); /* host: matches the definition */
-#else
 void func_80017C0C(omObjData*, s32, f32, f32, f32, f32, f32);
-#endif
-#ifdef TARGET_PC
-void func_80018450(omObjData*, u8); /* host: matches the definition */
-#else
 void func_80018450(omObjData*, s32);
-#endif
 void func_8001E2A8(s16, u16);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 void func_800295FC(ColVtx*, ColVtx*, ColVtx*, Vec3f*);
 void func_8002956C(Vec3f*);
 void func_8000A464(void*, Vec3f*);
@@ -250,14 +222,8 @@ extern u8 D_800F2B80[];
    (D_800EDED4 = &D_800EDED0[0].y, D_800EDED8 = &D_800EDED0[0].z) and the code addresses each
    column through its label, so they are declared as three Vec3f arrays and read through .x. */
 extern Vec3f D_800EDED0[];
-#ifdef TARGET_PC
-/* Host views: separate host objects did not alias the columns (writes overran D_800EDED0). */
-#define D_800EDED4 ((Vec3f*)((u8*)D_800EDED0 + 4))
-#define D_800EDED8 ((Vec3f*)((u8*)D_800EDED0 + 8))
-#else
 extern Vec3f D_800EDED4[];
 extern Vec3f D_800EDED8[];
-#endif
 f32 func_800296FC(f32, f32, ColVtx*, ColVtx*);
 
 f32 func_80000530(f32 x, f32 y, f32 z, ColVtx* verts, ColTri* tri, Vec3f* dir, Vec3f* out) {
@@ -2579,9 +2545,9 @@ void func_800081C0(omObjData* obj, s32 port) {
     }
     fontcolor = 15;
     sprintf(pfStrBuf, "*");
-    print8(16, (D_800B89A0 + 2) * 8, PB_HOSTCAST(char*, (PB_PTR32)pfStrBuf));
+    print8(16, (D_800B89A0 + 2) * 8, ((s32)pfStrBuf));
     sprintf(pfStrBuf, "CAMERA :[%s]", D_800B895B ? "HOMING" : "LOCK");
-    print8(24, 16, PB_HOSTCAST(char*, (PB_PTR32)pfStrBuf));
+    print8(24, 16, ((s32)pfStrBuf));
     if (D_800B895B != 0) {
         Center.x = obj->trans.x;
         Center.y = obj->trans.y;

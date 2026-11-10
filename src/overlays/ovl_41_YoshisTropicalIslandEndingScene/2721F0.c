@@ -503,13 +503,7 @@ void func_8010AA38_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     func_800A0D00(&delta, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].x - start.x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y - start.y,
                   (D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z + 1000.0f) - start.z);
     func_800A0D00(&D_80110448_YoshisTropicalIslandEndingScene[0]->coords, s * delta.x + start.x, s * delta.y + start.y, (1.0f - t) * delta.z + start.z);
-#ifdef TARGET_PC
-    /* the N64 form assigns scale in one argument and reads it in the next: unspecified order */
-    scale = (s * 0.9f + 0.1f) * 6.0f;
-    func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[0]->xScale, scale, scale, scale);
-#else
     func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[0]->xScale, scale = (s * 0.9f + 0.1f) * 6.0f, scale, scale);
-#endif
     arg0->rot.x = t + 0.03f;
     if (arg0->rot.x > 1.0f) {
         arg0->work[0] = 0;

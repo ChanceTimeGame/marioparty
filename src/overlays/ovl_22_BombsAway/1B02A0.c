@@ -455,13 +455,6 @@ s16 func_800FDE38_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 scale, s16 life, 
                       D_80100990_BombsAway[i].unk_08);
         break;
     }
-#ifdef TARGET_PC
-    /* Retail returns D_80100990[32].unk_00 when every effect is busy: past the array, the first
-       halfword of D_80100B10 on the N64. */
-    if (i >= 32) {
-        return D_80100B10_BombsAway[0];
-    }
-#endif
     return D_80100990_BombsAway[i].unk_00;
 }
 #else

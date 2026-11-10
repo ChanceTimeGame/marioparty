@@ -396,22 +396,12 @@ void func_800F76C8_KeyPaWay(omObjData* arg0) {
 
 /* Retail read D_800FF370's two halves as u16 scalars (a fresh %hi/%lo per access); the array
    spelling CSEs the address. The matching build names them through asm labels. */
-#ifdef TARGET_PC
-#define D_800FF370_0 (D_800FF370_KeyPaWay[0])
-#define D_800FF370_1 (D_800FF370_KeyPaWay[1])
-#else
 extern u16 D_800FF370_0 __asm__("D_800FF370_KeyPaWay");
 extern u16 D_800FF370_1 __asm__("D_800FF370_KeyPaWay+2");
-#endif
 /* Retail read D_800FF370's two halves as u16 scalars (a fresh %hi/%lo per access); the array
    spelling CSEs the address. The matching build names them through asm labels. */
-#ifdef TARGET_PC
-#define D_800FF370_0 (D_800FF370_KeyPaWay[0])
-#define D_800FF370_1 (D_800FF370_KeyPaWay[1])
-#else
 extern u16 D_800FF370_0 __asm__("D_800FF370_KeyPaWay");
 extern u16 D_800FF370_1 __asm__("D_800FF370_KeyPaWay+2");
-#endif
 // matches once 1F62C0.c.o is in the Makefile's blank-line-strip rule: KMC as adds a nop before the
 void func_800F7840_KeyPaWay(omObjData* arg0) {
     f32 s, c;

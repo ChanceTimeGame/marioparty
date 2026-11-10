@@ -152,22 +152,6 @@ extern GGRec D_800FBED0_GhostGuess[11];
 u16 func_8001E1D0(s16 index, s32 arg1);
 /* Record 0's fields: retail addresses them as separate globals (splat's labels); the host
    views them in the one array. */
-#ifdef TARGET_PC
-#define D_800FBED2_GhostGuess (D_800FBED0_GhostGuess[0].unk_02)
-#define D_800FBEDA_GhostGuess (D_800FBED0_GhostGuess[0].unk_0A)
-#define D_800FBEDC_GhostGuess (D_800FBED0_GhostGuess[0].unk_0C)
-#define D_800FBEE0_GhostGuess (D_800FBED0_GhostGuess[0].pos.x)
-#define D_800FBEE4_GhostGuess (D_800FBED0_GhostGuess[0].pos.y)
-#define D_800FBEE8_GhostGuess (D_800FBED0_GhostGuess[0].pos.z)
-#define D_800FBEEC_GhostGuess (D_800FBED0_GhostGuess[0].unk_1C)
-#define D_800FBEF0_GhostGuess (D_800FBED0_GhostGuess[0].unk_20)
-#define D_800FBEF4_GhostGuess (D_800FBED0_GhostGuess[0].unk_24)
-#define D_800FBEF8_GhostGuess (D_800FBED0_GhostGuess[0].unk_28)
-#define D_800FBEFC_GhostGuess (D_800FBED0_GhostGuess[0].unk_2C)
-#define D_800FBF00_GhostGuess (D_800FBED0_GhostGuess[0].unk_30)
-#define D_800FBF10_GhostGuess (D_800FBED0_GhostGuess[0].unk_40)
-#define D_800FBF12_GhostGuess (D_800FBED0_GhostGuess[0].unk_42)
-#else
 extern s16 D_800FBED2_GhostGuess;
 extern s16 D_800FBEDA_GhostGuess;
 extern omObjData* D_800FBEDC_GhostGuess;
@@ -182,7 +166,6 @@ extern f32 D_800FBEFC_GhostGuess;
 extern f32 D_800FBF00_GhostGuess;
 extern s16 D_800FBF10_GhostGuess;
 extern s16 D_800FBF12_GhostGuess;
-#endif
 
 
 void func_800F65E0_GhostGuess(void);
@@ -203,11 +186,7 @@ void func_800F8888_GhostGuess(omObjData* arg0);
 void func_800F9400_GhostGuess(omObjData* arg0, f32 max);
 s32 func_80017A60(omObjData* obj);
 s16 func_80010ED4(s16 id, s16 chanOfs);
-#ifdef TARGET_PC
-void func_80060F04(s16, s16, s16, s16); /* host: matches the definition */
-#else
 void func_80060F04(s16, s32, s32, s32);
-#endif
 void func_800F948C_GhostGuess(omObjData* arg0);
 void func_800FA764_GhostGuess(omObjData* arg0);
 void func_800FB21C_GhostGuess(void);
@@ -222,13 +201,8 @@ void func_800FB514_GhostGuess(void);
 
 /* A ghost record kept in its object's work[]: the N64 stores the pointer's bytes, the host the
    record's index (a pointer does not fit in four bytes). */
-#ifdef TARGET_PC
-#define GG_GHOST_SET(obj, g) func_800FB224_GhostGuess((obj), (u32)((g) - D_800FBC18_GhostGuess))
-#define GG_GHOST(obj) (&D_800FBC18_GhostGuess[func_800FB244_GhostGuess(obj)])
-#else
 #define GG_GHOST_SET(obj, g) func_800FB224_GhostGuess((obj), (u32)(g))
 #define GG_GHOST(obj) ((GGGhost*)func_800FB244_GhostGuess(obj))
-#endif
 
 extern Vec3f D_800FC2F0_GhostGuess;
 extern Vec3f D_800FC2FC_GhostGuess;

@@ -2563,11 +2563,7 @@ void func_800FDA04_SlotCarDerby(s32 type, Vec* pos, Vec* rot) {
     }
 }
 void func_800FDD08_SlotCarDerby(omObjData* obj, SCDObj* rec) {
-#ifdef TARGET_PC
-    u32 v = rec - D_80102468_SlotCarDerby;
-#else
     u32 v = (u32)rec;
-#endif
 
     obj->work[0] = v >> 24;
     obj->work[1] = v >> 16;
@@ -2577,19 +2573,11 @@ void func_800FDD08_SlotCarDerby(omObjData* obj, SCDObj* rec) {
 SCDObj* func_800FDD28_SlotCarDerby(omObjData* obj) {
     u32 v = (obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3];
 
-#ifdef TARGET_PC
-    return &D_80102468_SlotCarDerby[v];
-#else
     return (SCDObj*)v;
-#endif
 }
 /* The N64 Mtx's n-th halfword in N64 order (the integer halves are the first 16, the fractions
    the next 16), read endian-neutrally on the host. */
-#ifdef TARGET_PC
-#define SCD_MTX_H(mtx, n) ((u16)(((u32*)&(mtx))[(n) >> 1] >> (((n) & 1) ? 0 : 16)))
-#else
 #define SCD_MTX_H(mtx, n) (((u16*)&(mtx))[n])
-#endif
 
 /* Projects pos through camera cam's view into screen x, y and a perspective scale (z). */
 // scheduling of &Center and the viewport register (masked 4)
@@ -2991,11 +2979,6 @@ void func_800FF8A4_SlotCarDerby(void) {
 #ifdef NON_MATCHING
 void func_800FFD18_SlotCarDerby(void) {
     Mtx view;
-#ifdef TARGET_PC
-    /* retail puts this stack matrix's address in the display list; the host draws the list after
-       the function returns, so it lives in static storage there */
-    static
-#endif
     Mtx proj;
     Matrix4f mf;
     Matrix4f tmp;

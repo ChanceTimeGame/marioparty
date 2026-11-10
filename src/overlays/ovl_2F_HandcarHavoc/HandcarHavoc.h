@@ -184,11 +184,7 @@ typedef struct HHCount {
 } HHCount;
 
 /* obj->work[0..3] tested as one big-endian word (retail: lw + and 0x06000000 = work[0] & 6). */
-#ifdef TARGET_PC
-#define HH_DONE(obj) ((obj)->work[0] & 6)
-#else
 #define HH_DONE(obj) (*(u32*)(obj)->work & 0x06000000)
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    Main code
@@ -328,12 +324,7 @@ extern f32 D_800FF5D8_HandcarHavoc[2];
 extern HHLightDir D_800FF5E0_HandcarHavoc;
 extern f32 D_800FF5E8_HandcarHavoc;
 extern s16 D_800FF5EC_HandcarHavoc;
-#ifdef TARGET_PC
-/* Split label: the low byte of s16 D_800FF5EC. */
-#define D_800FF5ED_HandcarHavoc ((u8)D_800FF5EC_HandcarHavoc)
-#else
 extern u8 D_800FF5ED_HandcarHavoc;
-#endif
 extern s16 D_800FF5EE_HandcarHavoc;
 extern u16 D_800FF5F0_HandcarHavoc;
 extern u16 D_800FF5F2_HandcarHavoc[2];   /* "00mt037_DEF" (func_80039C48) */

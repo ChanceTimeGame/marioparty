@@ -197,7 +197,7 @@ void func_800F6988_name_74(void) {
 /* user_data is the model index (0..1) */
 void func_800F69A8_name_74(void) {
     Vec3f sp10;
-    s32 idx = (s32)(PB_PTR32)HuPrcCurrentGet()->user_data;
+    s32 idx = (s32)(s32)HuPrcCurrentGet()->user_data;
     Object* obj = D_800F702C_name_74[idx];
     u8 r;
 
@@ -233,7 +233,7 @@ void func_800F6B7C_name_74(s16 arg0) {
         func_800A0D00(&obj->xScale, 0.6f, 0.6f, 0.6f);
     }
     func_800A0D50(&obj->coords, &BoardSpaceGet(D_800F6F1C_name_74[arg0])->coords);
-    omAddPrcObj(func_800F69A8_name_74, 0x4800, 0, 0)->user_data = (void*)(PB_PTR32)arg0;
+    omAddPrcObj(func_800F69A8_name_74, 0x4800, 0, 0)->user_data = (void*)(s32)arg0;
 }
 
 void func_800F6C88_name_74(void) {

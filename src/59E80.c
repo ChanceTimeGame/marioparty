@@ -99,20 +99,14 @@ typedef struct SaveFile {
 } SaveFile; //
 
 //used to allow offsets from structs for the eep file offsets
-#ifndef TARGET_PC /* host: <stddef.h> offsetof (pb_host.h) */
 #define offsetof(st, m) \
     ((u32)&(((st *)0)->m))
-#endif
 
 extern u8 D_800D8720;
 s32 func_800141FC(s16 arg0);
 s32 InitEeprom(char*);
 s32 func_8005AFEC(void);
-#ifdef TARGET_PC
-s32 ReadEeprom(s32, u8*, s16); /* host: eeprom.c host definition */
-#else
 s32 ReadEeprom(s32, u8*, s32);
-#endif
 void func_8005B060(void);
 void func_8000B364(s32);
 
@@ -121,7 +115,7 @@ void func_8000B364(s32);
 #define MIN_HEAP_NODE_SIZE sizeof(struct HeapNode) + MIN_ALLOC_SIZE
 
 typedef struct StrData {
-/* 0x00 */ PB_PTR32 string; /* ROM address */
+/* 0x00 */ s32 string; /* ROM address */
 /* 0x04 */ u16 size;
 } StrData;
 
@@ -319,12 +313,6 @@ void ClearBoardFeatureFlag(s32 flag) {
     GwCommon.flag[flag / 8] &= ~(1 << flag % 8);
 }
 
-#ifdef TARGET_PC
-/* A heap block is its HeapNode header plus the request, rounded to 16 bytes. Retail adds 0x1F
-   (the N64's 16-byte header + 0xF); the host's header is 24 bytes (two pointers), and 0x1F would
-   let a block overrun the next node's header by up to 8 bytes. */
-#define PB_HEAP_BLOCK(n) (((n) + (s32)sizeof(HeapNode) + 0xF) & ~0xF)
-#endif
 
 void* HuMemHeapInit(void* ptr, u32 size) {
     HeapNode* heap = (HeapNode*)ptr;
@@ -340,12 +328,8 @@ void* HuMemMemoryAlloc(HeapNode* heap, s32 size) {
     HeapNode* cur_heap;
     HeapNode* new_heap_temp;
 
-#ifdef TARGET_PC
-    size = PB_HEAP_BLOCK(size);
-#else
     size = size + 0x1F;
     size = size & -16;
-#endif
 
     cur_heap = heap;
     do {
@@ -390,13 +374,10 @@ void HuMemMemoryFree(void *ptr)
     if (given_heap->heap_constant != HEAP_CONSTANT) {
         return;
     }
-#ifdef TARGET_PC
-    pb_gfx_forget(ptr);
-#endif
 
     heap_other = given_heap->prev;
 
-    if (((PB_UPTR32)heap_other < (PB_UPTR32)given_heap) && !heap_other->used) {
+    if (((u32)heap_other < (u32)given_heap) && !heap_other->used) {
         given_heap->next->prev = heap_other;
         given_heap->prev->next = given_heap->next;
         given_heap->prev->size += given_heap->size;
@@ -405,7 +386,7 @@ void HuMemMemoryFree(void *ptr)
 
     heap_other = given_heap->next;
 
-    if (((PB_UPTR32)given_heap < (PB_UPTR32)heap_other) && !heap_other->used) {
+    if (((u32)given_heap < (u32)heap_other) && !heap_other->used) {
         heap_other->next->prev = given_heap;
         given_heap->size += given_heap->next->size;
         given_heap->next = given_heap->next->next;
@@ -422,12 +403,8 @@ void* Realloc(HeapNode* heap, void* mem, u32 new_size)
     s32 temp;
 
     given_heap = (HeapNode*)(mem - sizeof(HeapNode));
-#ifdef TARGET_PC
-    temp = PB_HEAP_BLOCK((s32)new_size);
-#else
     temp = new_size + 0x1F;
     temp = temp & -16;
-#endif
 
     if (given_heap->size >= temp) {
         if ((u32)(given_heap->size - temp) > MIN_HEAP_NODE_SIZE) {
@@ -492,9 +469,6 @@ u32 GetUsedMemoryBlockCount(HeapNode* heap) {
 }
 
 s32 HuMemMemoryAllocSizeGet(s32 arg0) {
-#ifdef TARGET_PC
-    return PB_HEAP_BLOCK(arg0);
-#endif
     return (arg0 + 0x1F) & ~0xF;
 }
 
@@ -654,7 +628,7 @@ void func_8005A2B8(s16 win, s32 start) {
     for (i = start; i < start + 8; i++) {
         if (func_80059B48(D_800C5750[i].shownFlag) != 0) {
             str = func_8005B7E8(D_800C5750[i].nameStr);
-            sprintf(D_800D87D8[i], " %s", PB_HOSTCAST(char*, str));
+            sprintf(D_800D87D8[i], " %s", str);
             func_8005B838(str);
             if (func_80059B10(D_800C5750[i].ownedFlag) != 0 || D_800C5750[i].ownedFlag == -4) {
                 D_800D87D8[i][0] = 8;
@@ -1078,28 +1052,19 @@ void func_8005B6D0(u8* rom) {
     D_800D8910 = rom;
     buf = HuMemDirectMalloc(0x10);
     dmaRead(rom, buf, 0x10);
-#ifdef TARGET_PC
-    *buf = pb_bswap32(*buf); /* ROM message archive: big-endian */
-#endif
     D_800D8914 = *buf;
     HuMemDirectFree(buf);
     size = D_800D8914 * 4;
     D_800D8918 = HuMemDirectMalloc(size);
     dmaRead(rom + 4, D_800D8918, size);
-#ifdef TARGET_PC
-    pb_swap32_array(D_800D8918, size / 4);
-#endif
 }
 
 void func_8005B75C(s32 index, StrData* out) {
     u16* buf = HuMemDirectMalloc(0x10);
 
-    out->string = (PB_PTR32)(D_800D8910 + D_800D8918[index]);
+    out->string = (s32)(D_800D8910 + D_800D8918[index]);
     dmaRead((u8*)out->string, buf, 0x10);
     out->string += 2;
-#ifdef TARGET_PC
-    *buf = pb_bswap16(*buf);
-#endif
     out->size = *buf;
     HuMemDirectFree(buf);
 }

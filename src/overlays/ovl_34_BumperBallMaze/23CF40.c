@@ -78,11 +78,7 @@ extern omObjData* D_800FADE8_BumperBallMaze;
 /* Ending waits (4 bytes): D_800FADEC counts down, D_800FADEE (an undefined_syms.txt alias for
    retail's separate %lo(D_800FADEC+2) accesses) is the wait that follows. */
 extern u16 D_800FADEC_BumperBallMaze;
-#ifdef TARGET_PC
-#define D_800FADEE_BumperBallMaze (((u16*) &D_800FADEC_BumperBallMaze)[1])
-#else
 extern u16 D_800FADEE_BumperBallMaze;
-#endif
 extern u16 D_800FADF0_BumperBallMaze;
 extern u16 D_800FADF2_BumperBallMaze;
 extern u16 D_800FADF4_BumperBallMaze;

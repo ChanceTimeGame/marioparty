@@ -93,12 +93,7 @@ void func_800F65E0_BombsAway(void) {
     /* Retail zeroes columns 1 and 2 of the eight rows unk_50[0..3] and unk_90[0..3] (the
        identities just set lose their [1][1] and [2][2]), and each weight's x. */
     for (i = 0; i < 8; i++) {
-#ifdef TARGET_PC
-        /* rows 4..7 are unk_90's: view both matrices from the struct (unk_50[i >= 4] is UB). */
-        s->unk_134[i].unk_00 = ((f32(*)[4])((u8*)s + 0x50))[i][1] = ((f32(*)[4])((u8*)s + 0x50))[i][2] = 0.0f;
-#else
         s->unk_134[i].unk_00 = s->unk_50[i][1] = s->unk_50[i][2] = 0.0f;
-#endif
     }
     D_801004BC_BombsAway = 0;
     for (i = 0; i < 6; i++) {
@@ -1043,12 +1038,8 @@ void func_800F9824_BombsAway(omObjData* obj) {
     func_8009B770(w, 0, 0x2C);
     w[4] = 1;
     w[5] = 0;
-#ifdef TARGET_PC
-    func_80009028(obj, 0, -2000.0f, -2000.0f, 2000.0f, 2000.0f);
-#else
     /* Retail passed the area kind as a float 0.0 (mfc1 a1): a prototype with an f32 second argument. */
     ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(obj, 0.0f, -2000.0f, -2000.0f, 2000.0f, 2000.0f);
-#endif
 }
 // register allocation: the sine and 1.0f swap f20/f22 (masked 0)
 #ifdef NON_MATCHING

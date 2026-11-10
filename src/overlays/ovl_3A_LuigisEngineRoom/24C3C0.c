@@ -37,10 +37,10 @@ extern Object* D_800F9DE0_LuigisEngineRoom;    // toad model
 extern Object* D_800F9DE8_LuigisEngineRoom[7]; // toads
 extern Object* D_800F9E04_LuigisEngineRoom;    // boo model
 extern Object* D_800F9E08_LuigisEngineRoom[1]; // boo
-extern PB_PTR32 D_800F9E0C_LuigisEngineRoom;
-extern PB_PTR32 D_800F9E10_LuigisEngineRoom;
-extern PB_PTR32 D_800F9E14_LuigisEngineRoom;
-extern PB_PTR32 D_800F9E18_LuigisEngineRoom;
+extern s32 D_800F9E0C_LuigisEngineRoom;
+extern s32 D_800F9E10_LuigisEngineRoom;
+extern s32 D_800F9E14_LuigisEngineRoom;
+extern s32 D_800F9E18_LuigisEngineRoom;
 extern LuigiSteam D_800F9E20_LuigisEngineRoom[20]; // splat: D_800F9E30/34/38 = [0].pos.z/vel.x/vel.y...
 extern Object* D_800FA050_LuigisEngineRoom;
 extern Process* D_800FA054_LuigisEngineRoom;
@@ -164,10 +164,10 @@ DecisionTreeNonLeafNode D_800F96B0_LuigisEngineRoom[2] = {
     { 0x00000000, { (void*)0x0 }, { 0x15A46 } },
 };
 DecisionTreeNonLeafNode D_800F96C8_LuigisEngineRoom[6] = {
-    { 0x02000000, { (void*)0x1 }, { (PB_UPTR32)D_800F9614_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x2 }, { (PB_UPTR32)D_800F9644_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F9674_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x28 }, { (PB_UPTR32)D_800F96B0_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x1 }, { (u32)D_800F9614_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x2 }, { (u32)D_800F9644_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F9674_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x28 }, { (u32)D_800F96B0_LuigisEngineRoom } },
     { 0x03000000, { (void*)0x1F }, { 0x11446 } },
     { 0x00000000, { (void*)0x0 }, { 0x15A5F } },
 };
@@ -193,11 +193,11 @@ DecisionTreeNonLeafNode D_800F9794_LuigisEngineRoom[2] = {
     { 0x00000000, { (void*)0x0 }, { 0x10A1E } },
 };
 DecisionTreeNonLeafNode D_800F97AC_LuigisEngineRoom[8] = {
-    { 0x06000000, { (void (*)())func_800F7D60_LuigisEngineRoom }, { (PB_UPTR32)D_800F96C8_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x1 }, { (PB_UPTR32)D_800F9710_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x2 }, { (PB_UPTR32)D_800F9740_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F9764_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x28 }, { (PB_UPTR32)D_800F9794_LuigisEngineRoom } },
+    { 0x06000000, { (void (*)())func_800F7D60_LuigisEngineRoom }, { (u32)D_800F96C8_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x1 }, { (u32)D_800F9710_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x2 }, { (u32)D_800F9740_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F9764_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x28 }, { (u32)D_800F9794_LuigisEngineRoom } },
     { 0x03000000, { (void*)0x1F }, { 0x15A5F } },
     { 0x03000000, { (void*)0x1E0 }, { 0x10A1E } },
     { 0x00000000, { (void*)0x0 }, { 0x1051E } },
@@ -222,8 +222,8 @@ DecisionTreeNonLeafNode D_800F9878_LuigisEngineRoom[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x645F } },
 };
 DecisionTreeNonLeafNode D_800F98A8_LuigisEngineRoom[6] = {
-    { 0x03000000, { (void*)0x3 }, { (PB_UPTR32)D_800F9848_LuigisEngineRoom } },
-    { 0x01000000, { (void*)0x14 }, { (PB_UPTR32)D_800F9878_LuigisEngineRoom } },
+    { 0x03000000, { (void*)0x3 }, { (u32)D_800F9848_LuigisEngineRoom } },
+    { 0x01000000, { (void*)0x14 }, { (u32)D_800F9878_LuigisEngineRoom } },
     { 0x05000000, { (void*)0x1 }, { 0x3250 } },
     { 0x05000000, { (void*)0x2 }, { 0x283C } },
     { 0x05000000, { (void*)0x4 }, { 0x1428 } },
@@ -236,16 +236,16 @@ DecisionTreeNonLeafNode D_800F98F0_LuigisEngineRoom[4] = {
     { 0x00000000, { (void*)0x0 }, { 0x645F } },
 };
 DecisionTreeNonLeafNode D_800F9920_LuigisEngineRoom[5] = {
-    { 0x03000000, { (void*)0xFF }, { (PB_UPTR32)D_800F98F0_LuigisEngineRoom } },
+    { 0x03000000, { (void*)0xFF }, { (u32)D_800F98F0_LuigisEngineRoom } },
     { 0x05000000, { (void*)0x1 }, { 0x2850 } },
     { 0x05000000, { (void*)0x2 }, { 0x1E3C } },
     { 0x05000000, { (void*)0x4 }, { 0x1428 } },
     { 0x00000000, { (void*)0x0 }, { 0xA14 } },
 };
 DecisionTreeNonLeafNode D_800F995C_LuigisEngineRoom[5] = {
-    { 0x02000000, { (void*)0x1 }, { (PB_UPTR32)D_800F980C_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x4 }, { (PB_UPTR32)D_800F98A8_LuigisEngineRoom } },
-    { 0x02000000, { (void*)0x8 }, { (PB_UPTR32)D_800F9920_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x1 }, { (u32)D_800F980C_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x4 }, { (u32)D_800F98A8_LuigisEngineRoom } },
+    { 0x02000000, { (void*)0x8 }, { (u32)D_800F9920_LuigisEngineRoom } },
     { 0x02000000, { (void*)0x20 }, { 0x16450 } },
     { 0x00000000, { (void*)0x0 }, { 0x15A46 } },
 };
@@ -631,7 +631,7 @@ void func_800F6CD8_LuigisEngineRoom(void) {
         string_id = 1258;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     PlaySound(1125);
     WaitForTextConfirmation(str->unk8);
@@ -660,7 +660,7 @@ void func_800F6CD8_LuigisEngineRoom(void) {
         string_id = 1259;
     }
 
-    LoadStringIntoWindow(str->unk8, (void*)(PB_PTR32)string_id, -1, -1);
+    LoadStringIntoWindow(str->unk8, (void*)(s32)string_id, -1, -1);
     func_80071C8C(str->unk8, 1);
     WaitForTextConfirmation(str->unk8);
     func_80071E80(str->unk8, 1);
@@ -978,7 +978,7 @@ void func_800F796C_LuigisEngineRoom(void) {
     f32 step;
     s32 i;
 
-    idx = (PB_PTR32)HuPrcCurrentGet()->user_data;
+    idx = (s32)HuPrcCurrentGet()->user_data;
     start = D_800F9D30_LuigisEngineRoom[idx].target;
     step = (start - D_800F9D88_LuigisEngineRoom[idx].target) / 10.0f;
     cur = start;
@@ -999,7 +999,7 @@ Process* func_800F7A24_LuigisEngineRoom(s32 arg0) {
         return NULL;
     }
     proc = omAddPrcObj(func_800F796C_LuigisEngineRoom, 0x4800, 0, 0);
-    proc->user_data = (void*)(PB_PTR32)arg0;
+    proc->user_data = (void*)(s32)arg0;
     return proc;
 }
 
@@ -1526,7 +1526,7 @@ void func_800F8FE8_LuigisEngineRoom(void) {
         msg = 0x1DF;
     }
     win = CreateTextWindow(0x46, 0x8C, 0xF, 2);
-    LoadStringIntoWindow(win, (void*)(PB_PTR32)msg, -1, -1);
+    LoadStringIntoWindow(win, (void*)(s32)msg, -1, -1);
     func_8006E070(win, 0);
     ShowTextWindow(win);
     WaitForTextConfirmation(win);

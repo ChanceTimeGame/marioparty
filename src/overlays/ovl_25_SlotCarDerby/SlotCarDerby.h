@@ -160,7 +160,7 @@ typedef struct SCDBillboard {
     /* 0x00 */ Gfx* unk_00;    /* display list, (Gfx*)-1 = free */
     /* 0x04 */ Gfx* unk_04[3]; /* per-frame material lists (D_800F37F0 picks one) */
     /* 0x10 */ Vtx* unk_10[3]; /* per-frame vertices (0x80 bytes) */
-    /* 0x1C */ PB_PTR32 unk_1C; /* a pointer: only cleared here; func_800FFD18 reads [2 + frame]
+    /* 0x1C */ s32 unk_1C; /* a pointer: only cleared here; func_800FFD18 reads [2 + frame]
                                    from it when unk_20 is set, which nothing in the overlay does */
     /* 0x20 */ s8 unk_20;
     /* 0x21 */ char unk_21;
@@ -208,11 +208,7 @@ void func_80021E58(void);
 void func_80021EC0(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 /* Defined s16 (src/24740.c); retail's caller here uses the whole v0 (a call without the s16
    prototype), so the N64 build declares it s32 as src/1EA70.c does. */
-#ifdef TARGET_PC
-s16 func_80024198(u32, Gfx*, s32);
-#else
 s32 func_80024198(u32, Gfx*, s32);
-#endif
 unk2C0C0Struct50* func_80026A0C(s16, char*);
 void func_80023A38(void* src, void* dst, s32 size); /* copy (engine/mallocblock.h) */
 void func_800343C8(s16);
@@ -405,13 +401,7 @@ extern SCDObj* D_8010246C_SlotCarDerby;  /* [8] */
 extern SCDFx* D_80102470_SlotCarDerby;   /* [32] */
 extern s32 D_80102474_SlotCarDerby;      /* sprite group (s16 in a word; read (s16)) */
 extern s32 D_80102478_SlotCarDerby;      /* sprite group (read (s16)) */
-#ifdef TARGET_PC
-/* No splat label at 0x8010247C (asm only reads its halves through +2 labels): on the host it is a
-   view of the object gen_ovl.py makes for D_80102478, which runs on to the next label. */
-#define D_8010247C_SlotCarDerby ((s32*)(&D_80102478_SlotCarDerby + 1))
-#else
 extern s32 D_8010247C_SlotCarDerby[3];   /* effect sprites by SCDFx type (read (s16)) */
-#endif
 extern s32 D_80102488_SlotCarDerby;      /* effect sprite group (read (s16)) */
 extern s32 D_8010248C_SlotCarDerby;      /* billboard count */
 extern Gfx* D_80102490_SlotCarDerby[3];  /* per-frame billboard display lists */

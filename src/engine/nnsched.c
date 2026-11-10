@@ -181,7 +181,7 @@ void func_80063AD8(s32 mask) {
 
     for (client = D_800E23E0; client != NULL; client = client->next) {
         if (mask & client->mask) {
-            osSendMesg(client->msgQ, (OSMesg)PB_HOSTCAST(PB_PTR32, mask), OS_MESG_NOBLOCK);
+            osSendMesg(client->msgQ, (OSMesg)mask, OS_MESG_NOBLOCK);
         }
     }
 }
@@ -191,7 +191,7 @@ void func_80063B34(void* arg) {
 
     while (TRUE) {
         osRecvMesg(&D_800E23E8, &msg, OS_MESG_BLOCK);
-        switch ((s32)PB_HOSTCAST(PB_PTR32, msg)) {
+        switch ((s32)msg) {
             case 0x29A:
                 D_800F383C++;
                 func_80061094();
@@ -287,7 +287,7 @@ void func_80063DB8(void* arg) {
         osRecvMesg(&D_800E2458, NULL, OS_MESG_BLOCK);
         func_80061304(perf1);
         osSendMesg(task->msgQ, task->msg, OS_MESG_BLOCK);
-        if ((s32)PB_HOSTCAST(PB_PTR32, task->msg) & 1) {
+        if ((s32)(task->msg) & 1) {
             func_80061424();
         }
     }

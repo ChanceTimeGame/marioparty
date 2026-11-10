@@ -2,7 +2,6 @@
 #define _TYPES_H_
 
 #include "PR/ultratypes.h"
-#include "pb_host.h"
 
 
 typedef f32 Matrix4f[4][4];

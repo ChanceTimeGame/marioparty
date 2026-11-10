@@ -194,11 +194,6 @@ void func_800F6610_GameModeOverworld(void) {
     if (D_800FA204_GameModeOverworld != 0) {
         D_800FA1E2_GameModeOverworld = 1;
     }
-#ifdef TARGET_PC
-    if (pb_dev_overworld() >= 0) {
-        D_800FA1E2_GameModeOverworld = pb_dev_overworld(); /* mp1host --dev-overworld */
-    }
-#endif
     ClearBoardFeatureFlag(0);
     ClearBoardFeatureFlag(0x29);
     ClearBoardFeatureFlag(0x2B);
@@ -418,7 +413,7 @@ void func_800F731C_GameModeOverworld(void) {
     } else {
         msg = 0x9F;
     }
-    LoadStringIntoWindow(win, (void*)(PB_PTR32)msg, -1, -1);
+    LoadStringIntoWindow(win, (void*)(s32)msg, -1, -1);
     func_80071FF4(win, 0xC0);
     func_80071FF4(win2, 0xC0);
     while (func_80072718() != 0) {
@@ -598,7 +593,7 @@ void func_800F731C_GameModeOverworld(void) {
             } else {
                 msg = 0xA1;
             }
-            LoadStringIntoWindow(win, (void*)(PB_PTR32)msg, -1, -1);
+            LoadStringIntoWindow(win, (void*)(s32)msg, -1, -1);
             while (func_8006FCC0(win) != 0) {
                 HuPrcVSleep();
             }

@@ -6,7 +6,7 @@ u8 D_800C1C70 = 0;
 /* N64 segment addresses (rom start/end, ram, code, data, bss), all overlays linked at 0x800F65E0.
    The host loads overlays as DLLs and never reads this table as addresses. */
 #define OVL(a, b, c, d, e, f, g, h, i) { A(a), A(b), A(c), A(d), A(e), A(f), A(g), A(h), A(i) }
-#define A(x) PB_N64_ADDR(u8*, x)
+#define A(x) ((u8*)x)
 OverlayInfo overlay_table[] = {
     OVL(0xCDA50, 0xD51E0, 0x800F65E0, 0x800F65E0, 0x800FD7E0, 0x800FD7E0, 0x800FDD70, 0x800FDD70, 0x800FE520),
     OVL(0xD51E0, 0xE02F0, 0x800F65E0, 0x800F65E0, 0x801011F0, 0x801011F0, 0x801016F0, 0x801016F0, 0x80101AE0),
@@ -191,13 +191,6 @@ void OvlLoad(s32 overlayIndex) {
     u8 *bss_end;
     u8* curBssAddr;
 
-#ifdef TARGET_PC
-    /* Host: overlays are host modules, not code DMA'd to 0x800F65E0; the loader also provides
-       their bss. func_800F65E0 (the overlay entry the N64 jumps to) is the host's dispatcher. */
-    pb_ovl_load(overlayIndex);
-    D_800C1C70 = 0;
-    return;
-#endif
     rom_start = overlay_table[overlayIndex].rom_start;
     rom_end = overlay_table[overlayIndex].rom_end;
     bss_start = overlay_table[overlayIndex].bss_start;
@@ -282,7 +275,7 @@ s16 func_800178E8(void) {
     s16 temp_s0;
 
     temp_s0 = D_800C3001;
-    func_8001D8A0(D_800C3001, PB_HOSTCAST(PB_PTR32, &func_8002A0E4), PB_HOSTCAST(PB_PTR32, &D_800EE738));
+    func_8001D8A0(D_800C3001, (&func_8002A0E4), (&D_800EE738));
     D_800C3001 += 1;
     return temp_s0;
 }
@@ -304,7 +297,7 @@ u8 func_800179C0(s32 arg0) {
 
     for (i = 0; i < arg0; i++) {
         var_a0 = i << 0x10;
-        func_8001D8A0(var_a0 >> 0x10, PB_HOSTCAST(PB_PTR32, &func_8002A0E4), PB_HOSTCAST(PB_PTR32, (i * 0x6) + &D_800F2C28));
+        func_8001D8A0(var_a0 >> 0x10, (&func_8002A0E4), ((i * 0x6) + &D_800F2C28));
         D_800C3001 += 1;
     }
 

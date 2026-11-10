@@ -18,15 +18,9 @@ void func_800427E4(void);
 extern char* D_800C5218[]; /* character names */
 /* Retail called these unprototyped: their results are used as words, not narrowed to the
    definitions' u16/s16. The host calls them normally. */
-#ifdef TARGET_PC
-#define func_8004F25C_unproto() func_8004F25C()
-#define func_80023FC8_unproto(a) func_80023FC8(a)
-#define GMesFontMesCreate_unproto(a, b, c, d, e) GMesFontMesCreate(a, b, c, d, e)
-#else
 #define func_8004F25C_unproto() ((s32 (*)())func_8004F25C)()
 #define func_80023FC8_unproto(a) ((s32 (*)())func_80023FC8)(a)
 #define GMesFontMesCreate_unproto(a, b, c, d, e) ((s32 (*)())GMesFontMesCreate)(a, b, c, d, e)
-#endif
 
 void func_800F667C_UnknownEndGameBonuses1(void);
 void func_800F6730_UnknownEndGameBonuses1(void);
@@ -496,7 +490,7 @@ void func_800F79B4_UnknownEndGameBonuses1(s32 count, u8* flags) {
                 func_8006DA5C(win2, D_800C5218[GwPlayer[i].character], j++);                          \
             }                                                                                         \
         }                                                                                             \
-        SHOW_MESSAGE(win2, (PB_PTR32)msgs[k - 1]);                                               \
+        SHOW_MESSAGE(win2, (s32)msgs[k - 1]);                                               \
     }                                                                                                 \
     if (k == 1) {                                                                                     \
         func_8004EE14(timers[0], &D_800FA54C_UnknownEndGameBonuses1, 1, NULL);                        \

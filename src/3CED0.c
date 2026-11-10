@@ -216,12 +216,12 @@ void func_8003CAB4(void) {
     unk_Struct02* icons;
     s16 x;
     s16 y;
-    PB_PTR32 label1; /* PartyBoard: a func_80045D84 window handle (pointer) */
-    PB_PTR32 label2;
+    s32 label1;
+    s32 label2;
     s16 dir;
     u16 pad;
 
-    port = (s32)PB_HOSTCAST(PB_PTR32, HuPrcCurrentGet()->user_data);
+    port = (s32)(HuPrcCurrentGet()->user_data);
     bg = D_800F6598;
     sel = 0;
     for (i = 0; i < 4; i++) {

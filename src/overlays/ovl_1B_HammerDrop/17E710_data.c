@@ -13,8 +13,6 @@ f32 D_800FB5C8_HammerDrop[4] = { -300.0f, 0.0f, 300.0f, 0.0f };
 f32 D_800FB5D8_HammerDrop[4] = { 0.0f, 300.0f, 0.0f, -300.0f };
 f32 D_800FB5E8_HammerDrop[4] = { 90.0f, 180.0f, 270.0f, 0.0f };
 f32 D_800FB5F8_HammerDrop[4] = { 500.0f, 650.0f, 700.0f, 1200.0f };
-#ifndef TARGET_PC
 /* func_800F7D64's switch table, for the N64 asm path: the overlay runs at a fixed address, so
    its case labels are written as their addresses. The C path's switch builds its own table. */
 u32 jtbl_800FB608_HammerDrop[6] = { 0x800F7D94, 0x800F7DA8, 0x800F7DB8, 0x800F7DC8, 0x800F7DD8, 0x800F7DE0 };
-#endif
