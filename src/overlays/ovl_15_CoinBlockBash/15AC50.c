@@ -845,8 +845,6 @@ void func_801004E8_CoinBlockBash(void) {
 
 /* Draws the billboards: each one's matrix (facing the camera unless it is a model) and display
    list, into the billboard model's list for this frame. */
-// NON_MATCHING: scheduling of the view-matrix copy (as ovl_2E func_800FA2F4)
-#ifdef NON_MATCHING
 void func_80101748_CoinBlockBash(void) {
     Mtx view;
     Matrix4f m;
@@ -856,12 +854,14 @@ void func_80101748_CoinBlockBash(void) {
     Mtx* mtx;
     CBBBill* fx;
     s32 i;
+    u8* cams;
 
     func_801004E8_CoinBlockBash();
     D_800F2B7C[D_80103274_CoinBlockBash].unk_6C->unk_00[0] = D_8010325C_CoinBlockBash[D_80101C00_CoinBlockBash];
     gfx = D_8010325C_CoinBlockBash[D_80101C00_CoinBlockBash];
     mtx = D_80103268_CoinBlockBash[D_80101C00_CoinBlockBash];
-    view = ((unk_Struct00*)((u8*)D_800C3110 + (D_800F3FA8 << 7)))->unk_138;
+    cams = (u8*)D_800C3110;
+    view = ((unk_Struct00*)(cams + (D_800F3FA8 << 7)))->unk_138;
     gSPClearGeometryMode(gfx++, G_CULL_BACK | G_LIGHTING);
     gSPSetGeometryMode(gfx++, G_ZBUFFER);
     for (i = 0; i < D_80103258_CoinBlockBash; i++) {
@@ -890,9 +890,6 @@ void func_80101748_CoinBlockBash(void) {
     gSPMatrix(gfx++, osVirtualToPhysical(&view), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_80101748_CoinBlockBash);
-#endif
 
 void func_80101A5C_CoinBlockBash(void) {
     s32 i;

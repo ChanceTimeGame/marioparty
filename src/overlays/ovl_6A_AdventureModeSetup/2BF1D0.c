@@ -3011,7 +3011,8 @@ void func_800FF064_AdventureModeSetup() {
     D_80101FC0_AdventureModeSetup = omAddObj(0x3C, 0xEU, 1U, -1, func_800FED7C_AdventureModeSetup);
 }
 
-// retail loads &GwSystem/&D_801025A0 into a1/a0 just before the tail; here GCC hoists them to the function start (masked 20)
+// retail loads &GwSystem/&D_801025A0 into a1/a0 just before the tail; here GCC hoists them to the function start (masked 20);
+// assigning them after the second loop makes GCC CSE &GwSystem into the playType store instead (M1c)
 #ifdef NON_MATCHING
 void func_800FF0A0_AdventureModeSetup(void) {
     s32 saved[4];
