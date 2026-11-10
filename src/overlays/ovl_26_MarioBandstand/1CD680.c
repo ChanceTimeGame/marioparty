@@ -1,5 +1,7 @@
 #include "1CCCF0.h"
 
+int abs(int);
+
 /* ---------------------------------------------------------------------------------------------
    .data
    --------------------------------------------------------------------------------------------- */
@@ -391,9 +393,7 @@ void func_800F7760_MarioBandstand(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7760_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 6 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
-void func_800F7B88_MarioBandstand(s16 state) {
+void func_800F7B88_MarioBandstand(s32 state) {
     MBProp* p;
     s32 i;
 
@@ -407,9 +407,6 @@ void func_800F7B88_MarioBandstand(s16 state) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7B88_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 24 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -1349,22 +1346,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA
 #endif
 
 /* The stick's direction for a human player: 0 up, 1 left, 2 down, 3 right, 4 centred, -1 none. */
-// NON_MATCHING: masked 4 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 s32 func_800FA448_MarioBandstand(omObjData* obj) {
     s8 port = ((MBPlayerWork*)obj->unk_50)->unk_56;
     s32 sx = ContStkX[port];
     s32 sy = ContStkY[port];
-    s32 ax = sx;
-    s32 ay = sy;
+    s32 ax = abs(sx);
+    s32 ay = abs(sy);
     s32 dir;
 
-    if (ax < 0) {
-        ax = -ax;
-    }
-    if (ay < 0) {
-        ay = -ay;
-    }
     dir = -1;
     if ((ax < 0x10) & (ay < 0x10)) {
         dir = 4;
@@ -1377,9 +1366,6 @@ s32 func_800FA448_MarioBandstand(omObjData* obj) {
     }
     return dir;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA448_MarioBandstand);
-#endif
 
 /* The conductor (kind 0): the intro bow, then baton strokes on the beat. */
 void func_800FA4F8_MarioBandstand(omObjData* obj) {
