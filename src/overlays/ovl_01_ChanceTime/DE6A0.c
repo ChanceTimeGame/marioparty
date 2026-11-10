@@ -10,8 +10,6 @@ void* D_80101374_ChanceTime = NULL;
 s8 D_80101378_ChanceTime = 0;
 s8 D_80101379_ChanceTime = 0;
 
-// loop-invariant order: the two hoisted &D_80101824/&D_80101830 loads swapped (masked 4)
-#ifdef NON_MATCHING
 void func_800FFAA0_ChanceTime(void) {
     s8 idx[2];
     Vec mid;
@@ -58,7 +56,7 @@ void func_800FFAA0_ChanceTime(void) {
     D_80101374_ChanceTime = func_80042728(D_80101820_ChanceTime, 0);
     for (i = 0; i < 181; i += 5) {
         func_800A0D00(&D_80101820_ChanceTime->coords,
-                      (D_80101830_ChanceTime.x - D_80101824_ChanceTime.x) * i / 180.0f + D_80101824_ChanceTime.x,
+                      D_80101824_ChanceTime.x + (D_80101830_ChanceTime.x - D_80101824_ChanceTime.x) * i / 180.0f,
                       D_80101824_ChanceTime.y + 200.0f + sinf(i * 0.017453292519943295) * 100.0f,
                       D_80101824_ChanceTime.z + (D_80101830_ChanceTime.z - D_80101824_ChanceTime.z) * i / 180.0);
         D_80101820_ChanceTime->unk_18.x = sinf(i * 10 * 0.017453292519943295);
@@ -84,9 +82,6 @@ void func_800FFAA0_ChanceTime(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_ChanceTime/DE6A0", func_800FFAA0_ChanceTime);
-#endif
 s8 func_800FFF4C_ChanceTime(s8 arg0, s8 arg1) {
     if (D_80101378_ChanceTime == 0) {
         D_8010183C_ChanceTime = arg0;
