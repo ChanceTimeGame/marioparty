@@ -1689,12 +1689,9 @@ void func_800FC22C_DeepSeaDivers(omObjData* unused, f32* x, f32* y, f32* z) {
         *y = -2000.0f;
     }
 }
-#ifdef NON_MATCHING
 void func_800FC2F8_DeepSeaDivers(f32* x, f32* y, f32 dist, Vec2f* pts, s16 n, u16 flag, f32* outx, f32* outy) {
     f32 sx;
     f32 sy;
-    f32 cx;
-    f32 cy;
     f32 px;
     f32 py;
     f32 a;
@@ -1712,8 +1709,8 @@ void func_800FC2F8_DeepSeaDivers(f32* x, f32* y, f32 dist, Vec2f* pts, s16 n, u1
             sx += pts[i].x;
             sy += pts[i].y;
         }
-        cx = sx / (f32)n;
-        cy = sy / (f32)n;
+        sx /= n;
+        sy /= n;
         px = pts[0].x;
         py = pts[0].y;
         ny = 0.0f;
@@ -1722,14 +1719,16 @@ void func_800FC2F8_DeepSeaDivers(f32* x, f32* y, f32 dist, Vec2f* pts, s16 n, u1
             dy = pts[i + 1].y - py;
             a = -dy;
             b = pts[i + 1].x - px;
-            if (a * (*x - cx) + b * (*y - cy) < 0.0) {
+            if (a * (*x - sx) + b * (*y - sy) < 0.0) {
                 a = dy;
                 b = -b;
             }
             len = sqrtf(a * a + b * b);
             if (len != 0.0) {
-                nx += a / len;
-                ny += b / len;
+                a /= len;
+                b /= len;
+                nx += a;
+                ny += b;
             }
             px = pts[i + 1].x;
             py = pts[i + 1].y;
@@ -1741,17 +1740,16 @@ void func_800FC2F8_DeepSeaDivers(f32* x, f32* y, f32 dist, Vec2f* pts, s16 n, u1
             ny /= len;
         }
         *outx = nx;
-        len = sqrtf(nx * nx + ny * ny);
         *outy = ny;
+        len = sqrtf(nx * nx + ny * ny);
         if (len != 0.0) {
-            *x = cx + nx / len * dist;
-            *y = cy + ny / len * dist;
+            nx /= len;
+            ny /= len;
+            *x = sx + nx * dist;
+            *y = sy + ny * dist;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC2F8_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 s16 func_800FC644_DeepSeaDivers(f32* x, f32* y, s16 r, u16 flag, f32* outx, f32* outy) {
     Vec2f pts[256];
