@@ -1761,43 +1761,45 @@ void func_800FC124_HandcarHavoc(u16 i, Vec* out) {
 
 /* Length of track segment i. */
 // NON_MATCHING: register allocation
-#ifdef NON_MATCHING
-f32 func_800FC1B4_HandcarHavoc(u16 i) {
-    Vec a;
-    Vec b;
-    f32 dx;
-    f32 dy;
-    f32 dz;
-
-    func_800FC0C8_HandcarHavoc(i, &a);
-    func_800FC0C8_HandcarHavoc(i + 1, &b);
-    dx = b.x - a.x;
-    dy = b.y - a.y;
-    dz = b.z - a.z;
-    return func_800B1750(dx * dx + dy * dy + dz * dz);
+// decomp-permuter
+f32 func_800FC1B4_HandcarHavoc(u16 i)
+{
+  f32 dy;
+  Vec a;
+  float new_var3;
+  f32 new_var2;
+  float new_var;
+  Vec b;
+  f32 dx;
+  f32 dz;
+  func_800FC0C8_HandcarHavoc(i, &a);
+  func_800FC0C8_HandcarHavoc(i + 1, &b);
+  dx = b.x - a.x;
+  new_var3 = dx * dx;
+  dy = b.y - a.y;
+  new_var = new_var3 + (dy * dy);
+  dz = b.z - a.z;
+  new_var2 = func_800B1750(new_var + (dz * dz));
+  return new_var2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FC1B4_HandcarHavoc);
-#endif
 
 /* Distance from (x, y, z) to track point i. */
 // NON_MATCHING: register allocation
-#ifdef NON_MATCHING
-f32 func_800FC22C_HandcarHavoc(f32 x, f32 y, f32 z, u16 i) {
-    Vec a;
-    f32 dx;
-    f32 dy;
-    f32 dz;
-
-    func_800FC0C8_HandcarHavoc(i, &a);
-    dx = a.x - x;
-    dy = a.y - y;
-    dz = a.z - z;
-    return func_800B1750(dx * dx + dy * dy + dz * dz);
+// decomp-permuter
+f32 func_800FC22C_HandcarHavoc(f32 x, f32 y, f32 z, u16 i)
+{
+  Vec a;
+  f32 dx;
+  f32 dy;
+  f32 dz;
+  float new_var;
+  func_800FC0C8_HandcarHavoc(i, &a);
+  dx = a.x - x;
+  ;
+  new_var = (dx * dx) + ((a.y - y) * (a.y - y));
+  dz = a.z - z;
+  return func_800B1750(new_var + (dz * dz));
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FC22C_HandcarHavoc);
-#endif
 
 /* Direction of track segment i. */
 void func_800FC2A0_HandcarHavoc(u16 i, Vec* out) {
@@ -1815,37 +1817,40 @@ void func_800FC2A0_HandcarHavoc(u16 i, Vec* out) {
 
 /* The car's position (between its axles) and rotation (from the axle line). */
 // NON_MATCHING: axle distances reloaded
-#ifdef NON_MATCHING
-void func_800FC338_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos) {
-    Vec axle[2];
-    Vec d;
-    Vec p;
-    HHCar* w;
-    f32 a;
-    u16 seg;
-    s32 i;
+// decomp-permuter
+void func_800FC338_HandcarHavoc(omObjData *obj, Vec *rot, Vec *pos)
+{
+  Vec axle[2];
+  Vec d;
+  Vec p;
+  f32 new_var;
+  HHCar *w;
+  f32 a;
+  u16 seg;
+  s32 i;
+  w = obj->unk_50;
+  for (i = 0; i < 2; i++)
+  {
+    seg = w->seg[i];
+    func_800FC0C8_HandcarHavoc(seg, &p);
+    func_800FC2A0_HandcarHavoc(seg, &axle[i]);
+    new_var = w->dist[i];
+    axle[i].x = (new_var * axle[i].x) + p.x;
+    axle[i].y = (new_var * axle[i].y) + p.y;
+    axle[i].z = (new_var * axle[i].z) + p.z;
+  }
 
-    w = obj->unk_50;
-    for (i = 0; i < 2; i++) {
-        seg = w->seg[i];
-        func_800FC0C8_HandcarHavoc(seg, &p);
-        func_800FC2A0_HandcarHavoc(seg, &axle[i]);
-        axle[i].x = w->dist[i] * axle[i].x + p.x;
-        axle[i].y = w->dist[i] * axle[i].y + p.y;
-        axle[i].z = w->dist[i] * axle[i].z + p.z;
-    }
-    for (i = 0; i < 3; i++) {
-        (&w->slope.x)[i] = (&d.x)[i] = ((&axle[1].x)[i] - (&axle[0].x)[i]) / 400.0f;
-        (&pos->x)[i] = ((&axle[1].x)[i] + (&axle[0].x)[i]) / 2.0f;
-    }
-    rot->y = func_800B0CD8(d.x, d.z);
-    a = func_800FC7E0_HandcarHavoc(d.y);
-    rot->x = a * -d.z;
-    rot->z = a * d.x;
+  for (i = 0; i < 3; i++)
+  {
+    (&w->slope.x)[i] = ((&d.x)[i] = ((&axle[1].x)[i] - (&axle[0].x)[i]) / 400.0f);
+    (&pos->x)[i] = ((&axle[1].x)[i] + (&axle[0].x)[i]) / 2.0f;
+  }
+
+  rot->y = func_800B0CD8(d.x, d.z);
+  a = func_800FC7E0_HandcarHavoc(d.y);
+  rot->x = a * (-d.z);
+  rot->z = a * d.x;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FC338_HandcarHavoc);
-#endif
 
 /* Moves both axles along the track by the car's speed; 1 when the front reaches the goal. */
 u16 func_800FC4B0_HandcarHavoc(omObjData* obj) {
