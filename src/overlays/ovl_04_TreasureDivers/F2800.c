@@ -95,40 +95,39 @@ void func_800FA678_TreasureDivers(Matrix4f m) {
 
 /* World position -> screen offset from the centre. */
 // NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
-void func_800FA7E8_TreasureDivers(Vec* pos, Vec* out) {
-    Matrix4f m;
-    f32 w;
-
-    guTranslateF(m, pos->x, pos->y, pos->z);
-    guMtxCatF(m, D_800FF140_TreasureDivers, m);
-    if ((w = fabsf(m[3][2] * D_800FF258_TreasureDivers)) != 0.0) {
-        out->x = m[3][0] * 160.0f / w / 1.3333334f;
-        out->y = -m[3][1] * 120.0f / w;
-    }
+// decomp-permuter
+void func_800FA7E8_TreasureDivers(Vec *pos, Vec *out)
+{
+  Matrix4f m;
+  float new_var;
+  f32 w;
+  guTranslateF(m, pos->x, pos->y, pos->z);
+  guMtxCatF(m, D_800FF140_TreasureDivers, m);
+  new_var = m[3][2] * D_800FF258_TreasureDivers;
+  if ((w = fabsf(new_var)) != 0.0)
+  {
+    (*out).x = ((m[3][0] * 160.0f) / w) / 1.3333334f;
+    out->y = ((-m[3][1]) * 120.0f) / w;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", func_800FA7E8_TreasureDivers);
-#endif
 
 /* Screen offset and depth -> world position. */
 // NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
-void func_800FA8B8_TreasureDivers(f32 x, f32 y, f32 z, Vec* out) {
-    Matrix4f m;
-    f32 w;
-
-    z += D_800FF178_TreasureDivers;
-    w = fabsf(z * D_800FF258_TreasureDivers);
-    guTranslateF(m, 2.0f * x * w * 1.3333334f / 320.0f, -(2.0f * y * w / 240.0f), z);
-    guMtxCatF(m, D_800FFAE0_TreasureDivers, m);
-    out->x = m[3][0];
-    out->y = m[3][1];
-    out->z = m[3][2];
+// decomp-permuter
+void func_800FA8B8_TreasureDivers(f32 x, f32 y, f32 z, Vec *out)
+{
+  int new_var2;
+  Matrix4f m;
+  float new_var;
+  f32 w;
+  z += D_800FF178_TreasureDivers;
+  w = fabsf(z * D_800FF258_TreasureDivers);
+ do { new_var = (2.0f * x) * w; guTranslateF(m, (new_var * 1.3333334f) / 320.0f, -(((2.0f * y) * w) / 240.0f), z); guMtxCatF(m, D_800FFAE0_TreasureDivers, m); } while (0);
+  out->x = m[3][0];
+  out->y = m[3][1];
+  new_var2 = 3;
+  out->z = m[new_var2][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", func_800FA8B8_TreasureDivers);
-#endif
 
 /* Named: KMC as's li.d literals pool apart from an asm unit's .double (8 bytes appear after it). */
 const f64 D_800FE680_TreasureDivers __attribute__((section(".rodata"))) = -48.0;
