@@ -232,33 +232,31 @@ void func_800FC9A8_SlotMachine(unk2C0C0Struct50* part) {
     MtxRotate(part->unk_64, part->unk_44.x, part->unk_44.y, part->unk_44.z);
     MtxScale(part->unk_64, part->unk_50.x, part->unk_50.y, part->unk_50.z);
 }
-// operand order of one addu (cam + index vs index + cam), twice (masked 0)
-#ifdef NON_MATCHING
-void func_800FCA34_SlotMachine(s16 camera, Vec3f* pos, f32* out) {
-    f32 v[3];
-    Matrix4f mtx;
-    f32 (*m)[4];
-    unk_Struct00* cam;
-    f32 t;
-    f32 d;
-
-    cam = &D_800C3110[camera];
-    m = mtx;
-    HuGuLookAtF(m, cam->pos.x, cam->pos.y, cam->pos.z, cam->unkC.x, cam->unkC.y, cam->unkC.z, cam->unk18.x,
-                cam->unk18.y, cam->unk18.z);
-    func_800FCBFC_SlotMachine(m, pos->x, pos->y, pos->z, v);
-    t = func_800AEAC0(cam->unk_40 * 0.5);
-    t /= func_800AEFD0(cam->unk_40 * 0.5);
-    d = t * v[2];
-    if (d < 0.0f) {
-        d = -d;
-    }
-    out[0] = ((unk_Struct00*)(D_800F3FA8 * 16 + (u8*)cam))->unk58 / 4.0 * v[0] / d * 0.75;
-    out[1] = ((unk_Struct00*)(D_800F3FA8 * 16 + (u8*)cam))->unk5A / 4.0 * -v[1] / d;
+// decomp-permuter
+void func_800FCA34_SlotMachine(s16 camera, Vec3f *pos, f32 *out)
+{
+  short new_var;
+  f32 v[3];
+  Matrix4f mtx;
+  f32 (*m)[4];
+  unk_Struct00 *cam;
+  f32 t;
+  f32 d;
+  cam = &D_800C3110[camera];
+  m = mtx;
+  HuGuLookAtF(m, cam->pos.x, cam->pos.y, cam->pos.z, cam->unkC.x, cam->unkC.y, cam->unkC.z, cam->unk18.x, cam->unk18.y, cam->unk18.z);
+  func_800FCBFC_SlotMachine(m, pos->x, pos->y, pos->z, v);
+  t = func_800AEAC0(cam->unk_40 * 0.5);
+  t = t / func_800AEFD0(cam->unk_40 * 0.5);
+  d = t * v[2];
+  if (d < 0.0f)
+  {
+    d = -d;
+  }
+  new_var = 16;
+  out[0] = (((((unk_Struct00 *) ((D_800F3FA8 * new_var) + ((u8 *) cam)))->unk58 / 4.0) * v[0]) / d) * 0.75;
+  out[1] = ((((unk_Struct00 *) ((D_800F3FA8 * new_var) + ((u8 *) cam)))->unk5A / 4.0) * (-v[1])) / d;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_SlotMachine/E5DA0", func_800FCA34_SlotMachine);
-#endif
 void func_800FCBFC_SlotMachine(Matrix4f m, f32 x, f32 y, f32 z, f32* out) {
     *out++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
     *out++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
