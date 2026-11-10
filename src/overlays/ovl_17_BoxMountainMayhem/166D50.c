@@ -59,8 +59,6 @@ void func_800F719C_BoxMountainMayhem(omObjData* obj) {
     obj->func_ptr = func_800F79F4_BoxMountainMayhem;
 }
 
-// shadow model sign-extension and register choice (masked 9)
-#ifdef NON_MATCHING
 void func_800F739C_BoxMountainMayhem(omObjData* obj, BMMBodyWork* work, BMMBoxExt* ext) {
     omObjData* player;
     f32 r;
@@ -71,8 +69,7 @@ void func_800F739C_BoxMountainMayhem(omObjData* obj, BMMBodyWork* work, BMMBoxEx
     f32 dy;
     f32 dz;
     f32 floor;
-    s32 model;
-    s32 pad[2]; /* retail's frame is 8 bytes larger */
+    s16 model;
 
     floor = 0.0f;
     x = obj->trans.x;
@@ -127,7 +124,7 @@ void func_800F739C_BoxMountainMayhem(omObjData* obj, BMMBodyWork* work, BMMBoxEx
     }
     model = obj->model[1];
     if ((model != 0) & (floor != -10000.0f)) {
-        func_80025798((s16)model, x, floor, z);
+        func_80025798(model, x, floor, z);
         if (fabs(y - floor) < 50.0) {
             func_80025830(model, 1.0f, 1.0f, 1.0f);
         } else {
@@ -141,9 +138,9 @@ void func_800F739C_BoxMountainMayhem(omObjData* obj, BMMBodyWork* work, BMMBoxEx
     player->trans.y = dy;
     player->trans.z = dz;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F739C_BoxMountainMayhem);
-#endif
+
+/* Unreferenced double after func_800F739C's literal in retail .rodata. */
+const f64 D_800FC0C8_BoxMountainMayhem = 0.0;
 
 // decomp-permuter
 void func_800F76F4_BoxMountainMayhem(f32 x, f32 y, f32 z, s32 count)
@@ -172,7 +169,8 @@ void func_800F76F4_BoxMountainMayhem(f32 x, f32 y, f32 z, s32 count)
 
 }
 
-// 0x88888889 hoisted out of the retry loop, float registers (masked 24)
+// 0x88888889 hoisted out of the retry loop, float registers (masked 24); a goto retry loop
+// hoists nothing (retail hoists 950.0f and the table base)
 #ifdef NON_MATCHING
 void func_800F77C8_BoxMountainMayhem(omObjData* obj) {
     BMMBodyWork* work;
@@ -342,11 +340,12 @@ void func_800F7C30_BoxMountainMayhem(Vec* pos, omObjData* player, s8 count) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F7C30_BoxMountainMayhem);
 #endif
 
-// n set in a temp and copied, scheduling (masked 18)
+// retail sets n in $a1 and copies it to $s2 before the shuffle; ours sets $s2 directly (one move;
+// chkf masked 21, the rest are NON_MATCHING data offsets); tried a ternary
 #ifdef NON_MATCHING
 void func_800F7E70_BoxMountainMayhem(void) {
-    s16* a;
-    s16* b;
+    s32 a;
+    s32 b;
     s16 t;
     s32 n;
     s32 i;
@@ -363,11 +362,11 @@ void func_800F7E70_BoxMountainMayhem(void) {
         D_800FC118_BoxMountainMayhem[i] = 3;
     }
     for (i = 32; i != 0; i--) {
-        a = &D_800FC118_BoxMountainMayhem[rand8() % n];
-        b = &D_800FC118_BoxMountainMayhem[rand8() % n];
-        t = *a;
-        *a = *b;
-        *b = t;
+        a = rand8() % n;
+        b = rand8() % n;
+        t = D_800FC118_BoxMountainMayhem[a];
+        D_800FC118_BoxMountainMayhem[a] = D_800FC118_BoxMountainMayhem[b];
+        D_800FC118_BoxMountainMayhem[b] = t;
     }
     D_800FC288_BoxMountainMayhem = 0;
     D_800FC110_BoxMountainMayhem = 0;
