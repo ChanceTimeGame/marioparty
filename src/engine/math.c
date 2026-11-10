@@ -228,8 +228,7 @@ void MtxRotateZ(Mat4 mtx, f32 angle) {
 }
 
 /* Unrelated? Animation Code? */
-// FPR allocation in the found/else branches (masked 0 when built with the blank-line-strip
-// assembly rule, which retail's nop layout needs)
+// FPR allocation in the found/else branches (masked 0)
 #ifdef NON_MATCHING
 // Piecewise-quadratic interpolation through four keys (y[], x[]) at time t.
 f32 func_80022D9C(f32* y, f32* x, f32 t) {
