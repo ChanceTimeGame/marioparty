@@ -232,9 +232,9 @@ extern s16 D_800FE6FC_TreasureDivers;
 extern s16 D_800FE6FE_TreasureDivers;
 extern s16 D_800FE700_TreasureDivers;
 extern s16 D_800FE702_TreasureDivers;
-extern u16 D_800FE704_TreasureDivers;
+extern s16 D_800FE704_TreasureDivers;
 extern TDWork* D_800FE708_TreasureDivers[10]; /* the free treasures */
-extern u16 D_800FE730_TreasureDivers;
+extern s16 D_800FE730_TreasureDivers;
 extern TDWork* D_800FE738_TreasureDivers[10]; /* the divers carrying one */
 extern s16 D_800FE760_TreasureDivers;
 extern omObjData* D_800FE764_TreasureDivers;

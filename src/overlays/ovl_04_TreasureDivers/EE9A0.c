@@ -1026,8 +1026,6 @@ void func_800F9BAC_TreasureDivers(s16 i) {
 }
 
 /* Lists the free treasures (D_800FE708) and the divers carrying one (D_800FE738). */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 s16 func_800F9CB0_TreasureDivers(void) {
     TDWork* w;
     s16 i;
@@ -1048,9 +1046,6 @@ s16 func_800F9CB0_TreasureDivers(void) {
     }
     return -(D_800FE704_TreasureDivers == 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F9CB0_TreasureDivers);
-#endif
 
 /* Whether the diver faces away (more than 90 degrees) from where its CPU wants to go. */
 // NON_MATCHING: register allocation / scheduling
