@@ -936,38 +936,40 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800F
 #endif
 
 /* A splash where the runner lands in the water; close to the plant it makes it lunge. */
-// NON_MATCHING: retail loads the plant pointer and struct address before PlaySound
-#ifdef NON_MATCHING
 void func_800FD4BC_PiranhasPursuit(f32 x, f32 y) {
     f32 dx;
     f32 px;
+    f32 reach;
+    PPPlant* plant;
+    omObjData* o;
 
     dx = x - D_801012D0_PiranhasPursuit;
     PlaySound(0x347);
+    plant = &D_80101150_PiranhasPursuit;
+    o = D_80101108_PiranhasPursuit;
     if (D_80101110_PiranhasPursuit->work[0] == 0) {
         D_80101110_PiranhasPursuit->work[0] = 15;
         D_80101140_PiranhasPursuit[0] = dx;
         D_80101144_PiranhasPursuit = y;
         D_80101148_PiranhasPursuit = 20.0f;
-        px = D_80101108_PiranhasPursuit->trans.x - D_801012D0_PiranhasPursuit;
-        if ((dx <= px + (f32)(3.0 - D_80101108_PiranhasPursuit->scale.x) * 200.0) & (px < dx)) {
-            if (D_8010114C_PiranhasPursuit == 0.0) {
-                D_8010114C_PiranhasPursuit = 1.0f;
-                if (D_80101150_PiranhasPursuit.unk1C <= 0.0) {
-                    D_80101150_PiranhasPursuit.unk1C = 400.0f;
+        px = o->trans.x;
+        px -= D_801012D0_PiranhasPursuit;
+        reach = 3.0 - o->scale.x;
+        if ((px + reach * 200.0 >= dx) & (px < dx)) {
+            if (D_80101140_PiranhasPursuit[3] == 0.0) {
+                D_80101140_PiranhasPursuit[3] = 1.0f;
+                if (plant->unk1C <= 0.0) {
+                    plant->unk1C = 400.0f;
                 } else {
-                    D_80101150_PiranhasPursuit.unk1C = D_80101150_PiranhasPursuit.unk1C + 400.0;
+                    plant->unk1C = plant->unk1C + 400.0;
                 }
-                if (D_80101150_PiranhasPursuit.unk1C > 600.0) {
-                    D_80101150_PiranhasPursuit.unk1C = 600.0f;
+                if (plant->unk1C > 600.0) {
+                    plant->unk1C = 600.0f;
                 }
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FD4BC_PiranhasPursuit);
-#endif
 
 void func_800FD674_PiranhasPursuit(void) {
     u16 i;
