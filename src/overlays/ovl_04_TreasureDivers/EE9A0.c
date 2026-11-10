@@ -142,8 +142,6 @@ void func_800F6B2C_TreasureDivers(omObjData* obj) {
 void func_800F6EBC_TreasureDivers(void);
 
 /* The game's flow: intro message, play (45 s), result. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F6B60_TreasureDivers(omObjData* obj) {
     switch (D_800FE6F2_TreasureDivers) {
         case 0:
@@ -161,7 +159,7 @@ void func_800F6B60_TreasureDivers(omObjData* obj) {
             break;
         case 2:
             if (D_800FE6F8_TreasureDivers == 0) {
-                if ((s16)(D_800FE704_TreasureDivers | D_800FE730_TreasureDivers) == 0) {
+                if (((s16)D_800FE704_TreasureDivers | (s16)D_800FE730_TreasureDivers) == 0) {
                     D_800FE6F8_TreasureDivers = 1;
                     D_800FE6F6_TreasureDivers = 1;
                     D_800FE6F0_TreasureDivers = 10;
@@ -232,9 +230,6 @@ void func_800F6B60_TreasureDivers(omObjData* obj) {
     }
     func_800F6EBC_TreasureDivers();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F6B60_TreasureDivers);
-#endif
 
 void func_800F6EBC_TreasureDivers(void) {
     if (D_800FE6F8_TreasureDivers < 0 && func_80072718() == 0) {
