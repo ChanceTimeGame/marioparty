@@ -911,7 +911,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F7E40_
 
 /* Input: 2 when A was pressed (a human), else the CPU's choice (0..3); -1 for a CPU between
    decisions. Pushes it into the input ring. */
-// NON_MATCHING: register allocation / scheduling
+// register allocation (masked 0, raw 3): $f0/$f2 swapped in the volume cvt.s.d/trunc.w.s; an s16 cast, h or a new f32 local do not fix it
 #ifdef NON_MATCHING
 s16 func_800F8CA0_LimboDance(omObjData* obj) {
     LDPlayer* p;

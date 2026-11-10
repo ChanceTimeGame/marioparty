@@ -1086,7 +1086,7 @@ void func_800F9224_FlowerShower(omObjData* arg0, s16* stickX, s16* stickY, s32* 
     *stickY = 0;
 }
 
-// multiply operand order (masked 0)
+// multiply operand order (masked 0, raw 2): v.x * r comes out r * v.x; r * v.x, px *= r and declaring r first do not fix it
 #ifdef NON_MATCHING
 void func_800F95F4_FlowerShower(omObjData* arg0) {
     s16 sx;
