@@ -766,8 +766,6 @@ void func_800F9290_TipsyTourney(omObjData* obj) {
     }
 }
 
-// address association: retail hoists D_800FB7B8 - 0x32 into a saved register and adds the tile offset to it (masked ~10, 2 instructions shorter)
-#ifdef NON_MATCHING
 void func_800F9454_TipsyTourney(omObjData* obj) {
     TipsyBgWork* work = obj->unk_50;
     u8 plat = work->unk_05;
@@ -779,7 +777,6 @@ void func_800F9454_TipsyTourney(omObjData* obj) {
     f32 fz;
     s16 cx;
     s16 cz;
-    s16* tile;
 
     for (i = 0; i < D_800EE984; i++) {
         ball = D_800EDE70[i];
@@ -800,9 +797,8 @@ void func_800F9454_TipsyTourney(omObjData* obj) {
             D_800FB880_TipsyTourney[bw->unk_5C].z = pos.z;
             if ((fx > 0.0f) & (fx < 1.0f)) {
                 if ((fz > 0.0f) & (fz < 1.0f)) {
-                    tile = &D_800FB7B8_TipsyTourney[work->unk_05 - 1][cz][cx];
-                    if (*tile == 0) {
-                        (*tile)++;
+                    if (D_800FB7B8_TipsyTourney[work->unk_05 - 1][cz][cx] == 0) {
+                        D_800FB7B8_TipsyTourney[work->unk_05 - 1][cz][cx]++;
                         PlaySound(0x2B7);
                     }
                 }
@@ -810,9 +806,6 @@ void func_800F9454_TipsyTourney(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_TipsyTourney/1A4EB0", func_800F9454_TipsyTourney);
-#endif
 
 void func_800F9718_TipsyTourney(omObjData* obj) {
     TipsyBgWork* work = obj->unk_50;
