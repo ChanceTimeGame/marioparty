@@ -1399,38 +1399,39 @@ void func_800F8B48_LuigisEngineRoom(void) {
     SetNextChainAndSpace(-1, 8, 1);
 }
 
-// register allocation: retail copies the coin amount into a second callee-saved register before the coin calls (one extra move; masked 1)
-#ifdef NON_MATCHING
-void func_800F8B6C_LuigisEngineRoom(void) {
-    s16 player;
-    s16 win;
-    s32 coins;
-
-    player = GetCurrentPlayerIndex();
-    func_800405DC(player);
-    SetPlayerAnimation(-1, -1, 2);
-    if (_CheckFlag(0x42) == 0) {
-        win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-        LoadStringIntoWindow(win, (void*)0x239, -1, -1);
-        coins = 10;
-    } else {
-        win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-        LoadStringIntoWindow(win, (void*)0x23A, -1, -1);
-        coins = 20;
-    }
-    func_8006E070(win, 0);
-    ShowTextWindow(win);
-    PlaySound(0x432);
-    func_8004DBD4(win, player);
-    HideTextWindow(win);
-    func_80055960(player, coins);
-    ShowPlayerCoinChange(player, coins);
-    HuPrcSleep(30);
-    func_8003FEFC(player);
+// decomp-permuter
+void func_800F8B6C_LuigisEngineRoom(void)
+{
+  short new_var;
+  s16 player;
+  s16 win;
+  s32 coins;
+  player = GetCurrentPlayerIndex();
+  func_800405DC(player);
+  SetPlayerAnimation(-1, -1, 2);
+  if (_CheckFlag(0x42) == 0)
+  {
+    win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
+    LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
+    coins = 10;
+  }
+  else
+  {
+    win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
+    LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
+    coins = 20;
+  }
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
+  PlaySound(0x432);
+  func_8004DBD4(win, player);
+  new_var = coins;
+  HideTextWindow(win);
+  func_80055960(player, new_var);
+  ShowPlayerCoinChange(player, new_var);
+  HuPrcSleep(30);
+  func_8003FEFC(player);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_LuigisEngineRoom/24C3C0", func_800F8B6C_LuigisEngineRoom);
-#endif
 
 void func_800F8CA0_LuigisEngineRoom(void) {
     GwCommon.boardWork[31]++;
