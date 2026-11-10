@@ -293,7 +293,7 @@ void func_800FDEC0_HandcarHavoc(u16 sprite, HHScroll* s, f32 u, f32 v);
 void func_800FE004_HandcarHavoc(HHScroll* s);
 void func_800FE8D4_HandcarHavoc(s32 team);
 void func_800FEB4C_HandcarHavoc(s32 team, s32 i, s32 buf);
-s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, s32 wheel);
+s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, u16 wheel);
 void func_800FF0AC_HandcarHavoc(HHCar* w);
 
 /* .data */

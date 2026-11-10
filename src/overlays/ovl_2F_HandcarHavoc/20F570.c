@@ -1965,8 +1965,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FC85
 #endif
 
 /* Sparks from one side's wheels. */
-// NON_MATCHING: one u16 mask
-#ifdef NON_MATCHING
 void func_800FCA58_HandcarHavoc(omObjData* obj, u16 side) {
     Vec spot[2];
     HHCar* w;
@@ -1980,16 +1978,13 @@ void func_800FCA58_HandcarHavoc(omObjData* obj, u16 side) {
             mdl = func_800FECF4_HandcarHavoc(w->team, side, k);
             w->chips[side][k]++;
             if (mdl != -1) {
-                func_80025798(mdl, spot[k].x, spot[k].y, spot[k].z);
+                func_80025798(mdl, (spot + k)->x, (spot + k)->y, (spot + k)->z);
                 func_8009ECB0(D_800F2B7C[mdl].unk7C, 0.0f, w->rot.y, 0.0f);
                 func_800257E4(mdl, w->rot.x, 0.0f, w->rot.z);
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FCA58_HandcarHavoc);
-#endif
 
 /* The car's marker and the riders' faces on the map. */
 // NON_MATCHING: sign extension of the map x

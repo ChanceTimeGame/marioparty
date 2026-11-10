@@ -457,7 +457,7 @@ void func_800FEB4C_HandcarHavoc(s32 team, s32 i, s32 buf) {
 /* Starts a spark burst at a wheel; returns its model, or -1 when all 12 are in use. */
 // NON_MATCHING: spark struct addressed from a different base
 #ifdef NON_MATCHING
-s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, s32 wheel) {
+s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, u16 wheel) {
     HHSparks* p;
     HHChip* c;
     f32 yaw;
