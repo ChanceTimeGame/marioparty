@@ -135,8 +135,6 @@ void func_800F6C78_PiranhasPursuit(f32 x) {
 }
 
 /* The camera: the intro pans along the course, then it follows the scroll. */
-// NON_MATCHING: retail passes the camera timer's low half with lh to a u16 parameter (masked 2)
-#ifdef NON_MATCHING
 void func_800F6C84_PiranhasPursuit(omObjData* obj) {
     omObjData* solo;
 
@@ -161,12 +159,12 @@ void func_800F6C84_PiranhasPursuit(omObjData* obj) {
         case 2:
             D_80100224_PiranhasPursuit = 0x80;
             break;
-        case 3:
         case 4:
         case 5:
             if (D_80100224_PiranhasPursuit != 0) {
                 D_80100224_PiranhasPursuit--;
             }
+        case 3:
             if (D_801001F0_PiranhasPursuit == 3) {
                 D_80100220_PiranhasPursuit = func_8009B618(D_80100220_PiranhasPursuit + 2.0, 360.0);
             }
@@ -209,9 +207,6 @@ void func_800F6C84_PiranhasPursuit(omObjData* obj) {
         D_801001FC_PiranhasPursuit - (func_800AEAC0(D_80100220_PiranhasPursuit) * 1.25 + 3.0) * 100.0;
     func_800F9F4C_PiranhasPursuit(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/222320", func_800F6C84_PiranhasPursuit);
-#endif
 
 void func_800F70D0_PiranhasPursuit(omObjData* obj) {
     func_800F9CBC_PiranhasPursuit(obj, &D_80100CE0_PiranhasPursuit[0]);
@@ -1022,7 +1017,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/222320", func_800F
 #endif
 
 /* A watcher: CPU input, and keeps the watchers in place while the course scrolls. */
-// NON_MATCHING: register allocation (flags kept in a0)
+// NON_MATCHING: register allocation: retail keeps flags in a0 and copies it to s3 in the first branch delay slot (masked 1, raw 12 in the matching unit; nested if tried)
 #ifdef NON_MATCHING
 void func_800F9854_PiranhasPursuit(omObjData* obj) {
     PPWork* w;
@@ -1149,7 +1144,7 @@ void func_800F9D78_PiranhasPursuit(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32
     D_801010C0_PiranhasPursuit.z = cz;
 }
 
-void func_800F9E00_PiranhasPursuit(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, u16 frames) {
+void func_800F9E00_PiranhasPursuit(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, s16 frames) {
     D_801010F4_PiranhasPursuit = zoom;
     D_801010CC_PiranhasPursuit.x = cx;
     D_801010CC_PiranhasPursuit.y = cy;
