@@ -1025,7 +1025,7 @@ void func_800F9724_RunningOfTheBulb(omObjData* arg0) {
     D_800EDE70[D_800EE984++] = arg0;
     arg0->func_ptr = &func_800F9C2C_RunningOfTheBulb;
 }
-// mul.s operand order (masked 0)
+// mul.s operand order in s * dist (raw 1, masked 0); tried inline call both orders, *= then += (M1c)
 #ifdef NON_MATCHING
 void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* ext;

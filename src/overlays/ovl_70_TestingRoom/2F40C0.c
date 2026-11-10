@@ -369,13 +369,12 @@ void func_800F7C38_TestingRoom(omObjData* arg0) {
     func_800F77BC_TestingRoom(arg0, 0xA, 1.0f, 180.0f, 0, 0x96);
 }
 
-// register allocation (s1/s2 swapped; masked 0)
-#ifdef NON_MATCHING
 void func_800F7C68_TestingRoom(omObjData* arg0, f32 dx, f32 dz) {
     f32 rot;
     unkGlobalStruct_02* g;
     omObjData* obj;
     TRWork* w;
+    TRWork* w2;
     s16 i;
     f32 x, z, dist, angle;
 
@@ -397,21 +396,18 @@ void func_800F7C68_TestingRoom(omObjData* arg0, f32 dx, f32 dz) {
     }
     for (i = 0; i < D_800EE984; i++) {
         obj = D_800EDE70[i];
-        w = obj->unk_50;
-        if (w->unk_53 == g->unk_05) {
+        w2 = obj->unk_50;
+        if (w2->unk_53 == g->unk_05) {
             x = obj->trans.x - arg0->trans.x;
             z = obj->trans.z - arg0->trans.z;
             dist = func_800B1750(x * x + z * z);
             angle = func_800B0CD8(x, z) + rot;
             obj->trans.x = func_800AEAC0(angle) * dist + arg0->trans.x + dx;
             obj->trans.z = func_800AEFD0(angle) * dist + arg0->trans.z + dz;
-            w->unk_3C = rot + w->unk_3C;
+            w2->unk_3C = rot + w2->unk_3C;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_TestingRoom/2F40C0", func_800F7C68_TestingRoom);
-#endif
 
 void func_800F7EBC_TestingRoom(omObjData* arg0) {
     func_800F7C68_TestingRoom(arg0, 0.0f, 0.0f);
