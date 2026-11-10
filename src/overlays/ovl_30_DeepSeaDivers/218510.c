@@ -2399,7 +2399,6 @@ void func_800FEA00_DeepSeaDivers(omObjData* obj) {
     }
     D_80100C50_DeepSeaDivers = 0;
 }
-#ifdef NON_MATCHING
 void func_800FEAC4_DeepSeaDivers(s16 idx, s16 dir) {
     if (dir != 0) {
         D_801006D8_DeepSeaDivers[idx].pos.x = 2990.0f;
@@ -2416,9 +2415,6 @@ void func_800FEAC4_DeepSeaDivers(s16 idx, s16 dir) {
     D_80100C54_DeepSeaDivers[idx] = (f32)(((u32)(func_800FC1F4_DeepSeaDivers() * 3) >> 16) + 5) / 10.0f * 1.5;
     D_801006D8_DeepSeaDivers[idx].pos.z = -50.0 - D_80100C54_DeepSeaDivers[idx] * 50.0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FEAC4_DeepSeaDivers);
-#endif
 void func_800FED88_DeepSeaDivers(omObjData* obj, s16 idx) {
     s16 j;
 
