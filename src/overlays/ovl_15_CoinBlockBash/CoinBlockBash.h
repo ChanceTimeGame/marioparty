@@ -339,7 +339,7 @@ f32 func_800FE284_CoinBlockBash(Vec* pos);
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out);
 void func_800FE650_CoinBlockBash(void);
 s16 func_800FF904_CoinBlockBash(omObjData* obj, s32 arg, CBBCoin* c);
-void func_800FFD78_CoinBlockBash(CBBDrop* d, omObjData* obj);
+s32 func_800FFD78_CoinBlockBash(CBBDrop* d, omObjData* obj);
 void func_800FEE04_CoinBlockBash(void);
 void func_800FFBA8_CoinBlockBash(void);
 s16 func_800FFD60_CoinBlockBash(void);
