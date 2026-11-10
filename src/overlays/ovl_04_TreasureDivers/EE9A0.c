@@ -970,7 +970,7 @@ void func_800F9728_TreasureDivers(s16 i) {
 }
 
 /* A coin jumping out of a treasure. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING: one instruction (masked 1): unk18 / 2 ends srl where retail keeps sra; tried chained store, /=
 #ifdef NON_MATCHING
 void func_800F98B8_TreasureDivers(s16 i) {
     f32 x0;
