@@ -507,39 +507,38 @@ void func_800F74A0_PeachsBirthdayCake(void) {
     SetNextChainAndSpace(-1, 1, 1);
 }
 
-// register allocation: retail derives the s16 window id from v0, not from the saved copy (masked 0)
-#ifdef NON_MATCHING
-void func_800F74C4_PeachsBirthdayCake(void) {
-    s16 player;
-    s32 win;
-    s32 coins;
-
-    player = GetCurrentPlayerIndex();
-    func_800405DC(player);
-    SetPlayerAnimation(-1, -1, 2);
-    if (_CheckFlag(0x42) == 0) {
-        win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-        LoadStringIntoWindow((s16)win, (void*)0x239, -1, -1);
-        coins = 10;
-    } else {
-        win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-        LoadStringIntoWindow((s16)win, (void*)0x23A, -1, -1);
-        coins = 20;
-    }
-    func_8006E070((s16)win, 0);
-    ShowTextWindow((s16)win);
-    PlaySound(0x432);
-    func_8004DBD4((s16)win, player);
-    HideTextWindow((s16)win);
-    win = coins; /* retail reuses the window's register for the amount */
-    func_80055960(player, win);
-    ShowPlayerCoinChange(player, win);
-    HuPrcSleep(30);
-    func_8003FEFC(player);
+// decomp-permuter
+void func_800F74C4_PeachsBirthdayCake(void)
+{
+  s16 player;
+  unsigned short win;
+  s32 coins;
+  player = GetCurrentPlayerIndex();
+  func_800405DC(player);
+  SetPlayerAnimation(-1, -1, 2);
+  if (_CheckFlag(0x42) == 0)
+  {
+    win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
+    LoadStringIntoWindow((s16) win, (void *) 0x239, -1, -1);
+    coins = 10;
+  }
+  else
+  {
+    win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
+    LoadStringIntoWindow((s16) win, (void *) 0x23A, -1, -1);
+    coins = 20;
+  }
+  func_8006E070((s16) win, 0);
+  ShowTextWindow((s16) win);
+  PlaySound(0x432);
+  func_8004DBD4((s16) win, player);
+  HideTextWindow((s16) win);
+  win = coins;
+  func_80055960(player, win);
+  ShowPlayerCoinChange(player, win);
+  HuPrcSleep(30);
+  func_8003FEFC(player);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_PeachsBirthdayCake/2455F0", func_800F74C4_PeachsBirthdayCake);
-#endif
 
 void func_800F75F8_PeachsBirthdayCake(void) {
     GwCommon.boardWork[31]++;
