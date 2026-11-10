@@ -842,73 +842,95 @@ void func_800F7DB4_StaffScene(StaffModel* m) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F7DB4_StaffScene);
 #endif
-// register allocation only (masked 0)
-#ifdef NON_MATCHING
-void func_800F7F54_StaffScene(void) {
-    s32 t;
-    Vec3f* p;
-    StaffSparkle* s;
-    StaffModel* m;
-    StaffCtl* ctl;
+// decomp-permuter
+void func_800F7F54_StaffScene(void)
+{
+  s32 t;
+  Vec3f *p;
+  StaffSparkle *s;
+  StaffModel *m;
+  StaffCtl *ctl;
+  ctl = HuPrcCurrentGet()->user_data;
+  m = func_800FC998_StaffScene();
+  m->pos = D_800FD36C_StaffScene;
+  m->rot.y = 180.0f;
+  s = func_800FD0F0_StaffScene(m, 0);
+  s->cmd = 4;
+  ctl->stat = 0;
+  while (1)
+  {
+    HuPrcVSleep();
+    if (ctl->cmd != 0)
+    {
+      ctl->stat = ctl->cmd;
+      ctl->cmd = 0;
+    }
+    if (ctl->stat == 1)
+    {
+      break;
+    }
+    switch (ctl->stat)
+    {
+      case 0:
 
-    ctl = HuPrcCurrentGet()->user_data;
-    m = func_800FC998_StaffScene();
-    m->pos = D_800FD36C_StaffScene;
-    m->rot.y = 180.0f;
-    s = func_800FD0F0_StaffScene(m, 0);
-    s->cmd = 4;
-    ctl->stat = 0;
-    while (1) {
-        HuPrcVSleep();
-        if (ctl->cmd != 0) {
-            ctl->stat = ctl->cmd;
-            ctl->cmd = 0;
-        }
-        if (ctl->stat == 1) {
-            break;
-        }
-        switch (ctl->stat) {
-        case 0:
-        case 1:
-        case 2:
-            break;
-        case 4:
-            func_800F7C48_StaffScene(m);
-            s->cmd = 6;
-            ctl->stat = 3;
-            break;
-        case 5:
-            s->cmd = 7;
-            p = &m->pos;
-            t = 90;
-            ctl->stat = 6;
-        case 3:
-            func_800F758C_StaffScene(m, 0);
-            break;
-        case 6:
-            func_800F758C_StaffScene(m, 1);
-            if (t != 0) {
-                t--;
-                p->z -= 12.0f;
-                Center.z -= 12.0f;
-            } else {
-                PlaySound(0x4C);
-                func_800F7DB4_StaffScene(m);
-                ctl->stat = 7;
-            }
-            break;
-        }
+      case 1:
+
+      case 2:
+        break;
+
+      case 4:
+        func_800F7C48_StaffScene(m);
+        s->cmd = 6;
+        ctl->stat = 3;
+        break;
+
+      case 5:
+        s->cmd = 7;
+        p = &m->pos;
+        t = 90;
+        ctl->stat = 6;
+
+      case 3:
+        if (m)
+      {
+        func_800F758C_StaffScene(m, 0);
+        break;
+      }
+      else
+      {
+        func_800F758C_StaffScene(m, 0);
+        break;
+      }
+
+      case 6:
+        func_800F758C_StaffScene(m, 1);
+        if (t != 0)
+      {
+        t--;
+        p->z -= 12.0f;
+        Center.z -= 12.0f;
+      }
+      else
+      {
+        PlaySound(0x4C);
+        func_800F7DB4_StaffScene(m);
+        ctl->stat = 7;
+      }
+        break;
+
     }
-    func_800FD170_StaffScene(s);
-    func_800FCA8C_StaffScene(m);
-    ctl->stat = -1;
-    while (1) {
-        HuPrcVSleep();
-    }
+
+  }
+
+  func_800FD170_StaffScene(s);
+  func_800FCA8C_StaffScene(m);
+  ctl->stat = -1;
+  while (1)
+  {
+    HuPrcVSleep();
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F7F54_StaffScene);
-#endif
 void func_800F8128_StaffScene(void) {
     StaffCtl* ctl;
     void* file;
