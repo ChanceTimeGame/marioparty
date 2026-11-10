@@ -1104,14 +1104,15 @@ void func_800FA678_UnusedMinigame0(u8 src[8][6], u8 dst[8][6]) {
 }
 
 /* The direction of a neighbour of (x, z) that holds val, or -1. */
-// NON_MATCHING: branch layout of the neighbour test
-#ifdef NON_MATCHING
 s16 func_800FA6F8_UnusedMinigame0(u8 board[8][6], s16 x, s16 z, u8 val) {
-    s16 d;
+    s32 d;
     u32 nx;
     u32 nz;
 
-    if (val != 0 && !(val & 0x80)) {
+    if (val != 0) {
+        if (val & 0x80) {
+            return -1;
+        }
         for (d = 0; d < 4; d++) {
             nx = x + D_80102BE4_UnusedMinigame0[d][0];
             if (nx < 8) {
@@ -1124,32 +1125,32 @@ s16 func_800FA6F8_UnusedMinigame0(u8 board[8][6], s16 x, s16 z, u8 val) {
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA6F8_UnusedMinigame0);
-#endif
 
 /* Walks the piece at (x, z) (marking it) and returns a random other cell of it in (x, z). */
-// NON_MATCHING: branch layout of the stack pop
-#ifdef NON_MATCHING
 void func_800FA7A8_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     u8 stack[48][2];
     u8 cells[48][2];
     u8 val = board[*x][*z];
     s16 n = 0;
-    s16 sp = 1;
+    s16 sp;
     u16 cx;
     u16 cz;
     s16 d;
-    u8* c;
 
     stack[0][0] = *x;
     stack[0][1] = *z;
+    sp = 1;
     cx = *x;
     cz = *z;
     do {
         board[(s16)cx][(s16)cz] |= 0x80;
         d = func_800FA6F8_UnusedMinigame0(board, cx, cz, val);
-        if (d >= 0) {
+        if (d < 0) {
+            if (--sp >= 0) {
+                cx = stack[sp][0];
+                cz = stack[sp][1];
+            }
+        } else {
             cx += D_80102BE4_UnusedMinigame0[d][0];
             cz += D_80102BE4_UnusedMinigame0[d][1];
             stack[sp][0] = cx;
@@ -1158,18 +1159,12 @@ void func_800FA7A8_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
             cells[n][0] = cx;
             cells[n][1] = cz;
             n++;
-        } else if (--sp >= 0) {
-            cx = stack[sp][0];
-            cz = stack[sp][1];
         }
     } while (sp >= 0);
-    c = cells[(s32)(func_800FB6FC_UnusedMinigame0() * n) >> 16];
-    *x = c[0];
-    *z = c[1];
+    d = (s32)(func_800FB6FC_UnusedMinigame0() * n) >> 16;
+    *x = cells[d][0];
+    *z = cells[d][1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA7A8_UnusedMinigame0);
-#endif
 
 void func_800FA968_UnusedMinigame0(u8 board[8][6]) {
     UM0State* s;
