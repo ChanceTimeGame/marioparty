@@ -41,7 +41,9 @@ u8 D_800FCFD0_CrazyCutter[0x40] = {
     0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0xFF, 0xF0, 0x00,
 };
 
-// register allocation (masked 10)
+// register allocation: retail keeps i * 2 for the D_800FD588 store live across the call in a fifth
+// saved register (raw 32, masked 10; tried an s32 return for func_800FC024, D[i] = temp = call,
+// the call nested in func_800FC240's argument)
 #ifdef NON_MATCHING
 void func_800F65E0_CrazyCutter(void) {
     s32 i;
@@ -771,7 +773,8 @@ void func_800F8598_CrazyCutter(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F8598_CrazyCutter);
 #endif
-// loop shape (masked 14)
+// loop shape: retail has an unused 56-byte frame and the bound 10 in a register tested before the
+// loop (a local array or variable bound in the source); masked 14, not attempted further
 #ifdef NON_MATCHING
 s32 func_800F8F74_CrazyCutter(CrazyCutterPlayer* st, s16* cur) {
     s32 i;
@@ -1276,14 +1279,14 @@ void func_800FAACC_CrazyCutter(s32 arg0, s32 arg1, s32 arg2) {
         D_800FD4D8_CrazyCutter[arg0] = ~arg1 & D_800FD4D8_CrazyCutter[arg0];
     }
 }
-// f64 register allocation (masked 4)
+// register allocation: f0/f2 swapped around the f64 constants (raw 12, masked 0; tried goto tail,
+// f32 frac, direct returns)
 #ifdef NON_MATCHING
 f32 func_800FAB0C_CrazyCutter(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 base;
-    f64 frac;
+    f32 ret;
     s32 sign;
     s32 i;
 
@@ -1307,17 +1310,13 @@ f32 func_800FAB0C_CrazyCutter(f32 x) {
         sum = a / b;
     } while (i > 0);
     if (sign > 0) {
-        base = 1.5707963267948966;
-        frac = x / (sum + 1.0f);
-        goto done;
+        ret = 1.5707963267948966 - x / (sum + 1.0f);
+    } else if (sign >= 0) {
+        ret = x / (sum + 1.0f);
+    } else {
+        ret = -1.5707963267948966 - x / (sum + 1.0f);
     }
-    if (sign >= 0) {
-        return x / (sum + 1.0f);
-    }
-    frac = x / (sum + 1.0f);
-    base = -1.5707963267948966;
-done:
-    return base - frac;
+    return ret;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAB0C_CrazyCutter);
@@ -1385,12 +1384,14 @@ f32 func_800FAC38_CrazyCutter(s16* from, s16* to, s32 mode) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAC38_CrazyCutter);
 #endif
-// float registers; dead pitch compares folded (masked 70)
+// Control flow: retail keeps the dead pitch <= 0.002f / >= -0.002f tests that GCC drops here (as
+// func_800F9E98_HammerDrop; 205 vs 189 instructions, masked 42; tried wrap ternaries and Vec order,
+// both kept, and yaw = 0 after the pitch test)
 #ifdef NON_MATCHING
 f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
+    Vec3f delta;
     Vec3f fromV;
     Vec3f toV;
-    Vec3f delta;
     f32 horizontal;
     f32 pitch;
     f32 yaw;
@@ -1423,17 +1424,10 @@ f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
             yaw -= 180.0f;
         }
         pitch = func_800FAB0C_CrazyCutter(delta.y / horizontal) * 57.29577951308232;
-        if (yaw >= 360.0f) {
-            yaw -= 360.0f;
-        } else if (yaw < 0.0f) {
-            yaw += 360.0f;
-        }
-        pitch += 90.0f;
-        if (pitch >= 360.0f) {
-            pitch -= 360.0f;
-        } else if (pitch < 0.0f) {
-            pitch += 360.0f;
-        }
+        yaw = (yaw >= 360.0f) ? yaw - 360.0f : (yaw < 0.0f) ? yaw + 360.0f : yaw;
+        pitch = (pitch + 90.0f >= 360.0f) ? pitch + 90.0f - 360.0f
+              : (pitch + 90.0f < 0.0f)    ? pitch + 90.0f + 360.0f
+                                          : pitch + 90.0f;
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
@@ -1559,22 +1553,30 @@ void func_800FB778_CrazyCutter(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FB778_CrazyCutter);
 #endif
-// loop shape and float registers (masked 54)
+// scheduling: retail loads cur[0] and cur[1] before the grid row pointer (raw 4, masked 4; tried
+// cur[0] + cur[1] * w)
 #ifdef NON_MATCHING
 s32 func_800FB944_CrazyCutter(CrazyCutterPlayer* st) {
     Vec3f pos;
     s16 cur[2];
     f32 d;
+    f32 x;
+    f32 z;
 
     if (func_800FAAB0_CrazyCutter(st->player, 0x8000) == 0) {
+        return 0;
     }
     D_800FD148_CrazyCutter = 0;
     for (d = 0.0f; d <= D_800FD53C_CrazyCutter; d += 0.5f) {
-        pos.x = d * func_800AEAC0(st->angle) + st->prevX + D_800FCCF0_CrazyCutter[st->player] - 8.0f;
+        x = d * func_800AEAC0(st->angle);
+        z = d * func_800AEFD0(st->angle);
+        x += st->prevX;
+        z += st->prevZ;
+        pos.x = x + D_800FCCF0_CrazyCutter[st->player] - 8.0f;
         pos.y = st->y + 10.0f;
-        pos.z = d * func_800AEFD0(st->angle) + st->prevZ + D_800FCD00_CrazyCutter[st->player] - 8.0f;
+        pos.z = z + D_800FCD00_CrazyCutter[st->player] - 8.0f;
         func_800F9694_CrazyCutter(&pos, cur, st->player);
-        if (D_800FD4A0_CrazyCutter[st->player][cur[1] * D_800FD498_CrazyCutter + cur[0]] != 0) {
+        if ((D_800FD4A0_CrazyCutter[st->player] + cur[1] * D_800FD498_CrazyCutter)[cur[0]] != 0) {
             D_800FD148_CrazyCutter = 1;
             break;
         }
@@ -1716,8 +1718,6 @@ void func_800FC240_CrazyCutter(s16 arg0) {
 }
 
 
-// s16 temporaries re-extended in retail (masked 4)
-#ifdef NON_MATCHING
 void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
     s16 hundreds;
     s16 tens;
@@ -1737,7 +1737,7 @@ void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
         tens = value / 10;
         func_800672DC(grp, 1, tens, 0);
         func_800672B0(grp, 1, 1);
-        value %= 10;
+        value -= tens * 10;
     } else {
         func_800674BC(grp, 1, 0x8000);
     }
@@ -1746,9 +1746,6 @@ void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
     func_800672B0(grp, 2, 1);
     func_80067480(grp, 3, 0x8000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FC29C_CrazyCutter);
-#endif
 void func_800FC45C_CrazyCutter(s16 arg0, s16 arg1) {
     s16 i = 0;
     

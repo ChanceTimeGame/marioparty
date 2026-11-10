@@ -177,8 +177,6 @@ void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6AF8_HammerDrop);
 #endif
 
-// Logic-equivalent player update state machine; register allocation differs.
-#ifdef NON_MATCHING
 void func_800F6F9C_HammerDrop(omObjData* arg0) {
     unkGlobalStruct_00* work = arg0->unk_50;
     HammerDropPlayerState* state = (HammerDropPlayerState*) work->unk_E4;
@@ -239,9 +237,6 @@ void func_800F6F9C_HammerDrop(omObjData* arg0) {
         work->unk_50 |= 0x200;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F6F9C_HammerDrop);
-#endif
 
 void func_800F736C_HammerDrop(omObjData* arg0) {
     unkGlobalStruct_00* work = arg0->unk_50;
@@ -484,7 +479,8 @@ void func_800F7D28_HammerDrop(void) {
     D_800FB980_HammerDrop = 0;
 }
 
-// The compiler-owned jump table duplicates the still-assembly data table (masked 2).
+// Referent: the C switch table duplicates jtbl_800FB608 (17E710_data.c) and shifts the bss (masked 2);
+// matches only once 17E710.c owns its .rodata (17E710_tail.c).
 #ifdef NON_MATCHING
 void func_800F7D64_HammerDrop(void) {
     switch (D_800FB980_HammerDrop) {
@@ -598,12 +594,9 @@ void func_800F8080_HammerDrop(void) {
     D_800FB988_HammerDrop++;
 }
 
-// Register allocation only after retaining both flag-array bases (masked 2).
-#ifdef NON_MATCHING
 void func_800F813C_HammerDrop(omObjData* arg0) {
     omObjData* obj = arg0;
     s32* timer = obj->unk_50;
-    s32* flagBase;
     s32* flags;
     s32 readyCount;
     s32 i;
@@ -623,14 +616,12 @@ void func_800F813C_HammerDrop(omObjData* arg0) {
                 obj->func_ptr = func_800F84A0_HammerDrop;
             }
         } else {
-            flagBase = D_800FB6B0_HammerDrop;
             for (i = 0; i < 4; i++) {
-                readyCount += func_800F9E68_HammerDrop(flagBase[i], 2);
+                readyCount += func_800F9E68_HammerDrop(D_800FB6B0_HammerDrop[i], 2);
             }
             if (readyCount != D_800FB6C4_HammerDrop) {
-                timer = D_800FB6B0_HammerDrop;
                 for (i = 0; i < 4; i++) {
-                    flags = &timer[i];
+                    flags = &D_800FB6B0_HammerDrop[i];
                     if ((func_800F9E68_HammerDrop(*flags, 1) == 0) &&
                         (func_800F9E68_HammerDrop(*flags, 0x400) == 0) &&
                         (func_800F9E68_HammerDrop(*flags, 0x200) == 0)) {
@@ -645,9 +636,6 @@ void func_800F813C_HammerDrop(omObjData* arg0) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F813C_HammerDrop);
-#endif
 
 // decomp-permuter
 void func_800F82E0_HammerDrop(void)
@@ -948,29 +936,25 @@ update_shadow:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F896C_HammerDrop);
 #endif
 
-// Two register/scheduling differences; the retry count increment moves before the second test (masked 2).
-#ifdef NON_MATCHING
 void func_800F9228_HammerDrop(void) {
     omObjData* item;
     s32 attempts = 0;
-    s32 roll;
     s32 choice;
 
     while (1) {
-        roll = (rand8() & 0xFF) % 40;
-        if (roll < 21) {
+        choice = (rand8() & 0xFF) % 40;
+        if (choice < 21) {
             choice = 0;
+        } else if (choice < 30) {
+            choice = 1;
         } else {
             choice = 2;
-            if (roll < 30) {
-                choice = 1;
-            }
         }
         item = D_800EDE70[choice];
         if (func_800F9E68_HammerDrop(HAMMER_ITEM_WORK(item)->item->unk_44, 1) != 0) {
             item = D_800EDE70[choice + 3];
-            attempts++;
             if (func_800F9E68_HammerDrop(HAMMER_ITEM_WORK(item)->item->unk_44, 1) != 0) {
+                attempts++;
                 if (attempts > 0xFFFE) {
                     osSyncPrintf(D_800FB620_HammerDrop);
                     while (1) {}
@@ -982,9 +966,6 @@ void func_800F9228_HammerDrop(void) {
     }
     func_800F95E8_HammerDrop(item);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9228_HammerDrop);
-#endif
 
 // Logic-equivalent item construction; retail copies the two data tables to packed stack locals.
 #ifdef NON_MATCHING
@@ -1241,12 +1222,14 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
     }
 }
 
-// Logic-equivalent spherical displacement conversion; stack/register allocation differs.
+// Logic-equivalent spherical displacement conversion. Control flow: retail keeps the dead
+// pitch <= 0.002f / >= -0.002f tests that GCC drops here (190 vs 174 instructions, masked 36; tried
+// wrap ternaries and Vec order, both kept, and an if/else pitch chain)
 #ifdef NON_MATCHING
 void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
+    Vec delta;
     Vec fromCopy;
     Vec toCopy;
-    Vec delta;
     f32 horizontal;
     f32 pitch;
     f32 yaw;
@@ -1279,17 +1262,10 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
             yaw -= 180.0f;
         }
         pitch = (f32) ((f64) func_800FA1AC_HammerDrop(delta.y / horizontal) * D_800FB658_HammerDrop);
-        if (yaw >= 360.0f) {
-            yaw -= 360.0f;
-        } else if (yaw < 0.0f) {
-            yaw += 360.0f;
-        }
-        pitch += 90.0f;
-        if (pitch >= 360.0f) {
-            pitch -= 360.0f;
-        } else if (pitch < 0.0f) {
-            pitch += 360.0f;
-        }
+        yaw = (yaw >= 360.0f) ? yaw - 360.0f : (yaw < 0.0f) ? yaw + 360.0f : yaw;
+        pitch = (pitch + 90.0f >= 360.0f) ? pitch + 90.0f - 360.0f
+              : (pitch + 90.0f < 0.0f)    ? pitch + 90.0f + 360.0f
+                                          : pitch + 90.0f;
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
@@ -1301,15 +1277,15 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E98_HammerDrop);
 #endif
 
-// Logic-equivalent arctangent continued fraction; register allocation remains.
+// Logic-equivalent arctangent continued fraction; twin of func_800FAB0C_CrazyCutter: f0/f2 swapped
+// around the f64 constants (raw 12, masked 0)
 #ifdef NON_MATCHING
 f32 func_800FA1AC_HammerDrop(f32 arg0) {
     f32 temp_f0;
     f32 temp_f2;
     f32 var_f12;
     f32 var_f4;
-    f64 var_f0;
-    f64 var_f2;
+    f32 ret;
     s32 var_a0;
     s32 var_v1;
 
@@ -1334,17 +1310,13 @@ f32 func_800FA1AC_HammerDrop(f32 arg0) {
         var_f4 = temp_f2 / temp_f0;
     } while (var_v1 > 0);
     if (var_a0 > 0) {
-        var_f0 = D_800FB660_HammerDrop;
-        var_f2 = (f64) (var_f12 / (var_f4 + 1.0f));
-        goto done;
+        ret = D_800FB660_HammerDrop - var_f12 / (var_f4 + 1.0f);
+    } else if (var_a0 >= 0) {
+        ret = var_f12 / (var_f4 + 1.0f);
+    } else {
+        ret = D_800FB668_HammerDrop - var_f12 / (var_f4 + 1.0f);
     }
-    if (var_a0 >= 0) {
-        return var_f12 / (var_f4 + 1.0f);
-    }
-    var_f2 = (f64) (var_f12 / (var_f4 + 1.0f));
-    var_f0 = D_800FB668_HammerDrop;
-done:
-    return (f32) (var_f0 - var_f2);
+    return ret;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA1AC_HammerDrop);

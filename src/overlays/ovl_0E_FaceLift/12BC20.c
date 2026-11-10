@@ -102,7 +102,8 @@ Gfx D_800FC870_FaceLift[] = {
     gsSPEndDisplayList(),
 };
 
-// register allocation (two hoisted table bases)
+// register allocation: hoisted table bases and the D_800FC9FA store address (raw 23, masked 2; tried
+// struct indexing, an s16 view, a separate store statement)
 #ifdef NON_MATCHING
 void func_800F65E0_FaceLift(void) {
     omObjData* obj;
@@ -443,13 +444,12 @@ void func_800F7444_FaceLift(s16 player, FaceLiftWork* w) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F7444_FaceLift);
 #endif
-// register allocation (trg/btn swapped)
+// register allocation: trg/btn get s3/s4 swapped (raw 6, masked 0; tried separate zero stores)
 #ifdef NON_MATCHING
 void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg, u16* btn) {
     f32 dx;
     f32 dy;
     f32 d;
-    f32 s;
 
     *trg = *btn = 0;
     switch (w->cpuState) {
@@ -469,9 +469,8 @@ void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg,
             w->cpuState = 1;
             *trg = 0x8000;
         } else {
-            s = 4.0f / d;
-            stick->x = s * dx;
-            stick->y = s * dy;
+            stick->x = (4.0f / d) * dx;
+            stick->y = (4.0f / d) * dy;
         }
         return;
     case 1:
@@ -489,9 +488,8 @@ void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg,
             }
             w->cpuTimer = ((rand8() & 0xFF) >> 3) + 10;
         } else {
-            s = 0.8f / d;
-            stick->x = s * dx;
-            stick->y = s * dy;
+            stick->x = (0.8f / d) * dx;
+            stick->y = (0.8f / d) * dy;
         }
         *btn = 0x8000;
         return;
@@ -696,12 +694,11 @@ void func_800F86AC_FaceLift(omObjData* obj) {
 const char D_800FC940_FaceLift[] = "\x82\x76\x82\x68\x82\x6D";
 const char D_800FC948_FaceLift[] = "\x82\x6B\x82\x6E\x82\x72\x82\x64";
 
-// register allocation (GMesCreate result)
-#ifdef NON_MATCHING
 void func_800F8A98_FaceLift(omObjData* obj) {
     s16 i;
     s16 j;
     u16 t;
+    s16 mes;
 
     if (D_800FC964_FaceLift > 0) {
         if (--D_800FC964_FaceLift == 0) {
@@ -715,10 +712,11 @@ void func_800F8A98_FaceLift(omObjData* obj) {
             } else {
                 for (i = 0; i < 4; i++) {
                     if (D_800FC9CA_FaceLift[i] != 0) {
-                        GMesMaxTimeGet(GMesCreate(6, D_800FC940_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0), 32000);
+                        mes = GMesCreate(6, D_800FC940_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0);
                     } else {
-                        GMesMaxTimeGet(GMesCreate(6, D_800FC948_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0), 32000);
+                        mes = GMesCreate(6, D_800FC948_FaceLift, (i & 1) * 160 + 80, ((i >> 1) & 1) * 120 + 70, 1.0, 1.0, 0);
                     }
+                    GMesMaxTimeGet(mes, 32000);
                 }
             }
             t = (D_800FCA0A_FaceLift == 0) ? 60 : 0;
@@ -726,10 +724,10 @@ void func_800F8A98_FaceLift(omObjData* obj) {
                 D_800FC9F8_FaceLift = t + 60;
             } else if (D_800FC9C8_FaceLift == 1) {
                 D_800FC9F8_FaceLift = t + 60;
-            } else if (D_800FC9C8_FaceLift != 0) {
-                D_800FC9F8_FaceLift = t + 50;
-            } else {
+            } else if (D_800FC9C8_FaceLift == 0) {
                 D_800FC9F8_FaceLift = t / 2 + 30;
+            } else {
+                D_800FC9F8_FaceLift = t + 50;
             }
             D_800FC962_FaceLift = 5;
             obj->func_ptr = func_800F8CE0_FaceLift;
@@ -737,9 +735,6 @@ void func_800F8A98_FaceLift(omObjData* obj) {
         D_800FC3D2_FaceLift = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F8A98_FaceLift);
-#endif
 void func_800F8CE0_FaceLift(omObjData* obj) {
     s16 i;
 
@@ -978,8 +973,6 @@ void func_800F9BC8_FaceLift(void) {
         }
     }
 }
-// scheduling (Center base load)
-#ifdef NON_MATCHING
 void func_800F9EE4_FaceLift(omObjData* obj) {
     Vec3f eye;
     Vec3f at;
@@ -988,7 +981,7 @@ void func_800F9EE4_FaceLift(omObjData* obj) {
     f32 ry = CRot.y;
     s16 i;
 
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -1002,9 +995,6 @@ void func_800F9EE4_FaceLift(omObjData* obj) {
         func_8001D57C(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F9EE4_FaceLift);
-#endif
 // missing mov.s/move in the abs tests
 #ifdef NON_MATCHING
 s32 func_800FA058_FaceLift(s16 player, Vec3f* pos) {
@@ -1513,20 +1503,17 @@ void func_800FBE08_FaceLift(void) {
     D_800FCA28_FaceLift = 0;
 }
 
-// scheduling
-#ifdef NON_MATCHING
 s16 func_800FBE78_FaceLift(s16 x, s16 y) {
     s16 id;
     s16 i;
     s16 xo;
 
-    id = func_80064EF4(4, 5);
-    D_800FCA20_FaceLift[D_800FCA28_FaceLift] = id;
+    id = D_800FCA20_FaceLift[D_800FCA28_FaceLift] = func_80064EF4(4, 5);
     func_80067208(id, 0, D_800FCA1E_FaceLift, 0);
     func_80067480(id, 0, 0xFFFF);
     func_800674BC(id, 0, 0x8000);
     func_80066DC4(id, 0, x - 16, y);
-    for (i = 1, xo = 24; i < 3; i++, xo += 24) {
+    for (xo = 24, i = 1; i < 3; i++, xo += 24) {
         func_80067208(id, i, D_800FCA1E_FaceLift, 0);
         func_80066DC4(id, i, xo, 0);
         func_80067480(id, i, 0xFFFF);
@@ -1544,9 +1531,6 @@ s16 func_800FBE78_FaceLift(s16 x, s16 y) {
     D_800FCA28_FaceLift++;
     return id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FBE78_FaceLift);
-#endif
 void func_800FC094_FaceLift(s16 id) {
     s16 i;
 
@@ -1561,37 +1545,34 @@ void func_800FC0F0_FaceLift(s16 arg0) {
     }
 }
 
-// register allocation, missing sign extension
-#ifdef NON_MATCHING
 void func_800FC14C_FaceLift(s16 id, s16 val) {
-    s16 v = val;
-    s16 hundreds = 0;
+    s16 hundreds;
+    s16 tens;
 
+    hundreds = 0;
     if (val >= 100) {
         func_80067480(id, 0, 0x8000);
         func_800672DC(id, 0, 1, 0);
         func_800672B0(id, 0, 1);
-        v = val - 100;
+        val -= 100;
         hundreds = 1;
     } else {
         func_800674BC(id, 0, 0x8000);
     }
-    if (hundreds != 0 || v / 10 != 0) {
+    if (hundreds != 0 || (s16)(val / 10) != 0) {
         func_80067480(id, 1, 0x8000);
-        func_800672DC(id, 1, v / 10, 0);
+        tens = val / 10;
+        func_800672DC(id, 1, tens, 0);
         func_800672B0(id, 1, 1);
-        v %= 10;
+        val -= tens * 10;
     } else {
         func_800674BC(id, 1, 0x8000);
     }
     func_80067480(id, 2, 0x8000);
-    func_800672DC(id, 2, v, 0);
+    func_800672DC(id, 2, val, 0);
     func_800672B0(id, 2, 1);
     func_80067480(id, 3, 0x8000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FC14C_FaceLift);
-#endif
 void func_800FC30C_FaceLift(s16 arg0, s16 arg1) {
     s16 i;
     

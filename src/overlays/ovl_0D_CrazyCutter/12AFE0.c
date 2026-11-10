@@ -6,7 +6,8 @@
 #define CC_PAL16(pal, i) (((u16*)(pal))[i])
 
 /* Converts a sprite frame's image into a one-byte-per-pixel mask (0xFF where opaque). */
-// register allocation (masked 9)
+// register allocation, and buf + off + x recomputed per store in case 8 (raw 20, masked 6; tried
+// &pal[c], a dst temp, (buf + off)[x])
 #ifdef NON_MATCHING
 u8* func_800FC4F0_CrazyCutter(s16 grpIdx, s16 idx, s32* width, s32* height) {
     unk65770Obj* spr;
@@ -74,8 +75,6 @@ typedef s32 (*CrazyCutterPixelFunc)(s32, s32, s32, u8*, s32);
 
 /* Writes the palette's transparent index into the sprite image wherever mask is set, at (x0, y0).
    Returns the number of pixels that changed. */
-// retail keeps h in a stack copy; loop layout (masked 38)
-#ifdef NON_MATCHING
 s32 func_800FC70C_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h, s8* mask) {
     unk65770Obj* spr;
     unk65770AnimC* img;
@@ -87,6 +86,7 @@ s32 func_800FC70C_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     s32 count;
     s32 px;
     s32 py;
+    s32 ww = w;
     s32 hh = h;
 
     fn = NULL;
@@ -104,11 +104,11 @@ s32 func_800FC70C_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     }
     count = 0;
     for (y = 0; y < hh; y++) {
-        for (x = 0; x < w; x++) {
+        for (x = 0; x < ww; x++) {
             px = x + x0;
             py = y + y0;
             if (px >= 0 && px < img->unk4) {
-                if (py >= 0 && py < img->unk6 && mask[w * y + x] != 0) {
+                if (py >= 0 && py < img->unk6 && (mask + ww * y)[x] != 0) {
                     count += fn(px, py, img->unk4, pixels, col & 0xFF) != 0;
                 }
             }
@@ -116,9 +116,6 @@ s32 func_800FC70C_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/12AFE0", func_800FC70C_CrazyCutter);
-#endif
 
 s32 func_800FC8C0_CrazyCutter(s16 grpIdx, s16 idx, s32 x, s32 y) {
     unk65770Obj* spr;
@@ -172,8 +169,6 @@ s32 func_800FC9F4_CrazyCutter(s32 arg0, s32 arg1, s32 arg2, u8* arg3, u8 arg4) {
 
 /* Returns the first palette index whose alpha bit is clear; with none, clears one and returns the
    last index. Retail's fallback index is (n - 1) * n, past the palette (kept as retail). */
-// fallback return recomputed in retail (masked 3)
-#ifdef NON_MATCHING
 s32 func_800FCA20_CrazyCutter(u8* pal, u16 fmt) {
     u16 n;
     u16 i;
@@ -188,16 +183,11 @@ s32 func_800FCA20_CrazyCutter(u8* pal, u16 fmt) {
         }
     }
     pal[(n - 1) * i * 2 + 1] &= ~1;
-    return n - 1;
+    return (u16)(n - 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/12AFE0", func_800FCA20_CrazyCutter);
-#endif
 
 /* As func_800FC70C_CrazyCutter, but only counts the masked pixels that differ from the
    transparent index. */
-// as func_800FC70C (masked 41)
-#ifdef NON_MATCHING
 s32 func_800FCAAC_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h, s8* mask) {
     unk65770Obj* spr;
     unk65770AnimC* img;
@@ -209,9 +199,12 @@ s32 func_800FCAAC_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     s32 count;
     s32 px;
     s32 py;
-    s32 hh = h;
+    s32 ww;
+    s32 hh;
 
     spr = func_800675F4(grpIdx, idx);
+    ww = w;
+    hh = h;
     fn = NULL;
     col = func_800FCA20_CrazyCutter(spr->unk4C->unkC, spr->unk4C->unk18);
     img = &spr->unk4C->unk0[spr->unk52];
@@ -226,11 +219,11 @@ s32 func_800FCAAC_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     }
     count = 0;
     for (y = 0; y < hh; y++) {
-        for (x = 0; x < w; x++) {
+        for (x = 0; x < ww; x++) {
             px = x + x0;
             py = y + y0;
             if (px >= 0 && px < img->unk4) {
-                if (py >= 0 && py < img->unk6 && mask[w * y + x] != 0) {
+                if (py >= 0 && py < img->unk6 && (mask + ww * y)[x] != 0) {
                     count += fn(px, py, img->unk4, pixels, col & 0xFF) != 0;
                 }
             }
@@ -238,9 +231,6 @@ s32 func_800FCAAC_CrazyCutter(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h,
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/12AFE0", func_800FCAAC_CrazyCutter);
-#endif
 
 s32 func_800FCC64_CrazyCutter(u32 arg0, s32 arg1, u32 arg2, u8* arg3, s32 arg4) {
     s32 new_var = arg4;

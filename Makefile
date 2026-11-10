@@ -230,6 +230,8 @@ build/src/overlays/ovl_63_StaffScene/2A9CA0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp
 build/src/overlays/ovl_0D_CrazyCutter/1250D0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_09 113DC0.c (Pipe Maze) also has the mul fix on: nop between back-to-back mul.s (func_800F6DD8)
 build/src/overlays/ovl_09_PipeMaze/113DC0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_1B 17E710.c (Hammer Drop): nop between back-to-back mul.s and before mult (func_800FA1AC, twin of func_800FAB0C)
+build/src/overlays/ovl_1B_HammerDrop/17E710.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
 # mul nops included in the following *.c (Maybe only one func uses --vr4300mul-off)
 build/src/3AC60.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
