@@ -687,7 +687,7 @@ void func_800F8848_MushroomMixup(omObjData* arg0) {
     }
 }
 
-// retail recomputes a - b and keeps &d in a register; same result
+// register allocation (masked 2, raw 15): s0/s1/s2 hold other/arg0/dp in retail; declaration order does not move them
 /* A +-45 degree detour around the player the CPU is chasing (work unk_54). */
 #ifdef NON_MATCHING
 f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
@@ -697,27 +697,23 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
     f32 b;
     f32 off;
     f32 r;
+    Vec3f* dp;
 
     r = 0.0f;
     if (MM_PLAYER(arg0)->unk_54 != -1) {
+        dp = &d;
         other = D_800F3FB0[MM_PLAYER(arg0)->unk_54];
-        func_800A0D00(&d, x, 0.0f, z);
+        func_800A0D00(dp, x, 0.0f, z);
         d.x -= arg0->trans.x;
         d.y -= 0.0f;
         d.z -= arg0->trans.z;
         a = func_80029518(func_800B0CD8(d.x, d.z));
-        func_800A0D00(&d, other->trans.x, 0.0f, other->trans.z);
+        func_800A0D00(dp, other->trans.x, 0.0f, other->trans.z);
         d.x -= arg0->trans.x;
         d.y -= 0.0f;
         d.z -= arg0->trans.z;
         b = func_80029518(func_800B0CD8(d.x, d.z));
-        if (a - b < 0.0f) {
-            if (-(a - b) > 180.0f) {
-                off = -45.0f;
-            } else {
-                off = 45.0f;
-            }
-        } else if (a - b > 180.0f) {
+        if ((a - b < 0.0f ? -(a - b) : a - b) > 180.0f) {
             off = -45.0f;
         } else {
             off = 45.0f;
@@ -725,7 +721,7 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
         if (a - b < 0.0f) {
             off = -off;
         }
-        r = 0.0f + off;
+        r += off;
     }
     return r;
 }
