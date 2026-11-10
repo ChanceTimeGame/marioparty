@@ -313,10 +313,9 @@ void func_800F6F14_GameModeOverworld(void) {
 
 }
 
-// register allocation: retail saves one more GPR, FPU numbering differs (masked 43)
-#ifdef NON_MATCHING
 void func_800F6FC8_GameModeOverworld(void) {
-    f32 t;
+    f32 dx;
+    f32 dz;
     f32 angle;
     f32 z;
     f32 x;
@@ -338,9 +337,9 @@ void func_800F6FC8_GameModeOverworld(void) {
         if (i == 45) {
             D_800FA1C0_GameModeOverworld = 4;
         }
-        t = i;
-        func_80025798(D_800FA1E8_GameModeOverworld[6], x + (731.0f - x) / 300.0f * t, y + func_800AEAC0(angle) * 5.0f,
-                      z + (2704.0f - z) / 300.0f * t);
+        dx = (731.0f - x) / 300.0f * i;
+        dz = (2704.0f - z) / 300.0f * i;
+        func_80025798(D_800FA1E8_GameModeOverworld[6], x + dx, y + func_800AEAC0(angle) * 5.0f, z + dz);
         func_800257E4(D_800FA1E8_GameModeOverworld[6], func_800AEAC0(angle / 2.0f) * 3.0f, 0.0f, 0.0f);
         angle += 20.0f;
     }
@@ -348,9 +347,6 @@ void func_800F6FC8_GameModeOverworld(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_GameModeOverworld/2BB5F0", func_800F6FC8_GameModeOverworld);
-#endif
 void func_800F7214_GameModeOverworld(void) {
     s32 temp_s0;
     Vec3f pad;

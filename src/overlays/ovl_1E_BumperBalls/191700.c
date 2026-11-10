@@ -1112,7 +1112,8 @@ u16 func_800F9EE0_BumperBalls(void) {
     return (phi_a0_2 < 4) ^ 1;
 }
 
-// register allocation (work/table in s0/s1 swapped; masked ~0 beyond the bss shift)
+// register allocation: work/table in s0/s1 swapped (raw 44, masked 0); declaration order, a
+// separate work assignment and the unk_58 block order tried
 #ifdef NON_MATCHING
 void func_800F9F30_BumperBalls(omObjData* object) {
     u16* table;
@@ -1408,8 +1409,6 @@ void func_800FAB54_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
     *stickY = -func_800AEAC0(work->unk_50) * 80.0f;
 }
 
-// loop-counter register/scheduling in the dodge search (one instruction short)
-#ifdef NON_MATCHING
 void func_800FAE60_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
     BumperBallsWork* work = object->unk_50;
     omObjData* other;
@@ -1444,7 +1443,8 @@ void func_800FAE60_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
         work->unk_42 = 0;
         return;
     }
-    for (j = 0; j < 18; j++) {
+    j = 0;
+    do {
         for (i = 0; i < count; i++) {
             if (fabsf(angles[i] - work->unk_50) <= 20.0f) {
                 break;
@@ -1454,7 +1454,7 @@ void func_800FAE60_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
             break;
         }
         work->unk_50 += 20.0f;
-    }
+    } while (++j < 18);
     if (func_800FA3A0_BumperBalls(object, 1.3f) == 0) {
         BB_FLEE_EDGE(object, work, stickX, stickY);
         return;
@@ -1462,6 +1462,3 @@ void func_800FAE60_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
     *stickX = func_800AEFD0(work->unk_50) * 80.0f;
     *stickY = -func_800AEAC0(work->unk_50) * 80.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800FAE60_BumperBalls);
-#endif

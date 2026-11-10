@@ -627,16 +627,15 @@ omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32
   func_800257E4((s16) (*m), 0.0f, 0.0f, 0.0f);
   return obj;
 }
-// base/index order of the two array addresses (masked 4)
+// scheduling: both index shifts are emitted before their base `lui/addiu` (raw 4, masked 4);
+// `base; base += i`, `base + i` and fully indexed spellings tried
 #ifdef NON_MATCHING
 void func_800FEFE0_YoshisTropicalIslandEndingScene(s32 arg0) {
     omObjData** o;
     s32* m;
 
-    o = D_80110300_YoshisTropicalIslandEndingScene;
-    o += arg0;
-    m = D_801102B8_YoshisTropicalIslandEndingScene;
-    m += (*o)->work[0];
+    o = &D_80110300_YoshisTropicalIslandEndingScene[arg0];
+    m = &D_801102B8_YoshisTropicalIslandEndingScene[(*o)->work[0]];
     func_8002456C((s16)*m);
     *m = -1;
     omDelObj(*o);
@@ -683,8 +682,6 @@ Object* func_800FF1E4_YoshisTropicalIslandEndingScene(Unk266Obj* arg0) {
     func_800A0D50(&m->coords, &arg0->pos);
     return m;
 }
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800FF240_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     f32 t;
     f32 k;
@@ -701,12 +698,10 @@ void func_800FF240_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
     D_80110448_YoshisTropicalIslandEndingScene[0]->unk_18.x = k * sinf(arg0->rot.x * D_8010F198_YoshisTropicalIslandEndingScene);
     D_80110448_YoshisTropicalIslandEndingScene[0]->unk_18.z = 1.0f;
-    arg0->rot.z = t + 0.005f;
+    t += 0.005f;
+    arg0->rot.z = t;
 }
-const f64 D_8010F198_YoshisTropicalIslandEndingScene = 0.017453292519943295;
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FF240_YoshisTropicalIslandEndingScene);
-#endif
+const f64 D_8010F198_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
 // loop-invariant D_80110448 base not hoisted, model address order (masked ~18)
 #ifdef NON_MATCHING
@@ -888,7 +883,8 @@ void func_800FFF08_YoshisTropicalIslandEndingScene(s32* arg0, s32* arg1) {
         func_80067704(arg1[i]);
     }
 }
-// load of arg0->unk_80 scheduled after the index arithmetic (masked 2)
+// load of arg0->unk_80 scheduled after the index arithmetic (raw 2, masked 2); `&unk_80[i]`,
+// `e = unk_80; e += i;` and declaring e first tried
 #ifdef NON_MATCHING
 void func_800FFF5C_YoshisTropicalIslandEndingScene(unk2C0C0StructC0* arg0, f32 arg1, s16 arg2) {
     f32 w = 190.0f;

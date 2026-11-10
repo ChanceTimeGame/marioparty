@@ -8,7 +8,8 @@
 f32 D_800FB0D0_MinigameStadiumMinigameResultsScreen[4] = { -450.0f, -150.0f, 150.0f, 450.0f };
 
 /* The background: the board, each player's column base and coin bar. */
-// register allocation: base/index of one ids[] store swap a0/v1 (masked 0)
+// register allocation: base/index of the ids[j] store swap a0/v1 (raw 5, masked 0); inverted
+// ternary, post-increment indices and a file-id local tried
 #ifdef NON_MATCHING
 void func_800F8A00_MinigameStadiumMinigameResultsScreen(void) {
     Process* procs[4];

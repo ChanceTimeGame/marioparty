@@ -272,7 +272,7 @@ void func_800FC2A0_HandcarHavoc(u16 i, Vec* out);
 void func_800FC338_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos);
 u16 func_800FC4B0_HandcarHavoc(omObjData* obj);
 f32 func_800FC7E0_HandcarHavoc(f32 x);
-s16 func_800FC85C_HandcarHavoc(void);
+u16 func_800FC85C_HandcarHavoc(void);
 void func_800FCA58_HandcarHavoc(omObjData* obj, u16 side);
 void func_800FCBA4_HandcarHavoc(omObjData* obj);
 void func_800FCCA4_HandcarHavoc(omObjData* obj);
@@ -293,7 +293,7 @@ void func_800FDEC0_HandcarHavoc(u16 sprite, HHScroll* s, f32 u, f32 v);
 void func_800FE004_HandcarHavoc(HHScroll* s);
 void func_800FE8D4_HandcarHavoc(s32 team);
 void func_800FEB4C_HandcarHavoc(s32 team, s32 i, s32 buf);
-s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, s32 wheel);
+s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, u16 wheel);
 void func_800FF0AC_HandcarHavoc(HHCar* w);
 
 /* .data */
