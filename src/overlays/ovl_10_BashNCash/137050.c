@@ -1742,8 +1742,6 @@ void func_800FB940_BashNCash(omObjData* obj, Vec3f* pos) {
 }
 
 /* Ground height under a coin. */
-// loop layout (retail calls func_8002B3A8 before the loop and at its end) and register allocation
-#ifdef NON_MATCHING
 f32 func_800FBAB8_BashNCash(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* normal) {
     Vec4f probe;
     BashColVtx* verts;
@@ -1751,12 +1749,14 @@ f32 func_800FBAB8_BashNCash(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* normal) 
     f32 best;
     f32 h;
     s16 mdl;
+    BashCoinWork* w;
 
+    w = COIN_WORK(obj);
     best = -10000.0f;
     probe.x = x;
     probe.y = y;
     probe.z = z;
-    probe.w = COIN_WORK(obj)->unk_48;
+    probe.w = w->unk_48;
     func_800FB940_BashNCash(obj, (Vec3f*)&probe);
     probe.x = x + D_800ED6B8;
     probe.y = y;
@@ -1765,12 +1765,16 @@ f32 func_800FBAB8_BashNCash(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* normal) 
     mdl = D_800F2AF8[D_800B8954]->model[0];
     verts = (BashColVtx*)D_800F2B7C[mdl].unk_6C->unk_78;
     func_8002AE24(mdl, &D_800EDEC0, func_80002060, &probe);
-    while ((tri = (s16*)func_8002B3A8(&D_800EDEC0)) != NULL) {
-        h = func_80029764(x, y, z, verts, (u16*)tri);
-        if (best < h) {
-            best = h;
-            func_800295FC(&verts[tri[1]], &verts[tri[2]], &verts[tri[3]], normal);
-        }
+    goto next;
+loop:
+    h = func_80029764(x, y, z, verts, (u16*)tri);
+    if (best < h) {
+        best = h;
+        func_800295FC(&verts[tri[1]], &verts[tri[2]], &verts[tri[3]], normal);
+    }
+next:
+    if ((tri = (s16*)func_8002B3A8(&D_800EDEC0)) != NULL) {
+        goto loop;
     }
     if (best == -10000.0f) {
         best = -65536.0f;
@@ -1781,9 +1785,6 @@ f32 func_800FBAB8_BashNCash(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* normal) 
     }
     return best;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FBAB8_BashNCash);
-#endif
 
 /* A coin's object: flies, bounces off the walls, lands and blinks out. */
 // loop layout (retail calls func_8002B3A8 before the loop and at its end) and register allocation
