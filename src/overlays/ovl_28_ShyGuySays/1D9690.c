@@ -170,110 +170,133 @@ void func_800F69F8_ShyGuySays(void) {
 }
 
 
-// register allocation: v0/v1 swap around one slt (masked 0)
-#ifdef NON_MATCHING
-void func_800F6A38_ShyGuySays(omObjData* arg0) {
-    s16 sp10[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
-    s16 sp20[4];
-    f32 t;
-    s16 i;
-    s32 flag;
-    s32 done;
-
-    func_800F6F98_ShyGuySays(arg0);
-    func_800F72A4_ShyGuySays();
-    if (D_800FD5CA_ShyGuySays != 0) {
-        if (D_800FD9A4_ShyGuySays == 1) {
-            t = (f32)D_800FD5CC_ShyGuySays / 30.0;
-            if (t > 1.0) {
-                t = 1.0f;
-                D_800FD5CA_ShyGuySays = 0;
-            }
-            func_800F9C50_ShyGuySays((u16*)sp20);
-            for (i = 0; i < 4; i++) {
-                if (sp20[i] == 1) {
-                    break;
-                }
-            }
-            func_800F702C_ShyGuySays(D_800F3FB0[i], t);
+// decomp-permuter
+void func_800F6A38_ShyGuySays(omObjData *arg0)
+{
+  s16 sp10[6] = {0x451, 0x452, 0x453, 0x454, 0x455, 0x456};
+  s16 sp20[4];
+  f32 t;
+  s16 i;
+  s32 flag;
+  char done;
+  func_800F6F98_ShyGuySays(arg0);
+  func_800F72A4_ShyGuySays();
+  if (D_800FD5CA_ShyGuySays != 0)
+  {
+    if (D_800FD9A4_ShyGuySays == 1)
+    {
+      t = ((f32) D_800FD5CC_ShyGuySays) / 30.0;
+      if (t > 1.0)
+      {
+        t = 1.0f;
+        D_800FD5CA_ShyGuySays = 0;
+      }
+      func_800F9C50_ShyGuySays((u16 *) sp20);
+      for (i = 0; i < 4; i++)
+      {
+        if (sp20[i] == 1)
+        {
+          break;
         }
-        D_800FD5CC_ShyGuySays++;
+      }
+
+      func_800F702C_ShyGuySays(D_800F3FB0[i], t);
     }
-    switch (D_800FD5C6_ShyGuySays) {
+    D_800FD5CC_ShyGuySays++;
+  }
+  switch (D_800FD5C6_ShyGuySays)
+  {
     case 0:
-        if (++D_800FD5C8_ShyGuySays >= 0) {
-            flag = 2;
-            if (D_800FD9A4_ShyGuySays == 0) {
-                flag = 0x11;
-            }
-            GMesCreate(flag);
-            D_800FD5C8_ShyGuySays = 0;
-            D_800FD5C6_ShyGuySays = 1;
-        }
-        break;
-    case 1:
-        if (++D_800FD5C8_ShyGuySays >= 0 && GMesStatAllGet() == 2) {
-            flag = 0x32;
-            if (D_800FD9A4_ShyGuySays == 0) {
-                flag = 0x34;
-            }
-            func_80060128(flag);
-            D_800FD5C8_ShyGuySays = 0;
-            D_800FD5C6_ShyGuySays = 2;
-        }
-        break;
-    case 2:
-        if (++D_800FD5C8_ShyGuySays >= 0) {
-            D_800FDC1A_ShyGuySays = 1;
-            D_800FD5C8_ShyGuySays = 0;
-            D_800FD5C6_ShyGuySays = 3;
-        }
-        break;
-    case 3:
-        D_800FD5C8_ShyGuySays++;
-        if (D_800FD9A4_ShyGuySays != 0) {
-            if (D_800FD5C8_ShyGuySays < 0x15) {
-                break;
-            }
-            func_800F9C50_ShyGuySays((u16*)sp20);
-            for (i = 0; i < 4; i++) {
-                if (sp20[i] == 1) {
-                    break;
-                }
-            }
-            GMesCreate(4, D_800FDC10_ShyGuySays[i]);
-            PlaySound(sp10[D_800FDC10_ShyGuySays[i]]);
-            GwPlayer[i].coins_mg += 10;
-        }
-        D_800FD5C8_ShyGuySays = 0;
-        D_800FD5C6_ShyGuySays = 4;
-        break;
-    case 4:
-        D_800FD5C8_ShyGuySays++;
-        if (D_800FD9A4_ShyGuySays != 0) {
-            done = 0x53 < D_800FD5C8_ShyGuySays;
-        } else {
-            done = D_800FD5C8_ShyGuySays >= 0x5A;
-        }
-        if (done && GMesWait() == 0) {
-            func_800726AC(0, 0x14);
-            func_800601D4(0x28);
-            D_800FD5C8_ShyGuySays = 0;
-            D_800FD5C6_ShyGuySays = 5;
-        }
-        break;
-    case 5:
-        if (func_80072718() == 0) {
-            arg0->func_ptr = &func_800F69F8_ShyGuySays;
-        }
-        break;
+      if ((++D_800FD5C8_ShyGuySays) >= 0)
+    {
+      flag = 2;
+      if (D_800FD9A4_ShyGuySays == 0)
+      {
+        flag = 0x11;
+      }
+      GMesCreate(flag);
+      D_800FD5C8_ShyGuySays = 0;
+      D_800FD5C6_ShyGuySays = 1;
     }
-}
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", D_800FD5FC_ShyGuySays);
+      break;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800F6A38_ShyGuySays);
-#endif
+    case 1:
+      if (((++D_800FD5C8_ShyGuySays) >= 0) && (GMesStatAllGet() == 2))
+    {
+      flag = 0x32;
+      if (D_800FD9A4_ShyGuySays == 0)
+      {
+        flag = 0x34;
+      }
+      func_80060128(flag);
+      D_800FD5C8_ShyGuySays = 0;
+      D_800FD5C6_ShyGuySays = 2;
+    }
+      break;
+
+    case 2:
+      if ((++D_800FD5C8_ShyGuySays) >= 0)
+    {
+      D_800FDC1A_ShyGuySays = 1;
+      D_800FD5C8_ShyGuySays = 0;
+      D_800FD5C6_ShyGuySays = 3;
+    }
+      break;
+
+    case 3:
+      D_800FD5C8_ShyGuySays++;
+      if (D_800FD9A4_ShyGuySays != 0)
+    {
+      if (D_800FD5C8_ShyGuySays < 0x15)
+      {
+        break;
+      }
+      func_800F9C50_ShyGuySays((u16 *) sp20);
+      for (i = 0; i < 4; i++)
+      {
+        if (sp20[i] == 1)
+        {
+          break;
+        }
+      }
+
+      GMesCreate(4, D_800FDC10_ShyGuySays[i]);
+      PlaySound(sp10[D_800FDC10_ShyGuySays[i]]);
+      GwPlayer[i].coins_mg += 10;
+    }
+      D_800FD5C8_ShyGuySays = 0;
+      D_800FD5C6_ShyGuySays = 4;
+      break;
+
+    case 4:
+      D_800FD5C8_ShyGuySays++;
+      if (D_800FD9A4_ShyGuySays != 0)
+    {
+      done = 0x53 < D_800FD5C8_ShyGuySays;
+    }
+    else
+    {
+      done = D_800FD5C8_ShyGuySays >= 0x5A;
+    }
+      if (done && (GMesWait() == 0))
+    {
+      func_800726AC(0, 0x14);
+      func_800601D4(0x28);
+      D_800FD5C8_ShyGuySays = 0;
+      D_800FD5C6_ShyGuySays = 5;
+    }
+      break;
+
+    case 5:
+      if (func_80072718() == 0)
+    {
+      arg0->func_ptr = &func_800F69F8_ShyGuySays;
+    }
+      break;
+
+  }
+
+}
 void func_800F6E50_ShyGuySays(omObjData* arg0) {
     unkStruct_ShyGuySays_01* temp_v1_2;
 
@@ -1568,34 +1591,36 @@ void func_800FAED8_ShyGuySays(s16 arg0, s32 arg1) {
     }
 }
 
-// register allocation: i and cnt swap v1/a1, one andi scheduled later (masked 2)
-#ifdef NON_MATCHING
-f32 func_800FB190_ShyGuySays(f32 arg0, f32 arg1) {
-    unk2C0C0StructC0* m = D_800F2B7C[D_800FD9B0_ShyGuySays].unk_6C;
-    unk2C0C0StructE0* v = m->unk_08[D_800F37F0];
-    u16 n = m->unk_72;
-    u16 i;
-    u16 cnt = 0;
-    f64 sum = 0.0;
-    f32 dx;
-    f32 dz;
-
-    for (i = 0; i < n; i++, v++) {
-        dx = fabsf(v->unk_00 - arg0);
-        dz = fabsf(v->unk_04 - arg1);
-        if (dx < D_800FD9B8_ShyGuySays[0] * 1.5 && dz < D_800FD9B8_ShyGuySays[0] * 1.5) {
-            sum += v->unk_02;
-            cnt++;
-            if (cnt >= 10) {
-                break;
-            }
-        }
+// decomp-permuter
+f32 func_800FB190_ShyGuySays(f32 arg0, f32 arg1)
+{
+  unk2C0C0StructC0 *m = D_800F2B7C[D_800FD9B0_ShyGuySays].unk_6C;
+  unk2C0C0StructE0 *v = m->unk_08[D_800F37F0];
+  u16 n = m->unk_72;
+  u16 i;
+  unsigned int new_var;
+  u16 cnt = 0;
+  f64 sum = 0.0;
+  f32 dx;
+  f32 dz;
+  for (i = 0; i < n; i++, v++)
+  {
+    dx = fabsf(v->unk_00 - arg0);
+    dz = fabsf(v->unk_04 - arg1);
+    if ((dx < (D_800FD9B8_ShyGuySays[0] * 1.5)) && (dz < (D_800FD9B8_ShyGuySays[0] * 1.5)))
+    {
+      sum += v->unk_02;
+      cnt++;
+      if (cnt >= 10)
+      {
+        break;
+      }
     }
-    return -(sum * D_800FDC64_ShyGuySays->unk_00[cnt]);
+  }
+
+  new_var = cnt;
+  return -(sum * D_800FDC64_ShyGuySays->unk_00[new_var]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FB190_ShyGuySays);
-#endif
 u16 func_800FB2C8_ShyGuySays(s32 arg0) {
     void* data;
     u16 ret;
