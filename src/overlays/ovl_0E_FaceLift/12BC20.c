@@ -1505,20 +1505,17 @@ void func_800FBE08_FaceLift(void) {
     D_800FCA28_FaceLift = 0;
 }
 
-// scheduling
-#ifdef NON_MATCHING
 s16 func_800FBE78_FaceLift(s16 x, s16 y) {
     s16 id;
     s16 i;
     s16 xo;
 
-    id = func_80064EF4(4, 5);
-    D_800FCA20_FaceLift[D_800FCA28_FaceLift] = id;
+    id = D_800FCA20_FaceLift[D_800FCA28_FaceLift] = func_80064EF4(4, 5);
     func_80067208(id, 0, D_800FCA1E_FaceLift, 0);
     func_80067480(id, 0, 0xFFFF);
     func_800674BC(id, 0, 0x8000);
     func_80066DC4(id, 0, x - 16, y);
-    for (i = 1, xo = 24; i < 3; i++, xo += 24) {
+    for (xo = 24, i = 1; i < 3; i++, xo += 24) {
         func_80067208(id, i, D_800FCA1E_FaceLift, 0);
         func_80066DC4(id, i, xo, 0);
         func_80067480(id, i, 0xFFFF);
@@ -1536,9 +1533,6 @@ s16 func_800FBE78_FaceLift(s16 x, s16 y) {
     D_800FCA28_FaceLift++;
     return id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FBE78_FaceLift);
-#endif
 void func_800FC094_FaceLift(s16 id) {
     s16 i;
 
