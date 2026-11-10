@@ -474,17 +474,15 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F75B0_MushroomMixup);
 #endif
 
-// register allocation, switch compare order
+// register allocation (masked 0, raw 9): both "D_800FC98C |= 1 << work[0]" build the bit in v0, retail in v1
 #ifdef NON_MATCHING
 void func_800F7FCC_MushroomMixup(omObjData* arg0) {
     MMMushroom* rec;
 
-    switch (D_800ED430) {
-    case 2:
+    if (D_800ED430 == 2) {
         func_800258EC(arg0->model[0], 0x1C00, 0x400);
         D_800F2B7C[arg0->model[0]].unk_6C->unk_28 = 1;
-        break;
-    case 1:
+    } else if (D_800ED430 == 1) {
         rec = &D_800FC9C0_MushroomMixup[arg0->work[0]];
         if ((D_800FC8A0_MushroomMixup == 0 || rec->state == 2) && !((D_800FC98C_MushroomMixup >> arg0->work[0]) & 1)) {
             if ((rec->color & 7) == D_800FC81C_MushroomMixup) {
@@ -512,14 +510,13 @@ void func_800F7FCC_MushroomMixup(omObjData* arg0) {
                 if (rec->speed > 0.0f && arg0->trans.y < -400.0f) {
                     rec->state = 1;
                 }
-                if (rec->topY < arg0->trans.y) {
+                if (arg0->trans.y > rec->topY) {
                     D_800FC98C_MushroomMixup |= 1 << arg0->work[0];
                     arg0->trans.y = rec->topY;
                     rec->state = 0;
                 }
             }
         }
-        break;
     }
 }
 #else
