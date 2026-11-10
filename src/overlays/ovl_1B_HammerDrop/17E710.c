@@ -1294,15 +1294,15 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E98_HammerDrop);
 #endif
 
-// Logic-equivalent arctangent continued fraction; register allocation remains.
+// Logic-equivalent arctangent continued fraction; twin of func_800FAB0C_CrazyCutter: f0/f2 swapped
+// around the f64 constants (raw 12, masked 0)
 #ifdef NON_MATCHING
 f32 func_800FA1AC_HammerDrop(f32 arg0) {
     f32 temp_f0;
     f32 temp_f2;
     f32 var_f12;
     f32 var_f4;
-    f64 var_f0;
-    f64 var_f2;
+    f32 ret;
     s32 var_a0;
     s32 var_v1;
 
@@ -1327,17 +1327,13 @@ f32 func_800FA1AC_HammerDrop(f32 arg0) {
         var_f4 = temp_f2 / temp_f0;
     } while (var_v1 > 0);
     if (var_a0 > 0) {
-        var_f0 = D_800FB660_HammerDrop;
-        var_f2 = (f64) (var_f12 / (var_f4 + 1.0f));
-        goto done;
+        ret = D_800FB660_HammerDrop - var_f12 / (var_f4 + 1.0f);
+    } else if (var_a0 >= 0) {
+        ret = var_f12 / (var_f4 + 1.0f);
+    } else {
+        ret = D_800FB668_HammerDrop - var_f12 / (var_f4 + 1.0f);
     }
-    if (var_a0 >= 0) {
-        return var_f12 / (var_f4 + 1.0f);
-    }
-    var_f2 = (f64) (var_f12 / (var_f4 + 1.0f));
-    var_f0 = D_800FB668_HammerDrop;
-done:
-    return (f32) (var_f0 - var_f2);
+    return ret;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA1AC_HammerDrop);

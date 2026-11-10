@@ -443,13 +443,12 @@ void func_800F7444_FaceLift(s16 player, FaceLiftWork* w) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F7444_FaceLift);
 #endif
-// register allocation (trg/btn swapped)
+// register allocation: trg/btn get s3/s4 swapped (raw 6, masked 0; tried separate zero stores)
 #ifdef NON_MATCHING
 void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg, u16* btn) {
     f32 dx;
     f32 dy;
     f32 d;
-    f32 s;
 
     *trg = *btn = 0;
     switch (w->cpuState) {
@@ -469,9 +468,8 @@ void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg,
             w->cpuState = 1;
             *trg = 0x8000;
         } else {
-            s = 4.0f / d;
-            stick->x = s * dx;
-            stick->y = s * dy;
+            stick->x = (4.0f / d) * dx;
+            stick->y = (4.0f / d) * dy;
         }
         return;
     case 1:
@@ -489,9 +487,8 @@ void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg,
             }
             w->cpuTimer = ((rand8() & 0xFF) >> 3) + 10;
         } else {
-            s = 0.8f / d;
-            stick->x = s * dx;
-            stick->y = s * dy;
+            stick->x = (0.8f / d) * dx;
+            stick->y = (0.8f / d) * dy;
         }
         *btn = 0x8000;
         return;

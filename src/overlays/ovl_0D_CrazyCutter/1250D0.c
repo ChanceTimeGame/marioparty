@@ -1276,14 +1276,14 @@ void func_800FAACC_CrazyCutter(s32 arg0, s32 arg1, s32 arg2) {
         D_800FD4D8_CrazyCutter[arg0] = ~arg1 & D_800FD4D8_CrazyCutter[arg0];
     }
 }
-// f64 register allocation (masked 4)
+// register allocation: f0/f2 swapped around the f64 constants (raw 12, masked 0; tried goto tail,
+// f32 frac, direct returns)
 #ifdef NON_MATCHING
 f32 func_800FAB0C_CrazyCutter(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 base;
-    f64 frac;
+    f32 ret;
     s32 sign;
     s32 i;
 
@@ -1307,17 +1307,13 @@ f32 func_800FAB0C_CrazyCutter(f32 x) {
         sum = a / b;
     } while (i > 0);
     if (sign > 0) {
-        base = 1.5707963267948966;
-        frac = x / (sum + 1.0f);
-        goto done;
+        ret = 1.5707963267948966 - x / (sum + 1.0f);
+    } else if (sign >= 0) {
+        ret = x / (sum + 1.0f);
+    } else {
+        ret = -1.5707963267948966 - x / (sum + 1.0f);
     }
-    if (sign >= 0) {
-        return x / (sum + 1.0f);
-    }
-    frac = x / (sum + 1.0f);
-    base = -1.5707963267948966;
-done:
-    return base - frac;
+    return ret;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAB0C_CrazyCutter);

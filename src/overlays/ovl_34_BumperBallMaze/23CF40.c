@@ -1073,7 +1073,8 @@ u16 func_800F9278_BumperBallMaze(void) {
     return ((BumperBallMazeTimerWork*) D_800FAE14_BumperBallMaze->unk_50)->time;
 }
 
-// register allocation (masked 0)
+// register allocation: remainders computed in place, not in temps (raw 14, masked 0; tried explicit
+// t - q * n remainders, declaration order)
 #ifdef NON_MATCHING
 void func_800F928C_BumperBallMaze(u16 time, u16* digits) {
     u16 rest;
