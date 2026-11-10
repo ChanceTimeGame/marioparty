@@ -369,7 +369,8 @@ void func_800FE004_HandcarHavoc(HHScroll* s) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FE004_HandcarHavoc);
 #endif
 
-// NON_MATCHING: loop layout
+// NON_MATCHING: loop layout (masked 6): retail ends the b loop with bnez, not bnezl, and passes the
+// layer through a3; the second loop's counters swapped to match retail's registers
 #ifdef NON_MATCHING
 void func_800FE8D4_HandcarHavoc(s32 team) {
     s32 file;
@@ -417,10 +418,10 @@ void func_800FE8D4_HandcarHavoc(s32 team) {
         D_80101C40_HandcarHavoc[team][i] = mdl;
         func_80025F10(mdl, layer);
     }
-    for (i = 0; i < 12; i++) {
-        D_800FFCC0_HandcarHavoc[team][i].active = 0;
-        for (b = 0; b < D_800F37DA; b++) {
-            func_800FEB4C_HandcarHavoc(team, i, b);
+    for (b = 0; b < 12; b++) {
+        D_800FFCC0_HandcarHavoc[team][b].active = 0;
+        for (i = 0; i < D_800F37DA; i++) {
+            func_800FEB4C_HandcarHavoc(team, b, i);
         }
     }
 }
