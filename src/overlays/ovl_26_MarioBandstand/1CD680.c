@@ -1650,17 +1650,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA
 #endif
 
 /* CPU press for a musician: hits the A button with a chance from its level and the timing. */
-// NON_MATCHING: masked 45 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 s32 func_800FAFEC_MarioBandstand(omObjData* obj, s32 note, s32 diff) {
     MBPlayerCpu* cpu = ((MBPlayerWork*)obj->unk_50)->unk_E4;
     u8* chance = D_800FCCD4_MarioBandstand[cpu->level];
     s32 btn = 0;
-    u8 r;
+    u32 r;
     s32 hit;
 
     if (cpu->unkE != note) {
-        r = func_800FCAAC_MarioBandstand();
+        r = (u8)func_800FCAAC_MarioBandstand();
         if ((u32)(diff + 7) >= 0x12) {
             hit = r < chance[0];
         } else if (diff < -3) {
@@ -1675,27 +1673,22 @@ s32 func_800FAFEC_MarioBandstand(omObjData* obj, s32 note, s32 diff) {
             hit = r < chance[5];
         }
         if (hit) {
-            btn = 0x8000;
+            btn |= 0x8000;
         }
     }
     return btn;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FAFEC_MarioBandstand);
-#endif
 
 /* CPU stick for the conductor: the note's direction with the same chances. */
-// NON_MATCHING: masked 44 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 s32 func_800FB0D8_MarioBandstand(omObjData* obj, s32 note, s32 diff) {
     MBPlayerCpu* cpu = ((MBPlayerWork*)obj->unk_50)->unk_E4;
     u8* chance = D_800FCCD4_MarioBandstand[cpu->level];
     s32 dir = 4;
-    u8 r;
+    u32 r;
     s32 hit;
 
     if (cpu->unkE != note) {
-        r = func_800FCAAC_MarioBandstand();
+        r = (u8)func_800FCAAC_MarioBandstand();
         if ((u32)(diff + 7) >= 0x12) {
             hit = r < chance[0];
         } else if (diff < -3) {
@@ -1715,9 +1708,6 @@ s32 func_800FB0D8_MarioBandstand(omObjData* obj, s32 note, s32 diff) {
     }
     return dir;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB0D8_MarioBandstand);
-#endif
 
 /* ---------------------------------------------------------------------------------------------
    The song: note tracks read back from the audio driver, beat lists, the score sprites
