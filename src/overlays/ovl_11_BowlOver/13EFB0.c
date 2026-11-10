@@ -765,64 +765,69 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F8274_Bo
 #endif
 
 // argument register copy order
-#ifdef NON_MATCHING
-void func_800F8964_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, f32 x, f32 y, f32 z) {
-    BowlPlayerWork* w;
-    u32 chr;
+// decomp-permuter
+void func_800F8964_BowlOver(omObjData *obj, s32 dir, s32 file, s32 player, f32 x, f32 y, f32 z)
+{
+  BowlPlayerWork *w;
+  unsigned short new_var;
+  u32 chr;
+  new_var = player;
+  obj->unk_50 = func_80023684(sizeof(BowlPlayerWork), 0x7918);
+  func_8009B770(obj->unk_50, 0, sizeof(BowlPlayerWork));
+  w = (BowlPlayerWork *) obj->unk_50;
+  w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
+  w->unk_56 = GwPlayer[(u16) new_var].port;
+  obj->model[0] = LoadFormFile(dir | file, 0x699);
+  obj->model[1] = func_800174F4(6, 0x699);
+  guRandom();
+  func_8001775C(obj, 0, dir | 0x10);
+  guRandom();
+  func_8001775C(obj, 1, dir | 0xF);
+  func_8001775C(obj, 2, dir | 0x75);
+  func_8001775C(obj, 3, dir | 0x6A);
+  func_8001775C(obj, 4, dir);
+  func_800093FC(obj, x, y, z);
+  chr = ((u32) dir) >> 16;
+  func_80025798(obj->model[0], x, y, z);
+  func_8000940C(obj, 0.0f, 180.0f, 0.0f);
+  obj->scale.x = 1.5f;
+  obj->scale.y = 1.5f;
+  obj->scale.z = 1.5f;
+  obj->func_ptr = func_800F8274_BowlOver;
+  w->unk_52 = 0;
+  w->unk_A4 = 1.0f;
+  w->unk_C0 = 0xFFFF;
+  w->unk_38 = 1000.0f;
+  w->unk_50 = 0;
+  func_80008FD0(obj, 60.0f);
+  func_80008FDC(obj, 150.0f);
+  func_80008FE8(obj, 20.0f);
+  func_800090C4(obj, 0, 2);
+  switch (chr)
+  {
+    case 5:
+      w->unk_A0 = 0.7f;
+      break;
 
-    obj->unk_50 = func_80023684(sizeof(BowlPlayerWork), 0x7918);
-    func_8009B770(obj->unk_50, 0, sizeof(BowlPlayerWork));
-    w = PLAYER_WORK(obj);
-    w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
-    w->unk_56 = GwPlayer[(u16)player].port;
-    obj->model[0] = LoadFormFile(dir | file, 0x699);
-    obj->model[1] = func_800174F4(6, 0x699);
-    guRandom();
-    func_8001775C(obj, 0, dir | 0x10);
-    guRandom();
-    func_8001775C(obj, 1, dir | 0xF);
-    func_8001775C(obj, 2, dir | 0x75);
-    func_8001775C(obj, 3, dir | 0x6A);
-    func_8001775C(obj, 4, dir);
-    func_800093FC(obj, x, y, z);
-    chr = (u32)dir >> 16;
-    func_80025798(obj->model[0], x, y, z);
-    func_8000940C(obj, 0.0f, 180.0f, 0.0f);
-    obj->scale.x = 1.5f;
-    obj->scale.y = 1.5f;
-    obj->scale.z = 1.5f;
-    obj->func_ptr = func_800F8274_BowlOver;
-    w->unk_52 = 0;
-    w->unk_A4 = 1.0f;
-    w->unk_C0 = 0xFFFF;
-    w->unk_38 = 1000.0f;
-    w->unk_50 = 0;
-    func_80008FD0(obj, 60.0f);
-    func_80008FDC(obj, 150.0f);
-    func_80008FE8(obj, 20.0f);
-    func_800090C4(obj, 0, 2);
-    switch (chr) {
-        case 5:
-            w->unk_A0 = 0.7f;
-            break;
-        case 3:
-            w->unk_A0 = 0.9f;
-            break;
-        case 4:
-            w->unk_A0 = 0.8f;
-            break;
-        default:
-            w->unk_A0 = 1.0f;
-            break;
-    }
-    w->unk_58 = player;
-    func_80025BB8(obj->model[0], obj->motion[2]);
-    func_80025EB4(obj->model[0], 1, 1);
-    D_800FD5AC_BowlOver[D_800FDC5A_BowlOver[0]] = GwPlayer[D_800FDC5A_BowlOver[0]].coins;
+    case 3:
+      w->unk_A0 = 0.9f;
+      break;
+
+    case 4:
+      w->unk_A0 = 0.8f;
+      break;
+
+    default:
+      w->unk_A0 = 1.0f;
+      break;
+
+  }
+
+  w->unk_58 = new_var;
+  func_80025BB8(obj->model[0], obj->motion[2]);
+  func_80025EB4(obj->model[0], 1, 1);
+  D_800FD5AC_BowlOver[D_800FDC5A_BowlOver[0]] = GwPlayer[D_800FDC5A_BowlOver[0]].coins;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F8964_BowlOver);
-#endif
 
 // register allocation and float temporaries
 #ifdef NON_MATCHING
@@ -1088,18 +1093,19 @@ void func_800F9B00_BowlOver(omObjData* obj) {
     }
 }
 
-// load scheduling (masked 2)
-#ifdef NON_MATCHING
-void func_800F9B78_BowlOver(omObjData* obj) {
-    f32 s;
-
-    s = (0.4f - obj->trans.y * 0.0015f) * 2.5;
-    func_80025830(obj->model[1], s, 1.0f, s);
-    func_80025798(obj->model[1], obj->trans.x, 3.0f, obj->trans.z);
+// decomp-permuter
+void func_800F9B78_BowlOver(omObjData *obj)
+{
+  f32 s;
+  omObjData *new_var2;
+  float new_var;
+  s = 0.4f - (obj->trans.y * 0.0015f);
+  ;
+  new_var = 1.0f;
+  func_80025830(obj->model[1], s * 2.5, new_var, s * 2.5);
+  new_var2 = obj;
+  func_80025798(obj->model[1], new_var2->trans.x, (float) 3.0f, obj->trans.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F9B78_BowlOver);
-#endif
 
 void func_800F9C0C_BowlOver(omObjData* obj, f32 x, f32 y, f32 z) {
     BowlPlayerWork* w;
