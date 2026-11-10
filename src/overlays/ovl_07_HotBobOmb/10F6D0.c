@@ -21,11 +21,9 @@ void func_800F8FA0_HotBobOmb(void) {
     func_80018C90(D_800FA9B6_HotBobOmb);
 }
 
-// one extra move after the coins load and an 8-byte larger frame (masked residue only from those)
-#ifdef NON_MATCHING
 void func_800F902C_HotBobOmb(void) {
     s32 i;
-    s16 coins;
+    s32 coins;
     s32 gain;
 
     switch (D_800FA8CC_HotBobOmb) {
@@ -116,9 +114,6 @@ void func_800F902C_HotBobOmb(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F902C_HotBobOmb);
-#endif
 
 void func_800F94AC_HotBobOmb(void) {
     func_800F8FA0_HotBobOmb();
