@@ -526,15 +526,15 @@ void func_800F80A4_FaceLift(omObjData* obj, s32 player) {
     func_8009EA40(D_800F2B7C[obj->model[3]].unk7C, -17.25f, 5.6f, 27.5f);
 }
 // srl for sra after the signed-division bias
-#ifdef NON_MATCHING
-void func_800F8204_FaceLift(omObjData* obj) {
-    D_800FC966_FaceLift = (s16)(rand8() & 0xFF) / 32;
-    D_800FC9E8_FaceLift = omAddObj(0x1388, 0, 0, -1, func_800FB608_FaceLift);
-    obj->func_ptr = func_800F8274_FaceLift;
+// decomp-permuter
+void func_800F8204_FaceLift(omObjData *obj)
+{
+  int new_var;
+  new_var = (s16) (rand8() & 0xFF);
+  D_800FC966_FaceLift = new_var / 32;
+  D_800FC9E8_FaceLift = omAddObj(0x1388, 0, 0, -1, func_800FB608_FaceLift);
+  obj->func_ptr = func_800F8274_FaceLift;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F8204_FaceLift);
-#endif
 void func_800F8274_FaceLift(omObjData* obj) {
     omObjData* o;
     s16 i;
@@ -801,33 +801,36 @@ void func_800F8FCC_FaceLift(omObjData* obj) {
     }
 }
 // float register allocation, one mov.s
-#ifdef NON_MATCHING
-void func_800F9058_FaceLift(omObjData* obj) {
-    f32 s;
-    f32 t;
-
-    s = func_800AEAC0(obj->work[0] * 45.0f) * ((30.0f - obj->work[0]) / 30.0f);
-    if (s < 0.0f) {
-        t = -s + 1.0f;
-    } else {
-        t = s + 1.0f;
-    }
-    omSetSca(obj, t, t, t);
-    func_80025830(obj->model[1], t, t, t);
-    func_80025830(obj->model[2], t, t, t);
-    func_80025830(obj->model[3], t, t, t);
-    if (D_800F384E == 0) {
-        obj->work[0]++;
-    }
-    if (obj->work[0] >= 31) {
-        obj->work[0] = 0;
-        PlaySound(0x23C);
-        obj->func_ptr = func_800F91C0_FaceLift;
-    }
+// decomp-permuter
+void func_800F9058_FaceLift(omObjData *obj)
+{
+  f32 s;
+  f32 t;
+  s = func_800AEAC0(obj->work[0] * 45.0f) * ((30.0f - obj->work[0]) / 30.0f);
+  if (s < 0.0f)
+  {
+    t = (-s) + 1.0f;
+  }
+  else
+  {
+    t = s + 1.0f;
+  }
+  s = t;
+  omSetSca(obj, t, s, s);
+  func_80025830(obj->model[1], s, t, t);
+  func_80025830(obj->model[2], s, t, s);
+  func_80025830(obj->model[3], s, s, s);
+  if (D_800F384E == 0)
+  {
+    obj->work[0]++;
+  }
+  if (obj->work[0] >= 31)
+  {
+    obj->work[0] = 0;
+    PlaySound(0x23C);
+    obj->func_ptr = func_800F91C0_FaceLift;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F9058_FaceLift);
-#endif
 // scheduling (one sub.s)
 #ifdef NON_MATCHING
 void func_800F91C0_FaceLift(omObjData* obj) {
