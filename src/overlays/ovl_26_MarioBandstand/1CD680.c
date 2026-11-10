@@ -1425,8 +1425,6 @@ void func_800FA790_MarioBandstand(s16 model, s16 motion, s16 mode, f32 speed)
 }
 
 /* A musician's animation: 0x14 idle, 0x15 a note (alternating strokes for kind 1). */
-// NON_MATCHING: masked 71 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FA7EC_MarioBandstand(omObjData* obj, s32 mode, s32 half) {
     f32 speed;
     u8 kind = obj->work[0];
@@ -1436,18 +1434,22 @@ void func_800FA7EC_MarioBandstand(omObjData* obj, s32 mode, s32 half) {
     if (half) {
         speed = 0.5f;
     }
-    if (mode == 0x14) {
-        obj->work[2] = 0;
-    } else if (mode >= 0x14 && mode < 0x17) {
+    switch (mode) {
+    case 0x15:
+    case 0x16:
         obj->work[2] = 1;
+        break;
+    case 0x14:
+        obj->work[2] = 0;
+        break;
     }
     m = obj->model[0];
     switch (kind) {
+    case 0:
+        break;
     case 1:
-        if (mode == 0x14) {
-            func_800FA790_MarioBandstand(m, obj->motion[0x14], 2, 1.0f);
-            func_800FA790_MarioBandstand(obj->model[4], obj->motion[0x10], 2, 0.5f);
-        } else if (mode == 0x15) {
+        switch (mode) {
+        case 0x15:
             if (obj->work[3] != 0) {
                 func_800FA790_MarioBandstand(m, obj->motion[0x15], 0, speed);
                 func_800FA790_MarioBandstand(obj->model[4], obj->motion[0x10], 0, speed);
@@ -1456,31 +1458,42 @@ void func_800FA7EC_MarioBandstand(omObjData* obj, s32 mode, s32 half) {
                 func_800FA790_MarioBandstand(obj->model[4], obj->motion[0x11], 0, speed);
             }
             obj->work[3] ^= 1;
+            break;
+        case 0x14:
+        default:
+            func_800FA790_MarioBandstand(m, obj->motion[0x14], 2, 1.0f);
+            func_800FA790_MarioBandstand(obj->model[4], obj->motion[0x10], 2, 0.5f);
+            break;
         }
         break;
     case 2:
-        if (mode == 0x15) {
+        switch (mode) {
+        case 0x15:
             func_800FA790_MarioBandstand(m, obj->motion[0x15], 0, speed);
             func_800FA790_MarioBandstand(obj->model[3], obj->motion[0x10], 0, speed);
-        } else {
+            break;
+        case 0x14:
+        default:
             func_80025BB8(m, obj->motion[0x14]);
             func_80025EB4(m, 2, 2);
             func_800FA790_MarioBandstand(obj->model[3], obj->motion[0x10], 2, 0.5f);
+            break;
         }
         break;
     case 3:
-        if (mode == 0x15) {
+        switch (mode) {
+        case 0x15:
             func_800FA790_MarioBandstand(m, obj->motion[0x15], 0, speed);
-        } else {
+            break;
+        case 0x14:
+        default:
             func_80025BB8(m, obj->motion[0x14]);
             func_80025EB4(m, 2, 2);
+            break;
         }
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA7EC_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 24 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
