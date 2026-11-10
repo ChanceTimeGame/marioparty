@@ -143,8 +143,6 @@ void func_800F935C_BoxMountainMayhem(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800F935C_BoxMountainMayhem);
 #endif
 
-// register allocation (masked 2)
-#ifdef NON_MATCHING
 void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
     s32 r;
     u8 n;
@@ -167,11 +165,11 @@ void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
             }
             z++;
         }
-        if (z >= 4) {
-            z = 0;
-        }
         if (x >= 4) {
             x = 0;
+        }
+        if (z >= 4) {
+            z = 0;
         }
         if ((x == 3) & (z == 3)) {
             x = 0;
@@ -180,11 +178,9 @@ void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
         func_800F96A4_BoxMountainMayhem(x, z, depth);
         return;
     }
-    D_800FC138_BoxMountainMayhem[z][x][0] = n + 1;
+    n++;
+    D_800FC138_BoxMountainMayhem[z][x][0] = n;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800F96A4_BoxMountainMayhem);
-#endif
 
 // register allocation (masked 2)
 #ifdef NON_MATCHING
