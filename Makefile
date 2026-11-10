@@ -298,6 +298,8 @@ build/src/overlays/ovl_28_ShyGuySays/1D9690.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp
 build/src/overlays/ovl_11_BowlOver/13EFB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_11_BowlOver/142EA0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_6B 2CAA00.c: nop between mul.s in func_800F7274 (mul fix on)
+# ovl_33 234F80.c: nop between back-to-back mul.s in func_800FAFEC_PaddleBattle (mul fix on)
+build/src/overlays/ovl_33_PaddleBattle/234F80.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_6B_MinigameHouse/2CAA00.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_1E 191700.c: nop between mul.s in func_800F74E8 (mul fix on)
 build/src/overlays/ovl_1E_BumperBalls/191700.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C

@@ -2102,7 +2102,8 @@ void func_800FC110_MinigameHouse(void) {
         break;
     }
 }
-// register allocation s6/v1 for the table pointer (masked 0)
+// register allocation s6/v1 for the table pointer (masked 0, raw 2); tried D[row], D[0] + row * 4, &D[0][row * 4]
+// (all compute the index first)
 #ifdef NON_MATCHING
 void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s32 row, s32 mode) {
     s32 team;

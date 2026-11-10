@@ -1186,17 +1186,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FABA
 #endif
 
 /* The river point at (dist, lateral). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 24 lines)
-#ifdef NON_MATCHING
 void func_800FAC70_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     Vec p;
     Vec* l;
-    Vec* r;
     f32 t;
     f32 a;
     f32 b;
     f32 c;
-    s16 seg;
+    s32 seg;
 
     seg = func_800FABAC_PaddleBattle(dist, &t);
     a = (1.0 - t) * (1.0 - t) * 0.5;
@@ -1206,61 +1203,52 @@ void func_800FAC70_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     p.x = a * l[0].x + b * l[1].x + c * l[2].x;
     p.y = a * l[0].y + b * l[1].y + c * l[2].y;
     p.z = a * l[0].z + b * l[1].z + c * l[2].z;
-    r = &D_800FE600_PaddleBattle[seg];
-    out->x = a * r[0].x + b * r[1].x + c * r[2].x;
-    out->y = a * r[0].y + b * r[1].y + c * r[2].y;
-    out->z = a * r[0].z + b * r[1].z + c * r[2].z;
+    l = &D_800FE600_PaddleBattle[seg];
+    out->x = a * l[0].x + b * l[1].x + c * l[2].x;
+    out->y = a * l[0].y + b * l[1].y + c * l[2].y;
+    out->z = a * l[0].z + b * l[1].z + c * l[2].z;
     out->x = (out->x - p.x) * lateral + p.x;
     out->y = (out->y - p.y) * lateral + p.y;
     out->z = (out->z - p.z) * lateral + p.z + 10000.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAC70_PaddleBattle);
-#endif
 
 /* The river's width at `dist`. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 99 lines)
-#ifdef NON_MATCHING
 f32 func_800FAE48_PaddleBattle(f32 dist) {
+    Vec p;
     Vec* l;
-    Vec* r;
     f32 t;
     f32 a;
     f32 b;
     f32 c;
-    f32 x;
-    f32 y;
-    f32 z;
-    s16 seg;
+    s32 seg;
 
     seg = func_800FABAC_PaddleBattle(dist, &t);
     a = (1.0 - t) * (1.0 - t) * 0.5;
     b = (1.0 - t) * t + 0.5;
     c = t * t * 0.5;
     l = &D_800FE210_PaddleBattle[seg];
-    r = &D_800FE600_PaddleBattle[seg];
-    x = (a * l[0].x + b * l[1].x + c * l[2].x) - (a * r[0].x + b * r[1].x + c * r[2].x);
-    y = (a * l[0].y + b * l[1].y + c * l[2].y) - (a * r[0].y + b * r[1].y + c * r[2].y);
-    z = (a * l[0].z + b * l[1].z + c * l[2].z) - (a * r[0].z + b * r[1].z + c * r[2].z);
-    return sqrtf(x * x + y * y + z * z);
+    p.x = a * l[0].x + b * l[1].x + c * l[2].x;
+    p.y = a * l[0].y + b * l[1].y + c * l[2].y;
+    p.z = a * l[0].z + b * l[1].z + c * l[2].z;
+    l = &D_800FE600_PaddleBattle[seg];
+    p.x = p.x - (a * l[0].x + b * l[1].x + c * l[2].x);
+    p.y = p.y - (a * l[0].y + b * l[1].y + c * l[2].y);
+    p.z = p.z - (a * l[0].z + b * l[1].z + c * l[2].z);
+    return sqrtf(p.x * p.x + p.y * p.y + p.z * p.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAE48_PaddleBattle);
-#endif
 
 /* The river's direction (unit vector) at (dist, lateral). */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 87 lines)
+// float register allocation only (a in $f4, not $f2; masked 0, raw ~42); tried declaration orders, b before a
 #ifdef NON_MATCHING
 void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     Vec p;
     Vec q;
     Vec* l;
-    Vec* r;
     f32 t;
     f32 a;
     f32 b;
     f32 inv;
-    s16 seg;
+    s32 seg;
 
     seg = func_800FABAC_PaddleBattle(dist, &t);
     a = t - 1.0;
@@ -1269,10 +1257,10 @@ void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
     p.x = a * l[0].x + b * l[1].x + t * l[2].x;
     p.y = a * l[0].y + b * l[1].y + t * l[2].y;
     p.z = a * l[0].z + b * l[1].z + t * l[2].z;
-    r = &D_800FE600_PaddleBattle[seg];
-    q.x = a * r[0].x + b * r[1].x + t * r[2].x;
-    q.y = a * r[0].y + b * r[1].y + t * r[2].y;
-    q.z = a * r[0].z + b * r[1].z + t * r[2].z;
+    l = &D_800FE600_PaddleBattle[seg];
+    q.x = a * l[0].x + b * l[1].x + t * l[2].x;
+    q.y = a * l[0].y + b * l[1].y + t * l[2].y;
+    q.z = a * l[0].z + b * l[1].z + t * l[2].z;
     p.x = (q.x - p.x) * lateral + p.x;
     p.y = (q.y - p.y) * lateral + p.y;
     p.z = (q.z - p.z) * lateral + p.z;
