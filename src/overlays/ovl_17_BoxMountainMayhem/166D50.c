@@ -386,7 +386,7 @@ void func_800F7E70_BoxMountainMayhem(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F7E70_BoxMountainMayhem);
 #endif
 
-// shadow model sign-extension register (masked 6)
+// NON_MATCHING: retail sign-extends the new shadow model into s0 (one register for both sprite roles) (masked 6; tried s32 sprite, split statements, reversed chain)
 #ifdef NON_MATCHING
 void func_800F80A0_BoxMountainMayhem(omObjData* obj) {
     BMMBodyWork* work;
@@ -521,7 +521,7 @@ s32 func_800F84D0_BoxMountainMayhem(void)
   return count;
 }
 
-// register allocation throughout (masked 118; control flow and operations checked against the asm)
+// NON_MATCHING: register allocation throughout, frame 8 bytes larger (masked 118; control flow and operations checked against the asm; tried a shared stack variable, precomputed stage bounds)
 #ifdef NON_MATCHING
 f32 func_800F8548_BoxMountainMayhem(omObjData* obj, Vec* pos, f32 r, s32* hitOut) {
     BMMStageWork* stage;
@@ -722,7 +722,7 @@ f32 func_800F8548_BoxMountainMayhem(omObjData* obj, Vec* pos, f32 r, s32* hitOut
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F8548_BoxMountainMayhem);
 #endif
 
-// frame 8 bytes smaller, k = (hit & 6) != 0 as sltu, shadow sign-extension (masked 43)
+// NON_MATCHING: GCC if-converts the (hit & 6) test on k to sltu where retail branches and reloads hit (masked 26; tried k = 0 then if, k++, an s16 k)
 #ifdef NON_MATCHING
 void func_800F8C94_BoxMountainMayhem(omObjData* obj) {
     BMMBodyWork* work;
@@ -733,7 +733,7 @@ void func_800F8C94_BoxMountainMayhem(omObjData* obj) {
     f32 speed;
     f32 floor;
     s32 k;
-    s32 model;
+    s16 model;
 
     work = BMM_BODY(obj);
     ext = work->unk_68.coin;
