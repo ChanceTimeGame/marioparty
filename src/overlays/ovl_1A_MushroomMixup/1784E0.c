@@ -539,45 +539,44 @@ u8 func_800F8260_MushroomMixup(omObjData* arg0) {
     return var_a1;
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800F82AC_MushroomMixup(omObjData* arg0) {
-    MMPlayerWork* work;
-    s32 n;
-    s32 bit;
-    u8 p;
-
-    work = arg0->unk_50;
-    p = arg0->work[0];
-    n = ++*(D_800FC892_MushroomMixup + p);
+// decomp-permuter
+void func_800F82AC_MushroomMixup(omObjData *arg0)
+{
+  MMPlayerWork *work;
+  s32 n;
+  s32 bit;
+  u8 p;
+  work = arg0->unk_50;
+  p = arg0->work[0];
+  n = ++(*(D_800FC892_MushroomMixup + p));
+  if (n == 1)
+  {
     bit = n << p;
-    if (n == 1) {
-        D_800FC8A0_MushroomMixup |= bit;
-        D_800FC9A0_MushroomMixup |= bit;
-        func_800F7188_MushroomMixup(0x292);
-        func_80060F04(work->unk_58, 0x14, 0, 0x14);
-        func_800258EC(arg0->model[2], 4, 0);
-        func_8001E2A8(work->unk_23, 0);
-        func_8001E2F8(work->unk_23, 0xC8);
-        func_8001E268(work->unk_23, 4, 4);
-        func_80025798(arg0->model[2], arg0->trans.x, arg0->trans.y + 100.0f, arg0->trans.z + 180.0f);
-        func_80025830(arg0->model[2], 6.0f, 6.0f, 6.0f);
-        work->unk_40 = D_800B8990;
-        func_800258EC(arg0->model[1], 4, 4);
-    }
-    if (arg0->work[1] == 0) {
-        arg0->work[1] = 1;
-        func_800185A4(arg0, 0x10);
-        func_80017DB0(arg0);
-    }
-    if (arg0->trans.y > 50.0f) {
-        arg0->trans.y -= 1.5f;
-        func_800093FC(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
-    }
+    D_800FC8A0_MushroomMixup |= bit;
+    D_800FC9A0_MushroomMixup |= bit;
+    func_800F7188_MushroomMixup(0x292);
+    func_80060F04(work->unk_58, 0x14, 0, 0x14);
+    func_800258EC(arg0->model[2], 4, 0);
+    func_8001E2A8(work->unk_23, 0);
+    func_8001E2F8(work->unk_23, 0xC8);
+    func_8001E268(work->unk_23, 4, 4);
+    func_80025798(arg0->model[2], arg0->trans.x, arg0->trans.y + 100.0f, arg0->trans.z + 180.0f);
+    func_80025830(arg0->model[2], 6.0f, 6.0f, 6.0f);
+    work->unk_40 = D_800B8990;
+    func_800258EC(arg0->model[1], 4, 4);
+  }
+  if (arg0->work[1] == 0)
+  {
+    arg0->work[1] = 1;
+    func_800185A4(arg0, 0x10);
+    func_80017DB0(arg0);
+  }
+  if (arg0->trans.y > 50.0f)
+  {
+    arg0->trans.y = arg0->trans.y - 1.5f;
+    func_800093FC(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F82AC_MushroomMixup);
-#endif
 
 s32 func_800F846C_MushroomMixup(u16 arg0) {
     MMPlayerWork* work;
