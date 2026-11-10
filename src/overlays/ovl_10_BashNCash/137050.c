@@ -1338,11 +1338,10 @@ void func_800FA26C_BashNCash(omObjData* obj) {
     obj->rot.x += 60.0f;
 }
 
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FA440_BashNCash(omObjData* obj) {
     Vec3f v;
     s32 i;
+    f32 angle;
 
     obj->trans.x = D_800F2B7C[D_800FE618_BashNCash[D_800FE3A0_BashNCash]].unk_24;
     obj->trans.y = D_800F2B7C[D_800FE618_BashNCash[D_800FE3A0_BashNCash]].unk_28;
@@ -1351,16 +1350,14 @@ void func_800FA440_BashNCash(omObjData* obj) {
     obj->rot.y = D_800F2B7C[D_800FE618_BashNCash[D_800FE3A0_BashNCash]].unk_34;
     obj->rot.z = D_800F2B7C[D_800FE618_BashNCash[D_800FE3A0_BashNCash]].unk_38;
     func_800A0D00(&v, -obj->trans.x, 0.0f, -obj->trans.z);
+    angle = func_800B0CD8(v.x, v.z);
     i = D_800FE3A0_BashNCash;
-    D_800FE5BC_BashNCash[i] = func_800B0CD8(v.x, v.z) + 20.0f;
+    D_800FE5BC_BashNCash[i] = angle + 20.0f;
     D_800FE5B0_BashNCash[i] = 30.0f;
     D_800FE3A0_BashNCash = i + 1;
     obj->work[0] = i;
     obj->func_ptr = func_800FA26C_BashNCash;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FA440_BashNCash);
-#endif
 
 /* A hammer player's object. */
 // register allocation and scheduling (nmcmp: calls and stores equal)
