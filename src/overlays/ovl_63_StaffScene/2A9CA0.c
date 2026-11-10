@@ -660,9 +660,10 @@ void func_800F7684_StaffScene(StaffModel* m) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F7684_StaffScene);
 #endif
-// register allocation only (masked 0)
+// register allocation only (masked 0): d and the folded 2*vy/60 constant swap $f2/$f0; tried d inline, no tt, tt*tt, 2*vy/60 via a local
 #ifdef NON_MATCHING
 void func_800F78F8_StaffScene(StaffModel* m) {
+    f32* rx;
     s32 i;
     f32 d;
     Vec3f* p;
@@ -670,7 +671,6 @@ void func_800F78F8_StaffScene(StaffModel* m) {
     f32* ry;
     f32 vx;
     f32 ax;
-    f32* rx;
     f32 vy;
     f32 ay;
     f32 vz;
@@ -680,7 +680,8 @@ void func_800F78F8_StaffScene(StaffModel* m) {
     tt = 3600.0f;
     d = D_800FD354_StaffScene.y - p->y;
     vy = 5.0f;
-    ay = 2.0f * d / tt - 2.0f * vy / 60.0f;
+    d = 2.0f * d / tt;
+    ay = d - 2.0f * vy / 60.0f;
     vz = (D_800FD354_StaffScene.z - p->z) / 60.0f;
     vx = -12.0f;
     ax = 0.4f;
@@ -760,7 +761,7 @@ void func_800F7AC0_StaffScene(void) {
         HuPrcVSleep();
     }
 }
-// register allocation only (masked 0)
+// register allocation only (masked 0): d and the folded 2*vy/60 constant swap $f2/$f0; tried d inline, no tt, tt*tt, 2*vy/60 via a local
 #ifdef NON_MATCHING
 void func_800F7C48_StaffScene(StaffModel* m) {
     s32 i;
@@ -771,15 +772,16 @@ void func_800F7C48_StaffScene(StaffModel* m) {
     f32 vx;
     f32 ax;
     f32 vy;
-    f32 vz;
     f32 ay;
+    f32 vz;
 
     HuPrcSleep(2);
     p = &m->pos;
     tt = 3600.0f;
     d = D_800FD360_StaffScene.y - p->y;
     vy = 5.0f;
-    ay = 2.0f * d / tt - 2.0f * vy / 60.0f;
+    d = 2.0f * d / tt;
+    ay = d - 2.0f * vy / 60.0f;
     vz = (D_800FD360_StaffScene.z - p->z) / 60.0f;
     vx = 12.0f;
     ax = -0.4f;

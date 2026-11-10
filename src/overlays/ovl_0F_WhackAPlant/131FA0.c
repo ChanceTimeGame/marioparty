@@ -515,12 +515,11 @@ void func_800F8134_WhackAPlant(omObjData* arg0) {
     func_800257E4(arg0->model[4], 0.0f, 90.0f, 0.0f);
     arg0->func_ptr = func_800F82B4_WhackAPlant;
 }
-// NON_MATCHING: register allocation in the first clamp loop (masked 0)
-#ifdef NON_MATCHING
 void func_800F82B4_WhackAPlant(omObjData* arg0) {
     WAPFence* w;
     s32 i;
     f32 d;
+    f32 dx;
 
     w = arg0->unk_50;
     if (arg0->work[0] != 0xFF) {
@@ -531,11 +530,11 @@ void func_800F82B4_WhackAPlant(omObjData* arg0) {
     i = 0;
     if (D_800FB740_WhackAPlant != 0 || D_800FB710_WhackAPlant >= 3) {
         for (i = 0; i < 2; i++) {
-            d = D_800FB700_WhackAPlant->trans.x - w->unk0[i];
-            if (fabs(d) > 20.0) {
-                d = (d > 0.0f) ? 20.0f : -20.0f;
+            dx = D_800FB700_WhackAPlant->trans.x - w->unk0[i];
+            if (fabs(dx) > 20.0) {
+                dx = (dx > 0.0f) ? 20.0f : -20.0f;
             }
-            w->unk0[i] += d;
+            w->unk0[i] += dx;
         }
         for (i = 2; i < 4; i++) {
             d = D_800FB700_WhackAPlant->trans.z - w->unk10[i];
@@ -569,9 +568,6 @@ void func_800F82B4_WhackAPlant(omObjData* arg0) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_WhackAPlant/131FA0", func_800F82B4_WhackAPlant);
-#endif
 void func_800F8614_WhackAPlant(omObjData* arg0) {
     WAPPots* w;
     s32 i;
