@@ -349,12 +349,12 @@ void func_800FD37C_CraneGame(s16);
 void func_800FD3D0_CraneGame(Gfx**, Mtx*, camera*);
 void func_800FD604_CraneGame(CGCol*, s16);
 void func_800FD7B4_CraneGame(unk2C0C0StructA0*, CGColFace*, unk2C0C0Struct20*, s16);
-void func_800FDBF8_CraneGame(Matrix4f, f32, f32, f32, Vec*);
+void func_800FDBF8_CraneGame(Matrix4f, f32, f32, f32, f32*); /* out: a Vec */
 s32 func_800FDC94_CraneGame(Vec*, f32, f32, f32, s16);
 s32 func_800FDF54_CraneGame(Vec*, Vec*, f32);
 void func_800FE0A4_CraneGame(CGColFace*, s16, Vec*, Vec*);
 f32 func_800FE518_CraneGame(f32, f32);
-void func_800FE598_CraneGame(Vec*, Vec*);
+void func_800FE598_CraneGame(Vec*, f32*); /* out: a Vec */
 void func_800FE620_CraneGame(void);
 void func_800FE658_CraneGame(void);
 void func_800FE7A0_CraneGame(void);
