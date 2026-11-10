@@ -1064,8 +1064,6 @@ void func_800FA658_GrabBag(omObjData* arg0) {
     ContBtnTrg[work->port] &= 0x7FFF;
     ContBtnTrg[work->port] &= 0xBFFF;
 }
-// float register allocation at the shared return (masked 3)
-#ifdef NON_MATCHING
 f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     f32 target;
     f32 diff;
@@ -1076,22 +1074,16 @@ f32 func_800FA780_GrabBag(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
         return target;
     }
     if (diff <= -180.0f) {
-        return arg0 + arg3;
-    }
-    if ((diff <= 180.0f) & (diff >= 0.0f)) {
-        return arg0 + arg3;
-    }
-    if (diff > 180.0f) {
-        return arg0 - arg3;
-    }
-    if ((diff > -180.0f) & (diff < 0.0f)) {
-        return arg0 - arg3;
+        target = arg0 + arg3;
+    } else if ((diff <= 180.0f) & (diff >= 0.0f)) {
+        target = arg0 + arg3;
+    } else if (diff > 180.0f) {
+        target = arg0 - arg3;
+    } else if ((diff > -180.0f) & (diff < 0.0f)) {
+        target = arg0 - arg3;
     }
     return target;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA780_GrabBag);
-#endif
 void func_800FA8F4_GrabBag(omObjData* arg0) {
     GrabBagPos facePos[4] = { { 56, 24 }, { 264, 24 }, { 56, 202 }, { 264, 202 } };
     GrabBagPos bagPos[4] = { { 39, 38 }, { 247, 38 }, { 39, 216 }, { 247, 216 } };
