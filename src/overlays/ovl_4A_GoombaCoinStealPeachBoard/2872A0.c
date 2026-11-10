@@ -63,7 +63,7 @@ void func_800F65E0_GoombaCoinStealPeachBoard(void) {
     }
 }
 
-// scheduling: retail puts the rand compare in v1 and the maxTurns-1 addiu after both loads
+// scheduling: retail puts the rand compare in v1 and the maxTurns-1 addiu after both loads (masked 2; tried swapped operands of both compares, the rand result in a local)
 #ifdef NON_MATCHING
 s32 func_800F66D0_GoombaCoinStealPeachBoard(void) {
     u8* table;
@@ -127,12 +127,12 @@ s32 func_800F66D0_GoombaCoinStealPeachBoard(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_GoombaCoinStealPeachBoard/2872A0", func_800F66D0_GoombaCoinStealPeachBoard);
 #endif
 
-// register allocation: GCC hoists the -1 button value into s7 (retail loads it at the store)
+// loop invariant motion: GCC hoists the -1 button value into s7 (retail loads it at the store); 169 vs 167 instructions, masked 18
 #ifdef NON_MATCHING
 s32 func_800F68B8_GoombaCoinStealPeachBoard(s32 win) {
     s16 buttons[4];
-    u8 portMask[4] = "\x01\x02\x04\x08";
     s32 presses = 0;
+    u8 portMask[4] = "\x01\x02\x04\x08";
     s32 i;
     s32 n;
 
