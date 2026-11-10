@@ -429,6 +429,7 @@ void func_800F72EC_DeepSeaDivers(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F72EC_DeepSeaDivers);
 #endif
+// one instruction short and loop-temporary registers differ (masked 4); not finished in M1c
 #ifdef NON_MATCHING
 void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
     unk65770Anim* a = func_80067310(sprite);
@@ -448,8 +449,8 @@ void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
     gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
     gDPSetTextureLUT(gfx++, G_TT_RGBA16);
     gDPLoadTLUT_pal256(gfx++, a->unkC);
-    gSPVertex(gfx++, D_801003F8_DeepSeaDivers, 5, 0);
     cur = 0;
+    gSPVertex(gfx++, D_801003F8_DeepSeaDivers, 5, 0);
     for (i = 0; i < 20; i++) {
         gDPLoadTextureTile(gfx++, a->unk8, G_IM_FMT_CI, G_IM_SIZ_8b, 160, 0, 0, i * 12, 159, i * 12 + 11, 0,
                            G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
