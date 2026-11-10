@@ -328,7 +328,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19ACC0", func_8
 #endif
 
 /* Scrolls the texture coordinates of material `name` of a model. */
-// load order of the material table base (masked 2)
+// load order of the material table base: retail loads m->unk_80 before the index math (masked 2); tried m->unk_80 + k, k inlined
 #ifdef NON_MATCHING
 void func_800FA838_TightropeTreachery(s16 model, f32 u, f32 v, s32 w, s32 h, char* name) {
     unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
@@ -337,8 +337,8 @@ void func_800FA838_TightropeTreachery(s16 model, f32 u, f32 v, s32 w, s32 h, cha
     unk2C0C0StructE0* dst;
     u16 du;
     u16 dv;
-    s32 sizeU;
-    s32 sizeV;
+    u16 sizeU;
+    u16 sizeV;
     s16 n;
     s16 i;
     s16 k;
@@ -360,11 +360,11 @@ void func_800FA838_TightropeTreachery(s16 model, f32 u, f32 v, s32 w, s32 h, cha
         if (v < 0.0f) {
             v = -v;
         }
-        if (u * 32.0f > (u16)sizeU) {
-            du %= (u16)sizeU;
+        if (u * 32.0f > sizeU) {
+            du %= sizeU;
         }
-        if (v * 32.0f > (u16)sizeV) {
-            dv %= (u16)sizeV;
+        if (v * 32.0f > sizeV) {
+            dv %= sizeV;
         }
         for (i = 0; i < n; i++) {
             dst->unk_08 = du + src->unk_08;
@@ -379,16 +379,16 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19ACC0", func_8
 #endif
 
 /* The water's waves. */
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800FAAD8_TightropeTreachery(omObjData* obj) {
     unk2C0C0StructC0* m = D_800F2B7C[obj->model[0]].unk_6C;
     unk2C0C0StructE0* src = m->unk_04;
     unk2C0C0StructE0* dst = m->unk_08[D_800F37F0];
     s16 n = m->unk_72;
     s16 i;
-    f32 dx;
-    f32 dz;
+    f32 dx1;
+    f32 dz1;
+    f32 dx2;
+    f32 dz2;
     f32 d1;
     f32 d2;
     f32 h1;
@@ -396,12 +396,12 @@ void func_800FAAD8_TightropeTreachery(omObjData* obj) {
 
     for (i = 0; i < n; i++) {
         *dst = *src;
-        dx = src->unk_00 - 4000.0f;
-        dz = src->unk_04 + 4000.0f;
-        d1 = sqrtf(dx * dx + dz * dz) / 30.0f;
-        dx = src->unk_00 - 4000.0f;
-        dz = src->unk_04 - 4000.0f;
-        d2 = sqrtf(dx * dx + dz * dz) / 12.0f * 12.0f;
+        dx1 = src->unk_00 - 4000.0f;
+        dz1 = src->unk_04 + 4000.0f;
+        d1 = sqrtf(dx1 * dx1 + dz1 * dz1) / 30.0f;
+        dx2 = src->unk_00 - 4000.0f;
+        dz2 = src->unk_04 - 4000.0f;
+        d2 = sqrtf(dx2 * dx2 + dz2 * dz2) / 12.0f * 12.0f;
         h1 = src->unk_02 + func_800AEAC0(d1 * 12.0f + D_800FE464_TightropeTreachery) * 30.0f;
         h2 = src->unk_02 + func_800AEFD0(D_800FE468_TightropeTreachery + d2 * 30.0) * 8.0f;
         if (h2 < h1) {
@@ -428,9 +428,6 @@ void func_800FAAD8_TightropeTreachery(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19ACC0", func_800FAAD8_TightropeTreachery);
-#endif
 
 void func_800FAE54_TightropeTreachery(omObjData* obj) {
     if (func_8005FD5C() + D_800F64F8 == 0) {
