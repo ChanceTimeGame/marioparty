@@ -1269,7 +1269,6 @@ void func_800FA62C_DeepSeaDivers(s16 idx) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FA62C_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FA9A4_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
@@ -1278,14 +1277,10 @@ void func_800FA9A4_DeepSeaDivers(s16 idx) {
         func_80067208(D_80100C80_DeepSeaDivers[idx].sprite, 0, D_80101790_DeepSeaDivers[0], 3);
         D_80100C80_DeepSeaDivers[idx].sx = 0.75f;
         D_80100C80_DeepSeaDivers[idx].sy = 0.5f;
-    }
-    if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
+    } else if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
         func_800FD870_DeepSeaDivers(idx);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FA9A4_DeepSeaDivers);
-#endif
 void func_800FAABC_DeepSeaDivers(s16 idx) {
     DSDWork* w;
 
@@ -1345,22 +1340,19 @@ void func_800FAC68_DeepSeaDivers(s16 idx) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FAC68_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FB010_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
         D_80100C80_DeepSeaDivers[idx].timer = 60;
         D_80100C80_DeepSeaDivers[idx].y = 725.0f;
         func_80067208(D_80100C80_DeepSeaDivers[idx].sprite, 0, D_80101790_DeepSeaDivers[2], 0);
-    }
-    D_80100C80_DeepSeaDivers[idx].x = D_80101780_DeepSeaDivers[D_80100C80_DeepSeaDivers[idx].target].diver->trans.x;
-    if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
-        func_800FD870_DeepSeaDivers(idx);
+    } else {
+        D_80100C80_DeepSeaDivers[idx].x = D_80101780_DeepSeaDivers[D_80100C80_DeepSeaDivers[idx].target].diver->trans.x;
+        if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
+            func_800FD870_DeepSeaDivers(idx);
+        }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB010_DeepSeaDivers);
-#endif
 s16 func_800FB130_DeepSeaDivers(void) {
     DSDWork* w;
     s16 i;
@@ -1506,6 +1498,7 @@ void func_800FB860_DeepSeaDivers(void) {
     Center.y = -580.0f;
     Center.z = -110.0f;
 }
+// retail keeps out + 4 in a register (masked 3); tried *o++ x3, explicit o = out + 4 (CSE folds both)
 #ifdef NON_MATCHING
 void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
     f32* o = (f32*)out;
