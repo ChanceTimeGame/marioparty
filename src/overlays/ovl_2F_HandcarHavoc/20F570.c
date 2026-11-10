@@ -1978,8 +1978,6 @@ void func_800FCA58_HandcarHavoc(omObjData* obj, u16 side) {
 }
 
 /* The car's marker and the riders' faces on the map. */
-// NON_MATCHING: sign extension of the map x
-#ifdef NON_MATCHING
 void func_800FCBA4_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     s32 x;
@@ -1992,12 +1990,9 @@ void func_800FCBA4_HandcarHavoc(omObjData* obj) {
     }
     y = 176.0f - w->progress / D_800FF614_HandcarHavoc * 144.0f;
     SetBasicSpritePos(w->marker, x, y + 8);
-    SetBasicSpritePos(w->face[0], x, y);
-    SetBasicSpritePos(w->face[1], x, y);
+    SetBasicSpritePos(w->face[0], x, y + 18);
+    SetBasicSpritePos(w->face[1], x, y - 2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FCBA4_HandcarHavoc);
-#endif
 
 /* The backgrounds follow the cameras' pitch. */
 void func_800FCCA4_HandcarHavoc(omObjData* obj) {
