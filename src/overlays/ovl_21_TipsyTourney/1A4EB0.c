@@ -876,67 +876,82 @@ void func_800F9898_TipsyTourney(void) {
     }
 }
 
-// register reuse: retail copies the loop start with move, this reloads it with lhu (masked 2)
-#ifdef NON_MATCHING
-void func_800F9980_TipsyTourney(s16 model, s32 p) {
-    unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
-    unk2C0C0StructB0* g;
-    f32 minX;
-    f32 minZ;
-    f32 maxX;
-    f32 maxZ;
-    f32 w;
-    f32 h;
-    f32 lx;
-    f32 lz;
-    s16 start;
-    s16 k;
-    s16 r;
-    s16 c;
+// decomp-permuter
+void func_800F9980_TipsyTourney(s16 model, s32 p)
+{
+  unk2C0C0StructC0 *m = D_800F2B7C[model].unk_6C;
+  unk2C0C0StructB0 *g;
+  f32 minX;
+  f32 minZ;
+  f32 maxX;
+  f32 maxZ;
+  f32 w;
+  f32 h;
+  f32 lx;
+  f32 lz;
+  s16 start;
+  s16 k;
+  s16 c;
+  short new_var;
+  minZ = 10000.0f;
+  minX = 10000.0f;
+  maxZ = -10000.0f;
+  maxX = -10000.0f;
+  new_var = m->unk_80->unk_0E;
+  g = &m->unk_D0[start = new_var];
+  for (k = start; k < ((s16) m->unk_80->unk_10); k++, g++)
+  {
+    if (g->unk_0C < minX)
+    {
+      minX = g->unk_0C;
+    }
+    if (g->unk_14 < minZ)
+    {
+      minZ = g->unk_14;
+    }
+    if (maxX < g->unk_0C)
+    {
+      maxX = g->unk_0C;
+    }
+    if (maxZ < g->unk_14)
+    {
+      maxZ = g->unk_14;
+    }
+  }
 
-    minZ = 10000.0f;
-    minX = 10000.0f;
-    maxZ = -10000.0f;
-    maxX = -10000.0f;
-    g = &m->unk_D0[start = m->unk_80->unk_0E];
-    for (k = start; k < (s16)m->unk_80->unk_10; k++, g++) {
-        if (g->unk_0C < minX) {
-            minX = g->unk_0C;
-        }
-        if (g->unk_14 < minZ) {
-            minZ = g->unk_14;
-        }
-        if (maxX < g->unk_0C) {
-            maxX = g->unk_0C;
-        }
-        if (maxZ < g->unk_14) {
-            maxZ = g->unk_14;
-        }
-    }
-    w = (maxX - minX) / 5.0f;
-    h = (maxZ - minZ) / 5.0f;
-    for (r = 0; r < 5; r++) {
-        for (c = 0; c < 5; c++) {
-            g = &m->unk_D0[start = m->unk_80->unk_0E];
-            for (k = start; k < (s16)m->unk_80->unk_10; k++, g++) {
-                lx = minX + w * c;
-                if (lx <= g->unk_0C && g->unk_0C <= lx + w) {
-                    lz = minZ + h * r;
-                    if (lz <= g->unk_14 && g->unk_14 <= lz + h) {
-                        break;
-                    }
-                }
+  w = (maxX - minX) / 5.0f;
+  h = (maxZ - minZ) / 5.0f;
+  for (new_var = 0; new_var < 5; new_var++)
+  {
+    for (c = 0; c < 5; c++)
+    {
+      g = &m->unk_D0[start = m->unk_80->unk_0E];
+      for (k = start; k < ((s16) m->unk_80->unk_10); k++, g++)
+      {
+        lx = minX + (w * c);
+        if ((lx <= g->unk_0C) && (g->unk_0C <= (lx + w)))
+        {
+          lz = minZ + (h * new_var);
+          if ((lz <= g->unk_14) && (g->unk_14 <= (lz + h)))
+          {
+            if (1)
+            {
+              break;
             }
-            if (k != (s16)m->unk_80->unk_10) {
-                D_800FBA58_TipsyTourney[p][c][r] = k;
-            }
-            D_800FB7B8_TipsyTourney[p][c][r] = 0;
+          }
         }
+      }
+
+      if (k != ((s16) m->unk_80->unk_10))
+      {
+        D_800FBA58_TipsyTourney[p][c][new_var] = k;
+      }
+      D_800FB7B8_TipsyTourney[p][c][new_var] = 0;
     }
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_TipsyTourney/1A4EB0", func_800F9980_TipsyTourney);
-#endif
 
 void func_800F9C48_TipsyTourney(s16 model, s32 p) {
     unk2C0C0StructC0* m = D_800F2B7C[model].unk_6C;
@@ -1163,37 +1178,46 @@ void func_800FA880_TipsyTourney(omObjData* obj) {
     func_800FA3C4_TipsyTourney(obj);
 }
 
-// address association in the first loop (base + p * 0x32 first; masked 3)
-#ifdef NON_MATCHING
-s32 func_800FA94C_TipsyTourney(s32 p) {
-    s32 i;
-    s32 j;
+// decomp-permuter
+s32 func_800FA94C_TipsyTourney(s32 p)
+{
+  s32 i;
+  s32 j;
+  for (i = 0; i < 5; i++)
+  {
+    j = 0;
+    if (D_800FB7B8_TipsyTourney[p][j][i] == 0)
+    {
+      return 0;
+    }
+  }
 
-    for (i = 0; i < 5; i++) {
-        if (D_800FB7B8_TipsyTourney[p][0][i] == 0) {
-            return 0;
-        }
+  for (i = 0, j = 0; i < 5; i++)
+  {
+    if (D_800FB7B8_TipsyTourney[p][i][j] == 0)
+    {
+      return 0;
     }
-    for (i = 0, j = 0; i < 5; i++) {
-        if (D_800FB7B8_TipsyTourney[p][i][j] == 0) {
-            return 0;
-        }
+  }
+
+  for (i = 0; i < 5; i++)
+  {
+    if (D_800FB7B8_TipsyTourney[p][4][i] == 0)
+    {
+      return 0;
     }
-    for (i = 0; i < 5; i++) {
-        if (D_800FB7B8_TipsyTourney[p][4][i] == 0) {
-            return 0;
-        }
+  }
+
+  for (i = 0, j = 4; i < 5; i++)
+  {
+    if (D_800FB7B8_TipsyTourney[p][i][j] == 0)
+    {
+      return 0;
     }
-    for (i = 0, j = 4; i < 5; i++) {
-        if (D_800FB7B8_TipsyTourney[p][i][j] == 0) {
-            return 0;
-        }
-    }
-    return 1;
+  }
+
+  return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_TipsyTourney/1A4EB0", func_800FA94C_TipsyTourney);
-#endif
 
 s32 func_800FAA9C_TipsyTourney(s32 p) {
     if (D_800FB7B8_TipsyTourney[p][1][1] == 0) {
