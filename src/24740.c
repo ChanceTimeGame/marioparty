@@ -439,7 +439,7 @@ void func_80024754(void) {
     func_8002854C();
     D_800ED3E4[0] = D_800ED3E4[1] = NULL;
 }
-// register allocation; D_800ED0D8 address not folded into the load (masked 31, 3 of them the D_800ED3E4[1] split-label reloc)
+// register allocation; D_800ED0D8 address not folded into the load (masked 25)
 #ifdef NON_MATCHING
 void func_800247FC(OSMesgQueue* arg0, s32 arg1) {
     Matrix4f sp18;
@@ -1604,8 +1604,6 @@ void func_80028C64(s16 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
 void func_80028E8C(s16 arg0, void (*arg1)(Gfx**, Mtx*, u8)) {
     D_800ED3E4[arg0] = arg1;
 }
-// assembler mul fix adds a nop before mul.s after each sin/cos call (masked 3)
-#ifdef NON_MATCHING
 void func_80028EA4(s16 arg0, f32 arg1) {
     unk2C0C0StructC0* model = D_800F2B7C[arg0].unk_6C;
     unk2C0C0StructE0* src = model->unk_04;
@@ -1627,9 +1625,6 @@ void func_80028EA4(s16 arg0, f32 arg1) {
         dst++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/24740", func_80028EA4);
-#endif
 const char D_800CA810[] = "donky4_DEF";
 const char D_800CA81C[] = "wario_kao_DEF";
 const char D_800CA82C[] = "c003t000._DEF";

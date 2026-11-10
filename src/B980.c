@@ -2498,7 +2498,7 @@ void func_8000F294(s16 idx, s8 mode)
   s->count = D_800CEAF5;
 }
 
-// delay-slot/branch layout around the func_80010C4C result test (masked 7)
+// retail places the v < 0 arm after the success arm; voiceIdx extension reuse (masked 7)
 #ifdef NON_MATCHING
 void func_8000F4E0(void) {
     s32 i;
@@ -2547,14 +2547,14 @@ void func_8000F4E0(void) {
         } else {
             v = func_80010C4C(s->id);
         }
-        if (v >= 0) {
+        if (v < 0) {
+            s->id = -1;
+        } else {
             func_800123DC(v, s->vol);
             func_8001249C(v, s->unk_06);
             D_800CEA94[v].unk_23 = s->unk_05;
             s->delay = D_800CEAF4;
             D_800CEA94[v].unk_08 |= 0x20;
-        } else {
-            s->id = -1;
         }
     }
 }
@@ -2800,12 +2800,9 @@ void func_8000F844(s16 idx) {
 INCLUDE_ASM("asm/nonmatchings/B980", func_8000F844);
 #endif
 
-// one extra nop before mult after the filled branch delay slot (masked 1)
-#ifdef NON_MATCHING
 s16 func_80010040(s16 id) {
     B980SndParam param;
     s16 v;
-    s32 hi;
     s8 k;
 
     if ((id >= D_800CEA90->count) | (id < 0)) {
@@ -2817,19 +2814,15 @@ s16 func_80010040(s16 id) {
         return -1;
     }
     if (param.unk_17 & 0xF) {
-        hi = param.unk_17 & 0xF0;
-        if (hi != 0) {
+        if (param.unk_17 & 0xF0) {
             k = D_800CEA94[v].unk_2B;
             if (k != -1) {
-                v += (hi >> 4) * k;
+                v += ((param.unk_17 & 0xF0) >> 4) * k;
             }
         }
     }
     return v;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/B980", func_80010040);
-#endif
 
 void func_80010110(s16 idx) {
     unkB980Struct1* seq = &D_800CEAC0[idx];
@@ -3149,7 +3142,7 @@ s16 func_80010C78(s16 id, s32 keepLock) {
     return v;
 }
 
-// one extra nop before mult after the filled branch delay slot (masked 1)
+// the chanOfs != -1 test's sign extension is reused by the mult in retail only (masked 0, raw 3)
 #ifdef NON_MATCHING
 s16 func_80010ED4(s16 id, s16 chanOfs) {
     B980SndParam param;
