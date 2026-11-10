@@ -429,28 +429,27 @@ void func_800FE5A4_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
     arg0->trans.x = t;
 }
-// register allocation of the model pointer (masked 0)
-#ifdef NON_MATCHING
-void func_800FE658_YoshisTropicalIslandEndingScene(omObjData* arg0) {
-    s32 idx = arg0->work[0];
-    f32 t = arg0->rot.x;
-    f32 y;
-    Object** p;
-
-    y = func_800AEAC0(t * 360.0f) * 4.0f * 5.0f;
-    p = D_80110448_YoshisTropicalIslandEndingScene;
-    p += idx;
-    (*p)->coords.y = arg0->rot.z;
-    (*p)->unk_30 = (y + arg0->rot.y) - arg0->rot.z;
-    t += 0.01f;
-    if (t > 1.0f) {
-        t -= 1.0f;
-    }
-    arg0->rot.x = t;
+// decomp-permuter
+void func_800FE658_YoshisTropicalIslandEndingScene(omObjData *arg0)
+{
+  s32 idx = arg0->work[0];
+  f32 t = arg0->rot.x;
+  Object **new_var;
+  f32 y;
+  Object **p;
+  y = (func_800AEAC0(t * 360.0f) * 4.0f) * 5.0f;
+  new_var = D_80110448_YoshisTropicalIslandEndingScene;
+  p = new_var;
+  p += idx;
+  (*p)->coords.y = arg0->rot.z;
+  (*p)->unk_30 = (y + arg0->rot.y) - arg0->rot.z;
+  t += 0.01f;
+  if (t > 1.0f)
+  {
+    t -= 1.0f;
+  }
+  arg0->rot.x = t;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FE658_YoshisTropicalIslandEndingScene);
-#endif
 omObjData* func_800FE730_YoshisTropicalIslandEndingScene(u8 arg0, f32 arg1, f32 arg2) {
     omObjData* obj;
 
@@ -483,28 +482,27 @@ omObjData* func_800FE86C_YoshisTropicalIslandEndingScene(s32 arg0) {
     omSetSca(obj, model->coords.x, model->coords.y, model->coords.z);
     return obj;
 }
-// register allocation of the model pointer (masked 0)
-#ifdef NON_MATCHING
-void func_800FE900_YoshisTropicalIslandEndingScene(omObjData* arg0) {
-    s32 idx = arg0->work[0];
-    f32 t = arg0->rot.x;
-    f32 y;
-    Object** p;
-
-    t += 5.0f;
-    if (t < 360.0f) {
-        t -= 360.0f;
-    }
-    y = func_800AEAC0(t) * 25.0f;
-    p = D_80110448_YoshisTropicalIslandEndingScene;
-    p += idx;
-    (*p)->coords.y = arg0->rot.z;
-    (*p)->unk_30 = (y + arg0->rot.y) - arg0->rot.z;
-    arg0->rot.x = t;
+// decomp-permuter
+void func_800FE900_YoshisTropicalIslandEndingScene(omObjData *arg0)
+{
+  s32 idx = arg0->work[0];
+  f32 t = arg0->rot.x;
+  f32 y;
+  f32 new_var;
+  Object **p;
+  t += 5.0f;
+  if (t < 360.0f)
+  {
+    t -= 360.0f;
+  }
+  y = func_800AEAC0(t) * 25.0f;
+  p = D_80110448_YoshisTropicalIslandEndingScene;
+  ;
+  (*(p + idx))->coords.y = arg0->rot.z;
+  new_var = y;
+  (*(p + idx))->unk_30 = (new_var + arg0->rot.y) - arg0->rot.z;
+  arg0->rot.x = t;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FE900_YoshisTropicalIslandEndingScene);
-#endif
 omObjData* func_800FE9B8_YoshisTropicalIslandEndingScene(s32 arg0, f32 arg1, f32 arg2) {
     omObjData* obj;
 
@@ -522,28 +520,29 @@ void func_800FEA50_YoshisTropicalIslandEndingScene(omObjData* arg0) {
         arg0->func_ptr = &func_800FEAA0_YoshisTropicalIslandEndingScene;
     }
 }
-// delay-slot fill of the model index (masked 3)
-#ifdef NON_MATCHING
-void func_800FEAA0_YoshisTropicalIslandEndingScene(omObjData* arg0) {
-    u8 idx = arg0->work[0];
-    f32 t = arg0->trans.x;
-    Object** p;
-
-    if (t > 1.0f) {
-        arg0->func_ptr = &func_800FEA50_YoshisTropicalIslandEndingScene;
-        arg0->trans.x = arg0->trans.y = arg0->trans.z = arg0->rot.x = arg0->rot.y = arg0->rot.z = 0.0f;
-        p = D_80110448_YoshisTropicalIslandEndingScene;
+// decomp-permuter
+void func_800FEAA0_YoshisTropicalIslandEndingScene(omObjData *arg0)
+{
+  f32 new_var;
+  Object **new_var2;
+  u8 idx = arg0->work[0];
+  f32 t = arg0->trans.x;
+  new_var = t;
+  if (new_var > 1.0f)
+  {
+    Object **p;
+    arg0->func_ptr = &func_800FEA50_YoshisTropicalIslandEndingScene;
+    arg0->trans.x = (arg0->trans.y = (arg0->trans.z = (arg0->rot.x = (arg0->rot.y = (arg0->rot.z = 0.0f)))));
+    new_var2 = D_80110448_YoshisTropicalIslandEndingScene;
+    p = new_var2;
     p += idx;
-        (*p)->unk_30 = (*p)->unk_38 = -1.5f;
-        (*p)->unk_34 = 20.0f;
-        t = 0.0f;
-    }
-    t += (rand8() & 0xFF) * 0.000039215687f;
-    arg0->trans.x = t;
+    (*p)->unk_30 = ((*p)->unk_38 = -1.5f);
+    (*p)->unk_34 = 20.0f;
+    t = 0.0f;
+  }
+  t += (rand8() & 0xFF) * 0.000039215687f;
+  arg0->trans.x = t;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FEAA0_YoshisTropicalIslandEndingScene);
-#endif
 s16 func_800FEB8C_YoshisTropicalIslandEndingScene(s32 arg0) {
     s16 id;
 
@@ -592,44 +591,42 @@ void func_800FEC20_YoshisTropicalIslandEndingScene(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FEC20_YoshisTropicalIslandEndingScene);
 #endif
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-omObjData* func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32 arg2) {
-    s32* m;
-    u16 id;
-    Unk266Model* tbl;
-    omObjData* obj;
-    Vec3f* pos;
-    Vec3f* scale;
-
-    m = D_801102B8_YoshisTropicalIslandEndingScene;
-    m += arg0;
-    id = *m;
-    tbl = D_8010E820_YoshisTropicalIslandEndingScene[arg1];
-    obj = omAddObj(0x800, 0, 0, -1, &func_800FEC20_YoshisTropicalIslandEndingScene);
-    obj->work[0] = arg0;
-    obj->work[1] = 1;
-    obj->work[2] = arg1;
-    obj->work[3] = arg2;
-    func_800258EC(id, 4, 0);
-    func_80025EB4(id, 2, 2);
-    func_80025F10(id, 1);
-    pos = &tbl[arg2].pos;
-    scale = &tbl[arg2].scale;
-    func_80025798(id, pos->x, pos->y, pos->z);
-    func_80025830(id, scale->x, scale->y, scale->z);
-    func_800257E4(id, 0.0f, 0.0f, 0.0f);
-    omSetTra(obj, 0.0f, 0.0f, 1.0f);
-    omSetSca(obj, 0.0f, 0.0f, 1.0f);
-    omSetRot(obj, 0.0f, 0.0f, 1.0f);
-    func_80025798((s16)*m, pos->x, pos->y, pos->z);
-    func_80025830((s16)*m, scale->x, scale->y, scale->z);
-    func_800257E4((s16)*m, 0.0f, 0.0f, 0.0f);
-    return obj;
+// decomp-permuter
+omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32 arg2)
+{
+  s32 *new_var;
+  s32 *m;
+  u16 id;
+  Unk266Model *tbl;
+  omObjData *obj;
+  Vec3f *pos;
+  Vec3f *scale;
+  new_var = D_801102B8_YoshisTropicalIslandEndingScene;
+  m = new_var;
+  m += arg0;
+  id = *m;
+  tbl = D_8010E820_YoshisTropicalIslandEndingScene[arg1];
+  obj = omAddObj(0x800, 0, 0, -1, &func_800FEC20_YoshisTropicalIslandEndingScene);
+  obj->work[0] = arg0;
+  obj->work[1] = 1;
+  obj->work[2] = arg1;
+  obj->work[3] = arg2;
+  func_800258EC(id, 4, 0);
+  func_80025EB4(id, 2, 2);
+  func_80025F10(id, 1);
+  pos = &tbl[arg2].pos;
+  scale = &tbl[arg2].scale;
+  func_80025798(id, pos->x, pos->y, pos->z);
+  func_80025830(id, scale->x, scale->y, scale->z);
+  func_800257E4(id, 0.0f, 0.0f, 0.0f);
+  omSetTra(obj, 0.0f, 0.0f, 1.0f);
+  omSetSca(obj, 0.0f, 0.0f, 1.0f);
+  omSetRot(obj, 0.0f, 0.0f, 1.0f);
+  func_80025798((s16) (*m), pos->x, pos->y, pos->z);
+  func_80025830((s16) (*m), scale->x, scale->y, scale->z);
+  func_800257E4((s16) (*m), 0.0f, 0.0f, 0.0f);
+  return obj;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FEE24_YoshisTropicalIslandEndingScene);
-#endif
 // base/index order of the two array addresses (masked 4)
 #ifdef NON_MATCHING
 void func_800FEFE0_YoshisTropicalIslandEndingScene(s32 arg0) {
