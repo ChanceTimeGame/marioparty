@@ -604,7 +604,7 @@ const u32 D_80103B54_UnusedMinigame0 __attribute__((section(".rodata"))) = 0;
 #endif
 
 /* Points camera 0 at Center from CRot / CZoom. */
-// NON_MATCHING: scheduling of the Center address load (masked 4)
+// NON_MATCHING: scheduling of the Center address load (masked 4, raw 8); a Vec* local for Center is worse
 #ifdef NON_MATCHING
 void func_800FCD68_UnusedMinigame0(void) {
     Vec eye;
