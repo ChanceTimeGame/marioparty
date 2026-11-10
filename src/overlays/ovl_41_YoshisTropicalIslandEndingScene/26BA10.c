@@ -265,7 +265,8 @@ void func_80102C14_YoshisTropicalIslandEndingScene(void) {
     MBModelDispOff(D_80110448_YoshisTropicalIslandEndingScene[0]);
 }
 
-// retail keeps a dead copy of the argument in $s0 (frame 0x20 vs 0x18); calls identical
+// retail keeps a dead copy of the argument in $s0 (frame 0x20 vs 0x18; masked 5); calls identical;
+// direct array addresses and the permuter's best (10) tried
 #ifdef NON_MATCHING
 void func_80102F54_YoshisTropicalIslandEndingScene(omObjData* obj) {
     Vec3f* cam = D_80110180_YoshisTropicalIslandEndingScene;

@@ -1139,16 +1139,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9DD
 #endif
 
 /* A thrown rider's arc. */
-// NON_MATCHING: register allocation
+// NON_MATCHING: retail has a VR4300 mul-fix nop between the two mul.s of g*t*t (masked 2); the
+// unit-wide mul fix adds nops to func_800F7998, so this may belong to a separate retail TU
 #ifdef NON_MATCHING
 void func_800FA210_HandcarHavoc(omObjData* obj) {
     HHFall* f;
     f32 dy;
-    f32 t;
 
     f = obj->unk_50;
-    t = f->t;
-    dy = func_800AEAC0(f->angle) * f->v0 * t - f->g * t * t;
+    dy = func_800AEAC0(f->angle) * f->v0 * f->t - f->g * f->t * f->t;
     omSetTra(obj, func_800AEAC0(f->yaw) * f->side + obj->trans.x, dy + obj->trans.y,
              func_800AEFD0(f->yaw) * f->side + obj->trans.z);
     f->t += 1.0f;
