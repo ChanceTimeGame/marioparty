@@ -121,7 +121,7 @@ s32 func_800FAFA0_PlatformPeril(s32 pl) {
     return ret;
 }
 
-// return-tail cross-jumping and register allocation (masked 58, logic-equivalent)
+// masked 2: retail keeps neg.d + a shared add.d for "+ -(dir * 25.0)" where GCC folds it to sub.d; flags/dir swap s0/s1
 #ifdef NON_MATCHING
 f32 func_800FB028_PlatformPeril(omObjData* obj, s32* jump) {
     s32 col;
@@ -130,6 +130,7 @@ f32 func_800FB028_PlatformPeril(omObjData* obj, s32* jump) {
     s32 flags = 0;
     s32 dir;
     s32 a;
+    f64 t;
 
     *jump = 1;
     func_800FBC38_PlatformPeril(obj->trans.x, obj->trans.y, obj->trans.z, &col, &row, &layer);
@@ -151,7 +152,8 @@ f32 func_800FB028_PlatformPeril(omObjData* obj, s32* jump) {
         if (a == 0) {
             return 180.0f;
         }
-        return (f32)a + 180.0;
+        t = (f32)a;
+        goto end;
     }
     if (flags == 2) {
         dir = func_800FAE7C_PlatformPeril(col);
@@ -167,18 +169,16 @@ f32 func_800FB028_PlatformPeril(omObjData* obj, s32* jump) {
         if (D_800FE5B0_PlatformPeril[layer][col - dir] != 2) {
             return (f32)dir * 45.0f + 180.0 + a;
         }
-        return (f32)dir * 25.0 + 180.0;
-    }
-    if (((a < 0) & (dir < 0)) || ((a > 0) & (dir > 0))) {
+    } else if (((a < 0) & (dir < 0)) || ((a > 0) & (dir > 0))) {
         return (f32)a + 180.0 + (f32)dir * 25.0;
-    }
-    if ((a < 0 && !(flags & 1)) || (a > 0 && !(flags & 4))) {
+    } else if ((a < 0 && !(flags & 1)) || (a > 0 && !(flags & 4))) {
         return (f32)a + 180.0 + -((f32)dir * 25.0);
-    }
-    if (D_800FE5B0_PlatformPeril[layer][col - dir] != 2) {
+    } else if (D_800FE5B0_PlatformPeril[layer][col - dir] != 2) {
         return (f32)dir * 45.0f + 180.0 + a;
     }
-    return (f32)dir * 25.0 + 180.0;
+    t = (f32)dir * 25.0;
+end:
+    return t + 180.0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/170470", func_800FB028_PlatformPeril);
@@ -594,7 +594,7 @@ void func_800FC8D4_PlatformPeril(void) {
 void func_800FC8DC_PlatformPeril(void) {
 }
 
-// zero-constant register reuse in the loop test (masked 6)
+// zero-constant register reuse in the loop test (masked 6): retail loads 0.0f at entry and copies it to $f4 for the loop; tried a while loop and an f32 D_800FDEBC
 #ifdef NON_MATCHING
 void func_800FC8E4_PlatformPeril(void) {
     s32 n;
