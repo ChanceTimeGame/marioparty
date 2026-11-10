@@ -170,23 +170,23 @@ s8 func_800F6AC8_MinigameStadiumMinigameResultsScreen(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/303E70", func_800F6AC8_MinigameStadiumMinigameResultsScreen);
 #endif
 
-// register allocation: i/best swap a0/a1 (masked 0)
-#ifdef NON_MATCHING
-s8 func_800F6B0C_MinigameStadiumMinigameResultsScreen(void) {
-    s32 i;
-    s32 best;
-
-    best = 0;
-    for (i = 0; i < 4; i++) {
-        if (GwPlayer[i].coins_mg > GwPlayer[best].coins_mg) {
-            best = i;
-        }
+// decomp-permuter
+s8 func_800F6B0C_MinigameStadiumMinigameResultsScreen(void)
+{
+  s32 i;
+  s32 best;
+  i = 0;
+  best = i;
+  for (i = i; i < 4; i++)
+  {
+    if (GwPlayer[i].coins_mg > GwPlayer[best].coins_mg)
+    {
+      best = i;
     }
-    return best;
+  }
+
+  return best;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/303E70", func_800F6B0C_MinigameStadiumMinigameResultsScreen);
-#endif
 
 s8 func_800F6B6C_MinigameStadiumMinigameResultsScreen(void) {
     s32 i;
@@ -421,65 +421,83 @@ void func_800F72B0_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col
 }
 
 /* rotate the column's coins one slot forward (coins lost) */
-// register allocation in the slot-3 branch (masked 0 bar addresses)
-#ifdef NON_MATCHING
-void func_800F75C0_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col) {
-    ColWork* c;
-    s32 slot;
-    s32 i;
+// decomp-permuter
+void func_800F75C0_MinigameStadiumMinigameResultsScreen(ColWork *w, ColWork *col)
+{
+  ColWork *c;
+  s32 slot;
+  s32 i;
+  if (w->slot == 3)
+  {
+    slot = w->player;
+    w->pos.x = D_800FB000_MinigameStadiumMinigameResultsScreen[slot * 12];
+    w->pos.y = 150.0f;
+    w->pos.z = -100.0f;
+    func_80025798(w->ids[0], w->pos.x, w->pos.y, w->pos.z);
+  }
+  else
+  {
+    slot = (w->player * 12) + ((w->slot + 1) * 3);
+    if ((w->slot == 0) || (w->slot == 2))
+    {
+      w->pos.x += 10.0f;
+      w->pos.z += 10.0f;
+      if (w->pos.x > D_800FB000_MinigameStadiumMinigameResultsScreen[slot])
+      {
+        w->pos.x = D_800FB000_MinigameStadiumMinigameResultsScreen[slot];
+      }
+      if ((w->slot == 0) && (w->pos.z > (-50.0f)))
+      {
+        w->pos.z = -50.0f;
+      }
+      else
+        if ((w->slot == 2) && (w->pos.z > 0.0f))
+      {
+        w->pos.z = 0.0f;
+      }
+    }
+    else
+      if (w->slot == 1)
+    {
+      w->pos.x -= 10.0f;
+      if (w->pos.x < D_800FB000_MinigameStadiumMinigameResultsScreen[slot])
+      {
+        w->pos.x = D_800FB000_MinigameStadiumMinigameResultsScreen[slot];
+      }
+    }
+    w->pos.y = 150.0f;
+    func_80025798(w->ids[0], w->pos.x, w->pos.y, w->pos.z);
+  }
+  slot = (w->player * 12) + (2 * 3);
+  if (((w->slot == 1) && (w->pos.x == D_800FB000_MinigameStadiumMinigameResultsScreen[slot])) && (w->pos.z == (-50.0f)))
+  {
+    for (i = 0; i < 4; i++)
+    {
+      c = col->child[i]->user_data;
+      if (c->slot == 3)
+      {
+        c->slot = 0;
+      }
+      else
+      {
+        c->slot++;
+      }
+    }
 
-    if (w->slot == 3) {
-        w->pos.x = D_800FB000[w->player * 12];
-        w->pos.y = 150.0f;
-        w->pos.z = -100.0f;
-        func_80025798(w->ids[0], w->pos.x, w->pos.y, w->pos.z);
-    } else {
-        slot = SLOT(w->player, w->slot + 1);
-        if (w->slot == 0 || w->slot == 2) {
-            w->pos.x += 10.0f;
-            w->pos.z += 10.0f;
-            if (w->pos.x > D_800FB000[slot]) {
-                w->pos.x = D_800FB000[slot];
-            }
-            if (w->slot == 0 && w->pos.z > -50.0f) {
-                w->pos.z = -50.0f;
-            } else if (w->slot == 2 && w->pos.z > 0.0f) {
-                w->pos.z = 0.0f;
-            }
-        } else if (w->slot == 1) {
-            w->pos.x -= 10.0f;
-            if (w->pos.x < D_800FB000[slot]) {
-                w->pos.x = D_800FB000[slot];
-            }
-        }
-        w->pos.y = 150.0f;
-        func_80025798(w->ids[0], w->pos.x, w->pos.y, w->pos.z);
+    for (i = 0; i < 4; i++)
+    {
+      c = col->child[i]->user_data;
+      slot = (c->player * 12) + (c->slot * 3);
+      c->pos.x = D_800FB000_MinigameStadiumMinigameResultsScreen[slot];
+      c->pos.z = D_800FB000_MinigameStadiumMinigameResultsScreen[slot + 2];
+      c->pos.y = 150.0f;
+      func_80025798(c->ids[0], c->pos.x, 150.0f, c->pos.z);
     }
-    slot = SLOT(w->player, 2);
-    if (w->slot == 1 && w->pos.x == D_800FB000[slot] && w->pos.z == -50.0f) {
-        for (i = 0; i < 4; i++) {
-            c = col->child[i]->user_data;
-            if (c->slot == 3) {
-                c->slot = 0;
-            } else {
-                c->slot++;
-            }
-        }
-        for (i = 0; i < 4; i++) {
-            c = col->child[i]->user_data;
-            slot = SLOT(c->player, c->slot);
-            c->pos.x = D_800FB000[slot];
-            c->pos.z = D_800FB000[slot + 2];
-            c->pos.y = 150.0f;
-            func_80025798(c->ids[0], c->pos.x, 150.0f, c->pos.z);
-        }
-        col->flags &= ~0x210;
-        col->step++;
-    }
+
+    col->flags &= ~0x210;
+    col->step++;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/303E70", func_800F75C0_MinigameStadiumMinigameResultsScreen);
-#endif
 
 void func_800F7914_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col, PlayerRes* res) {
     func_800258EC(w->ids[0], 4, 0);
@@ -585,45 +603,57 @@ void func_800F7CCC_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col
 }
 
 /* raise a coin into the column (coins won) */
-// scheduling: GCC folds the +1 onto slot, retail adds it to step (masked 2)
-#ifdef NON_MATCHING
-void func_800F7D94_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col, PlayerRes* res) {
-    f32 y;
-    s32 n;
-
-    n = (col->step + 1) + w->slot;
-    y = w->pos.y;
-    if (y < 150.0f) {
-        if (res->unk_70 > res->unk_74) {
-            w->pos.y = y + 22.5f;
-            if (res->coinsMg >= res->unk_70) {
-                res->unk_74++;
-            }
-        }
-        if (res->unk_70 >= res->coinsMg && res->total < n * 20) {
-            if (!(col->flags & 0x10)) {
-                col->flags |= 0x400;
-            }
-        }
-    } else {
-        w->pos.y = 150.0f;
-        if (res->total > n * 20) {
-            col->flags |= (u16)D_800FB0C0[w->slot];
-            if ((col->flags & 8) && res->total > (col->step + 4) * 20) {
-                col->flags |= 0x10;
-                res->flags |= 0x40;
-            }
-        } else if (res->total == n * 20) {
-            col->flags |= (u16)D_800FB0C0[w->slot];
-            if (!(col->flags & 0x10)) {
-                col->flags |= 0x400;
-            }
-        }
+// decomp-permuter
+void func_800F7D94_MinigameStadiumMinigameResultsScreen(ColWork *w, ColWork *col, PlayerRes *res)
+{
+  f32 y;
+  int new_var;
+  s32 n;
+  n = w->slot;
+  new_var = col->step + 1;
+  n = new_var + n;
+  y = w->pos.y;
+  if (y < 150.0f)
+  {
+    if (res->unk_70 > res->unk_74)
+    {
+      w->pos.y = y + 22.5f;
+      if (res->coinsMg >= res->unk_70)
+      {
+        res->unk_74++;
+      }
     }
+    if ((res->unk_70 >= res->coinsMg) && (res->total < (n * 20)))
+    {
+      if (!(col->flags & 0x10))
+      {
+        col->flags |= 0x400;
+      }
+    }
+  }
+  else
+  {
+    w->pos.y = 150.0f;
+    if (res->total > (n * 20))
+    {
+      col->flags |= (u16) D_800FB0C0_MinigameStadiumMinigameResultsScreen[w->slot];
+      if ((col->flags & 8) && (res->total > ((col->step + 4) * 20)))
+      {
+        col->flags |= 0x10;
+        res->flags |= 0x40;
+      }
+    }
+    else
+      if (res->total == (n * 20))
+    {
+      col->flags |= (u16) D_800FB0C0_MinigameStadiumMinigameResultsScreen[w->slot];
+      if (!(col->flags & 0x10))
+      {
+        col->flags |= 0x400;
+      }
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/303E70", func_800F7D94_MinigameStadiumMinigameResultsScreen);
-#endif
 
 void func_800F7F0C_MinigameStadiumMinigameResultsScreen(void) {
     s16 cam;
