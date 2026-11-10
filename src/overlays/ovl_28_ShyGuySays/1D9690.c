@@ -1354,7 +1354,8 @@ void func_800F9F60_ShyGuySays(omObjData* arg0, s16* arg1, u16 arg2) {
     }
 }
 
-// register allocation and one move/lw scheduling swap in the joint loop (masked 2)
+// register allocation in the joint loop: (f32)i lands in t's $f20, retail uses a $f2 temp (masked 2, raw 7);
+// tried swapped operands, t/sway declaration order
 #ifdef NON_MATCHING
 void func_800FA308_ShyGuySays(omObjData* arg0, s16* arg1, u16 arg2) {
     f32 sp18[3];
