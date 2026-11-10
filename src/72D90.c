@@ -718,6 +718,66 @@ void* func_80074124(s32 arg0) {
     return data;
 }
 
+#ifdef TARGET_PC
+#include "PR/gbi_ex.h"
+#include "PR/gu.h"
+/* Host widescreen: the iris wipe blacks out what is outside its circle with fill rectangles. The
+   top and bottom ones span the screen and RT64 widens them; the side ones do not, so the scene
+   showed beside the 4:3 area while the circle was small. Black quads from the view's edge to the
+   circle's band, in an ortho space RT64 widens (as MP2 51630.c's edge quads), close the gap. */
+static Vtx pbWipeVtx[2][8];
+static s32 pbWipeBuf;
+static Mtx pbWipeMtx[2];
+static s32 pbWipeMtxInit;
+static Vp pbWipeVp = { { { 640, 480, 511, 0 }, { 640, 480, 511, 0 } } };
+
+static void pbWipeQuad(Gfx** g, Vtx* v, f32 x0, f32 x1, f32 y0, f32 y1) {
+    s32 k;
+
+    for (k = 0; k < 4; k++) {
+        v[k].v.ob[0] = (s16) ((k == 1 || k == 2) ? x1 : x0);
+        v[k].v.ob[1] = (s16) ((k >= 2) ? y1 : y0);
+        v[k].v.ob[2] = 0;
+        v[k].v.flag = 0;
+        v[k].v.tc[0] = v[k].v.tc[1] = 0;
+        v[k].v.cn[0] = v[k].v.cn[1] = v[k].v.cn[2] = 0;
+        v[k].v.cn[3] = 0xFF;
+    }
+    gSPVertex((*g)++, v, 4, 0);
+    gSP2Triangles((*g)++, 0, 1, 2, 0, 0, 2, 3, 0);
+}
+
+static void pbWipeSides(Gfx** g, s32 left, s32 right, s32 top, s32 bottom) {
+    f32 e = 160.0f * (pb_wide_scale() - 1.0f);
+    Vtx* v;
+
+    if (e <= 0.0f || bottom <= top) {
+        return;
+    }
+    if (!pbWipeMtxInit) {
+        guOrtho(&pbWipeMtx[0], 0.0f, 320.0f, 240.0f, 0.0f, -10.0f, 10.0f, 1.0f);
+        guMtxIdent(&pbWipeMtx[1]);
+        pbWipeMtxInit = 1;
+    }
+    pbWipeBuf ^= 1;
+    v = pbWipeVtx[pbWipeBuf];
+    gEXPushViewport((*g)++);
+    gEXPushProjectionMatrix((*g)++);
+    gEXPushGeometryMode((*g)++);
+    gSPViewport((*g)++, &pbWipeVp);
+    gSPMatrix((*g)++, &pbWipeMtx[0], G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gSPMatrix((*g)++, &pbWipeMtx[1], G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPClearGeometryMode((*g)++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH | G_CULL_BOTH | G_FOG | G_LIGHTING |
+                                     G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD);
+    pbWipeQuad(g, &v[0], -e - 8.0f, left < 0 ? (f32) left : 0.0f, top, bottom);
+    pbWipeQuad(g, &v[4], right > 320 ? (f32) right : 320.0f, 328.0f + e, top, bottom);
+    gSPPopMatrix((*g)++, G_MTX_MODELVIEW);
+    gEXPopGeometryMode((*g)++);
+    gEXPopProjectionMatrix((*g)++);
+    gEXPopViewport((*g)++);
+}
+#endif
+
 void func_8007420C(Gfx** arg0, f32 arg1, f32 arg2) {
     s16 var_t1;
     s16 var_t2;
@@ -772,6 +832,11 @@ void func_8007420C(Gfx** arg0, f32 arg1, f32 arg2) {
     if (var_t4 < SCREEN_WIDTH) {
         gDPScisFillRectangle((*arg0)++, var_t4, var_t1, SCREEN_WIDTH, var_t2);
     }
+#ifdef TARGET_PC
+    if (pb_widescreen()) {
+        pbWipeSides(arg0, var_t3, var_t4, var_t1, var_t2);
+    }
+#endif
 }
 
 s32 func_80074C20(Gfx** arg0) {

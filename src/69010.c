@@ -124,6 +124,19 @@ extern Vp D_800C5B40; /* 65770.c: the sprite layer's full-screen viewport */
 #define PB_SPR_WIDE_MAX 512
 static unk69010Sprite* pb_spr_wide[PB_SPR_WIDE_MAX];
 static s32 pb_spr_wide_count;
+/* The origin last set in each of the layer's two streams (65770.c func_8006677C: sprites flagged
+   0x4000 draw inline, the rest in the list func_80066B3C replays later). Both start at NONE;
+   setting it only when it changes keeps the layer's display list within its retail size, as
+   MP2 84FF0.c (emitting it per sprite overran MP2's and crashed in HuMemMemoryAlloc). */
+static u16 pb_spr_origin[2];
+/* And the x offset (quarter pixels) set with it: the player cards' shift to the screen sides. */
+static s16 pb_spr_offset[2];
+/* The sprites shifted this frame and by how much (the player cards' groups, 54120.c). */
+f32 pb_hud_card_shift(s32 group);
+#define PB_SPR_SHIFT_MAX 64
+static unk69010Sprite* pb_spr_shift_spr[PB_SPR_SHIFT_MAX];
+static s16 pb_spr_shift_q[PB_SPR_SHIFT_MAX];
+static s32 pb_spr_shift_count;
 
 void pb_spr_classify(void)
 {
@@ -131,6 +144,9 @@ void pb_spr_classify(void)
   s16 i;
 
   pb_spr_wide_count = 0;
+  pb_spr_shift_count = 0;
+  pb_spr_origin[0] = pb_spr_origin[1] = G_EX_ORIGIN_NONE;
+  pb_spr_offset[0] = pb_spr_offset[1] = 0;
   if (!pb_widescreen())
   {
     return;
@@ -170,6 +186,17 @@ void pb_spr_classify(void)
         maxX = x1;
       }
     }
+    {
+      f32 shift = pb_hud_card_shift(g);
+      for (i = 0; shift != 0.0f && i < grp->count && pb_spr_shift_count < PB_SPR_SHIFT_MAX; i++)
+      {
+        if (grp->obj[i] != NULL)
+        {
+          pb_spr_shift_spr[pb_spr_shift_count] = (unk69010Sprite*) grp->obj[i];
+          pb_spr_shift_q[pb_spr_shift_count++] = (s16) (shift * 4.0f);
+        }
+      }
+    }
     if (minX <= 10.0f && maxX >= 310.0f)
     {
       for (i = 0; i < grp->count && pb_spr_wide_count < PB_SPR_WIDE_MAX; i++)
@@ -200,8 +227,58 @@ static void pb_spr_align(Gfx** g, unk69010Sprite* spr)
       break;
     }
   }
-  gEXSetViewportAlign((*g)++, wide ? G_EX_ORIGIN_NONE : G_EX_ORIGIN_CENTER, 0, 0);
-  gSPViewport((*g)++, &D_800C5B40);
+  {
+    u16 origin = wide ? G_EX_ORIGIN_NONE : G_EX_ORIGIN_CENTER;
+    s32 stream = (spr->flags & 0x4000) ? 0 : 1;
+    u16* cur = &pb_spr_origin[stream];
+    s16 offset = 0;
+
+    for (i = 0; !wide && i < pb_spr_shift_count; i++)
+    {
+      if (pb_spr_shift_spr[i] == spr)
+      {
+        offset = pb_spr_shift_q[i];
+        break;
+      }
+    }
+    if (*cur == origin && pb_spr_offset[stream] == offset)
+    {
+      return;
+    }
+    if (pb_spr_offset[stream] != offset)
+    {
+      /* sprites drawn as rectangles (unscaled, unrotated: most of a card) follow the rectangle
+         alignment, not the viewport's */
+      if (offset != 0)
+      {
+        /* RT64 keeps NONE-origin rectangles inside 4:3: anchor to the side the card moves to. LEFT
+           measures from the view's left edge (4:3 place + e + shift), RIGHT from its right edge (the
+           macro takes quarter pixels; offset is shift * 4). */
+        s16 e4 = (s16) (160.0f * (pb_wide_scale() - 1.0f) * 4.0f);
+        if (offset < 0)
+        {
+          gEXSetRectAlign((*g)++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_LEFT, e4 + offset, 0, e4 + offset, 0);
+        }
+        else
+        {
+          gEXSetRectAlign((*g)++, G_EX_ORIGIN_RIGHT, G_EX_ORIGIN_RIGHT, offset - e4 - 320 * 4, 0, offset - e4 - 320 * 4, 0);
+        }
+        /* the layer's 0..320 scissor (65770.c) is the 4:3 area for rectangles: open it to the view's
+           sides while a card is drawn */
+        gEXSetScissorAlign((*g)++, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, -320, 0, 0, 0, 320, 240); /* pixels: the macro scales */
+      }
+      else
+      {
+        gEXSetRectAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
+        gEXSetScissorAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0, 0, 0, 320, 240);
+      }
+      gDPSetScissor((*g)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    }
+    *cur = origin;
+    pb_spr_offset[stream] = offset;
+    gEXSetViewportAlign((*g)++, origin, offset, 0);
+    gSPViewport((*g)++, &D_800C5B40);
+  }
 }
 
 /* After the sprite layer: the default origin again, with the layer's viewport reloaded under it, since
@@ -212,6 +289,8 @@ void pb_spr_align_end(Gfx** g)
   {
     gEXSetViewportAlign((*g)++, G_EX_ORIGIN_NONE, 0, 0);
     gSPViewport((*g)++, &D_800C5B40);
+    gEXSetRectAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
+    gEXSetScissorAlign((*g)++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0, 0, 0, 320, 240); /* the next scissor */
   }
 }
 #endif
