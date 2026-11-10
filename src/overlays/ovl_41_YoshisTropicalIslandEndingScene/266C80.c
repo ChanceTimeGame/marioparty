@@ -682,8 +682,6 @@ Object* func_800FF1E4_YoshisTropicalIslandEndingScene(Unk266Obj* arg0) {
     func_800A0D50(&m->coords, &arg0->pos);
     return m;
 }
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800FF240_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     f32 t;
     f32 k;
@@ -700,12 +698,10 @@ void func_800FF240_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
     D_80110448_YoshisTropicalIslandEndingScene[0]->unk_18.x = k * sinf(arg0->rot.x * D_8010F198_YoshisTropicalIslandEndingScene);
     D_80110448_YoshisTropicalIslandEndingScene[0]->unk_18.z = 1.0f;
-    arg0->rot.z = t + 0.005f;
+    t += 0.005f;
+    arg0->rot.z = t;
 }
-const f64 D_8010F198_YoshisTropicalIslandEndingScene = 0.017453292519943295;
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FF240_YoshisTropicalIslandEndingScene);
-#endif
+const f64 D_8010F198_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
 // loop-invariant D_80110448 base not hoisted, model address order (masked ~18)
 #ifdef NON_MATCHING
