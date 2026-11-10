@@ -1413,8 +1413,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FAF9
 #endif
 
 /* Follows the car: pitch from the slope, yaw from the track. */
-// NON_MATCHING: branch layout of the yaw clamp
-#ifdef NON_MATCHING
 void func_800FB0EC_HandcarHavoc(omObjData* obj) {
     HHCam* c;
     omObjData* car;
@@ -1452,11 +1450,11 @@ void func_800FB0EC_HandcarHavoc(omObjData* obj) {
     func_800FBFA0_HandcarHavoc(&dy, func_8009B618(fabs(w->rot.y - c->ry), 3.0) + 1.0);
     func_800FBFA0_HandcarHavoc(&dx, 1.0f);
     CRotM[cam].x += dx;
-    if (!(dx > 0.0f)) {
-        if (CRotM[cam].x < pitch) {
+    if (dx > 0.0f) {
+        if (pitch < CRotM[cam].x) {
             CRotM[cam].x = pitch;
         }
-    } else if (pitch < CRotM[cam].x) {
+    } else if (CRotM[cam].x < pitch) {
         CRotM[cam].x = pitch;
     }
     CRotM[cam].y += dy;
@@ -1489,9 +1487,6 @@ void func_800FB0EC_HandcarHavoc(omObjData* obj) {
     CenterM[cam].y = car->trans.y;
     CenterM[cam].z = car->trans.z - func_800AEFD0(CRotM[cam].y) * 300.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FB0EC_HandcarHavoc);
-#endif
 
 /* The camera of a fallen car: pulls out to the side. */
 void func_800FB5DC_HandcarHavoc(omObjData* obj) {
