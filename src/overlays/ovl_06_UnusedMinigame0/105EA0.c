@@ -1580,39 +1580,43 @@ s32 func_80102634_UnusedMinigame0(u8 (*grid)[6], s32 col, s32 row) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_80102634_UnusedMinigame0);
 #endif
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_8010298C_UnusedMinigame0(s32 col, s32 row) {
-    UM0Cell* c0;
-    UM0Cell* n;
-    u32 nc;
-    u32 nr;
-    s32 i;
-    s32 j;
+// decomp-permuter
+void func_8010298C_UnusedMinigame0(s32 col, s32 row)
+{
+  UM0Cell *c0;
+  UM0Cell *n;
+  u32 nc;
+  UM0Cell *new_var;
+  u32 nr;
+  s32 i;
+  s32 j;
+  c0 = &D_8010B150_UnusedMinigame0[col][row];
+  c0->done = 1;
+  for (j = row - 1; j >= 0; j--)
+  {
+    n = &D_8010B150_UnusedMinigame0[col][j];
+    n->shiftRows++;
+  }
 
-    c0 = &D_8010B150_UnusedMinigame0[col][row];
-    c0->done = 1;
-    for (j = row - 1; j >= 0; j--) {
-        n = &D_8010B150_UnusedMinigame0[col][j];
-        n->shiftRows++;
-    }
-    for (i = 0; i < 4; i++) {
-        nc = col + D_80103768_UnusedMinigame0[i][0];
-        if (nc < 8) {
-            nr = row + D_80103768_UnusedMinigame0[i][1];
-            if (nr < 6) {
-                n = &D_8010B150_UnusedMinigame0[nc][nr];
-                if (*(s32*)&n->done == 0) {
-                    n->seen = 1;
-                    if (c0->color == n->color) {
-                        func_8010298C_UnusedMinigame0(col + D_80103768_UnusedMinigame0[i][0],
-                                                      row + D_80103768_UnusedMinigame0[i][1]);
-                    }
-                }
-            }
+  for (i = 0; i < 4; i++)
+  {
+    nc = col + D_80103768_UnusedMinigame0[i][0];
+    if (nc < 8)
+    {
+      nr = row + D_80103768_UnusedMinigame0[i][1];
+      if (nr < 6)
+      {
+        n = (new_var = &D_8010B150_UnusedMinigame0[nc][nr]);
+        if ((*((s32 *) (&new_var->done))) == 0)
+        {
+          n->seen = 1;
+          if (c0->color == new_var->color)
+          {
+            func_8010298C_UnusedMinigame0(col + D_80103768_UnusedMinigame0[i][0], row + D_80103768_UnusedMinigame0[i][1]);
+          }
         }
+      }
     }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_8010298C_UnusedMinigame0);
-#endif
