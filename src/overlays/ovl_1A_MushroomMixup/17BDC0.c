@@ -186,9 +186,7 @@ void func_800FA454_MushroomMixup(omObjData* arg0) {
     D_800FC848_MushroomMixup = D_800FC84C_MushroomMixup = 0.0f;
 }
 
-// argument copy order (masked 2)
-#ifdef NON_MATCHING
-void func_800FA53C_MushroomMixup(omObjData* arg0, MMMushroom* rec, s32 file, s32 idx, Vec* pos) {
+void func_800FA53C_MushroomMixup(omObjData* arg0, MMMushroom* rec, s32 file, s16 idx, Vec* pos) {
     MMGroundWork* work;
 
     arg0->model[0] = func_800174C0(file, 0x889);
@@ -212,9 +210,6 @@ void func_800FA53C_MushroomMixup(omObjData* arg0, MMMushroom* rec, s32 file, s32
     ((void (*)(u16, u32))func_800F70F0_MushroomMixup)(arg0->model[0], rec->color & 7);
     func_80025B34(arg0->model[0]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/17BDC0", func_800FA53C_MushroomMixup);
-#endif
 
 void func_800FA664_MushroomMixup(omObjData* arg0, s32 arg1, s32 arg2, u16 arg3, f32 arg4, s32 arg5) {
     Vec3f sp18;
@@ -660,9 +655,7 @@ void func_800FBF4C_MushroomMixup(omObjData* arg0) {
     func_800FA664_MushroomMixup(arg0, D_800C59AC[GwPlayer[3].character].unk_00, D_800C59AC[GwPlayer[3].character].unk_04, 3, 315.0f, 2);
 }
 
-// retail loads -5.0f and 0.0f together (masked 2)
 /* Retail addresses each record's fields through their own labels (MushroomMixup.h). */
-#ifdef NON_MATCHING
 void func_800FBFB0_MushroomMixup(omObjData* arg0) {
     Vec pos;
     Vec* pp;
@@ -673,7 +666,7 @@ void func_800FBFB0_MushroomMixup(omObjData* arg0) {
     D_800FC9B8_MushroomMixup = 0.0f;
     rec->obj = arg0;
     D_800FC9C6_MushroomMixup = 6;
-    D_800FC9CC_MushroomMixup = -5.0f;
+    D_800FC9CC_MushroomMixup = -5.0f - D_800FC9B8_MushroomMixup;
     D_800FC9C8_MushroomMixup = 0;
     pp->x = D_800FC9D4_MushroomMixup = D_800FC9D0_MushroomMixup = 0.0f;
     pp->y = D_800FC9D8_MushroomMixup = 0.0f;
@@ -681,9 +674,6 @@ void func_800FBFB0_MushroomMixup(omObjData* arg0) {
     func_800F70C4_MushroomMixup();
     func_800FA53C_MushroomMixup(arg0, rec, 0x2C0000, 0, pp);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/17BDC0", func_800FBFB0_MushroomMixup);
-#endif
 
 void func_800FC068_MushroomMixup(omObjData* arg0) {
     Vec pos;

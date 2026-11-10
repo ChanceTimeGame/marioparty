@@ -174,7 +174,7 @@ void func_800F9EC0_MushroomMixup(omObjData*);
 void func_800FA320_MushroomMixup(omObjData*);
 void func_800FA3C4_MushroomMixup(omObjData*);
 void func_800FA454_MushroomMixup(omObjData*);
-void func_800FA53C_MushroomMixup(omObjData*, MMMushroom*, s32, s32, Vec*);
+void func_800FA53C_MushroomMixup(omObjData*, MMMushroom*, s32, s16, Vec*);
 void func_800FA664_MushroomMixup(omObjData*, s32, s32, u16, f32, s32);
 void func_800FAAE8_MushroomMixup(omObjData*);
 void func_800FABE4_MushroomMixup(omObjData*);
