@@ -138,8 +138,6 @@ void func_800F69EC_CrazyCutter(omObjData* arg0) {
     }
 }
 
-// sprite ids: retail lbu+sign-extend+andi 0xFFFF, C lb (callees mask the id); masked 39
-#ifdef NON_MATCHING
 void func_800F6B04_CrazyCutter(omObjData* obj) {
     s32 kinds[3] = { 9, 10, 11 };
     Vec3f* pos;
@@ -157,11 +155,11 @@ void func_800F6B04_CrazyCutter(omObjData* obj) {
     for (y = 0; y < 8; y++) {
         for (x = 0; x < 10; x++) {
             D_800FD170_CrazyCutter[i] = func_80019060(sprite, 0, 1);
-            func_80018D44(D_800FD170_CrazyCutter[i], 0x4008);
+            func_80018D44((u16)D_800FD170_CrazyCutter[i], 0x4008);
             D_800FD1C0_CrazyCutter[i] = x * 32 + 16;
             D_800FD300_CrazyCutter[i] = y * 32 + 16;
-            SetBasicSpritePos(D_800FD170_CrazyCutter[i], D_800FD1C0_CrazyCutter[i], D_800FD300_CrazyCutter[i]);
-            ShowBasicSprite(D_800FD170_CrazyCutter[i]);
+            SetBasicSpritePos((u16)D_800FD170_CrazyCutter[i], D_800FD1C0_CrazyCutter[i], D_800FD300_CrazyCutter[i]);
+            ShowBasicSprite((u16)D_800FD170_CrazyCutter[i]);
             SetBasicSpriteSize(D_800FD170_CrazyCutter[i], 1.0f, 1.0f);
             i++;
         }
@@ -170,11 +168,11 @@ void func_800F6B04_CrazyCutter(omObjData* obj) {
         for (x = 0; x < 2; x++) {
             D_800FD156_CrazyCutter[y * 2 + x] = InitSprite(kinds[D_800FD480_CrazyCutter] | 0x1F0000);
             D_800FD160_CrazyCutter[y * 2 + x] = func_80019060(D_800FD156_CrazyCutter[y * 2 + x], 0, 1);
-            func_80018D44(D_800FD160_CrazyCutter[y * 2 + x], 0x4008);
+            func_80018D44((u16)D_800FD160_CrazyCutter[y * 2 + x], 0x4008);
             D_800FD440_CrazyCutter[y * 2 + x] = x * 160 + 80;
             D_800FD450_CrazyCutter[y * 2 + x] = y * 120 + 60;
-            SetBasicSpritePos(D_800FD160_CrazyCutter[y * 2 + x], D_800FD440_CrazyCutter[y * 2 + x], D_800FD450_CrazyCutter[y * 2 + x]);
-            ShowBasicSprite(D_800FD160_CrazyCutter[y * 2 + x]);
+            SetBasicSpritePos((u16)D_800FD160_CrazyCutter[y * 2 + x], D_800FD440_CrazyCutter[y * 2 + x], D_800FD450_CrazyCutter[y * 2 + x]);
+            ShowBasicSprite((u16)D_800FD160_CrazyCutter[y * 2 + x]);
             SetBasicSpriteSize(D_800FD160_CrazyCutter[y * 2 + x], 1.0f, 1.0f);
         }
     }
@@ -194,14 +192,6 @@ void func_800F6B04_CrazyCutter(omObjData* obj) {
     HuMemDirectFree(data);
     obj->func_ptr = &func_800F6F00_CrazyCutter;
 }
-#else
-/* GCC cannot see the previous INCLUDE_ASM switch to .text */
-__asm__(".section .rodata");
-const s32 D_800FD010_CrazyCutter[3] __attribute__((section(".rodata"))) = { 9, 10, 11 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F6B04_CrazyCutter);
-#endif
-// sprite ids as in func_800F6B04 (lb vs lbu+extend+mask); masked 65
-#ifdef NON_MATCHING
 void func_800F6F00_CrazyCutter(omObjData* obj) {
     Vec3f* pos = obj->unk_50;
     s32 i;
@@ -209,18 +199,18 @@ void func_800F6F00_CrazyCutter(omObjData* obj) {
     if (D_800FD548_CrazyCutter == 1 || D_800FD548_CrazyCutter == 2) {
         if (D_800FD54C_CrazyCutter & 1) {
             for (i = 0; i < 80; i++) {
-                SetBasicSpritePos(D_800FD170_CrazyCutter[i], D_800FD1C0_CrazyCutter[i], D_800FD300_CrazyCutter[i] + D_800FD54A_CrazyCutter);
+                SetBasicSpritePos((u16)D_800FD170_CrazyCutter[i], D_800FD1C0_CrazyCutter[i], D_800FD300_CrazyCutter[i] + D_800FD54A_CrazyCutter);
             }
             for (i = 0; i < 4; i++) {
-                SetBasicSpritePos(D_800FD160_CrazyCutter[i], D_800FD440_CrazyCutter[i], D_800FD450_CrazyCutter[i] + D_800FD54A_CrazyCutter);
+                SetBasicSpritePos((u16)D_800FD160_CrazyCutter[i], D_800FD440_CrazyCutter[i], D_800FD450_CrazyCutter[i] + D_800FD54A_CrazyCutter);
             }
             omSetTra(obj, pos->x, pos->y, pos->z + D_800FD548_CrazyCutter * 5.0f);
         } else {
             for (i = 0; i < 80; i++) {
-                SetBasicSpritePos(D_800FD170_CrazyCutter[i], D_800FD1C0_CrazyCutter[i], D_800FD300_CrazyCutter[i]);
+                SetBasicSpritePos((u16)D_800FD170_CrazyCutter[i], D_800FD1C0_CrazyCutter[i], D_800FD300_CrazyCutter[i]);
             }
             for (i = 0; i < 4; i++) {
-                SetBasicSpritePos(D_800FD160_CrazyCutter[i], D_800FD440_CrazyCutter[i], D_800FD450_CrazyCutter[i]);
+                SetBasicSpritePos((u16)D_800FD160_CrazyCutter[i], D_800FD440_CrazyCutter[i], D_800FD450_CrazyCutter[i]);
             }
             omSetTra(obj, pos->x, pos->y, pos->z);
         }
@@ -232,9 +222,6 @@ void func_800F6F00_CrazyCutter(omObjData* obj) {
         omDelObj(obj);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F6F00_CrazyCutter);
-#endif
 // cross-jumping merges the D_800FD544 == 4 and == 0 tails; retail keeps both (masked 23)
 #ifdef NON_MATCHING
 void func_800F7180_CrazyCutter(omObjData* arg0) {
