@@ -223,27 +223,23 @@ void func_800F9B34_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9B34_MinigameStadiumMinigameResultsScreen);
 #endif
 
-// register allocation: the maximum stays in a register (masked 7)
-#ifdef NON_MATCHING
 void func_800F9BF0_MinigameStadiumMinigameResultsScreen(void) {
     PlayerRes* all[4];
     ResMain* main;
+    Process* prc;
     s32 i;
 
     main = HuPrcCurrentGet()->relative->user_data;
     for (i = 0; i < 4; i++) {
-        all[i] = main->player[i]->user_data;
+        prc = main->player[i];
+        all[i] = prc->user_data;
     }
-    D_800FB2A1_MinigameStadiumMinigameResultsScreen = 1;
-    for (i = 0; i < 4; i++) {
+    for (i = 0, D_800FB2A1_MinigameStadiumMinigameResultsScreen = 1; i < 4; i++) {
         if (D_800FB2A1_MinigameStadiumMinigameResultsScreen < all[i]->rank) {
             D_800FB2A1_MinigameStadiumMinigameResultsScreen = all[i]->rank;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9BF0_MinigameStadiumMinigameResultsScreen);
-#endif
 
 void func_800F9C94_MinigameStadiumMinigameResultsScreen(PlayerRes* res, ColWork* col) {
     func_800F9CB8_MinigameStadiumMinigameResultsScreen(col, res);

@@ -627,16 +627,15 @@ omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32
   func_800257E4((s16) (*m), 0.0f, 0.0f, 0.0f);
   return obj;
 }
-// base/index order of the two array addresses (masked 4)
+// scheduling: both index shifts are emitted before their base `lui/addiu` (raw 4, masked 4);
+// `base; base += i`, `base + i` and fully indexed spellings tried
 #ifdef NON_MATCHING
 void func_800FEFE0_YoshisTropicalIslandEndingScene(s32 arg0) {
     omObjData** o;
     s32* m;
 
-    o = D_80110300_YoshisTropicalIslandEndingScene;
-    o += arg0;
-    m = D_801102B8_YoshisTropicalIslandEndingScene;
-    m += (*o)->work[0];
+    o = &D_80110300_YoshisTropicalIslandEndingScene[arg0];
+    m = &D_801102B8_YoshisTropicalIslandEndingScene[(*o)->work[0]];
     func_8002456C((s16)*m);
     *m = -1;
     omDelObj(*o);

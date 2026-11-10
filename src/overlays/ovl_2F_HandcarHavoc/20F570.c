@@ -810,7 +810,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F8E0
 #endif
 
 /* 0: straight, 1: too fast into a bend (tipping), 2: skidding at full lean. */
-// NON_MATCHING: register allocation
+// NON_MATCHING: float registers of lean * 0.085f and the * 10.0f constant (raw 5, masked 0);
+// float declaration order, fabsf(d) inline, and accumulating into ad tried
 #ifdef NON_MATCHING
 u16 func_800F917C_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -849,7 +850,8 @@ u16 func_800F917C_HandcarHavoc(omObjData* obj) {
     } else {
         lean = -w->lean;
     }
-    if ((ad + lean * 0.085f) * 10.0f + fabs(w->speed) < 80.0) {
+    ad += lean * 0.085f;
+    if (ad * 10.0f + fabs(w->speed) < 80.0) {
         return 0;
     }
     if (fabs(w->lean) != 18.0) {
