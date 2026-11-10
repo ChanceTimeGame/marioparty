@@ -212,8 +212,6 @@ void func_800F9C98_KnockBlockTower(omObjData* obj) {
 }
 
 /* A plain block. */
-// register allocation: the work block reaches obj->unk_50 through s3 (masked 2)
-#ifdef NON_MATCHING
 void func_800F9D3C_KnockBlockTower(omObjData* obj) {
     KBTStageWork* w;
     KBTNode* n;
@@ -246,13 +244,8 @@ void func_800F9D3C_KnockBlockTower(omObjData* obj) {
     func_80009090(obj);
     w->unk_05 = n->id = i + 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_KnockBlockTower/1A2E40", func_800F9D3C_KnockBlockTower);
-#endif
 
 /* A bomb block. */
-// register allocation: the work block reaches obj->unk_50 through s3 (masked 2)
-#ifdef NON_MATCHING
 void func_800F9EA0_KnockBlockTower(omObjData* obj) {
     KBTStageWork* w;
     KBTNode* n;
@@ -286,9 +279,6 @@ void func_800F9EA0_KnockBlockTower(omObjData* obj) {
     func_80008FB8(obj, 0.5f);
     w->unk_05 = n->id = i + 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_KnockBlockTower/1A2E40", func_800F9EA0_KnockBlockTower);
-#endif
 
 /* The goal's physics object. */
 void func_800FA010_KnockBlockTower(omObjData* obj) {
