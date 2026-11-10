@@ -883,7 +883,8 @@ void func_800FFF08_YoshisTropicalIslandEndingScene(s32* arg0, s32* arg1) {
         func_80067704(arg1[i]);
     }
 }
-// load of arg0->unk_80 scheduled after the index arithmetic (masked 2)
+// load of arg0->unk_80 scheduled after the index arithmetic (raw 2, masked 2); `&unk_80[i]`,
+// `e = unk_80; e += i;` and declaring e first tried
 #ifdef NON_MATCHING
 void func_800FFF5C_YoshisTropicalIslandEndingScene(unk2C0C0StructC0* arg0, f32 arg1, s16 arg2) {
     f32 w = 190.0f;

@@ -351,18 +351,16 @@ void func_800F757C_HandcarHavoc(omObjData* obj) {
 }
 
 /* Water planes follow the cameras; the sun light circles. */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 void func_800F7998_HandcarHavoc(omObjData* obj) {
     f32 x;
     f32 z;
 
-    x = func_800AEAC0(CRotM[0].y) * -2000.0f + CenterM[0].x;
-    z = func_800AEFD0(CRotM[0].y) * -2000.0f + CenterM[0].z;
+    x = CenterM[0].x + func_800AEAC0(CRotM[0].y) * -2000.0f;
+    z = CenterM[0].z + func_800AEFD0(CRotM[0].y) * -2000.0f;
     func_80025798(obj->model[4], x, D_800FF5D8_HandcarHavoc[0], z);
     func_80025798(obj->model[7], x, D_800FF5D8_HandcarHavoc[0] + 20.0f, z);
-    x = func_800AEAC0(CRotM[1].y) * -2000.0f + CenterM[1].x;
-    z = func_800AEFD0(CRotM[1].y) * -2000.0f + CenterM[1].z;
+    x = CenterM[1].x + func_800AEAC0(CRotM[1].y) * -2000.0f;
+    z = CenterM[1].z + func_800AEFD0(CRotM[1].y) * -2000.0f;
     func_80025798(obj->model[5], x, D_800FF5D8_HandcarHavoc[1], z);
     func_80025798(obj->model[8], x, D_800FF5D8_HandcarHavoc[1] + 20.0f, z);
     func_800257E4(obj->model[4], 0.0f, CRotM[0].y, 0.0f);
@@ -389,9 +387,6 @@ void func_800F7998_HandcarHavoc(omObjData* obj) {
     func_800234B8(2, D_800FF5ED_HandcarHavoc, 0, 0);
     func_80023504(2, D_800FF5E0_HandcarHavoc.x, D_800FF5E0_HandcarHavoc.y, D_800FF5E0_HandcarHavoc.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F7998_HandcarHavoc);
-#endif
 
 /* The map in the middle: 16 track segments and the goal. */
 void func_800F7DD8_HandcarHavoc(void) {

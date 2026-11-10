@@ -1112,7 +1112,8 @@ u16 func_800F9EE0_BumperBalls(void) {
     return (phi_a0_2 < 4) ^ 1;
 }
 
-// register allocation (work/table in s0/s1 swapped; masked ~0 beyond the bss shift)
+// register allocation: work/table in s0/s1 swapped (raw 44, masked 0); declaration order, a
+// separate work assignment and the unk_58 block order tried
 #ifdef NON_MATCHING
 void func_800F9F30_BumperBalls(omObjData* object) {
     u16* table;
