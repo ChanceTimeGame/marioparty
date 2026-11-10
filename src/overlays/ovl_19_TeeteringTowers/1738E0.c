@@ -425,7 +425,7 @@ u8 func_800F773C_TeeteringTowers(f32 x, f32 z) {
 }
 
 /* Snaps the stick to the nearest of eight directions. */
-// register allocation: retail negates the copies, not the loaded values (masked 0)
+// register allocation: retail negates the copies, not the loaded values (masked 0, raw 2; tried testing x, reordering, separate abs loads)
 #ifdef NON_MATCHING
 void func_800F77E4_TeeteringTowers(s8* sx, s8* sy) {
     s32 x = *sx;

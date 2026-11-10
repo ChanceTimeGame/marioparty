@@ -976,7 +976,7 @@ const f32 D_800FFB70_CraneGame[4][2] __attribute__((section(".rodata"))) = {
 };
 #endif
 
-// float register allocation (masked 0)
+// float register allocation: px/py swap f26/f30 (masked 0, raw 25; tried declaration order, if/else for the nudge, separate dx/dz at the end)
 #ifdef NON_MATCHING
 s16 func_800F97D4_CraneGame(omObjData* obj) {
     f32 m1[4][4];

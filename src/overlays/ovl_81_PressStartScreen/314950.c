@@ -165,10 +165,9 @@ void func_800F69C8_PressStartScreen(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_81_PressStartScreen/314950", func_800F69C8_PressStartScreen);
 #endif
 
-// scheduling of the unk_80 load (masked 2)
+// scheduling of the unk_80 load: retail loads it before the index multiply (masked 2, raw 2; tried base local, pointer + index)
 #ifdef NON_MATCHING
 void func_800F6EB4_PressStartScreen(unk2C0C0StructC0* arg0, f32 arg1, s16 arg2) {
-    unk2C0C0Struct30* base = arg0->unk_80;
     unk2C0C0Struct30* obj;
     unk2C0C0StructE0* src;
     unk2C0C0StructE0* dst;
@@ -179,7 +178,7 @@ void func_800F6EB4_PressStartScreen(unk2C0C0StructC0* arg0, f32 arg1, s16 arg2) 
     s16 n;
     s16 i;
 
-    obj = &base[arg2];
+    obj = &arg0->unk_80[arg2];
     src = arg0->unk_04 + obj->unk_0A;
     dst = arg0->unk_08[D_800F37F0] + obj->unk_0A;
     n = obj->unk_0C;
