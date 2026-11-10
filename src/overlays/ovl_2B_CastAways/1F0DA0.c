@@ -1515,26 +1515,25 @@ void func_800FA410_CastAways(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
 #endif
-// register allocation: retail keeps a u16 copy of the weight (masked 2)
-#ifdef NON_MATCHING
-s16 func_800FABE4_CastAways(u16 arg0) {
-    u16 r;
-    u16 i;
-    u8 w;
-
-    r = (u8)(rand8() % 10);
-    for (i = 0; i < 3; i++) {
-        w = D_800FBA0C_CastAways[arg0][i];
-        if (r < w) {
-            break;
-        }
-        r -= w;
+// decomp-permuter
+s16 func_800FABE4_CastAways(u16 arg0)
+{
+  u16 r;
+  u16 i;
+  u8 w;
+  r = (u8) (rand8() % 10);
+  for (i = 0; i < 3; i++)
+  {
+    w = D_800FBA0C_CastAways[arg0][i];
+    if (w > r)
+    {
+      break;
     }
-    return D_800FBA18_CastAways[arg0][i];
+    r -= w;
+  }
+
+  return D_800FBA18_CastAways[arg0][i];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FABE4_CastAways);
-#endif
 void func_800FACA8_CastAways(void) {
     if ((D_800FB9E4_CastAways != 0) || (D_800F5144 != 0)) {
         func_800FB5B4_CastAways(131);
