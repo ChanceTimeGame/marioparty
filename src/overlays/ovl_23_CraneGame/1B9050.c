@@ -474,7 +474,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1B9050", func_800FC9B0_C
 #endif
 
 /* Emits the faces in draw order as gSP1Triangle/gSP1Quadrangle batches of at most 29 vertices. */
-// register allocation; the vertex-list base is kept in a register (masked 25)
+// register allocation; &D_80100708 is hoisted into a register, retail rebuilds it per use and has an 8-byte larger frame (masked 41; tried an indexed search loop)
 #ifdef NON_MATCHING
 void func_800FCB78_CraneGame(Gfx** gfx, unk2C0C0StructC0* m) {
     u8 (*start)[4];

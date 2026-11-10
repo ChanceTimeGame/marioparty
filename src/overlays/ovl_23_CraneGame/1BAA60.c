@@ -42,8 +42,6 @@ void func_800FD37C_CraneGame(s16 model) {
 }
 
 /* The draw-pass callback: refreshes each group's world-to-group matrix. */
-// group-matrix index evaluation order, register allocation (masked 19)
-#ifdef NON_MATCHING
 void func_800FD3D0_CraneGame(Gfx** gfx, Mtx* mtx, camera* cam) {
     Matrix4f m1;
     Matrix4f m2;
@@ -51,6 +49,7 @@ void func_800FD3D0_CraneGame(Gfx** gfx, Mtx* mtx, camera* cam) {
     CGCol* e;
     unk_ovl_2D_struct* p;
     unk2C0C0StructC0* m;
+    unk2C0C0Struct30* o;
     CGColGroup* g;
     s32 i;
     s32 j;
@@ -68,8 +67,9 @@ void func_800FD3D0_CraneGame(Gfx** gfx, Mtx* mtx, camera* cam) {
                 e->unk2--;
             }
             for (j = 0; j < (m->unk_6A & 0x3F); j++) {
+                o = &m->unk_80[j];
                 g = &e->groups[j];
-                func_800A0B90(m1, D_800ED0D8[m->unk_28][m->unk_80[j].unk_12].unk_44);
+                func_800A0B90(m1, D_800ED0D8[m->unk_28][o->unk_12].unk_44);
                 func_800AC0B0(m1, inv, m1);
                 MtxInv(m1, m2);
                 func_8009EA40(m1, -m1[3][0], -m1[3][1], -m1[3][2]);
@@ -78,9 +78,6 @@ void func_800FD3D0_CraneGame(Gfx** gfx, Mtx* mtx, camera* cam) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FD3D0_CraneGame);
-#endif
 
 /* Retail stores the group count from the low byte of unk_6A (a byte read at +1). */
 // decomp-permuter

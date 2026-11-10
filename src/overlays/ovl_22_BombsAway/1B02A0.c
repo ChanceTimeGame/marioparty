@@ -138,7 +138,7 @@ void func_800FC8F8_BombsAway(omObjData* obj) {
     }
     func_80066DC4(D_80100B50_BombsAway, 0, 0xA0, D_800FFAC4_BombsAway);
 }
-// operand order of the offset's or/addu (masked 2; GCC canonicalises pointer + int)
+// operand order of the offset's or/addu (masked 0, raw 4; tried swapped or operands, a u16 offset local, tex += offset)
 #ifdef NON_MATCHING
 void func_800FCD04_BombsAway(void) {
     BaSplash* p;

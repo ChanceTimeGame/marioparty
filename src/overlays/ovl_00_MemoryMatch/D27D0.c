@@ -74,10 +74,7 @@ u8 D_800FD8D0_MemoryMatch[] = "\x82\x72\x82\x73\x82\x60\x82\x71\x82\x73"; /* STA
 u8 D_800FD8DC_MemoryMatch[] = "\x82\x65\x82\x68\x82\x6D\x82\x68\x82\x72\x82\x67"; /* FINISH */
 u8 D_800FD8EC_MemoryMatch[] = "\x82\x73\x82\x68\x82\x6C\x82\x64\x82\x74\x82\x6F"; /* TIMEUP */
 
-// scheduling of a move (masked 5)
-#ifdef NON_MATCHING
 void func_800FB360_MemoryMatch(void) {
-    omObjData* obj;
     s16 i;
 
     D_800FE1A0_MemoryMatch = omAddObj(0xA, 0, 0, -1, func_800FB558_MemoryMatch);
@@ -88,25 +85,18 @@ void func_800FB360_MemoryMatch(void) {
     D_800FE1DE_MemoryMatch = 0;
     D_800FE1DA_MemoryMatch = 0;
     for (i = 0; i < 6; i++) {
-        obj = omAddObj(0xB, 1, 0, -1, func_800FB888_MemoryMatch);
-        D_800FE1A8_MemoryMatch[D_800FE1D8_MemoryMatch] = obj;
-        omSetStatBit(obj, 0xA0);
+        omSetStatBit(D_800FE1A8_MemoryMatch[D_800FE1D8_MemoryMatch] = omAddObj(0xB, 1, 0, -1, func_800FB888_MemoryMatch), 0xA0);
         D_800FE1D8_MemoryMatch++;
     }
     for (i = 0; i < 2; i++) {
         D_800FE1C0_MemoryMatch[D_800FE1DC_MemoryMatch++] = omAddObj(0xC, 2, 0, -1, func_800FBC34_MemoryMatch);
     }
     for (i = 0; i < 4; i++) {
-        obj = omAddObj(0xD, 7, 0, -1, func_800FC5A4_MemoryMatch);
-        D_800EDE70[D_800EE984] = obj;
-        omSetStatBit(obj, 0xA0);
+        omSetStatBit(D_800EDE70[D_800EE984] = omAddObj(0xD, 7, 0, -1, func_800FC5A4_MemoryMatch), 0xA0);
         D_800EE984++;
     }
     D_800FE1E4_MemoryMatch = InitSprite(0x2A);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/D27D0", func_800FB360_MemoryMatch);
-#endif
 void func_800FB558_MemoryMatch(omObjData* arg0) {
     arg0->func_ptr = func_800FB570_MemoryMatch;
     D_800FE1E2_MemoryMatch = 0;
