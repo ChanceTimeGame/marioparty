@@ -366,7 +366,7 @@ void func_800F7430_DesertDash(omObjData* obj) {
     D_800FC00C_DesertDash = func_800F983C_DesertDash(obj, 2);
 }
 
-// register allocation only (masked 2: fabsf operand and a pointer temp)
+// register allocation only (masked 2: fabsf operand and the team->obj[0] load order in the func_80066DF4 call); tried fabsf(a - b) inline, d reused, (f32) cast
 #ifdef NON_MATCHING
 /* Per-frame driver of both teams' sleds, cameras and sprites. */
 void func_800F7C6C_DesertDash(omObjData* obj) {

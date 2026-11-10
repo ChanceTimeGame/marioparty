@@ -228,7 +228,7 @@ void func_800FA110_LimboDance(omObjData* obj);
 void func_800FA418_LimboDance(omObjData* obj);
 void func_800FB04C_LimboDance(f32 x);
 void func_800FB058_LimboDance(omObjData* obj);
-void func_800FB504_LimboDance(s16 sprite, Gfx** gfx, f32 scroll);
+void func_800FB504_LimboDance(s32 sprite, Gfx** gfx, f32 scroll);
 void func_800FB93C_LimboDance(u8 count);
 s16 func_800FBAF0_LimboDance(s16 sprite, s16 sprite2, u8 flags);
 void func_800FC4FC_LimboDance(s32 id, f32 amp, f32 angle);

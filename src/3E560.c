@@ -418,7 +418,7 @@ void MBModelIDSet(Object* arg0, u8 id) {
     }
 }
 
-// register allocation: retail stores a copy of the model index (masked 18 incl. split-label relocs)
+// register allocation (masked 9): retail stores a copy of the model index (s1) and sets i = 0 late; tried s32 model, decl order, u16 return cast
 #ifdef NON_MATCHING
 Object* MBModelParamCreate(Object* arg0) {
     MBModel* m;

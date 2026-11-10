@@ -258,6 +258,8 @@ build/src/overlays/ovl_03_BuriedTreasure/EB0E0.c.o: CFLAGS = -G0 -mips3 -mgp32 -
 # ovl_41 262590.c (func_800F8FE8: nop between back-to-back mul.s) has the mul fix on
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/262590.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_17_BoxMountainMayhem/166D50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_29 1E4480.c (func_800FB058: nop between back-to-back mul.d) has the mul fix on
+build/src/overlays/ovl_29_LimboDance/1E4480.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_17_BoxMountainMayhem/168CA0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_40 259EB0.c: nop before mult at func_800FA61C's roulette loop head
 build/src/overlays/ovl_40_ResultsScene/259EB0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
