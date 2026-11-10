@@ -1545,37 +1545,34 @@ void func_800FC0F0_FaceLift(s16 arg0) {
     }
 }
 
-// register allocation, missing sign extension
-#ifdef NON_MATCHING
 void func_800FC14C_FaceLift(s16 id, s16 val) {
-    s16 v = val;
-    s16 hundreds = 0;
+    s16 hundreds;
+    s16 tens;
 
+    hundreds = 0;
     if (val >= 100) {
         func_80067480(id, 0, 0x8000);
         func_800672DC(id, 0, 1, 0);
         func_800672B0(id, 0, 1);
-        v = val - 100;
+        val -= 100;
         hundreds = 1;
     } else {
         func_800674BC(id, 0, 0x8000);
     }
-    if (hundreds != 0 || v / 10 != 0) {
+    if (hundreds != 0 || (s16)(val / 10) != 0) {
         func_80067480(id, 1, 0x8000);
-        func_800672DC(id, 1, v / 10, 0);
+        tens = val / 10;
+        func_800672DC(id, 1, tens, 0);
         func_800672B0(id, 1, 1);
-        v %= 10;
+        val -= tens * 10;
     } else {
         func_800674BC(id, 1, 0x8000);
     }
     func_80067480(id, 2, 0x8000);
-    func_800672DC(id, 2, v, 0);
+    func_800672DC(id, 2, val, 0);
     func_800672B0(id, 2, 1);
     func_80067480(id, 3, 0x8000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FC14C_FaceLift);
-#endif
 void func_800FC30C_FaceLift(s16 arg0, s16 arg1) {
     s16 i;
     

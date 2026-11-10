@@ -1721,8 +1721,6 @@ void func_800FC240_CrazyCutter(s16 arg0) {
 }
 
 
-// s16 temporaries re-extended in retail (masked 4)
-#ifdef NON_MATCHING
 void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
     s16 hundreds;
     s16 tens;
@@ -1742,7 +1740,7 @@ void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
         tens = value / 10;
         func_800672DC(grp, 1, tens, 0);
         func_800672B0(grp, 1, 1);
-        value %= 10;
+        value -= tens * 10;
     } else {
         func_800674BC(grp, 1, 0x8000);
     }
@@ -1751,9 +1749,6 @@ void func_800FC29C_CrazyCutter(s16 grp, s16 value) {
     func_800672B0(grp, 2, 1);
     func_80067480(grp, 3, 0x8000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FC29C_CrazyCutter);
-#endif
 void func_800FC45C_CrazyCutter(s16 arg0, s16 arg1) {
     s16 i = 0;
     
