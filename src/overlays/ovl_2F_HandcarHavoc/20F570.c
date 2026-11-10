@@ -722,8 +722,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F873
 #endif
 
 /* Tilt from the lean and the bend; tipping and skidding. */
-// NON_MATCHING: branch layout of the clamp tails
-#ifdef NON_MATCHING
 void func_800F8E00_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     f32 d;
@@ -768,10 +766,10 @@ void func_800F8E00_HandcarHavoc(omObjData* obj) {
             break;
         case 1:
             obj->work[0] |= 8;
-            if (!(fabs(w->tilt) >= 21.0)) {
-                w->tipTimer = 0;
-            } else {
+            if (fabs(w->tilt) >= 21.0) {
                 w->tipTimer += 1.0f;
+            } else {
+                w->tipTimer = 0;
             }
             func_80060F04(w->player[0], 5, 0, 5);
             func_80060F04(w->player[1], 5, 0, 5);
@@ -800,9 +798,6 @@ void func_800F8E00_HandcarHavoc(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F8E00_HandcarHavoc);
-#endif
 
 /* 0: straight, 1: too fast into a bend (tipping), 2: skidding at full lean. */
 // NON_MATCHING: float registers of lean * 0.085f and the * 10.0f constant (raw 5, masked 0);
