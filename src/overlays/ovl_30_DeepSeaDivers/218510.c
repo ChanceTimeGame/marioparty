@@ -2540,6 +2540,7 @@ void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80039C48("dmy_I8", &D_80100C60_DeepSeaDivers);
     D_80100C64_DeepSeaDivers = D_80100C68_DeepSeaDivers = 0.0f;
 }
+// code identical (s16 counter); as C the unit's .rodata gains a zero word before "dmy_I8", moving "yura_1_1" +4 (masked 1). Tried named f64 consts
 #ifdef NON_MATCHING
 void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructC0* m;
@@ -2547,7 +2548,7 @@ void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructE0* dst;
     s16 flip = 0;
     s16 row = 0;
-    s32 i;
+    s16 i;
 
     m = D_800F2B7C[obj->model[1]].unk_6C;
     D_80100C64_DeepSeaDivers -= 0.1f;
