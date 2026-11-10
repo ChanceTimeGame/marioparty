@@ -45,19 +45,15 @@ void func_800F90A8_BoxMountainMayhem(omObjData* obj) {
     obj->func_ptr = NULL;
 }
 
-// loop entry test scheduled as slt instead of retail nop (masked 1)
-#ifdef NON_MATCHING
 void func_800F918C_BoxMountainMayhem(omObjData* obj) {
     BMMStackExt* ext;
     f32 h;
     f32 y;
-    s32 pad[2]; /* retail's frame is 8 bytes larger */
     s32 i;
     u8 n;
 
     ext = BMM_STAGE(obj)->unk_28;
     n = obj->work[0];
-    i = 0;
     if (n != 0) {
         h = 0.0f;
         for (i = 0; i < n; i++) {
@@ -74,9 +70,8 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
             }
             h += 150.0f;
         }
-        i = 0;
     }
-    do {
+    for (i = 0; i < 4; i++) {
         if (ext->unk_10[i] >= 0) {
             if (ext->unk_18[i] <= 0) {
                 func_80064D38(ext->unk_10[i]);
@@ -84,12 +79,8 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
             }
             ext->unk_18[i]--;
         }
-        i++;
-    } while (i < 4);
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800F918C_BoxMountainMayhem);
-#endif
 
 // register allocation (masked 23)
 #ifdef NON_MATCHING
