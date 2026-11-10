@@ -254,7 +254,7 @@ void func_800FA7A8_UnusedMinigame0(u8 board[8][6], s16* x, s16* z);
 void func_800FA968_UnusedMinigame0(u8 board[8][6]);
 void func_800FA9D0_UnusedMinigame0(UM0State* s);
 UM0State* func_800FABF0_UnusedMinigame0(void);
-s32 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z);
+s16 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z);
 
 /* 103D80.c */
 void func_800FADF0_UnusedMinigame0(omObjData* obj);
