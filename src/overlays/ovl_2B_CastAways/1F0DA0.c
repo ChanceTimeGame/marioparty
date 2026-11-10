@@ -1221,7 +1221,7 @@ void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwa
     arg1->samples[arg1->sampleCount].z = arg0->trans.z;
 }
 
-// float register allocation only
+// float register allocation: slope in $f4, retail $f6 (raw 9, masked 0); tried decl order, reusing limit/surface
 #ifdef NON_MATCHING
 void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
     f32 k = 0.6f;
@@ -1248,8 +1248,8 @@ void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
             if ((arg0->samples[arg0->sampleCount].y == 0.0f) & (surface == 0.0f)) {
                 limit = 0.0f;
             } else {
-                slope = (surface - arg0->samples[arg0->sampleCount].y)
-                      / (arg0->samples[arg0->sampleCount].z - arg0->samples[4].z);
+                slope = surface - arg0->samples[arg0->sampleCount].y;
+                slope = slope / (arg0->samples[arg0->sampleCount].z - arg0->samples[4].z);
                 limit = fabs(arg0->samples[4].z - arg0->samples[i].z) * slope;
             }
             if (arg0->samples[i].y <= limit && arg0->samples[i].y <= 0.0f) {

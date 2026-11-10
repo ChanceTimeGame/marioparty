@@ -659,8 +659,6 @@ void func_800F76F0_MariosRainbowCastle(void) {
     EndProcess(NULL);
 }
 
-// register allocation: retail swaps s0/s2 (cloudPos vs dest); masked 0
-#ifdef NON_MATCHING
 void func_800F7774_MariosRainbowCastle(void) {
     Vec3f target;
     Vec3f vel;
@@ -668,8 +666,6 @@ void func_800F7774_MariosRainbowCastle(void) {
     GW_PLAYER* player;
     Object* cloud;
     Object* model;
-    Vec3f* modelPos;
-    Vec3f* cloudPos;
     Vec3f* dest;
     f32 zoom;
     f32 speed;
@@ -712,9 +708,7 @@ void func_800F7774_MariosRainbowCastle(void) {
     }
     func_800726AC(1, 8);
     HuPrcSleep(8);
-    modelPos = &model->coords;
     func_8004A7DC();
-    cloudPos = &cloud->coords;
     func_8004A7A4();
     zoom = func_8004B844();
     func_8004B838(-1.0f);
@@ -728,12 +722,12 @@ void func_800F7774_MariosRainbowCastle(void) {
     func_8004B5C4(speed);
     func_8004B838(zoom);
     SetFadeInTypeAndTime(1, 8);
-    func_800A0D50(modelPos, dest);
+    func_800A0D50(&model->coords, dest);
     model->unk_30 = 300.0f;
     model->unk_34 = 0.0f;
     model->unk_38 = -3.0f;
-    func_800A0D50(cloudPos, modelPos);
-    func_800A0E00(cloudPos, modelPos, &offset);
+    func_800A0D50(&cloud->coords, &model->coords);
+    func_800A0E00(&cloud->coords, &model->coords, &offset);
     cloud->coords.y += model->unk_30;
     cloud->coords.x -= 230.0f;
     cloud->coords.z -= 230.0f;
@@ -763,9 +757,6 @@ void func_800F7774_MariosRainbowCastle(void) {
     func_80056E30(1);
     EndProcess(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3B_MariosRainbowCastle/24FAB0", func_800F7774_MariosRainbowCastle);
-#endif
 
 void func_800F7C04_MariosRainbowCastle(void) {
     SetNextChainAndSpace(-1, 0, 1);
