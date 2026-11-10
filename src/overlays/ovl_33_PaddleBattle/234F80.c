@@ -1269,12 +1269,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAFE
 #endif
 
 /* The raft's tilt from three float points around it (each eased toward the ground under it). */
-// logic-equivalent; block order of the identity fallback, register allocation (normalised diff 108 lines)
+// tail differs: retail keeps &p[2] in s2 across the calls, negates y before the sqrt and lays the identity
+// fallback out last (masked 33, raw 70; the loop matches). Tried q = &p[2] for the tail (worse).
 #ifdef NON_MATCHING
 s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
     Vec p[3];
     Vec* q;
     Vec* s;
+    Vec* t;
     f32 len;
     f32 inv;
     s32 i;
@@ -1285,14 +1287,15 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
         q->z = pos->z + func_800AEFD0(rotY + D_800FEA78_PaddleBattle[i]) * 1.5 * 100.0;
         q->y = pos->y + 300.0;
         s = &st[i * 2];
+        t = &s[1];
         if (func_800FDBB8_PaddleBattle(q, 0.0f, -1000.0f, 0.0f, -1) != 0) {
             s[1].x = q->x;
             s[1].y = q->y;
             s[1].z = q->z;
         }
-        q->x = s[0].x = s[0].x + (s[1].x - s[0].x) * 0.1;
-        q->y = s[0].y = s[0].y + (s[1].y - s[0].y) * 0.1;
-        q->z = s[0].z = s[0].z + (s[1].z - s[0].z) * 0.1;
+        q->x = s[0].x = s[0].x + (t->x - s[0].x) * 0.1;
+        q->y = s[0].y = s[0].y + (t->y - s[0].y) * 0.1;
+        q->z = s[0].z = s[0].z + (t->z - s[0].z) * 0.1;
     }
     p[0].x -= p[2].x;
     p[0].y -= p[2].y;
@@ -1910,7 +1913,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD71
    `skip`. Returns 1 when something was hit. */
 // logic-equivalent; the unused vector, register allocation (normalised diff 22 lines)
 #ifdef NON_MATCHING
-s16 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     Vec p;
     Vec d;
     unk_ovl_2D_struct* m;

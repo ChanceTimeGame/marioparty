@@ -1308,7 +1308,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F88
 #endif
 const char D_801002BC_MinigameHouse[] __attribute__((section(".rodata"))) = "%d";
 
-// register allocation; retail hoists the buffer base out of three fill loops (masked 37)
+// register allocation; retail hoists the buffer base out of three fill loops (masked 44, 197 vs 194 instructions);
+// tried D[n] stores and a local buffer pointer (worse)
 #ifdef NON_MATCHING
 char* func_800F9D64_MinigameHouse(s32 arg0) {
     u8* str;
