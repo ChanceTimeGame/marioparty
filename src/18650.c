@@ -487,9 +487,9 @@ void func_800186E4(omObjData* obj, s32 a, s32 b) {
     eb->flags = flags;
 }
 
-// register allocation of the parameters; retail reads speed as u16 from the stack (masked 5)
+// register allocation of the parameters (masked 0)
 #ifdef NON_MATCHING
-void func_8001874C(omObjData* obj, s32 idx, s32 file, s32 flags, s32 speed) {
+void func_8001874C(omObjData* obj, s32 idx, s32 file, s32 flags, u16 speed) {
     s16 mot = func_8001755C(file);
     ActorWork* w;
     MotionEntry* e;
@@ -506,9 +506,9 @@ void func_8001874C(omObjData* obj, s32 idx, s32 file, s32 flags, s32 speed) {
 INCLUDE_ASM("asm/nonmatchings/18650", func_8001874C);
 #endif
 
-// register allocation of the parameters; retail reads speed as u16 from the stack (masked 5)
+// register allocation of the parameters (masked 0)
 #ifdef NON_MATCHING
-void func_800187D0(omObjData* obj, s32 idx, s32 file, s32 flags, s32 speed) {
+void func_800187D0(omObjData* obj, s32 idx, s32 file, s32 flags, u16 speed) {
     s16 mot = func_80028784(DataRead(file), 0x18);
     ActorWork* w;
     MotionEntry* e;
