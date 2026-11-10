@@ -156,34 +156,46 @@ void func_800F6BA4_GhostGuess(omObjData* arg0) {
     D_800EE9A0.def[1].dir[2] = 0x40;
     SetFadeInTypeAndTime(0, 0x10);
 }
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800F6E78_GhostGuess(omObjData* arg0) {
-    GGRec* r;
-    s32 i;
-
-    D_800FBEDC_GhostGuess = arg0;
-    D_800FBEDA_GhostGuess = 1;
-    D_800FBED2_GhostGuess = 0;
-    arg0->func_ptr = &func_800F80E4_GhostGuess;
-    arg0->scale.x = arg0->scale.y = arg0->scale.z = 1.5f;
-    arg0->model[0] = func_800174C0(0x180006, 0x9D);
-    D_800F2B7C[arg0->model[0]].unk_4C = 0.0f;
-    D_800FBF10_GhostGuess = ReadImgPackand(0x21, 0x284, 8);
-    for (i = 1; i < 11; i++) {
-        r = &D_800FBED0_GhostGuess[i];
-        r->unk_40 = D_800ECDE0[func_8001E1D0(D_800FBED0_GhostGuess[0].unk_40, 8)].unk_00;
-        func_80025930(r->unk_40, 0x70000000, 0x70000000);
-        r->unk_0A = 1;
-        r->unk_08 = 0;
-        r->unk_02 = 0;
-        r->scale.x = r->scale.y = r->scale.z = 3.0f;
-        func_80025830(r->unk_40, r->scale.x, r->scale.y, r->scale.z);
+// decomp-permuter
+void func_800F6E78_GhostGuess(omObjData *arg0)
+{
+  GGRec *r;
+  s32 i;
+  D_800FBEDC_GhostGuess = arg0;
+  D_800FBEDA_GhostGuess = 1;
+  D_800FBED2_GhostGuess = 0;
+  arg0->func_ptr = &func_800F80E4_GhostGuess;
+  arg0->scale.x = (arg0->scale.y = (arg0->scale.z = 1.5f));
+  arg0->model[0] = func_800174C0(0x180006, 0x9D);
+  D_800F2B7C[arg0->model[0]].unk_4C = 0.0f;
+  D_800FBF10_GhostGuess = ReadImgPackand(0x21, 0x284, 8);
+  for (i = 1; i < 11; i++)
+  {
+    if (i)
+    {
+      r = &D_800FBED0_GhostGuess[i];
+      r->unk_40 = D_800ECDE0[func_8001E1D0(D_800FBED0_GhostGuess[0].unk_40, 8)].unk_00;
+      func_80025930(r->unk_40, 0x70000000, 0x70000000);
+      r->unk_0A = 1;
+      r->unk_08 = 0;
+      r->unk_02 = 0;
+      r->scale.x = (r->scale.y = (r->scale.z = 3.0f));
+      func_80025830(r->unk_40, r->scale.x, r->scale.y, r->scale.z);
     }
+    else
+    {
+      r = &D_800FBED0_GhostGuess[i];
+      r->unk_40 = D_800ECDE0[func_8001E1D0(D_800FBED0_GhostGuess[0].unk_40, 8)].unk_00;
+      func_80025930(r->unk_40, 0x70000000, 0x70000000);
+      r->unk_0A = 1;
+      r->unk_08 = 0;
+      r->unk_02 = 0;
+      r->scale.x = (r->scale.y = (r->scale.z = 3.0f));
+      func_80025830(r->unk_40, r->scale.x, r->scale.y, r->scale.z);
+    }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_GhostGuess/117210", func_800F6E78_GhostGuess);
-#endif
 void func_800F6FF4_GhostGuess(omObjData* arg0) {
     s32 idle[5] = { 0x0F, 0x38, 0x39, 0x3A, 0x3B };
     s32 dir;
