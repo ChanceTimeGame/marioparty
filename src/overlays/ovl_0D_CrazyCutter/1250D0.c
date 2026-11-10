@@ -971,8 +971,6 @@ void func_800F98B4_CrazyCutter(CrazyCutterPlayer* arg0) {
     D_800FD5C8_CrazyCutter = PlaySound(0x237);
 }
 
-// register allocation (masked 27)
-#ifdef NON_MATCHING
 void func_800F9968_CrazyCutter(omObjData* parent, s32 player) {
     f32 xs[4] = { -400.0f, 400.0f, -400.0f, 400.0f };
     f32 zs[4] = { -250.0f, -250.0f, 350.0f, 350.0f };
@@ -1016,7 +1014,7 @@ void func_800F9968_CrazyCutter(omObjData* parent, s32 player) {
         D_800FD534_CrazyCutter = files[D_800FD480_CrazyCutter];
     } else {
         *obj->model = func_80023FC8(D_800FD540_CrazyCutter);
-        D_800FD4E8_CrazyCutter[st->player].model = func_80023FC8(D_800FD542_CrazyCutter);
+        D_800FD4E8_CrazyCutter[st->player].model = func_80023FC8_s32(D_800FD542_CrazyCutter);
     }
     func_80021240(*obj->model);
     omSetTra(obj, st->x, st->y + 300.0f, st->z);
@@ -1029,16 +1027,6 @@ void func_800F9968_CrazyCutter(omObjData* parent, s32 player) {
     D_800FD4E8_CrazyCutter[st->player].scale = 0.1f;
     D_800FD4E8_CrazyCutter[st->player].unk8 = 0.0f;
 }
-#else
-/* GCC cannot see the previous INCLUDE_ASM switch to .text */
-__asm__(".section .rodata");
-const f32 D_800FD084_CrazyCutter[4] __attribute__((section(".rodata"))) = { -400.0f, 400.0f, -400.0f, 400.0f };
-const f32 D_800FD094_CrazyCutter[4] __attribute__((section(".rodata"))) = { -250.0f, -250.0f, 350.0f, 350.0f };
-const f32 D_800FD0A4_CrazyCutter[3] __attribute__((section(".rodata"))) = { 2.2f, 4.0f, 4.5f };
-const f32 D_800FD0B0_CrazyCutter[3] __attribute__((section(".rodata"))) = { -30.0f, 50.0f, 0.0f };
-const s32 D_800FD0BC_CrazyCutter[3] __attribute__((section(".rodata"))) = { 0x1E0007, 0x1F0005, 0x1F0004 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F9968_CrazyCutter);
-#endif
 // switch tail layout and register allocation (masked 96)
 #ifdef NON_MATCHING
 void func_800F9D98_CrazyCutter(omObjData* obj) {
