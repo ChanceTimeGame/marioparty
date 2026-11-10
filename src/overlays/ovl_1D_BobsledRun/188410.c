@@ -1618,7 +1618,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FB594_
 #endif
 
 /* Draw layer by distance to the other team's camera (1: top screen only, 2: bottom, 3: both). */
-// register allocation
+// register allocation (masked 0, raw 21): obj/layer swap s0/s1, dx..dz not tied to their loads;
+// tried declaration order, per-branch distance, operand order (M1c)
 #ifdef NON_MATCHING
 void func_800FB858_BobsledRun(omObjData* obj) {
     Vec3f* c;
@@ -2051,7 +2052,7 @@ f32 func_800FCA48_BobsledRun(s32 team, f32 value) {
 }
 
 /* Mean of the last six stick samples, packed (x << 16) | y. */
-// register allocation
+// register allocation (masked 0, raw 15): x/i swap a0/a1; tried shift/mask reads, declaration order (M1c)
 #ifdef NON_MATCHING
 s32 func_800FCAC0_BobsledRun(omObjData* obj) {
     BRWork* work;
@@ -2066,7 +2067,9 @@ s32 func_800FCAC0_BobsledRun(omObjData* obj) {
         x += ((s16*)&work->unk_6C[i])[0];
         y = ((u16*)&work->unk_6C[i])[1] + y;
     }
-    return (((s16)x / 6) << 16) | (((s16)y / 6) & 0xFFFF);
+    x = (s16)x / 6;
+    y = (s16)y / 6;
+    return (x << 16) | (y & 0xFFFF);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FCAC0_BobsledRun);
