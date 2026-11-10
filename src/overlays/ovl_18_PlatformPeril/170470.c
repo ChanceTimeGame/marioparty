@@ -211,36 +211,44 @@ void func_800FB3E8_PlatformPeril(void) {
     }
 }
 
-// clamp: GCC folds -(i > 0) & i into ~i >> 31 (masked 3)
-#ifdef NON_MATCHING
-s32 func_800FB544_PlatformPeril(s32 pl) {
-    s32 idle = 0;
-    s32 alive = D_800FE2C4_PlatformPeril;
-    s32 i;
-    s32 j;
+// decomp-permuter
+s32 func_800FB544_PlatformPeril(s32 pl)
+{
+  int new_var;
+  s32 idle = 0;
+  s32 alive = D_800FE2C4_PlatformPeril;
+  s32 i;
+  s32 j;
+  for (i = 0; i < 4; i++)
+  {
+    idle += D_800FE2D8_PlatformPeril[i] == 0;
+  }
 
-    for (i = 0; i < 4; i++) {
-        idle += D_800FE2D8_PlatformPeril[i] == 0;
+  for (i = 0; i < 4; i++)
+  {
+    if (pl == D_800FE590_PlatformPeril[i])
+    {
+      break;
     }
-    for (i = 0; i < 4; i++) {
-        if (pl == D_800FE590_PlatformPeril[i]) {
-            break;
-        }
-    }
-    for (j = 0; j < 4; j++) {
-        i += (alive & D_800FDD60_PlatformPeril[j]) == 0;
-    }
-    i += idle;
-    if (i >= 4) {
-        i = 3;
-    } else {
-        i &= -(i > 0);
-    }
-    return i;
+  }
+
+  for (j = 0; j < 4; j++)
+  {
+    i += (alive & D_800FDD60_PlatformPeril[j]) == 0;
+  }
+
+  i += idle;
+  if (i >= 4)
+  {
+    i = 3;
+  }
+  else
+  {
+    new_var = 0;
+    i &= -(i > new_var);
+  }
+  return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/170470", func_800FB544_PlatformPeril);
-#endif
 
 void func_800FB60C_PlatformPeril(s32* a, s32* b) {
     s32 t = *a;
