@@ -45,19 +45,15 @@ void func_800F90A8_BoxMountainMayhem(omObjData* obj) {
     obj->func_ptr = NULL;
 }
 
-// loop entry test scheduled as slt instead of retail nop (masked 1)
-#ifdef NON_MATCHING
 void func_800F918C_BoxMountainMayhem(omObjData* obj) {
     BMMStackExt* ext;
     f32 h;
     f32 y;
-    s32 pad[2]; /* retail's frame is 8 bytes larger */
     s32 i;
     u8 n;
 
     ext = BMM_STAGE(obj)->unk_28;
     n = obj->work[0];
-    i = 0;
     if (n != 0) {
         h = 0.0f;
         for (i = 0; i < n; i++) {
@@ -74,9 +70,8 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
             }
             h += 150.0f;
         }
-        i = 0;
     }
-    do {
+    for (i = 0; i < 4; i++) {
         if (ext->unk_10[i] >= 0) {
             if (ext->unk_18[i] <= 0) {
                 func_80064D38(ext->unk_10[i]);
@@ -84,12 +79,8 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
             }
             ext->unk_18[i]--;
         }
-        i++;
-    } while (i < 4);
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800F918C_BoxMountainMayhem);
-#endif
 
 // register allocation (masked 23)
 #ifdef NON_MATCHING
@@ -152,8 +143,6 @@ void func_800F935C_BoxMountainMayhem(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800F935C_BoxMountainMayhem);
 #endif
 
-// register allocation (masked 2)
-#ifdef NON_MATCHING
 void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
     s32 r;
     u8 n;
@@ -176,11 +165,11 @@ void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
             }
             z++;
         }
-        if (z >= 4) {
-            z = 0;
-        }
         if (x >= 4) {
             x = 0;
+        }
+        if (z >= 4) {
+            z = 0;
         }
         if ((x == 3) & (z == 3)) {
             x = 0;
@@ -189,11 +178,9 @@ void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
         func_800F96A4_BoxMountainMayhem(x, z, depth);
         return;
     }
-    D_800FC138_BoxMountainMayhem[z][x][0] = n + 1;
+    n++;
+    D_800FC138_BoxMountainMayhem[z][x][0] = n;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800F96A4_BoxMountainMayhem);
-#endif
 
 // register allocation (masked 2)
 #ifdef NON_MATCHING
@@ -351,7 +338,8 @@ void func_800F9C20_BoxMountainMayhem(omObjData* stack, s32 x, s32 level, s32 z, 
     }
 }
 
-// retail keeps the 0 return value in s2 (masked 13)
+// retail keeps the 0 return value in s2, ours rematerialises 0 (masked 13); a second `ret = 0`
+// after the hit gives masked 8 plus one extra move; tried moving the initial set
 #ifdef NON_MATCHING
 s32 func_800FA058_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
@@ -643,7 +631,7 @@ void func_800FAB60_BoxMountainMayhem(omObjData* obj, BMMPlayerWork* work, BMMPla
     func_80025798(obj->model[10], obj->trans.x, obj->trans.y + ext->unk_00, obj->trans.z);
 }
 
-// register allocation (masked 0)
+// register allocation: stick in $v1, retail $a0 (raw 4, masked 0); tried u8 stick, chained store, if/else
 #ifdef NON_MATCHING
 void func_800FAD84_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
@@ -701,8 +689,6 @@ f32 func_800FAF98_BoxMountainMayhem(Vec* from, Vec* to) {
     return func_800B0CD8(dz, dx);
 }
 
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32 dist, u16* buttons) {
     BMMPlayerExt* ext;
     f32 a;
@@ -714,10 +700,13 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
     b = 0;
     a = func_800FAF98_BoxMountainMayhem(from, to);
     reach = work->unk_64 + work->unk_48 + 75.0f + 40.0f;
-    if (dist <= reach * reach) {
-        b = ((s32)(func_800FBD2C_BoxMountainMayhem() & 0xFF) >= D_800FC010_BoxMountainMayhem[ext->unk_0C]) << 14;
+    reach *= reach;
+    if (dist <= reach) {
+        reach = func_800FBD2C_BoxMountainMayhem() & 0xFF;
+        b = (reach >= D_800FC010_BoxMountainMayhem[ext->unk_0C]) << 14;
     } else if (dist < 65025.0f) {
-        if ((s32)(func_800FBD2C_BoxMountainMayhem() & 0x3FF) < D_800FC010_BoxMountainMayhem[ext->unk_0C]) {
+        reach = func_800FBD2C_BoxMountainMayhem() & 0x3FF;
+        if (reach < D_800FC010_BoxMountainMayhem[ext->unk_0C]) {
             b = 0x4000;
         }
         t = a + 22.5f;
@@ -726,7 +715,9 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
         } else if (t > 360.0f) {
             t -= 360.0f;
         }
-        if ((s32)(t / 45.0f) & 1) {
+        t /= 45.0f;
+        reach = t;
+        if (reach & 1) {
             a += 45.0f;
             if (a > 360.0f) {
                 a -= 360.0f;
@@ -738,11 +729,9 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
     }
     return a;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800FAFC8_BoxMountainMayhem);
-#endif
 
-// register allocation (masked 0)
+// ContBtn load goes to $v0 then andi into $a0; retail loads into $a0 (raw 5, masked 1);
+// tried temp r for both roles, u16 r, reusing n
 #ifdef NON_MATCHING
 void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
@@ -757,6 +746,7 @@ void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
     s32 n;
     s32 move;
     s32 target;
+    s32 r;
 
     work = BMM_PLAYER(obj);
     ext = work->unk_E4;
@@ -785,7 +775,8 @@ void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
         }
     }
     if (ext->unk_08 != target) {
-        target &= -((s32)(func_800FBD2C_BoxMountainMayhem() & 0x1FF) >= D_800FC010_BoxMountainMayhem[ext->unk_0C]);
+        r = func_800FBD2C_BoxMountainMayhem() & 0x1FF;
+        target &= -(r >= D_800FC010_BoxMountainMayhem[ext->unk_0C]);
     }
     ext->unk_08 = target;
     switch (target) {
@@ -800,7 +791,8 @@ void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
     case 0:
         break;
     }
-    buttons |= ContBtn[work->unk_56] & 0x1FFF;
+    r = ContBtn[work->unk_56] & 0x1FFF;
+    buttons |= r;
     buttons ^= ext->unk_06 & buttons & 0x4000;
     ContBtnTrg[work->unk_56] = ContBtn[work->unk_56] = buttons;
     ContBtnTrg[work->unk_56] = buttons & (buttons ^ ext->unk_06);
@@ -961,7 +953,8 @@ void func_800FB788_BoxMountainMayhem(void)
   }
 }
 
-// register allocation (masked 0)
+// float register allocation: trans.x loaded into $f2, retail $f0 (masked 1; other raw lines are
+// NON_MATCHING data offsets); tried decl order, inlined squares
 #ifdef NON_MATCHING
 void func_800FB9B4_BoxMountainMayhem(void) {
     omObjData* p;

@@ -518,7 +518,8 @@ s16 func_800FC438_PlatformPeril(s32 a, s32 b, s32 c) {
     return id;
 }
 
-// register allocation (masked 20 incl. address shift)
+// the constant 1 for p->active is hoisted out of the loop (one more saved register), retail
+// loads it in the loop (masked 20); tried plain statements for the initialisers
 #ifdef NON_MATCHING
 /* Burst of 8 sparks at the winner's position. */
 void func_800FC48C_PlatformPeril(f32 x, f32 y, f32 z) {

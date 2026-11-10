@@ -204,10 +204,8 @@ void func_800FB644_CastAways(u16 arg0, f32 arg1) {
     D_800F2B7C[arg0].unk_4C = arg1;
 }
 
-// register allocation: retail copies arg6 through v0 (masked 4)
-#ifdef NON_MATCHING
 void func_800FB668_CastAways(omObjData* arg0, s16 arg1, CastAwaysAnimData* arg2,
-        f32 arg3, f32 arg4, u16 arg5, s32 arg6) {
+        f32 arg3, f32 arg4, u16 arg5, u16 arg6) {
     CastAwaysPlayerWork* player = arg0->unk_50;
     omObjData* lureObj;
     CastAwaysLureWork* lure;
@@ -229,9 +227,6 @@ void func_800FB668_CastAways(omObjData* arg0, s16 arg1, CastAwaysAnimData* arg2,
     lure->flags = arg6;
     lure->animData = arg2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F5700", func_800FB668_CastAways);
-#endif
 
 void func_800FB778_CastAways(omObjData* arg0) {
     CastAwaysLureWork* lure = arg0->unk_50;

@@ -238,7 +238,7 @@ void func_800FAD2C_CastAways(omObjData*);
 s32 func_800FACEC_CastAways(CastAwaysPlayerWork*);
 void func_800F6A24_CastAways(omObjData*, s8*, s8*, s8*);
 s16 func_800FB404_CastAways(s8, s8);
-void func_800FB668_CastAways(omObjData*, s16, CastAwaysAnimData*, f32, f32, u16, s32);
+void func_800FB668_CastAways(omObjData*, s16, CastAwaysAnimData*, f32, f32, u16, u16);
 CastAwaysSpriteData* func_800FAFF0_CastAways(s8, s8, s8);
 s32 func_800FB4D4_CastAways(f32, f32, f32, u16, f32, f32, f32);
 s32 func_800FB53C_CastAways(f32, f32, f32, u16, f32, f32, f32);

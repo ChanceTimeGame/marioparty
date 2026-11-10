@@ -632,7 +632,7 @@ void func_800F7C6C_DesertDash(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F7C6C_DesertDash);
 #endif
 
-// branch layout only (case 0 test: bc1f/j where retail has bc1tl/j; masked 19)
+// branch layout only (case 0 test: bc1f/j where retail has bc1tl/j; masked 19); tried if (!(..)) break;
 #ifdef NON_MATCHING
 /* What lies ahead of z: 0 nothing, 1 an obstacle to wait for, 2 jump now, 3 hit; -1 unknown. */
 u16 func_800F8A80_DesertDash(f32 z) {

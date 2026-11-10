@@ -474,8 +474,6 @@ void func_800FAFD4_DesertDash(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FAFD4_DesertDash);
 #endif
 
-// loop counter increment scheduled one slot earlier
-#ifdef NON_MATCHING
 void func_800FB3F8_DesertDash(u16 n) {
     DDObstacle* o;
     u16 i;
@@ -484,18 +482,16 @@ void func_800FB3F8_DesertDash(u16 n) {
     if (n >= 6) {
         n = 5;
     }
-    for (i = 0; i < n; i++, o++) {
+    for (i = 0; i < n; o++, i++) {
         o->unk14 = -((6000 / (n + 1)) * (i + 1));
         func_800258EC(o->unk6, 4, 0);
         func_800258EC(o->unk8, 4, 0);
         o->unk0 = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FB3F8_DesertDash);
-#endif
 
-// (u16)bit hoisted out of the loop; register allocation
+// (u16)bit hoisted out of the loop; register allocation (raw 56, masked 12);
+// tried inline 1 << t, (u16)v & bit
 #ifdef NON_MATCHING
 /* Hides the obstacles behind team t's camera, shows those ahead (bit t of the model flags). */
 void func_800FB4F8_DesertDash(u16 t, f32 z) {

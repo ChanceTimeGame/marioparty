@@ -398,7 +398,8 @@ void func_800F7684_CastAways(omObjData* arg0) {
     arg0->func_ptr = &func_800F76B8_CastAways;
 }
 
-// register allocation and block order of the switch arms
+// register allocation and block order of the switch arms (masked 27); retail keeps arg0 in $s2 and
+// reuses it for the new fish object (masked 26 that way); tried a chained work store
 #ifdef NON_MATCHING
 void func_800F76B8_CastAways(omObjData* arg0) {
     CastAwaysItemSet* set;
@@ -1221,7 +1222,7 @@ void func_800F9E2C_CastAways(omObjData* arg0, CastAwaysPlayerWork* arg1, CastAwa
     arg1->samples[arg1->sampleCount].z = arg0->trans.z;
 }
 
-// float register allocation only
+// float register allocation: slope in $f4, retail $f6 (raw 9, masked 0); tried decl order, reusing limit/surface
 #ifdef NON_MATCHING
 void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
     f32 k = 0.6f;
@@ -1248,8 +1249,8 @@ void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
             if ((arg0->samples[arg0->sampleCount].y == 0.0f) & (surface == 0.0f)) {
                 limit = 0.0f;
             } else {
-                slope = (surface - arg0->samples[arg0->sampleCount].y)
-                      / (arg0->samples[arg0->sampleCount].z - arg0->samples[4].z);
+                slope = surface - arg0->samples[arg0->sampleCount].y;
+                slope = slope / (arg0->samples[arg0->sampleCount].z - arg0->samples[4].z);
                 limit = fabs(arg0->samples[4].z - arg0->samples[i].z) * slope;
             }
             if (arg0->samples[i].y <= limit && arg0->samples[i].y <= 0.0f) {
@@ -1287,8 +1288,6 @@ void func_800F9EAC_CastAways(CastAwaysPlayerWork* arg0, f32 drop) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F9EAC_CastAways);
 #endif
-// rodata order (C floats) and register allocation
-#ifdef NON_MATCHING
 void func_800FA198_CastAways(void) {
     Vec3f pos;
     Vec2f scr;
@@ -1335,9 +1334,6 @@ void func_800FA198_CastAways(void) {
     }
     D_800FBA08_CastAways--;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA198_CastAways);
-#endif
 // register allocation and block order
 #ifdef NON_MATCHING
 void func_800FA410_CastAways(void) {
