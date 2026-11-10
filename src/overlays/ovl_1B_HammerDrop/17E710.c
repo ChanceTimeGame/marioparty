@@ -484,7 +484,8 @@ void func_800F7D28_HammerDrop(void) {
     D_800FB980_HammerDrop = 0;
 }
 
-// The compiler-owned jump table duplicates the still-assembly data table (masked 2).
+// Referent: the C switch table duplicates jtbl_800FB608 (17E710_data.c) and shifts the bss (masked 2);
+// matches only once 17E710.c owns its .rodata (17E710_tail.c).
 #ifdef NON_MATCHING
 void func_800F7D64_HammerDrop(void) {
     switch (D_800FB980_HammerDrop) {
@@ -598,12 +599,9 @@ void func_800F8080_HammerDrop(void) {
     D_800FB988_HammerDrop++;
 }
 
-// Register allocation only after retaining both flag-array bases (masked 2).
-#ifdef NON_MATCHING
 void func_800F813C_HammerDrop(omObjData* arg0) {
     omObjData* obj = arg0;
     s32* timer = obj->unk_50;
-    s32* flagBase;
     s32* flags;
     s32 readyCount;
     s32 i;
@@ -623,14 +621,12 @@ void func_800F813C_HammerDrop(omObjData* arg0) {
                 obj->func_ptr = func_800F84A0_HammerDrop;
             }
         } else {
-            flagBase = D_800FB6B0_HammerDrop;
             for (i = 0; i < 4; i++) {
-                readyCount += func_800F9E68_HammerDrop(flagBase[i], 2);
+                readyCount += func_800F9E68_HammerDrop(D_800FB6B0_HammerDrop[i], 2);
             }
             if (readyCount != D_800FB6C4_HammerDrop) {
-                timer = D_800FB6B0_HammerDrop;
                 for (i = 0; i < 4; i++) {
-                    flags = &timer[i];
+                    flags = &D_800FB6B0_HammerDrop[i];
                     if ((func_800F9E68_HammerDrop(*flags, 1) == 0) &&
                         (func_800F9E68_HammerDrop(*flags, 0x400) == 0) &&
                         (func_800F9E68_HammerDrop(*flags, 0x200) == 0)) {
@@ -645,9 +641,6 @@ void func_800F813C_HammerDrop(omObjData* arg0) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F813C_HammerDrop);
-#endif
 
 // decomp-permuter
 void func_800F82E0_HammerDrop(void)
