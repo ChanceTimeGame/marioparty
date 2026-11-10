@@ -616,19 +616,20 @@ s16 func_800F81C0_MarioBandstand(s32 cmd) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F81C0_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 36 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation, retail masks func_800FCAAC's result into a0 (raw 5, masked 0); tried u32 k (M1c)
 #ifdef NON_MATCHING
 void func_800F853C_MarioBandstand(void) {
     s16 who[8];
     omObjData* obj;
     omObjData* player;
     MBCoin* c;
-    MBProp* p;
+    s32 k;
     void* data;
     s32 i;
     s32 j;
     u16 slot;
     s16 id;
+    s16 base;
     s16 m;
 
     obj = D_800FD708_MarioBandstand;
@@ -644,21 +645,22 @@ void func_800F853C_MarioBandstand(void) {
         }
         c = D_800FD418_MarioBandstand;
         for (i = 0; i < 8; i++, c++) {
-            if (i != 0) {
-                id = func_8001E1D0(id, 8);
-            } else {
+            if (i == 0) {
                 data = DataRead(0x21);
                 id = func_8001E00C(data, 0x28D, 8);
+                base = id;
                 HuMemDirectFree(data);
+            } else {
+                id = func_8001E1D0(base, 8);
             }
             m = D_800ECDE0[id].unk_00;
             obj->model[(s16)slot] = m;
             func_80025930(m, 0x70000000, 0x70000000);
             slot++;
-            p = &D_800FD2D8_MarioBandstand[func_800FCAAC_MarioBandstand() & 0xF];
-            c->pos.x = p->x;
-            c->pos.y = p->y;
-            c->pos.z = p->z;
+            k = func_800FCAAC_MarioBandstand() & 0xF;
+            c->pos.x = D_800FD2D8_MarioBandstand[k].x;
+            c->pos.y = D_800FD2D8_MarioBandstand[k].y;
+            c->pos.z = D_800FD2D8_MarioBandstand[k].z;
             player = D_800FD6D0_MarioBandstand[who[i]];
             c->vel.x = (player->trans.x - c->pos.x) / 30.0f;
             c->vel.y = ((player->trans.y - c->pos.y) + 120.0f) / 30.0f + 45.0f;
