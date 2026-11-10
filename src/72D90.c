@@ -575,8 +575,6 @@ Gfx* func_80073100(Gfx* arg0, Vtx* arg1) {
     return sp4C;
 }
 
-// Matches without --vr4300mul-off
-#ifdef NON_MATCHING
 s32 func_80073560(Gfx** arg0) {
     f32 temp_f22;
     f32 temp_f24;
@@ -634,9 +632,6 @@ s32 func_80073560(Gfx** arg0) {
 
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/72D90", func_80073560);
-#endif
 
 s32 func_80073F84(Gfx** arg0) {
     if (D_800F3288 == 0.0f) {
@@ -2094,8 +2089,6 @@ s32 func_800789C0(unkCommonStruct0* arg0, Gfx** arg1) {
     return 1;
 }
 
-// Matches without --vr4300mul-off
-#ifdef NON_MATCHING
 s32 func_80078B6C(unkCommonStruct0* arg0, Gfx** arg1) {
     f32 temp_f22;
     u8 temp_s0;
@@ -2179,9 +2172,6 @@ s32 func_80078B6C(unkCommonStruct0* arg0, Gfx** arg1) {
 
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/72D90", func_80078B6C);
-#endif
 
 void func_80079078(s16 arg0) {
     // Checks if both sign bits are zero. Seems some kind of compiler optimization.

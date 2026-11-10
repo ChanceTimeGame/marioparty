@@ -9,9 +9,9 @@ s64 __fixdfdi(f64 x);
 f64 __floatdidf(s64 x);
 
 // CORDIC: *out = atan(y / x) for x > 0.
-// Retail loads `out` from the stack before copying x; GCC schedules it after (masked 2).
-#ifdef NON_MATCHING
-void func_8009B150(s64 x, s64 y, f64* out) {
+void func_8009B150(s64 x0, s64 y0, f64* out) {
+    s64 x = x0;
+    s64 y = y0;
     s64 z = 0;
     s64 nx;
     s32 i;
@@ -30,9 +30,6 @@ void func_8009B150(s64 x, s64 y, f64* out) {
     }
     *out = (f64)z / 1152921504606846976.0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9BD50", func_8009B150);
-#endif
 
 // atan
 f64 func_8009B308(f64 x) {
