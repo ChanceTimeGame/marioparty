@@ -398,7 +398,8 @@ void func_800F7684_CastAways(omObjData* arg0) {
     arg0->func_ptr = &func_800F76B8_CastAways;
 }
 
-// register allocation and block order of the switch arms
+// register allocation and block order of the switch arms (masked 27); retail keeps arg0 in $s2 and
+// reuses it for the new fish object (masked 26 that way); tried a chained work store
 #ifdef NON_MATCHING
 void func_800F76B8_CastAways(omObjData* arg0) {
     CastAwaysItemSet* set;
