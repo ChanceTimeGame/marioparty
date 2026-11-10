@@ -463,8 +463,6 @@ void func_800F71BC_BowlOver(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F71BC_BowlOver);
 #endif
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800F7C24_BowlOver(omObjData* obj) {
     f32 x;
     u8 chr;
@@ -486,11 +484,8 @@ void func_800F7C24_BowlOver(omObjData* obj) {
             x = -235.0f;
             break;
     }
-    func_800F8964_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[0], x, 0.0f, 300.0f);
+    func_800F8964_BowlOver(obj, dir, file, (u16)D_800FDC5A_BowlOver[0], x, 0.0f, 300.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F7C24_BowlOver);
-#endif
 
 void func_800F7D14_BowlOver(omObjData* obj) {
     f32 s;
@@ -1251,8 +1246,6 @@ s32 func_800FA080_BowlOver(omObjData* obj, f32* dx, f32* dz) {
 }
 
 /* Rotation of angle about axis, translated (retail uses pos->z where pos->x would be expected). */
-// float register allocation
-#ifdef NON_MATCHING
 void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
     f32 s;
     f32 c;
@@ -1269,6 +1262,9 @@ void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
     f32 xy;
     f32 xz;
     f32 yz;
+    f32 pxy;
+    f32 pyz;
+    f32 pxz;
     f32 py;
     f32 pz;
 
@@ -1279,6 +1275,9 @@ void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
     x = axis->x;
     y = axis->y;
     z = axis->z;
+    pxy = x * y;
+    pyz = y * z;
+    pxz = z * x;
     xx = x * x;
     yy = y * y;
     zz = z * z;
@@ -1286,17 +1285,15 @@ void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
     ys = y * s;
     zs = z * s;
     m[3][3] = 1.0f;
-    m[2][3] = 0.0f;
-    m[1][3] = 0.0f;
-    m[0][3] = 0.0f;
+    m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[0][0] = t * xx + c;
-    xy = t * (x * y);
+    xy = t * pxy;
     m[0][1] = xy + zs;
-    xz = t * (z * x);
+    xz = t * pxz;
     m[0][2] = xz - ys;
     m[1][0] = xy - zs;
     m[1][1] = t * yy + c;
-    yz = t * (y * z);
+    yz = t * pyz;
     m[1][2] = yz + xs;
     m[2][0] = xz + ys;
     m[2][1] = yz - xs;
@@ -1305,9 +1302,6 @@ void func_800FA1D8_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Mat4 m) {
     m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
     m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800FA1D8_BowlOver);
-#endif
 
 // register allocation (masked 2, raw 30): rand8 result copied to s0 before its andi, hi in a0 not a1;
 // tried lo local, seed % 127773 (M1c)
