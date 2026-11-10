@@ -1102,37 +1102,36 @@ void func_800F9A8C_ShellGame(omObjData* obj) {
     func_80025EB4(obj->model[0], 2, 2);
 }
 // NON_MATCHING: FP register allocation
-#ifdef NON_MATCHING
-void func_800F9E24_ShellGame(omObjData* obj) {
-    SGShell* sh;
-    f32 x;
-    f32 z;
-
-    sh = &D_800FF7A0_ShellGame[obj->work[0]];
-    x = func_800AEAC0(obj->rot.y) * sh->unk64;
-    z = func_800AEFD0(obj->rot.y) * sh->unk64;
-    sh->unk1C.x = x + obj->trans.x;
-    sh->unk1C.y = obj->trans.y + sh->unk68;
-    sh->unk1C.z = z + obj->trans.z;
-    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_80025798(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_80025798(obj->model[2], sh->unk1C.x, sh->unk1C.y, sh->unk1C.z);
-    func_80025798(obj->model[3], obj->trans.x, 2.0f, obj->trans.z);
-    func_80025798(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_800257E4(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
-    func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
-    func_800257E4(obj->model[2], obj->rot.x, obj->rot.y, obj->rot.z);
-    func_800257E4(obj->model[4], obj->rot.x, obj->rot.y, obj->rot.z);
-    func_80025830(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
-    func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
-    func_80025830(obj->model[4], obj->scale.x, obj->scale.y, obj->scale.z);
-    x = 1.5 - obj->trans.y / 100.0 / 5.0;
-    func_80025830(obj->model[3], x, 1.0f, x);
-    func_800258EC(obj->model[3], 4, 0);
+// decomp-permuter
+void func_800F9E24_ShellGame(omObjData *obj)
+{
+  float new_var;
+  SGShell *sh;
+  f32 x;
+  f32 z;
+  sh = &D_800FF7A0_ShellGame[obj->work[0]];
+  new_var = func_800AEAC0(obj->rot.y) * sh->unk64;
+  x = new_var;
+  z = func_800AEFD0(obj->rot.y) * sh->unk64;
+  sh->unk1C.x = x + obj->trans.x;
+  sh->unk1C.y = obj->trans.y + sh->unk68;
+  sh->unk1C.z = z + obj->trans.z;
+  func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_80025798(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_80025798(obj->model[2], sh->unk1C.x, sh->unk1C.y, sh->unk1C.z);
+  func_80025798(obj->model[3], obj->trans.x, 2.0f, obj->trans.z);
+  func_80025798(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_800257E4(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+  func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+  func_800257E4(obj->model[2], obj->rot.x, obj->rot.y, obj->rot.z);
+  func_800257E4(obj->model[4], obj->rot.x, obj->rot.y, obj->rot.z);
+  func_80025830(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+  func_80025830(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+  func_80025830(obj->model[4], obj->scale.x, obj->scale.y, obj->scale.z);
+  x = 1.5 - ((obj->trans.y / 100.0) / 5.0);
+  func_80025830(obj->model[3], x, 1.0f, x);
+  func_800258EC(obj->model[3], 4, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F9E24_ShellGame);
-#endif
 void func_800FA038_ShellGame(omObjData* obj) {
     switch (D_800FF100_ShellGame) {
     case 0:
