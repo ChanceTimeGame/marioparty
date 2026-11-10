@@ -82,7 +82,7 @@ void func_800F6F70_MarioBandstand(void) {
     D_800FD718_MarioBandstand = omAddObj(8, 0x1C, 0, -1, func_800F8940_MarioBandstand);
 }
 
-// NON_MATCHING: masked 7 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: retail sign-extends sound before PlaySound (2 instructions short, masked 8); tried s32 sound, (s16) cast, sound reused for the handle (M1c)
 #ifdef NON_MATCHING
 void func_800F7000_MarioBandstand(void) {
     s16 sound;
@@ -187,11 +187,9 @@ s16 func_800F7090_MarioBandstand(omObjData* obj, s16 slot) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7090_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 22 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F73E8_MarioBandstand(void) {
     omObjData* obj = D_800FD708_MarioBandstand;
-    s16 i;
+    s32 i;
 
     if (obj != NULL) {
         for (i = D_800FD51A_MarioBandstand; i < D_800FD51C_MarioBandstand; i++) {
@@ -199,15 +197,10 @@ void func_800F73E8_MarioBandstand(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F73E8_MarioBandstand);
-#endif
 
-// NON_MATCHING: masked 22 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800F7458_MarioBandstand(void) {
     omObjData* obj = D_800FD708_MarioBandstand;
-    s16 i;
+    s32 i;
 
     if (obj != NULL) {
         for (i = D_800FD51A_MarioBandstand; i < D_800FD51C_MarioBandstand; i++) {
@@ -215,9 +208,6 @@ void func_800F7458_MarioBandstand(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7458_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 55 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -731,7 +721,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F8
    Thrown items
    --------------------------------------------------------------------------------------------- */
 
-// NON_MATCHING: masked 13 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation (raw 20, masked 10): retail keeps the 5-loop bound in s5 and the swap indices in s4/s5; tried s32 type, a bound local, b as bound (M1c)
 #ifdef NON_MATCHING
 void func_800F8940_MarioBandstand(omObjData* obj) {
     s16 shared[3];
