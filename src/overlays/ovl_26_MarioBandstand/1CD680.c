@@ -1493,10 +1493,8 @@ void func_800FA7EC_MarioBandstand(omObjData* obj, s32 mode, s32 half) {
     }
 }
 
-// NON_MATCHING: masked 24 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FAA58_MarioBandstand(omObjData* obj) {
-    s16 motion;
+    s32 motion;
     s16 m;
     f32 t;
 
@@ -1547,9 +1545,6 @@ void func_800FAA58_MarioBandstand(omObjData* obj) {
         func_800FA4F8_MarioBandstand(obj);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FAA58_MarioBandstand);
-#endif
 
 void func_800FAC2C_MarioBandstand(omObjData* obj) {
     MBBeatInfo info;
@@ -1925,7 +1920,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB
 
 /* The next beat of a track: fills `info` (timing difference, length, beat index) and returns the
    note (the conductor's direction + 1 for track 0). */
-// NON_MATCHING: masked 40 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// register allocation and address CSE: retail loads &D_800FD598 before the timer test and reads the
+// timer through its own %hi/%lo (masked 40; tried hoisting the base, D + track)
 #ifdef NON_MATCHING
 s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
     MBTrack* t;
