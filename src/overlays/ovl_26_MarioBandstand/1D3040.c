@@ -35,10 +35,10 @@ u32 func_800FCAAC_MarioBandstand(void) {
     return D_800FD190_MarioBandstand = func_800FC9D8_MarioBandstand(D_800FD190_MarioBandstand);
 }
 
-// NON_MATCHING: masked 20 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation, arg2/arg3 in s3/s1 (raw 8, masked 4); tried u16 slot prototype, inlining model, s16 idx (M1c)
 #ifdef NON_MATCHING
-s16 func_800FCAD4_MarioBandstand(omObjData* obj, s32 file, s32 arg2, s32 arg3, u16 slot, s32 idx) {
-    s16* cache = &D_800FD6E0_MarioBandstand[(s16)idx];
+s16 func_800FCAD4_MarioBandstand(omObjData* obj, s32 file, s32 arg2, s32 arg3, u16 slot, s16 idx) {
+    s16* cache = &D_800FD6E0_MarioBandstand[idx];
     void* data;
     s16 id;
     s16 model;
@@ -49,7 +49,7 @@ s16 func_800FCAD4_MarioBandstand(omObjData* obj, s32 file, s32 arg2, s32 arg3, u
         HuMemDirectFree(data);
         *cache = id;
     } else {
-        id = func_8001E1D0(D_800FD6E0_MarioBandstand[(s16)idx], arg3 & 0xFF);
+        id = func_8001E1D0(D_800FD6E0_MarioBandstand[idx], arg3 & 0xFF);
     }
     model = D_800ECDE0[id].unk_00;
     obj->model[(s16)slot] = model;
