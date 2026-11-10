@@ -703,17 +703,17 @@ void func_800F7BA0_MinigameHouse(void) {
     func_8002890C(0xFF, 0xFF, 0xFF);
     D_8010060C_MinigameHouse = omAddObj(0x2710, 2, 0, -1, &func_800F7B00_MinigameHouse);
 }
-// model[1] load scheduled after the 180.0f constant (masked 2)
-#ifdef NON_MATCHING
 void func_800F7C6C_MinigameHouse(omObjData* arg0) {
     TextWindow* win;
+    f32 angle;
 
     func_80027E48(arg0->model[0], D_801000FC_MinigameHouse, 0, 0x40, 0x40, "36t_002", 0);
     D_801000FC_MinigameHouse += 0.5f;
     if (D_801000FC_MinigameHouse > 64.0f) {
         D_801000FC_MinigameHouse -= 64.0f;
     }
-    func_800257E4(arg0->model[1], 180.0f - func_800B0CD8(arg0->trans.y + 20.0f - Center.y, arg0->trans.z - Center.z), 0.0f, 0.0f);
+    angle = func_800B0CD8(arg0->trans.y + 20.0f - Center.y, arg0->trans.z - Center.z);
+    func_800257E4(arg0->model[1], 180.0f - angle, 0.0f, 0.0f);
     win = arg0->unk_50;
     if (win != NULL) {
         if ((s8)arg0->work[0] != win->unk_11) {
@@ -727,9 +727,6 @@ void func_800F7C6C_MinigameHouse(omObjData* arg0) {
         arg0->work[0] = win->unk_11;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800F7C6C_MinigameHouse);
-#endif
 // float register allocation f0/f2 for scale (masked 0, raw 16); tried scale += 1.0f, declaration order, split mul
 #ifdef NON_MATCHING
 void func_800F7DE0_MinigameHouse(omObjData* arg0) {
