@@ -149,66 +149,79 @@ void func_800F84CC_UnusedMinigame1(void) {
 }
 
 /* The result: the machines that stopped closest to the mark (within 40) win 10 coins each. */
-// operand order of one addu (&dist[i]: index + base vs base + index) (masked 0)
-#ifdef NON_MATCHING
-void func_800F85A0_UnusedMinigame1(void) {
-    s32 dist[4];
-    s32 idx[4];
-    s32 chr[4];
-    UM1Machine* w;
-    s32* dp;
-    s32 best;
-    s32 n;
-    s32 i;
-    s32 d;
+// decomp-permuter
+void func_800F85A0_UnusedMinigame1(void)
+{
+  s32 dist[4];
+  s32 idx[4];
+  s32 chr[4];
+  UM1Machine *w;
+  s32 *dp;
+  s32 best;
+  s32 n;
+  s32 i;
+  s32 d;
+  best = 10000;
+  n = 0;
+  for (i = 0; i < 4; i++)
+  {
+    w = D_800F9498_UnusedMinigame1[i]->unk_50;
+    dp = &dist[i];
+    d = (*(&dist[i]) = 344.0f - w->unk10);
+    if (((u32) d) < 40)
+    {
+      if (d < best)
+      {
+        best = d;
+        idx[0] = i;
+        chr[0] = w->unk22;
+        n = 1;
+      }
+      else
+        if (dist[i] == best)
+      {
+        idx[n] = i;
+        chr[n] = w->unk22;
+        n++;
+      }
+    }
+  }
 
-    best = 10000;
-    n = 0;
-    for (i = 0; i < 4; i++) {
-        w = D_800F9498_UnusedMinigame1[i]->unk_50;
-        dp = &dist[i];
-        d = 344.0f - w->unk10;
-        *dp = d;
-        if ((u32)d < 40) {
-            if (d < best) {
-                best = d;
-                idx[0] = i;
-                chr[0] = w->unk22;
-                n = 1;
-            } else if (dist[i] == best) {
-                idx[n] = i;
-                chr[n] = w->unk22;
-                n++;
-            }
-        }
+  if (n != ((int) 0))
+  {
+    for (i = 0; i < n; i++)
+    {
+      GwPlayer[idx[i]].coins_mg += 10;
     }
-    if (n != 0) {
-        for (i = 0; i < n; i++) {
-            GwPlayer[idx[i]].coins_mg += 10;
-        }
-        switch (n) {
-            case 1:
-                GMesCreate(4, chr[0]);
-                break;
-            case 2:
-                GMesCreate(0xF, chr[0], chr[1]);
-                break;
-            case 3:
-                GMesCreate(0x13, chr[0], chr[1], chr[2]);
-                break;
-            case 4:
-                GMesCreate(4, 6);
-                break;
-        }
-        func_80060128(0x32);
-    } else {
-        GMesCreate(0x11);
-        func_80060128(0x34);
+
+    switch (n)
+    {
+      case 1:
+        GMesCreate(4, chr[0]);
+        break;
+
+      case 2:
+        GMesCreate(0xF, chr[0], chr[1]);
+        break;
+
+      case 3:
+        GMesCreate(0x13, chr[0], chr[1], chr[2]);
+        break;
+
+      case 4:
+        GMesCreate(4, 6);
+        break;
+
     }
+
+    func_80060128(0x32);
+  }
+  else
+  {
+    GMesCreate(0x11);
+    func_80060128(0x34);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_UnusedMinigame1/1127C0", func_800F85A0_UnusedMinigame1);
-#endif
 
 /* The result text above a machine and its baby's face. */
 void func_800F8764_UnusedMinigame1(omObjData* obj) {
