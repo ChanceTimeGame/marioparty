@@ -2260,17 +2260,20 @@ void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDE44_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FE170_DeepSeaDivers(s16 idx, Vec* top, Vec* bottom) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
     DSDRopeNode* first = r->nodes;
-    DSDRopeNode* last;
-    f32 dx = top->x - bottom->x;
-    f32 dy = top->y - bottom->y;
-    f32 dz = top->z - bottom->z;
-    f32 dist = sqrtf(dx * dx + dy * dy + dz * dz);
+    DSDRopeNode* last = &r->nodes[r->n];
+    f32 dist;
+    f32 d;
 
-    last = &first[r->n];
+    d = top->x - bottom->x;
+    dist = d * d;
+    d = top->y - bottom->y;
+    dist += d * d;
+    d = top->z - bottom->z;
+    dist += d * d;
+    dist = sqrtf(dist);
     if (r->unk8 < dist) {
         r->unk8 = dist;
     }
@@ -2285,9 +2288,6 @@ void func_800FE170_DeepSeaDivers(s16 idx, Vec* top, Vec* bottom) {
         r->unk6 -= 0x800;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FE170_DeepSeaDivers);
-#endif
 s16 func_800FE2C0_DeepSeaDivers(s16 idx) {
     unk2C0C0StructC0* m;
     s32 model;
