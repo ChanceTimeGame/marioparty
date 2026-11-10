@@ -1649,32 +1649,43 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FB858_
 #endif
 
 // register allocation
-#ifdef NON_MATCHING
-void func_800FB93C_BobsledRun(omObjData* obj) {
-    Vec3f* c;
-    s32 layer;
-    f32 dx;
-    f32 dy;
-    f32 dz;
-
-    layer = 2;
-    if (BR_WORK(obj)->unk_58 == 0) {
-        c = &CenterM[1];
-        layer = 1;
-    } else {
-        c = &CenterM[0];
-    }
+// decomp-permuter
+void func_800FB93C_BobsledRun(omObjData *obj)
+{
+  Vec3f *c;
+  s32 layer;
+  unsigned char pad;
+  f32 dx;
+  f32 dy;
+  f32 dz;
+  layer = 2;
+  if (((BRWork *) obj->unk_50)->unk_58 == 0)
+  {
+    c = &CenterM[1];
+    layer = 1;
+  }
+  else
+  {
+    c = &CenterM[0];
+  }
+  if (c)
+  {
     dx = obj->trans.x - c->x;
     dy = obj->trans.y - c->y;
     dz = obj->trans.z - c->z;
-    if (func_800B1750(dx * dx + dy * dy + dz * dz) < 5000.0f) {
-        layer = 3;
-    }
-    func_80025F10(obj->model[0], layer);
+  }
+  else
+  {
+    dx = obj->trans.x - c->x;
+    dy = obj->trans.y - c->y;
+    dz = obj->trans.z - c->z;
+  }
+  if (func_800B1750(((dx * dx) + (dy * dy)) + (dz * dz)) < 5000.0f)
+  {
+    layer = 3;
+  }
+  func_80025F10(obj->model[0], layer);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FB93C_BobsledRun);
-#endif
 
 void func_800FBA00_BobsledRun(omObjData* obj) {
     func_800FB1C4_BobsledRun(obj, D_800C59AC[GwPlayer[D_800FF2A8_BobsledRun[0].player[0]].character].unk_00,
