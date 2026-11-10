@@ -1584,32 +1584,33 @@ void func_800FAEB4_MemoryMatch(omObjData* arg0) {
     }
     func_8009ECB0(D_800F2B7C[arg0->model[0]].unk7C, 0.0f, D_800FD8A8_MemoryMatch, 0.0f);
 }
-// register allocation (masked 3)
-#ifdef NON_MATCHING
-void func_800FAF9C_MemoryMatch(omObjData* arg0) {
-    unk_MemoryMatch_03* p = &(&D_800FE2C8_MemoryMatch)[arg0->work[0]];
-    f32 frame;
-
-    unkGlobalStruct_00* g = arg0->unk_50;
-
-    if (g->unk_5C == 0x200) {
-        frame = func_80025E70(arg0->model[0]);
-        if (frame == -1.0f) {
-            frame = func_80025D18(arg0->model[0]);
-        }
-        if (frame >= 27.0f && arg0->trans.y == p->unk_08) {
-            if (func_800F84A8_MemoryMatch(p->unk_04) == 5) {
-                D_800FD880_MemoryMatch = 45;
-            } else {
-                D_800FD882_MemoryMatch = 10;
-            }
-            D_800FD884_MemoryMatch = 7;
-        }
+// decomp-permuter
+void func_800FAF9C_MemoryMatch(omObjData *arg0)
+{
+  unkGlobalStruct_00 *g = arg0->unk_50;
+  unk_MemoryMatch_03 *p = &(&D_800FE2C8_MemoryMatch)[arg0->work[0]];
+  f32 frame;
+  if (g->unk_5C == 0x200)
+  {
+    frame = func_80025E70(arg0->model[0]);
+    if (frame == (-1.0f))
+    {
+      frame = func_80025D18(arg0->model[0]);
     }
+    if ((frame >= 27.0f) && (arg0->trans.y == p->unk_08))
+    {
+      if (func_800F84A8_MemoryMatch(p->unk_04) == 5)
+      {
+        D_800FD880_MemoryMatch = 45;
+      }
+      else
+      {
+        D_800FD882_MemoryMatch = 10;
+      }
+      D_800FD884_MemoryMatch = 7;
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800FAF9C_MemoryMatch);
-#endif
 // retail keeps 0.0f in f20 and passes it as a1 (masked 11)
 #ifdef NON_MATCHING
 void func_800FB0A8_MemoryMatch(omObjData* arg0) {
