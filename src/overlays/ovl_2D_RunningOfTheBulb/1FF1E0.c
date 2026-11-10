@@ -968,7 +968,7 @@ void func_800F960C_RunningOfTheBulb(omObjData* arg0) {
 void func_800F9648_RunningOfTheBulb(omObjData* arg0) {
 }
 
-// retail reloads the player pointer and flags; branch shape of the count
+// retail reloads the player pointer and flags and shares one n++ with a hoisted 2 (raw 18, masked 11); tried continue, one || test (hoists the 2 but CSEs the reloads) (M1c)
 #ifdef NON_MATCHING
 u16 func_800F9650_RunningOfTheBulb(void) {
     RotbPlayerWork* work;

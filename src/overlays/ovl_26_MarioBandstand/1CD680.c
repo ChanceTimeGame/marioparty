@@ -1889,13 +1889,14 @@ void func_800FB4D8_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB4D8_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 16 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: 1 instruction short, masked 7: retail loads the timer test through its own lui and the table base separately; tried s32 d, s16 timer local (kept), s32 diff, s32 return (M1c)
 #ifdef NON_MATCHING
 s16 func_800FB8EC_MarioBandstand(s32 track) {
     MBTrack* t;
     s32 k;
-    s16 diff;
-    s16 d;
+    s32 diff;
+    s32 d;
+    s16 timer;
 
     diff = 0;
     if (!(D_800FD678_MarioBandstand & 0x8000)) {
@@ -1904,10 +1905,11 @@ s16 func_800FB8EC_MarioBandstand(s32 track) {
     if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
         t = &D_800FD598_MarioBandstand[track];
         k = t->note - t->base;
-        diff = t->timer - t->ev[k][1];
+        timer = t->timer;
+        diff = timer - t->ev[k][1];
         k++;
         if (k < t->count) {
-            d = t->timer - t->ev[k][1];
+            d = timer - t->ev[k][1];
             if (d >= -7) {
                 diff = d;
             }
