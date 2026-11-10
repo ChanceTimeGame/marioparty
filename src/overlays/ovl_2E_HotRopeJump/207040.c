@@ -807,7 +807,7 @@ void func_800F8968_HotRopeJump(f32 x, f32 y, f32 z) {
     func_800F8F04_HotRopeJump(id, 4.0f);
 }
 
-// NON_MATCHING: register allocation of the hit point
+// NON_MATCHING: register allocation of the hit point (t/dy swap f4/f6) and ret in a2 not v0 (masked 7, 2 instructions long); tried explicit returns, declaration order
 #ifdef NON_MATCHING
 s32 func_800F8A14_HotRopeJump(omObjData* obj) {
     HRJSeg* seg;
@@ -836,10 +836,8 @@ s32 func_800F8A14_HotRopeJump(omObjData* obj) {
         dy -= obj->trans.y + 50.0;
         dz -= obj->trans.z;
         if (dx * dx + dy * dy + dz * dz <= 2500.0) {
-            return 1;
-        }
-        ret = 0;
-        if (225.0 - D_801004BC_HotRopeJump * 7.5 <= seg->angle && seg->angle <= 270.0f) {
+            ret = 1;
+        } else if (seg->angle >= 225.0 - D_801004BC_HotRopeJump * 7.5 && seg->angle <= 270.0f) {
             ret = 2;
         }
     }
