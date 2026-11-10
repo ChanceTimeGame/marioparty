@@ -196,8 +196,6 @@ void func_800FABA0_BowlOver(omObjData* obj, f32* dx, f32* dz) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FABA0_BowlOver);
 #endif
 
-// float register allocation
-#ifdef NON_MATCHING
 void func_800FAC94_BowlOver(omObjData* obj, f32 dx, f32 dz) {
     omObjData* other;
     f32 ex;
@@ -216,13 +214,13 @@ void func_800FAC94_BowlOver(omObjData* obj, f32 dx, f32 dz) {
         ez = (obj->trans.z + dz) - other->trans.z;
         d = sqrtf(ex * ex + ez * ez);
         if (d < 90.0f) {
-            if (d == 0.0f) {
-                dx = 0.0f;
-                dz = 0.0f;
-            } else {
+            if (d != 0.0f) {
                 push = 90.0f - d;
                 obj->trans.x = (dx - (dx - (ex / d) * push)) + obj->trans.x;
                 obj->trans.z = (dz - (dz - (ez / d) * push)) + obj->trans.z;
+            } else {
+                dx = 0.0f;
+                dz = 0.0f;
             }
         } else {
             obj->trans.x += dx;
@@ -230,9 +228,6 @@ void func_800FAC94_BowlOver(omObjData* obj, f32 dx, f32 dz) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FAC94_BowlOver);
-#endif
 
 // register allocation and float temporaries
 #ifdef NON_MATCHING
