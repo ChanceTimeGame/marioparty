@@ -771,7 +771,8 @@ void func_800F8598_CrazyCutter(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F8598_CrazyCutter);
 #endif
-// loop shape (masked 14)
+// loop shape: retail has an unused 56-byte frame and the bound 10 in a register tested before the
+// loop (a local array or variable bound in the source); masked 14, not attempted further
 #ifdef NON_MATCHING
 s32 func_800F8F74_CrazyCutter(CrazyCutterPlayer* st, s16* cur) {
     s32 i;
@@ -1555,22 +1556,30 @@ void func_800FB778_CrazyCutter(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FB778_CrazyCutter);
 #endif
-// loop shape and float registers (masked 54)
+// scheduling: retail loads cur[0] and cur[1] before the grid row pointer (raw 4, masked 4; tried
+// cur[0] + cur[1] * w)
 #ifdef NON_MATCHING
 s32 func_800FB944_CrazyCutter(CrazyCutterPlayer* st) {
     Vec3f pos;
     s16 cur[2];
     f32 d;
+    f32 x;
+    f32 z;
 
     if (func_800FAAB0_CrazyCutter(st->player, 0x8000) == 0) {
+        return 0;
     }
     D_800FD148_CrazyCutter = 0;
     for (d = 0.0f; d <= D_800FD53C_CrazyCutter; d += 0.5f) {
-        pos.x = d * func_800AEAC0(st->angle) + st->prevX + D_800FCCF0_CrazyCutter[st->player] - 8.0f;
+        x = d * func_800AEAC0(st->angle);
+        z = d * func_800AEFD0(st->angle);
+        x += st->prevX;
+        z += st->prevZ;
+        pos.x = x + D_800FCCF0_CrazyCutter[st->player] - 8.0f;
         pos.y = st->y + 10.0f;
-        pos.z = d * func_800AEFD0(st->angle) + st->prevZ + D_800FCD00_CrazyCutter[st->player] - 8.0f;
+        pos.z = z + D_800FCD00_CrazyCutter[st->player] - 8.0f;
         func_800F9694_CrazyCutter(&pos, cur, st->player);
-        if (D_800FD4A0_CrazyCutter[st->player][cur[1] * D_800FD498_CrazyCutter + cur[0]] != 0) {
+        if ((D_800FD4A0_CrazyCutter[st->player] + cur[1] * D_800FD498_CrazyCutter)[cur[0]] != 0) {
             D_800FD148_CrazyCutter = 1;
             break;
         }
