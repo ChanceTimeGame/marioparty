@@ -142,8 +142,6 @@ void func_800F6B2C_TreasureDivers(omObjData* obj) {
 void func_800F6EBC_TreasureDivers(void);
 
 /* The game's flow: intro message, play (45 s), result. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F6B60_TreasureDivers(omObjData* obj) {
     switch (D_800FE6F2_TreasureDivers) {
         case 0:
@@ -161,7 +159,7 @@ void func_800F6B60_TreasureDivers(omObjData* obj) {
             break;
         case 2:
             if (D_800FE6F8_TreasureDivers == 0) {
-                if ((s16)(D_800FE704_TreasureDivers | D_800FE730_TreasureDivers) == 0) {
+                if (((s16)D_800FE704_TreasureDivers | (s16)D_800FE730_TreasureDivers) == 0) {
                     D_800FE6F8_TreasureDivers = 1;
                     D_800FE6F6_TreasureDivers = 1;
                     D_800FE6F0_TreasureDivers = 10;
@@ -232,9 +230,6 @@ void func_800F6B60_TreasureDivers(omObjData* obj) {
     }
     func_800F6EBC_TreasureDivers();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F6B60_TreasureDivers);
-#endif
 
 void func_800F6EBC_TreasureDivers(void) {
     if (D_800FE6F8_TreasureDivers < 0 && func_80072718() == 0) {
@@ -1074,7 +1069,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F9E
 #endif
 
 /* The nearest boat within a cone around angle ang (narrower when farther), or -1. */
-// NON_MATCHING: register allocation / scheduling
+// register allocation: retail keeps dist & 0xFFFF in one register for lim and the best test (masked 6)
 #ifdef NON_MATCHING
 s16 func_800F9E9C_TreasureDivers(omObjData* obj, s16 ang) {
     TDWork* w;
@@ -1092,20 +1087,22 @@ s16 func_800F9E9C_TreasureDivers(omObjData* obj, s16 ang) {
     for (i = 0; i < 3; i++) {
         dx = D_800FF188_TreasureDivers[i].scr.x - w->pos.x;
         dy = D_800FF188_TreasureDivers[i].scr.y - w->pos.y;
+        a = (s32)func_800B0CD8(dx, dy) + 180;
         dist = (u32)sqrtf(dx * dx + dy * dy);
-        a = func_800B0CD8(dx, dy) + 180;
         lim = 180 - dist * 2;
         if (lim >= 0) {
             da = a - ang;
             if (da < 0) {
                 da = -da;
             }
-            if (da % 360 < lim && dist < best) {
-                best = dist;
+            if (da % 360 < lim) {
+                if (dist < best) {
+                    best = dist;
+                }
             }
         }
     }
-    if (best != 0xFFFF) {
+    if (best < 0xFFFF) {
         return best;
     }
     return -1;

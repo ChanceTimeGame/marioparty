@@ -291,7 +291,7 @@ s32 func_800F6DE0_FlyGuyWarioBoard(s32 win, u8* avail) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_FlyGuyWarioBoard/28ECA0", func_800F6DE0_FlyGuyWarioBoard);
 #endif
 
-// register allocation: 0x400 vs -1 constant held in s8 (masked 5)
+// loop-invariant choice: retail hoists 0x400 into s8, ours hoists -1; tried if-inversion, 0xFFFF (masked 5, raw 7)
 #ifdef NON_MATCHING
 s32 func_800F7070_FlyGuyWarioBoard(s32 win, u8* avail) {
     s32 count = 0;
@@ -302,7 +302,8 @@ s32 func_800F7070_FlyGuyWarioBoard(s32 win, u8* avail) {
     for (i = 0; i < 4; i++) {
         if (i == D_800F8230_FlyGuyWarioBoard) {
             if (GwPlayer[i].flags & 1) {
-                count = D_800F8254_FlyGuyWarioBoard + (D_800F8254_FlyGuyWarioBoard < i);
+                count = D_800F8254_FlyGuyWarioBoard;
+                count += count < i;
                 buttons[GwPlayer[i].port] = 0x400;
             } else {
                 func_8007155C(win, portMask.m[GwPlayer[i].port]);
