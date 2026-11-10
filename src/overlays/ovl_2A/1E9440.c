@@ -2283,13 +2283,10 @@ void func_800FC990_name_2A(omObjData* obj, Vec* out) {
 }
 
 /* `player` catches the ball. */
-// index-before-base order of the player pointer (one sll)
-#ifdef NON_MATCHING
 void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     N2ABallWork* work = obj->unk_50;
     N2ABallExt* ext = work->unk_68;
-    omObjData** p = D_800FE030_name_2A + player;
-    N2APlayerWork* pw = (*p)->unk_50;
+    N2APlayerWork* pw = D_800FE030_name_2A[player]->unk_50;
     s32* flags;
 
     func_800FD85C_name_2A(&D_800FDF70_name_2A, 8, 0);
@@ -2297,7 +2294,7 @@ void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     flags = &D_800FDF60_name_2A[player];
     func_800FD85C_name_2A(flags, 0x4000, 1);
     func_800FD85C_name_2A(flags, 0x8000, 1);
-    func_8000A634(*p, obj);
+    func_8000A634(D_800FE030_name_2A[player], obj);
     pw->unk_50 &= ~0x100;
     pw->unk_A4 = 0.8f;
     ext->unk_48 = player;
@@ -2308,9 +2305,6 @@ void func_800FC9EC_name_2A(omObjData* obj, s32 player) {
     func_800258EC(D_800FE02C_name_2A->model[0], 4, 0);
     func_800258EC(D_800FE02C_name_2A->model[1], 4, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FC9EC_name_2A);
-#endif
 
 void func_800FCB5C_name_2A(omObjData* obj) {
     Vec from;
