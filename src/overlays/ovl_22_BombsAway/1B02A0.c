@@ -269,14 +269,13 @@ void func_800FD428_BombsAway(void) {
     }
     DataClose(D_80100B6C_BombsAway);
 }
-// register allocation: f0/f2 swapped (masked 0)
-#ifdef NON_MATCHING
-void func_800FD4B8_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
-    func_800FD364_BombsAway(x, y, z, (f32)((z + 2250.0) / 1500.0) * scale, 16.0f, 1.0f, 0);
+// decomp-permuter
+void func_800FD4B8_BombsAway(f32 x, f32 y, f32 z, f32 scale)
+{
+  float new_var;
+  new_var = ((f32) ((z + 2250.0) / 1500.0)) * scale;
+  func_800FD364_BombsAway(x, y, z, new_var, 16.0f, 1.0f, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_BombsAway/1B02A0", func_800FD4B8_BombsAway);
-#endif
 void func_800FD530_BombsAway(void) {
     D_80100782_BombsAway = 1;
 }
