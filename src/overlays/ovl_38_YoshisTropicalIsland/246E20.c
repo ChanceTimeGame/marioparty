@@ -849,40 +849,39 @@ void func_800F7BC8_YoshisTropicalIsland(void) {
     SetNextChainAndSpace(-1, 6, 1);
 }
 
-// register allocation: retail swaps s0/s1 between player and win (masked 0)
-#ifdef NON_MATCHING
-void func_800F7BEC_YoshisTropicalIsland(void) {
-    s32 win;
-    s16 player;
-    s32 amount;
-
-    player = GetCurrentPlayerIndex();
-    func_800405DC(player);
-    SetPlayerAnimation(-1, -1, 2);
-    if (_CheckFlag(0x42) == 0) {
-        win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-        LoadStringIntoWindow(win, (void*)0x239, -1, -1);
-        amount = 10;
-    } else {
-        win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-        LoadStringIntoWindow(win, (void*)0x23A, -1, -1);
-        amount = 20;
-    }
-    win = (s16)win;
-    func_8006E070(win, 0);
-    ShowTextWindow(win);
-    PlaySound(0x432);
-    func_8004DBD4(win, player);
-    HideTextWindow(win);
-    win = amount;
-    func_80055960(player, win);
-    ShowPlayerCoinChange(player, win);
-    HuPrcSleep(30);
-    func_8003FEFC(player);
+// decomp-permuter
+void func_800F7BEC_YoshisTropicalIsland(void)
+{
+  short win;
+  s16 player;
+  s32 amount;
+  player = GetCurrentPlayerIndex();
+  func_800405DC(player);
+  SetPlayerAnimation(-1, -1, 2);
+  if (_CheckFlag(0x42) == 0)
+  {
+    win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
+    LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
+    amount = 10;
+  }
+  else
+  {
+    win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
+    LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
+    amount = 20;
+  }
+  win = (s16) win;
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
+  PlaySound(0x432);
+  func_8004DBD4(win, player);
+  HideTextWindow(win);
+  win = amount;
+  func_80055960(player, win);
+  ShowPlayerCoinChange(player, win);
+  HuPrcSleep(30);
+  func_8003FEFC(player);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_YoshisTropicalIsland/246E20", func_800F7BEC_YoshisTropicalIsland);
-#endif
 
 void func_800F7D20_YoshisTropicalIsland(void) {
     GwCommon.boardWork[31]++;
