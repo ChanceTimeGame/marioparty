@@ -1118,7 +1118,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F9080
 
 /* Draws the billboards: each one's matrix (facing the camera unless unk_08) and display list, into
    the billboard model's list for this frame. */
-// NON_MATCHING: scheduling of the view-matrix copy
+// NON_MATCHING: scheduling of the view-matrix copy and the fx->unk_04 load (raw 10, masked 6); tried operand order, &D_800C3110->unk_138 + i * 2, i * 128
 #ifdef NON_MATCHING
 void func_800FA2F4_HotRopeJump(void) {
     Mtx view;
@@ -1797,7 +1797,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FC428
 
 /* The rope: 13 flame models with lights, placed at random, that then gather into the turning
    rope (func_800FCE98). */
-// NON_MATCHING: register allocation
+// NON_MATCHING: retail's frame is 24 bytes larger, and f0/f2 swap in the two int-to-float conversions (masked 26); tried t = i - 6; t /= 6.0f
 #ifdef NON_MATCHING
 void func_800FCAC0_HotRopeJump(omObjData* obj) {
     HRJSeg* seg;
@@ -1816,8 +1816,7 @@ void func_800FCAC0_HotRopeJump(omObjData* obj) {
     seg = D_80100854_HotRopeJump;
     for (i = 0; i < 13;) {
         tex = func_80067310(D_801007D0_HotRopeJump);
-        seg->model = func_800FD90C_HotRopeJump(D_800FE6F4_HotRopeJump, tex, func_80067310(D_801007D2_HotRopeJump));
-        obj->model[i] = seg->model;
+        obj->model[i] = seg->model = func_800FD90C_HotRopeJump(D_800FE6F4_HotRopeJump, tex, func_80067310(D_801007D2_HotRopeJump));
         mdl = &D_800F2B7C[seg->model];
         mdl->unk_6C->unk_80->unk_14 |= 0x71010000;
         mdl->unk_6C->unk_80->unk_14 &= ~0x2000;
