@@ -6,8 +6,7 @@ s16 D_800FDB00_TugOWar = -1; /* team's motion */
 s16 D_800FDB02_TugOWar = -1; /* solo player's motion */
 s16 D_800FDB04_TugOWar = -1;
 s16 D_800FDB06_TugOWar = -1;
-f32 D_800FDB08_TugOWar = 1.0f; /* solo player's pull factor */
-f32 D_800FDB0C_TugOWar = 1.0f; /* team's pull factor */
+f32 D_800FDB08_TugOWar[2] = { 1.0f, 1.0f }; /* pull factors: [0] solo player, [1] team */
 s32 D_800FDB10_TugOWar = 0;    /* wobble phase (degrees) */
 s8 D_800FDB14_TugOWar = 0;     /* pulling paused */
 s8 D_800FDB15_TugOWar = 0;
@@ -30,13 +29,13 @@ s8 D_800FDB3D_TugOWar = 0;
 s8 D_800FDB3E_TugOWar = 0;
 s8 D_800FDB3F_TugOWar = 0;
 s8 D_800FDB40_TugOWar = 0;
-s8 D_800FDB44_TugOWar[8] = { 0, 2, 3, 4, 5, 6, 0, 0 };
-s8 D_800FDB4C_TugOWar[10] = { 6, 12, 14, 15, 16, 17, 18, 19, 20, 21 };
-u16 D_800FDB56_TugOWar = 0;
+u8 D_800FDB44_TugOWar[8] = { 0, 2, 3, 4, 5, 6, 0, 0 };
+u8 D_800FDB4C_TugOWar[10] = { 6, 12, 14, 15, 16, 17, 18, 19, 20, 21 };
+s16 D_800FDB56_TugOWar = 0;
 f32 D_800FDB58_TugOWar = 0.0f;
 f32 D_800FDB5C_TugOWar = 0.0f;
 u16 D_800FDB60_TugOWar = 0;
-u16 D_800FDB62_TugOWar = 0;
+s16 D_800FDB62_TugOWar = 0;
 s8 D_800FDB64_TugOWar = 0;
 s8 D_800FDB65_TugOWar = 0;
 s8 D_800FDB66_TugOWar = 0;
@@ -44,9 +43,9 @@ s8 D_800FDB67_TugOWar = 0;
 s8 D_800FDB68_TugOWar = 0;
 s32 D_800FDB6C_TugOWar = 0;
 f32 D_800FDB70_TugOWar = 0.0f;
-s8 D_800FDB74_TugOWar[8] = { 0, 7, 8, 9, 10, 11, 0, 0 };
-s8 D_800FDB7C_TugOWar[10] = { 11, 13, 22, 23, 24, 25, 26, 27, 28, 29 };
-u16 D_800FDB86_TugOWar = 0;
+u8 D_800FDB74_TugOWar[8] = { 0, 7, 8, 9, 10, 11, 0, 0 };
+u8 D_800FDB7C_TugOWar[10] = { 11, 13, 22, 23, 24, 25, 26, 27, 28, 29 };
+s16 D_800FDB86_TugOWar = 0;
 f32 D_800FDB88_TugOWar = 0.0f;
 f32 D_800FDB8C_TugOWar = 0.0f;
 u16 D_800FDB90_TugOWar = 0;
@@ -169,17 +168,17 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F7604_Tug
 
 /* The pull: sums the players' forces and moves the rope (`rope` is func_800F95D4's object; retail
    leaves it in a0). Returns 0 when the solo player has won, 1 when the team has, 2 while it goes on. */
-// logic-equivalent rewrite of the pull; block layout and temporaries differ (masked 226)
-#ifdef NON_MATCHING
 s8 func_800F77EC_TugOWar(omObjData* rope) {
     TWPull* p[4];
+    TWPlayerWork* w;
     f32 pull[4];
     f32 dist;
     f32 f;
     f32 t;
     f32 speed;
-    s32 strain0;
-    s32 strain1;
+    f32 sway;
+    s8 strain0;
+    s8 strain1;
     s16 i;
 
     strain0 = 0;
@@ -204,7 +203,8 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
         D_800FDB14_TugOWar = 1;
     }
     for (i = 0; i < 4; i++) {
-        p[i] = ((TWPlayerWork*)D_800F3FB0[i]->unk_50)->unk_E4;
+        w = D_800F3FB0[i]->unk_50;
+        p[i] = w->unk_E4;
         pull[i] = p[i]->pull;
     }
     if (D_800FDB14_TugOWar != 1) {
@@ -214,8 +214,8 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
             D_800FDB20_TugOWar += pull[i];
         }
         D_800FDB1C_TugOWar = pull[0] * 3.0f;
-        D_800FDB1C_TugOWar = D_800FDB1C_TugOWar * D_800FDB08_TugOWar;
-        D_800FDB20_TugOWar = D_800FDB20_TugOWar * D_800FDB0C_TugOWar;
+        D_800FDB1C_TugOWar = D_800FDB1C_TugOWar * D_800FDB08_TugOWar[0];
+        D_800FDB20_TugOWar = D_800FDB20_TugOWar * D_800FDB08_TugOWar[1];
         if (D_800FDFB4_TugOWar == 1) {
             D_800FDB20_TugOWar *= 0.75;
         }
@@ -227,8 +227,7 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
                 D_800FDDF0_TugOWar += D_800FDB1C_TugOWar;
                 D_800FDDF4_TugOWar += D_800FDB20_TugOWar;
             } else {
-                D_800FDDF4_TugOWar = 0.0f;
-                D_800FDDF0_TugOWar = 0.0f;
+                D_800FDDF0_TugOWar = D_800FDDF4_TugOWar = 0.0f;
                 D_800FDB34_TugOWar = 0;
             }
             D_800FDB34_TugOWar++;
@@ -240,49 +239,27 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
                 D_800FDB30_TugOWar = 0;
             }
         } else if (D_800FDB30_TugOWar < 40) {
-            if (D_800FDB2D_TugOWar == 1) {
+            switch (D_800FDB2D_TugOWar) {
+            case 2:
+                D_800FDB1C_TugOWar = 0.0f;
+                D_800FDB20_TugOWar = 200.0f;
+                func_80060F04(D_800FDFAE_TugOWar[0], 20, 0, 20);
+                break;
+            case 1:
                 D_800FDB1C_TugOWar = 200.0f;
                 D_800FDB20_TugOWar = 0.0f;
                 func_80060F04(D_800FDFAE_TugOWar[1], 20, 0, 20);
                 func_80060F04(D_800FDFAE_TugOWar[2], 20, 0, 20);
                 func_80060F04(D_800FDFAE_TugOWar[3], 20, 0, 20);
-            } else if (D_800FDB2D_TugOWar == 2) {
-                D_800FDB1C_TugOWar = 0.0f;
-                D_800FDB20_TugOWar = 200.0f;
-                func_80060F04(D_800FDFAE_TugOWar[0], 20, 0, 20);
+                break;
             }
             D_800FDB30_TugOWar++;
         } else {
             D_800FDB2D_TugOWar = 0;
-            D_800FDDF4_TugOWar = 0.0f;
-            D_800FDDF0_TugOWar = 0.0f;
+            D_800FDDF0_TugOWar = D_800FDDF4_TugOWar = 0.0f;
         }
         if (D_800FDB1C_TugOWar != D_800FDB20_TugOWar) {
-            if (!(D_800FDB1C_TugOWar < D_800FDB20_TugOWar)) {
-                /* the solo player pulls harder */
-                f = D_800FDB1C_TugOWar - D_800FDB20_TugOWar;
-                if (f > 500.0f) {
-                    f = 500.0f;
-                }
-                p[0]->x -= f / 100.0f;
-                rope->trans.x -= f / 100.0f;
-                if (dist >= 600.0f) {
-                    if (f / 100.0f > 1.0) {
-                        strain0 = 1;
-                    }
-                    for (i = 0; i < 3; i++) {
-                        p[i + 1]->x -= f / 100.0f;
-                    }
-                    if (D_800FDB28_TugOWar > 20) {
-                        func_800F71F0_TugOWar(D_800FDB2D_TugOWar != 0 ? 14 : 35, 2);
-                        func_800F731C_TugOWar(0, 2);
-                        D_800FDB28_TugOWar = 0;
-                    }
-                } else if (D_800FDB28_TugOWar > 20) {
-                    func_800F731C_TugOWar(0, 2);
-                    D_800FDB28_TugOWar = 0;
-                }
-            } else {
+            if (D_800FDB1C_TugOWar < D_800FDB20_TugOWar) {
                 /* the team pulls harder */
                 f = D_800FDB20_TugOWar - D_800FDB1C_TugOWar;
                 if (f > 500.0f) {
@@ -299,11 +276,39 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
                     p[0]->x += f / 100.0f;
                     if (D_800FDB28_TugOWar > 20) {
                         func_800F71F0_TugOWar(0, 2);
-                        func_800F731C_TugOWar(D_800FDB2D_TugOWar != 0 ? 2 : 35, 2);
+                        if (D_800FDB2D_TugOWar == 0) {
+                            func_800F731C_TugOWar(35, 2);
+                        } else {
+                            func_800F731C_TugOWar(2, 2);
+                        }
                         D_800FDB28_TugOWar = 0;
                     }
                 } else if (D_800FDB28_TugOWar > 20) {
                     func_800F71F0_TugOWar(0, 2);
+                    D_800FDB28_TugOWar = 0;
+                }
+            } else {
+                /* the solo player pulls harder */
+                f = D_800FDB1C_TugOWar - D_800FDB20_TugOWar;
+                if (f > 500.0f) {
+                    f = 500.0f;
+                }
+                p[0]->x -= f / 100.0f;
+                rope->trans.x -= f / 100.0f;
+                if (dist >= 600.0f) {
+                    if (f / 100.0f > 1.0) {
+                        strain0 = 1;
+                    }
+                    for (i = 0; i < 3; i++) {
+                        p[i + 1]->x -= f / 100.0f;
+                    }
+                    if (D_800FDB28_TugOWar > 20) {
+                        func_800F71F0_TugOWar(D_800FDB2D_TugOWar == 0 ? 35 : 14, 2);
+                        func_800F731C_TugOWar(0, 2);
+                        D_800FDB28_TugOWar = 0;
+                    }
+                } else if (D_800FDB28_TugOWar > 20) {
+                    func_800F731C_TugOWar(0, 2);
                     D_800FDB28_TugOWar = 0;
                 }
             }
@@ -344,15 +349,16 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
             p[i]->x -= (dist - 600.0f) / 2.0f;
         }
     }
-    speed = 0.8 - (600.0f - (p[1]->x - p[0]->x)) / 20.0f * 0.8;
+    dist = p[1]->x - p[0]->x;
+    speed = 0.8 - (600.0f - dist) / 20.0f * 0.8;
     t = func_80025D18(D_800F3FB0[1]->model[0]);
     if (D_800FDB14_TugOWar == 0) {
-        if (!(t < 19.0f)) {
-            f = 1.0f - (t - 19.0f) / 19.0f;
+        if (t < 19.0f) {
+            sway = t / 19.0f;
         } else {
-            f = t / 19.0f;
+            sway = 1.0f - (t - 19.0f) / 19.0f;
         }
-        D_800FDB24_TugOWar = f * 0.2;
+        D_800FDB24_TugOWar = sway * 0.2;
     }
     func_800FB718_TugOWar(rope->model[0], rope->model[0], rope->model[1], speed + D_800FDB24_TugOWar);
     func_800F7604_TugOWar();
@@ -373,9 +379,9 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
         for (i = 0; i < 3; i++) {
             p[i + 1]->x = p[0]->x + 600.0f + i * 90.0f;
         }
-        D_800FDB08_TugOWar -= 0.01;
-        if (D_800FDB08_TugOWar < 0.5f) {
-            D_800FDB08_TugOWar = 0.5f;
+        D_800FDB08_TugOWar[0] -= 0.01;
+        if (D_800FDB08_TugOWar[0] < 0.5f) {
+            D_800FDB08_TugOWar[0] = 0.5f;
         }
         return 2;
     }
@@ -393,9 +399,9 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
             return 0;
         }
         p[0]->x = p[1]->x - 600.0f;
-        D_800FDB0C_TugOWar -= 0.01f;
-        if (D_800FDB0C_TugOWar < 0.5f) {
-            D_800FDB0C_TugOWar = 0.5f;
+        D_800FDB08_TugOWar[1] -= 0.01f;
+        if (D_800FDB08_TugOWar[1] < 0.5f) {
+            D_800FDB08_TugOWar[1] = 0.5f;
         }
         return 2;
     }
@@ -410,13 +416,8 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
     }
     return 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F77EC_TugOWar);
-#endif
 
 /* The solo player won: the team is pulled into the water. */
-// logic-equivalent; temporaries and branch layout differ (masked 26)
-#ifdef NON_MATCHING
 void func_800F851C_TugOWar(omObjData* obj) {
     TWPlayerWork* w[4];
     TWPull* p[4];
@@ -450,12 +451,13 @@ void func_800F851C_TugOWar(omObjData* obj) {
         if (D_800FDB3C_TugOWar == 0) {
             func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB44_TugOWar[D_800FDB60_TugOWar + 1]],
                                   obj->model[D_800FDB44_TugOWar[D_800FDB60_TugOWar]], D_800FDB58_TugOWar);
-        }
-        if (D_800FDBE4_TugOWar == 0) {
+        } else if (D_800FDBE4_TugOWar == 0) {
             func_800FB718_TugOWar(obj->model[0], obj->model[6], obj->model[5], 1.0f);
+        } else {
+            func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar + 1]],
+                                  obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar]], D_800FDB5C_TugOWar);
         }
-        func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar + 1]],
-                              obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar]], D_800FDB5C_TugOWar);
+        return;
     }
     if (D_800FDB3C_TugOWar == 0) {
         obj->trans.x -= 8.0f;
@@ -464,7 +466,8 @@ void func_800F851C_TugOWar(omObjData* obj) {
                               obj->model[D_800FDB44_TugOWar[D_800FDB60_TugOWar]], D_800FDB58_TugOWar);
         if ((D_800FDB58_TugOWar += 0.2) >= 1.0) {
             D_800FDB58_TugOWar = 0.0f;
-            if (++D_800FDB60_TugOWar >= 5) {
+            D_800FDB60_TugOWar++;
+            if (D_800FDB60_TugOWar >= 5) {
                 D_800FDB3C_TugOWar = 1;
             }
         }
@@ -543,13 +546,8 @@ void func_800F851C_TugOWar(omObjData* obj) {
         D_800FDFB2_TugOWar = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F851C_TugOWar);
-#endif
 
 /* The team won: the solo player is pulled into the water. */
-// logic-equivalent; temporaries and branch layout differ (masked 37)
-#ifdef NON_MATCHING
 void func_800F8DA0_TugOWar(omObjData* obj) {
     TWPlayerWork* w[4];
     TWPull* p[4];
@@ -579,13 +577,14 @@ void func_800F8DA0_TugOWar(omObjData* obj) {
         if (D_800FDB67_TugOWar == 0) {
             func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB74_TugOWar[D_800FDB90_TugOWar + 1]],
                                   obj->model[D_800FDB74_TugOWar[D_800FDB90_TugOWar]], D_800FDB88_TugOWar);
-        }
-        if (D_800FDBE4_TugOWar == 0) {
+        } else if (D_800FDBE4_TugOWar == 0) {
             func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB74_TugOWar[5]],
                                   obj->model[D_800FDB74_TugOWar[4]], 1.0f);
+        } else {
+            func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB7C_TugOWar[D_800FDB86_TugOWar + 1]],
+                                  obj->model[D_800FDB7C_TugOWar[D_800FDB86_TugOWar]], D_800FDB8C_TugOWar);
         }
-        func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB7C_TugOWar[D_800FDB86_TugOWar + 1]],
-                              obj->model[D_800FDB7C_TugOWar[D_800FDB86_TugOWar]], D_800FDB8C_TugOWar);
+        return;
     }
     if (D_800FDB67_TugOWar == 0) {
         obj->trans.x += 8.0f;
@@ -596,7 +595,8 @@ void func_800F8DA0_TugOWar(omObjData* obj) {
                               obj->model[D_800FDB74_TugOWar[D_800FDB90_TugOWar]], D_800FDB88_TugOWar);
         if ((D_800FDB88_TugOWar += 0.2) >= 1.0) {
             D_800FDB88_TugOWar = 0.0f;
-            if (++D_800FDB90_TugOWar >= 5) {
+            D_800FDB90_TugOWar++;
+            if (D_800FDB90_TugOWar >= 5) {
                 D_800FDB67_TugOWar = 1;
             }
         }
@@ -655,11 +655,11 @@ void func_800F8DA0_TugOWar(omObjData* obj) {
         }
         if (p[0]->x >= -100.0f) {
             p[0]->y -= 20.0f;
-            if (!(p[0]->y > 100.0f)) {
+            if (p[0]->y > 100.0f) {
+                D_800F3FB0[0]->rot.z -= 5.0f;
+            } else {
                 p[0]->y = 100.0f;
                 D_800FDB65_TugOWar = 1;
-            } else {
-                D_800F3FB0[0]->rot.z -= 5.0f;
             }
         }
     }
@@ -668,9 +668,6 @@ void func_800F8DA0_TugOWar(omObjData* obj) {
         D_800FDFB2_TugOWar = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F8DA0_TugOWar);
-#endif
 
 void func_800F95D4_TugOWar(omObjData* arg0) {
     if (D_800FDB94_TugOWar == 2) {

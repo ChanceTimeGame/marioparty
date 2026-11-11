@@ -252,7 +252,8 @@ void func_800F6DD0_HotBobOmb(omObjData* obj, s32 player) {
     obj->func_ptr = func_800F724C_HotBobOmb;
 }
 
-// masked
+// D_800F2B7C base loaded before the model index *192 in the frame-count argument (masked 4, raw 6);
+// tried (p + i)->, &p[i]->, a float subtract
 #ifdef NON_MATCHING
 void func_800F724C_HotBobOmb(omObjData* obj) {
     s32 idx;
@@ -432,8 +433,6 @@ void func_800F7934_HotBobOmb(omObjData* obj) {
     func_80021E58();
 }
 
-// masked
-#ifdef NON_MATCHING
 void func_800F7E84_HotBobOmb(omObjData* obj) {
     f32 tbl[60] = {
         1.0f, 1.0f, 0.3f, 0.5f, 0.0f, 0.2f, 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -443,14 +442,11 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
         1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
     };
     f32 f;
-    f32 u;
     f32 s;
     s32 i;
+    s32 j;
     s32 n;
-    s32 k;
-    s32 a;
-    s32 b;
-    s32 v;
+    s32 m;
 
     f = ((18.0f - (f32)D_800FA924_HotBobOmb) - 5.0f) / 13.0f;
     switch (D_800F9D40_HotBobOmb) {
@@ -459,23 +455,22 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
             func_80039644(D_800FA890_HotBobOmb[i], 1, 0);
         }
         obj->trans.y = D_800FA864_HotBobOmb;
-        u = 1.0f - f;
-        obj->trans.x = u * D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.x + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.x;
-        obj->trans.z = u * D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.z + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.z;
+        obj->trans.x = D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.x * (1.0f - f) + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.x;
+        obj->trans.z = D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.z * (1.0f - f) + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.z;
         if (!(D_800FA864_HotBobOmb > 30.0f)) {
             obj->trans.y = 30.0f;
             D_800F9D40_HotBobOmb = 1;
             D_800FA864_HotBobOmb = 30.0f;
         }
-        D_800FA1C0_HotBobOmb += 0.03f;
+        D_800FA1C0_HotBobOmb += 0.030000001f;
         break;
     case 1:
         for (i = 0; i < 5; i++) {
             func_80039644(D_800FA9AC_HotBobOmb[i], 1, 0);
             func_80039644(D_800FA890_HotBobOmb[i], 1, 0);
         }
-        for (i = 0; i < 4; i++) {
-            n = D_800FA8A0_HotBobOmb[i];
+        for (j = 0; j < 4; j++) {
+            n = D_800FA8A0_HotBobOmb[j];
             if (n > 0) {
                 break;
             }
@@ -484,18 +479,15 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
             obj->trans.y = sinf(f * 3.1415f) * 30.0f + (D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.y + 30.0f) * tbl[0x37 - n];
         } else if (f < 0.0f) {
             obj->trans.y = sinf(f * 3.1415f) * 30.0f + D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.y;
-            a = D_800FA180_HotBobOmb[D_800FA99C_HotBobOmb];
-            b = D_800FA180_HotBobOmb[D_800FA998_HotBobOmb];
-            if (b < a) {
-                D_800FA198_HotBobOmb = -((a - b) / 30);
+            if (D_800FA180_HotBobOmb[D_800FA99C_HotBobOmb] > D_800FA180_HotBobOmb[D_800FA998_HotBobOmb]) {
+                D_800FA198_HotBobOmb = -((D_800FA180_HotBobOmb[D_800FA99C_HotBobOmb] - D_800FA180_HotBobOmb[D_800FA998_HotBobOmb]) / 30);
             } else {
                 D_800FA198_HotBobOmb = (D_800FA180_HotBobOmb[D_800FA99C_HotBobOmb] - D_800FA180_HotBobOmb[D_800FA998_HotBobOmb]) / 30;
             }
         } else {
             obj->trans.y = sinf(f * 3.1415f) * 200.0f * ((5.0f - (f32)D_800FA994_HotBobOmb) / 5.0f) + 40.0f + D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.y;
-            u = 1.0f - f;
-            obj->trans.x = u * D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.x + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.x;
-            obj->trans.z = u * D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.z + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.z;
+            obj->trans.x = D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.x * (1.0f - f) + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.x;
+            obj->trans.z = D_800F9D44_HotBobOmb[D_800FA99C_HotBobOmb].bomb.z * (1.0f - f) + f * D_800F9D44_HotBobOmb[D_800FA998_HotBobOmb].bomb.z;
             D_800FA17C_HotBobOmb += D_800FA198_HotBobOmb;
             func_8001249C((s16)D_800FA174_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
             func_8001249C((s16)D_800FA178_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
@@ -504,20 +496,20 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
             D_800F9D40_HotBobOmb = 2;
         }
         if (D_800FA1B0_HotBobOmb == 0) {
-            n = D_800FA19C_HotBobOmb++;
-            if (n % 3 == 0) {
-                k = n / 3;
-                if ((k != 0) & (k < 5)) {
-                    func_800258EC(D_800FA86C_HotBobOmb[k], 4, 0);
-                    func_800258EC(D_800FA86C_HotBobOmb[k - 1], 4, 4);
+            i = D_800FA19C_HotBobOmb++;
+            if (i % 3 == 0) {
+                i = i / 3;
+                if ((i != 0) & (i < 5)) {
+                    func_800258EC(D_800FA86C_HotBobOmb[i], 4, 0);
+                    func_800258EC(D_800FA86C_HotBobOmb[i - 1], 4, 4);
                 }
             }
             for (i = D_800FA190_HotBobOmb; i < 16; i++) {
-                if (i * D_800FA194_HotBobOmb >= D_800FA9A8_HotBobOmb - D_800FA9BC_HotBobOmb) {
+                if (D_800FA9A8_HotBobOmb - D_800FA9BC_HotBobOmb <= i * D_800FA194_HotBobOmb) {
                     break;
                 }
             }
-            if (D_800FA194_HotBobOmb >= D_800FA9BC_HotBobOmb) {
+            if (D_800FA9BC_HotBobOmb <= D_800FA194_HotBobOmb) {
                 i = 15;
             }
             func_80060F04((s16)D_800FA99C_HotBobOmb, 5, 0, 5);
@@ -535,14 +527,12 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
             s = -s;
         }
         obj->scale.x = obj->scale.y = obj->scale.z = s + 1.0f;
-        n = ++D_800FA1B8_HotBobOmb;
-        v = -1;
-        if (D_800FA1C4_HotBobOmb < obj->scale.x) {
-            v = 1;
+        m = ++D_800FA1B8_HotBobOmb;
+        if (obj->scale.x > D_800FA1C4_HotBobOmb) {
             if (D_800FA1B4_HotBobOmb == -1) {
                 D_800FA1B0_HotBobOmb++;
                 if (D_800FA1BC_HotBobOmb == D_800FA1B4_HotBobOmb) {
-                    if (n >= 41) {
+                    if (m >= 41) {
                         D_800FA1B8_HotBobOmb = 0;
                         D_800FA1B0_HotBobOmb = 0;
                         D_800FA1BC_HotBobOmb = 0;
@@ -552,8 +542,10 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
                     D_800FA1B0_HotBobOmb = 0;
                 }
             }
+            D_800FA1B4_HotBobOmb = 1;
+        } else {
+            D_800FA1B4_HotBobOmb = -1;
         }
-        D_800FA1B4_HotBobOmb = v;
         D_800FA1C4_HotBobOmb = obj->scale.x;
         D_800FA1C0_HotBobOmb += 0.6f / (f32)(20 - D_800FA1B0_HotBobOmb * 2);
         break;
@@ -593,16 +585,6 @@ void func_800F7E84_HotBobOmb(omObjData* obj) {
         D_800FA868_HotBobOmb = 0;
     }
 }
-#else
-const f32 D_800FA640_HotBobOmb[60] __attribute__((section(".rodata"))) = {
-    1.0f, 1.0f, 0.3f, 0.5f, 0.0f, 0.2f, 0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-};
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10CF70", func_800F7E84_HotBobOmb);
-#endif
 
 void func_800F8A04_HotBobOmb(void) {
     s32 i;

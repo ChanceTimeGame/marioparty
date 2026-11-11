@@ -282,20 +282,15 @@ void func_800FCF5C_TreasureDivers(omObjData* obj) {
 }
 
 /* The two fish, each followed by two models replaying its recorded positions. */
-// NON_MATCHING (masked 59): retail keeps &D_800F2B7C[m] after the malloc in s0 (computed before
-// the call, m in s3); tried direct indexing, reassigning mp, split nx++
-#ifdef NON_MATCHING
 void func_800FD00C_TreasureDivers(omObjData* obj) {
     s32 i;
     s32 k;
-    f32 v;
-    f32 off;
 
     for (i = 0; i < 2; i++) {
         if (D_800FE450_TreasureDivers[i] < D_800FFA60_TreasureDivers[i].vx) {
             D_800FE450_TreasureDivers[i]++;
         }
-        if (D_800FFA60_TreasureDivers[i].vx < D_800FE450_TreasureDivers[i]) {
+        if (D_800FE450_TreasureDivers[i] > D_800FFA60_TreasureDivers[i].vx) {
             D_800FE450_TreasureDivers[i]--;
         }
         D_800FE7C8_TreasureDivers[i][D_800FE440_TreasureDivers].pos.x = D_800FFA60_TreasureDivers[i].pos.x;
@@ -333,14 +328,13 @@ void func_800FD00C_TreasureDivers(omObjData* obj) {
             D_800FECC0_TreasureDivers[i] = 2.0 * ((f32)(func_800FCAF0_TreasureDivers(5) + 3) / 10.0f);
             D_800FFA60_TreasureDivers[i].pos.z = -800.0f - D_800FECC0_TreasureDivers[i] * 250.0f;
             D_800FFA60_TreasureDivers[i].pos.y = 800.0f - func_800FCAF0_TreasureDivers(600);
-            if (!(func_800FCAF0_TreasureDivers(0) & 1)) {
-                D_800FFA60_TreasureDivers[i].pos.x = -1690.0f;
-                v = (func_800FCAF0_TreasureDivers(5) + 8) + D_800FECC0_TreasureDivers[i] * 10.0f;
-            } else {
+            if (func_800FCAF0_TreasureDivers(0) & 1) {
                 D_800FFA60_TreasureDivers[i].pos.x = 1690.0f;
-                v = -((func_800FCAF0_TreasureDivers(5) + 8) + D_800FECC0_TreasureDivers[i] * 10.0f);
+                D_800FFA60_TreasureDivers[i].vx = -((func_800FCAF0_TreasureDivers(5) + 8) + D_800FECC0_TreasureDivers[i] * 10.0f);
+            } else {
+                D_800FFA60_TreasureDivers[i].pos.x = -1690.0f;
+                D_800FFA60_TreasureDivers[i].vx = (func_800FCAF0_TreasureDivers(5) + 8) + D_800FECC0_TreasureDivers[i] * 10.0f;
             }
-            D_800FFA60_TreasureDivers[i].vx = v;
             if (D_800FFA60_TreasureDivers[i].vx < 0.0f) {
                 D_800FFA60_TreasureDivers[i].rot.y = 0.0f;
             } else {
@@ -353,15 +347,15 @@ void func_800FD00C_TreasureDivers(omObjData* obj) {
             }
         }
         if (i == 0) {
-            obj->scale.x = D_800FECC0_TreasureDivers[0];
-            obj->scale.y = D_800FECC0_TreasureDivers[0];
-            obj->scale.z = D_800FECC0_TreasureDivers[0];
-            obj->rot.x = D_800FFA60_TreasureDivers[0].rot.x;
-            obj->rot.y = D_800FFA60_TreasureDivers[0].rot.y;
-            obj->rot.z = D_800FFA60_TreasureDivers[0].rot.z;
-            obj->trans.x = D_800FFA60_TreasureDivers[0].pos.x;
-            obj->trans.y = D_800FFA60_TreasureDivers[0].pos.y;
-            obj->trans.z = D_800FFA60_TreasureDivers[0].pos.z;
+            obj->scale.x = D_800FECC0_TreasureDivers[i];
+            obj->scale.y = D_800FECC0_TreasureDivers[i];
+            obj->scale.z = D_800FECC0_TreasureDivers[i];
+            obj->rot.x = D_800FFA60_TreasureDivers[i].rot.x;
+            obj->rot.y = D_800FFA60_TreasureDivers[i].rot.y;
+            obj->rot.z = D_800FFA60_TreasureDivers[i].rot.z;
+            obj->trans.x = D_800FFA60_TreasureDivers[i].pos.x;
+            obj->trans.y = D_800FFA60_TreasureDivers[i].pos.y;
+            obj->trans.z = D_800FFA60_TreasureDivers[i].pos.z;
         } else {
             func_80025830(obj->model[i * 3], D_800FECC0_TreasureDivers[i], D_800FECC0_TreasureDivers[i],
                           D_800FECC0_TreasureDivers[i]);
@@ -384,9 +378,9 @@ void func_800FD00C_TreasureDivers(omObjData* obj) {
                       D_800FECC0_TreasureDivers[i]);
         func_800257E4(obj->model[i * 3 + 1], D_800FE7C8_TreasureDivers[i][k].rot.x,
                       D_800FE7C8_TreasureDivers[i][k].rot.y, D_800FE7C8_TreasureDivers[i][k].rot.z);
-        off = D_800FE450_TreasureDivers[i] * 3;
-        func_80025798(obj->model[i * 3 + 1], off + D_800FE7C8_TreasureDivers[i][k].pos.x,
-                      off + D_800FE7C8_TreasureDivers[i][k].pos.y, off + D_800FE7C8_TreasureDivers[i][k].pos.z);
+        func_80025798(obj->model[i * 3 + 1], D_800FE450_TreasureDivers[i] * 3 + D_800FE7C8_TreasureDivers[i][k].pos.x,
+                      D_800FE450_TreasureDivers[i] * 3 + D_800FE7C8_TreasureDivers[i][k].pos.y,
+                      D_800FE450_TreasureDivers[i] * 3 + D_800FE7C8_TreasureDivers[i][k].pos.z);
     }
     for (i = 0; i < 2; i++) {
         k = D_800FE440_TreasureDivers - 7;
@@ -397,14 +391,11 @@ void func_800FD00C_TreasureDivers(omObjData* obj) {
                       D_800FECC0_TreasureDivers[i]);
         func_800257E4(obj->model[i * 3 + 2], D_800FE7C8_TreasureDivers[i][k].rot.x,
                       D_800FE7C8_TreasureDivers[i][k].rot.y, D_800FE7C8_TreasureDivers[i][k].rot.z);
-        off = D_800FE450_TreasureDivers[i] * 3;
-        func_80025798(obj->model[i * 3 + 2], D_800FE7C8_TreasureDivers[i][k].pos.x - off,
-                      D_800FE7C8_TreasureDivers[i][k].pos.y - off, D_800FE7C8_TreasureDivers[i][k].pos.z - off);
+        func_80025798(obj->model[i * 3 + 2], D_800FE7C8_TreasureDivers[i][k].pos.x - D_800FE450_TreasureDivers[i] * 3,
+                      D_800FE7C8_TreasureDivers[i][k].pos.y - D_800FE450_TreasureDivers[i] * 3,
+                      D_800FE7C8_TreasureDivers[i][k].pos.z - D_800FE450_TreasureDivers[i] * 3);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F4420", func_800FD00C_TreasureDivers);
-#endif
 
 void func_800FD934_TreasureDivers(omObjData* obj) {
     func_800FD98C_TreasureDivers(obj->model[5]);
