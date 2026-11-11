@@ -351,7 +351,8 @@ void func_800FB93C_LimboDance(u8 count) {
 
 /* A torch flame: sprite (CI4, the flame shape) over sprite2's first frame (CI4 32x32, the fire
    texture) on D_800FEA28's quads. Returns its id, -1 if none is free. */
-// NON_MATCHING: register allocation / scheduling
+// register allocation (masked 6): anim/frame/w/h take a1/t0/t1 in retail, t0/v1/t0/t1 here;
+// tried inline frame reads and the w/h declaration order.
 #ifdef NON_MATCHING
 s16 func_800FBAF0_LimboDance(s16 sprite, s16 sprite2, u8 flags) {
     LDBillboard* b;
@@ -379,10 +380,11 @@ s16 func_800FBAF0_LimboDance(s16 sprite, s16 sprite2, u8 flags) {
     dl = HuMemDirectMalloc(0x2000 * sizeof(Gfx)); /* 0x10000 bytes on the N64 */
     gfx = dl;
     gDPPipeSync(gfx++);
+    anim = D_800EC700[b->unk_22];
     gDPSetBlendColor(gfx++, 1, 1, 1, 1);
     gDPSetRenderMode(gfx++, 0x504A50, 0);
     gDPSetCombine(gfx++, 0xFF99FF, 0xFF30FE7F);
-    frame = &D_800EC700[b->unk_22]->unk0[b->unk_24];
+    frame = &anim->unk0[b->unk_24];
     w = frame->unk4;
     h = frame->unk6;
     gDPLoadTextureBlock_4b(gfx++, 0x02000000, G_IM_FMT_CI, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
@@ -413,9 +415,10 @@ s16 func_800FBAF0_LimboDance(s16 sprite, s16 sprite2, u8 flags) {
     gDPSetPrimColor(gfx++, 0, 0, b->unk_2A, b->unk_2B, b->unk_2C, b->unk_29);
     gDPSetTextureFilter(gfx++, D_800FEA20_LimboDance[(b->unk_28 & 0x18) >> 3]);
     anim = D_800EC700[b->unk_22];
+    frame = &anim->unk0[b->unk_24];
     gDPSetTextureLUT(gfx++, G_TT_RGBA16);
     gDPLoadTLUT_pal16(gfx++, 0, anim->unkC);
-    gSPSegment(gfx++, 2, osVirtualToPhysical(anim->unk0[b->unk_24].unk0));
+    gSPSegment(gfx++, 2, osVirtualToPhysical(frame->unk0));
     gSPSegment(gfx++, 1, osVirtualToPhysical(b->unk_10[0]));
     gSPDisplayList(gfx++, b->unk_00);
     gSPEndDisplayList(gfx++);
