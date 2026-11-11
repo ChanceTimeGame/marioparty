@@ -330,7 +330,7 @@ void func_800FA878_PiranhasPursuit(omObjData* obj) {
     func_800FA4CC_PiranhasPursuit(obj);
 }
 
-// NON_MATCHING: register allocation and block order
+// NON_MATCHING: retail loads obj->model[0] after computing func_80027C1C's float argument (masked 4; trans.x numerator tried)
 #ifdef NON_MATCHING
 void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     PPPiece* p;
@@ -339,10 +339,15 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     f32 a;
     f32 v;
     f32 bx;
-    s32 y;
-    s32 n;
+    f32 y0;
+    f32 y1;
+    f32 y2;
+    s16 y;
     s16 i;
 
+    y0 = -50.0f;
+    y1 = -5.0f;
+    y2 = -40.0f;
     off = 0.0f;
     obj->trans.x = D_801012D0_PiranhasPursuit;
     func_80027C1C(obj->model[0], D_801012D0_PiranhasPursuit / (obj->scale.x * 24.0), 0.0f, 64, 64);
@@ -358,24 +363,25 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     if (func_8005FD5C() + D_800F64F8 == 0) {
         switch (D_801012E6_PiranhasPursuit) {
             case 0:
-                y = -50;
+                y = y0;
                 D_801012D4_PiranhasPursuit = -16000.0f;
                 off = Center.x - -16000.0f;
                 break;
             case 1:
                 if (D_801003F4_PiranhasPursuit < D_801012E4_PiranhasPursuit) {
                     t = (f32)(D_801003F4_PiranhasPursuit + 1) / (f32)D_801012E4_PiranhasPursuit;
-                    y = (s16)(-50.0f + t * (-5.0f - -50.0f)) + func_800AEAC0(t * 180.0) * 8.0;
+                    y = y0 + t * (y1 - y0);
+                    y = y + func_800AEAC0(t * 180.0) * 8.0;
                     D_801003F4_PiranhasPursuit++;
                 } else {
                     D_801012E6_PiranhasPursuit++;
-                    y = -5;
+                    y = y1;
                     D_801003F4_PiranhasPursuit = 0;
                 }
                 off = Center.x - D_801012D4_PiranhasPursuit;
                 break;
             case 2:
-                y = -5;
+                y = y1;
                 if (D_801012CA_PiranhasPursuit != 0 && D_801003F0_PiranhasPursuit >= 0.0) {
                     a = func_800AEAC0(D_801003EC_PiranhasPursuit) * D_801003F0_PiranhasPursuit * 100.0f;
                     D_801003F0_PiranhasPursuit = D_801003F0_PiranhasPursuit - 0.06;
@@ -384,7 +390,7 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
                         D_801003EC_PiranhasPursuit + 64.0f + func_800AEAC0(D_801003E8_PiranhasPursuit * 15.0) * 96.0f,
                         360.0);
                     D_801012D4_PiranhasPursuit = a + D_8010112C_PiranhasPursuit[D_80101134_PiranhasPursuit].pos.x;
-                } else if (D_8010112C_PiranhasPursuit[D_80101134_PiranhasPursuit].pos.x < D_801012D4_PiranhasPursuit) {
+                } else if (D_801012D4_PiranhasPursuit > D_8010112C_PiranhasPursuit[D_80101134_PiranhasPursuit].pos.x) {
                     D_801012D4_PiranhasPursuit = D_8010112C_PiranhasPursuit[D_80101134_PiranhasPursuit].pos.x;
                 } else {
                     off = Center.x - D_801012D4_PiranhasPursuit;
@@ -393,16 +399,15 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
                 break;
             default:
                 D_801012D4_PiranhasPursuit = D_8010112C_PiranhasPursuit[D_80101134_PiranhasPursuit].pos.x;
-                n = D_801012E4_PiranhasPursuit - 2;
-                if (D_801003F4_PiranhasPursuit < n) {
-                    t = (f32)D_801003F4_PiranhasPursuit / (f32)n;
+                if (D_801003F4_PiranhasPursuit < D_801012E4_PiranhasPursuit - 2) {
+                    t = (f32)D_801003F4_PiranhasPursuit / (f32)(D_801012E4_PiranhasPursuit - 2);
                     if (t > 1.0) {
                         t = 1.0f;
                     }
-                    y = -5.0f + t * (-40.0f - -5.0f);
+                    y = y1 + t * (y2 - y1);
                     D_801003F4_PiranhasPursuit++;
                 } else {
-                    y = -40;
+                    y = y2;
                 }
                 break;
         }
