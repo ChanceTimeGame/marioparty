@@ -559,14 +559,15 @@ void func_800F7DA8_ShellGame(omObjData* obj, s32 show) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F7DA8_ShellGame);
 #endif
-// NON_MATCHING: retail computes an unused (sec / 10)
-#ifdef NON_MATCHING
 s16 func_800F8154_ShellGame(void) {
     u16 sec;
     u16 tens;
 
     sec = D_800FF10C_ShellGame / 30;
-    tens = sec / 10;
+    tens = sec / 10; /* clamped below but never used: retail keeps the division */
+    if (tens > 9) {
+        tens = 9;
+    }
     if (D_800FF10C_ShellGame == 0x14A) {
         GMesCreate(8, 10, 160, 32);
     } else {
@@ -583,9 +584,6 @@ s16 func_800F8154_ShellGame(void) {
     D_800FEC14_ShellGame = 0;
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F8154_ShellGame);
-#endif
 s16 func_800F8238_ShellGame(s32 a, s32 b, s32 c) {
     s16 id;
 

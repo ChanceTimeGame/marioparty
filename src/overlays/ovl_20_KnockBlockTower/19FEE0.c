@@ -91,7 +91,8 @@ void func_800F69F8_KnockBlockTower(omObjData* obj) {
 
 /* Builds the tower: 5 or 6 blocks, two of them (type 1) bombs. */
 // list-head stores: retail addresses D_800FB650[0]'s type/next by symbol, GCC reuses the base register;
-// rand/divisor registers swapped in the % (masked 13; tried n = D for the obj store, n = n->next, a next temp)
+// rand/divisor registers swapped in the % (masked 13; tried n = D for the obj store, n = n->next, a next temp;
+// M1g: all head stores by symbol, n = D[0].next = n + 1 chained)
 #ifdef NON_MATCHING
 void func_800F6A10_KnockBlockTower(void) {
     KBTNode* n;
@@ -354,7 +355,7 @@ void func_800F7320_KnockBlockTower(omObjData* obj) {
 
 /* Knocks the block `id` out of the tower. */
 // register allocation: the found node is copied through v1 first (masked 1; tried a separate found
-// local)
+// local, assignment in the test, the body wrapped in if (n != NULL) (M1g))
 #ifdef NON_MATCHING
 void func_800F7398_KnockBlockTower(omObjData* obj, s32 id) {
     KBTPlayerWork* work = obj->unk_50;
