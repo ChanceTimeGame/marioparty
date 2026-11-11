@@ -455,7 +455,8 @@ void func_800F6C7C_BumperBallMaze(omObjData* object) {
 /* "ＡＢＣ" (Shift-JIS) */
 const u8 D_800FAD28_BumperBallMaze[] = { 0x82, 0x60, 0x82, 0x61, 0x82, 0x62, 0x00, 0x00 };
 
-// float register allocation of the turn-step clamp (step kept apart from the 30.0f compare)
+// masked 38, one real difference: the turn-step clamp keeps step apart from the 30.0f compare (mov.s
+// f12,f2; retail uses f2 as step). Tried a ternary operand, step preassigned (two compare forms).
 #ifdef NON_MATCHING
 void func_800F7240_BumperBallMaze(omObjData* object) {
     BumperBallMazeFloorProbe probe;
