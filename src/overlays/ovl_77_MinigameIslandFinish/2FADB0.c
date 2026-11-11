@@ -346,14 +346,16 @@ s16 func_800F6BC8_MinigameIslandFinish(s16 msg) {
     func_8004DBD4(win, 0);                         \
     HideTextWindow(win)
 
-// register allocation in the balloon loops (n + 1 kept on the stack, i/j/k registers) and some block order (masked ~500 of 1,955)
+// register allocation in the balloon loops (n + 1 spilled, i/j/k registers; retail's frame is 48 bytes
+// larger) and the j loops: retail passes (s16)(j + 1) and keeps it as the new j, as for an s32 j, but
+// s32 j frees n + 1's spill and moves every register (masked 44, was 258; tails and the 0x499 window
+// are cross-jumped copies, M1h)
 #ifdef NON_MATCHING
 void func_800F6D68_MinigameIslandFinish(void) {
     Vec3f pos;
     Vec2f screen;
     s32 win;
     s32 choice;
-    s32 msg;
 
     HuPrcSleep(0x1A);
     if (D_800C597A == 0) {
@@ -547,7 +549,11 @@ void func_800F6D68_MinigameIslandFinish(void) {
             ClearBoardFeatureFlag(0x2D);
             func_8005B300();
             func_800F697C_MinigameIslandFinish();
-            win = CreateTextWindow(0x64, (D_800F9144_MinigameIslandFinish == NULL) ? 0x50 : 0xAA, 9, 1);
+            if (D_800F9144_MinigameIslandFinish == NULL) {
+                win = CreateTextWindow(0x64, 0x50, 9, 1);
+            } else {
+                win = CreateTextWindow(0x64, 0xAA, 9, 1);
+            }
             LoadStringIntoWindow(win, (void*)0x499, -1, -1);
             func_8006E070(win, 0);
             ShowTextWindow(win);
@@ -556,9 +562,7 @@ void func_800F6D68_MinigameIslandFinish(void) {
             HideTextWindow(win);
         }
         win = CreateTextWindow(0x50, 0x3C, 0xF, 2);
-        msg = 0x49A;
-    last:
-        LoadStringIntoWindow(win, (void*)(s32)msg, -1, -1);
+        LoadStringIntoWindow(win, (void*)0x49A, -1, -1);
         func_8006E070(win, 0);
         ShowTextWindow(win);
         func_8004DBD4(win, 0);
@@ -575,19 +579,23 @@ void func_800F6D68_MinigameIslandFinish(void) {
         func_800F6B94_MinigameIslandFinish(win);
         choice = func_8006FCF0(win, 0, 1);
         HideTextWindow(win);
-        if (choice != 0) {
+        if (choice == 0) {
+            win = CreateTextWindow(0x5A, 0x3C, 0xB, 3);
+            LoadStringIntoWindow(win, (void*)0x49D, -1, -1);
+            func_8006E070(win, 0);
+            ShowTextWindow(win);
+            PlaySound(0x468);
+            func_8004DBD4(win, 0);
+            HideTextWindow(win);
+            D_800F9010_MinigameIslandFinish = 1;
+        } else {
             win = CreateTextWindow(0x50, 0x3C, 0xB, 1);
-            msg = 0x49E;
-            goto last;
+            LoadStringIntoWindow(win, (void*)0x49E, -1, -1);
+            func_8006E070(win, 0);
+            ShowTextWindow(win);
+            func_8004DBD4(win, 0);
+            HideTextWindow(win);
         }
-        win = CreateTextWindow(0x5A, 0x3C, 0xB, 3);
-        LoadStringIntoWindow(win, (void*)0x49D, -1, -1);
-        func_8006E070(win, 0);
-        ShowTextWindow(win);
-        PlaySound(0x468);
-        func_8004DBD4(win, 0);
-        HideTextWindow(win);
-        D_800F9010_MinigameIslandFinish = 1;
     }
 end:
     D_800F5144 = 1;
