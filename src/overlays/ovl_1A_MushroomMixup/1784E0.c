@@ -582,82 +582,79 @@ s32 func_800F846C_MushroomMixup(u16 arg0) {
     return ret;
 }
 
-// loop counter widths (s8/u16) and register allocation; same decisions
 /* The round's winner: a player index, 4 when nobody, -1 while undecided. */
-#ifdef NON_MATCHING
 s8 func_800F84F0_MushroomMixup(void) {
     omObjData* obj;
     MMPlayerWork* work;
     s8 res;
-    u8 ok;
+    s8 ok;
     u16 alive;
-    u16 j;
-    s8 i;
-    u16 any;
+    u16 i;
 
     res = -1;
     ok = 1;
-    alive = 0;
-    for (j = 0; j < 4; j++) {
-        if (D_800FC9A8_MushroomMixup[j]->work[2] == 0) {
+    for (i = 0, alive = 0; i < 4; i++) {
+        obj = D_800FC9A8_MushroomMixup[i];
+        if (obj->work[2] == 0) {
             alive++;
         }
     }
     if (alive < 2) {
-        for (i = 0; (u16)i < 4; i++) {
-            obj = D_800FC9A8_MushroomMixup[(u16)i];
-            work = D_800FC880_MushroomMixup[(u16)i];
+        for (i = 0; i < 4; i++) {
+            obj = D_800FC9A8_MushroomMixup[i];
+            work = D_800FC880_MushroomMixup[i];
             if (obj->work[2] == 0) {
                 break;
             }
         }
-        if ((u16)i < 4 && (u8)(work->unk_53 - 2) < 7 && !func_800F7574_MushroomMixup()) {
-            ok = (D_800FC9C0_MushroomMixup[work->unk_53 - 2].color & 7) == D_800FC81C_MushroomMixup;
+        if (i < 4 && (u8)(work->unk_53 - 2) < 7 && !func_800F7574_MushroomMixup()) {
+            if (((D_800FC9C0_MushroomMixup + work->unk_53 - 2)->color & 7) != D_800FC81C_MushroomMixup) {
+                ok = 0;
+            }
         }
         if (ok && alive == 1) {
             D_800FC996_MushroomMixup = 1;
         }
-        if ((u8)func_800F846C_MushroomMixup((u16)i) & ok) {
-            if ((u16)i == 4) {
+        if (!(u8)func_800F846C_MushroomMixup(i)) {
+            ok = 0;
+        }
+        if (ok) {
+            if (i == 4) {
                 if (D_800FC9C8_MushroomMixup == 2 && D_800FC9C0_MushroomMixup[0].obj->trans.y >= -620.0f) {
                     i = -1;
                 }
-                res = i;
                 if (D_800FC9EC_MushroomMixup == 2 && D_800FC9E4_MushroomMixup.obj->trans.y >= -620.0f) {
-                    res = -1;
+                    i = -1;
                 }
             } else {
-                work = D_800FC880_MushroomMixup[(u16)i];
+                work = D_800FC880_MushroomMixup[i];
                 func_80008FB8(obj, 0.0f);
                 work->unk_40 = 0.0f;
                 if (D_800FC70C_MushroomMixup < 3) {
                     D_800FC70C_MushroomMixup++;
                     i = -1;
                 }
-                res = i;
             }
+            res = i;
         } else {
             D_800FC70C_MushroomMixup = 0;
         }
     }
-    if (_CheckFlag(0x2B) != 0 && res == -1 && D_800FC9A8_MushroomMixup[0]->work[2] != 0) {
+    if (_CheckFlag(0x2B) != 0 && res == -1 && (obj = D_800FC9A8_MushroomMixup[0])->work[2] != 0) {
         D_800FC996_MushroomMixup = 1;
-        any = 0;
+        i = 0;
         if (D_800FC9C8_MushroomMixup == 2 && D_800FC9C0_MushroomMixup[0].obj->trans.y >= -620.0f) {
-            any = 1;
+            i = 1;
         }
         if (D_800FC9EC_MushroomMixup == 2 && D_800FC9E4_MushroomMixup.obj->trans.y >= -620.0f) {
-            any = 1;
+            i = 1;
         }
-        if (any == 0) {
+        if (i == 0) {
             res = 4;
         }
     }
     return res;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F84F0_MushroomMixup);
-#endif
 
 void func_800F8840_MushroomMixup(void) {
 }
@@ -974,19 +971,18 @@ void func_800F9548_MushroomMixup(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F9548_MushroomMixup);
 #endif
 
-// retail reaches d through a register; register allocation
 /* The start: each player walks to its partner (work[3]) and they turn to face each other. */
-#ifdef NON_MATCHING
 void func_800F9890_MushroomMixup(omObjData* arg0) {
     Vec3f d;
+    Vec3f* dp;
     MMPlayerWork* work;
     MMPlayerWork* otherWork;
     omObjData* other;
     MMPlayerState* st;
     MMPlayerState* ost;
     f32 a;
-    u8 p;
-    u8 q;
+    s32 p;
+    s32 q;
 
     p = arg0->work[0];
     work = arg0->unk_50;
@@ -1002,14 +998,15 @@ void func_800F9890_MushroomMixup(omObjData* arg0) {
     st->stkY = 0;
     st->stkX = 0;
     st->btnTrg = 0;
+    dp = &d;
     switch (st->state) {
     case 0:
-        func_800A0D00(&d, other->trans.x, 0.0f, other->trans.z);
-        d.x -= arg0->trans.x;
-        d.y -= 0.0f;
-        d.z -= arg0->trans.z;
-        if (func_800A1200(&d) > 100.0f) {
-            a = func_80029518(func_800B0CD8(d.x, d.z));
+        func_800A0D00(dp, other->trans.x, 0.0f, other->trans.z);
+        dp->x -= arg0->trans.x;
+        dp->y -= 0.0f;
+        dp->z -= arg0->trans.z;
+        if (func_800A1200(dp) > 100.0f) {
+            a = func_80029518(func_800B0CD8(dp->x, dp->z));
             st->stkX = func_800AEAC0(a) * 60.0f;
             st->stkY = func_800AEFD0(a) * 60.0f;
         } else {
@@ -1058,9 +1055,6 @@ void func_800F9890_MushroomMixup(omObjData* arg0) {
         arg0->func_ptr = func_800F9548_MushroomMixup;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F9890_MushroomMixup);
-#endif
 
 void func_800F9CF0_MushroomMixup(omObjData* arg0) {
     u8 temp_v0;

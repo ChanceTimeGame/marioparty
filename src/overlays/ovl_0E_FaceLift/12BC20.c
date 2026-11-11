@@ -910,7 +910,8 @@ void func_800F9988_FaceLift(Gfx** gfx) {
     gDPSetColorImage((*gfx)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, 0x003D0800);
     gSPDisplayList((*gfx)++, D_800FC7E8_FaceLift);
 }
-// scheduling (one nop)
+// scheduling: retail loads 5.6f before the D_800F2B7C[model] address, so the j delay slot
+// differs (one nop; masked 10)
 #ifdef NON_MATCHING
 void func_800F99E8_FaceLift(Vec3f* a, Vec3f* b, s16 model, s16 side) {
     f32 k = D_800FC9F0_FaceLift[side];
@@ -995,8 +996,6 @@ void func_800F9EE4_FaceLift(omObjData* obj) {
         func_8001D57C(i);
     }
 }
-// missing mov.s/move in the abs tests
-#ifdef NON_MATCHING
 s32 func_800FA058_FaceLift(s16 player, Vec3f* pos) {
     Matrix4f mtx;
     Vec2f sc;
@@ -1029,7 +1028,11 @@ s32 func_800FA058_FaceLift(s16 player, Vec3f* pos) {
     if (a < 0.0f) {
         a = -a;
     }
-    if (!(w < 0.0f ? a < -w : a < w)) {
+    if (w < 0.0f) {
+        if (!(a < -w)) {
+            return 0;
+        }
+    } else if (!(a < w)) {
         return 0;
     }
     a = y;
@@ -1041,10 +1044,7 @@ s32 func_800FA058_FaceLift(s16 player, Vec3f* pos) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FA058_FaceLift);
-#endif
-// register allocation
+// register allocation: the &grp[model] index lands in v0, not s1 (masked 0)
 #ifdef NON_MATCHING
 void func_800FA374_FaceLift(s16 model0, s16 model1) {
     unk2C0C0StructC0* grp[2];
@@ -1072,8 +1072,7 @@ void func_800FA374_FaceLift(s16 model0, s16 model1) {
         v = (*g)->unk_04;
         r2 = D_800FC4B0_FaceLift[i].radius;
         r2 *= r2;
-        k = 0;
-        for (j = 0; j < n; j++, v++) {
+        for (j = 0, k = 0; j < n; j++, v++) {
             ex = px - v->unk_00;
             ey = py - v->unk_02;
             d = func_800B1750(ex * ex + ey * ey);
@@ -1087,8 +1086,6 @@ void func_800FA374_FaceLift(s16 model0, s16 model1) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FA374_FaceLift);
 #endif
-// scheduling (model index)
-#ifdef NON_MATCHING
 void func_800FA5B4_FaceLift(s16 model, s16 part, Vec3f* p) {
     unk_ovl_2D_struct* m;
     unk2C0C0StructC0* g;
@@ -1107,8 +1104,8 @@ void func_800FA5B4_FaceLift(s16 model, s16 part, Vec3f* p) {
     f32 ex;
     f32 ey;
 
-    m = D_800F2B7C + model;
-    g = m->unk_6C;
+    g = D_800F2B7C[model].unk_6C;
+    m = &D_800F2B7C[model];
     ox = D_800FC4B0_FaceLift[part].x - m->unk_24;
     oy = D_800FC4B0_FaceLift[part].y - m->unk_28;
     dx = p->x - D_800FC4B0_FaceLift[part].x;
@@ -1130,10 +1127,8 @@ void func_800FA5B4_FaceLift(s16 model, s16 part, Vec3f* p) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FA5B4_FaceLift);
-#endif
-// scheduling (vertex index)
+// scheduling: *verts loaded after g->unk_08[D_800F37F0] (masked 4); an integer-address form
+// ((u32)base + *verts * 16) matches but truncates pointers on 64-bit hosts
 #ifdef NON_MATCHING
 void func_800FA7D0_FaceLift(s16 model, s16 part, Vec3f* p) {
     unk_ovl_2D_struct* m;
@@ -1152,8 +1147,8 @@ void func_800FA7D0_FaceLift(s16 model, s16 part, Vec3f* p) {
     f32 ex;
     f32 ey;
 
-    m = D_800F2B7C + model;
-    g = m->unk_6C;
+    g = D_800F2B7C[model].unk_6C;
+    m = &D_800F2B7C[model];
     ox = D_800FC4B0_FaceLift[part].x - m->unk_24;
     oy = D_800FC4B0_FaceLift[part].y - m->unk_28;
     dx = p->x - D_800FC4B0_FaceLift[part].x;
@@ -1163,7 +1158,7 @@ void func_800FA7D0_FaceLift(s16 model, s16 part, Vec3f* p) {
     r2 *= r2;
     n = D_800FC4B0_FaceLift[part].count;
     for (i = 0; i < n; i++, verts++) {
-        dst = *verts + g->unk_08[D_800F37F0];
+        dst = &g->unk_08[D_800F37F0][*verts];
         ex = ox - dst->unk_00;
         ey = oy - dst->unk_02;
         d = func_800B1750(ex * ex + ey * ey);
@@ -1414,7 +1409,8 @@ void func_800FB858_FaceLift(s16 player, f32 x, f32 y, f32 z, u16 type) {
         func_80025F10(m, (s16)(1 << player));
     }
 }
-// register allocation, one extra instruction
+// register allocation (n and j swap s0/s1) and one extra instruction: retail's >= 90 loop reuses
+// the k = 0 from the max < th test's delay slot instead of its own init
 #ifdef NON_MATCHING
 s16 func_800FB9E8_FaceLift(void) {
     f32 dist[4];
@@ -1450,8 +1446,7 @@ s16 func_800FB9E8_FaceLift(void) {
             D_800FCA02_FaceLift[i] = 0;
         }
     }
-    max = 0;
-    for (k = 0; k < 4; k++) {
+    for (k = 0, max = 0; k < 4; k++) {
         if (max < D_800FCA02_FaceLift[k]) {
             max = D_800FCA02_FaceLift[k];
         }
