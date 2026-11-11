@@ -453,7 +453,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FE874_C
 
 /* Modes: 0 hold the default framing, 1 follow the claw and the prize, 2 frame every queued point,
    3 the opening swing (func_800FE874). The result eases into Center, CRot and CZoom. */
-// register allocation, stack layout and constant placement (masked 167)
+// stack layout: retail has a 48-byte matrix buffer (HuGuLookAtF writes 64, over z0) and pts[8][3]; register allocation (masked 117)
 #ifdef NON_MATCHING
 void func_800FEB08_CraneGame(void) {
     f32 hi[3];
@@ -478,6 +478,7 @@ void func_800FEB08_CraneGame(void) {
     if (D_80100A5C_CraneGame != 0 && D_80100A60_CraneGame != 0 && D_80100A5E_CraneGame >= 0) {
         if (D_80100A5E_CraneGame == 3) {
             func_800FE874_CraneGame();
+            return;
         }
         if (D_80100A5E_CraneGame != 0) {
             for (i = 0; i < 3; i++) {

@@ -709,7 +709,7 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F88AC_MushroomMixup);
 #endif
 
-// retail reaches d through a register and copies floats as words; register allocation
+// retail reaches d through a register, spills p to the stack (sh/lhu) and saves two more s-registers; register allocation (masked 148)
 /* The CPU: writes the pad state its player object reads this frame. */
 #ifdef NON_MATCHING
 void func_800F8A58_MushroomMixup(omObjData* arg0) {
