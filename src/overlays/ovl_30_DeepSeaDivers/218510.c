@@ -2421,9 +2421,7 @@ void func_800FED88_DeepSeaDivers(omObjData* obj, s16 idx) {
         func_800258EC(obj->model[idx * 3 + 2], 4, 4);
     }
 }
-#ifdef NON_MATCHING
 void func_800FEF34_DeepSeaDivers(omObjData* obj) {
-    DSDFish* t;
     s16 i;
     s16 j;
     s16 k;
@@ -2433,15 +2431,14 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
         if ((f32)D_800FFE6C_DeepSeaDivers[i] < D_801006D8_DeepSeaDivers[i].vx) {
             D_800FFE6C_DeepSeaDivers[i]++;
         }
-        if (D_801006D8_DeepSeaDivers[i].vx < (f32)D_800FFE6C_DeepSeaDivers[i]) {
+        if ((f32)D_800FFE6C_DeepSeaDivers[i] > D_801006D8_DeepSeaDivers[i].vx) {
             D_800FFE6C_DeepSeaDivers[i]--;
         }
-        t = &D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers];
-        t->pos.x = D_801006D8_DeepSeaDivers[i].pos.x;
-        t->pos.y = D_801006D8_DeepSeaDivers[i].pos.y;
-        t->pos.z = D_801006D8_DeepSeaDivers[i].pos.z;
-        t->rot.y = D_801006D8_DeepSeaDivers[i].rot.y;
-        t->rot.z = D_801006D8_DeepSeaDivers[i].rot.z;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].pos.x = D_801006D8_DeepSeaDivers[i].pos.x;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].pos.y = D_801006D8_DeepSeaDivers[i].pos.y;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].pos.z = D_801006D8_DeepSeaDivers[i].pos.z;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].rot.y = D_801006D8_DeepSeaDivers[i].rot.y;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].rot.z = D_801006D8_DeepSeaDivers[i].rot.z;
         D_800FFE60_DeepSeaDivers[i] += 2 + ((u32)(func_800FC1F4_DeepSeaDivers() * 3) >> 16);
         if (D_800FFE60_DeepSeaDivers[i] >= 361) {
             D_800FFE60_DeepSeaDivers[i] = 0;
@@ -2471,15 +2468,15 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
             }
         }
         if (i == 0) {
-            obj->scale.x = D_80100C54_DeepSeaDivers[0];
-            obj->scale.y = D_80100C54_DeepSeaDivers[0];
-            obj->scale.z = D_80100C54_DeepSeaDivers[0];
-            obj->rot.x = D_801006D8_DeepSeaDivers[0].rot.x;
-            obj->rot.y = D_801006D8_DeepSeaDivers[0].rot.y;
-            obj->rot.z = D_801006D8_DeepSeaDivers[0].rot.z;
-            obj->trans.x = D_801006D8_DeepSeaDivers[0].pos.x;
-            obj->trans.y = D_801006D8_DeepSeaDivers[0].pos.y;
-            obj->trans.z = D_801006D8_DeepSeaDivers[0].pos.z;
+            obj->scale.x = D_80100C54_DeepSeaDivers[i];
+            obj->scale.y = D_80100C54_DeepSeaDivers[i];
+            obj->scale.z = D_80100C54_DeepSeaDivers[i];
+            obj->rot.x = D_801006D8_DeepSeaDivers[i].rot.x;
+            obj->rot.y = D_801006D8_DeepSeaDivers[i].rot.y;
+            obj->rot.z = D_801006D8_DeepSeaDivers[i].rot.z;
+            obj->trans.x = D_801006D8_DeepSeaDivers[i].pos.x;
+            obj->trans.y = D_801006D8_DeepSeaDivers[i].pos.y;
+            obj->trans.z = D_801006D8_DeepSeaDivers[i].pos.z;
         } else {
             func_80025830(obj->model[i * 3], D_80100C54_DeepSeaDivers[i], D_80100C54_DeepSeaDivers[i],
                           D_80100C54_DeepSeaDivers[i]);
@@ -2492,10 +2489,10 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
     if (++D_80100C50_DeepSeaDivers >= 10) {
         D_80100C50_DeepSeaDivers = 0;
     }
-    for (i = 0; i < 2; i++) {
-        for (j = 0; j < 2; j++) {
-            k = j + (i * 3 + 1);
-            if (j == 0) {
+    for (j = 0; j < 2; j++) {
+        for (i = 0; i < 2; i++) {
+            k = i + (s16)(j * 3 + 1);
+            if (i == 0) {
                 n = D_80100C50_DeepSeaDivers - 5;
             } else {
                 n = D_80100C50_DeepSeaDivers - 7;
@@ -2503,25 +2500,22 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
             if (n < 0) {
                 n += 10;
             }
-            func_80025830(obj->model[k], D_80100C54_DeepSeaDivers[i], D_80100C54_DeepSeaDivers[i],
-                          D_80100C54_DeepSeaDivers[i]);
-            func_800257E4(obj->model[k], D_80100758_DeepSeaDivers[i][n].rot.x, D_80100758_DeepSeaDivers[i][n].rot.y,
-                          D_80100758_DeepSeaDivers[i][n].rot.z);
-            if (j == 0) {
-                func_80025798(obj->model[k], (f32)(D_800FFE6C_DeepSeaDivers[i] * 3) + D_80100758_DeepSeaDivers[i][n].pos.x,
-                              (f32)(D_800FFE6C_DeepSeaDivers[i] * 3) + D_80100758_DeepSeaDivers[i][n].pos.y,
-                              (f32)(D_800FFE6C_DeepSeaDivers[i] * 3) + D_80100758_DeepSeaDivers[i][n].pos.z);
+            func_80025830(obj->model[k], D_80100C54_DeepSeaDivers[j], D_80100C54_DeepSeaDivers[j],
+                          D_80100C54_DeepSeaDivers[j]);
+            func_800257E4(obj->model[k], D_80100758_DeepSeaDivers[j][n].rot.x, D_80100758_DeepSeaDivers[j][n].rot.y,
+                          D_80100758_DeepSeaDivers[j][n].rot.z);
+            if (i == 0) {
+                func_80025798(obj->model[k], (f32)(D_800FFE6C_DeepSeaDivers[j] * 3) + D_80100758_DeepSeaDivers[j][n].pos.x,
+                              (f32)(D_800FFE6C_DeepSeaDivers[j] * 3) + D_80100758_DeepSeaDivers[j][n].pos.y,
+                              (f32)(D_800FFE6C_DeepSeaDivers[j] * 3) + D_80100758_DeepSeaDivers[j][n].pos.z);
             } else {
-                func_80025798(obj->model[k], D_80100758_DeepSeaDivers[i][n].pos.x - (f32)(D_800FFE6C_DeepSeaDivers[i] * 3),
-                              D_80100758_DeepSeaDivers[i][n].pos.y - (f32)(D_800FFE6C_DeepSeaDivers[i] * 3),
-                              D_80100758_DeepSeaDivers[i][n].pos.z - (f32)(D_800FFE6C_DeepSeaDivers[i] * 3));
+                func_80025798(obj->model[k], D_80100758_DeepSeaDivers[j][n].pos.x - (f32)(D_800FFE6C_DeepSeaDivers[j] * 3),
+                              D_80100758_DeepSeaDivers[j][n].pos.y - (f32)(D_800FFE6C_DeepSeaDivers[j] * 3),
+                              D_80100758_DeepSeaDivers[j][n].pos.z - (f32)(D_800FFE6C_DeepSeaDivers[j] * 3));
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FEF34_DeepSeaDivers);
-#endif
 void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80026040(obj->model[1]);
     D_80100C5C_DeepSeaDivers = 0.0f;
