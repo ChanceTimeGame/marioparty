@@ -83,6 +83,7 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
 }
 
 // register allocation (masked 10): retail keeps an unused constant 2 in fp through the model loop and swaps cell/n; tried chained n store, 1 + k
+// (M1g: model[i + 1], ext arrays by i, k from 1: all masked 19-21)
 #ifdef NON_MATCHING
 void func_800F935C_BoxMountainMayhem(omObjData* obj) {
     BMMStageWork* work;

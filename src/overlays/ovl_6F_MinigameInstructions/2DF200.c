@@ -2082,6 +2082,7 @@ void func_80101A90_MinigameInstructions(Ovl6FPlayerWork* work) {
     work->unk_B8++;
 }
 // retail rematerialises the -180.0f for CZoom - unk_14 after func_80025830; here unk_14 is reloaded (masked 2)
+// (M1g: CZoom - -180.0f and a local z = -180.0f both keep the constant in $f20 across the call, masked 8)
 #ifdef NON_MATCHING
 void func_80102048_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
