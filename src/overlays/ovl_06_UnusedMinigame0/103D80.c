@@ -537,7 +537,7 @@ f32 func_800FC944_UnusedMinigame0(f32 x, f32 z) {
 
 /* Pushes obj off the first object of D_80108C4C on flat ground within radius + 40, sliding along
    it against the direction (dx, dz); returns that object's index, or -1. */
-// NON_MATCHING: register allocation: retail keeps 10.0/0.5 in integer register pairs, 40.0f in f30 per iteration and dz on the stack (masked 83)
+// NON_MATCHING: register allocation: retail loads 40.0f into f30 inside the loop (we hoist it to s6), so 10.0/0.5 go to integer pairs and dz to the stack (masked 64, raw 112; px/pz locals took it from 78)
 #ifdef NON_MATCHING
 s16 func_800FCA40_UnusedMinigame0(omObjData* obj, f32 dx, f32 dz, f32 radius) {
     s16 i;
@@ -548,6 +548,8 @@ s16 func_800FCA40_UnusedMinigame0(omObjData* obj, f32 dx, f32 dz, f32 radius) {
     f32 tz = 0.0f;
     f32 d;
     f32 push;
+    f32 px;
+    f32 pz;
 
     for (i = 0; i < D_8010B450_UnusedMinigame0; i++) {
         o = D_80108C4C_UnusedMinigame0[i];
@@ -561,6 +563,8 @@ s16 func_800FCA40_UnusedMinigame0(omObjData* obj, f32 dx, f32 dz, f32 radius) {
                     nz /= d;
                 }
                 push = radius + 40.0f - d;
+                px = obj->trans.x - nx * push;
+                pz = obj->trans.z - nz * push;
                 if (nx != 0.0 && nz != 0.0) {
                     tx = nz;
                     tz = -nx;
@@ -578,8 +582,8 @@ s16 func_800FCA40_UnusedMinigame0(omObjData* obj, f32 dx, f32 dz, f32 radius) {
                         tx = -nx;
                     }
                 }
-                obj->trans.x = obj->trans.x - nx * push + tx * push * 0.5;
-                obj->trans.z = obj->trans.z - nz * push + tz * push * 0.5;
+                obj->trans.x = px + tx * push * 0.5;
+                obj->trans.z = pz + tz * push * 0.5;
                 return i;
             }
         }
