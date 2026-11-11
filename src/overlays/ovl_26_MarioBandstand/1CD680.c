@@ -100,21 +100,14 @@ void func_800F7000_MarioBandstand(void) {
     }
 }
 
-// NON_MATCHING: masked 31 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
-s16 func_800F7090_MarioBandstand(omObjData* obj, s16 slot) {
+s32 func_800F7090_MarioBandstand(omObjData* obj, s32 slot) {
     s16 px[16];
     s16 pz[16];
     MBProp* p;
     s32 i;
-    s32 j;
-    s16 n;
     s32 x;
-    s32 z;
-    s16 k;
     u32 r;
-    s16 model;
-    s16 tmp;
+    s16 n;
 
     D_800FD51A_MarioBandstand = slot;
     for (i = 0; i < 5; i++) {
@@ -122,28 +115,30 @@ s16 func_800F7090_MarioBandstand(omObjData* obj, s16 slot) {
         px[i + 5] = 1;
         px[i + 10] = 2;
     }
-    px[15] = func_800FCAAC_MarioBandstand() & 1;
+    r = func_800FCAAC_MarioBandstand() & 1;
+    px[15] = r;
     i = 0x40;
     do {
         i--;
         r = func_800FCAAC_MarioBandstand();
         x = r & 0xF;
-        z = (r >> 12) & 0xF;
-        tmp = px[x];
-        px[x] = px[z];
-        px[z] = tmp;
+        r >>= 12;
+        r &= 0xF;
+        n = px[x];
+        px[x] = px[r];
+        px[r] = n;
     } while (i != 0);
 
     p = D_800FD2D8_MarioBandstand;
     for (i = 0; i < 16; i++, p++) {
-        k = px[i];
-        p->unk2 = func_800FCAD4_MarioBandstand(obj, D_800FCC00_MarioBandstand[k], 0x289, 8, slot, k);
-        model = obj->model[slot];
-        p->model = model;
-        if (k == 2) {
-            func_80025830(model, 3.5f, 3.5f, 3.5f);
+        x = px[i];
+        p->unk2 = func_800FCAD4_MarioBandstand(obj, D_800FCC00_MarioBandstand[x], 0x289, 8, slot, x);
+        n = obj->model[slot];
+        p->model = n;
+        if (x == 2) {
+            func_80025830(n, 3.5f, 3.5f, 3.5f);
         } else {
-            func_80025830(model, 2.5f, 2.5f, 2.5f);
+            func_80025830(n, 2.5f, 2.5f, 2.5f);
         }
         slot++;
         p->state = 0;
@@ -153,21 +148,22 @@ s16 func_800F7090_MarioBandstand(omObjData* obj, s16 slot) {
     do {
         r = func_800FCAAC_MarioBandstand();
         x = r & 7;
-        z = (r >> 7) % 3;
-        for (j = 0; j < n; j++) {
-            if (px[j] == x && pz[j] == z) {
+        r >>= 7;
+        r %= 3;
+        for (i = 0; i < n; i++) {
+            if (px[i] == x && pz[i] == r) {
                 break;
             }
         }
-        if (j >= n) {
+        if (i >= n) {
             px[n] = x;
-            pz[n] = z;
+            pz[n] = r;
             n++;
         }
     } while (n < 16);
 
     p = D_800FD2D8_MarioBandstand;
-    for (i = 0; i < 16; i++, p++) {
+    for (i = 0; i < 16; p++, i++) {
         p->x = px[i] * 140 - 490;
         p->y = -65;
         p->z = pz[i] * 100 + 460;
@@ -179,9 +175,6 @@ s16 func_800F7090_MarioBandstand(omObjData* obj, s16 slot) {
     D_800FD51C_MarioBandstand = slot;
     return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7090_MarioBandstand);
-#endif
 
 void func_800F73E8_MarioBandstand(void) {
     omObjData* obj = D_800FD708_MarioBandstand;
