@@ -93,9 +93,9 @@ s8 func_800FFF4C_ChanceTime(s8 arg0, s8 arg1) {
     return D_80101370_ChanceTime;
 }
 
-// loop-invariant motion: the coin loop's 0.0f arguments are hoisted into an FPR; the tie loop's
-// (f32)i is computed before the call (retail: inside its arguments, which the host may order
-// differently) - masked 5 besides the address shift
+// register allocation (masked 8): the star steps' division in v1/v0 (retail v0/v1; tried a ternary), and
+// both arc loops hoist &D_80101830 before &D_80101824 (retail after). M1g: the coin loop indexes c[i]
+// directly; the tie loop's t = i sits inside the first argument, the z argument uses (f32)i, not t
 #ifdef NON_MATCHING
 void func_800FFFB0_ChanceTime(void) {
     s8 idx[2];
@@ -111,7 +111,6 @@ void func_800FFFB0_ChanceTime(void) {
     s16 count;
     s32 v;
     CTCoin* c;
-    CTCoin* p;
     f32 rot;
     f32 rad;
     f32 t;
@@ -201,17 +200,15 @@ void func_800FFFB0_ChanceTime(void) {
             c = coins[side];
             i = 0;
             while (i < (s32)prog[side]) {
-                p = &c[i];
-                if (p->unk_19 == 0) {
-                    if (p->unk_18 == 1) {
-                        func_800258EC(p->unk_00, 4, 0);
-                        p->unk_08 += 10.0f;
-                        if (D_800F3FB0[idx[side]]->trans.y + 200.0f <= p->unk_08) {
-                            p->unk_19 = 1;
+                if (c[i].unk_19 == 0) {
+                    if (c[i].unk_18 == 1) {
+                        func_800258EC(c[i].unk_00, 4, 0);
+                        c[i].unk_08 += 10.0f;
+                        if (D_800F3FB0[idx[side]]->trans.y + 200.0f <= c[i].unk_08) {
+                            c[i].unk_19 = 1;
                         }
-                        p = &c[i++];
-                        func_80025798(p->unk_00, p->unk_04, p->unk_08, p->unk_0C);
-                        func_800257E4(p->unk_00, 90.0f, 0.0f, 0.0f);
+                        func_80025798(c[i].unk_00, c[i].unk_04, c[i].unk_08, c[i].unk_0C);
+                        func_800257E4(c[i++].unk_00, 90.0f, 0.0f, 0.0f);
                         continue;
                     }
                 } else {
@@ -297,11 +294,10 @@ void func_800FFFB0_ChanceTime(void) {
         rot = 0.0f;
         i = 0;
         do {
-            t = i;
             func_80025798(D_80101868_ChanceTime[0].unk_00,
-                          (D_80101830_ChanceTime.x - D_80101824_ChanceTime.x) * t / 180.0f + D_80101824_ChanceTime.x,
+                          (D_80101830_ChanceTime.x - D_80101824_ChanceTime.x) * (t = i) / 180.0f + D_80101824_ChanceTime.x,
                           D_80101824_ChanceTime.y + 200.0f + sinf(rad = i * 0.017453292519943295) * 100.0f,
-                          D_80101824_ChanceTime.z + (D_80101830_ChanceTime.z - D_80101824_ChanceTime.z) * t / 180.0);
+                          D_80101824_ChanceTime.z + (D_80101830_ChanceTime.z - D_80101824_ChanceTime.z) * (f32)i / 180.0);
             i += 5;
             func_80025798(D_80101868_ChanceTime[1].unk_00,
                           (D_80101824_ChanceTime.x - D_80101830_ChanceTime.x) * t / 180.0f + D_80101830_ChanceTime.x,
