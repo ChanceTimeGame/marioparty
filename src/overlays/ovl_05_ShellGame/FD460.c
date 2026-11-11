@@ -13,8 +13,6 @@ u16 D_800FEC54_ShellGame = 0;
 f32 D_800FEC58_ShellGame = 0.0f;
 s16 D_800FEC5C_ShellGame = 0;
 
-// NON_MATCHING: register reuse of the character index
-#ifdef NON_MATCHING
 void func_800FCF90_ShellGame(omObjData* obj) {
     struct {
         s16 mot[4];
@@ -25,6 +23,7 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     u16 c;
     u16 i;
     u16 pl;
+    s16 k;
     u16 r;
 
     dizzy.mot[0] = 15;
@@ -36,7 +35,7 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     cheer.len[0] = 120;
     cheer.len[1] = 120;
     D_800FEC44_ShellGame = NULL;
-    D_800FF79C_ShellGame = D_800FF798_ShellGame = 0.0f;
+    D_800FF798_ShellGame = D_800FF79C_ShellGame = 0.0f;
     for (i = 0; i < 4; i++) {
         if (GwPlayer[i].group == 0) {
             break;
@@ -44,29 +43,30 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     }
     switch (i) {
     case 0:
-        pl = 0;
+        k = 0;
         break;
     case 1:
-        pl = 1;
+        k = 1;
         break;
     case 2:
-        pl = 2;
+        k = 2;
         break;
     case 3:
-        pl = 3;
+        k = 3;
         break;
     default:
-        pl = 0;
+        k = 0;
         break;
     }
-    D_800FF9F0_ShellGame = pl;
-    D_800FF794_ShellGame = GwPlayer[pl].port;
+    D_800FF9F0_ShellGame = k;
+    D_800FF794_ShellGame = GwPlayer[k].port;
     D_800FF796_ShellGame = 0;
-    if (GwPlayer[pl].flags & 1) {
+    if (GwPlayer[(u16)k].flags & 1) {
         D_800FF792_ShellGame = 1;
     } else {
         D_800FF792_ShellGame = 0;
     }
+    pl = k;
     c = GwPlayer[pl].character;
     D_800FFA0C_ShellGame = c;
     ch = D_800C59AC[c].unk_00;
@@ -108,9 +108,6 @@ void func_800FCF90_ShellGame(omObjData* obj) {
     func_800090C4(obj, 0, 2);
     D_800ED430 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FCF90_ShellGame);
-#endif
 void func_800FD448_ShellGame(omObjData* obj) {
     switch (D_800FF9EC_ShellGame) {
     case 3:

@@ -79,7 +79,7 @@ const char D_80101664_ChanceTime[] = "Coins";
 /* 7 bytes: retail has a second NUL after "Stars" (0x80101672) */
 const char D_8010166C_ChanceTime[7] = "Stars";
 
-// register allocation: coin count in a0 not a1, compare on the copy (masked 0)
+// register allocation: coin count in a0 not a1, compare on the copy (raw 34, masked 0); M1e tried s16 n/c, testing the field, ternary clamp, declaration order
 #ifdef NON_MATCHING
 void func_800FED28_ChanceTime(void) {
     char unused[0x30]; /* retail's frame has 0x30 unreferenced bytes */
