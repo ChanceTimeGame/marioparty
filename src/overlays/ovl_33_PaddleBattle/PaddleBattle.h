@@ -45,7 +45,7 @@ typedef struct PBPlayer {
     /* 0x00 */ omObjData* obj;
     /* 0x04 */ s16 seat;
     /* 0x06 */ s16 state;
-    /* 0x08 */ u16 timer;
+    /* 0x08 */ s16 timer;
     /* 0x0A */ char pad0A[2];
     /* 0x0C */ s16 hit;
     /* 0x0E */ s16 unkE;

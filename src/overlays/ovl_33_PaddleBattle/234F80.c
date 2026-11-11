@@ -545,13 +545,11 @@ s16 func_800F89F0_PaddleBattle(u8* ring, u8 idx, u8 dir, u8 n) {
 }
 
 /* A rider: paddling (a stick circle is a stroke), the bump reaction, placed on its seat. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 141 lines)
-#ifdef NON_MATCHING
 void func_800F8B0C_PaddleBattle(omObjData* obj) {
     Matrix4f m;
     PBPlayer* p;
-    u8 player;
-    u8 seat;
+    s32 player;
+    s32 seat;
     s32 stroke;
     s32 dir;
     s32 i;
@@ -608,7 +606,10 @@ void func_800F8B0C_PaddleBattle(omObjData* obj) {
             stroke = 1;
         }
     }
-    if ((D_800FFF02_PaddleBattle.state == 1) & stroke) {
+    if (D_800FFF02_PaddleBattle.state != 1) {
+        stroke = 0;
+    }
+    if (stroke != 0) {
         p->unk1C = 3;
         p->stroke = 1;
         RAFT.strokes[p->seat]++;
@@ -642,7 +643,8 @@ void func_800F8B0C_PaddleBattle(omObjData* obj) {
                 p->unk18 -= 40.0f;
             }
         }
-        if (RAFT.unk86 == 2 && RAFT.side == (p->seat == 0)) {
+        stroke = p->seat == 0;
+        if (RAFT.unk86 == 2 && RAFT.side == stroke) {
             /* the raft bumped this side's bank */
             p->state++;
             p->hit = 1;
@@ -661,14 +663,18 @@ void func_800F8B0C_PaddleBattle(omObjData* obj) {
             }
             if (RAFT.unk86 == 2) {
                 if (p->seat != 0) {
-                    if (!(func_800F68E8_PaddleBattle(player, -1) & 0x8000)) {
-                        func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[0]);
+                    for (dir = 0; dir < 1; dir++) {
+                        if (func_800F68E8_PaddleBattle(player, -1) >= 0) {
+                            func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[0]);
+                        }
                     }
                 } else {
-                    if (!(func_800F68E8_PaddleBattle(player, -3) & 0x8000)) {
-                        func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[1]);
-                        func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[2]);
-                        func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[3]);
+                    for (dir = 0; dir < 1; dir++) {
+                        if (func_800F68E8_PaddleBattle(player, -3) >= 0) {
+                            func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[1]);
+                            func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[2]);
+                            func_800FA298_PaddleBattle(obj->trans.x, obj->trans.y, obj->trans.z, RAFT.seat[3]);
+                        }
                     }
                 }
             }
@@ -701,7 +707,7 @@ void func_800F8B0C_PaddleBattle(omObjData* obj) {
     obj->trans.x = m[3][0];
     obj->trans.y = m[3][1];
     obj->trans.z = m[3][2];
-    m[3][2] = m[3][1] = m[3][0] = 0.0f;
+    m[3][0] = m[3][1] = m[3][2] = 0.0f;
     func_8002C37C(D_800F2B7C[obj->model[0]].unk7C, m);
     if (obj->work[2] != 0) {
         obj->work[2]--;
@@ -710,9 +716,6 @@ void func_800F8B0C_PaddleBattle(omObjData* obj) {
     func_80017DB0(obj);
     func_80017BB0(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F8B0C_PaddleBattle);
-#endif
 
 /* A paddle: setup. */
 void func_800F94B8_PaddleBattle(omObjData* obj) {
