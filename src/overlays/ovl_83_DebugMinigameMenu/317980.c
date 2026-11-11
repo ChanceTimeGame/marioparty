@@ -1,6 +1,8 @@
 #include "common.h"
 #include "317980.h"
 
+int abs(int);
+
 /* .data */
 DebugMgEntry D_800F98B0_DebugMinigameMenu[90] = {
     { 0x00, 0x01, 0x0B, 0x00, 0, 0x03250000, "01:SHINKEI SUIJYAKU" },
@@ -299,7 +301,8 @@ void func_800F6B14_DebugMinigameMenu(f32 zoom, f32 rx, f32 ry, f32 rz, f32 x, f3
 
 #define DBG_REPEAT(i, dir)                                          \
     if (D_800FAE04_DebugMinigameMenu[i] & (dir)) {                  \
-        if (++D_800FAE0C_DebugMinigameMenu[i] >= 16) {              \
+        D_800FAE0C_DebugMinigameMenu[i]++;                          \
+        if (D_800FAE0C_DebugMinigameMenu[i] >= 16) {                \
             D_800FAE0C_DebugMinigameMenu[i] = 15;                   \
         }                                                           \
     } else {                                                        \
@@ -319,12 +322,13 @@ void func_800F6B14_DebugMinigameMenu(f32 zoom, f32 rx, f32 ry, f32 rz, f32 x, f3
         }                                                           \
     }
 
-// key-repeat state machine: block layout and register allocation differ (masked ~190, logic per m2c)
+// key-repeat state machine (masked 61): x/y live in a0/a1 where retail has a2/a3, and the repeat
+// tails cross-jump differently (retail shares the dir 4/8 "|= dir; = 2" tail); abs() and the
+// non-short-circuit tests fixed
 #ifdef NON_MATCHING
 void func_800F6BAC_DebugMinigameMenu(omObjData* arg0) {
     s32 i;
     s8 x, y;
-    s8 old;
 
     for (i = 0; i < D_800F3778; i++) {
         D_800FAE00_DebugMinigameMenu[i] = 0;
@@ -345,54 +349,30 @@ void func_800F6BAC_DebugMinigameMenu(omObjData* arg0) {
         if (ContBtnTrg[i] & 0x101) {
             D_800FAE00_DebugMinigameMenu[i] |= 8;
         }
-        if (y < -10) {
-            old = D_800FAD8C_DebugMinigameMenu[i];
-            if (old < 0) {
-                old = -old;
-            }
-            if (old < 10) {
-                D_800FAE00_DebugMinigameMenu[i] |= 2;
-            }
+        if (y < -10 && abs(D_800FAD8C_DebugMinigameMenu[i]) < 10) {
+            D_800FAE00_DebugMinigameMenu[i] |= 2;
         }
-        if (y > 10) {
-            old = D_800FAD8C_DebugMinigameMenu[i];
-            if (old < 0) {
-                old = -old;
-            }
-            if (old < 10) {
-                D_800FAE00_DebugMinigameMenu[i] |= 1;
-            }
+        if (y > 10 && abs(D_800FAD8C_DebugMinigameMenu[i]) < 10) {
+            D_800FAE00_DebugMinigameMenu[i] |= 1;
         }
-        if (x < -10) {
-            old = D_800FAD88_DebugMinigameMenu[i];
-            if (old < 0) {
-                old = -old;
-            }
-            if (old < 10) {
-                D_800FAE00_DebugMinigameMenu[i] |= 4;
-            }
+        if (x < -10 && abs(D_800FAD88_DebugMinigameMenu[i]) < 10) {
+            D_800FAE00_DebugMinigameMenu[i] |= 4;
         }
-        if (x > 10) {
-            old = D_800FAD88_DebugMinigameMenu[i];
-            if (old < 0) {
-                old = -old;
-            }
-            if (old < 10) {
-                D_800FAE00_DebugMinigameMenu[i] |= 8;
-            }
+        if (x > 10 && abs(D_800FAD88_DebugMinigameMenu[i]) < 10) {
+            D_800FAE00_DebugMinigameMenu[i] |= 8;
         }
         D_800FAD88_DebugMinigameMenu[i] = x;
         D_800FAD8C_DebugMinigameMenu[i] = y;
         if (ContBtnTrg[i] & 0x2000) {
             D_800FAE00_DebugMinigameMenu[i] |= 0x40;
         }
-        if ((ContBtn[i] & 0x808) | (y > 10)) {
+        if (((ContBtn[i] & 0x808) != 0) | (y > 10)) {
             DBG_REPEAT(i, 1)
-        } else if ((ContBtn[i] & 0x404) | (y < -10)) {
+        } else if (((ContBtn[i] & 0x404) != 0) | (y < -10)) {
             DBG_REPEAT(i, 2)
-        } else if ((ContBtn[i] & 0x202) | (x < -10)) {
+        } else if (((ContBtn[i] & 0x202) != 0) | (x < -10)) {
             DBG_REPEAT(i, 4)
-        } else if ((ContBtn[i] & 0x101) | (x > 10)) {
+        } else if (((ContBtn[i] & 0x101) != 0) | (x > 10)) {
             DBG_REPEAT(i, 8)
         } else {
             D_800FAE0C_DebugMinigameMenu[i] = 0;
@@ -574,12 +554,13 @@ void func_800F79E0_DebugMinigameMenu(omObjData* arg0) {
     }
 }
 
-// option screen: jump tables start at case 1, retail at 0; layout differs (masked ~245, logic per m2c)
+// option screen (masked 143): retail keeps x/y unhoisted in the row loop, spills arg0 and (i / 2) * 7,
+// and computes i * 3 three times; logic checked against retail, layout differs
 #ifdef NON_MATCHING
 void func_800F7BD4_DebugMinigameMenu(omObjData* arg0) {
     DebugMgEntry* row;
     s32 i;
-    u32 r;
+    s32 r;
     s32 x, y, base;
     u16* c;
 
@@ -616,7 +597,7 @@ void func_800F7BD4_DebugMinigameMenu(omObjData* arg0) {
                 if (r == 0) {
                     c = (u16*)D_800FA404_DebugMinigameMenu[0];
                     if (i == D_800FAC5C_DebugMinigameMenu) {
-                        func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, D_800FA404_DebugMinigameMenu[0][1], c[0]);
+                        func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, (u16)D_800FA404_DebugMinigameMenu[0][1], c[0]);
                     } else {
                         func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, c[0], 0);
                     }
@@ -626,7 +607,7 @@ void func_800F7BD4_DebugMinigameMenu(omObjData* arg0) {
                 if (i == D_800FAC5C_DebugMinigameMenu) {
                     c = (u16*)D_800FA404_DebugMinigameMenu[0];
                     if (r == D_800FAC5A_DebugMinigameMenu) {
-                        func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, D_800FA404_DebugMinigameMenu[0][1], c[0]);
+                        func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, (u16)D_800FA404_DebugMinigameMenu[0][1], c[0]);
                     } else {
                         func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, c[0], 0);
                     }
@@ -635,7 +616,7 @@ void func_800F7BD4_DebugMinigameMenu(omObjData* arg0) {
             } else {
                 continue;
             }
-            func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, D_800FA404_DebugMinigameMenu[1][0], 0);
+            func_800F95F8_DebugMinigameMenu(x, y, pfStrBuf, (u16)D_800FA404_DebugMinigameMenu[1][0], 0);
         }
     }
     for (i = 0; i < D_800F3778; i++) {
@@ -753,13 +734,13 @@ void func_800F7BD4_DebugMinigameMenu(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_800F7BD4_DebugMinigameMenu);
 #endif
 
-// title scroll: register allocation and constant propagation of the two offsets (masked ~83)
+// title scroll (masked 15): GCC folds dy2 + 8 to 14 where retail keeps dy2 in s4, dy1/dy2 registers swap,
+// and the two dy clamps lay out as branch-likely; tried declaration orders
 #ifdef NON_MATCHING
 void func_800F855C_DebugMinigameMenu(omObjData* arg0) {
-    u16* p;
+    s32 x, y, t, i;
     s32 dy1 = 12;
     s32 dy2 = 6;
-    s32 x, y, t, i;
 
     rand8();
     sprintf(pfStrBuf, D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].name);
@@ -767,53 +748,51 @@ void func_800F855C_DebugMinigameMenu(omObjData* arg0) {
     y = (D_800FAC42_DebugMinigameMenu + 10) * 9;
     if (y - D_800FA4AC_DebugMinigameMenu >= 0x31) {
         if (--D_800FA4B4_DebugMinigameMenu == 0) {
-            p = (u16*)&D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu];
-            *p = func_80019060(D_800FAD98_DebugMinigameMenu, 0, 1);
-            func_80018D44(*p, 0x4000);
+            D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu] = func_80019060(D_800FAD98_DebugMinigameMenu, 0, 1);
+            func_80018D44((u16)D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0x4000);
             func_80018D84(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0x8000);
             SetBasicSpriteSize(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0.75f, 0.75f);
             func_80018DC4(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 8.0f);
-            SetBasicSpritePos(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], x, (y - D_800FA4AE_DebugMinigameMenu) + dy2 + 8);
+            SetBasicSpritePos((u16)D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], x, (y - (u16)D_800FA4AC_DebugMinigameMenu) + dy2 + 8);
             func_80018F68(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0xFF, 0xFF, 0xBE);
             D_800FA4B0_DebugMinigameMenu++;
-            p = (u16*)&D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu];
-            *p = func_80019060(D_800FAD98_DebugMinigameMenu, 0, 1);
-            func_80018D44(*p, 0x4000);
+            D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu] = func_80019060(D_800FAD98_DebugMinigameMenu, 0, 1);
+            func_80018D44((u16)D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0x4000);
             func_80018D84(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0x8000);
             SetBasicSpriteSize(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0.75f, 0.75f);
             func_80018DC4(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 8.0f);
-            SetBasicSpritePos(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu],
+            SetBasicSpritePos((u16)D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu],
                               x + strlen(D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].name) * 8,
-                              (y - D_800FA4AE_DebugMinigameMenu) + dy2 + 8);
+                              (y - (u16)D_800FA4AC_DebugMinigameMenu) + dy2 + 8);
             func_80018F68(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0xFF, 0xFF, 0xBE);
             D_800FA4B0_DebugMinigameMenu++;
             D_800FA4B4_DebugMinigameMenu = 4;
         }
         D_800FA4AC_DebugMinigameMenu += 4;
-        t = (y - D_800FA4AC_DebugMinigameMenu) + 12;
+        t = (y - D_800FA4AC_DebugMinigameMenu) + dy1;
         if (y < t) {
             dy1 = t - y;
         }
-        t = (y - D_800FA4AC_DebugMinigameMenu) + 6;
+        t = (y - D_800FA4AC_DebugMinigameMenu) + dy2;
         if (y < t) {
             dy2 = t - y;
         }
         fontcolor = 9;
-        print8(x, (y - D_800FA4AE_DebugMinigameMenu) + dy1, pfStrBuf);
+        print8(x, (y - (u16)D_800FA4AC_DebugMinigameMenu) + dy1, pfStrBuf);
         fontcolor = 0xD;
-        print8(x, (y - D_800FA4AE_DebugMinigameMenu) + dy2, pfStrBuf);
+        print8(x, (y - (u16)D_800FA4AC_DebugMinigameMenu) + dy2, pfStrBuf);
     }
     for (i = 0; i < D_800FA4B0_DebugMinigameMenu; i++) {
-        if ((s16)D_800FADA0_DebugMinigameMenu[i] != -1 && (func_80018ED8(D_800FADA0_DebugMinigameMenu[i]) & 6)) {
+        if (D_800FADA0_DebugMinigameMenu[i] != -1 && (func_80018ED8(D_800FADA0_DebugMinigameMenu[i]) & 6)) {
             func_800191F8(D_800FADA0_DebugMinigameMenu[i]);
             D_800FADA0_DebugMinigameMenu[i] = -1;
         }
     }
     x = (u32)(320 - strlen(pfStrBuf) * 8) >> 1;
     fontcolor = 7;
-    print8(x + 1, (y + 1) - D_800FA4AE_DebugMinigameMenu, pfStrBuf);
+    print8(x + 1, (y + 1) - (u16)D_800FA4AC_DebugMinigameMenu, pfStrBuf);
     fontcolor = 0xF;
-    print8(x, y - D_800FA4AE_DebugMinigameMenu, pfStrBuf);
+    print8(x, y - (u16)D_800FA4AC_DebugMinigameMenu, pfStrBuf);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_800F855C_DebugMinigameMenu);
@@ -823,8 +802,6 @@ void func_800F8A24_DebugMinigameMenu(omObjData* arg0) {
     arg0->func_ptr = func_800F8A34_DebugMinigameMenu;
 }
 
-// character select: layout and register allocation (masked ~126, logic per m2c)
-#ifdef NON_MATCHING
 void func_800F8A34_DebugMinigameMenu(omObjData* arg0) {
     u8 avail[6];
     DebugMgEntry* e;
@@ -834,6 +811,7 @@ void func_800F8A34_DebugMinigameMenu(omObjData* arg0) {
     s32 c;
     u16 col;
     s32 ovl;
+    u8 k;
 
     if (D_800FAD90_DebugMinigameMenu == 1) {
         if (func_80072718() == 0) {
@@ -847,15 +825,15 @@ void func_800F8A34_DebugMinigameMenu(omObjData* arg0) {
                     SetBoardFeatureFlag(0x2B);
                 }
                 if (D_800F370E == 0) {
-                    ovl = D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].ovl;
-                } else {
-                    ovl = D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].ovl;
-                    if (!((ovl == 0x7A) | (ovl == 0x7E))) {
-                        omOvlCallEx(0x6F, 0, 0x84);
-                        return;
-                    }
+                    omOvlCallEx(D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].ovl, 0, 0x94);
+                    return;
                 }
-                omOvlCallEx(ovl, 0, 0x94);
+                ovl = D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].ovl;
+                if ((ovl == 0x7A) | (ovl == 0x7E)) {
+                    omOvlCallEx(ovl, 0, 0x94);
+                    return;
+                }
+                omOvlCallEx(0x6F, 0, 0x84);
                 return;
             }
             if (D_800C5970 == 1) {
@@ -869,7 +847,8 @@ void func_800F8A34_DebugMinigameMenu(omObjData* arg0) {
         ready += D_800FAD50_DebugMinigameMenu[i] == 1;
     }
     if (ready == D_800F3778) {
-        for (p = D_800F3779, n = 0; p < 4; p++, n = 0) {
+        for (p = (u8)D_800F3778; p < 4; p++) {
+            n = 0;
             for (i = 0; i < 6; i++) {
                 avail[i] = 0;
             }
@@ -880,10 +859,12 @@ void func_800F8A34_DebugMinigameMenu(omObjData* arg0) {
             }
             if (n == 1) {
                 GwPlayer[p].character = avail[0];
+                D_800FAD54_DebugMinigameMenu[avail[0]] = 1;
             } else {
-                GwPlayer[p].character = avail[rand8() % n];
+                k = rand8() % n;
+                GwPlayer[p].character = avail[k];
+                D_800FAD54_DebugMinigameMenu[avail[k]] = 1;
             }
-            D_800FAD54_DebugMinigameMenu[GwPlayer[p].character] = 1;
         }
         func_800726AC(0, 0x14);
         D_800FAD90_DebugMinigameMenu = 1;
@@ -968,9 +949,6 @@ void func_800F8A34_DebugMinigameMenu(omObjData* arg0) {
         func_800F95F8_DebugMinigameMenu(i * 0x38 + 0x38, 0x90, pfStrBuf, 0xF, 7);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_800F8A34_DebugMinigameMenu);
-#endif
 
 void func_800F9400_DebugMinigameMenu(u16 se) {
     func_8006035C(PlaySound(D_800FA3F0_DebugMinigameMenu[se].id), D_800FA3F0_DebugMinigameMenu[se].vol);
