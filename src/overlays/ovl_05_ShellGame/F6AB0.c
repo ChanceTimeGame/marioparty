@@ -1847,7 +1847,8 @@ void func_800FC7B0_ShellGame(u16 result) {
 }
 /* Builds the scrolling backdrop: `strips` rows of the I8 image `image`, each cut into tiles,
    scaled by (sx, sy) and scrolled by D_800FF728[row] (ovl_20 KnockBlockTower's func_800FA9B0). */
-// NON_MATCHING: logic-equivalent rewrite; the asm interleaves the display-list writes differently
+// NON_MATCHING: register allocation and stack-slot order (masked 31; was 88 before shx/shy became
+// s16 and the x offset a separate temp); an s16 y0 made it worse
 #ifdef NON_MATCHING
 void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16 strips, f32 sx, f32 sy) {
     unk65770AnimC* frame;
@@ -1855,10 +1856,11 @@ void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16
     s16 w;
     u16 h;
     u16 sw;
-    s32 shx;
-    s32 shy;
+    s16 shx;
+    s16 shy;
     s32 x0;
     s32 y0;
+    s32 ox;
     s32 n;
     s32 rows;
     s32 th;
@@ -1869,11 +1871,12 @@ void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16
     timg = frame->unk0;
     h = frame->unk6;
     sw = (s32)(frame->unk4 * sx);
+    ox = (u16)frame->unk8 * sx;
     y0 = y - (s32)((u16)frame->unkA * sy);
     shx = sx / 2.0f;
     shy = sy / 2.0f;
     w = frame->unk4;
-    x0 = x - (s32)((u16)frame->unk8 * sx);
+    x0 = x - ox;
     if (w < 81) {
         n = (s16)((s16)h / 40);
     } else if (w < 161) {
