@@ -823,8 +823,6 @@ f32 func_800F8918_FlowerShower(omObjData* arg0, f32 arg1, f32 arg2, f32 arg3, Ve
     return var_f20;
 }
 
-// branch tails merged differently, register allocation (masked 28)
-#ifdef NON_MATCHING
 void func_800F898C_FlowerShower(omObjData* arg0, u16* arg1) {
     Vec3f dir;
     FlowerShowerPlayerWork* work;
@@ -841,7 +839,6 @@ void func_800F898C_FlowerShower(omObjData* arg0, u16* arg1) {
     f32 dy;
     f32 dz;
     f32 a;
-    f32 s;
     s32 i;
     s32 moved;
     s8 port;
@@ -923,9 +920,8 @@ void func_800F898C_FlowerShower(omObjData* arg0, u16* arg1) {
         dir.x = func_800AEAC0(a) * 220.0f - arg0->trans.x;
         dir.z = func_800AEFD0(a) * 220.0f - arg0->trans.z;
         func_8002956C(&dir);
-        s = skill * 45.0f;
-        dir.x = s * dir.x;
-        dir.z = s * dir.z;
+        dir.x = skill * 45.0f * dir.x;
+        dir.z = skill * 45.0f * dir.z;
         ContStkX[port] = dir.x;
         ContStkY[port] = -dir.z;
     } else if ((moved == 0) & (target != NULL)) {
@@ -952,16 +948,12 @@ void func_800F898C_FlowerShower(omObjData* arg0, u16* arg1) {
         dir.x = func_800AEAC0(a) * 150.0f - arg0->trans.x;
         dir.z = func_800AEFD0(a) * 150.0f - arg0->trans.z;
         func_8002956C(&dir);
-        s = skill * 48.0f;
-        dir.x = s * dir.x;
-        dir.z = s * dir.z;
+        dir.x = skill * 48.0f * dir.x;
+        dir.z = skill * 48.0f * dir.z;
         ContStkX[port] = dir.x;
         ContStkY[port] = -dir.z;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_FlowerShower/1BD640", func_800F898C_FlowerShower);
-#endif
 void func_800F90AC_FlowerShower(omObjData* arg0) {
     s32 temp_s0;
     s32 temp_s0_2;

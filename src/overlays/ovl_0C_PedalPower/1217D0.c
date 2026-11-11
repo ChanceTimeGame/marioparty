@@ -218,7 +218,7 @@ void func_800F6D2C_PedalPower(omObjData* arg0) {
     func_80025830(arg0->model[1], 2.0f, 2.0f, 2.0f);
 }
 
-// register allocation of the rand8() & 3 temp (masked 0)
+// register allocation of the rand8() & 3 temp (masked 0, raw 5); tried % 4, a held temp, 60 + 30 * x
 #ifdef NON_MATCHING
 void func_800F6ED0_PedalPower(omObjData* arg0) {
     s32 snd;

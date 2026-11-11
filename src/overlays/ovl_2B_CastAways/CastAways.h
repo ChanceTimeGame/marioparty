@@ -178,7 +178,7 @@ extern s16 D_800FBB42_CastAways;
 extern s16 D_800FBB44_CastAways;
 extern s16 D_800FBB46_CastAways;
 extern omObjData* D_800FBB48_CastAways[3];
-extern s16 D_800FBB54_CastAways;
+extern u16 D_800FBB54_CastAways;
 extern s16 D_800FBB56_CastAways;
 extern u16 D_800FBB58_CastAways;
 extern u16 D_800FBB5A_CastAways;

@@ -975,7 +975,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_CastAways);
 #endif
-// register allocation and block order
+// register allocation only (masked 0, raw 7: z/y registers in the castState == 4 block); tried y = z - b; y *= s, separate locals
 #ifdef NON_MATCHING
 void func_800F92FC_CastAways(omObjData* arg0) {
     CastAwaysRodWork* rod;
@@ -989,10 +989,9 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     f32 half;
     f32 y;
     f32 z;
+    f32 fishX;
     f32 fishY;
     f32 fishZ;
-    f32 drop;
-    u16 n;
 
     reel = 0;
     if (D_800FBB7C_CastAways != 1) {
@@ -1003,7 +1002,8 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     event = arg0->unk_10;
     if (event != 0) {
         arg0->unk_10 = 0;
-        if (event == D_800FBB7C_CastAways) {
+        switch (event) {
+        case 1:
             if (rod->state == 0) {
                 rod->state = 1;
                 rod->counter = 0;
@@ -1012,15 +1012,19 @@ void func_800F92FC_CastAways(omObjData* arg0) {
                 rod->startY = arg0->trans.y;
                 rod->stepZ = fabsf((half + half) / 45.0f);
                 rod->stepY = rod->velY;
-                rod->gravity = fabsf((rod->velY + rod->velY) / 41.0f);
+                rod->gravity = fabsf((rod->stepY + rod->stepY) / 41.0f);
                 func_800258EC(player->spriteData->model, 4, 0);
                 player->sound = func_80060540(0x314, player->playerNo);
             }
-        } else if (event == 2) {
+            break;
+        case 2:
             reel = 1;
+            break;
         }
     }
     switch (rod->state) {
+    case 0:
+        break;
     case 1:
         z = arg0->trans.z - rod->stepZ;
         y = arg0->trans.y - fabs(rod->stepY) * rod->stepY;
@@ -1041,6 +1045,7 @@ void func_800F92FC_CastAways(omObjData* arg0) {
                 continue;
             }
             fishWork = fish[i]->unk_50;
+            fishX = fish[i]->trans.x;
             if (fishWork->type != 2) {
                 fishY = fish[i]->trans.y;
                 fishZ = fish[i]->trans.z;
@@ -1049,7 +1054,7 @@ void func_800F92FC_CastAways(omObjData* arg0) {
                 fishZ = fish[i]->trans.z - -150.0f;
             }
             if ((u16)func_800FB4D4_CastAways(arg0->trans.x, arg0->trans.y + 8.0f, arg0->trans.z, fishWork->type,
-                                             fish[i]->trans.x, fishY, fishZ) != 1) {
+                                             fishX, fishY, fishZ) != 1) {
                 continue;
             }
             player->sound = func_80060540(0x315, player->playerNo);
@@ -1151,8 +1156,8 @@ void func_800F92FC_CastAways(omObjData* arg0) {
             player->samples[player->sampleCount].x = arg0->trans.x;
             player->samples[player->sampleCount].y = arg0->trans.y;
             player->samples[player->sampleCount].z = arg0->trans.z;
-            n = player->sampleCount;
-            if (n >= 2 && player->samples[n - 1].z < player->samples[n].z) {
+            if (player->sampleCount >= 2 &&
+                player->samples[player->sampleCount].z > player->samples[player->sampleCount - 1].z) {
                 player->sampleCount--;
                 player->samples[player->sampleCount].x = arg0->trans.x;
                 player->samples[player->sampleCount].y = arg0->trans.y;
@@ -1163,7 +1168,8 @@ void func_800F92FC_CastAways(omObjData* arg0) {
             }
             if (++rod->counter == 5) {
                 rod->state = 2;
-                if (++arg0->work[0] == rod->steps) {
+                arg0->work[0]++;
+                if (arg0->work[0] == rod->steps) {
                     rod->state = 0;
                     func_800258EC(player->spriteData->model, 4, 4);
                     player->castState = 1;
@@ -1189,13 +1195,12 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     }
     if (rod->state != 0) {
         if (player->castState == 2) {
-            drop = 7.0f;
+            func_800F9EAC_CastAways(player, 7.0f);
         } else if (player->castState == 1) {
-            drop = 7.0f;
+            func_800F9EAC_CastAways(player, 7.0f);
         } else {
-            drop = 1.0f;
+            func_800F9EAC_CastAways(player, 1.0f);
         }
-        func_800F9EAC_CastAways(player, drop);
         func_800FB0C8_CastAways(player->spriteData, player->samples, player->sampleCount + 1);
     }
 }
@@ -1327,8 +1332,6 @@ void func_800FA198_CastAways(void) {
     }
     D_800FBA08_CastAways--;
 }
-// register allocation and block order
-#ifdef NON_MATCHING
 void func_800FA410_CastAways(void) {
     omObjData** players;
     omObjData** fish;
@@ -1341,6 +1344,7 @@ void func_800FA410_CastAways(void) {
     s16 slot;
     s16 id;
     u16 winners;
+    unk_800ECDE0* spr;
 
     players = func_8005DB44(4);
     switch (D_800FBB8C_CastAways) {
@@ -1375,15 +1379,15 @@ void func_800FA410_CastAways(void) {
                     fish[j]->model[0] = set->models[0][slot];
                     func_800258EC(fish[j]->model[0], 4, 0);
                     id = set->spriteIds[slot];
-                    obj = fish[j];
-                    omSetTra(obj, obj->trans.x, obj->trans.y - 30.0f, obj->trans.z - -150.0f);
+                    omSetTra(fish[j], fish[j]->trans.x, fish[j]->trans.y - 30.0f, fish[j]->trans.z - -150.0f);
                     omSetSca(fish[j], 8.0f, 8.0f, 8.0f);
                     break;
                 }
                 /* Retail reuses the previous id for any other type (none exist). */
-                D_800ECDE0[id].unk_02 = D_800FBB40_CastAways;
-                D_800ECDE0[id].unk_08 = 0;
-                D_800ECDE0[id].unk_04 = 0;
+                spr = &D_800ECDE0[id];
+                spr->unk_02 = D_800FBB40_CastAways;
+                spr->unk_08 = 0;
+                spr->unk_04 = 0;
                 func_8001E268(id, 6, 6);
                 func_8001E268(id, 1, 0);
                 func_8001E360(id, 0xFF, 0xFF, 0xBE);
@@ -1417,25 +1421,29 @@ void func_800FA410_CastAways(void) {
         break;
     case 1:
         for (i = 0; i < 4; i++) {
-            players[i]->rot.y -= 12.0f;
-            if (players[i]->rot.y < 0.0f) {
+            if ((players[i]->rot.y -= 12.0f) < 0.0f) {
                 players[i]->rot.y = 0.0f;
             }
         }
         if (players[0]->rot.y == 0.0f) {
-            D_800FBB8C_CastAways = (D_800FBB56_CastAways != 0) ? 7 : 2;
+            if (D_800FBB56_CastAways != 0) {
+                D_800FBB8C_CastAways = 7;
+            } else {
+                D_800FBB8C_CastAways = 2;
+            }
             for (i = 0; i < 4; i++) {
                 func_80025C20(players[i]->model[0], players[i]->motion[0xE], 0, 0xF, 2);
             }
         }
         break;
     case 2:
-        winners = 0;
         if (GMesStatAllGet() & 2) {
+            winners = 0;
             for (i = 0; i < 4; i++) {
-                if (((CastAwaysPlayerWork*)players[i]->unk_50)->catches != 0) {
-                    winners++;
+                work = players[i]->unk_50;
+                if (work->catches != 0) {
                     func_80025BB8(players[i]->model[0], players[i]->motion[0xC]);
+                    winners++;
                 } else {
                     func_80025BB8(players[i]->model[0], players[i]->motion[0xD]);
                 }
@@ -1501,9 +1509,6 @@ void func_800FA410_CastAways(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
-#endif
 // decomp-permuter
 s16 func_800FABE4_CastAways(u16 arg0)
 {

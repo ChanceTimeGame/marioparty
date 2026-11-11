@@ -544,8 +544,6 @@ void func_800F8BDC_GrabBag(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8BDC_GrabBag);
 #endif
-// register allocation (s7/s8, f22/f24); retail tests unk_EF == 1 through a set-compare (2 instructions, masked 26)
-#ifdef NON_MATCHING
 void func_800F903C_GrabBag(omObjData* arg0) {
     GrabBagPlayerWork* work0;
     GrabBagPlayerWork* work1;
@@ -556,6 +554,7 @@ void func_800F903C_GrabBag(omObjData* arg0) {
     f32 dist;
     f32 diff;
     f32 angle;
+    s32 first;
 
     work0 = GB_PLAYER(arg0);
     for (i = 0; i < 4; i++) {
@@ -639,7 +638,8 @@ void func_800F903C_GrabBag(omObjData* arg0) {
                     func_80060F04(work1->player, 2, 3, 10);
                 }
             }
-            if (work0->unk_EF == 1) {
+            first = work0->unk_EF == 1;
+            if (first) {
                 if (grabber == work0) {
                     work0->speed = 0.0f;
                     func_80025798(arg0->model[0], arg0->trans.x, 3.0f, arg0->trans.z);
@@ -689,9 +689,6 @@ void func_800F903C_GrabBag(omObjData* arg0) {
         arg0->trans.y = 3.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F903C_GrabBag);
-#endif
 void func_800F975C_GrabBag(GrabBagPlayerWork* arg0, s32 arg1) {
     D_800FB244_GrabBag[arg0->port] = ContBtn[arg0->port] & ~D_800FB11C_GrabBag[arg0->port];
     D_800FB11C_GrabBag[arg0->port] = ContBtn[arg0->port];
@@ -928,7 +925,7 @@ void func_800F9ED0_GrabBag(omObjData* arg0, omObjData* arg1) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
 #endif
 // control flow: GCC if-converts the ±1 returns and drops the final compare; frame 48 vs retail 24
-// (masked 39; tried inverted tests, a ret local with if/else)
+// (masked 39; tried inverted tests, a ret local with if/else, s32 temps for the rand tests, ret = a < b tail, goto to a shared return 1)
 #ifdef NON_MATCHING
 s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
     GrabBagPlayerWork* work0;

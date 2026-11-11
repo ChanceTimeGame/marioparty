@@ -366,7 +366,7 @@ void func_800F7430_DesertDash(omObjData* obj) {
     D_800FC00C_DesertDash = func_800F983C_DesertDash(obj, 2);
 }
 
-// register allocation only (masked 2: fabsf operand and the team->obj[0] load order in the func_80066DF4 call); tried fabsf(a - b) inline, d reused, (f32) cast
+// register allocation only (masked 0, raw 3: the fabsf operand registers); tried fabsf(a - b) inline, d reused, (f32) cast, z reused, v -= b
 #ifdef NON_MATCHING
 /* Per-frame driver of both teams' sleds, cameras and sprites. */
 void func_800F7C6C_DesertDash(omObjData* obj) {
@@ -594,7 +594,7 @@ void func_800F7C6C_DesertDash(omObjData* obj) {
             }
             func_800F95E8_DesertDash(i, 830.0f, (i * 2 - 1) * 100.0, 280.0f, team->obj[0]->trans.z, -17.25f,
                                      0.0f, 0.0f, 1);
-            func_80066DF4((s16)D_800FC3B4_DesertDash, (s16)i, (s16)i, D_800FC2E0_DesertDash[i] + team->obj[0]->trans.x,
+            func_80066DF4((s16)D_800FC3B4_DesertDash, (s16)i, (s16)i, team->obj[0]->trans.x + D_800FC2E0_DesertDash[i],
                           team->obj[0]->trans.y + 160.0, team->obj[0]->trans.z);
             spr = func_800675F4((s16)D_800FC3B4_DesertDash, (s16)i);
             func_80066DC4((s16)D_800FC3B8_DesertDash, (s16)i, spr->unk4, spr->unk6);
@@ -680,7 +680,7 @@ u16 func_800F8A80_DesertDash(f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D3990", func_800F8A80_DesertDash);
 #endif
 
-// register allocation only (s0..s3 permuted; masked 0)
+// register allocation only (s0..s3 permuted; masked 0, raw 61); declaration order of team/m/work has no effect
 #ifdef NON_MATCHING
 /* A player's per-frame update: pull input (stick pushes and shakes) and squash-and-stretch. */
 void func_800F8C34_DesertDash(omObjData* obj) {
