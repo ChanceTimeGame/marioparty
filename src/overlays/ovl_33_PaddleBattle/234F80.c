@@ -1544,16 +1544,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FBEE
 #endif
 
 /* A light ring over the river: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 39 lines)
-#ifdef NON_MATCHING
 void func_800FC39C_PaddleBattle(omObjData* obj) {
     PBRingWork* w;
-    s32 v;
 
     obj->model[0] = func_800174C0(0x120007, 0xDD);
     func_80026040(obj->model[0]);
-    w = func_80023684(sizeof(PBRingWork), 0x7918);
-    obj->unk_50 = w;
+    w = obj->unk_50 = func_80023684(sizeof(PBRingWork), 0x7918);
     func_8009B770(w, 0, sizeof(PBRingWork));
     w->idx = (u8)D_800FFBEA_PaddleBattle;
     obj->func_ptr = func_800FC784_PaddleBattle;
@@ -1562,7 +1558,7 @@ void func_800FC39C_PaddleBattle(omObjData* obj) {
     obj->trans.x = Center.x;
     obj->trans.y = Center.y + 800.0;
     obj->trans.z = Center.z;
-    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, Center.z);
+    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
     obj->scale.z = 0.5f;
     obj->scale.x = 0.5f;
     obj->scale.y = 0.5f;
@@ -1570,21 +1566,13 @@ void func_800FC39C_PaddleBattle(omObjData* obj) {
     w->scale = (f32)(PB_RAND16() * 80 / 65536) * 0.01 + 0.4;
     w->unk18 = (PB_RAND16() * 300 / 65536 + 100) * 0.002;
     w->unk1C = (PB_RAND16() * 300 / 65536 + 100) * 0.002;
-    v = D_800FFBEA_PaddleBattle * 16;
-    if (D_800FFBEA_PaddleBattle >= 4) {
-        v = PB_RAND16() * 63 / 65536;
-    }
-    obj->work[3] = v;
+    obj->work[3] = (D_800FFBEA_PaddleBattle < 4) ? D_800FFBEA_PaddleBattle * 16 : PB_RAND16() * 63 / 65536;
     obj->work[1] = 0;
     obj->work[0] = (u8)D_800FFBEA_PaddleBattle;
     func_80039C48("sin_dmy_DEF", D_800FFB68_PaddleBattle[D_800FFBEA_PaddleBattle]);
-    D_800FFBA8_PaddleBattle[D_800FFBEA_PaddleBattle] = 0.0f;
-    D_800FFB88_PaddleBattle[D_800FFBEA_PaddleBattle] = 0.0f;
+    D_800FFB88_PaddleBattle[D_800FFBEA_PaddleBattle] = D_800FFBA8_PaddleBattle[D_800FFBEA_PaddleBattle] = 0.0f;
     D_800FFBEA_PaddleBattle++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FC39C_PaddleBattle);
-#endif
 
 /* A light ring: appears over the bank the raft drifts toward, every 64 frames. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 22 lines)
