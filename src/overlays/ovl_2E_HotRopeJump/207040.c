@@ -937,8 +937,6 @@ void func_800F8FF4_HotRopeJump(s16 id) {
 
 /* Builds this frame's display list and quad of every visible billboard, then advances its
    animation. */
-// NON_MATCHING: scheduling and block layout of the animation tail
-#ifdef NON_MATCHING
 void func_800F9080_HotRopeJump(void) {
     Vtx* v;
     Gfx* gfx;
@@ -950,10 +948,11 @@ void func_800F9080_HotRopeJump(void) {
     s16 x;
     s16 y;
     s16 nh;
-    s16 len;
-    u16 count;
+    s32 len;
+    s32 count;
     s16 k;
     u16 i;
+    s32 more;
 
     v = D_801004E4_HotRopeJump[D_80100324_HotRopeJump];
     gfx = D_801004D8_HotRopeJump[D_80100324_HotRopeJump];
@@ -1066,7 +1065,7 @@ void func_800F9080_HotRopeJump(void) {
                         func_800F8FF4_HotRopeJump(i);
                         break;
                     }
-                    if (((fx->flags >> 1) & 1) | (len != -1)) {
+                    if (((fx->flags >> 1) & 1) | (more = (len != -1))) {
                         fx->frame--;
                         break;
                     }
@@ -1076,9 +1075,6 @@ void func_800F9080_HotRopeJump(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F9080_HotRopeJump);
-#endif
 
 /* Draws the billboards: each one's matrix (facing the camera unless unk_08) and display list, into
    the billboard model's list for this frame. */
