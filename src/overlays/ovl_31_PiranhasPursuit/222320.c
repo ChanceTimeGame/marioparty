@@ -549,7 +549,7 @@ void func_800F7AA0_PiranhasPursuit(omObjData* obj) {
 
 /* The solo runner: input (or the CPU), running, jumping over the course pieces, riding a log,
    being caught at the end, and the coin shower. */
-// NON_MATCHING: register allocation, CSE of the clamp/landing speed reloads, branchless index (masked 117 of 1779; calls, stores and constants equal)
+// NON_MATCHING: register allocation, CSE of the clamp/landing speed reloads (retail keeps w->unk_40 in f20), branchless index (masked 98; calls, stores and constants equal)
 #ifdef NON_MATCHING
 void func_800F8114_PiranhasPursuit(omObjData* obj) {
     Vec pos;
@@ -612,10 +612,11 @@ void func_800F8114_PiranhasPursuit(omObjData* obj) {
             p->unk40 = p->unk42 = p->unk44 = p->unk46 = 0;
             p->unk0 = 0;
             p->unk2 = 1;
+            p->unk38 = ry;
+            break;
         case 1:
         case 2:
         case 9:
-            p->unk38 = ry;
             break;
         case 3:
         case 4:
@@ -787,7 +788,7 @@ void func_800F8114_PiranhasPursuit(omObjData* obj) {
                     w->unk_40 = D_800B8980 * 0.8;
                 }
             } else if (GwPlayer[w->unk_58].flags & 1) {
-                if ((u32)(piece->unk2 - 5) >= 2) {
+                if ((u32)((u16)piece->unk2 - 5) >= 2) {
                     r = func_800F9D40_PiranhasPursuit() % (GwPlayer[w->unk_58].cpu_difficulty * 2 + 6);
                     if (dist <= (f32)((f32)(0.8f + (r + w->unk_40 * 0.075) * 0.1) * 100.0) + piece->unk4) {
                         if (piece->unk34 - obj->trans.x >= 0.0f) {
