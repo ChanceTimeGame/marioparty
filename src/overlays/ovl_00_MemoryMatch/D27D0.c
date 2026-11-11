@@ -223,12 +223,10 @@ void func_800FBC34_MemoryMatch(omObjData* arg0) {
     func_80025830(arg0->model[1], arg0->scale.x, arg0->scale.y, arg0->scale.z);
     D_800FE1DE_MemoryMatch++;
 }
-// register/schedule: retail copies i into v1/s0 per block, 6 instructions we lack (masked 32); tried u8 i (adds andi), compare operand order
-#ifdef NON_MATCHING
 void func_800FBF24_MemoryMatch(omObjData* arg0) {
-    s32 i = arg0->work[0];
+    s16 i = arg0->work[0];
     omObjData* player = D_800F3FB0[0];
-    f32 dx, dz, dist, s;
+    f32 dx, dz, dist;
 
     switch (D_800FE230_MemoryMatch[i] & 0x7FFF) {
     case 0:
@@ -290,12 +288,9 @@ void func_800FBF24_MemoryMatch(omObjData* arg0) {
         arg0->work[1]--;
     }
     func_80025798(arg0->model[1], arg0->trans.x, func_800F96A8_MemoryMatch(arg0->trans.x, arg0->trans.z), arg0->trans.z);
-    s = 75.0 / arg0->trans.y * 0.0625 + 0.0625;
-    func_80025830(arg0->model[1], s, 1.0f, s);
+    dist = 75.0 / arg0->trans.y * 0.0625 + 0.0625; /* the shadow scale */
+    func_80025830(arg0->model[1], dist, 1.0f, dist);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/D27D0", func_800FBF24_MemoryMatch);
-#endif
 void func_800FC5A4_MemoryMatch(omObjData* arg0) {
     unk_MemoryMatch_6C* w;
     s16 i;
