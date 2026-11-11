@@ -330,8 +330,6 @@ void func_800FA878_PiranhasPursuit(omObjData* obj) {
     func_800FA4CC_PiranhasPursuit(obj);
 }
 
-// NON_MATCHING: retail loads obj->model[0] after computing func_80027C1C's float argument (masked 4; trans.x numerator tried)
-#ifdef NON_MATCHING
 void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     PPPiece* p;
     f32 off;
@@ -350,7 +348,8 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     y2 = -40.0f;
     off = 0.0f;
     obj->trans.x = D_801012D0_PiranhasPursuit;
-    func_80027C1C(obj->model[0], D_801012D0_PiranhasPursuit / (obj->scale.x * 24.0), 0.0f, 64, 64);
+    t = D_801012D0_PiranhasPursuit / (obj->scale.x * 24.0);
+    func_80027C1C(obj->model[0], t, 0.0f, 64, 64);
     p = D_80101124_PiranhasPursuit;
     for (i = 0; i < 14; i++, p++) {
         if (p->pos.x < obj->trans.x - 1500.0f) {
@@ -429,9 +428,6 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
         func_80066DC4(D_80101128_PiranhasPursuit[1], 0, bx + 320.0f, y);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FAEE8_PiranhasPursuit);
-#endif
 
 void func_800FB590_PiranhasPursuit(void) {
     HuMemDirectFree(D_80101124_PiranhasPursuit);
@@ -446,6 +442,8 @@ void func_800FB5C8_PiranhasPursuit(f32 x) {
 /* Builds the course: 23 pieces from the start (-15900) to the goal (16000). */
 // NON_MATCHING: retail sign-extends the running piece index at each call (sll/sra, 46 instructions; masked 48),
 // as if the 5th parameter were s32 at the call site; s32, u16 and s16 n tried (abs() matched the max loop)
+// M1g: retail folds every index to base+k (n0+1 in s2; s32-style CSE) and stores D_80101134 = n (22);
+// s32 n with D_80101134 = n and separate n++ statements give in-place increments instead (masked 62)
 #ifdef NON_MATCHING
 void func_800FB5D4_PiranhasPursuit(s16* models) {
     PPPiece* p;
@@ -1442,18 +1440,18 @@ void func_800FF450_PiranhasPursuit(void) {
 }
 
 /* While the plant snaps (motion 4) it catches the runner if it is in reach. */
-// NON_MATCHING: retail loads D_800F2B7C before plant->model[3] (masked 4; tried (D_800F2B7C + i)->unk_48)
-#ifdef NON_MATCHING
 void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant) {
     Vec2f d;
     Vec2f r;
     Vec2f p;
     f32 frame;
     s16 se;
+    unk_ovl_2D_struct* m;
     PPPlant* pp = &D_80101150_PiranhasPursuit;
 
     if (((runner != NULL) & (plant != NULL)) && pp->state == 4) {
-        frame = D_800F2B7C[plant->model[3]].unk_48;
+        m = D_800F2B7C;
+        frame = m[plant->model[3]].unk_48;
         if (((frame >= 15.0f) & (frame <= 17.0f)) || ((frame >= 63.0f) & (frame <= 65.0f))) {
             p.x = plant->trans.x + pp->unk28 * 200.0;
         } else if ((frame >= 40.0f) & (frame <= 42.0f)) {
@@ -1484,9 +1482,6 @@ void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FF470_PiranhasPursuit);
-#endif
 
 typedef struct PPScaleSteps {
     f32 v[7][2];
