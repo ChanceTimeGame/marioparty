@@ -664,12 +664,13 @@ void func_800F8314_MemoryMatch(void) {
     }
 }
 
-// range test folded into sltiu; retail slti+bltz (masked 8)
-#ifdef NON_MATCHING
 s16 func_800F84A8_MemoryMatch(s16 arg0) {
     u16 i;
 
-    if (arg0 >= 9 || arg0 < 0) {
+    if (arg0 >= 9) {
+        return -1;
+    }
+    if (arg0 < 0) {
         return -1;
     }
     for (i = 0; i < 9; i++) {
@@ -699,9 +700,6 @@ s16 func_800F84A8_MemoryMatch(s16 arg0) {
     }
     return D_800FE2E8_MemoryMatch[arg0]->work[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800F84A8_MemoryMatch);
-#endif
 // retail reloads every global, keeps a 0x18 frame and a dead li a0,5 (a deleted call?) (masked 24;
 // pool-B accesses are those reloads only, same referents). M1e: a call to a const-attributed
 // f(5) there gives the 0x18 frame but GCC drops it before allocation, so no reloads (masked 22).
@@ -1592,8 +1590,6 @@ void func_800FAF9C_MemoryMatch(omObjData *arg0)
     }
   }
 }
-// retail keeps 0.0f in f20 and passes it as a1 (masked 11)
-#ifdef NON_MATCHING
 void func_800FB0A8_MemoryMatch(omObjData* arg0) {
     unk_MemoryMatch_2C* work;
 
@@ -1608,11 +1604,9 @@ void func_800FB0A8_MemoryMatch(omObjData* arg0) {
     work->unk_05 = 0;
     func_80008FC4(arg0, 20.0f);
     func_80008FB8(arg0, 1.0f);
-    func_80009028(D_800F2AF8[0], 0, -550.0f, -500.0f, 550.0f, 500.0f);
+    /* retail passed an f32 0.0f (func_80009028 stores the bits into a float field) */
+    ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(D_800F2AF8[0], 0.0f, -550.0f, -500.0f, 550.0f, 500.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800FB0A8_MemoryMatch);
-#endif
 void func_800FB1B0_MemoryMatch(void) {
 }
 
