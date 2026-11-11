@@ -1,6 +1,8 @@
 #include "common.h"
 #include "ShellGame.h"
 
+int abs(int);
+
 /* .data (0x800FEC10..0x800FEC40) */
 u32 D_800FEC10_ShellGame = 0x19971204;
 s16 D_800FEC14_ShellGame = 1;
@@ -702,8 +704,6 @@ void func_800F87CC_ShellGame(void) {
         p->unk24 = p->unk26 = p->unk28 = p->unk2A = 0;
     }
 }
-// NON_MATCHING: retail keeps |dx|,|dy| in registers after the stack stores
-#ifdef NON_MATCHING
 void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 type) {
     unk65770Obj* o;
     f32 p0[2];
@@ -712,8 +712,6 @@ void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 typ
     f32 len;
     f32 ang;
     SGSprite* p;
-    s32 dx;
-    s32 dy;
     s16 i;
 
     ang = 0.0f;
@@ -731,16 +729,8 @@ void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 typ
         o = func_800675F4(p->unk2, 0);
         p1[0] = o->unk40;
         p1[1] = o->unk42;
-        dx = p1[0] - p0[0];
-        if (dx < 0) {
-            dx = -dx;
-        }
-        d[0] = dx;
-        dy = p1[1] - p0[1];
-        if (dy < 0) {
-            dy = -dy;
-        }
-        d[1] = dy;
+        d[0] = abs((s32)(p1[0] - p0[0]));
+        d[1] = abs((s32)(p1[1] - p0[1]));
         len = sqrtf(d[0] * d[0] + d[1] * d[1]);
         ang = func_800F7398_ShellGame(p0[0] - p1[0], p0[1] - p1[1]);
         if (ang < 360.0) {
@@ -786,9 +776,6 @@ void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 typ
         func_800671DC(p->unk2, 0, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F88E8_ShellGame);
-#endif
 // NON_MATCHING: constant hoisting / FP register allocation
 #ifdef NON_MATCHING
 void func_800F8CF8_ShellGame(void) {
