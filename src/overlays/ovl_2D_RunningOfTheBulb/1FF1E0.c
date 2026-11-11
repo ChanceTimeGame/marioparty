@@ -849,16 +849,15 @@ void func_800F8EA0_RunningOfTheBulb(omObjData* arg0) {
     ContBtnTrg[temp_s0] = temp_s6;
 }
 
-// port read lb vs retail lbu+sign-extend, register allocation
-#ifdef NON_MATCHING
 void func_800F9094_RunningOfTheBulb(omObjData* arg0) {
     RotbPlayerWork* work;
+    RotbPlayerWork* lead;
     omObjData* other;
     s16* btnp;
     u16* trgp;
     f32 angle;
     s32 i;
-    s32 port;
+    s16 port;
     u8 stkX;
     u8 stkY;
     u16 btn;
@@ -868,7 +867,8 @@ void func_800F9094_RunningOfTheBulb(omObjData* arg0) {
     port = work->unk_56;
     stkX = ContStkX[(u16)port];
     stkY = ContStkY[(u16)port];
-    btnp = &ContBtn[(u16)port];
+    btnp = ContBtn;
+    btnp = &btnp[(u16)port];
     btn = *btnp;
     trgp = &ContBtnTrg[(u16)port];
     trg = *trgp;
@@ -903,12 +903,15 @@ void func_800F9094_RunningOfTheBulb(omObjData* arg0) {
             } else {
                 ContStkY[(u16)port] = 80;
             }
-        } else if (arg0->trans.z <= -1770.0f && ROTB_PLAYER(D_800FE4A0_RunningOfTheBulb)->unk_38 != 1000.0f) {
-            angle = func_800FCEA0_RunningOfTheBulb(arg0, NULL, D_800FE364_RunningOfTheBulb[work->unk_58][0], D_800FE364_RunningOfTheBulb[work->unk_58][1], 40.0f, 250.0f);
-            ContStkX[(u16)port] = func_800AEAC0(angle) * 80.0f;
-            ContStkY[(u16)port] = -func_800AEFD0(angle) * 80.0f;
         } else {
-            goto turn;
+            lead = ROTB_PLAYER(D_800FE4A0_RunningOfTheBulb);
+            if (arg0->trans.z <= -1770.0f && lead->unk_38 != 1000.0f) {
+                angle = func_800FCEA0_RunningOfTheBulb(arg0, NULL, D_800FE364_RunningOfTheBulb[work->unk_58][0], D_800FE364_RunningOfTheBulb[work->unk_58][1], 40.0f, 250.0f);
+                ContStkX[(u16)port] = func_800AEAC0(angle) * 80.0f;
+                ContStkY[(u16)port] = -func_800AEFD0(angle) * 80.0f;
+            } else {
+                goto turn;
+            }
         }
         break;
     case 1:
@@ -927,9 +930,6 @@ void func_800F9094_RunningOfTheBulb(omObjData* arg0) {
     ContBtn[(u16)port] = btn;
     ContBtnTrg[(u16)port] = trg;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800F9094_RunningOfTheBulb);
-#endif
 void func_800F947C_RunningOfTheBulb(omObjData* arg0, f32 arg1) {
     RotbPlayerWork* work = arg0->unk_50;
     RotbPlayerExt* ext = work->unk_E4;
