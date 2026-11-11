@@ -1026,8 +1026,6 @@ void func_800F9724_RunningOfTheBulb(omObjData* arg0) {
     D_800EDE70[D_800EE984++] = arg0;
     arg0->func_ptr = &func_800F9C2C_RunningOfTheBulb;
 }
-// mul.s operand order in s * dist (raw 1, masked 0); tried inline call both orders, *= then += (M1c)
-#ifdef NON_MATCHING
 void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* ext;
     f32 z;
@@ -1036,6 +1034,7 @@ void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
     f32 s;
     f32 xs;
     f32 y;
+    f32 pz;
     u8 r;
 
     ext = ROTB_BODY(arg0)->unk_68.bulb;
@@ -1066,9 +1065,9 @@ void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
         xs += 650.0f;
     }
     s = func_800AEAC0(angle);
-    dist = s * dist + z;
-    if (D_800FE478_RunningOfTheBulb->trans.z - 200.0f < dist) {
-        dist = D_800FE478_RunningOfTheBulb->trans.z - 1000.0f;
+    pz = s * dist + z;
+    if (D_800FE478_RunningOfTheBulb->trans.z - 200.0f < pz) {
+        pz = D_800FE478_RunningOfTheBulb->trans.z - 1000.0f;
     }
     rand8();
     y = (u8)(rand8() % 10) + 120.0f;
@@ -1076,16 +1075,13 @@ void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
     func_800211BC(arg0->model[2], 0xEF);
     ext->unk_04 = 0x10;
     ext->unk_2C = ext->unk_30 = ext->unk_34 = 0.0f;
-    omSetTra(arg0, xs, y, dist);
+    omSetTra(arg0, xs, y, pz);
     omSetSca(arg0, 1.0f, 1.0f, 1.0f);
     func_800FA36C_RunningOfTheBulb(arg0);
     func_800258EC(arg0->model[0], 4, 0);
     func_800258EC(arg0->model[2], 4, 0);
     func_8009ECB0(D_800F2B7C[arg0->model[0]].unk7C, 0.0f, ext->unk_20, 0.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800F98F0_RunningOfTheBulb);
-#endif
 void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
     f32 dist;
     RotbBodyWork* body;

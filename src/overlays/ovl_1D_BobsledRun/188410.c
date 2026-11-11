@@ -419,6 +419,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800F6F20_
 /* The bobsled (D_800F3FB0[team]): steering, jumps, bumps and both cameras. */
 // trans.y kept in an integer register (z in f30), the bump branches not cross-jumped, block layout,
 // ground0 read lbu+sll/sra; M1f matched the fade-out sprite call (masked ~227 incl. the unit's .bss shift)
+// M1h: the census field/store flag is the .bss-relative relocations plus GCC cross-jumping the 0.1f and
+// 0.15f bump arms (one unk_40 store fewer); logic checked equal
 #ifdef NON_MATCHING
 void func_800F78F4_BobsledRun(omObjData* obj) {
     s16 stkX;
@@ -2022,7 +2024,7 @@ f32 func_800FCA48_BobsledRun(s32 team, f32 value) {
 }
 
 /* Mean of the last six stick samples, packed (x << 16) | y. */
-// register allocation (masked 0, raw 15): x/i swap a0/a1; tried shift/mask reads, declaration order (M1c)
+// register allocation (masked 0, raw 15): x/i swap a0/a1; tried shift/mask reads, declaration order (M1c), y += (M1h)
 #ifdef NON_MATCHING
 s32 func_800FCAC0_BobsledRun(omObjData* obj) {
     BRWork* work;
