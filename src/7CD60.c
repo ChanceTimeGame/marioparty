@@ -230,7 +230,8 @@ s32 func_8007C818(u8* dcrun, BitStream* buf, BitStream* runbuf) {
     return 0;
 }
 
-// register allocation and spill-slot choice under -O3 (pointer locals spilled in retail; masked ~130)
+// register allocation and spill-slot choice under -O3 (pointer locals spilled in retail; masked 147: the opcode
+// mix is identical except retail has three more spill lw/sw pairs)
 #ifdef NON_MATCHING
 void func_8007CA90(void) {
     u8 dcrun[3];
@@ -396,7 +397,8 @@ void func_8007CE28(u8* arg0) {
     
 }
 
-// register allocation, and the abs/max tests take bgez/bnezl instead of bltzl/beqz (masked 76)
+// register allocation, and the abs/max tests take bgez/bnezl instead of bltzl/beqz (masked 84; tried the MP3
+// hvq.c s16 abs/max shape, block++ after the max test, a ternary abs: all worse)
 #ifdef NON_MATCHING
 void func_8007CFCC(s16* block, s32* scale, s32 plane) {
     u16 code;
@@ -517,86 +519,82 @@ void func_8007D470(s16* block, s32 nbasis, s32 dc, s32 plane) {
     }
 }
 
-// retail sign-extends the s16 temporaries and stores the 16 results last; scheduling and registers (masked 45)
+// MP3 hvq.c func_80066A44_main shape (s16 results stored last). Retail sign-extends the four corner sums
+// (ur/dr/ul/dl) and GCC drops them here: masked 18, 126 of 134 (s16 sums: 42; s16 c2/downv or s32 u8s: worse).
+// Logic-equivalent: the sums fit in s16 and only the low 16 bits of each shift are stored.
 #ifdef NON_MATCHING
 void func_8007DA48(s16* block, unkStruct_D_800E6EC8* info, s32 plane) {
-    u8 bn;
-    u8 dc;
-    u8 right;
-    u8 up;
-    u8 down;
-    u8 left;
-    s32 c2;
-    u32 base;
-    s16 dr;
-    s16 ur;
-    s16 ul;
-    s16 dl;
-    s32 ud;
-    s32 lr;
-    s32 s0;
-    s32 s1;
-    u32 t0;
-    u32 t1;
-    u32 t2;
-    u32 t3;
-    s32 t4;
-    s32 t5;
-    s32 ulx;
-    s32 urx;
-    s32 dlx;
-    s32 drx;
+    s32 bn = info->cur.bn;
+    u8 dc = info->cur.dc;
 
-    bn = info->cur.bn;
-    dc = info->cur.dc;
     if (bn == 0) {
+        s16* p = block;
+        u8 right, up, down, left;
+        s32 base, c2;
+        s32 downv, rightv;
+        s32 ud, lr, s0, s1;
+        s32 urx, drx, ulx, dlx;
+        s32 ur, dr, ul, dl;
+        s16 p0, p1, p2, p3;
+        s16 p4, p5, p6, p7;
+        s16 p8, p9, p10, p11;
+        s16 p12, p13, p14;
+
         right = dc;
         if (info->next.bn == 0) {
             right = info->next.dc;
         }
-        up = dc;
-        if (info->unk0->bn == 0) {
-            up = info->unk0->dc;
-        }
-        down = dc;
-        if (info->unk8->bn == 0) {
-            down = info->unk8->dc;
-        }
+        up = info->unk0->bn == 0 ? info->unk0->dc : dc;
+        down = info->unk8->bn == 0 ? info->unk8->dc : dc;
         left = info->left;
-        c2 = dc * 2;
-        base = (dc * 8) | 4;
-        dr = (down + right) - c2;
-        ur = (up + right) - c2;
-        ul = (up + left) - c2;
-        dl = (left + down) - c2;
+        downv = down;
+        rightv = right;
+        c2 = dc << 1;
+        base = (dc << 3) | 4;
+        dr = downv + rightv - c2;
         ud = up - down;
         lr = left - right;
         s0 = ud + lr;
         s1 = ud - lr;
-        t0 = base + s0;
-        t1 = base + s1;
-        t2 = base - s1;
-        t3 = base - s0;
-        ulx = up - left;
         urx = up - right;
-        dlx = down - left;
         drx = down - right;
-        block[0] = (t0 + ul) >> 3;
-        block[1] = (t0 + ulx) >> 3;
-        block[2] = (t1 + urx) >> 3;
-        block[3] = (t1 + ur) >> 3;
-        block[4] = (t0 - ulx) >> 3;
-        block[5] = (base - dr) >> 3;
-        block[6] = (base - dl) >> 3;
-        block[7] = (t1 - urx) >> 3;
-        block[8] = (t2 - dlx) >> 3;
-        block[9] = (base - ur) >> 3;
-        block[10] = (base - ul) >> 3;
-        block[11] = (t3 - drx) >> 3;
-        block[12] = (t2 + dl) >> 3;
-        block[13] = (t2 + dlx) >> 3;
-        block[14] = (t3 + drx) >> 3;
-        block[15] = (t3 + dr) >> 3;
+        ulx = up - left;
+        dlx = down - left;
+        ur = up + right - c2;
+        ul = up + left - c2;
+        dl = left + down - c2;
+
+        p0 = (base + s0 + ul) >> 3;
+        p1 = (base + s0 + ulx) >> 3;
+        p2 = (base + s1 + urx) >> 3;
+        p3 = (base + s1 + ur) >> 3;
+        p4 = (base + s0 - ulx) >> 3;
+        p5 = (base - dr) >> 3;
+        p6 = (base - dl) >> 3;
+        p7 = (base + s1 - urx) >> 3;
+        p8 = (base - s1 - dlx) >> 3;
+        p9 = (base - ur) >> 3;
+        p10 = (base - ul) >> 3;
+        p11 = (base - s0 - drx) >> 3;
+        p12 = (base - s1 + dl) >> 3;
+        p13 = (base - s1 + dlx) >> 3;
+        p14 = (base - s0 + drx) >> 3;
+        p[0] = p0;
+        p[1] = p1;
+        p[2] = p2;
+        p[3] = p3;
+        p[4] = p4;
+        p[5] = p5;
+        p[6] = p6;
+        p[7] = p7;
+        p[8] = p8;
+        p[9] = p9;
+        p[10] = p10;
+        p[11] = p11;
+        p[12] = p12;
+        p[13] = p13;
+        p[14] = p14;
+        p[15] = (base - s0 + dr) >> 3;
         info->left = dc;
     } else {
         func_8007D470(block, bn, dc, plane);
