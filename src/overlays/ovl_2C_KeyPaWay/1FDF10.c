@@ -184,7 +184,8 @@ void func_800FE8EC_KeyPaWay(omObjData* obj) {
     }
 }
 
-// constant scheduling: retail hoists only three of the inner loop's constants out of the outer loop (masked 5)
+// constant scheduling: retail hoists only three of the inner loop's constants out of the outer loop (masked 5;
+// loop.c invariant threshold; dropping the dead i = 0, a Vec3f* eye and direct D_800FF564 fields tried)
 #ifdef NON_MATCHING
 void func_800FEA28_KeyPaWay(omObjData* obj) {
     Vec3f pts[4];

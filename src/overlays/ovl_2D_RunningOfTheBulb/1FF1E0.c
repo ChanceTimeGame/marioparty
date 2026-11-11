@@ -1084,8 +1084,6 @@ void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800F98F0_RunningOfTheBulb);
 #endif
-// CSE of 360-d and fabs register allocation
-#ifdef NON_MATCHING
 void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
     f32 dist;
     RotbBodyWork* body;
@@ -1096,11 +1094,9 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
     f32 ty;
     f32 tz;
     f32 d;
-    f32 step;
     f32 vx;
     f32 vy;
     f32 vz;
-    f64 dd;
 
     body = arg0->unk_50;
     ext = body->unk_68.bulb;
@@ -1134,12 +1130,10 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
                 } else {
                     ext->unk_20 = d + ext->unk_20;
                 }
+            } else if (360.0f - d > 2.0f) {
+                ext->unk_20 = ext->unk_20 - 2.0f;
             } else {
-                step = 2.0f;
-                if (!(360.0f - d > step)) {
-                    step = 360.0f - d;
-                }
-                ext->unk_20 = ext->unk_20 - step;
+                ext->unk_20 = ext->unk_20 - (360.0f - d);
             }
         }
         if (ext->unk_20 < 0.0f) {
@@ -1194,16 +1188,14 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
                 vz = func_800AEFD0(tz) * body->unk_40;
             }
             if (ty < arg0->trans.y) {
-                dd = fabs(ty - arg0->trans.y);
-                if (dd < body->unk_40) {
-                    vy = vy - dd;
+                if (fabs(ty - arg0->trans.y) < body->unk_40) {
+                    vy = vy - fabs(ty - arg0->trans.y);
                 } else {
                     vy = vy - body->unk_40;
                 }
             } else if (arg0->trans.y < ty) {
-                dd = fabs(ty - arg0->trans.y);
-                if (dd < body->unk_40) {
-                    vy = vy + dd;
+                if (fabs(ty - arg0->trans.y) < body->unk_40) {
+                    vy = vy + fabs(ty - arg0->trans.y);
                 } else {
                     vy = vy + body->unk_40;
                 }
@@ -1216,9 +1208,6 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
         ext->unk_02--;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800F9C2C_RunningOfTheBulb);
-#endif
 void func_800FA2B8_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* temp = ROTB_BODY(arg0)->unk_68.bulb;
 
@@ -1879,7 +1868,7 @@ void func_800FBF74_RunningOfTheBulb(omObjData* arg0) {
     ContBtnTrg[temp_s0] = 0;
 }
 
-// register allocation and branch layout
+// register allocation only (raw 150, masked 0): s/f registers rotated; spill-slot declaration order fixed
 #ifdef NON_MATCHING
 void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     struct {
@@ -1892,6 +1881,8 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* bulb;
     omObjData* target;
     omObjData* obj;
+    u16 port;
+    u16 chance;
     f32 speed;
     f32 maxA;
     f32 range;
@@ -1905,12 +1896,12 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     f32 y;
     f32 lim;
     f32 dir;
+    f32 dist;
+    f32 step;
     s32 i;
-    u16 diff;
-    u16 port;
-    u16 chance;
     u16 track;
-    s32 cnt;
+    u16 diff;
+    u16 cnt;
     u16 n;
     u16 useLeader;
     u16 visible;
@@ -1967,8 +1958,10 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     useLeader = 0;
     if (arg0 == D_800FE4A0_RunningOfTheBulb) {
         /* Retail computes the distance and angle to the goal and drops both. */
-        func_800B1750((0.0f - arg0->trans.x) * (0.0f - arg0->trans.x) + (-2350.0f - arg0->trans.z) * (-2350.0f - arg0->trans.z));
-        func_800B0CD8(0.0f - arg0->trans.x, -2350.0f - arg0->trans.z);
+        tx = 0.0f;
+        tz = -2350.0f;
+        func_800B1750((tx - arg0->trans.x) * (tx - arg0->trans.x) + (tz - arg0->trans.z) * (tz - arg0->trans.z));
+        func_800B0CD8(tx - arg0->trans.x, tz - arg0->trans.z);
         cnt = func_800FDAC4_RunningOfTheBulb(arg0, near.obj, near.dist);
         n = 0;
         for (i = 0; i < (u16)cnt; i++) {
@@ -1998,12 +1991,10 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
                     if (ROTB_BODY(obj)->unk_68.bulb->unk_00 & 0x14) {
                         continue;
                     }
-                    /* Retail keeps the last distance checked, not the smallest (the store sits
-                       in the branch delay slot), while the target is the first nearer one. */
                     if (near.dist[i] < best) {
+                        best = near.dist[i];
                         target = obj;
                     }
-                    best = near.dist[i];
                 }
                 if (target == NULL) {
                     target = D_800FE4A0_RunningOfTheBulb;
@@ -2016,7 +2007,8 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
                 bulb->unk_08 = arg0;
                 ext->unk_30 = target;
             }
-        } else if (!useLeader) {
+        }
+        if (!useLeader) {
             target = ext->unk_30;
         }
         if ((ROTB_PLAYER(D_800FE4A0_RunningOfTheBulb)->unk_E4->unk_00 & 4) && D_800FE4A0_RunningOfTheBulb->trans.y < 30.0f) {
@@ -2094,16 +2086,15 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
                 ContBtnTrg[port] |= 0x4000;
             }
         }
-        best = func_800B1750((tx - arg0->trans.x) * (tx - arg0->trans.x) + (tz - arg0->trans.z) * (tz - arg0->trans.z));
-        if (best < 160.0f) {
-            speed = 30.0f;
+        dist = func_800B1750((tx - arg0->trans.x) * (tx - arg0->trans.x) + (tz - arg0->trans.z) * (tz - arg0->trans.z));
+        if (dist < 160.0f) {
+            step = 30.0f;
+        } else if (dist < 500.0f) {
+            step = 40.0f;
         } else {
-            speed = 80.0f;
-            if (best < 500.0f) {
-                speed = 40.0f;
-            }
+            step = 80.0f;
         }
-        speed = mult * speed;
+        speed = mult * step;
         if (jitterX != 0.0f) {
             tx += func_8009B618((f32)rand8(), jitterX) - jitterX / 2.0f;
         }
@@ -2127,8 +2118,6 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FC0F4_RunningOfTheBulb);
 #endif
-// register allocation (retail keeps the count live across the retry loop)
-#ifdef NON_MATCHING
 f32 func_800FCEA0_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     struct {
         f32 dist[10];
@@ -2140,7 +2129,6 @@ f32 func_800FCEA0_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     f32 x;
     f32 z;
     s32 i;
-    s32 j;
     u16 n;
     u16 tries;
 
@@ -2186,37 +2174,32 @@ f32 func_800FCEA0_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     }
     tries = 0;
     work = arg0->unk_50;
-retry:
-    /* Retail counts j past a blocking entry before leaving the scan, so a blocker in the last
-       slot reads as "none". */
-    for (j = 0; j < n;) {
-        if (func_800FDB84_RunningOfTheBulb(near.angle[j], angle) <= arg4 && near.dist[j] <= arg5) {
-            j++;
+    while (1) {
+        for (i = 0; i < n; i++) {
+            if (func_800FDB84_RunningOfTheBulb(near.angle[i], angle) <= arg4 && near.dist[i] <= arg5) {
+                break;
+            }
+        }
+        if (i == n) {
+            x = func_800AEAC0(angle) * arg5 + arg0->trans.x;
+            z = func_800AEFD0(angle) * arg5 + arg0->trans.z;
+            if (work->unk_48 + -400.0f <= x && x <= 400.0f - work->unk_48 && work->unk_48 + -2500.0f <= z && z <= 2500.0f - work->unk_48) {
+                break;
+            }
+            if (z < D_800FE478_RunningOfTheBulb->trans.z - 200.0f) {
+                break;
+            }
+        }
+        D_800FE456_RunningOfTheBulb++;
+        if (++tries == 36) {
+            D_800FE454_RunningOfTheBulb = 1;
             break;
         }
-        j++;
-    }
-    if (j == n) {
-        x = func_800AEAC0(angle) * arg5 + arg0->trans.x;
-        z = func_800AEFD0(angle) * arg5 + arg0->trans.z;
-        if (work->unk_48 + -400.0f <= x && x <= 400.0f - work->unk_48 && work->unk_48 + -2500.0f <= z && z <= 2500.0f - work->unk_48) {
-            goto done;
-        }
-        if (z < D_800FE478_RunningOfTheBulb->trans.z - 200.0f) {
-            goto done;
+        angle += 10.0f;
+        if (angle > 180.0f) {
+            angle -= 360.0f;
         }
     }
-    D_800FE456_RunningOfTheBulb++;
-    if (++tries == 36) {
-        D_800FE454_RunningOfTheBulb = 1;
-        goto done;
-    }
-    angle += 10.0f;
-    if (angle > 180.0f) {
-        angle -= 360.0f;
-    }
-    goto retry;
-done:
     if (angle < 0.0f) {
         angle += 360.0f;
     }
@@ -2225,11 +2208,6 @@ done:
     }
     return angle;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FCEA0_RunningOfTheBulb);
-#endif
-// register allocation (retail keeps the count live across the retry loop)
-#ifdef NON_MATCHING
 f32 func_800FD394_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f32 arg3, f32 arg4) {
     struct {
         f32 dist[14];
@@ -2240,7 +2218,6 @@ f32 func_800FD394_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     f32 x;
     f32 z;
     s32 i;
-    s32 j;
     u16 n;
     u16 tries;
 
@@ -2265,23 +2242,23 @@ f32 func_800FD394_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     }
     for (i = 0; i < 4; i++) {
         obj = D_800FE49C_RunningOfTheBulb[i];
-        x = obj->trans.x;
-        if (x + 70.0f < -400.0f) {
+        if (obj->trans.x + 70.0f < -400.0f) {
             continue;
         }
-        if (400.0f < x - 70.0f) {
+        if (400.0f < obj->trans.x - 70.0f) {
             continue;
         }
-        z = obj->trans.z;
-        if (z + 70.0f < -2500.0f) {
+        if (obj->trans.z + 70.0f < -2500.0f) {
             continue;
         }
-        if (D_800FE478_RunningOfTheBulb->trans.z + 200.0f < z - 70.0f) {
+        if (obj->trans.z - 70.0f > D_800FE478_RunningOfTheBulb->trans.z + 200.0f) {
             continue;
         }
         if (200.0f < obj->trans.y) {
             continue;
         }
+        x = obj->trans.x;
+        z = obj->trans.z;
         near.dist[n] = func_800B1750((x - arg0->trans.x) * (x - arg0->trans.x) + (z - arg0->trans.z) * (z - arg0->trans.z));
         near.angle[n] = func_800B0CD8(x - arg0->trans.x, z - arg0->trans.z);
         if ((near.angle[n] = near.angle[n] - CRot.y) < -180.0f) {
@@ -2308,37 +2285,32 @@ f32 func_800FD394_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     }
     tries = 0;
     work = arg0->unk_50;
-retry:
-    /* Retail counts j past a blocking entry before leaving the scan, so a blocker in the last
-       slot reads as "none". */
-    for (j = 0; j < n;) {
-        if (func_800FDB84_RunningOfTheBulb(near.angle[j], arg2) <= arg3 && near.dist[j] <= arg4) {
-            j++;
+    while (1) {
+        for (i = 0; i < n; i++) {
+            if (func_800FDB84_RunningOfTheBulb(near.angle[i], arg2) <= arg3 && near.dist[i] <= arg4) {
+                break;
+            }
+        }
+        if (i == n) {
+            x = func_800AEAC0(arg2) * arg4 + arg0->trans.x;
+            z = func_800AEFD0(arg2) * arg4 + arg0->trans.z;
+            if (work->unk_48 + -400.0f <= x && x <= 400.0f - work->unk_48 && work->unk_48 + -2500.0f <= z && z <= 2500.0f - work->unk_48) {
+                break;
+            }
+            if (z < D_800FE478_RunningOfTheBulb->trans.z - 200.0f) {
+                break;
+            }
+        }
+        D_800FE456_RunningOfTheBulb++;
+        if (++tries == 36) {
+            D_800FE454_RunningOfTheBulb = 1;
             break;
         }
-        j++;
-    }
-    if (j == n) {
-        x = func_800AEAC0(arg2) * arg4 + arg0->trans.x;
-        z = func_800AEFD0(arg2) * arg4 + arg0->trans.z;
-        if (work->unk_48 + -400.0f <= x && x <= 400.0f - work->unk_48 && work->unk_48 + -2500.0f <= z && z <= 2500.0f - work->unk_48) {
-            goto done;
-        }
-        if (z < D_800FE478_RunningOfTheBulb->trans.z - 200.0f) {
-            goto done;
+        arg2 += 10.0f;
+        if (arg2 > 180.0f) {
+            arg2 -= 360.0f;
         }
     }
-    D_800FE456_RunningOfTheBulb++;
-    if (++tries == 36) {
-        D_800FE454_RunningOfTheBulb = 1;
-        goto done;
-    }
-    arg2 += 10.0f;
-    if (arg2 > 180.0f) {
-        arg2 -= 360.0f;
-    }
-    goto retry;
-done:
     if (arg2 < 0.0f) {
         arg2 += 360.0f;
     }
@@ -2347,9 +2319,6 @@ done:
     }
     return arg2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FD394_RunningOfTheBulb);
-#endif
 f32 func_800FD9BC_RunningOfTheBulb(u16 arg0, f32* arg1) {
     f32 temp_f0;
     f32 var_f12;

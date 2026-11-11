@@ -288,13 +288,11 @@ void func_800F6EBC_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = func_800F74E8_BumperBalls;
 }
 
-// float register allocation of the turn-step clamp and the port copy (masked ~6, one instruction short)
-#ifdef NON_MATCHING
 void func_800F74E8_BumperBalls(omObjData* object) {
     BumperBallsWork* work;
     s8 stickX;
     s8 stickY;
-    s32 port;
+    s16 port;
     f32 diff;
     f32 speed;
     f32 height;
@@ -330,14 +328,11 @@ void func_800F74E8_BumperBalls(omObjData* object) {
         if (diff < 180.0f) {
             work->unk_0C = (diff > 30.0f) ? work->unk_0C + 30.0f : diff + work->unk_0C;
         } else {
-            f32 step;
-
             if (360.0f - diff > 30.0f) {
-                step = 30.0f;
+                work->unk_0C = work->unk_0C - 30.0f;
             } else {
-                step = 360.0f - diff;
+                work->unk_0C = work->unk_0C - (360.0f - diff);
             }
-            work->unk_0C = work->unk_0C - step;
         }
         if (work->unk_0C < 0.0f) {
             work->unk_0C += 360.0f;
@@ -443,9 +438,6 @@ void func_800F74E8_BumperBalls(omObjData* object) {
     func_80025798(object->model[1], object->trans.x, 120.0f, object->trans.z);
     work->unk_10 = work->unk_0C;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/191700", func_800F74E8_BumperBalls);
-#endif
 
 void func_800F7EC4_BumperBalls(omObjData* object) {
     BumperBallsWork* work = object->unk_50;
