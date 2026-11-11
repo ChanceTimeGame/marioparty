@@ -259,12 +259,9 @@ void func_800FA7E8_PiranhasPursuit(void) {
 }
 
 /* The background: sky, two rows of trees, the course, and the scrolling horizon sprites. */
-// NON_MATCHING: float constant registers, store order of the allocation
-#ifdef NON_MATCHING
 void func_800FA878_PiranhasPursuit(omObjData* obj) {
     PPPiece* p;
     s16 i;
-    f32 f;
     unk65770AnimC* a;
     s16 g;
 
@@ -289,15 +286,14 @@ void func_800FA878_PiranhasPursuit(omObjData* obj) {
                 p->pos.z = -400.0f;
             }
             p->scale.x = (f32)(func_800FA218_PiranhasPursuit(31) + 90.0) * 0.014;
-            f = func_800FA218_PiranhasPursuit(31) + 100.0;
+            p->scale.y = (f32)(func_800FA218_PiranhasPursuit(31) + 100.0) * 0.012;
         } else {
             p->pos.x = (i * 6.5 + (f32)func_800FA218_PiranhasPursuit(7) * 0.2 + -5.0) * 100.0 + -16000.0;
             p->pos.y = 0.0f;
             p->pos.z = -((i + 3) * 100);
             p->scale.x = (f32)(func_800FA218_PiranhasPursuit(31) + 90.0) * 0.014;
-            f = func_800FA218_PiranhasPursuit(31) + 110.0;
+            p->scale.y = (f32)(func_800FA218_PiranhasPursuit(31) + 110.0) * 0.012;
         }
-        p->scale.y = f * 0.012;
         p->scale.z = 1.0f;
         func_80025798(obj->model[i + 1], p->pos.x, p->pos.y, p->pos.z);
         func_80025830(obj->model[i + 1], p->scale.x, p->scale.y, p->scale.z);
@@ -333,9 +329,6 @@ void func_800FA878_PiranhasPursuit(omObjData* obj) {
     func_80066DC4(D_80101128_PiranhasPursuit[1], 0, 320, 0);
     func_800FA4CC_PiranhasPursuit(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FA878_PiranhasPursuit);
-#endif
 
 // NON_MATCHING: register allocation and block order
 #ifdef NON_MATCHING
@@ -446,7 +439,8 @@ void func_800FB5C8_PiranhasPursuit(f32 x) {
 }
 
 /* Builds the course: 23 pieces from the start (-15900) to the goal (16000). */
-// NON_MATCHING: retail passes a running s16 piece index; abs() form
+// NON_MATCHING: retail sign-extends the running piece index at each call (sll/sra, 46 instructions; masked 48),
+// as if the 5th parameter were s32 at the call site; s32, u16 and s16 n tried (abs() matched the max loop)
 #ifdef NON_MATCHING
 void func_800FB5D4_PiranhasPursuit(s16* models) {
     PPPiece* p;
@@ -477,10 +471,7 @@ void func_800FB5D4_PiranhasPursuit(s16* models) {
     v = D_800F2B7C[models[3]].unk_6C->unk_04;
     D_8010113C_PiranhasPursuit = 0;
     for (i = 0; i < D_800F2B7C[models[3]].unk_6C->unk_72; i++, v++) {
-        d = v->unk_02;
-        if (d < 0) {
-            d = -d;
-        }
+        d = abs(v->unk_02);
         if (D_8010113C_PiranhasPursuit < d) {
             D_8010113C_PiranhasPursuit = d;
         }
