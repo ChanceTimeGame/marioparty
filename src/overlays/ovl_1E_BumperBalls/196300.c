@@ -44,9 +44,9 @@ void func_800FB2D0_BumperBalls(s32 arg0) {
     omOvlReturnEx(1);
 }
 
-// Logic-equivalent water mesh setup (masked 70): retail keeps row*2 unfolded (hence row << 1) and
-// hoists the wave-row bases (row offset + base) into registers; tried pointer locals, a row*2 local,
-// direct [row][column] indexing.
+// Logic-equivalent water mesh setup (masked 33): retail hoists the wave-row bases (row offset + base)
+// into registers and allocates row/column to s8/s6; tried pointer locals, a row*2 local, direct
+// [row][column] indexing; angle = rowAngle at the row's top (M1g) took masked 53 -> 33.
 #ifdef NON_MATCHING
 void func_800FB2EC_BumperBalls(void) {
     unk2C0C0Struct70* texture;
@@ -75,8 +75,8 @@ void func_800FB2EC_BumperBalls(void) {
         D_800FCF88_BumperBalls[screen] = func_80023684(0x800 * sizeof(Gfx), 0x7918);
     }
     rowAngle = 0.0f;
-    angle = 0.0f;
     for (row = 0; row < 6; row++) {
+        angle = rowAngle;
         for (column = 0; column < 6; column++) {
             second = angle + 90.0f;
             if (second >= 360.0f) {
@@ -103,7 +103,6 @@ void func_800FB2EC_BumperBalls(void) {
         if (rowAngle >= 360.0f) {
             rowAngle -= 360.0f;
         }
-        angle = rowAngle;
     }
     source = D_800FCFA8_BumperBalls[D_800F37F0];
     for (row = 0; row < 6; row++) {

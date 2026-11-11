@@ -421,14 +421,11 @@ void func_800F7620_MushroomBank(omObjData* obj) {
         }
     }
 }
-// NON_MATCHING: register: the shelf model id is sign-extended at each use instead of once (masked 9; a direct
-// s16 assignment and a chained store change nothing)
-#ifdef NON_MATCHING
 void func_800F7754_MushroomBank(void) {
     omObjData* obj;
     unk_ovl_2D_struct* m;
     void* file;
-    s16 model;
+    s32 model;
     s32 i;
 
     obj = omAddObj(1, 13, 0, -1, func_800F7620_MushroomBank);
@@ -501,9 +498,6 @@ void func_800F7754_MushroomBank(void) {
     obj->rot.y = 323.0f;
     obj->rot.z = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_MushroomBank/2D6FC0", func_800F7754_MushroomBank);
-#endif
 /* Whether prize arg0 is on the shelf. Retail's callers test the result. */
 s32 func_800F7B98_MushroomBank(s32 arg0) {
     BankPrize* temp = &D_800F89C0_MushroomBank[arg0];
