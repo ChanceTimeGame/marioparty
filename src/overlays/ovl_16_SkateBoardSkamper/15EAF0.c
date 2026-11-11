@@ -274,7 +274,8 @@ void func_800F71B8_SkateBoardSkamper(omObjData* obj) {
 }
 
 /* Ripples on the course model's vertex colours and heights around (+-1000, z). */
-// register allocation (masked 25): retail hoists 28.0f into a saved register, this C hoists 255.0f
+// register allocation (masked 25): retail hoists 28.0f into a saved register, this C hoists 255.0f (M1g: loop.c
+// moves a constant when threshold * savings * lifetime >= the loop insn count, so this is a borderline count, as in 3C420 func_8003BB48)
 #ifdef NON_MATCHING
 void func_800F7758_SkateBoardSkamper(omObjData* obj) {
     unk2C0C0StructC0* m = D_800F2B7C[obj->model[0]].unk_6C;
@@ -347,7 +348,7 @@ s32 func_800F7B7C_SkateBoardSkamper(s32 n, s32 player) {
 }
 
 /* The player's rank (0 leads). */
-// if-conversion (masked 10): GCC turns the last rank test into xor/sltu/negu (retail branches), and retail's leaf frame is 0x18 with no stack use; early-return form is the same; addresses agree; a search loop is another shape
+// if-conversion (masked 10): GCC turns the last rank test into xor/sltu/negu (retail branches), and retail's leaf frame is 0x18 with no stack use; early-return form is the same; addresses agree; a search loop is another shape; M1g: an unused 16-byte local array reproduces retail's j/frame shape (frame 0x10, retail 0x18 = 17-24 bytes of dead locals or a dead call), so the frame is the cause, but the last test still if-converts
 #ifdef NON_MATCHING
 s32 func_800F7BC4_SkateBoardSkamper(s32 player) {
     s32 rank;

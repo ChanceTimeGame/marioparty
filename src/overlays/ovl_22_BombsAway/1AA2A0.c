@@ -694,13 +694,14 @@ void func_800F8100_BombsAway(omObjData* obj, s16 player) {
     p->unk_42 = 12;
     p->unk_44 = -1;
 }
-// register allocation: diff and move swap s3/s4 (masked 0)
+// register allocation (masked 0, raw 12): the else arm's copy of port goes to v0 in retail (ours s1, the then arm's pad);
+// M1g: diff is s16 (fixed the s3/s4 swap); block-local pads in each arm made it worse
 #ifdef NON_MATCHING
 void func_800F8538_BombsAway(omObjData* obj) {
     BaPlayer* p;
     s32 port;
     s16 move;
-    s32 diff;
+    s16 diff;
     f32 dx;
     f32 dz;
     f32 ang;

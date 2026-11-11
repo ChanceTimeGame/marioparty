@@ -605,7 +605,8 @@ void func_80039020(void) {
     }
 }
 
-// register allocation; bpp < 9 compiles sltiu not slti (masked 16)
+// register allocation (masked 22): retail spills nframes to the stack (sh 22(sp)), ours keeps it in s4. M1g: bpp is s16
+// (halfword spill + slti; u16 gave sltiu)
 #ifdef NON_MATCHING
 s16 func_80039084(void* arg) {
     u8* arg0 = arg;
@@ -618,7 +619,7 @@ s16 func_80039084(void* arg) {
     u8* q;
     u8* data;
     s16 nframes;
-    u16 bpp;
+    s16 bpp;
     s16 slot;
     s16 i;
     s16 j;
@@ -698,7 +699,7 @@ s16 func_80039084(void* arg) {
     npal = arg0[0x1A];
     spr->unk_04 = npal;
     p = arg0 + (arg0[0xD] << 16) + (arg0[0xE] << 8) + arg0[0xF];
-    if ((s32) bpp < 9) {
+    if (bpp < 9) {
         spr->unk_14 = func_80023684(npal * 2, slot + 20000);
         func_80023A38(p, spr->unk_14, npal * 2);
     } else {

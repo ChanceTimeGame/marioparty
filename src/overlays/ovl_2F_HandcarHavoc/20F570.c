@@ -1041,9 +1041,6 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
 }
 
 /* The fallen car slides off and sinks; decides the race when both have fallen. */
-// NON_MATCHING: only residue is retail's VR4300 mul-fix nop between the mul.s of fallG*t*t (as in
-// func_800FA210); the unit-wide mul fix breaks func_800F7998, so likely a separate retail TU
-#ifdef NON_MATCHING
 void func_800F9DD8_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     omObjData* other;
@@ -1106,9 +1103,6 @@ void func_800F9DD8_HandcarHavoc(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9DD8_HandcarHavoc);
-#endif
 
 /* A thrown rider's arc. */
 // NON_MATCHING: retail has a VR4300 mul-fix nop between the two mul.s of g*t*t (masked 2); the

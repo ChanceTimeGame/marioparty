@@ -839,13 +839,13 @@ void func_800F96A0_CoinBlockBash(omObjData* obj, Matrix4f parent) {
         D_80102538_CoinBlockBash.unk_34[3][2] += -70.0;
     }
 }
-// NON_MATCHING: KMC as nop placement after the func_800FDD50 call (mul fix), one float register
+// NON_MATCHING: KMC as nop placement only (masked 6): retail has jal sqrtf; nop; nop; mul.s, the blank-line strip
+// gives one nop there (without the strip the extra nop lands after the func_800FDD50 call instead). M1g: one lim variable fixed the float register
 #ifdef NON_MATCHING
 s32 func_800F9814_CoinBlockBash(f32 x, f32 y, f32 z, f32 r) {
     Vec p;
     f32 dist;
     f32 lim;
-    f32 dy;
 
     func_800FDD50_CoinBlockBash(D_80102538_CoinBlockBash.unk_34, x, y, z, &p);
     lim = r * r + 10000.0;
@@ -856,12 +856,12 @@ s32 func_800F9814_CoinBlockBash(f32 x, f32 y, f32 z, f32 r) {
     if (r + 90.0 < abs((s32)p.y)) {
         return 0;
     }
-    dy = abs((s32)p.y) - 90.0;
-    if (dy <= 0.0f) {
+    lim = abs((s32)p.y) - 90.0;
+    if (lim <= 0.0f) {
         return 1;
     }
-    dy = sqrtf(dy * dy + r * r);
-    lim = dy * dy + 10000.0;
+    lim = sqrtf(lim * lim + r * r);
+    lim = lim * lim + 10000.0;
     if (lim < dist) {
         return 0;
     }
@@ -1402,8 +1402,8 @@ void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
         p->unk_9E = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 3 / 65536;
     }
 }
-// NON_MATCHING: register allocation (level in s1 and p in s2 in retail) and one
-// missing `andi 0xff` after `& 3` on the difficulty (tried (u8) casts, % 4, a u8 temporary)
+// NON_MATCHING: register allocation (masked 2): idx in s3 (ours s0) and the final 30 : 12 kept in level's s1;
+// M1g: level is s16 (gives retail's andi 3; andi 0xff, masked 44 -> 2); tried an if/else for 30 : 12
 #ifdef NON_MATCHING
 void func_800FB900_CoinBlockBash(omObjData* obj) {
     f32 d;
@@ -1417,13 +1417,13 @@ void func_800FB900_CoinBlockBash(omObjData* obj) {
     s32 chance;
     s32 idx;
     s32 i;
-    s32 level;
+    s16 level;
 
     p = func_800F7644_CoinBlockBash(obj);
     if (D_801024F0_CoinBlockBash.timer < 4) {
         return;
     }
-    level = (u8)(GwPlayer[obj->work[0]].cpu_difficulty & 3);
+    level = GwPlayer[obj->work[0]].cpu_difficulty & 3;
     maxspd = 1.0 - (f32)(3 - level) * 0.03;
     if (p->unk_98 != 0) {
         p->unk_80 = 0.0f;
@@ -2017,7 +2017,8 @@ void func_800FC2AC_CoinBlockBash(omObjData* obj) {
     }
 }
 // NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10);
-// retail addresses GwPlayer[i].character as sym+reg (lui at); tried &GwPlayer[i]->, (GwPlayer + i)-> (M1c)
+// retail addresses GwPlayer[i].character as sym+reg (lui at); tried &GwPlayer[i]->, (GwPlayer + i)-> (M1c). M1g: GCC emits
+// `lbu $2,GwPlayer+4($N)` either way; as uses $at only when N is the destination, so the lui at form is register allocation
 #ifdef NON_MATCHING
 s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big) {
     f32 scl[6] = { 1.0f, 1.0f, 1.0f, 0.8f, 0.9f, 0.7f };
@@ -2217,8 +2218,6 @@ s32 func_800FE294_CoinBlockBash(Vec* pos, Vec* vel, Vec* out, Vec* n, s32 unused
     }
     return r;
 }
-// NON_MATCHING: retail reloads D_800F3FA8 and recomputes the viewport address for unk5A after the out->x store (masked 8)
-#ifdef NON_MATCHING
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out) {
     Vec v;
     Matrix4f mtx;
@@ -2241,10 +2240,8 @@ void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out) {
     }
     /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 */
     vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-    out->x = vp->unk58 / 4.0 * v.x / d * 0.75;
-    out->y = vp->unk5A / 4.0 * -v.y / d;
-    out->z = 400.0 / d;
+    ((f32*)out)[0] = vp->unk58 / 4.0 * v.x / d * 0.75;
+    vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
+    ((f32*)out)[1] = vp->unk5A / 4.0 * -v.y / d;
+    ((f32*)out)[2] = 400.0 / d;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FE470_CoinBlockBash);
-#endif

@@ -131,7 +131,8 @@ void func_8003BA68(unk_8003B8D4Struct* arg0, unk_ProcessUserData08* arg1) {
 unk_ProcessUserData08* func_8003BB30(unk_8003B8D4Struct* arg0, s16 arg1) {
     return arg0->unk04[arg1];
 }
-// GCC hoists the 360.0f constant out of the loop into $f24; retail reloads it
+// GCC hoists the 360.0f constant out of the loop into $f24; retail reloads it (masked 33); M1g: a goto loop stops all hoisting
+// (retail still hoists -1 into s6), a while loop changes nothing
 #ifdef NON_MATCHING
 void func_8003BB48(void) {
     OSMesg msg;
