@@ -213,7 +213,8 @@ void func_800F6B88_FaceLift(FaceLiftWork* w, f32 spread) {
         w->order[k + 1] = t;
     }
 }
-// scheduling of the D_800FC9FA_FaceLift index
+// scheduling: retail computes the D_800FC9FA_FaceLift index (sll a3) between x and y (raw 3, masked 2;
+// tried inline x/y arguments, one inlined, (s16) casts)
 #ifdef NON_MATCHING
 void func_800F6DBC_FaceLift(omObjData* obj) {
     Vec2f pos;
@@ -288,11 +289,11 @@ void func_800F6DBC_FaceLift(omObjData* obj) {
         func_8001D4D4(player, &D_800FC450_FaceLift[4]);
         if (obj->work[2] < 20 && (obj->unk_10 & 1)) {
             t = obj->work[2] / 20.0f;
-            D_800FC968_FaceLift.x = (1.0f - t) * D_800FC3D8_FaceLift[player].x + t * D_800FC3D8_FaceLift[4].x;
-            D_800FC968_FaceLift.y = (1.0f - t) * D_800FC3D8_FaceLift[player].y + t * D_800FC3D8_FaceLift[4].y;
+            D_800FC968_FaceLift.x = D_800FC3D8_FaceLift[player].x * (1.0f - t) + t * D_800FC3D8_FaceLift[4].x;
+            D_800FC968_FaceLift.y = D_800FC3D8_FaceLift[player].y * (1.0f - t) + t * D_800FC3D8_FaceLift[4].y;
             D_800FC968_FaceLift.z = 511.0f;
-            D_800FC974_FaceLift.x = (1.0f - t) * D_800FC414_FaceLift[player].x + t * D_800FC414_FaceLift[4].x;
-            D_800FC974_FaceLift.y = (1.0f - t) * D_800FC414_FaceLift[player].y + t * D_800FC414_FaceLift[4].y;
+            D_800FC974_FaceLift.x = D_800FC414_FaceLift[player].x * (1.0f - t) + t * D_800FC414_FaceLift[4].x;
+            D_800FC974_FaceLift.y = D_800FC414_FaceLift[player].y * (1.0f - t) + t * D_800FC414_FaceLift[4].y;
             D_800FC974_FaceLift.z = 511.0f;
             func_8001D520(player, &D_800FC968_FaceLift, &D_800FC974_FaceLift);
             x = D_800FC7D4_FaceLift[player].x + (0xE6 - D_800FC7D4_FaceLift[player].x) * t;
@@ -309,7 +310,8 @@ void func_800F6DBC_FaceLift(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F6DBC_FaceLift);
 #endif
-// register allocation (port in a1, bnez for bnezl)
+// register allocation: dx*dx goes to $f0, retail $f2, in the moving-parts loop (raw 4, masked 0; tried
+// 1.0f > sum, ex/ey for the loop deltas)
 #ifdef NON_MATCHING
 void func_800F7444_FaceLift(s16 player, FaceLiftWork* w) {
     Vec3f pos;
@@ -322,7 +324,7 @@ void func_800F7444_FaceLift(s16 player, FaceLiftWork* w) {
     f32 ey;
     s16 sel;
     s16 i;
-    s32 port;
+    s16 port;
     s16 snd;
 
     port = GwPlayer[player].port;
@@ -826,8 +828,6 @@ void func_800F9058_FaceLift(omObjData *obj)
     obj->func_ptr = func_800F91C0_FaceLift;
   }
 }
-// scheduling (one sub.s)
-#ifdef NON_MATCHING
 void func_800F91C0_FaceLift(omObjData* obj) {
     f32 t;
     f32 s;
@@ -836,8 +836,8 @@ void func_800F91C0_FaceLift(omObjData* obj) {
     if (obj->work[0] < 50) {
         for (i = 0; i < 6; i++) {
             t = obj->work[0] / 50.0f;
-            D_800FC980_FaceLift[i].x = t * D_800FC5F0_FaceLift[D_800FC966_FaceLift * 6 + i].x + (1.0f - t) * D_800FC4B0_FaceLift[i].x;
-            D_800FC980_FaceLift[i].y = t * D_800FC5F0_FaceLift[D_800FC966_FaceLift * 6 + i].y + (1.0f - t) * D_800FC4B0_FaceLift[i].y;
+            D_800FC980_FaceLift[i].x = t * D_800FC5F0_FaceLift[D_800FC966_FaceLift * 6 + i].x + D_800FC4B0_FaceLift[i].x * (1.0f - t);
+            D_800FC980_FaceLift[i].y = t * D_800FC5F0_FaceLift[D_800FC966_FaceLift * 6 + i].y + D_800FC4B0_FaceLift[i].y * (1.0f - t);
         }
         func_800F99E8_FaceLift(&D_800FC980_FaceLift[4], &D_800FC980_FaceLift[2], obj->model[2], 1);
         func_800F99E8_FaceLift(&D_800FC980_FaceLift[4], &D_800FC980_FaceLift[3], obj->model[3], 0);
@@ -882,9 +882,6 @@ void func_800F91C0_FaceLift(omObjData* obj) {
         func_800258EC(obj->model[3], 4, 4);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F91C0_FaceLift);
-#endif
 void func_800F9800_FaceLift(omObjData* obj) {
     s16 i;
 
