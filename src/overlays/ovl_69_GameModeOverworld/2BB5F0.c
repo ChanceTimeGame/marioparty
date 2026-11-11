@@ -642,8 +642,6 @@ void func_800F7DF0_GameModeOverworld(void) {
 s16 func_800F8758_GameModeOverworld(u8 arg0);
 s16 func_800F87D0_GameModeOverworld(u8 arg0);
 
-// FPU allocation and the evaluation order of (cur != 0) & near (masked 70)
-#ifdef NON_MATCHING
 void func_800F7E24_GameModeOverworld(void) {
     Vec3f pos;
     Vec2f scr;
@@ -653,8 +651,6 @@ void func_800F7E24_GameModeOverworld(void) {
     f32 dx, dy, len;
     f32 sx, sy;
     f32 best;
-    f32 d;
-    f32 t;
     s32 spr;
     s32 near;
     u16 id;
@@ -677,8 +673,8 @@ void func_800F7E24_GameModeOverworld(void) {
     SetBasicSpriteSize(id, 0.0f, 0.0f);
     for (i = 0; i < 11; i++) {
         HuPrcVSleep();
-        t = i / 10.0f;
-        SetBasicSpriteSize(spr & 0xFFFF, t, t);
+        dx = i / 10.0f;
+        SetBasicSpriteSize(spr & 0xFFFF, dx, dx);
     }
     D_800FA1C0_GameModeOverworld = 1;
     D_800FA200_GameModeOverworld = 1;
@@ -717,8 +713,7 @@ void func_800F7E24_GameModeOverworld(void) {
         best = 10.0f;
         dx = sx - dirX[0];
         dy = sy - dirY[0];
-        near = func_800B1750(dx * dx + dy * dy) < 0.5f;
-        if (near & (cur != 0)) {
+        if ((cur != 0) & (func_800B1750(dx * dx + dy * dy) < 0.5f)) {
             best = 0.0f;
             sel = 0;
         } else if (cur != 5) {
@@ -732,9 +727,9 @@ void func_800F7E24_GameModeOverworld(void) {
                     if (cur != i) {
                         dx = sx - dirX[i];
                         dy = sy - dirY[i];
-                        d = func_800B1750(dx * dx + dy * dy);
-                        if (d < best) {
-                            best = d;
+                        len = func_800B1750(dx * dx + dy * dy);
+                        if (len < best) {
+                            best = len;
                             sel = i;
                         }
                     }
@@ -745,9 +740,9 @@ void func_800F7E24_GameModeOverworld(void) {
                 if (cur != i) {
                     dx = sx - dirX[i];
                     dy = sy - dirY[i];
-                    d = func_800B1750(dx * dx + dy * dy);
-                    if (d < best) {
-                        best = d;
+                    len = func_800B1750(dx * dx + dy * dy);
+                    if (len < best) {
+                        best = len;
                         sel = i;
                     }
                 }
@@ -762,8 +757,9 @@ void func_800F7E24_GameModeOverworld(void) {
             pos.z = D_800F9A1C_GameModeOverworld[cur + 1].z;
             Convert3DTo2D(0, &pos, &scr);
             for (i = 1; i < 6; i++) {
-                t = i / 5.0f;
-                SetBasicSpritePos(spr & 0xFFFF, curX + (scr.x - curX) * t, curY + (scr.y - curY) * t);
+                dx = curX + (scr.x - curX) * (i / 5.0f);
+                dy = curY + (scr.y - curY) * (i / 5.0f);
+                SetBasicSpritePos(spr & 0xFFFF, dx, dy);
                 HuPrcVSleep();
             }
             curX = scr.x;
@@ -784,17 +780,14 @@ void func_800F7E24_GameModeOverworld(void) {
     D_800FA200_GameModeOverworld = 0;
     do {
         HuPrcVSleep();
-        t = i * 0.1f;
-        SetBasicSpriteSize(spr & 0xFFFF, t, t);
+        dx = i * 0.1f;
+        SetBasicSpriteSize(spr & 0xFFFF, dx, dx);
         i--;
     } while (i >= 0);
     while (1) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_GameModeOverworld/2BB5F0", func_800F7E24_GameModeOverworld);
-#endif
 void func_800F86A8_GameModeOverworld(omObjData* arg0) {
     arg0->model[0] = -1;
     SetFadeInTypeAndTime(0xFF, 0x10);

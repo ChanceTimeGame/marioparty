@@ -741,7 +741,8 @@ void func_800F8CA8_KeyPaWay(omObjData* arg0) {
     func_800F8CC4_KeyPaWay(arg0, 3);
 }
 
-// register allocation: chr/idx/mot in s0/s1/s6 instead of s1/s6/s0 (masked 0)
+// register allocation: chr/idx/mot in s0/s1/s6 instead of s1/s6/s0 (masked 0);
+// u16/u8 mot, s32 idx and s32 chr tried
 #ifdef NON_MATCHING
 void func_800F8CC4_KeyPaWay(omObjData* obj, s32 player) {
     u8 chr;
