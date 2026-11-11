@@ -434,8 +434,8 @@ void func_800F7C1C_MarioBandstand(s32 cmd) {
 
 /* Ranks the players by score (lowest first), pays the best 10 coins each; returns half the
    rounded score total. */
-// register allocation (raw 84, masked 2): retail loads obj->work[0] before the score and keeps the
-// truncated score in a0; tried an obj local and an s32 score
+// register allocation (raw 85, masked 10): retail loads obj->work[0] before the score and keeps the
+// truncated score in a0; tried an obj local, an s32 score, a divisor cast/local (M1e)
 #ifdef NON_MATCHING
 s32 func_800F7D58_MarioBandstand(void) {
     f32 total;
@@ -546,7 +546,8 @@ void func_800F80B0_MarioBandstand(s16 model) {
 const char D_800FD238_MarioBandstand[] __attribute__((section(".rodata"))) = "";
 const char D_800FD23C_MarioBandstand[] __attribute__((section(".rodata"))) = "";
 
-// NON_MATCHING: masked 35 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation, retail sign-extends the second model id from v0 (masked 23 with
+// address shift; tried u16/s16 m2, reusing m, a chained store) (M1e)
 #ifdef NON_MATCHING
 s16 func_800F81C0_MarioBandstand(s32 cmd) {
     u16 chr[4];
@@ -556,7 +557,6 @@ s16 func_800F81C0_MarioBandstand(s32 cmd) {
     u16 slot;
     u16 m;
     s16 m2;
-    f32 s;
 
     if (cmd == 0) {
         D_800FD2CC_MarioBandstand = 0.025f;
@@ -590,8 +590,7 @@ s16 func_800F81C0_MarioBandstand(s32 cmd) {
             m2 = func_80023FC8(D_800FD2BC_MarioBandstand[0]);
             D_800FD2C4_MarioBandstand[i] = m2;
             obj->model[(s16)slot++] = m2;
-            s = D_800FD2CC_MarioBandstand * 0.8f;
-            func_80025830(m2, s, 0.6f, s);
+            func_80025830(m2, D_800FD2CC_MarioBandstand * 0.8f, 0.6f, D_800FD2CC_MarioBandstand * 0.8f);
             if (player->work[0] != 0) {
                 func_80025798(m2, player->trans.x, player->trans.y + 5.0f, player->trans.z);
             } else {
@@ -605,7 +604,8 @@ s16 func_800F81C0_MarioBandstand(s32 cmd) {
         func_800F853C_MarioBandstand();
     } else if (cmd == 1) {
         for (i = 0; i < D_800FD520_MarioBandstand.count; i++) {
-            chr[i] = D_800FD700_MarioBandstand[D_800FD6D0_MarioBandstand[D_800FD520_MarioBandstand.id[i]]->work[0]];
+            player = D_800FD6D0_MarioBandstand[D_800FD520_MarioBandstand.id[i]];
+            chr[i] = D_800FD700_MarioBandstand[player->work[0]];
         }
         if (D_800FD520_MarioBandstand.count == 1 && _CheckFlag(0x2B) == 0) {
             GMesCreate(4, chr[0]);
@@ -991,23 +991,29 @@ void func_800F93A4_MarioBandstand(omObjData* obj) {
 
 /* Starts a free item: kind (low nibble of `kind`) 0 = thrown from the audience at (x, y, z),
    1 = dropped onto a random prop. */
-// NON_MATCHING: masked 79 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation, GCC spills x to s2 where retail keeps it in $f22 (masked 24 with
+// address shift); tried literal constants, a second fabsf temporary (M1e)
 #ifdef NON_MATCHING
 void func_800F9430_MarioBandstand(f32 x, f32 y, f32 z, s32 kind) {
     MBItem* it;
+    MBItem* items;
     s32 n;
-    s16 i;
-    s16 idx;
-    s16 px;
+    s32 i;
+    s32 idx;
+    s32 px;
+    f32 py;
+    f32 pz;
+    f32 dy;
     f32 dz;
     f32 a;
     f32 t;
     f32 vz;
     u8 k;
 
+    items = D_800FD718_MarioBandstand->unk_50;
     i = D_800FD2BA_MarioBandstand;
     for (n = 0; n < 8; n++) {
-        it = &((MBItem*)D_800FD718_MarioBandstand->unk_50)[i];
+        it = &items[i];
         if (it->state == 0) {
             break;
         }
@@ -1021,12 +1027,16 @@ void func_800F9430_MarioBandstand(f32 x, f32 y, f32 z, s32 kind) {
         it->kind = k;
         switch (k & 0xF) {
         case 0:
-            t = (s32)(func_800FCAAC_MarioBandstand() & 7) * 140 - 490;
+            n = func_800FCAAC_MarioBandstand() & 7;
+            t = n * 140 - 490;
+            py = -65.0f;
+            pz = 460.0f;
             it->pos.x = t;
-            it->pos.y = -65.0f;
-            it->pos.z = 460.0f;
-            func_80025798(it->model, t, -65.0f, 460.0f);
-            dz = z - 460.0f;
+            it->pos.y = py;
+            it->pos.z = pz;
+            func_80025798(it->model, t, py, pz);
+            dy = y - py;
+            dz = z - pz;
             a = func_800B0CD8(x - t, dz);
             it->rotX = 0.0f;
             it->rotY = a;
@@ -1035,16 +1045,19 @@ void func_800F9430_MarioBandstand(f32 x, f32 y, f32 z, s32 kind) {
             it->vel.x = func_800AEAC0(a) * 25.0f;
             vz = func_800AEFD0(a) * 25.0f;
             it->vel.z = vz;
-            if (dz != 0.0f && vz != 0.0f) {
-                t = fabsf(dz / vz);
-                it->timer = t;
-                if (t != 0.0f) {
-                    it->vel.y = (y - -65.0f) / t + t * 1.8f;
-                    break;
+            if (dz != 0.0f) {
+                if (vz != 0.0f) {
+                    t = fabsf(dz / vz);
+                    it->timer = t;
+                    if (t != 0.0f) {
+                        it->vel.y = dy / t + t * 1.8f;
+                        break;
+                    }
+                    goto fall;
                 }
-            } else {
-                it->timer = 0xF;
             }
+            it->timer = 0xF;
+        fall:
             it->vel.y = 60.0f;
             break;
         case 1:
@@ -1061,7 +1074,7 @@ void func_800F9430_MarioBandstand(f32 x, f32 y, f32 z, s32 kind) {
                 it->pos.x = (s32)(func_800FCAAC_MarioBandstand() % 210);
                 it->pos.z = 800.0f;
             }
-            it->pos.y = (s16)((rand8() & 7) - 0x36);
+            it->pos.y = (rand8() & 7) - 0x36;
             it->vel.x = (s32)(func_800FCAAC_MarioBandstand() & 0x1F) - 0x10;
             it->vel.z = -26.6f;
             it->vel.y = (rand8() & 0xF) + 0x28;
@@ -1099,15 +1112,16 @@ void func_800F97D0_MarioBandstand(void) {
     }
 }
 
-// NON_MATCHING: masked 73 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation, retail keeps kind 1's second model id in s0 for the shared hook
+// call (raw 35, masked 7); tried the hook calls inline, a separate model local, s16 m (M1e)
 #ifdef NON_MATCHING
 void func_800F98C4_MarioBandstand(omObjData* obj) {
     MBPlayerWork* w;
     MBPlayerCpu* cpu;
     Vec* pos;
-    s16 player;
+    s32 player;
     u8 chr;
-    u8 kind;
+    u16 kind;
     s32 dir;
     s32 file;
     s32 i;
@@ -1247,9 +1261,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F9
 #endif
 
 /* The backing musicians next to a player's instrument (kinds 1-3: two of them for kind 1). */
-// NON_MATCHING: masked 66 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: retail reads obj->work[0] once and tests (u16)(kind) with its own andi; GCC reloads it
+// (raw 8, masked 2); tried a u8/s32 work local, kind = work then kind-- (M1e)
 #ifdef NON_MATCHING
-void func_800FA028_MarioBandstand(omObjData* obj, s32 slot) {
+s32 func_800FA028_MarioBandstand(omObjData* obj, s32 slot) {
     s32 count;
     s32 j;
     u16 kind;
@@ -1257,11 +1272,10 @@ void func_800FA028_MarioBandstand(omObjData* obj, s32 slot) {
     s32* motions;
     u16 m;
     u16 h;
-    s16 clap;
-    char* name;
+    s32 clap;
 
     if (obj->work[0] == 0) {
-        return;
+        return slot;
     }
     kind = obj->work[0] - 1;
     count = 2;
@@ -1296,37 +1310,37 @@ void func_800FA028_MarioBandstand(omObjData* obj, s32 slot) {
             obj->model[slot++] = h;
             func_80025798(h, pos->x, pos->y, pos->z + 60.0f);
             func_80025830(h, 0.8f, 0.8f, 0.8f);
-            clap = m;
             h = func_80023FC8(obj->model[3]);
             obj->model[slot++] = h;
+            clap = (s16)m;
             func_8002859C(h, clap, "129_000-i-hook-R");
             func_800258EC(h, 0x4000, 0x4000);
             h = func_80023FC8(obj->model[3]);
             obj->model[slot++] = h;
-            name = "129_000-i-hook-L";
+            func_8002859C(h, clap, "129_000-i-hook-L");
+            func_800258EC(h, 0x4000, 0x4000);
             break;
         case 1:
-            clap = m;
             h = func_80023FC8(obj->model[2]);
             obj->model[slot++] = h;
+            clap = (s16)m;
             func_8002859C(h, clap, "129_000-i-hook-R");
             func_800258EC(h, 0x4000, 0x4000);
             h = LoadFormFile(0x3A0003, 0x699);
             obj->model[slot++] = h;
-            name = "129_000-i-hook-L";
+            func_8002859C(h, clap, "129_000-i-hook-L");
+            func_800258EC(h, 0x4000, 0x4000);
             break;
         case 2:
             h = LoadFormFile(0x3A000C, 0x699);
             obj->model[slot++] = h;
-            clap = m;
-            name = "129_000-i-hook-R";
+            clap = (s16)m;
+            func_8002859C(h, clap, "129_000-i-hook-R");
+            func_800258EC(h, 0x4000, 0x4000);
             break;
-        default:
-            continue;
         }
-        func_8002859C(h, clap, name);
-        func_800258EC(h, 0x4000, 0x4000);
     }
+    return slot;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FA028_MarioBandstand);
@@ -1768,7 +1782,8 @@ void func_800FB214_MarioBandstand(void) {
 }
 
 /* Follows the song: reads each channel's state from the audio driver and records note changes. */
-// NON_MATCHING: masked 44 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// NON_MATCHING: register allocation, retail copies func_8000C144's result to a0, we use v1 (raw 1,
+// masked 0); tried a switch, declaration order (M1e)
 #ifdef NON_MATCHING
 void func_800FB4D8_MarioBandstand(void) {
     B980ChlInfo info;
@@ -1776,6 +1791,7 @@ void func_800FB4D8_MarioBandstand(void) {
     s32 i;
     u16 note;
     s32 r;
+    s32 bit;
     u8* ev;
 
     if (D_800FD678_MarioBandstand & 0x4000) {
@@ -1830,15 +1846,16 @@ void func_800FB4D8_MarioBandstand(void) {
             note = info.pan;
             break;
         }
+        bit = 1 << i;
         if (note != t->note) {
-            D_800FD678_MarioBandstand |= 1 << i;
+            D_800FD678_MarioBandstand |= bit;
             t->flags |= 1;
             t->note = note;
             if (i == 0) {
                 D_800FD678_MarioBandstand |= 0x400;
             }
         } else {
-            D_800FD678_MarioBandstand &= ~(1 << i);
+            D_800FD678_MarioBandstand &= ~bit;
             t->flags &= ~1;
             if (i == 0) {
                 D_800FD678_MarioBandstand &= ~0x400;
@@ -1847,8 +1864,9 @@ void func_800FB4D8_MarioBandstand(void) {
         if (t->flags & 2) {
             t->unk26++;
             if (t->flags & 1) {
-                t->ev[t->count][0] = note;
-                t->ev[t->count][1] = (u8)t->unk28;
+                ev = t->ev[t->count];
+                ev[0] = note;
+                ev[1] = t->unk28;
                 t->count++;
                 t->unk26 = 0;
             }
@@ -1915,8 +1933,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB
 
 /* The next beat of a track: fills `info` (timing difference, length, beat index) and returns the
    note (the conductor's direction + 1 for track 0). */
-// register allocation and address CSE: retail loads &D_800FD598 before the timer test and reads the
-// timer through its own %hi/%lo (masked 40; tried hoisting the base, D + track)
+// address CSE: retail reads the timer test through its own %hi/%lo (GCC reuses the &D_800FD598 base),
+// so track is copied out of a0 (masked 11; tried hoisting the base, D + track, base-first song)
 #ifdef NON_MATCHING
 s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
     MBTrack* t;
@@ -1927,23 +1945,26 @@ s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
     s32 i;
     s32 n;
     s32 t0;
-    s16 d;
-    s16 ret;
+    s32 d;
+    s32 e;
+    s32 ret;
 
     ret = 0;
     if (!(D_800FD678_MarioBandstand & 0x8000)) {
         return 0;
     }
+    t = D_800FD598_MarioBandstand;
     if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
-        t = &D_800FD598_MarioBandstand[track];
+        t += track;
         pos = t->note;
         k = pos - t->base;
         t0 = t->ev[k][1];
         info->diff = (u16)t->timer - t0;
         k++;
         if (k < t->count) {
-            d = t->timer - t->ev[k][1];
-            info->len = t->ev[k][1] - t0;
+            e = t->ev[k][1];
+            d = t->timer - e;
+            info->len = e - t0;
             if (d >= -7) {
                 pos++;
                 info->diff = d;
@@ -1964,9 +1985,10 @@ s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
         info->idx = i;
         if (i < n) {
             if (track != 0) {
-                return b->note;
+                ret = b->note;
+            } else {
+                ret = D_800FD590_MarioBandstand[b->note] + 1;
             }
-            ret = D_800FD590_MarioBandstand[b->note] + 1;
         }
     }
     return ret;

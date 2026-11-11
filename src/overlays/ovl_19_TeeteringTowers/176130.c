@@ -48,7 +48,8 @@ void func_800F8E30_TeeteringTowers(void) {
     D_800FADD0_TeeteringTowers = 0.0f;
 }
 
-// retail keeps a second copy of the 0.0f compare operand ($f4, mov.s; masked 2)
+// retail keeps a second copy of the 0.0f compare operand ($f4, mov.s; masked 4); tried literal,
+// while loop, operand order (M1e)
 #ifdef NON_MATCHING
 void func_800F8E3C_TeeteringTowers(void) {
     f32 zero = 0.0f;
