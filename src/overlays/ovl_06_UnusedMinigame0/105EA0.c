@@ -967,8 +967,6 @@ void func_800FF488_UnusedMinigame0(void) {
     func_800FFA64_UnusedMinigame0();
     func_80025830(UM0_MODEL_DROP, 2.5f, 2.5f, 2.5f);
 }
-// float register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800FFA64_UnusedMinigame0(void) {
     Gfx* gfx;
     Mtx* mtx;
@@ -1017,8 +1015,8 @@ void func_800FFA64_UnusedMinigame0(void) {
                 guMtxCatL(mtx, &m, mtx);
                 guRotate(&m, 90.0f, 0.0f, 0.0f, 1.0f);
             } else {
-                s = 1.0 - func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) * 0.75;
-                guScale(&m, s, 1.0f, 2.0f * func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) + 1.0f);
+                guScale(&m, 1.0 - func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) * 0.75, 1.0f,
+                        2.0f * func_800AEAC0(D_80108C60_UnusedMinigame0[i].timer * 180 * 0.25 * 0.5) + 1.0f);
                 guMtxCatL(mtx, &m, mtx);
                 guRotate(&m, 90.0f, 1.0f, 0.0f, 0.0f);
             }
@@ -1115,9 +1113,6 @@ void func_800FFA64_UnusedMinigame0(void) {
     }
     gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FFA64_UnusedMinigame0);
-#endif
 // register allocation and block order (state machine; logic checked against the asm)
 #ifdef NON_MATCHING
 s32 func_80100850_UnusedMinigame0(void) {
