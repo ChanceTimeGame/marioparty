@@ -667,7 +667,7 @@ void func_800F8848_MushroomMixup(omObjData* arg0) {
     }
 }
 
-// register allocation (masked 2, raw 15): s0/s1/s2 hold other/arg0/dp in retail; declaration order does not move them
+// register allocation (masked 0, raw 14): s0/s1/s2 hold other/arg0/dp in retail; declaration order does not move them; the idx local fixed the load order (M1g)
 /* A +-45 degree detour around the player the CPU is chasing (work unk_54). */
 #ifdef NON_MATCHING
 f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
@@ -679,10 +679,12 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
     f32 r;
     Vec3f* dp;
 
+    s8 idx = MM_PLAYER(arg0)->unk_54;
+
     r = 0.0f;
-    if (MM_PLAYER(arg0)->unk_54 != -1) {
+    if (idx != -1) {
         dp = &d;
-        other = D_800F3FB0[MM_PLAYER(arg0)->unk_54];
+        other = D_800F3FB0[idx];
         func_800A0D00(dp, x, 0.0f, z);
         d.x -= arg0->trans.x;
         d.y -= 0.0f;

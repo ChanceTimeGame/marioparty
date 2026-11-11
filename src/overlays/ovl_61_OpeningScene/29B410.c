@@ -1610,15 +1610,10 @@ void func_800FBD7C_OpeningScene(void) {
     func_8004E184();
 }
 
-// retail copies the flags stack argument into a second callee-saved register (frame 72 vs 64; masked 11);
-// retail tests arg3 & 2 in place on the original and keeps the copy for & 1; tried a late flags = arg3 & 1 (M1c)
-#ifdef NON_MATCHING
-s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* arg2, s32 arg3) {
+s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* arg2, u16 arg3) {
     Vec3f sp10;
     Vec3f sp20;
-    s32 flags;
 
-    flags = arg3;
     sp10 = D_800FD520_OpeningScene;
     sp20 = D_800FD4DC_OpeningScene;
 
@@ -1635,14 +1630,11 @@ s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* 
     func_800FC17C_OpeningScene(arg0, arg2);
     func_800FC1F0_OpeningScene(arg0, &sp10);
     func_800FC264_OpeningScene(arg0, &sp20);
-    if (flags & 1) {
+    if (arg3 & 1) {
         func_80025B34(arg0->model);
     }
     return arg0->model;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_OpeningScene/29B410", func_800FBD98_OpeningScene);
-#endif
 s32 func_800FBEA8_OpeningScene(OpeningModel* arg0) {
     func_8002456C(arg0->model);
     if (arg0->self2 != NULL) {

@@ -168,6 +168,7 @@ void func_800F6E6C_KeyPaWay(omObjData* arg0) {
 }
 
 // float constant register allocation; the 0.0f arguments come from a hoisted register (masked 14)
+// retail passes the else-call zeros as integer zero (move a1,zero); tried one shared call with x = z = 0.0f (masked 35) and the if/else swapped (masked 26) (M1g)
 #ifdef NON_MATCHING
 void func_800F6F10_KeyPaWay(omObjData* obj, u8 port) {
     KPWPlayerWork* work;

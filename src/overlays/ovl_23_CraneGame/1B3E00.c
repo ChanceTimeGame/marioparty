@@ -899,6 +899,7 @@ void func_800F82D4_CraneGame(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1B3E00", func_800F82D4_CraneGame);
 #endif
 // register allocation and loop-invariant placement of the vertex table bases (masked 14)
+// retail loads guTranslateF a0 = m2 and a1 = 0 directly (not from the hoisted s3/f20) and hoists only the tri base; integer 0 literals change nothing (M1g)
 #ifdef NON_MATCHING
 s32 func_800F9464_CraneGame(omObjData* obj, Vec* out) {
     f32 m[4][4];

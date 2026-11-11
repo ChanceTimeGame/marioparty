@@ -274,7 +274,8 @@ void func_800FB058_LimboDance(omObjData* obj) {
 
 /* Appends the sea strip's display list: the sprite's first frame drawn as 320-wide texture
    rectangles, scrolled by scroll texels. */
-// NON_MATCHING: register allocation / scheduling
+// register allocation / scheduling (masked 9); retail masks the rectangle y words with 0xFFC (not CSE'd with the
+// tile's 0xFFF) and does not hoist the 0xFD48 SETTIMG word; "* 4" args change nothing (M1g)
 #ifdef NON_MATCHING
 void func_800FB504_LimboDance(s32 sprite, Gfx** pgfx, f32 scroll) {
     Gfx* gfx;
@@ -460,7 +461,8 @@ void func_800FC4FC_LimboDance(s32 id, f32 amp, f32 angle) {
 
 
 /* Takes a free billboard for sprite and builds its display list (ovl_25's func_800FE2F0). */
-// NON_MATCHING: register allocation / scheduling
+// register allocation (masked 13): the vertex pointer is t1 in retail, t0 here, and one DL store schedules
+// differently; M1g fixed two render modes to retail's 0x5049D8/0x553078 (ovl_25's twin really uses 0x4049D8/0x443078)
 #ifdef NON_MATCHING
 s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     LDBillboard* b;
@@ -497,10 +499,10 @@ s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     anim = D_800EC700[b->unk_22];
     if (anim->unk18 & 0x8000) {
         gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
-        gDPSetRenderMode(gfx++, 0x4049D8, 0);
+        gDPSetRenderMode(gfx++, 0x5049D8, 0);
         gDPSetBlendColor(gfx++, 1, 1, 1, 1);
     } else if (b->unk_29 == 0xFF) {
-        gDPSetRenderMode(gfx++, 0x443078, 0);
+        gDPSetRenderMode(gfx++, 0x553078, 0);
         gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
     } else {
         gDPSetBlendColor(gfx++, 0, 0, 0, 1);
@@ -787,8 +789,8 @@ void func_800FDF58_LimboDance(void) {
 }
 
 /* Builds this frame's billboard display list (ovl_25's func_800FFD18). */
-// load order (masked 18): retail loads D_800C3110 before D_800F3FA8, b->unk_1C before D_800F37F0,
-// and &Center after the first mul.s, as in the ovl_25 twin; tried [] vs + forms and a Vtx** unk_1C.
+// scheduling (masked 2 plus data offsets): as the ovl_25 twin, retail loads b->unk_1C after the G_MOVEWORD
+// store and before D_800F37F0; the twin's cam/vp locals and Center.x-first eye.x fixed the rest (M1g, was 18).
 #ifdef NON_MATCHING
 void func_800FE3CC_LimboDance(void) {
     Mtx view;
@@ -800,6 +802,8 @@ void func_800FE3CC_LimboDance(void) {
     Vec at;
     Vec up;
     LDBillboard* b;
+    unk_Struct00* cam;
+    unk_Struct00* vp;
     Gfx* gfx;
     Mtx* mtx;
     f32 rx;
@@ -810,10 +814,12 @@ void func_800FE3CC_LimboDance(void) {
     *D_800F2B7C[D_800FF218_LimboDance].unk_6C->unk_00 = D_800FF200_LimboDance[D_800FE9B0_LimboDance];
     gfx = D_800FF200_LimboDance[D_800FE9B0_LimboDance];
     mtx = D_800FF20C_LimboDance[D_800FE9B0_LimboDance];
-    proj = *(&D_800C3110->unk_138 + D_800F3FA8 * 2); /* the viewport's projection pair */
+    cam = D_800C3110;
+    vp = (unk_Struct00*)((u8*)cam + D_800F3FA8 * 128);
+    proj = vp->unk_138; /* the viewport's projection pair */
     rx = CRot.x;
     ry = CRot.y;
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
