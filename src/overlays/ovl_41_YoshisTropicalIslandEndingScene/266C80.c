@@ -264,7 +264,8 @@ void func_800FDACC_YoshisTropicalIslandEndingScene(s16 arg0) {
     e->unk_10 &= 0xFF7F;
     func_800258EC(e->unk_00, 4, 4);
 }
-// s->id reload in the loop and the base register of the last record (masked 8)
+// loop: retail reloads s->id from s1 for func_8001E2F8 where ours keeps it (masked 11, mostly branch
+// offsets); reading the first or second id through D_8010F880[i] tried
 #ifdef NON_MATCHING
 void func_800FDB24_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     Unk266Spr* s;
@@ -309,7 +310,7 @@ void func_800FDB24_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     b = D_8010F880_YoshisTropicalIslandEndingScene;
     s = &b[16];
     id = D_800ECDE0[b[16].id].unk_00;
-    t = b[16].t;
+    t = s->t;
     func_8001E2F8(s->id, (1.0f - func_800B1750(t)) * 255.0f);
     {
         f32 k = 1.01f - func_800B1750(t);
@@ -334,7 +335,8 @@ const f64 D_8010F178_YoshisTropicalIslandEndingScene = 0.6f;
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FDB24_YoshisTropicalIslandEndingScene);
 #endif
 
-// D_800ECDE0 load scheduled before the index scaling in the loop (masked 4)
+// scheduling: D_800ECDE0 load before the index scaling in the loop (raw 6, masked 4); `(p + i)->`,
+// `(s32)` index and `(&p[i])->` tried
 #ifdef NON_MATCHING
 omObjData* func_800FDF78_YoshisTropicalIslandEndingScene(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     omObjData* obj;
@@ -555,16 +557,13 @@ s16 func_800FEB8C_YoshisTropicalIslandEndingScene(s32 arg0) {
     func_800257E4(id, 0.0f, 0.0f, 0.0f);
     return id;
 }
-// load order of work[3] and the model-id pointer (masked 2)
-#ifdef NON_MATCHING
 void func_800FEC20_YoshisTropicalIslandEndingScene(omObjData* arg0) {
-    u8 idx = arg0->work[0];
-    u8 k = arg0->work[2];
-    u8 j = arg0->work[3];
+    s32 idx = arg0->work[0];
+    s32 k = arg0->work[2];
+    s32 j = arg0->work[3];
     Unk266Model* tbl = D_8010E820_YoshisTropicalIslandEndingScene[k];
     Vec3f* pos = &tbl[j].pos;
     Vec3f* scale = &tbl[j].scale;
-    s32* m;
     f32 y;
 
     D_800C34A4 = arg0->rot.x;
@@ -582,15 +581,10 @@ void func_800FEC20_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     arg0->rot.y += 0.0125f;
     arg0->rot.z = ((10.0f - arg0->rot.z) / 67.0f) + arg0->rot.z;
     y = arg0->rot.y * arg0->rot.y * 30.0f * 5.0f;
-    m = D_801102B8_YoshisTropicalIslandEndingScene;
-    m += idx;
-    func_80025798((s16)*m, pos->x, pos->y - y, pos->z);
-    func_80025830((s16)*m, scale->x, scale->y, scale->z);
-    func_800257E4((s16)*m, 0.0f, 0.0f, 0.0f);
+    func_80025798((s16)D_801102B8_YoshisTropicalIslandEndingScene[idx], pos->x, pos->y - y, pos->z);
+    func_80025830((s16)D_801102B8_YoshisTropicalIslandEndingScene[idx], scale->x, scale->y, scale->z);
+    func_800257E4((s16)D_801102B8_YoshisTropicalIslandEndingScene[idx], 0.0f, 0.0f, 0.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FEC20_YoshisTropicalIslandEndingScene);
-#endif
 // decomp-permuter
 omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -703,24 +697,19 @@ void func_800FF240_YoshisTropicalIslandEndingScene(omObjData* arg0) {
 }
 const f64 D_8010F198_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
-// loop-invariant D_80110448 base not hoisted, model address order (masked ~18)
-#ifdef NON_MATCHING
 void func_800FF364_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     s32 n = D_8010DC90_YoshisTropicalIslandEndingScene[GwSystem.unk_00];
     s32 i;
     f32 a;
     f32 x;
     f32 z;
-    Object** p;
 
     for (i = 0; i < arg0->trans.y; i++) {
         a = (360 / n) * i;
         x = (sinf((a + arg0->rot.y) * D_8010F1A0_YoshisTropicalIslandEndingScene) * arg0->trans.x) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].x;
         z = (cosf((a + arg0->rot.y) * D_8010F1A0_YoshisTropicalIslandEndingScene) * arg0->trans.x) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z;
-        p = D_80110448_YoshisTropicalIslandEndingScene;
-        p += i;
-        func_800A0D00(&(*p)->coords, x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y, z);
-        func_800A0D00((Vec3f*)&(*p)->xScale, arg0->scale.x, arg0->scale.x, arg0->scale.x);
+        func_800A0D00(&D_80110448_YoshisTropicalIslandEndingScene[i]->coords, x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y, z);
+        func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[i]->xScale, arg0->scale.x, arg0->scale.x, arg0->scale.x);
     }
     arg0->rot.y -= 2.0f;
     if (arg0->rot.y <= 0.0f) {
@@ -728,27 +717,21 @@ void func_800FF364_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
     arg0->work[0]++;
 }
-const f64 D_8010F1A0_YoshisTropicalIslandEndingScene = 0.017453292519943295;
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FF364_YoshisTropicalIslandEndingScene);
-#endif
+const f64 D_8010F1A0_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
-// D_80110448 base not hoisted out of the first loop; register allocation (masked 23)
-#ifdef NON_MATCHING
 void func_800FF59C_YoshisTropicalIslandEndingScene(void) {
     s32 n = D_8010DC90_YoshisTropicalIslandEndingScene[GwSystem.unk_00];
     f32 r = D_8010DCFC_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene];
     s32 i;
-    s32 c;
     f32 a;
     f32 s;
+    f32 k;
     Object** p;
     omObjData* obj;
-    omObjData* obj2;
 
     for (i = 0; i < n; i++) {
+        D_80110448_YoshisTropicalIslandEndingScene[i] = MBModelCreate(0x25, NULL);
         p = &D_80110448_YoshisTropicalIslandEndingScene[i];
-        *p = MBModelCreate(0x25, NULL);
         a = ((360 / n) * i) * D_8010F1A8_YoshisTropicalIslandEndingScene;
         func_800A0D00(&(*p)->coords, (sinf(a) * r) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y,
                       (cosf(a) * r) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z);
@@ -794,27 +777,28 @@ void func_800FF59C_YoshisTropicalIslandEndingScene(void) {
     D_80110448_YoshisTropicalIslandEndingScene[0]->coords.y = D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y;
     D_80110448_YoshisTropicalIslandEndingScene[0]->coords.z = D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z;
     omDelObj(obj);
-    obj2 = omAddObj(0x1000, 0, 0, -1, &func_800FF240_YoshisTropicalIslandEndingScene);
-    omSetRot(obj2, 0.0f, 0.0f, 0.0f);
-    obj2->work[1] = 1;
+    obj = omAddObj(0x1000, 0, 0, -1, &func_800FF240_YoshisTropicalIslandEndingScene);
+    omSetRot(obj, 0.0f, 0.0f, 0.0f);
+    obj->work[1] = 1;
     HuPrcSleep(5);
     SetFadeInTypeAndTime(0, 0x10);
     HuPrcSleep(0x10);
-    for (c = 0xF8; c >= 0; c -= 4) {
-        func_80028C64(*D_80110448_YoshisTropicalIslandEndingScene[0]->unk_3C->unk_40, c, c, c, 0xFF);
+    for (i = 0xF8; i >= 0; i -= 4) {
+        func_80028C64(*D_80110448_YoshisTropicalIslandEndingScene[0]->unk_3C->unk_40, i, i, i, 0xFF);
         HuPrcVSleep();
     }
-    while (obj2->work[1] == 0) {
+    while (obj->work[1] == 0) {
         HuPrcSleep(0);
     }
     func_800726AC(0, 0x24);
     for (i = 0; i < 0x25; i++) {
+        k = i * 0.027777778f;
         D_80110448_YoshisTropicalIslandEndingScene[0]->coords.z -= 30.0f;
-        s = (2.0f * D_8010DD1C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene]) * (D_8010F1B8_YoshisTropicalIslandEndingScene - ((i * 0.027777778f) * D_8010F1B0_YoshisTropicalIslandEndingScene));
+        s = (2.0f * D_8010DD1C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene]) * (D_8010F1B8_YoshisTropicalIslandEndingScene - (k * D_8010F1B0_YoshisTropicalIslandEndingScene));
         func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[0]->xScale, s, s, s);
         HuPrcSleep(0);
     }
-    omDelObj(obj2);
+    omDelObj(obj);
     MBModelKill(D_80110448_YoshisTropicalIslandEndingScene[0]);
     D_80110448_YoshisTropicalIslandEndingScene[0] = NULL;
     func_800427D4(D_80110400_YoshisTropicalIslandEndingScene[0]);
@@ -825,9 +809,6 @@ void func_800FF59C_YoshisTropicalIslandEndingScene(void) {
 const f64 D_8010F1A8_YoshisTropicalIslandEndingScene = 0.017453292519943295;
 const f64 D_8010F1B0_YoshisTropicalIslandEndingScene = 0.7;
 const f64 D_8010F1B8_YoshisTropicalIslandEndingScene = 1.0;
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FF59C_YoshisTropicalIslandEndingScene);
-#endif
 
 void func_800FFC08_YoshisTropicalIslandEndingScene(s32* arg0, s32* arg1) {
     f32 pos[5][2] = { { 16.0f, 160.0f }, { 68.0f, 152.0f }, { 160.0f, 140.0f }, { 252.0f, 152.0f }, { 304.0f, 160.0f } };
