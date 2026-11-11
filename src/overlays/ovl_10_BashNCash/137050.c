@@ -17,7 +17,7 @@ s32 D_800FE3D8_BashNCash = 120;
 u32 D_800FE3DC_BashNCash = 929; /* frames left */
 s32 D_800FE3E0_BashNCash = 0;
 s32 D_800FE3E4_BashNCash = 0;
-s32 D_800FE3E8_BashNCash = 0;
+u32 D_800FE3E8_BashNCash = 0;
 s32 D_800FE3EC_BashNCash = 0;
 u32 D_800FE3F0_BashNCash = 0;
 s32 D_800FE3F4_BashNCash = 0;
@@ -1908,11 +1908,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FBCC8_B
 #endif
 
 /* The game's control object. */
-// register allocation and a shared base register for this unit's .data
+// register allocation: retail keeps w in s1 and diff with the constant 1 in s0 (masked 0, raw 30)
 #ifdef NON_MATCHING
 void func_800FC240_BashNCash(void) {
     BashPlayerWork* w;
+    BashPlayerWork* w2;
     s32 diff;
+    s32 wait;
     s32 i;
 
     func_800F6EE0_BashNCash();
@@ -1957,7 +1959,7 @@ void func_800FC240_BashNCash(void) {
                     break;
                 }
             }
-            if (i >= D_800F2BC0 || --D_800FE3E4_BashNCash == 0) {
+            if (i >= D_800F2BC0 || D_800FE3E4_BashNCash-- == 0) {
                 func_80009438();
             }
         }
@@ -1984,11 +1986,11 @@ void func_800FC240_BashNCash(void) {
         }
         if (GMesStatAllGet() == 0) {
             D_800FE62C_BashNCash = 3;
-            w = D_800F3FB0[D_800FE610_BashNCash]->unk_50;
+            w2 = D_800F3FB0[D_800FE610_BashNCash]->unk_50;
             if (_CheckFlag(0x2B) == 0) {
-                w->unk_3C = 0.0f;
-                func_8009ECB0(D_800F2B7C[D_800F3FB0[D_800FE610_BashNCash]->model[0]].unk7C, w->unk_3C, w->unk_3C,
-                              w->unk_3C);
+                w2->unk_3C = 0.0f;
+                func_8009ECB0(D_800F2B7C[D_800F3FB0[D_800FE610_BashNCash]->model[0]].unk7C, w2->unk_3C, w2->unk_3C,
+                              w2->unk_3C);
                 if (D_800FE3EC_BashNCash != 0) {
                     func_800184BC(D_800F3FB0[D_800FE610_BashNCash], 0xD);
                     func_80060128(0x35);
@@ -2018,14 +2020,14 @@ void func_800FC240_BashNCash(void) {
         case 1:
             if (_CheckFlag(0x2B) == 0) {
                 if (D_800FE3EC_BashNCash != 0) {
-                    diff = D_800FE3F0_BashNCash++ < 90;
+                    wait = D_800FE3F0_BashNCash++ < 90;
                 } else {
-                    diff = D_800FE3F0_BashNCash++ < 77;
+                    wait = D_800FE3F0_BashNCash++ < 77;
                 }
             } else {
-                diff = D_800FE3F0_BashNCash++ < 20;
+                wait = D_800FE3F0_BashNCash++ < 20;
             }
-            if (!diff && (_CheckFlag(0x2B) == 0 || GMesWait() != 1)) {
+            if (!wait && (_CheckFlag(0x2B) == 0 || GMesWait() != 1)) {
                 func_800726AC(0, 0x14);
                 D_800FE3E8_BashNCash = 2;
             }
