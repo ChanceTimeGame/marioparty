@@ -118,8 +118,8 @@ SlotWork* func_800F7734_SlotMachine(omObjData* unused, omObjData* obj) {
 #define SLOT_UNPROTO(f) ((s32 (*)())(f))
 #define SLOT_8001E1D0(a, b) ((s32 (*)(s16, s32))func_8001E1D0)(a, b)
 
-// register allocation: the image index and func_800FC050 % 480 sit in other registers (masked 33,
-// mostly branch offsets after one missing move)
+// the i == 0 image index skips the u16 mask in retail (ours shares it), plus register allocation
+// (masked 1, raw 15; tried s32/u16 idx and img)
 #ifdef NON_MATCHING
 void func_800F7750_SlotMachine(omObjData* obj) {
     omObjData* player;
@@ -322,7 +322,8 @@ void func_800F7750_SlotMachine(omObjData* obj) {
                 switch (coin->unk_02) {
                     case 0:
                         if (++coin->unk_44 >= i * 4) {
-                            coin->unk_28 = func_800FC050_SlotMachine() % 480 - 240;
+                            result = func_800FC050_SlotMachine();
+                            coin->unk_28 = result % 480 - 240;
                             coin->unk_2C = coin->unk_30 = 0.0f;
                             coin->unk_1C = coin->unk_10;
                             coin->unk_20 = coin->unk_14;
