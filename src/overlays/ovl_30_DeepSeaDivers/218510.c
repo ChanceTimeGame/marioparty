@@ -1381,6 +1381,8 @@ s32 func_800FB27C_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB27C_DeepSeaDivers);
 #endif
+// code identical; as C, .rodata loses the zero double retail has at D_801001D8 after this function's constants, shifting later rodata
+#ifdef NON_MATCHING
 s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
     DSDWork* t;
@@ -1488,6 +1490,9 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
     }
     return btn;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB310_DeepSeaDivers);
+#endif
 void func_800FB860_DeepSeaDivers(void) {
     CZoom = 21000.0f;
     CRot.x = 2.9249f;
