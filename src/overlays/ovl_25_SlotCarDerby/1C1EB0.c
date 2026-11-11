@@ -2942,7 +2942,8 @@ void func_800FF8A4_SlotCarDerby(void) {
 }
 /* Builds this frame's billboard display list: each visible billboard's matrix (camera-facing
    unless flag 0x80) and material list, then restores the viewport's matrix. */
-// scheduling: &Center, the viewport index and the unk_1C base loads (masked 10)
+// scheduling (masked 2, raw 2): retail loads b->unk_1C after the G_MOVEWORD w0 store and before
+// D_800F37F0; ours loads the index first. Tried [i + 2], *(p + 2 + i), (p + 2)[i], (p + i)[2], a local
 #ifdef NON_MATCHING
 void func_800FFD18_SlotCarDerby(void) {
     Mtx view;
@@ -2954,6 +2955,8 @@ void func_800FFD18_SlotCarDerby(void) {
     Vec at;
     Vec up;
     SCDBillboard* b;
+    unk_Struct00* cam;
+    unk_Struct00* vp;
     Gfx* gfx;
     Mtx* mtx;
     f32 rx;
@@ -2964,10 +2967,12 @@ void func_800FFD18_SlotCarDerby(void) {
     D_800F2B7C[D_801024A8_SlotCarDerby].unk_6C->unk_00 = &D_80102490_SlotCarDerby[D_80100EA8_SlotCarDerby];
     gfx = D_80102490_SlotCarDerby[D_80100EA8_SlotCarDerby];
     mtx = D_8010249C_SlotCarDerby[D_80100EA8_SlotCarDerby];
-    proj = *(&D_800C3110->unk_138 + D_800F3FA8 * 2); /* the viewport's projection pair */
+    cam = D_800C3110;
+    vp = (unk_Struct00*)((u8*)cam + D_800F3FA8 * 128);
+    proj = vp->unk_138; /* the viewport's projection pair */
     rx = CRot.x;
     ry = CRot.y;
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -3003,7 +3008,7 @@ void func_800FFD18_SlotCarDerby(void) {
             MtxMult(sc, tmp, mf);
         }
         if (b->unk_20 != 0) {
-            gSPSegment(gfx++, 1, osVirtualToPhysical(*((Vtx**)b->unk_1C + D_800F37F0 + 2)));
+            gSPSegment(gfx++, 1, osVirtualToPhysical(b->unk_1C[D_800F37F0 + 2]));
         }
         func_800A0A20(mf, mtx);
         gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

@@ -160,7 +160,7 @@ typedef struct SCDBillboard {
     /* 0x00 */ Gfx* unk_00;    /* display list, (Gfx*)-1 = free */
     /* 0x04 */ Gfx* unk_04[3]; /* per-frame material lists (D_800F37F0 picks one) */
     /* 0x10 */ Vtx* unk_10[3]; /* per-frame vertices (0x80 bytes) */
-    /* 0x1C */ s32 unk_1C; /* a pointer: only cleared here; func_800FFD18 reads [2 + frame]
+    /* 0x1C */ Vtx** unk_1C; /* only cleared here; func_800FFD18 reads [2 + frame]
                                    from it when unk_20 is set, which nothing in the overlay does */
     /* 0x20 */ s8 unk_20;
     /* 0x21 */ char unk_21;
