@@ -1542,15 +1542,14 @@ void func_800FC39C_PaddleBattle(omObjData* obj) {
 }
 
 /* A light ring: appears over the bank the raft drifts toward, every 64 frames. */
-// masked 46: retail evaluates func_800FAC70's side ? 1.0f : 0.0f argument before RAFT.dist + 10.0f
-// and loads p.x once before the +/- s branch; tried a ternary and the reversed if.
-#ifdef NON_MATCHING
 void func_800FC784_PaddleBattle(omObjData* obj) {
     Matrix4f m;
     Vec p;
     PBRingWork* w;
     s32 side;
     f32 s;
+    f32 lat;
+    f32 x;
 
     w = obj->unk_50;
     if (func_8005FD5C() + D_800F64F8 == 0) {
@@ -1567,13 +1566,16 @@ void func_800FC784_PaddleBattle(omObjData* obj) {
             }
             func_800258EC(obj->model[0], 4, 0);
             side = obj->work[0] & 1;
-            func_800FAC70_PaddleBattle(RAFT.dist + 10.0f, side ? 1.0f : 0.0f, &p);
+            lat = side ? 1.0f : 0.0f;
+            func_800FAC70_PaddleBattle(RAFT.dist + 10.0f, lat, &p);
             s = PB_RAND16() * 800.0 / 65536.0 + 200.0;
-            if (side == 0) {
-                obj->trans.x = p.x + s;
+            x = p.x;
+            if (side != 0) {
+                x -= s;
             } else {
-                obj->trans.x = p.x - s;
+                x += s;
             }
+            obj->trans.x = x;
             obj->trans.z = p.z + PB_RAND16() * 200.0 / 65536.0 - 300.0;
             obj->trans.y = p.y + 900.0;
             w->height = PB_RAND16() * 100 / 65536 * 0.01 + 1.5;
@@ -1594,9 +1596,6 @@ void func_800FC784_PaddleBattle(omObjData* obj) {
     func_80027E48(obj->model[0], D_800FFB88_PaddleBattle[w->idx], D_800FFBA8_PaddleBattle[w->idx],
                   D_800FFB68_PaddleBattle[w->idx][0], D_800FFB68_PaddleBattle[w->idx][1], "sin-light1", 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FC784_PaddleBattle);
-#endif
 
 /* Builds a textured quad model (the waterfall) from `vtx`; its texture is segment 2. */
 s32 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
