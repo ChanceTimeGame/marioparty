@@ -1952,11 +1952,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC4D0_
 #endif
 
 /* Race state from the ground under the sled: 1 start ramp, 5 crash zone, else racing / goal. */
-// register allocation
-#ifdef NON_MATCHING
 void func_800FC7DC_BobsledRun(omObjData* obj) {
     BRWork* work;
-    s8 r;
 
     work = obj->unk_50;
     if (work->unk_53 == 1) {
@@ -1969,11 +1966,11 @@ void func_800FC7DC_BobsledRun(omObjData* obj) {
     }
     if (D_800FF2A8_BobsledRun[work->unk_58].timer > 40) {
         D_800FF2A8_BobsledRun[work->unk_58].state = 3;
-        r = -2;
         if (D_800FF2A1_BobsledRun == -1) {
-            r = work->unk_58;
+            D_800FF2A1_BobsledRun = work->unk_58;
+        } else {
+            D_800FF2A1_BobsledRun = -2;
         }
-        D_800FF2A1_BobsledRun = r;
         PlaySound(0x2A0);
         func_80060618(0x45F, D_800FF2A8_BobsledRun[work->unk_58].player[0]);
         func_80060618(0x45F, D_800FF2A8_BobsledRun[work->unk_58].player[1]);
@@ -1981,9 +1978,6 @@ void func_800FC7DC_BobsledRun(omObjData* obj) {
     }
     D_800FF2A8_BobsledRun[work->unk_58].state = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC7DC_BobsledRun);
-#endif
 
 /* Teams from the players' groups. */
 void func_800FC918_BobsledRun(void) {
@@ -2096,32 +2090,28 @@ void func_800FCB44_BobsledRun(void) {
 }
 
 /* Turn by turn, glancing off walls the sled faces into. */
-// register allocation
-#ifdef NON_MATCHING
 void func_800FCCE8_BobsledRun(omObjData* obj, Vec3f* normal, f32 turn) {
     BRWork* work;
     s32 team;
     f32 a;
     f32 s;
-    f32 dot;
 
     work = obj->unk_50;
     team = work->unk_58;
     work->unk_3C = turn + work->unk_3C;
     a = work->unk_3C - 90.0f;
     s = func_800AEAC0(a);
-    dot = func_8000A72C(normal->x, normal->z, s, func_800AEFD0(a));
-    if (dot > 0.7f) {
-        work->unk_3C = work->unk_3C - (turn + 1.0f);
-    } else if (dot < -0.7f) {
-        work->unk_3C = (f32)(fabs(turn) + 1.0) + work->unk_3C;
+    a = func_8000A72C(normal->x, normal->z, s, func_800AEFD0(a));
+    if (a > 0.7f) {
+        turn += 1.0f;
+        work->unk_3C = work->unk_3C - turn;
+    } else if (a < -0.7f) {
+        turn = fabs(turn) + 1.0;
+        work->unk_3C = turn + work->unk_3C;
     }
     work->unk_3C = func_80029518(work->unk_3C);
-    D_800FF2A8_BobsledRun[team].unk08 = dot;
+    D_800FF2A8_BobsledRun[team].unk08 = a;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FCCE8_BobsledRun);
-#endif
 
 /* Time display m:ss"cc (frames at 60 per second). */
 void func_800FCE2C_BobsledRun(s16 idx, s16 time) {
