@@ -719,22 +719,19 @@ void func_800FF364_YoshisTropicalIslandEndingScene(omObjData* arg0) {
 }
 const f64 D_8010F1A0_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
-// D_80110448 base not hoisted out of the first loop; register allocation (masked 23)
-#ifdef NON_MATCHING
 void func_800FF59C_YoshisTropicalIslandEndingScene(void) {
     s32 n = D_8010DC90_YoshisTropicalIslandEndingScene[GwSystem.unk_00];
     f32 r = D_8010DCFC_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene];
     s32 i;
-    s32 c;
     f32 a;
     f32 s;
+    f32 k;
     Object** p;
     omObjData* obj;
-    omObjData* obj2;
 
     for (i = 0; i < n; i++) {
+        D_80110448_YoshisTropicalIslandEndingScene[i] = MBModelCreate(0x25, NULL);
         p = &D_80110448_YoshisTropicalIslandEndingScene[i];
-        *p = MBModelCreate(0x25, NULL);
         a = ((360 / n) * i) * D_8010F1A8_YoshisTropicalIslandEndingScene;
         func_800A0D00(&(*p)->coords, (sinf(a) * r) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y,
                       (cosf(a) * r) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z);
@@ -780,27 +777,28 @@ void func_800FF59C_YoshisTropicalIslandEndingScene(void) {
     D_80110448_YoshisTropicalIslandEndingScene[0]->coords.y = D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y;
     D_80110448_YoshisTropicalIslandEndingScene[0]->coords.z = D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z;
     omDelObj(obj);
-    obj2 = omAddObj(0x1000, 0, 0, -1, &func_800FF240_YoshisTropicalIslandEndingScene);
-    omSetRot(obj2, 0.0f, 0.0f, 0.0f);
-    obj2->work[1] = 1;
+    obj = omAddObj(0x1000, 0, 0, -1, &func_800FF240_YoshisTropicalIslandEndingScene);
+    omSetRot(obj, 0.0f, 0.0f, 0.0f);
+    obj->work[1] = 1;
     HuPrcSleep(5);
     SetFadeInTypeAndTime(0, 0x10);
     HuPrcSleep(0x10);
-    for (c = 0xF8; c >= 0; c -= 4) {
-        func_80028C64(*D_80110448_YoshisTropicalIslandEndingScene[0]->unk_3C->unk_40, c, c, c, 0xFF);
+    for (i = 0xF8; i >= 0; i -= 4) {
+        func_80028C64(*D_80110448_YoshisTropicalIslandEndingScene[0]->unk_3C->unk_40, i, i, i, 0xFF);
         HuPrcVSleep();
     }
-    while (obj2->work[1] == 0) {
+    while (obj->work[1] == 0) {
         HuPrcSleep(0);
     }
     func_800726AC(0, 0x24);
     for (i = 0; i < 0x25; i++) {
+        k = i * 0.027777778f;
         D_80110448_YoshisTropicalIslandEndingScene[0]->coords.z -= 30.0f;
-        s = (2.0f * D_8010DD1C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene]) * (D_8010F1B8_YoshisTropicalIslandEndingScene - ((i * 0.027777778f) * D_8010F1B0_YoshisTropicalIslandEndingScene));
+        s = (2.0f * D_8010DD1C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene]) * (D_8010F1B8_YoshisTropicalIslandEndingScene - (k * D_8010F1B0_YoshisTropicalIslandEndingScene));
         func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[0]->xScale, s, s, s);
         HuPrcSleep(0);
     }
-    omDelObj(obj2);
+    omDelObj(obj);
     MBModelKill(D_80110448_YoshisTropicalIslandEndingScene[0]);
     D_80110448_YoshisTropicalIslandEndingScene[0] = NULL;
     func_800427D4(D_80110400_YoshisTropicalIslandEndingScene[0]);
@@ -811,9 +809,6 @@ void func_800FF59C_YoshisTropicalIslandEndingScene(void) {
 const f64 D_8010F1A8_YoshisTropicalIslandEndingScene = 0.017453292519943295;
 const f64 D_8010F1B0_YoshisTropicalIslandEndingScene = 0.7;
 const f64 D_8010F1B8_YoshisTropicalIslandEndingScene = 1.0;
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FF59C_YoshisTropicalIslandEndingScene);
-#endif
 
 void func_800FFC08_YoshisTropicalIslandEndingScene(s32* arg0, s32* arg1) {
     f32 pos[5][2] = { { 16.0f, 160.0f }, { 68.0f, 152.0f }, { 160.0f, 140.0f }, { 252.0f, 152.0f }, { 304.0f, 160.0f } };
