@@ -308,7 +308,8 @@ extern f32 D_80100C5C_DeepSeaDivers;
 extern s16 D_80100C60_DeepSeaDivers[2];
 extern f32 D_80100C64_DeepSeaDivers;
 extern f32 D_80100C68_DeepSeaDivers;
-extern s16 D_80100C70_DeepSeaDivers[3]; /* the sprite file; pumpers and divers made so far */
+extern s16 D_80100C70_DeepSeaDivers; /* the sprite file */
+extern s16 D_80100C72_DeepSeaDivers[2]; /* pumpers and divers made so far */
 extern DSDFx D_80100C80_DeepSeaDivers[64];
 extern DSDTeamObj D_80101780_DeepSeaDivers[2];
 extern s16 D_80101790_DeepSeaDivers[3];

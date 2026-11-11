@@ -199,8 +199,8 @@ void func_800F65E0_DeepSeaDivers(void) {
     D_800F2AF8[D_800ED440++] = obj = omAddObj(0, 9, 0, -1, func_800F70F4_DeepSeaDivers);
     omSetStatBit(obj, 160);
     D_800F2AF8[D_800ED440++] = omAddObj(1, 6, 0, -1, func_800F791C_DeepSeaDivers);
-    D_80100C70_DeepSeaDivers[1] = 0;
-    D_80100C70_DeepSeaDivers[2] = 0;
+    D_80100C72_DeepSeaDivers[0] = 0;
+    D_80100C72_DeepSeaDivers[1] = 0;
     for (n = 0, j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++) {
             if (GwPlayer[i].group == j) {
@@ -482,12 +482,12 @@ void func_800F7968_DeepSeaDivers(omObjData* obj) {
     s32 dir;
     u8 chr;
 
-    player = D_8010046A_DeepSeaDivers[D_80100C70_DeepSeaDivers[1] * 2];
+    player = D_8010046A_DeepSeaDivers[D_80100C72_DeepSeaDivers[0] * 2];
     chr = GwPlayer[player].character;
     dir = D_800C59AC[chr].unk_00;
     obj->model[0] = LoadFormFile(dir | D_800C59AC[chr].unk_04, 0x299);
     D_800F2B7C[obj->model[0]].unk_4C = 0.0f;
-    func_800093FC(obj, D_800FF968_DeepSeaDivers[D_80100C70_DeepSeaDivers[1]], 650.0f, -325.0f);
+    func_800093FC(obj, D_800FF968_DeepSeaDivers[D_80100C72_DeepSeaDivers[0]], 650.0f, -325.0f);
     func_8000941C(obj, 1.0f, 1.0f, 1.0f);
     obj->unk_50 = w = func_80023684(sizeof(DSDPlayerWork), 0x7918);
     func_8009B770(w, 0, sizeof(DSDPlayerWork));
@@ -506,13 +506,13 @@ void func_800F7968_DeepSeaDivers(omObjData* obj) {
     func_80025798(obj->model[1], obj->trans.x, obj->trans.y + 25.0, obj->trans.z + 20.0);
     func_800257E4(obj->model[1], 0.0f, 0.0f, 0.0f);
     func_80025830(obj->model[1], 1.0f, 1.0f, 1.0f);
-    obj->model[2] = func_800174C0(D_800FF96C_DeepSeaDivers[D_80100C70_DeepSeaDivers[1]], 0x2D9);
+    obj->model[2] = func_800174C0(D_800FF96C_DeepSeaDivers[D_80100C72_DeepSeaDivers[0]], 0x2D9);
     func_80025830(obj->model[2], 1.0f, 1.0f, 1.0f);
     obj->func_ptr = func_800F7C9C_DeepSeaDivers;
     dw = func_800FC058_DeepSeaDivers(obj);
-    dw->unkC = D_80100C70_DeepSeaDivers[1];
+    dw->unkC = D_80100C72_DeepSeaDivers[0];
     dw->unk44 = player;
-    D_80100C70_DeepSeaDivers[1]++;
+    D_80100C72_DeepSeaDivers[0]++;
 }
 #ifdef NON_MATCHING
 void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
@@ -706,11 +706,11 @@ void func_800F8680_DeepSeaDivers(omObjData* obj) {
     s32 dir;
     u8 chr;
 
-    player = D_8010046A_DeepSeaDivers[D_80100C70_DeepSeaDivers[2] * 2 + 1];
+    player = D_8010046A_DeepSeaDivers[D_80100C72_DeepSeaDivers[1] * 2 + 1];
     chr = GwPlayer[player].character;
     dir = D_800C59AC[chr].unk_00;
     obj->model[0] = LoadFormFile(dir | D_800C59AC[chr].unk_04, 0x299);
-    func_800093FC(obj, D_800FF968_DeepSeaDivers[D_80100C70_DeepSeaDivers[2]], 325.0f, -200.0f);
+    func_800093FC(obj, D_800FF968_DeepSeaDivers[D_80100C72_DeepSeaDivers[1]], 325.0f, -200.0f);
     func_8000941C(obj, 1.0f, 1.0f, 1.0f);
     obj->unk_50 = w = func_80023684(sizeof(DSDPlayerWork), 0x7918);
     func_8009B770(w, 0, sizeof(DSDPlayerWork));
@@ -730,9 +730,9 @@ void func_800F8680_DeepSeaDivers(omObjData* obj) {
     func_8001874C(obj, 4, dir | 0x17, 1, 0);
     func_8001874C(obj, 5, dir | 0x24, 2, 0);
     dw = func_800FC058_DeepSeaDivers(obj);
-    dw->unkC = D_80100C70_DeepSeaDivers[2];
+    dw->unkC = D_80100C72_DeepSeaDivers[1];
     dw->unk44 = player;
-    D_80100C70_DeepSeaDivers[2]++;
+    D_80100C72_DeepSeaDivers[1]++;
 }
 #ifdef NON_MATCHING
 void func_800F88E0_DeepSeaDivers(omObjData* obj) {
@@ -1241,7 +1241,6 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F9DD8_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FA62C_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
@@ -1261,15 +1260,10 @@ void func_800FA62C_DeepSeaDivers(s16 idx) {
             func_800FD870_DeepSeaDivers(idx);
         }
         func_8006752C(D_80100C80_DeepSeaDivers[idx].sprite, 0, D_80100C80_DeepSeaDivers[idx].unk1E << 5);
-    }
-    if (--D_80100C80_DeepSeaDivers[idx].unk20 == 0 || D_80100C80_DeepSeaDivers[idx].y >= 465.0) {
+    } else if (--D_80100C80_DeepSeaDivers[idx].unk20 == 0 || D_80100C80_DeepSeaDivers[idx].y >= 465.0) {
         D_80100C80_DeepSeaDivers[idx].unk1E = 8;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FA62C_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FA9A4_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
@@ -1278,14 +1272,10 @@ void func_800FA9A4_DeepSeaDivers(s16 idx) {
         func_80067208(D_80100C80_DeepSeaDivers[idx].sprite, 0, D_80101790_DeepSeaDivers[0], 3);
         D_80100C80_DeepSeaDivers[idx].sx = 0.75f;
         D_80100C80_DeepSeaDivers[idx].sy = 0.5f;
-    }
-    if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
+    } else if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
         func_800FD870_DeepSeaDivers(idx);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FA9A4_DeepSeaDivers);
-#endif
 void func_800FAABC_DeepSeaDivers(s16 idx) {
     DSDWork* w;
 
@@ -1345,22 +1335,19 @@ void func_800FAC68_DeepSeaDivers(s16 idx) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FAC68_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FB010_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
         D_80100C80_DeepSeaDivers[idx].timer = 60;
         D_80100C80_DeepSeaDivers[idx].y = 725.0f;
         func_80067208(D_80100C80_DeepSeaDivers[idx].sprite, 0, D_80101790_DeepSeaDivers[2], 0);
-    }
-    D_80100C80_DeepSeaDivers[idx].x = D_80101780_DeepSeaDivers[D_80100C80_DeepSeaDivers[idx].target].diver->trans.x;
-    if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
-        func_800FD870_DeepSeaDivers(idx);
+    } else {
+        D_80100C80_DeepSeaDivers[idx].x = D_80101780_DeepSeaDivers[D_80100C80_DeepSeaDivers[idx].target].diver->trans.x;
+        if (func_80067328(D_80100C80_DeepSeaDivers[idx].sprite, 0) & 2) {
+            func_800FD870_DeepSeaDivers(idx);
+        }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB010_DeepSeaDivers);
-#endif
 s16 func_800FB130_DeepSeaDivers(void) {
     DSDWork* w;
     s16 i;
@@ -1394,6 +1381,7 @@ s32 func_800FB27C_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB27C_DeepSeaDivers);
 #endif
+// code identical; as C, .rodata loses the zero double retail has at D_801001D8 after this function's constants, shifting later rodata
 #ifdef NON_MATCHING
 s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
@@ -1417,9 +1405,17 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
                 case 0:
                 case 2:
                     if (obj->trans.x >= 0.0f) {
-                        w->unk42 = (w->unk2 & 8) ? 45 : 90;
+                        if (!(w->unk2 & 8)) {
+                            w->unk42 = 90;
+                        } else {
+                            w->unk42 = 45;
+                        }
                     } else {
-                        w->unk42 = (w->unk2 & 8) ? 270 : 315;
+                        if (!(w->unk2 & 8)) {
+                            w->unk42 = 315;
+                        } else {
+                            w->unk42 = 270;
+                        }
                     }
                     if (fabs(obj->trans.x) < 250.0) {
                         w->unk42 = -w->unk42;
@@ -1456,7 +1452,7 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
                 sel = -1;
                 for (i = 0; i < D_80100410_DeepSeaDivers; i++) {
                     /* a new best is always taken; a tie only on a coin flip */
-                    if (best < D_80100418_DeepSeaDivers[i]->unk4E) {
+                    if (D_80100418_DeepSeaDivers[i]->unk4E > best) {
                         best = D_80100418_DeepSeaDivers[i]->unk4E;
                         sel = i;
                     } else if (D_80100418_DeepSeaDivers[i]->unk4E == best && (func_800FC1F4_DeepSeaDivers() & 1)) {
@@ -1468,7 +1464,7 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
                 w->unk2 |= 0x10;
             } else {
                 w->unk40 =
-                    D_80100440_DeepSeaDivers[(func_800FC1F4_DeepSeaDivers() * D_80100438_DeepSeaDivers) >> 16]->unkA;
+                    D_80100440_DeepSeaDivers[(s32)(func_800FC1F4_DeepSeaDivers() * D_80100438_DeepSeaDivers) >> 16]->unkA;
                 w->unk2 &= ~0x10;
             }
         }
@@ -1483,7 +1479,7 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
             dy = t->unk14 - w->unk14;
             w->unk42 = (s32)func_800B0CD8(dx, -dy) + 180;
             if (sqrtf(dx * dx + dy * dy) < 80.0) {
-                btn = 0x4000;
+                btn |= 0x4000;
             }
         }
     }
@@ -1506,6 +1502,7 @@ void func_800FB860_DeepSeaDivers(void) {
     Center.y = -580.0f;
     Center.z = -110.0f;
 }
+// retail keeps out + 4 in a register (masked 3); tried *o++ x3, explicit o = out + 4 (CSE folds both)
 #ifdef NON_MATCHING
 void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
     f32* o = (f32*)out;
@@ -1816,6 +1813,7 @@ s16 func_800FC644_DeepSeaDivers(f32* x, f32* y, s16 r, u16 flag, f32* outx, f32*
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC644_DeepSeaDivers);
 #endif
+// retail indexes with (s16)i but tests (u16)i < 9, and adds index + pts (masked 32). Tried: s16 i, if-form k, b before a, quotient temp
 #ifdef NON_MATCHING
 f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
     Vec* pts;
@@ -1831,12 +1829,16 @@ f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
     for (i = 0; i < 9; i++) {
         pts = D_800FFC80_DeepSeaDivers[i];
         for (j = 0; j < D_800FFCA4_DeepSeaDivers[i]; j++) {
-            k = (j + 1 < D_800FFCA4_DeepSeaDivers[i]) ? j + 1 : 0;
+            k = j + 1;
+            if (k >= D_800FFCA4_DeepSeaDivers[i]) {
+                k = 0;
+            }
             if ((pts[j].x * 5.0 <= x && x < pts[k].x * 5.0) || (x < pts[j].x * 5.0 && pts[k].x * 5.0 <= x)) {
-                a = &pts[j];
                 b = &pts[k];
+                a = &pts[j];
                 if (b->x - a->x != 0.0) {
-                    h = a->y * 5.0 + (f32)((x - a->x * 5.0) / (b->x - a->x * 5.0)) * (b->y - a->y) * 5.0;
+                    h = (x - a->x * 5.0) / (b->x - a->x * 5.0);
+                    h = a->y * 5.0 + h * (b->y - a->y) * 5.0;
                     if (((b->x - a->x >= 0.0f) & (h <= y)) && best < h) {
                         best = h;
                         found = 1;
@@ -1846,7 +1848,7 @@ f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
         }
     }
     if (found == 0) {
-        best = -2000.0f;
+        return -2000.0f;
     }
     return best;
 }
@@ -1899,7 +1901,7 @@ void func_800FCF54_DeepSeaDivers(omObjData* obj, f32 vx, f32 vy) {
 
     w = func_800FC1C8_DeepSeaDivers(obj);
     r = (w->unk6 < w->unk4) ? w->unk4 : w->unk6;
-    for (i = 0; i < D_80100C70_DeepSeaDivers[2]; i++) {
+    for (i = 0; i < D_80100C72_DeepSeaDivers[1]; i++) {
         o = D_80101780_DeepSeaDivers[i].diver;
         ow = func_800FC1C8_DeepSeaDivers(o);
         if (obj != o && ow->unk8 >= 0) {
@@ -1941,31 +1943,30 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FCF
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_80100268_DeepSeaDivers);
 INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_8010026C_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 s16 func_800FD28C_DeepSeaDivers(omObjData* obj) {
     omObjData* o;
     f32 d;
     s16 hit = 0;
     s16 i;
 
-    for (i = 0; i < D_80100C70_DeepSeaDivers[1]; i++) {
+    for (i = 0; i < D_80100C72_DeepSeaDivers[0]; i++) {
         o = D_80101780_DeepSeaDivers[i].boat;
         if (obj != o) {
             d = fabsf(o->trans.x - obj->trans.x);
             if (d < 270.0) {
-                if (!(o->trans.x < obj->trans.x)) {
-                    o->trans.x = o->trans.x + (270.0 - d);
-                    hit = 1;
-                    if (o->trans.x > 2000.0) {
-                        o->trans.x = 2000.0f;
-                        obj->trans.x = 1730.0f;
-                    }
-                } else {
+                if (o->trans.x < obj->trans.x) {
                     o->trans.x = o->trans.x - (270.0 - d);
                     hit = 1;
                     if (o->trans.x < -2000.0) {
                         o->trans.x = -2000.0f;
                         obj->trans.x = -1730.0f;
+                    }
+                } else {
+                    o->trans.x = o->trans.x + (270.0 - d);
+                    hit = 1;
+                    if (o->trans.x > 2000.0) {
+                        o->trans.x = 2000.0f;
+                        obj->trans.x = 1730.0f;
                     }
                 }
             }
@@ -1979,9 +1980,6 @@ s16 func_800FD28C_DeepSeaDivers(omObjData* obj) {
     }
     return hit;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD28C_DeepSeaDivers);
-#endif
 s16 func_800FD450_DeepSeaDivers(s32 file) {
     void* data = DataRead(file);
     s16 ret = func_800678A4(data);
@@ -1989,16 +1987,15 @@ s16 func_800FD450_DeepSeaDivers(s32 file) {
     DataClose(data);
     return ret & 0xFF;
 }
-#ifdef NON_MATCHING
 void func_800FD494_DeepSeaDivers(void) {
     s16 i;
 
     D_80101790_DeepSeaDivers[0] = func_800FD450_DeepSeaDivers(0x160010);
     D_80101790_DeepSeaDivers[1] = func_800FD450_DeepSeaDivers(0x21);
     D_80101790_DeepSeaDivers[2] = func_800FD450_DeepSeaDivers(0x440008);
-    D_80100C70_DeepSeaDivers[0] = func_800FD450_DeepSeaDivers(0x440006);
+    D_80100C70_DeepSeaDivers = func_800FD450_DeepSeaDivers(0x440006);
     D_8010179E_DeepSeaDivers = func_80064EF4(1, 0);
-    func_80067208(D_8010179E_DeepSeaDivers, 0, D_80100C70_DeepSeaDivers[0], 0);
+    func_80067208(D_8010179E_DeepSeaDivers, 0, D_80100C70_DeepSeaDivers, 0);
     func_800674BC(D_8010179E_DeepSeaDivers, 0, 0x4000);
     func_80066DC4(D_8010179E_DeepSeaDivers, 0, 160, 64);
     func_80067354(D_8010179E_DeepSeaDivers, 0, 2.0f, 1.0f);
@@ -2012,16 +2009,10 @@ void func_800FD494_DeepSeaDivers(void) {
         D_80100C80_DeepSeaDivers[i].x = 0.0f;
         D_80100C80_DeepSeaDivers[i].y = 0.0f;
         D_80100C80_DeepSeaDivers[i].z = 0.0f;
-        D_80100C80_DeepSeaDivers[i].unk1E = D_80100C80_DeepSeaDivers[i].unk20 = D_80100C80_DeepSeaDivers[i].unk22 = 0;
-        D_80100C80_DeepSeaDivers[i].timer = 0;
-        D_80100C80_DeepSeaDivers[i].unk26 = D_80100C80_DeepSeaDivers[i].unk28 = D_80100C80_DeepSeaDivers[i].unk2A = 0;
-        D_80100C80_DeepSeaDivers[i].unk24 = 0;
+        D_80100C80_DeepSeaDivers[i].timer = D_80100C80_DeepSeaDivers[i].unk1E = D_80100C80_DeepSeaDivers[i].unk20 = D_80100C80_DeepSeaDivers[i].unk22 = 0;
+        D_80100C80_DeepSeaDivers[i].unk24 = D_80100C80_DeepSeaDivers[i].unk26 = D_80100C80_DeepSeaDivers[i].unk28 = D_80100C80_DeepSeaDivers[i].unk2A = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD494_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 s16 func_800FD680_DeepSeaDivers(s16 type, f32 x, f32 y, f32 z, s16 target) {
     s16 i;
 
@@ -2043,24 +2034,20 @@ s16 func_800FD680_DeepSeaDivers(s16 type, f32 x, f32 y, f32 z, s16 target) {
                 func_800672B0(D_80100C80_DeepSeaDivers[i].sprite, 0, 1);
                 func_80067384(D_80100C80_DeepSeaDivers[i].sprite, 0, 0x8000);
             }
-            D_80100C80_DeepSeaDivers[i].unk1E = D_80100C80_DeepSeaDivers[i].unk20 = D_80100C80_DeepSeaDivers[i].unk22 = 0;
-            D_80100C80_DeepSeaDivers[i].timer = 0;
-            D_80100C80_DeepSeaDivers[i].unk26 = D_80100C80_DeepSeaDivers[i].unk28 = D_80100C80_DeepSeaDivers[i].unk2A = 0;
-            D_80100C80_DeepSeaDivers[i].unk24 = 0;
+            D_80100C80_DeepSeaDivers[i].timer = D_80100C80_DeepSeaDivers[i].unk1E = D_80100C80_DeepSeaDivers[i].unk20 = D_80100C80_DeepSeaDivers[i].unk22 = 0;
+            D_80100C80_DeepSeaDivers[i].unk24 = D_80100C80_DeepSeaDivers[i].unk26 = D_80100C80_DeepSeaDivers[i].unk28 = D_80100C80_DeepSeaDivers[i].unk2A = 0;
             return i;
         }
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FD680_DeepSeaDivers);
-#endif
 void func_800FD870_DeepSeaDivers(s16 idx) {
     D_80100C80_DeepSeaDivers[idx].flags = 0;
     if (D_80100C80_DeepSeaDivers[idx].sprite >= 0) {
         func_800674BC(D_80100C80_DeepSeaDivers[idx].sprite, 0, 0x8000);
     }
 }
+// code identical; as C, .rodata differs: retail pads after jtbl_801002A0 to 16 bytes before the next doubles (12 zero bytes in the .s)
 #ifdef NON_MATCHING
 void func_800FD8C8_DeepSeaDivers(void) {
     Vec3f p;
@@ -2417,7 +2404,6 @@ void func_800FEA00_DeepSeaDivers(omObjData* obj) {
     }
     D_80100C50_DeepSeaDivers = 0;
 }
-#ifdef NON_MATCHING
 void func_800FEAC4_DeepSeaDivers(s16 idx, s16 dir) {
     if (dir != 0) {
         D_801006D8_DeepSeaDivers[idx].pos.x = 2990.0f;
@@ -2434,16 +2420,11 @@ void func_800FEAC4_DeepSeaDivers(s16 idx, s16 dir) {
     D_80100C54_DeepSeaDivers[idx] = (f32)(((u32)(func_800FC1F4_DeepSeaDivers() * 3) >> 16) + 5) / 10.0f * 1.5;
     D_801006D8_DeepSeaDivers[idx].pos.z = -50.0 - D_80100C54_DeepSeaDivers[idx] * 50.0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FEAC4_DeepSeaDivers);
-#endif
-#ifdef NON_MATCHING
 void func_800FED88_DeepSeaDivers(omObjData* obj, s16 idx) {
     s16 j;
 
     func_800FEAC4_DeepSeaDivers(idx, idx);
-    D_801006D8_DeepSeaDivers[idx].rot.z = 0.0f;
-    D_801006D8_DeepSeaDivers[idx].rot.x = 0.0f;
+    D_801006D8_DeepSeaDivers[idx].rot.x = D_801006D8_DeepSeaDivers[idx].rot.z = 0.0f;
     for (j = 0; j < 10; j++) {
         D_80100758_DeepSeaDivers[idx][j].pos.x = D_801006D8_DeepSeaDivers[idx].pos.x;
         D_80100758_DeepSeaDivers[idx][j].pos.y = D_801006D8_DeepSeaDivers[idx].pos.y;
@@ -2458,9 +2439,6 @@ void func_800FED88_DeepSeaDivers(omObjData* obj, s16 idx) {
         func_800258EC(obj->model[idx * 3 + 2], 4, 4);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FED88_DeepSeaDivers);
-#endif
 #ifdef NON_MATCHING
 void func_800FEF34_DeepSeaDivers(omObjData* obj) {
     DSDFish* t;
@@ -2568,6 +2546,7 @@ void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80039C48("dmy_I8", &D_80100C60_DeepSeaDivers);
     D_80100C64_DeepSeaDivers = D_80100C68_DeepSeaDivers = 0.0f;
 }
+// code identical (s16 counter); as C the unit's .rodata gains a zero word before "dmy_I8", moving "yura_1_1" +4 (masked 1). Tried named f64 consts
 #ifdef NON_MATCHING
 void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructC0* m;
@@ -2575,7 +2554,7 @@ void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructE0* dst;
     s16 flip = 0;
     s16 row = 0;
-    s32 i;
+    s16 i;
 
     m = D_800F2B7C[obj->model[1]].unk_6C;
     D_80100C64_DeepSeaDivers -= 0.1f;
