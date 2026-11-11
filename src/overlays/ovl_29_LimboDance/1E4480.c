@@ -274,7 +274,8 @@ void func_800FB058_LimboDance(omObjData* obj) {
 
 /* Appends the sea strip's display list: the sprite's first frame drawn as 320-wide texture
    rectangles, scrolled by scroll texels. */
-// NON_MATCHING: register allocation / scheduling
+// register allocation / scheduling (masked 9); retail masks the rectangle y words with 0xFFC (not CSE'd with the
+// tile's 0xFFF) and does not hoist the 0xFD48 SETTIMG word; "* 4" args change nothing (M1g)
 #ifdef NON_MATCHING
 void func_800FB504_LimboDance(s32 sprite, Gfx** pgfx, f32 scroll) {
     Gfx* gfx;
