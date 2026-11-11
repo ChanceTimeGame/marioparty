@@ -216,7 +216,8 @@ const Vtx_t D_800FE6F4_HotRopeJump[9] = {
     { { -50, -25, 25 }, 0, { 0, 0x800 }, { 0x00, 0x00, 0x00, 0xFF } },
 };
 
-HRJSeq2 D_800FE784_HotRopeJump HRJ_RODATA_RW = { 0, 0 };
+s16 D_800FE784_HotRopeJump HRJ_RODATA_RW = 0;
+s16 D_800FE786_HotRopeJump HRJ_RODATA_RW = 0;
 const s16 D_800FE788_HotRopeJump[4] = { 90, 128, 128, 0 };
 void func_800F6C9C_HotRopeJump(omObjData* obj) {
     func_800F6EEC_HotRopeJump(obj, 0);
@@ -1821,8 +1822,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FCAC0
 
 /* The rope: each flame grows in, flies to its place, then turns with the rope (state 3) until it
    is put out (state 4). */
-// NON_MATCHING: register allocation and block layout
-#ifdef NON_MATCHING
 void func_800FCE98_HotRopeJump(omObjData* obj) {
     Matrix4f m;
     HRJSeg* seg;
@@ -1830,8 +1829,8 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
     unk65770Anim* anim;
     unk_Struct00* c;
     s32 i;
+    s32 n;
     f32 t;
-    f32 r;
     f32 x;
     f32 y;
     f32 z;
@@ -1839,23 +1838,23 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
 
     c = D_800C3110;
     if (func_8005FD5C() + D_800F64F8 == 0) {
-        D_800FE784_HotRopeJump.timer++;
-        if (D_800FE788_HotRopeJump[D_800FE784_HotRopeJump.state] != 0 &&
-            D_800FE784_HotRopeJump.timer >= D_800FE788_HotRopeJump[D_800FE784_HotRopeJump.state]) {
-            D_800FE784_HotRopeJump.timer = 0;
-            D_800FE784_HotRopeJump.state++;
+        D_800FE784_HotRopeJump++;
+        if (D_800FE788_HotRopeJump[D_800FE786_HotRopeJump] != 0 &&
+            D_800FE784_HotRopeJump >= D_800FE788_HotRopeJump[D_800FE786_HotRopeJump]) {
+            D_800FE784_HotRopeJump = 0;
+            D_800FE786_HotRopeJump++;
         }
     }
     HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y, c->unk18.z);
     anim = func_80067310(D_801007CE_HotRopeJump);
     if (func_8005FD5C() + D_800F64F8 == 0) {
         seg = D_80100854_HotRopeJump;
-        for (i = 0; i < 13; i++, seg++) {
+        for (i = 0; i < 13; seg++, i++) {
             mdl = &D_800F2B7C[seg->model];
             t = (f32)(i - 6) / 6.0f;
-            r = (1.0 - t * t) * 200.0 + 100.0;
-            x = func_800AEFD0(seg->angle) * r;
-            y = func_800AEAC0(seg->angle) * r + 150.0;
+            t = (1.0 - t * t) * 200.0 + 100.0;
+            x = func_800AEFD0(seg->angle) * t;
+            y = func_800AEAC0(seg->angle) * t + 150.0;
             if (y < 50.0) {
                 y = 50.0f;
             }
@@ -1863,8 +1862,12 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
             switch (seg->state) {
                 case 0:
                     if (seg->delay != 0) {
-                        if (--seg->delay == 0 && (i == 0 || i < 11)) {
-                            PlaySound(0x336);
+                        if (--seg->delay == 0) {
+                            if (i == 0) {
+                                PlaySound(0x336);
+                            } else if (i < 11) {
+                                PlaySound(0x336);
+                            }
                         }
                         continue;
                     }
@@ -1876,10 +1879,15 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
                     }
                     if (1.0 < mdl->unk_40) {
                         mdl->unk_40 = mdl->unk_40 - 0.1;
-                    } else if (D_800FE784_HotRopeJump.state != 0) {
+                    } else if (D_800FE786_HotRopeJump != 0) {
                         seg->state = 1;
                         seg->timer = 0;
-                        seg->delay = ((i < 6) ? i : 12 - i) * 4 + 2;
+                        if (i >= 6) {
+                            n = 12 - i;
+                        } else {
+                            n = i;
+                        }
+                        seg->delay = n * 4 + 2;
                         seg->vel.x = (x - seg->pos.x) * 0.05;
                         seg->vel.z = (z - seg->pos.z) * 0.05;
                         seg->vel.y = 50.0f;
@@ -1909,7 +1917,7 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
                     break;
                 case 2:
                     if (seg->timer < 31) {
-                        t = seg->timer / 30.0;
+                        t = (f32)seg->timer / 30.0;
                     } else {
                         t = 1.0f;
                     }
@@ -1933,7 +1941,7 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
                             func_800FB690_HotRopeJump(seg->light);
                             seg->light = -1;
                         } else {
-                            t = (30 - seg->timer) * (1.0 / 30.0);
+                            t = (f32)(30 - seg->timer) * (1.0 / 30.0);
                             func_800FB638_HotRopeJump(seg->light, t * seg->size, t * seg->size);
                         }
                     }
@@ -2017,13 +2025,6 @@ void func_800FCE98_HotRopeJump(omObjData* obj) {
         seg->dir.z = seg[1].pos.z - seg->pos.z;
     }
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", D_800FEA30_HotRopeJump);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", D_800FEA34_HotRopeJump);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FCE98_HotRopeJump);
-#endif
 
 /* Vertices copied per frame: retail copies 10 from a 9-vertex table (the 10th is the next data,
    unused by the lists); the host copies the 9 it has. */

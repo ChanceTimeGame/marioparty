@@ -96,7 +96,7 @@ typedef struct HRJSeg {
     /* 0x38 */ s16 light;
     /* 0x3A */ s16 model;
     /* 0x3C */ u16 anim;
-    /* 0x3E */ u16 state;
+    /* 0x3E */ s16 state;
     /* 0x40 */ s16 timer;
     /* 0x42 */ s16 delay;
     /* 0x44 */ char unk_44[4];
@@ -230,7 +230,8 @@ typedef struct HRJSeq2 {
     /* 0x00 */ s16 timer;
     /* 0x02 */ s16 state;
 } HRJSeq2;
-extern HRJSeq2 D_800FE784_HotRopeJump; /* rope */
+extern s16 D_800FE784_HotRopeJump; /* rope timer */
+extern s16 D_800FE786_HotRopeJump; /* rope state */
 extern const s16 D_800FE788_HotRopeJump[4]; /* its state durations */
 
 extern const Gfx D_800FE610_HotRopeJump[]; /* the floor's setup list */
