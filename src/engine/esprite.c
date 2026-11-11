@@ -77,8 +77,6 @@ void func_80018AFC(void) {
     func_80023728(D_800ED60C);
     D_800ED60C = NULL;
 }
-// Logic-equivalent; retail loads D_800ED60C before the index and cross-jumps the clamp compare (masked 31); tried lo/hi locals, D+i, a ternary test
-#ifdef NON_MATCHING
 void func_80018B2C(void) {
     s32 i;
     s16 id;
@@ -86,15 +84,15 @@ void func_80018B2C(void) {
 
     if (D_800ED60C != NULL) {
         for (i = 0; i < D_800EC6DC; i++) {
-            sprite = &D_800ED60C[i];
-            if (sprite->unk_00 & 1) {
+            if (D_800ED60C[i].unk_00 & 1) {
+                sprite = &D_800ED60C[i];
                 id = sprite->unk_04;
                 func_80066DC4(id, 0, sprite->unk_0A, sprite->unk_0C);
                 if (sprite->unk_00 & 2) {
                     func_8006752C(id, 0, sprite->unk_1E);
                     sprite->unk_1E += sprite->unk_20;
                     if (sprite->unk_20 > 0) {
-                        if (sprite->unk_1C < sprite->unk_1E) {
+                        if (sprite->unk_1E > sprite->unk_1C) {
                             sprite->unk_1E = sprite->unk_1C;
                         }
                     } else {
@@ -110,9 +108,6 @@ void func_80018B2C(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/engine/esprite", func_80018B2C);
-#endif
 void ShowBasicSprite(s32 arg0) {
     func_80067480(D_800ED60C[arg0 & 0xFFFF].unk_04, 0, 0x8000);
         //[arg0 & 0xFFFF] required to match for other calls to this function
