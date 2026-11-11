@@ -1840,8 +1840,6 @@ void func_800FBF88_BobsledRun(Mat4 m, Vec3f* pos, Vec3f* axis, f32 angle) {
 }
 
 /* omOutViewMulti with each camera rolled by D_800FF340[i]. */
-// the 350.0f near-plane constant is hoisted out of the loop
-#ifdef NON_MATCHING
 void func_800FC180_BobsledRun(omObjData* obj) {
     Vec3f pos;
     Vec3f target;
@@ -1858,9 +1856,10 @@ void func_800FC180_BobsledRun(omObjData* obj) {
     one = 1.0f;
     zero = 0.0f;
     for (i = 0; i < obj->work[0]; i++) {
-        near = 350.0f;
         if (BR_WORK(D_800F3FB0[i])->unk_53 == 5) {
             near = 700.0f;
+        } else {
+            near = 350.0f;
         }
         rx = CRotM[i].x;
         ry = CRotM[i].y;
@@ -1889,9 +1888,6 @@ void func_800FC180_BobsledRun(omObjData* obj) {
         func_8001D57C(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC180_BobsledRun);
-#endif
 
 /* Boost pads (ground 6) and the catch-up bonus for the team behind. */
 void func_800FC4D0_BobsledRun(BRWork* work) {
