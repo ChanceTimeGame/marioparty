@@ -803,18 +803,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800F78F4_
 #endif
 
 /* Bumping into the other sled: returns 0 (retail never returns 2). */
-// branch-likely delay slot of the bump test: retail copies mov.s $f12 into a bc1tl slot (one instruction
-// short, masked 5); tried nested if, !(a && b) (M1c)
-// M1g: call duplicated per arm with a shared hit: label (masked 7)
-#ifdef NON_MATCHING
 s32 func_800F9138_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
     BRWork* work;
     BRWork* ow;
     omObjData* o;
     f32 speed;
-    f32 nx;
-    f32 nz;
-    f32 ny;
     f32 dx;
     f32 dy;
     f32 dz;
@@ -846,18 +839,19 @@ s32 func_800F9138_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
             d2 = dx2 + dy * dy + dz2;
             func_800B1750(d2);
             d = func_800B1750(d2) - (ow->unk_48 + work->unk_48);
-            if (d < 0.0f && (ow->unk_38 == 1000.0f || work->unk_38 != 1000.0f)) {
-                func_800078E8(dx, dz, d);
-                func_800F6DB8_BobsledRun(work, x, z, o->trans.x, o->trans.z);
-                work->unk_54 = i;
+            if (!(d < 0.0f)) {
+                continue;
             }
+            if (ow->unk_38 != 1000.0f && work->unk_38 == 1000.0f) {
+                continue;
+            }
+            func_800078E8(dx, dz, d);
+            func_800F6DB8_BobsledRun(work, x, z, o->trans.x, o->trans.z);
+            work->unk_54 = i;
         }
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800F9138_BobsledRun);
-#endif
 
 /* Ground probe on the track (after a bump check); returns the ground height or 65536 (airborne). */
 f32 func_800F93C0_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z) {
