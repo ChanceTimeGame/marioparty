@@ -529,7 +529,8 @@ void func_8002AD30(s16 idx) {
 void func_8002ADF0(s32* arg0, s32 n) {
     ((HitList*)arg0)->list = func_80023684((u16)n * sizeof(u16*), 0x55F0);
 }
-// scheduling: the list-pointer copy lands after the cb/probe spills (masked 2)
+// scheduling: the list-pointer copy lands after the cb/probe spills (masked 2). M1g: arg1 used
+// directly via a cast macro fixes that move (masked 0) but swaps s7/s8 with x1 (raw 11)
 #ifdef NON_MATCHING
 void func_8002AE24(s16 mi, s32* arg1, s32 (*cb)(s32, u16*, unk2C0C0StructA0*, HitProbe*), HitProbe* probe) {
     HitList* l = (HitList*)arg1;

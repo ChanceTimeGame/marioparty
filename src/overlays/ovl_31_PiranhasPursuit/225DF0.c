@@ -1442,18 +1442,18 @@ void func_800FF450_PiranhasPursuit(void) {
 }
 
 /* While the plant snaps (motion 4) it catches the runner if it is in reach. */
-// NON_MATCHING: retail loads D_800F2B7C before plant->model[3] (masked 4; tried (D_800F2B7C + i)->unk_48)
-#ifdef NON_MATCHING
 void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant) {
     Vec2f d;
     Vec2f r;
     Vec2f p;
     f32 frame;
     s16 se;
+    unk_ovl_2D_struct* m;
     PPPlant* pp = &D_80101150_PiranhasPursuit;
 
     if (((runner != NULL) & (plant != NULL)) && pp->state == 4) {
-        frame = D_800F2B7C[plant->model[3]].unk_48;
+        m = D_800F2B7C;
+        frame = m[plant->model[3]].unk_48;
         if (((frame >= 15.0f) & (frame <= 17.0f)) || ((frame >= 63.0f) & (frame <= 65.0f))) {
             p.x = plant->trans.x + pp->unk28 * 200.0;
         } else if ((frame >= 40.0f) & (frame <= 42.0f)) {
@@ -1484,9 +1484,6 @@ void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FF470_PiranhasPursuit);
-#endif
 
 typedef struct PPScaleSteps {
     f32 v[7][2];
