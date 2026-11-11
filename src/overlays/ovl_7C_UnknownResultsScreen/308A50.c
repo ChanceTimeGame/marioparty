@@ -135,7 +135,7 @@ void func_800F6688_UnknownResultsScreen(void) {
     }
 }
 
-// register allocation of the sprite counters (masked 4)
+// register allocation: n and j swap registers; retail adds j * 16 + 24 before the table read (masked 4)
 #ifdef NON_MATCHING
 void func_800F6724_UnknownResultsScreen(void) {
     char buf[16];
@@ -635,8 +635,6 @@ void func_800F8194_UnknownResultsScreen(void) {
     }
 }
 
-// register allocation (masked 1)
-#ifdef NON_MATCHING
 void func_800F82C4_UnknownResultsScreen(void) {
     s16 nd[4];
     s16 digits[4][3];
@@ -729,9 +727,6 @@ void func_800F82C4_UnknownResultsScreen(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F82C4_UnknownResultsScreen);
-#endif
 
 void func_800F8B44_UnknownResultsScreen(void) {
     s16 left[4];
@@ -789,7 +784,7 @@ void func_800F8B44_UnknownResultsScreen(void) {
     (newRank[D_800FA0E8_UnknownResultsScreen[i].place] != oldRank[D_800FA0E8_UnknownResultsScreen[i].place] || \
      D_800FA0E8_UnknownResultsScreen[i].rank != D_800FA0E0_UnknownResultsScreen[i].rank)
 
-// spill/hoist of speed * 25 and one delay slot (3 instructions short)
+// retail spills speed * 3 (part of the * 25) to the stack: frame 8 bytes larger (masked 28)
 #ifdef NON_MATCHING
 void func_800F90A4_UnknownResultsScreen(void) {
     s16 delay[4];
