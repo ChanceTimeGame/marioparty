@@ -1099,6 +1099,8 @@ void func_800F9AF4_DeepSeaDivers(omObjData* obj) {
     w->unk34 = obj->scale.x;
     D_8010040C_DeepSeaDivers++;
 }
+// register allocation: t and x take $f4/$f6, retail $f6/$f4 (raw 9, masked 0; tried declaration orders,
+// sc/s/t as one variable, x sharing h)
 #ifdef NON_MATCHING
 void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
@@ -1107,10 +1109,10 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
     unk2C0C0Struct50* anim;
     DSDPlayerWork* plw;
     Matrix4f m;
-    f64 sc;
     f32 h;
     f32 t;
-    f32 s;
+    f32 x;
+    f32 y;
 
     w = func_800FC1C8_DeepSeaDivers(obj);
     if (w->unk0 >= 0) {
@@ -1119,6 +1121,7 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
         w->unk14 = D_800F2B7C[obj->model[0]].unk_28;
         w->unk18 = D_800F2B7C[obj->model[0]].unk_2C;
         w->unk42 = (u32)(func_800FC1F4_DeepSeaDivers() * 3) >> 16;
+        h = D_800F2B7C[obj->model[0]].unk_3C;
         if (w->unk4E < 10) {
             w->unk50 = 4;
             w->unk52 = 0xE0;
@@ -1128,9 +1131,9 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
         }
         w->unk5C = 24;
         w->unk5E = -1;
-        sc = D_800F2B7C[obj->model[0]].unk_3C;
-        w->unk4 = sc * 9.0 * 5.0;
-        w->unk6 = sc * 7.5 * 5.0;
+        w->unk4 = h * 9.0 * 5.0;
+        w->unk6 = h * 7.5 * 5.0;
+        return;
     }
     switch (w->unk8) {
         case 0:
@@ -1159,8 +1162,8 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
         case 1:
             if (w->unk5C != 0) {
                 w->unk5C--;
-                s = (f32)(fabs(func_800AEAC0(w->unk5C * 22.5)) * 0.5 + 1.0) * w->unk34;
-                obj->scale.x = obj->scale.y = s;
+                t = fabs(func_800AEAC0(w->unk5C * 22.5)) * 0.5 + 1.0;
+                obj->scale.x = obj->scale.y = t * w->unk34;
             }
             diver = D_80101780_DeepSeaDivers[w->unk5E].diver;
             pw = func_800FC1C8_DeepSeaDivers(diver);
@@ -1175,15 +1178,17 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
                 MtxRotate(m, pw->unk28 + anim->unk_44.x - 90.0, pw->unk2C + anim->unk_44.y, 0.0f);
                 MtxTranslate(m, D_800FF994_DeepSeaDivers[plw->unk_58].x, D_800FF994_DeepSeaDivers[plw->unk_58].y,
                              D_800FF994_DeepSeaDivers[plw->unk_58].z);
+                x = m[3][0];
+                y = m[3][1];
                 if (w->unk40 != 0) {
                     t = (f32)(16 - w->unk40) / 16.0;
-                    obj->trans.x = t * (m[3][0] - obj->trans.x) + obj->trans.x;
-                    obj->trans.y = t * (m[3][1] - obj->trans.y) + obj->trans.y;
+                    obj->trans.x = t * (x - obj->trans.x) + obj->trans.x;
+                    obj->trans.y = t * (y - obj->trans.y) + obj->trans.y;
                     obj->trans.z = t * 108.0 * 5.0 + -600.0;
                     w->unk40--;
                 } else {
-                    obj->trans.x = m[3][0];
-                    obj->trans.y = m[3][1];
+                    obj->trans.x = x;
+                    obj->trans.y = y;
                     obj->trans.z = -60.0f;
                 }
             }
@@ -1204,7 +1209,7 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
                 w->unk40 = 80;
                 PlaySound(0x196);
                 w->unk54 = w->unk4E;
-                GwPlayer[D_8010046A_DeepSeaDivers[w->unk5E * 2]].coins_mg += w->unk4E;
+                GwPlayer[D_8010046A_DeepSeaDivers[w->unk5E * 2]].coins_mg += w->unk54;
                 GwPlayer[D_8010046A_DeepSeaDivers[w->unk5E * 2 + 1]].coins_mg += w->unk54;
                 D_80100406_DeepSeaDivers = 1;
             }
