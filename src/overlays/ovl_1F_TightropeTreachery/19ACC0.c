@@ -94,8 +94,6 @@ void func_800F9480_TightropeTreachery(s16 model) {
 }
 
 /* The rope: sways, sags under the walker and bends with the wind. */
-// register allocation (masked 0)
-#ifdef NON_MATCHING
 void func_800F9508_TightropeTreachery(s16 model) {
     TTPlayerWork* w = D_800F3FB0[0]->unk_50;
     f32 amp;
@@ -159,10 +157,9 @@ void func_800F9508_TightropeTreachery(s16 model) {
         src++;
         dst++;
     }
-    m = D_800F2B7C[model].unk_6C;
-    dst2 = m->unk_78;
+    dst2 = D_800F2B7C[model].unk_6C->unk_78;
     src2 = D_800FE6AC_TightropeTreachery;
-    for (i = 0, n = m->unk_6E; i < n; i++) {
+    for (i = 0, n = D_800F2B7C[model].unk_6C->unk_6E; i < n; i++) {
         dst2->unk_00 = src2->unk_00 + D_800FE714_TightropeTreachery[0] * 70.0f * func_800AEFD0((src2->unk_04 + 2500) / 5000.0 * 90.0) +
                        D_800FE398_TightropeTreachery;
         dst2->unk_02 = src2->unk_02;
@@ -180,9 +177,6 @@ void func_800F9508_TightropeTreachery(s16 model) {
         D_800F3FB0[0]->trans.x += D_800FE390_TightropeTreachery;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19ACC0", func_800F9508_TightropeTreachery);
-#endif
 
 /* The wind: gusts in a random direction, with their sound. */
 void func_800F9BA0_TightropeTreachery(void) {

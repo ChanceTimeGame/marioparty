@@ -360,12 +360,9 @@ void func_800F77B8_HotBobOmb(omObjData* obj, s32 unused) {
     func_80025798(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
 }
 
-// masked
-#ifdef NON_MATCHING
 void func_800F7934_HotBobOmb(omObjData* obj) {
     u16 m;
     void* data;
-    s16 r;
     s32 i;
 
     D_800FA86C_HotBobOmb[0] = obj->model[0] = LoadFormFile(0x190006, 0x68D);
@@ -377,36 +374,31 @@ void func_800F7934_HotBobOmb(omObjData* obj) {
 
     m = obj->model[0];
     data = DataRead(0x190009);
-    D_800FA9AC_HotBobOmb[0] = r = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF");
-    func_80039644(r, 1, 1);
+    func_80039644(D_800FA9AC_HotBobOmb[0] = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF"), 1, 1);
     HuMemDirectFree(data);
     func_80025AD4(m);
 
     m = obj->model[1];
     data = DataRead(0x19000A);
-    D_800FA9AC_HotBobOmb[1] = r = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF");
-    func_80039644(r, 1, 1);
+    func_80039644(D_800FA9AC_HotBobOmb[1] = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF"), 1, 1);
     HuMemDirectFree(data);
     func_80025AD4(m);
 
     m = obj->model[2];
     data = DataRead(0x19000B);
-    D_800FA9AC_HotBobOmb[2] = r = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF");
-    func_80039644(r, 1, 1);
+    func_80039644(D_800FA9AC_HotBobOmb[2] = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF"), 1, 1);
     HuMemDirectFree(data);
     func_80025AD4(m);
 
     m = obj->model[3];
     data = DataRead(0x19000C);
-    D_800FA9AC_HotBobOmb[3] = r = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF");
-    func_80039644(r, 1, 1);
+    func_80039644(D_800FA9AC_HotBobOmb[3] = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF"), 1, 1);
     HuMemDirectFree(data);
     func_80025AD4(m);
 
     m = obj->model[4];
     data = DataRead(0x19000D);
-    D_800FA9AC_HotBobOmb[4] = r = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF");
-    func_80039644(r, 1, 1);
+    func_80039644(D_800FA9AC_HotBobOmb[4] = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "maru_DEF"), 1, 1);
     HuMemDirectFree(data);
     func_80025AD4(m);
 
@@ -414,8 +406,7 @@ void func_800F7934_HotBobOmb(omObjData* obj) {
     for (i = 0; i < 5; i++) {
         m = obj->model[i];
         data = DataRead(0x19000E);
-        D_800FA890_HotBobOmb[i] = r = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "spark0_DEF");
-        func_80039644(r, 1, 1);
+        func_80039644(D_800FA890_HotBobOmb[i] = func_80038A9C(D_800F2B7C[m].unk_6C, data, 0, "spark0_DEF"), 1, 1);
         func_80025AD4(m);
         func_80025B34(m);
         HuMemDirectFree(data);
@@ -440,9 +431,6 @@ void func_800F7934_HotBobOmb(omObjData* obj) {
     obj->func_ptr = func_800F7E84_HotBobOmb;
     func_80021E58();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10CF70", func_800F7934_HotBobOmb);
-#endif
 
 // masked
 #ifdef NON_MATCHING

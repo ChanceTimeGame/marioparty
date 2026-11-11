@@ -908,7 +908,8 @@ void func_800F8B38_GameModeOverworld(void) {
     }
 }
 
-// scheduling of the index arithmetic (masked 31)
+// register allocation (masked 2): retail builds &path[seg] in s0 as index + path, ours base + index in
+// v0; tried path + seg, the tail inline, seg/t compare order
 #ifdef NON_MATCHING
 void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
     f32 vals[4];
@@ -919,7 +920,6 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
     f32 end;
     f32 dx, dy, dz, d;
     f32 s;
-    f32 ft;
     s16 i;
     s16 seg;
     s16 t;
@@ -951,7 +951,7 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
     end = total - 10.0f;
     seg = 1;
     for (t = 10; t < end; t++) {
-        if (path[seg + 1].time < t) {
+        if (t > path[seg + 1].time) {
             seg++;
         }
         k = &path[seg];
@@ -959,69 +959,66 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
         times[1] = k[0].time;
         times[2] = k[1].time;
         times[3] = k[2].time;
-        ft = t;
         vals[0] = k[-1].center.x;
         vals[1] = k[0].center.x;
         vals[2] = k[1].center.x;
         vals[3] = k[2].center.x;
-        Center.x = func_80022D9C(vals, times, ft);
+        Center.x = func_80022D9C(vals, times, t);
         vals[0] = k[-1].center.y;
         vals[1] = k[0].center.y;
         vals[2] = k[1].center.y;
         vals[3] = k[2].center.y;
-        Center.y = func_80022D9C(vals, times, ft);
+        Center.y = func_80022D9C(vals, times, t);
         vals[0] = k[-1].center.z;
         vals[1] = k[0].center.z;
         vals[2] = k[1].center.z;
         vals[3] = k[2].center.z;
-        Center.z = func_80022D9C(vals, times, ft);
+        Center.z = func_80022D9C(vals, times, t);
         vals[0] = k[-1].rot.x;
         vals[1] = k[0].rot.x;
         vals[2] = k[1].rot.x;
         vals[3] = k[2].rot.x;
-        CRot.x = func_80022D9C(vals, times, ft);
+        CRot.x = func_80022D9C(vals, times, t);
         vals[0] = k[-1].rot.y;
         vals[1] = k[0].rot.y;
         vals[2] = k[1].rot.y;
         vals[3] = k[2].rot.y;
-        CRot.y = func_80022D9C(vals, times, ft);
+        CRot.y = func_80022D9C(vals, times, t);
         vals[0] = k[-1].rot.z;
         vals[1] = k[0].rot.z;
         vals[2] = k[1].rot.z;
         vals[3] = k[2].rot.z;
-        CRot.z = func_80022D9C(vals, times, ft);
+        CRot.z = func_80022D9C(vals, times, t);
         vals[0] = k[-1].zoom;
         vals[1] = k[0].zoom;
         vals[2] = k[1].zoom;
         vals[3] = k[2].zoom;
-        CZoom = func_80022D9C(vals, times, ft);
+        CZoom = func_80022D9C(vals, times, t);
         HuPrcVSleep();
     }
-    k = &path[(s16)(seg + 1)];
-    CRot.x = k->rot.x;
-    CRot.y = k->rot.y;
-    CRot.z = k->rot.z;
-    CZoom = k->zoom;
-    Center.x = k->center.x;
-    Center.y = k->center.y;
-    Center.z = k->center.z;
+    CRot.x = path[(s16)(seg + 1)].rot.x;
+    CRot.y = path[(s16)(seg + 1)].rot.y;
+    CRot.z = path[(s16)(seg + 1)].rot.z;
+    CZoom = path[(s16)(seg + 1)].zoom;
+    Center.x = path[(s16)(seg + 1)].center.x;
+    Center.y = path[(s16)(seg + 1)].center.y;
+    Center.z = path[(s16)(seg + 1)].center.z;
     D_800ECC22 = 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_GameModeOverworld/2BB5F0", func_800F8BA0_GameModeOverworld);
 #endif
-// loop layout and scheduling (masked 56)
+// register allocation (masked 6): retail keeps d in f2 (mov.s) and swaps idx/b (s5/s6); tried local order
 #ifdef NON_MATCHING
 void func_800F907C_GameModeOverworld(void) {
     Vec2f* pts;
-    Vec2f* tgt;
     f32 x, z, sx, sz, dx, dz, d;
     f32 px, pz;
     f32 lastX, lastZ;
     f32 a, b;
+    u16 shadow;
     f32 ang;
     s16 bird;
-    u16 shadow;
     s16 idx;
 
     idx = 0;
@@ -1041,14 +1038,13 @@ void func_800F907C_GameModeOverworld(void) {
     lastX = 0.0f;
     b = rand8();
     while (1) {
-        tgt = &pts[idx + 1];
-        dx = tgt->x - x;
-        dz = tgt->y - z;
-        d = func_800B1750(dx * dx + dz * dz);
-        sx = dx / d * 3.0f;
-        sz = dz / d * 3.0f;
-        x += sx;
+        sx = pts[idx + 1].x - x;
+        sz = pts[idx + 1].y - z;
+        d = func_800B1750(sx * sx + sz * sz);
+        sx = sx / d * 3.0f;
+        sz = sz / d * 3.0f;
         while (1) {
+            x += sx;
             z += sz;
             px = x + func_800AEAC0(a) * 20.0f;
             pz = z + func_800AEFD0(a) * 20.0f;
@@ -1068,7 +1064,6 @@ void func_800F907C_GameModeOverworld(void) {
             a += 5.0f;
             b += 10.0f;
             HuPrcVSleep();
-            x += sx;
         }
         idx++;
         if (pts[idx + 1].x == 0.0f && pts[idx + 1].y == 0.0f) {
@@ -1079,7 +1074,8 @@ void func_800F907C_GameModeOverworld(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_GameModeOverworld/2BB5F0", func_800F907C_GameModeOverworld);
 #endif
-// loop layout and scheduling (masked 40)
+// register allocation (masked 2): retail frame 8 bytes larger (144) and its s-registers rotated;
+// tried the inner distance without casts, dx/dz shared with ux/uz (152)
 #ifdef NON_MATCHING
 void func_800F9474_GameModeOverworld(void) {
     Vec2f* pts;
@@ -1089,8 +1085,8 @@ void func_800F9474_GameModeOverworld(void) {
     f32 phase, step, amp;
     f32 ang;
     s16 fish;
-    u16 pos;
-    u16 dir;
+    s16 pos;
+    s16 dir;
 
     lastZ = 0.0f;
     pts = HuPrcCurrentGet()->user_data;
@@ -1110,11 +1106,11 @@ void func_800F9474_GameModeOverworld(void) {
         rand8();
         tgt = &pts[(s16)pos + (s16)dir];
         rand8();
-        dx = tgt->x - x;
-        dz = tgt->y - z;
-        d = func_800B1750(dx * dx + dz * dz);
-        ux = dx / d;
-        uz = dz / d;
+        ux = tgt->x - x;
+        uz = tgt->y - z;
+        d = func_800B1750(ux * ux + uz * uz);
+        ux = ux / d;
+        uz = uz / d;
         while (1) {
             x += ux * (func_800AEAC0(phase) * amp + 10.0f);
             z += uz * (func_800AEAC0(phase) * amp + 10.0f);
