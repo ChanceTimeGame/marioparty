@@ -50,7 +50,7 @@ u16 D_800FD32C_BowlOver = 0;
 u16 D_800FD32E_BowlOver = 0;
 s32 D_800FD330_BowlOver = 0;
 f32 D_800FD334_BowlOver = -1.0f;
-u8 D_800FD338_BowlOver[4] = { 0, 0, 0, 0 };
+u8 D_800FD338_BowlOver = 0;
 f32 D_800FD33C_BowlOver = 2.0f;
 f32 D_800FD340_BowlOver = 0.0f;
 f32 D_800FD344_BowlOver = 0.0f;
@@ -828,9 +828,6 @@ void func_800F8964_BowlOver(omObjData *obj, s32 dir, s32 file, s32 player, f32 x
   D_800FD5AC_BowlOver[D_800FDC5A_BowlOver[0]] = GwPlayer[D_800FDC5A_BowlOver[0]].coins;
 }
 
-// D_800FD338's address is CSE'd into a register; retail keeps %hi/%lo per access (masked 4; tried
-// D -= 2, vol += (u8)(v - 2))
-#ifdef NON_MATCHING
 void func_800F8C64_BowlOver(omObjData* obj) {
     BowlBallWork* bw = BALL_WORK(obj);
     f32 rot;
@@ -889,13 +886,13 @@ void func_800F8C64_BowlOver(omObjData* obj) {
         }
         if (D_800FD350_BowlOver == 0) {
             if (D_800FD2D8_BowlOver == 1) {
-                v = D_800FD338_BowlOver[0];
-                D_800FD338_BowlOver[0] = v - 2;
+                v = D_800FD338_BowlOver;
+                D_800FD338_BowlOver = v - 2;
                 a = v + 0x7D;
                 if (a < 0) {
                     a = 0;
                 }
-                vol += D_800FD338_BowlOver[0];
+                vol += D_800FD338_BowlOver;
                 if (vol < 0) {
                     vol = 0;
                 }
@@ -934,9 +931,6 @@ void func_800F8C64_BowlOver(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F8C64_BowlOver);
-#endif
 
 void func_800F91D0_BowlOver(omObjData* obj) {
     BowlBallWork* w;

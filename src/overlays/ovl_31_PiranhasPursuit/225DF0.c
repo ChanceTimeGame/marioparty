@@ -442,6 +442,8 @@ void func_800FB5C8_PiranhasPursuit(f32 x) {
 /* Builds the course: 23 pieces from the start (-15900) to the goal (16000). */
 // NON_MATCHING: retail sign-extends the running piece index at each call (sll/sra, 46 instructions; masked 48),
 // as if the 5th parameter were s32 at the call site; s32, u16 and s16 n tried (abs() matched the max loop)
+// M1g: retail folds every index to base+k (n0+1 in s2; s32-style CSE) and stores D_80101134 = n (22);
+// s32 n with D_80101134 = n and separate n++ statements give in-place increments instead (masked 62)
 #ifdef NON_MATCHING
 void func_800FB5D4_PiranhasPursuit(s16* models) {
     PPPiece* p;

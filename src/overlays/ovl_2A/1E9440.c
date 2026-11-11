@@ -1826,7 +1826,8 @@ void func_800FB334_name_2A(N2APlayerExt* ext) {
 
 /* Stick toward work->unk_3C; deflection by CPU level (team 0 and team 1 use the levels in
    opposite order). */
-// GCC cross-jumps the identical team-1 cases into team 0's; retail keeps both copies
+// GCC cross-jumps the identical team-1 cases into team 0's; retail keeps both copies (only team 0's
+// case 0 is merged, into team 1's default %14 block that falls into the join) (masked 74)
 #ifdef NON_MATCHING
 void func_800FB3FC_name_2A(omObjData* obj) {
     N2APlayerWork* work = obj->unk_50;
@@ -1924,7 +1925,8 @@ void func_800FB878_name_2A(N2APlayerExt* ext) {
 
 /* After a goal: send each team-0 player to the free end of the court (ext->unk_48/4C). */
 // masked 21: retail tests the end counters through the hoisted &D_800FDFA4[0]/[1] registers it
-// increments through; tried goto arms and four nested arms (no cross-jump).
+// increments through; tried goto arms and four nested arms (no cross-jump). M1g: pointer locals
+// to the counters set before the loop give masked 18 but derive [1] from [0]; retail hoists both after i = 0.
 #ifdef NON_MATCHING
 void func_800FB8BC_name_2A(void) {
     f32 homeX[2];
