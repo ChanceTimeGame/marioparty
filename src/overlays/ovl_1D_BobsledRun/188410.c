@@ -1291,7 +1291,7 @@ void func_800FA890_BobsledRun(omObjData* obj) {
     func_80025930(obj->model[0], 0x600, 0x600);
 }
 
-// register allocation
+// register allocation: spr / x / (s16)spr in s0/s1/s2 in retail, s2/s0/s1 here (masked 0; declaration order, for loop tried)
 #ifdef NON_MATCHING
 void func_800FA96C_BobsledRun(omObjData* obj) {
     s16 x;
