@@ -45,8 +45,8 @@ char* D_800B8A50[] = {
 extern Vec3f D_800CD9B0;
 
 void func_8000A534(void*, f32);
-void func_8001E268(u8, s32, s32);
-void func_8001E3B4(u8);
+void func_8001E268(s16, u8, u8);
+void func_8001E3B4(s16);
 f32 func_80025D18(s16);
 f32 func_80025E70(s16);
 
@@ -387,7 +387,7 @@ s32 func_80000D14(Vec3f* p, ColTri* tri, ColVtx* verts) {
     }
     return 1;
 }
-// register allocation (masked 150) and block layout around the shared return-2 tail
+// float register allocation (masked 17, raw 63; 1180 vs 1181): dx/dz/0.0f pseudos get other callee-saved regs, and the last flat < 0 test fills its delay slot without bc1tl. M1h: func_8001E268 prototype (s16, u8, u8) and the block_107 tail after block_78 took it from masked 100
 #ifdef NON_MATCHING
 s32 func_80000F3C(omObjData* obj, f32 x, f32 y, f32 z) {
     PlayerWork* w = obj->unk_50;
@@ -574,12 +574,14 @@ s32 func_80000F3C(omObjData* obj, f32 x, f32 y, f32 z) {
                         ow2->unk_40 = D_800B8990;
                         func_8000A988(obj, dx, dz2);
                         func_800096B0(w, 9);
-                        func_80060F04(w->unk_58, 2, 3, 10);
-                        func_80060F04(ow2->unk_58, 2, 3, 10);
-                        return 2;
+                        goto block_107;
                     block_78:
                         func_800078E8(dx, dz2, func_800B1750(dx * dx + dz2 * dz2) - (ow2->unk_48 + w->unk_48));
                         return 0;
+                    block_107:
+                        func_80060F04(w->unk_58, 2, 3, 10);
+                        func_80060F04(ow2->unk_58, 2, 3, 10);
+                        return 2;
                     }
                     if ((dist < 0.0f) & (dy < 0.0f)) {
                         if (!(ow2->unk_50 & 0x200)) {
@@ -635,9 +637,9 @@ s32 func_80000F3C(omObjData* obj, f32 x, f32 y, f32 z) {
                 }
             }
         } else {
-            flat = func_800B1750(dx * dx + dy * dy + dz2 * dz2) - (ow2->unk_48 + w->unk_48);
-            if (flat < 0.0f && (ow2->unk_38 == 1000.0f || w->unk_38 != 1000.0f)) {
-                func_800078E8(dx, dz2, flat);
+            dist = func_800B1750(dx * dx + dy * dy + dz2 * dz2) - (ow2->unk_48 + w->unk_48);
+            if (dist < 0.0f && (ow2->unk_38 == 1000.0f || w->unk_38 != 1000.0f)) {
+                func_800078E8(dx, dz2, dist);
                 w->unk_54 = i;
             }
         }
@@ -2219,7 +2221,7 @@ f32 func_80007954(f32 arg0) {
 }
 
 void func_800079A8(omObjData* arg0, f32 arg1, f32 arg2, f32 arg3) {
-    u8 temp_s0;
+    s16 temp_s0;
     unkGlobalStruct_00* temp_s2;
 
     temp_s2 = arg0->unk_50;
