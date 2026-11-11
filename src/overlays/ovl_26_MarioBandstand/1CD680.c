@@ -433,7 +433,8 @@ void func_800F7C1C_MarioBandstand(s32 cmd) {
 
 /* Ranks the players by score (lowest first), pays the best 10 coins each; returns half the
    rounded score total. */
-// NON_MATCHING: masked 56 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// register allocation (raw 84, masked 2): retail loads obj->work[0] before the score and keeps the
+// truncated score in a0; tried an obj local and an s32 score
 #ifdef NON_MATCHING
 s32 func_800F7D58_MarioBandstand(void) {
     f32 total;
@@ -1705,13 +1706,10 @@ void func_800FB1D0_MarioBandstand(void) {
     D_800FD71C_MarioBandstand = omAddObj(8, 0, 0, -1, func_800FC744_MarioBandstand);
 }
 
-// NON_MATCHING: masked 52 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FB214_MarioBandstand(void) {
     MBTrack* t;
     s32 song;
     s32 i;
-    s32 seq;
 
     song = func_800FCAAC_MarioBandstand() % 3;
     D_800FD680_MarioBandstand = song;
@@ -1723,7 +1721,7 @@ void func_800FB214_MarioBandstand(void) {
         }
         D_800FD568_MarioBandstand = D_800FCE7C_MarioBandstand;
         D_800FD590_MarioBandstand = D_800FCCF0_MarioBandstand;
-        seq = 0x17;
+        func_80060128(0x17);
         break;
     case 1:
         for (i = 0; i < 4; i++) {
@@ -1732,7 +1730,7 @@ void func_800FB214_MarioBandstand(void) {
         }
         D_800FD568_MarioBandstand = D_800FCFA0_MarioBandstand;
         D_800FD590_MarioBandstand = D_800FCCFC_MarioBandstand;
-        seq = 0x2D;
+        func_80060128(0x2D);
         break;
     case 2:
         for (i = 0; i < 4; i++) {
@@ -1741,10 +1739,9 @@ void func_800FB214_MarioBandstand(void) {
         }
         D_800FD568_MarioBandstand = D_800FD0C8_MarioBandstand;
         D_800FD590_MarioBandstand = D_800FCD08_MarioBandstand;
-        seq = 0x2E;
+        func_80060128(0x2E);
         break;
     }
-    func_80060128(seq);
     D_800FD678_MarioBandstand = 0x2000;
     func_800FBB14_MarioBandstand();
     D_800FD67C_MarioBandstand = (func_8005FD5C() & 0xFFFF) + D_800F64F8;
@@ -1768,9 +1765,6 @@ void func_800FB214_MarioBandstand(void) {
         D_800FD70C_MarioBandstand[2] -= 3;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB214_MarioBandstand);
-#endif
 
 /* Follows the song: reads each channel's state from the audio driver and records note changes. */
 // NON_MATCHING: masked 44 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
