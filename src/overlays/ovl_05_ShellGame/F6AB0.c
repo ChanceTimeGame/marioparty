@@ -1149,8 +1149,6 @@ void func_800FA038_ShellGame(omObjData* obj) {
         break;
     }
 }
-// NON_MATCHING: compare tree of the state switch, constant hoisting
-#ifdef NON_MATCHING
 void func_800FA0EC_ShellGame(void) {
     omObjData from;
     omObjData to;
@@ -1181,7 +1179,8 @@ void func_800FA0EC_ShellGame(void) {
     } else if (D_800FF104_ShellGame < 135) {
     } else if (D_800FF104_ShellGame == 135) {
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
-            func_800674BC(D_800FF190_ShellGame[D_800FF7A0_ShellGame[i].unk6E].unk2, 0, 0x8000);
+            sh = &D_800FF7A0_ShellGame[i];
+            func_800674BC(D_800FF190_ShellGame[sh->unk6E].unk2, 0, 0x8000);
             func_800FC77C_ShellGame(D_800FF9F8_ShellGame[i]);
         }
     } else if (D_800FF104_ShellGame < 165) {
@@ -1208,13 +1207,7 @@ void func_800FA0EC_ShellGame(void) {
                 func_800258EC(obj->model[1], 4, 0);
                 func_800FC6E0_ShellGame(obj);
                 sh->unkC++;
-            } else if (sh->unkC == 20) {
-                func_800258EC(obj->model[1], 4, 4);
-                func_800258EC(obj->model[4], 4, 0);
-                func_800258EC(obj->model[2], 4, 4);
-                func_80025830(obj->model[2], 0.5f, 0.5f, 0.5f);
-                sh->unkC = 21;
-            } else {
+            } else if (sh->unkC < 20) {
                 if (sh->unk64 > 0.0f) {
                     sh->unk64 -= 20.0;
                 }
@@ -1222,6 +1215,12 @@ void func_800FA0EC_ShellGame(void) {
                     sh->unk68 -= 20.0;
                 }
                 sh->unkC++;
+            } else if (sh->unkC == 20) {
+                func_800258EC(obj->model[1], 4, 4);
+                func_800258EC(obj->model[4], 4, 0);
+                func_800258EC(obj->model[2], 4, 4);
+                func_80025830(obj->model[2], 0.5f, 0.5f, 0.5f);
+                sh->unkC = 21;
             }
         }
         for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
@@ -1240,9 +1239,6 @@ void func_800FA0EC_ShellGame(void) {
     }
     D_800FF104_ShellGame++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FA0EC_ShellGame);
-#endif
 void func_800FA664_ShellGame(void) {
     omObjData* obj;
     SGShell* sh;
