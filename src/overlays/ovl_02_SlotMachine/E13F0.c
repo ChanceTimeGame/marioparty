@@ -1236,13 +1236,11 @@ void func_800FAE34_SlotMachine(omObjData* obj) {
         func_80017DB0(obj);
     }
 }
-// load scheduling: the frame table's base is loaded before the index product, twice (masked 4)
-#ifdef NON_MATCHING
 void func_800FBD60_SlotMachine(void) {
     s32 i;
     unk65770Obj* spr;
     unk65770Obj* spr2;
-    unk65770Anim* anim;
+    unk65770AnimC* frame;
 
     for (i = 0; i < 3; i++) {
         HuMemDirectFree(D_800FFA3C_SlotMachine[i]);
@@ -1253,16 +1251,13 @@ void func_800FBD60_SlotMachine(void) {
     }
     HuMemDirectFree(D_800FFA10_SlotMachine);
     spr = func_800675F4((s16)D_800FFCC0_SlotMachine, 0);
-    anim = spr->unk4C;
-    anim->unk0[spr->unk52].unk0 = D_800FFA14_SlotMachine;
+    frame = &spr->unk4C->unk0[spr->unk52];
+    frame->unk0 = D_800FFA14_SlotMachine;
     spr2 = func_800675F4((s16)D_800FFA30_SlotMachine, 0);
-    anim = spr2->unk4C;
-    anim->unk0[spr2->unk52].unk0 = D_800FFA18_SlotMachine;
+    frame = &spr2->unk4C->unk0[spr2->unk52];
+    frame->unk0 = D_800FFA18_SlotMachine;
     func_800FBF6C_SlotMachine();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_SlotMachine/E13F0", func_800FBD60_SlotMachine);
-#endif
 SlotWork* func_800FBE84_SlotMachine(omObjData* obj) {
     SlotWork* w;
 

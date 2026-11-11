@@ -199,9 +199,9 @@ extern s32 D_80109CC0_UnusedMinigame0[3];
 extern s16 D_80103E20_UnusedMinigame0;           /* outline points */
 extern s16 D_80103E22_UnusedMinigame0;           /* outline index-list length */
 extern UM0Point D_80103E28_UnusedMinigame0[0xC0];
-extern s8 D_80104128_UnusedMinigame0[0x120];     /* point indices, 0xFF ends a loop */
+extern u8 D_80104128_UnusedMinigame0[0x120];     /* point indices, 0xFF ends a loop */
 extern UM0Point* D_80104248_UnusedMinigame0;     /* next free point */
-extern s8* D_8010424C_UnusedMinigame0;           /* next free index */
+extern u8* D_8010424C_UnusedMinigame0;           /* next free index */
 extern f32 D_80104250_UnusedMinigame0[8][3];        /* camera keys: centre */
 extern f32 D_801042B0_UnusedMinigame0[8][3];        /* camera keys: rotation */
 extern f32 D_80104310_UnusedMinigame0[8];        /* camera keys: zoom */

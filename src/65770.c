@@ -952,7 +952,7 @@ void func_80067834(void) {
         }
     }
 }
-// register allocation: idx/pal swap s7/s8, keys[k] not reloaded (masked 26)
+// register allocation: idx/pal swap s7/s8, keys[k] address cached, unk12 test not reloaded (masked 30; tried assign-in-test)
 #ifdef NON_MATCHING
 s16 func_800678A4(void* arg0) {
     u8* data = arg0;

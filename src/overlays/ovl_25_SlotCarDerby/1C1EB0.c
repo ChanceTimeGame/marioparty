@@ -81,7 +81,7 @@ void func_800F6A38_SlotCarDerby(omObjData* obj) {
     func_800FB2FC_SlotCarDerby(0, 400, 400);
 }
 
-// register allocation (masked 0)
+// register allocation: base/index operand order of the segment pointers (masked 0; tried index-first arithmetic, a/b order, an inline dx)
 #ifdef NON_MATCHING
 void func_800F6AEC_SlotCarDerby(void) {
     f32 dx;
@@ -1290,7 +1290,7 @@ f32 func_800F96F4_SlotCarDerby(f32 start, f32 dist, f32 step, Vec* pos, Vec* dir
     func_800F9CB4_SlotCarDerby(t, &D_80101440_SlotCarDerby[i], &D_80101424_SlotCarDerby[next], &D_80101440_SlotCarDerby[next], dir);
     return d;
 }
-// retail keeps the pos pointer increment (addiu; lwc1 0/4) where GCC folds it (masked 13)
+// retail keeps the pos pointer increment (addiu; lwc1 0/4) where GCC folds it (masked 13; tried three increment spellings)
 #ifdef NON_MATCHING
 s32 func_800F9A0C_SlotCarDerby(Vec* pos, f32* groundY) {
     f32 best;
@@ -2209,7 +2209,7 @@ void func_800FC394_SlotCarDerby(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FC394_SlotCarDerby);
 #endif
-// register allocation and multiply order (masked 12)
+// retail extracts the g/b fields before re-reading *p for alpha, and reads *p twice (masked 7; tried s32/u32 c, channel locals)
 #ifdef NON_MATCHING
 /* Scales a sprite palette's RGBA5551 colours by r/g/b (/256), keeping alpha. */
 void func_800FCCA0_SlotCarDerby(s16 anim, s32 r, s32 g, s32 b) {
@@ -2219,9 +2219,14 @@ void func_800FCCA0_SlotCarDerby(s16 anim, s32 r, s32 g, s32 b) {
 
     for (i = 0; i < a->unk1A; i++, p++) {
         u16 c = *p;
+        s32 cr;
+        s32 cg;
+        s32 cb;
 
-        *p = (*p & 1) | (((((c >> 11) * r) >> 8) << 11) | (((((c >> 6) & 0x1F) * g) >> 8) << 6) |
-                         (((((c >> 1) & 0x1F) * b) >> 8) << 1));
+        cr = ((c >> 11) * r) >> 8;
+        cg = (((c >> 6) & 0x1F) * g) >> 8;
+        cb = (((c >> 1) & 0x1F) * b) >> 8;
+        *p = (*p & 1) | ((cr << 11) | (cg << 6) | (cb << 1));
     }
 }
 #else
