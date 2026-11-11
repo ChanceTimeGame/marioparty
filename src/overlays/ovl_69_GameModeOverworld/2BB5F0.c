@@ -908,7 +908,8 @@ void func_800F8B38_GameModeOverworld(void) {
     }
 }
 
-// scheduling of the index arithmetic (masked 31)
+// register allocation (masked 2): retail builds &path[seg] in s0 as index + path, ours base + index in
+// v0; tried path + seg, the tail inline, seg/t compare order
 #ifdef NON_MATCHING
 void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
     f32 vals[4];
@@ -919,7 +920,6 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
     f32 end;
     f32 dx, dy, dz, d;
     f32 s;
-    f32 ft;
     s16 i;
     s16 seg;
     s16 t;
@@ -951,7 +951,7 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
     end = total - 10.0f;
     seg = 1;
     for (t = 10; t < end; t++) {
-        if (path[seg + 1].time < t) {
+        if (t > path[seg + 1].time) {
             seg++;
         }
         k = &path[seg];
@@ -959,52 +959,50 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
         times[1] = k[0].time;
         times[2] = k[1].time;
         times[3] = k[2].time;
-        ft = t;
         vals[0] = k[-1].center.x;
         vals[1] = k[0].center.x;
         vals[2] = k[1].center.x;
         vals[3] = k[2].center.x;
-        Center.x = func_80022D9C(vals, times, ft);
+        Center.x = func_80022D9C(vals, times, t);
         vals[0] = k[-1].center.y;
         vals[1] = k[0].center.y;
         vals[2] = k[1].center.y;
         vals[3] = k[2].center.y;
-        Center.y = func_80022D9C(vals, times, ft);
+        Center.y = func_80022D9C(vals, times, t);
         vals[0] = k[-1].center.z;
         vals[1] = k[0].center.z;
         vals[2] = k[1].center.z;
         vals[3] = k[2].center.z;
-        Center.z = func_80022D9C(vals, times, ft);
+        Center.z = func_80022D9C(vals, times, t);
         vals[0] = k[-1].rot.x;
         vals[1] = k[0].rot.x;
         vals[2] = k[1].rot.x;
         vals[3] = k[2].rot.x;
-        CRot.x = func_80022D9C(vals, times, ft);
+        CRot.x = func_80022D9C(vals, times, t);
         vals[0] = k[-1].rot.y;
         vals[1] = k[0].rot.y;
         vals[2] = k[1].rot.y;
         vals[3] = k[2].rot.y;
-        CRot.y = func_80022D9C(vals, times, ft);
+        CRot.y = func_80022D9C(vals, times, t);
         vals[0] = k[-1].rot.z;
         vals[1] = k[0].rot.z;
         vals[2] = k[1].rot.z;
         vals[3] = k[2].rot.z;
-        CRot.z = func_80022D9C(vals, times, ft);
+        CRot.z = func_80022D9C(vals, times, t);
         vals[0] = k[-1].zoom;
         vals[1] = k[0].zoom;
         vals[2] = k[1].zoom;
         vals[3] = k[2].zoom;
-        CZoom = func_80022D9C(vals, times, ft);
+        CZoom = func_80022D9C(vals, times, t);
         HuPrcVSleep();
     }
-    k = &path[(s16)(seg + 1)];
-    CRot.x = k->rot.x;
-    CRot.y = k->rot.y;
-    CRot.z = k->rot.z;
-    CZoom = k->zoom;
-    Center.x = k->center.x;
-    Center.y = k->center.y;
-    Center.z = k->center.z;
+    CRot.x = path[(s16)(seg + 1)].rot.x;
+    CRot.y = path[(s16)(seg + 1)].rot.y;
+    CRot.z = path[(s16)(seg + 1)].rot.z;
+    CZoom = path[(s16)(seg + 1)].zoom;
+    Center.x = path[(s16)(seg + 1)].center.x;
+    Center.y = path[(s16)(seg + 1)].center.y;
+    Center.z = path[(s16)(seg + 1)].center.z;
     D_800ECC22 = 0;
 }
 #else
