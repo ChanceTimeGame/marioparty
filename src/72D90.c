@@ -1461,7 +1461,7 @@ s16 GMesFontMesCreate(unkCommonStruct0* arg0, char* arg1, u8 arg2, s16 arg3, s16
     return GMesFontCreate(arg0, arg1, arg2, arg3, arg4);
 }
 
-// register allocation: retail loads the unused arg4 into s3 and copies w per loop (masked 24)
+// register allocation: retail loads the unused arg4 into s3 and keeps w unextended in the loops (masked 21; tried u16/u32/s16/s32 w)
 #ifdef NON_MATCHING
 s16 GMesFontCreate(unkCommonStruct0* arg0, void* arg1, u8 arg2, s16 arg3, s16 arg4) {
     u16 hi;
@@ -1529,7 +1529,8 @@ s16 GMesFontCreate(unkCommonStruct0* arg0, void* arg1, u8 arg2, s16 arg3, s16 ar
             x = w + x;
         }
         func_80067598(id, idx, 0);
-        str += ((u8)(str[1] + 0x80) < 2) + 1;
+        str = str + ((u8)(str[1] + 0x80) < 2);
+        str++;
     }
 
     func_80067208(id, 0, hi, 0);

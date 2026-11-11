@@ -102,8 +102,8 @@ void func_800F65E0_PressStartScreen(void) {
     }
 }
 
-// register allocation (masked 2, raw 12): f0/f2 swapped on y/z, and the else arm of rot computes
-// &D_800F8060[i] before the product in retail (tried pointer-arith form)
+// register allocation (masked 0, raw 10): f0/f2 swapped on y/z, retail reuses the factor register
+// for z (tried a factor local)
 #ifdef NON_MATCHING
 void func_800F69C8_PressStartScreen(omObjData* arg0) {
     f32 rot;
@@ -135,7 +135,7 @@ void func_800F69C8_PressStartScreen(omObjData* arg0) {
             if (D_800F8060_PressStartScreen[i] > 0.0f) {
                 rot = D_800F8060_PressStartScreen[i] - D_800F80B0_PressStartScreen * 0.5f;
             } else {
-                rot = D_800F80B0_PressStartScreen * 0.5f + D_800F8060_PressStartScreen[i];
+                rot = D_800F8060_PressStartScreen[i] + D_800F80B0_PressStartScreen * 0.5f;
             }
             if (rot < 0.0f) {
                 rot += 360.0f;
