@@ -466,8 +466,6 @@ void func_800F6D78_DebugSequentialPlay(omObjData* arg0) {
     }
 }
 
-// register allocation (raw 49, masked 20); tried digit-subtract locals, coins %= steps (kept), declaration order (M1c)
-#ifdef NON_MATCHING
 void func_800F6EF4_DebugSequentialPlay(u16 arg0) {
     s16 coins;
     u16 spr;
@@ -475,19 +473,16 @@ void func_800F6EF4_DebugSequentialPlay(u16 arg0) {
     coins = GwPlayer[arg0].coins;
     spr = func_80019060(D_800F92D8_DebugSequentialPlay, 0, 1);
     func_80018E50(spr, coins / 100, 0);
-    coins %= 100;
     SetBasicSpritePos(spr, D_800F8C10_DebugSequentialPlay[arg0] + 0x58, D_800F8C20_DebugSequentialPlay[arg0] + 0x20);
+    coins %= 100;
     spr = func_80019060(D_800F92D8_DebugSequentialPlay, 0, 1);
     func_80018E50(spr, coins / 10, 0);
-    coins %= 10;
     SetBasicSpritePos(spr, D_800F8C10_DebugSequentialPlay[arg0] + 0x68, D_800F8C20_DebugSequentialPlay[arg0] + 0x20);
+    coins %= 10;
     spr = func_80019060(D_800F92D8_DebugSequentialPlay, 0, 1);
     func_80018E50(spr, coins, 0);
     SetBasicSpritePos(spr, D_800F8C10_DebugSequentialPlay[arg0] + 0x78, D_800F8C20_DebugSequentialPlay[arg0] + 0x20);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7E_DebugSequentialPlay/30F1B0", func_800F6EF4_DebugSequentialPlay);
-#endif
 
 void func_800F70D0_DebugSequentialPlay(u16 arg0) {
     u16 sum = 0;
