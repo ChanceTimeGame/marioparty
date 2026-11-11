@@ -148,7 +148,7 @@ void func_800FD59C_HandcarHavoc(omObjData *obj, u16 seat, Vec *out)
 }
 
 /* The two wheel spots of one side (D_800FF404). */
-// NON_MATCHING: stack addressing of the copy array
+// stack addressing of the copy array (masked 8): retail addresses tmp[k].x from the m base (s0 + 96) and y/z from fresh sp+116/120; tried f32 tmp[2][3], separate copy statements
 #ifdef NON_MATCHING
 void func_800FD888_HandcarHavoc(omObjData* obj, u16 side, Vec* out) {
     Matrix4f m;
@@ -206,9 +206,12 @@ void func_800FD888_HandcarHavoc(omObjData* obj, u16 side, Vec* out) {
                 v[j] += t[i] * m[i][j];
             }
         }
-        tmp[k].x = out[k].x = obj->trans.x + v[0];
-        tmp[k].y = out[k].y = obj->trans.y + v[1];
-        tmp[k].z = out[k].z = obj->trans.z + v[2];
+        out[k].x = obj->trans.x + v[0];
+        tmp[k].x = out[k].x;
+        out[k].y = obj->trans.y + v[1];
+        tmp[k].y = out[k].y;
+        out[k].z = obj->trans.z + v[2];
+        tmp[k].z = out[k].z;
     }
 }
 #else
@@ -216,12 +219,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FD88
 #endif
 
 /* Pumps the levers by the car's speed and pump power. */
-// NON_MATCHING: register allocation of the lever model
+// register allocation (masked 9): retail loads model[1] with lhu and sign-extends at each use, and loads obj->model after the fabs; tried s16, u16 + (s16) index
 #ifdef NON_MATCHING
 void func_800FDBC8_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     f32 pump;
-    u16 mdl;
+    s16 mdl;
 
     w = obj->unk_50;
     func_800FDCEC_HandcarHavoc(obj->model[0], w->leverDir, fabs(w->speed) / 20.0);
@@ -451,11 +454,8 @@ void func_800FEB4C_HandcarHavoc(s32 team, s32 i, s32 buf) {
 }
 
 /* Starts a spark burst at a wheel; returns its model, or -1 when all 12 are in use. */
-// NON_MATCHING: spark struct addressed from a different base
-#ifdef NON_MATCHING
 s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, u16 wheel) {
     HHSparks* p;
-    HHChip* c;
     f32 yaw;
     f32 pitch;
     f32 r;
@@ -495,28 +495,25 @@ s16 func_800FECF4_HandcarHavoc(s32 team, s32 side, u16 wheel) {
                 break;
         }
         r = D_800FF434_HandcarHavoc[k];
-        c = &p->chip[k];
-        c->a.x = func_800AEAC0(yaw) * r;
-        c->a.y = func_800AEAC0(pitch) * r;
-        c->a.z = func_800AEFD0(yaw) * r;
-        c->b.x = func_800AEAC0(yaw + 1.0f) * r;
-        c->b.y = func_800AEAC0(pitch) * r;
-        c->b.z = func_800AEFD0(yaw + 1.0f) * r;
+        p->chip[k].a.x = func_800AEAC0(yaw) * r;
+        p->chip[k].a.y = func_800AEAC0(pitch) * r;
+        p->chip[k].a.z = func_800AEFD0(yaw) * r;
+        p->chip[k].b.x = func_800AEAC0(yaw + 1.0f) * r;
+        p->chip[k].b.y = func_800AEAC0(pitch) * r;
+        p->chip[k].b.z = func_800AEFD0(yaw + 1.0f) * r;
     }
     return D_80101C40_HandcarHavoc[team][i];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FECF4_HandcarHavoc);
-#endif
 
 /* Updates a car's spark bursts (vertices, display lists, timers) and their sound. */
-// NON_MATCHING: spark struct addressed from a different base
+// loop-invariant hoisting (masked 26): GCC hoists D_800FF6B8 + team offset into s6, retail adds it inside the active branch; tried an HHChip pointer (kept), s32 team
 #ifdef NON_MATCHING
 void func_800FF0AC_HandcarHavoc(HHCar* w) {
     HHSparks* p;
     Vtx* v;
+    HHChip* c;
     s16* mdl;
-    u16 team;
+    s32 team;
     u16 any;
     s32 i;
     s32 k;
@@ -531,14 +528,15 @@ void func_800FF0AC_HandcarHavoc(HHCar* w) {
             any = 1;
             v = D_800FF6B8_HandcarHavoc[team][i][D_800F37F0];
             for (k = 0; k < 4; k++) {
+                c = &p->chip[k];
                 v++;
-                v->v.ob[0] = p->chip[k].a.x;
-                v->v.ob[1] = p->chip[k].a.y;
-                v->v.ob[2] = p->chip[k].a.z;
+                v->v.ob[0] = c->a.x;
+                v->v.ob[1] = c->a.y;
+                v->v.ob[2] = c->a.z;
                 v++;
-                v->v.ob[0] = p->chip[k].b.x;
-                v->v.ob[1] = p->chip[k].b.y;
-                v->v.ob[2] = p->chip[k].b.z;
+                v->v.ob[0] = c->b.x;
+                v->v.ob[1] = c->b.y;
+                v->v.ob[2] = c->b.z;
                 v++;
             }
             func_800FEB4C_HandcarHavoc(team, i, D_800F37F0);
