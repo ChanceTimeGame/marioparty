@@ -419,8 +419,6 @@ void func_80015F90(u8* str) {
 INCLUDE_ASM("asm/nonmatchings/156F0", func_80015F90);
 #endif
 
-// glyph nibble store: retail reloads *p and re-masks color (masked 9)
-#ifdef NON_MATCHING
 void func_80016220(u8 ch, s16 id, s16 x, s16 y, u8 color) {
     Win* w = &D_800F3B88[D_800F33E8];
     u8* src = &D_800C1910[ch * 8];
@@ -437,7 +435,7 @@ void func_80016220(u8 ch, s16 id, s16 x, s16 y, u8 color) {
         for (c = 0; c < 4; c++) {
             *p = (*src & mask) ? color << 4 : 0;
             mask >>= 1;
-            *p = (*src & mask) ? *p | color : *p;
+            *p = *p | ((*src & mask) ? color : 0);
             mask >>= 1;
             p++;
         }
@@ -445,9 +443,6 @@ void func_80016220(u8 ch, s16 id, s16 x, s16 y, u8 color) {
         row += tw / 2;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/156F0", func_80016220);
-#endif
 
 // register allocation (pos/args swapped) and one va_arg addressing form (masked 1)
 #ifdef NON_MATCHING

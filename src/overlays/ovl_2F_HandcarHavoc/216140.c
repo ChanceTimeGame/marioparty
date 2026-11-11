@@ -219,7 +219,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FD88
 #endif
 
 /* Pumps the levers by the car's speed and pump power. */
-// register allocation (masked 9): retail loads model[1] with lhu and sign-extends at each use, and loads obj->model after the fabs; tried s16, u16 + (s16) index
+// register allocation (masked 9): retail loads model[1] with lhu and sign-extends at each use, and loads obj->model after the fabs; tried s16, u16 + (s16) index; M1g: no local (masked 17), (u16) load cast (folds to lh)
 #ifdef NON_MATCHING
 void func_800FDBC8_HandcarHavoc(omObjData* obj) {
     HHCar* w;
