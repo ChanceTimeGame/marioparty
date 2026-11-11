@@ -101,7 +101,8 @@ void func_800F6990_MinigameInstructions(void) {
 }
 const u8 D_8010F050_MinigameInstructions[] __attribute__((section(".rodata"))) = { 0x82, 0xA0, 0x83, 0x41, 0x81, 0x49, 0x00 };
 
-// one delay slot: retail's branch to count = 37 is bnez, this is bnezl (masked 1)
+// one delay slot: retail's branch to count = 37 is bnez, this is bnezl (masked 1);
+// count = 37 before the if, the inverted condition and an s32 count tried
 #ifdef NON_MATCHING
 void func_800F6B14_MinigameInstructions(void) {
     Vec2f in;
