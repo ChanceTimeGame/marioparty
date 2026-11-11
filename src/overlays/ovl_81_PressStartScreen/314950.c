@@ -439,7 +439,8 @@ s16 func_800F7A94_PressStartScreen(void) {
     return group;
 }
 
-// retail sets up = 1 in a branch delay slot and again in the branch (masked 18)
+// retail sets up = 1 in a branch delay slot and again in the branch (masked 18); CSE folds the second
+// up = 1 into the first (M1g: if/else with up = 1 in both arms, masked 22)
 #ifdef NON_MATCHING
 void func_800F7BFC_PressStartScreen(void) {
     s32 spr0, spr1, obj0, obj1;

@@ -361,7 +361,8 @@ void func_800FAE60_DesertDash(void) {
     }
 }
 
-// loop-head branch layout (bnez/j where retail has beqzl) and FPR constants
+// FPR constants (1.0f hoisted in a different order) and a leftover j over the stolen else block at the
+// loop tail (masked 17; M1g: unk0 != 0 arm first gave retail's beqzl, was masked 42)
 #ifdef NON_MATCHING
 /* Moves the obstacles up and down; plays the slam sound for the teams that see one land. */
 void func_800FAFD4_DesertDash(void) {
@@ -377,9 +378,7 @@ void func_800FAFD4_DesertDash(void) {
     o = D_800FC670_DesertDash;
     i = 0;
     do {
-        if (o->unk0 == 0) {
-            i++;
-        } else {
+        if (o->unk0 != 0) {
         switch (o->unk4) {
             case 2:
                 o->unk10 = 0.0f;
@@ -449,6 +448,8 @@ void func_800FAFD4_DesertDash(void) {
         func_80025830(o->unk8, 2.0 * s, 1.0f, s);
         func_80025798(o->unkA, 0.0f, 0.0f, o->unk14);
         func_80025830(o->unkA, 3.0f, 3.0f, 3.0f);
+        } else {
+            i++;
         }
         o++;
     } while (i < 5);
