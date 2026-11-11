@@ -193,7 +193,7 @@ void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim
 void func_800FE38C_HotRopeJump(void);
 void func_800FE39C_HotRopeJump(void);
 void func_800FE3A8_HotRopeJump(f32 speed);
-void func_800FE3B4_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec* out);
+void func_800FE3B4_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, f32* o);
 
 /* .data */
 extern s32 D_800FE450_HotRopeJump; /* jumps to win */

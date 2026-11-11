@@ -26,7 +26,8 @@ u16 D_800FE4E0_HotRopeJump[4] = { 0, 0, 0, 0 };
 u16 D_800FE4E8_HotRopeJump = 0;
 s16 D_800FE4EC_HotRopeJump[10] = { 0, 0x3000, 0x2000, 0, 0, 0, 0, 0, 0, 0 };
 
-// NON_MATCHING: register allocation: retail does not hoist D_800FE464's base (masked 22)
+// NON_MATCHING: the shuffle loop: retail reuses the hoisted -1 (s1) for the tbl[r] store; tried
+// do/while retry loops (masked 28, D_800FE464's base hoisted) (masked 17)
 #ifdef NON_MATCHING
 void func_800F65E0_HotRopeJump(void) {
     s32* tbl;
@@ -66,16 +67,19 @@ void func_800F65E0_HotRopeJump(void) {
     D_8010031C_HotRopeJump = D_800B8994;
     i = 0;
     tbl = D_800FE474_HotRopeJump;
-    do {
-    retry:
+next:
+    while (1) {
         r = rand8() & 3;
-        if (tbl[r] == -1) {
-            goto retry;
+        if (tbl[r] != -1) {
+            break;
         }
-        D_800FE464_HotRopeJump[i] = tbl[r];
-        i++;
-        tbl[r] = -1;
-    } while (i < 4);
+    }
+    D_800FE464_HotRopeJump[i] = tbl[r];
+    i++;
+    tbl[r] = -1;
+    if (i < 4) {
+        goto next;
+    }
     D_800B8964 = 1.6f;
     D_800B8968 = 0.175f;
     SetFadeInTypeAndTime(0, 16);
@@ -294,14 +298,15 @@ void func_800F6E58_HotRopeJump(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F6E58_HotRopeJump);
 #endif
 
-// NON_MATCHING: register allocation of the motion pointer (masked 0)
+// NON_MATCHING: instruction-identical (raw 0 in an all-C unit), but after the INCLUDE_ASM
+// neighbours above GCC emits the a/b initialiser templates into .text; unwrap with them
 #ifdef NON_MATCHING
 void func_800F6EEC_HotRopeJump(omObjData* obj, s32 player) {
     s32 a[5] = { 0x0F, 0x38, 0x39, 0x3A, 0x3B };
     s32 b[5] = { 0x10, 0x3C, 0x3D, 0x3E, 0x3F };
     s32 dir;
     s32 file;
-    s32* m;
+    s32 k;
     HRJPlayerWork* w;
 
     dir = D_800C59AC[GwPlayer[player].character].unk_00;
@@ -321,9 +326,9 @@ void func_800F6EEC_HotRopeJump(omObjData* obj, s32 player) {
     func_8001874C(obj, 1, dir | 1, 1, 0);
     func_8001874C(obj, 2, dir | 3, 1, 0);
     func_8001874C(obj, 6, dir | 5, 1, 0x13);
-    m = (rand8() & 1) + a;
-    func_8001874C(obj, 0xD, dir | m[0], 1, 0x78);
-    func_8001874C(obj, 0xE, dir | m[6], 1, 0x78);
+    k = rand8() & 1;
+    func_8001874C(obj, 0xD, dir | a[k], 1, 0x78);
+    func_8001874C(obj, 0xE, dir | b[k], 1, 0x78);
     func_8001874C(obj, 0x11, dir | 0x18, 0, 0);
     func_8001874C(obj, 0x15, dir | 0x62, 0, 0);
     func_8001874C(obj, 0x1E, dir | 0x63, 0, 0);
@@ -1275,7 +1280,8 @@ void func_800FA9DC_HotRopeJump(omObjData* obj) {
 #define HRJ_MTX_HALF(m, i) (((u16*)(m))[i])
 
 /* World position -> screen position (x, y) and depth (z), through camera cam's view matrix. */
-// NON_MATCHING: register allocation
+// NON_MATCHING: register allocation: sz and the 0.01744 constant swap f22/f24 (masked 0); out is
+// written as f32[] so the store does not let GCC keep D_800F3FA8 cached
 #ifdef NON_MATCHING
 void func_800FAB34_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
     Mtx mtx;
@@ -1296,10 +1302,10 @@ void func_800FAB34_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
     sz = fabsf(sz / cosf(D_800C3110[cam].unk_40 * 0.017444444444444446 / 2.0));
     if (sz != 0.0) {
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->x = (s16)(vp->unk58 / 4.0 * sx / sz / 1.3333334f) + vp->unk60 / 4.0;
+        ((f32*)out)[0] = (s16)(vp->unk58 / 4.0 * sx / sz / 1.3333334f) + vp->unk60 / 4.0;
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->y = (s16)(vp->unk5A / 4.0 * -sy / sz) + vp->unk62 / 4.0;
-        out->z = sz;
+        ((f32*)out)[1] = (s16)(vp->unk5A / 4.0 * -sy / sz) + vp->unk62 / 4.0;
+        ((f32*)out)[2] = sz;
     }
 }
 #else
@@ -1308,7 +1314,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FAB34
 
 /* func_800FAB34 through the current CZoom/CRot/Center camera; z becomes how far the point lies
    outside a box of scaleX x scaleY around it (0 when inside). */
-// NON_MATCHING: register allocation
+// NON_MATCHING: register allocation (dist and the 2.0 constant swap f20/f22) and the &Center load
+// scheduled before the eye.x products (masked 6)
 #ifdef NON_MATCHING
 void func_800FADDC_HotRopeJump(s32 cam, Vec* pos, Vec* out, f32 scaleX, f32 scaleY) {
     Mtx view;
@@ -1325,8 +1332,10 @@ void func_800FADDC_HotRopeJump(s32 cam, Vec* pos, Vec* out, f32 scaleX, f32 scal
     f32 sy;
     f32 sz;
     f32 dist;
+    Mtx* m;
 
     c = &D_800C3110[cam];
+    m = &mtx;
     rx = CRot.x;
     ry = CRot.y;
     eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
@@ -1339,18 +1348,19 @@ void func_800FADDC_HotRopeJump(s32 cam, Vec* pos, Vec* out, f32 scaleX, f32 scal
     up.y = func_800AEFD0(rx);
     up.z = func_800AEFD0(ry) * func_800AEAC0(rx);
     guLookAt(&view, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
-    guTranslate(&mtx, pos->x, pos->y, pos->z);
-    guMtxCatL(&mtx, &view, &mtx);
+    guTranslate(m, pos->x, pos->y, pos->z);
+    guMtxCatL(m, &view, m);
     sx = (s32)((HRJ_MTX_HALF(&mtx, 12) << 16) | HRJ_MTX_HALF(&mtx, 28)) >> 16;
     sy = (s32)((HRJ_MTX_HALF(&mtx, 13) << 16) | HRJ_MTX_HALF(&mtx, 29)) >> 16;
     sz = (s32)((HRJ_MTX_HALF(&mtx, 14) << 16) | HRJ_MTX_HALF(&mtx, 30)) >> 16;
-    dist = fabsf(sz * func_800AEAC0(D_800C3110[cam].unk_40 / 2.0) / func_800AEFD0(D_800C3110[cam].unk_40 / 2.0));
+    dist = func_800AEAC0(D_800C3110[cam].unk_40 / 2.0);
+    dist = fabsf(sz * dist / func_800AEFD0(D_800C3110[cam].unk_40 / 2.0));
     if (dist != 0.0) {
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->x = (s16)(vp->unk58 / 4.0 * sx / dist / 1.3333334f) + vp->unk60 / 4.0;
+        ((f32*)out)[0] = (s16)(vp->unk58 / 4.0 * sx / dist / 1.3333334f) + vp->unk60 / 4.0;
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        out->y = (s16)(vp->unk5A / 4.0 * -sy / dist) + vp->unk62 / 4.0;
-        out->z = dist;
+        ((f32*)out)[1] = (s16)(vp->unk5A / 4.0 * -sy / dist) + vp->unk62 / 4.0;
+        ((f32*)out)[2] = dist;
     }
     if (dist != 0.0f) {
         sc[0] = sx * sz / dist * (1.0f / scaleX);
@@ -1406,7 +1416,7 @@ void func_800FB354_HotRopeJump(f32 angle) {
     HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y,
                 c->unk18.z);
     m[3][0] = m[3][1] = m[3][2] = 0.0f;
-    func_800FE3B4_HotRopeJump(m, func_800AEFD0(angle) * 100.0, func_800AEAC0(angle) * 100.0, 0.0f, &v);
+    func_800FE3B4_HotRopeJump(m, func_800AEFD0(angle) * 100.0, func_800AEAC0(angle) * 100.0, 0.0f, (f32*)&v);
     func_80023504(1, 0.0f, 0.0f, -100.0f);
     func_80023504(2, v.x, v.y, v.z);
 }
@@ -1539,7 +1549,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FB6B4
 
 /* Builds the floor: a 2 x 12 x 32 vertex grid (per-frame copies, lit by func_800FB6B4) and its
    display list. Returns the model. */
-// NON_MATCHING: retail writes the list through fixed offsets, not gfx++ (different shape)
+// NON_MATCHING: register allocation: x and s swap v1/a0 in the vertex loop (masked 0)
 #ifdef NON_MATCHING
 s16 func_800FBABC_HotRopeJump(void) {
     unk65770Anim* tex;
@@ -1548,14 +1558,15 @@ s16 func_800FBABC_HotRopeJump(void) {
     unk2C0C0StructC0* m;
     unk2C0C0StructE0* v;
     unk2C0C0StructE0* src;
-    s16 model;
+    s32 model;
     s32 step;
     s32 x0;
     s32 s0;
-    s32 x;
-    s32 z;
     s32 s;
     s32 t;
+    s32 x;
+    s32 y;
+    s16 z;
     s32 half;
     s32 row;
     s32 col;
@@ -1567,21 +1578,22 @@ s16 func_800FBABC_HotRopeJump(void) {
 
     step = 60;
     tex = func_80067310(D_801007BC_HotRopeJump);
-    buf = func_80023668(0x2000 * sizeof(Gfx));
+    buf = gfx = func_80023668(0x2000 * sizeof(Gfx));
     model = D_801007BA_HotRopeJump = func_8002451C(0xC0, func_800FB6B4_HotRopeJump, 0);
     m = D_800F2B7C[model].unk_6C;
-    m->unk_04 = m->unk_08[0] = v = func_80023684(0x364 * sizeof(Vtx), m->unk_68);
+    v = m->unk_08[0] = m->unk_04 = func_80023684(0x364 * sizeof(Vtx), m->unk_68);
+    y = 0;
     x0 = -step * 12;
     s0 = 0;
     for (half = 0; half < 2; half++) {
         z = step * -16.0;
         t = 0;
-        for (row = 0; row < 32; row++) {
+        for (i = 0; i < 32; i++) {
             x = x0;
             s = s0;
             for (col = 0; col < 12; col++) {
                 v->unk_00 = x;
-                v->unk_02 = 0;
+                v->unk_02 = y;
                 v->unk_04 = z;
                 *(s16*)v->unk_06 = 0;
                 v->unk_08 = s;
@@ -1601,11 +1613,10 @@ s16 func_800FBABC_HotRopeJump(void) {
     for (i = 1; i < D_800F37DA; i++) {
         v = m->unk_08[i] = func_80023684(0x364 * sizeof(Vtx), m->unk_68);
         src = m->unk_08[0];
-        for (row = 0; row < 0x300; row++) {
+        for (col = 0; col < 0x300; col++) {
             *v++ = *src++;
         }
     }
-    gfx = buf;
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_1CYCLE);
     gSPClearGeometryMode(gfx++, 0x60600);
@@ -1625,14 +1636,14 @@ s16 func_800FBABC_HotRopeJump(void) {
     for (half = 0; half < 2; half++) {
         gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, 0);
         vtx += 12;
-        for (row = 1; row < 32; row++) {
-            cur = (row & 1) * 16;
-            prev = ((row - 1) & 1) * 16;
-            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur);
+        for (i = 1; i < 32; i++) {
+            prev = (i - 1) & 1;
+            cur = i & 1;
+            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur * 16);
             vtx += 12;
             for (col = 1; col < 12; col++) {
-                gSP2Triangles(gfx++, cur + col, prev + col - 1, cur + col - 1, 0, prev + col, prev + col - 1,
-                              cur + col, 0);
+                gSP2Triangles(gfx++, cur * 16 + col, prev * 16 + col - 1, cur * 16 + col - 1, 0, prev * 16 + col,
+                              prev * 16 + col - 1, cur * 16 + col, 0);
             }
         }
     }
@@ -2135,8 +2146,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FD90C
 
 /* A flame's per-frame list: its matrix (facing the camera, D_801007D8) and its animated texture;
    the top two vertices sway with seg->anim. */
-// NON_MATCHING: retail writes the list through fixed offsets, not gfx++
-#ifdef NON_MATCHING
 void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim) {
     Matrix4f m;
     Vec d;
@@ -2164,18 +2173,17 @@ void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim
     MtxScale(m, mdl->unk_3C, mdl->unk_40, mdl->unk_44);
     guMtxCatF(m, D_801007D8_HotRopeJump, m);
     func_800A0A20(m, &seg->mtx[D_800F37F0]);
-    gfx = md->unk_00[D_800F37F0 + 1];
-    md->unk_00[0] = gfx;
-    gDPPipeSync(gfx++);
-    gSPSegment(gfx++, 2, osVirtualToPhysical(anim->unk0[(s16)seg->anim >> 2].unk0));
-    gSPDisplayList(gfx++, osVirtualToPhysical(md->unk_00[4]));
-    gSPMatrix(gfx++, osVirtualToPhysical(&seg->mtx[D_800F37F0]), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPDisplayList(gfx++, osVirtualToPhysical(md->unk_00[5]));
-    gDPPipeSync(gfx++);
-    gSPEndDisplayList(gfx++);
+    md->unk_00[0] = gfx = md->unk_00[D_800F37F0 + 1];
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 2, osVirtualToPhysical(anim->unk0[(s16)seg->anim >> 2].unk0));
+    gSPDisplayList(&gfx[2], osVirtualToPhysical(md->unk_00[4]));
+    gSPMatrix(&gfx[3], osVirtualToPhysical(&seg->mtx[D_800F37F0]), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(&gfx[4], osVirtualToPhysical(md->unk_00[5]));
+    gDPPipeSync(&gfx[5]);
+    gSPEndDisplayList(&gfx[6]);
     v = md->unk_08[D_800F37F0];
     a = (f32)((seg->anim & 0x3F) * 360) * 0.015625 + 90.0;
-    r = fabs(vtx->ob[0] * 0.4);
+    r = vtx->ob[0] * 0.4 < 0 ? -(vtx->ob[0] * 0.4) : vtx->ob[0] * 0.4;
     for (i = 0; i < 2; i++) {
         v->unk_00 = vtx->ob[0] + func_800AEFD0(a) * r + d.x;
         v->unk_02 = vtx->ob[1] + func_800AEAC0(a) * r + d.y;
@@ -2187,9 +2195,6 @@ void func_800FDFC4_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, unk65770Anim* anim
         vtx++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FDFC4_HotRopeJump);
-#endif
 
 void func_800FE38C_HotRopeJump(void) {
     D_801007C4_HotRopeJump = 1;
@@ -2203,15 +2208,8 @@ void func_800FE3A8_HotRopeJump(f32 speed) {
     D_801007C8_HotRopeJump = speed;
 }
 
-// NON_MATCHING: retail keeps out + 4 in a register (masked 3)
-#ifdef NON_MATCHING
-void func_800FE3B4_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    f32* o = (f32*)out;
-
+void func_800FE3B4_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
     *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    o[0] = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    o[1] = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FE3B4_HotRopeJump);
-#endif
