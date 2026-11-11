@@ -222,8 +222,6 @@ void func_800F6F00_CrazyCutter(omObjData* obj) {
         omDelObj(obj);
     }
 }
-// cross-jumping merges the D_800FD544 == 4 and == 0 tails; retail keeps both (masked 23)
-#ifdef NON_MATCHING
 void func_800F7180_CrazyCutter(omObjData* arg0) {
     s32 i;
     s32 end;
@@ -240,8 +238,8 @@ void func_800F7180_CrazyCutter(omObjData* arg0) {
                     func_800FAACC_CrazyCutter(i, 2, 1);
                 }
             }
-            cnt = D_800FD460_CrazyCutter;
             end = 90;
+            cnt = D_800FD460_CrazyCutter;
         } else if (D_800FD544_CrazyCutter == 0) {
             if (D_800FD460_CrazyCutter == 1) {
                 func_80060128(52);
@@ -257,7 +255,11 @@ void func_800F7180_CrazyCutter(omObjData* arg0) {
             }
             if (D_800FD460_CrazyCutter == 55) {
                 for (i = 0; i < 4; i++) {
-                    func_800FAACC_CrazyCutter(i, func_800FAAB0_CrazyCutter(i, 0x10000) ? 2 : 4, 1);
+                    if (func_800FAAB0_CrazyCutter(i, 0x10000)) {
+                        func_800FAACC_CrazyCutter(i, 2, 1);
+                    } else {
+                        func_800FAACC_CrazyCutter(i, 4, 1);
+                    }
                 }
             }
             cnt = D_800FD460_CrazyCutter;
@@ -270,9 +272,6 @@ void func_800F7180_CrazyCutter(omObjData* arg0) {
         arg0->func_ptr = &func_800FA9D8_CrazyCutter;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F7180_CrazyCutter);
-#endif
 
 // register pressure: retail keeps obj/player on the stack and reloads them, CSE of GwPlayer[player] (masked 151)
 #ifdef NON_MATCHING
@@ -758,7 +757,8 @@ void func_800F8598_CrazyCutter(omObjData* obj) {
     }
 }
 // loop shape: retail has an unused 56-byte frame and the bound 10 in a register tested before the
-// loop (a local array or variable bound in the source); masked 14, not attempted further
+// loop (beqz, not folded); masked 14. M1g tried a local bound variable and a static inline helper
+// taking the count (both fold the constant, no frame)
 #ifdef NON_MATCHING
 s32 func_800F8F74_CrazyCutter(CrazyCutterPlayer* st, s16* cur) {
     s32 i;
@@ -1514,12 +1514,11 @@ void func_800FB778_CrazyCutter(omObjData* obj) {
     }
     ring->frame++;
 }
-// scheduling: retail loads cur[0] and cur[1] before the grid row pointer (raw 4, masked 4; tried
-// cur[0] + cur[1] * w)
-#ifdef NON_MATCHING
 s32 func_800FB944_CrazyCutter(CrazyCutterPlayer* st) {
     Vec3f pos;
     s16 cur[2];
+    s32 cx;
+    s32 cy;
     f32 d;
     f32 x;
     f32 z;
@@ -1537,16 +1536,15 @@ s32 func_800FB944_CrazyCutter(CrazyCutterPlayer* st) {
         pos.y = st->y + 10.0f;
         pos.z = z + D_800FCD00_CrazyCutter[st->player] - 8.0f;
         func_800F9694_CrazyCutter(&pos, cur, st->player);
-        if ((D_800FD4A0_CrazyCutter[st->player] + cur[1] * D_800FD498_CrazyCutter)[cur[0]] != 0) {
+        cx = cur[0];
+        cy = cur[1];
+        if ((D_800FD4A0_CrazyCutter[st->player] + cy * D_800FD498_CrazyCutter)[cx] != 0) {
             D_800FD148_CrazyCutter = 1;
             break;
         }
     }
     return D_800FD148_CrazyCutter;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FB944_CrazyCutter);
-#endif
 // decomp-permuter
 s16 func_800FBAFC_CrazyCutter(s32 idx)
 {
