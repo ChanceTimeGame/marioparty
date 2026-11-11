@@ -203,7 +203,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F74F
 #endif
 
 /* The raft: steering, bumps against the banks, the camera. */
-// logic-equivalent; register allocation, branch layout and the order of the turn sum (normalised diff 442 lines)
+// register allocation only (masked 6, raw 87): retail's f20/f22/f24 are permuted; variable reuse,
+// ternaries and declaration order tried
 #ifdef NON_MATCHING
 void func_800F76B8_PaddleBattle(omObjData* obj) {
     PBRaft* r;
@@ -211,12 +212,10 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
     Vec b;
     Matrix4f rot;
     Matrix4f m;
-    f32 sum;
     f32 w;
     f32 t;
     f32 x;
     f32 f;
-    f64 s;
     s32 i;
     s32 ok;
 
@@ -229,27 +228,30 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
     if (r->state == 1) {
         r->side = r->lateral > 0.5 ? 1 : 0;
         if (r->timer == 0) {
-            r->weight[3] = r->weight[2] = r->weight[1] = r->weight[0] = 1.0f;
-            r->strokes[3] = r->strokes[2] = r->strokes[1] = r->strokes[0] = 0;
+            r->weight[0] = r->weight[1] = r->weight[2] = r->weight[3] = 1.0f;
+            r->strokes[0] = r->strokes[1] = r->strokes[2] = r->strokes[3] = 0;
         } else if (r->timer == 40) {
             /* the side with fewer strokes gets the heavier paddles */
-            if (r->strokes[1] + r->strokes[2] + r->strokes[3] < r->strokes[0] * 3) {
+            ok = r->strokes[1] + r->strokes[2] + r->strokes[3];
+            if (ok < r->strokes[0] * 3) {
+                t = 1.5f;
                 w = 1.0f;
-                r->weight[0] = 1.5f;
             } else {
+                t = 1.0f;
                 w = 1.5f;
-                r->weight[0] = 1.0f;
             }
-            r->weight[3] = r->weight[2] = r->weight[1] = w;
+            r->weight[0] = t;
+            r->weight[1] = r->weight[2] = r->weight[3] = w;
         } else if (r->timer == 120) {
             r->timer = 0;
         }
         r->timer++;
-        sum = 0.0f;
+        t = D_800FFFA0_PaddleBattle[r->seat[0]].power * r->weight[0];
+        w = 0.0f;
         for (i = 1; i < 4; i++) {
-            sum += D_800FFFA0_PaddleBattle[r->seat[i]].power * r->weight[i];
+            w += D_800FFFA0_PaddleBattle[r->seat[i]].power * r->weight[i];
         }
-        r->turn = sum - D_800FFFA0_PaddleBattle[r->seat[0]].power * r->weight[0] * 3.0f;
+        r->turn = w - t * 3.0f;
         r->dist += r->speed;
         if (D_800FFF02_PaddleBattle.state == 1) {
             r->speed += 0.05;
@@ -259,12 +261,14 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
         }
         func_800FAFEC_PaddleBattle(r->dist, 0.5f, &b);
         func_800FAFEC_PaddleBattle(r->dist - 40.0, 0.5f, &a);
-        r->drift += ((a.x * b.z + -b.x * a.z) * r->speed * 0.005 - r->drift) * 0.2;
-        w = func_800FAE48_PaddleBattle(r->dist);
-        w = w / func_800FAE48_PaddleBattle(r->dist + 10.0);
+        t = a.x * b.z + -b.x * a.z;
+        r->drift += (t * r->speed * 0.005 - r->drift) * 0.2;
+        f = func_800FAE48_PaddleBattle(r->dist);
+        w = f / func_800FAE48_PaddleBattle(r->dist + 10.0);
         func_800FAFEC_PaddleBattle(r->dist, r->lateral, &b);
         func_800FAFEC_PaddleBattle(r->dist + 10.0f, r->lateral, &a);
-        r->lateral += w * (-b.z * a.x + a.z * b.x) * r->speed * 0.005;
+        w *= -b.z * a.x + a.z * b.x;
+        r->lateral += w * r->speed * 0.005;
         ok = 1;
         for (i = 0; i < 4; i++) {
             if ((f32)D_800FE9FC_PaddleBattle.range[i].start < r->dist &&
@@ -273,14 +277,16 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
                 break;
             }
         }
-        ok = (D_800FFF02_PaddleBattle.state == 1) & ok;
+        if (D_800FFF02_PaddleBattle.state != 1) {
+            ok = 0;
+        }
         w = 250.0 / func_800FAE48_PaddleBattle(r->dist);
         t = r->lateral - 0.5;
         x = t;
         if (t < 0.0f) {
             x = -t;
         }
-        if (0.5 - w < x) {
+        if (x > 0.5 - w) {
             if (ok) {
                 /* bumped the bank outside the bystanders' stretches */
                 r->state++;
@@ -305,29 +311,23 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
         if (r->unk86 != 0) {
             r->unk8E = 1;
             r->shake = 20;
-            if (r->side != 0) {
-                i = 0;
-            } else {
-                i = PB_RAND16() * 90 / 1966080 + 1;
-            }
-            D_800FFB38_PaddleBattle = i;
-            if (i >= 4) {
+            D_800FFB38_PaddleBattle = r->side != 0 ? 0 : PB_RAND16() * 90 / 1966080 + 1;
+            if (D_800FFB38_PaddleBattle >= 4) {
                 D_800FFB38_PaddleBattle = 1;
             }
         }
         if (r->unk8E != 0) {
             r->unk8E++;
-            f = 2.0f;
-            if (r->lateral - 0.5 >= 0.0) {
-                f = -2.0f;
-            }
+            f = r->lateral - 0.5 >= 0.0 ? -2.0f : 2.0f;
             t = r->unk8E;
-            r->turn = f * (t >= 30.0f ? 1.0f : (f32)(t / 30.0));
+            x = t >= 30.0f ? 1.0f : (f32)(t / 30.0);
+            r->turn = f * x;
             t = r->unk8E + 5;
             if (t < 0.0) {
                 t = 0.0f;
             }
-            r->dist = (t >= 30.0f ? 1.0f : (f32)(t / 30.0)) * r->speed + r->dist;
+            x = t >= 30.0f ? 1.0f : (f32)(t / 30.0);
+            r->dist = x * r->speed + r->dist;
             if (r->unk8E >= 31) {
                 r->state = 1;
             }
@@ -339,12 +339,8 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
             r->lateral += (w - r->lateral) * 0.2;
             r->turn *= 0.8;
             if ((s16)++r->unk8C < 30) {
-                t = 30 - (s16)r->unk8C;
-                x = 0.0f;
-                if (!(t < 0.0f)) {
-                    x = t / 30.0;
-                }
-                r->dist = x * r->speed + r->dist;
+                w = 30 - (s16)r->unk8C;
+                r->dist = (w < 0.0f ? 0.0f : (f32)(w / 30.0)) * r->speed + r->dist;
             }
         }
         r->timer = 0;
@@ -404,9 +400,10 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
     obj->trans.y += (r->y - obj->trans.y) * 0.2;
     if (func_800FB1E8_PaddleBattle(D_800FF360_PaddleBattle, &obj->trans, r->rotY, rot) != 0) {
         if (r->shake != 0) {
-            s = r->shake;
-            t = func_8009B618(s * 20.0, 360.0);
-            guRotateF(m, (f32)(s / 20.0) * 10.0, func_800AEAC0(t), 0.0f, func_800AEFD0(t));
+            t = r->shake / 20.0;
+            w = func_8009B618(r->shake * 20.0, 360.0);
+            f = func_800AEAC0(w);
+            guRotateF(m, t * 10.0, f, 0.0f, func_800AEFD0(w));
             guMtxCatF(m, rot, rot);
             r->shake--;
         }
