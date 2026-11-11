@@ -594,14 +594,16 @@ void func_800FC8D4_PlatformPeril(void) {
 void func_800FC8DC_PlatformPeril(void) {
 }
 
-// zero-constant register reuse in the loop test (masked 6): retail loads 0.0f at entry and copies it to $f4 for the loop; tried a while loop and an f32 D_800FDEBC
+// zero-constant register copy (masked 4): retail loads 0.0f at entry and copies it to $f4 for the loop;
+// a local zero hoists the mtc1 but not the copy; tried while loops, reversed compare, an f32 D_800FDEBC
 #ifdef NON_MATCHING
 void func_800FC8E4_PlatformPeril(void) {
     s32 n;
+    f32 z = 0.0f;
 
     D_800FDEB8_PlatformPeril = D_800FDD74_PlatformPeril;
     D_800FDEBC_PlatformPeril = 0;
-    for (n = 0; 0.0f < D_800FDD74_PlatformPeril[n].center.y; n++) {
+    for (n = 0; z < D_800FDD74_PlatformPeril[n].center.y; n++) {
     }
 }
 #else
