@@ -2127,8 +2127,6 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FC0F4_RunningOfTheBulb);
 #endif
-// register allocation (retail keeps the count live across the retry loop)
-#ifdef NON_MATCHING
 f32 func_800FCEA0_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     struct {
         f32 dist[10];
@@ -2140,7 +2138,6 @@ f32 func_800FCEA0_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     f32 x;
     f32 z;
     s32 i;
-    s32 j;
     u16 n;
     u16 tries;
 
@@ -2186,37 +2183,32 @@ f32 func_800FCEA0_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f
     }
     tries = 0;
     work = arg0->unk_50;
-retry:
-    /* Retail counts j past a blocking entry before leaving the scan, so a blocker in the last
-       slot reads as "none". */
-    for (j = 0; j < n;) {
-        if (func_800FDB84_RunningOfTheBulb(near.angle[j], angle) <= arg4 && near.dist[j] <= arg5) {
-            j++;
+    while (1) {
+        for (i = 0; i < n; i++) {
+            if (func_800FDB84_RunningOfTheBulb(near.angle[i], angle) <= arg4 && near.dist[i] <= arg5) {
+                break;
+            }
+        }
+        if (i == n) {
+            x = func_800AEAC0(angle) * arg5 + arg0->trans.x;
+            z = func_800AEFD0(angle) * arg5 + arg0->trans.z;
+            if (work->unk_48 + -400.0f <= x && x <= 400.0f - work->unk_48 && work->unk_48 + -2500.0f <= z && z <= 2500.0f - work->unk_48) {
+                break;
+            }
+            if (z < D_800FE478_RunningOfTheBulb->trans.z - 200.0f) {
+                break;
+            }
+        }
+        D_800FE456_RunningOfTheBulb++;
+        if (++tries == 36) {
+            D_800FE454_RunningOfTheBulb = 1;
             break;
         }
-        j++;
-    }
-    if (j == n) {
-        x = func_800AEAC0(angle) * arg5 + arg0->trans.x;
-        z = func_800AEFD0(angle) * arg5 + arg0->trans.z;
-        if (work->unk_48 + -400.0f <= x && x <= 400.0f - work->unk_48 && work->unk_48 + -2500.0f <= z && z <= 2500.0f - work->unk_48) {
-            goto done;
-        }
-        if (z < D_800FE478_RunningOfTheBulb->trans.z - 200.0f) {
-            goto done;
+        angle += 10.0f;
+        if (angle > 180.0f) {
+            angle -= 360.0f;
         }
     }
-    D_800FE456_RunningOfTheBulb++;
-    if (++tries == 36) {
-        D_800FE454_RunningOfTheBulb = 1;
-        goto done;
-    }
-    angle += 10.0f;
-    if (angle > 180.0f) {
-        angle -= 360.0f;
-    }
-    goto retry;
-done:
     if (angle < 0.0f) {
         angle += 360.0f;
     }
@@ -2225,9 +2217,6 @@ done:
     }
     return angle;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800FCEA0_RunningOfTheBulb);
-#endif
 // register allocation (retail keeps the count live across the retry loop)
 #ifdef NON_MATCHING
 f32 func_800FD394_RunningOfTheBulb(omObjData* arg0, omObjData* arg1, f32 arg2, f32 arg3, f32 arg4) {
