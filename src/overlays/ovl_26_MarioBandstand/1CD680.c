@@ -1980,11 +1980,9 @@ s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB99C_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 18 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FBB14_MarioBandstand(void) {
     s16 g;
-    s16 i;
+    s32 i;
     s32 j;
     void* data;
     s16 img;
@@ -2018,9 +2016,6 @@ void func_800FBB14_MarioBandstand(void) {
         func_80066DC4(g, j, D_800FD140_MarioBandstand[j][0], D_800FD140_MarioBandstand[j][1]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FBB14_MarioBandstand);
-#endif
 
 void func_800FBD1C_MarioBandstand(void) {
     s16* p;
@@ -2216,13 +2211,11 @@ void func_800FBF68_MarioBandstand(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FBF68_MarioBandstand);
 #endif
 
-// NON_MATCHING: masked 7 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
-#ifdef NON_MATCHING
 void func_800FC4E0_MarioBandstand(void) {
     void* data;
     s16 img;
     s16 g;
-    s16 i;
+    s32 i;
 
     data = DataRead(0x3A001A);
     img = func_800678A4(data);
@@ -2258,9 +2251,6 @@ void func_800FC4E0_MarioBandstand(void) {
     func_80066DC4(g, 0, 0x154, 0xC7);
     func_80067354(g, 0, 1.0f, 1.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FC4E0_MarioBandstand);
-#endif
 
 // decomp-permuter
 void func_800FC744_MarioBandstand(omObjData *obj)
