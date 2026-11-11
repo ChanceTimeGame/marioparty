@@ -692,12 +692,14 @@ void func_800FBB30_BowlOver(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FBB30_BowlOver);
 #endif
 
-// register allocation
+// register allocation only (masked 0, raw 12): retail keeps guRandom() >> 4 in a0 for the % 300
 #ifdef NON_MATCHING
 void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin) {
     BowlPlayerWork* w;
     s16 i;
     u16 img;
+    u32 r;
+    u32 id;
 
     obj->unk_50 = func_80023684(sizeof(BowlPlayerWork), 0x7918);
     func_8009B770(obj->unk_50, 0, sizeof(BowlPlayerWork));
@@ -705,8 +707,9 @@ void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 s
     w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
     w->unk_56 = GwPlayer[(u16)player].port;
     w->unk_58 = player;
+    id = (u32)dir >> 16;
     for (i = 0; i < 6; i++) {
-        if (D_800FD5D8_BowlOver[i].unk_00 == (u32)dir >> 16) {
+        if (D_800FD5D8_BowlOver[i].unk_00 == id) {
             break;
         }
     }
@@ -722,7 +725,8 @@ void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 s
         img = ReadImgPackand(0x21, 0x289, 8);
         obj->model[i + 7] = D_800ECDE0[img].unk_00;
         func_80025930(obj->model[i + 7], 0x70000000, 0x70000000);
-        func_80039970(D_800ECDE0[img].unk_02, ((u32)guRandom() >> 4) % 300 / 100);
+        r = ((u32)guRandom() >> 4) % 300 / 100;
+        func_80039970(D_800ECDE0[img].unk_02, r);
         func_80025830(obj->model[i + 7], 2.0f, 2.0f, 2.0f);
         func_800258EC(obj->model[i + 7], 4, 4);
         obj->model[i + 12] = func_80023FC8(obj->model[1]);
