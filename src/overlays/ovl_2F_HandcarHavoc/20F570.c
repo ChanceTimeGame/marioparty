@@ -1162,8 +1162,6 @@ void func_800FA318_HandcarHavoc(omObjData* obj) {
 }
 
 /* Braking to a stop at the end. */
-// NON_MATCHING: retail shares the lean clamp store (cross-jumped)
-#ifdef NON_MATCHING
 void func_800FA3B8_HandcarHavoc(omObjData* obj) {
     Vec pos;
     Vec rot;
@@ -1210,13 +1208,12 @@ void func_800FA3B8_HandcarHavoc(omObjData* obj) {
     if (w->rot.z >= 360.0f) {
         w->rot.z -= 360.0f;
     }
-    if (w->leanIn < w->lean) {
+    if (w->lean > w->leanIn) {
         w->lean -= 2.0f;
         if (w->lean < w->leanIn) {
             w->lean = w->leanIn;
         }
-    }
-    if (w->lean < w->leanIn) {
+    } else if (w->lean < w->leanIn) {
         w->lean += 2.0f;
         if (w->leanIn < w->lean) {
             w->lean = w->leanIn;
@@ -1246,37 +1243,33 @@ void func_800FA3B8_HandcarHavoc(omObjData* obj) {
             func_8006071C(w->snd);
             w->sndOn = 0;
         }
-        if (D_800FF5D0_HandcarHavoc != 0) {
+        if (D_800FF5D0_HandcarHavoc == 0) {
+            if (w->team == D_80101C90_HandcarHavoc) {
+                for (i = 0; i < 2; i++) {
+                    func_80025C20(obj->model[3 + i], func_80025E48(obj->motion[9 + i]), 0, 20, 0);
+                    func_80025EB4(obj->model[3 + i], 3, 2);
+                }
+                obj->func_ptr = func_800FA8C0_HandcarHavoc;
+            } else {
+                obj->func_ptr = NULL;
+            }
+        } else {
             obj->func_ptr = NULL;
             if ((u16)(D_80101CAA_HandcarHavoc - 8) >= 2 && D_80101CAA_HandcarHavoc != 6) {
                 D_80101CAA_HandcarHavoc = 2;
             }
-        } else {
-            if (w->team != D_80101C90_HandcarHavoc) {
-                obj->func_ptr = NULL;
-                return;
-            }
-            for (i = 0; i < 2; i++) {
-                func_80025C20(obj->model[3 + i], func_80025E48(obj->motion[9 + i]), 0, 20, 0);
-                func_80025EB4(obj->model[3 + i], 3, 2);
-            }
-            obj->func_ptr = func_800FA8C0_HandcarHavoc;
         }
     } else if (w->team == D_80101C90_HandcarHavoc && fabs(w->speed) > 60.0) {
         func_800FCA58_HandcarHavoc(obj, 0);
         func_800FCA58_HandcarHavoc(obj, 1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FA3B8_HandcarHavoc);
-#endif
 
 /* The winners turn round and jump off the car. */
-// NON_MATCHING: data addressed through a section base register
-#ifdef NON_MATCHING
 void func_800FA8C0_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     f32 a;
+    f32 y;
     s32 i;
 
     w = obj->unk_50;
@@ -1311,11 +1304,11 @@ void func_800FA8C0_HandcarHavoc(omObjData* obj) {
         case 1:
             D_800FF5C8_HandcarHavoc += 1.0f;
             for (i = 0; i < 2; i++) {
+                y = func_800AEAC0(70.0f) * D_800FF5C0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc -
+                    D_800FF5C8_HandcarHavoc * 2.5f * D_800FF5C8_HandcarHavoc;
                 func_80025798(obj->model[3 + i],
-                              D_800FF5B0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc + D_800FF598_HandcarHavoc[i].x,
-                              func_800AEAC0(70.0f) * D_800FF5C0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc -
-                                  D_800FF5C8_HandcarHavoc * 2.5f * D_800FF5C8_HandcarHavoc +
-                                  D_800FF598_HandcarHavoc[i].y,
+                              D_800FF598_HandcarHavoc[i].x + D_800FF5B0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc,
+                              y + D_800FF598_HandcarHavoc[i].y,
                               D_800FF5B8_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc + D_800FF598_HandcarHavoc[i].z);
             }
             if (D_800FF5C8_HandcarHavoc >= 15.0f) {
@@ -1345,9 +1338,6 @@ void func_800FA8C0_HandcarHavoc(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FA8C0_HandcarHavoc);
-#endif
 
 void func_800FAE64_HandcarHavoc(omObjData* obj) {
     s32 i;
