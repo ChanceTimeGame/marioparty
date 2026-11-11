@@ -56,7 +56,7 @@ typedef struct MMGroundWork {
 /* D_800FC9C0: one record per mushroom platform (func_800FBFB0 ... func_800FC3C4). */
 typedef struct MMMushroom {
     /* 0x00 */ omObjData* obj;
-    /* 0x04 */ s16 colIdx;  /* its collision object index (work unk_05) */
+    /* 0x04 */ u16 colIdx;  /* its collision object index (work unk_05) */
     /* 0x06 */ s16 color;   /* & 7: colour 0-6 */
     /* 0x08 */ u16 state;   /* 0 rest, 1 rising, 2 moving */
     /* 0x0C */ f32 speed;
@@ -69,7 +69,7 @@ typedef struct MMMushroom {
 typedef struct MMPlayerState {
     /* 0x00 */ u16 flags;   /* 1 CPU, 2 target chosen, 4 turned */
     /* 0x02 */ u16 state;
-    /* 0x04 */ s16 difficulty;
+    /* 0x04 */ u16 difficulty;
     /* 0x06 */ u16 color;
     /* 0x08 */ u16 wait;
     /* 0x0A */ u16 timer;
@@ -207,10 +207,10 @@ void func_800FC6E4_MushroomMixup(omObjData*);
 /* ---------------------------------------------------------------------------------------------
    Data (1784E0.c, 17BDC0.c)
    --------------------------------------------------------------------------------------------- */
-extern u8 D_800FC700_MushroomMixup; /* round phase 0-3 */
-extern u8 D_800FC701_MushroomMixup;
-extern u8 D_800FC702_MushroomMixup;
-extern u8 D_800FC703_MushroomMixup;
+extern s8 D_800FC700_MushroomMixup; /* round phase 0-3 */
+extern s8 D_800FC701_MushroomMixup;
+extern s8 D_800FC702_MushroomMixup;
+extern s8 D_800FC703_MushroomMixup;
 extern s16 D_800FC704_MushroomMixup;
 extern s16 D_800FC706_MushroomMixup;
 extern s16 D_800FC708_MushroomMixup;
