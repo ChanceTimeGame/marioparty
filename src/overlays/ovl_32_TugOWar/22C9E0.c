@@ -105,8 +105,6 @@ void func_800F65E0_TugOWar(void) {
 }
 
 /* The game flow: instructions, the timer, the result and the exit. */
-// the fade ternary is if-converted (sltu/negu/andi); retail branches on lb v0 (masked 3)
-#ifdef NON_MATCHING
 void func_800F69C0_TugOWar(omObjData* obj) {
     TWPlayerWork* w[4];
     TWPull* p[4];
@@ -250,7 +248,11 @@ void func_800F69C0_TugOWar(omObjData* obj) {
             }
         } else if (D_800FDAF0_TugOWar == 0) {
             if (D_800FDAF8_TugOWar > D_800FDAFC_TugOWar) {
-                func_800726AC(D_800FDFB3_TugOWar != 0 ? 3 : 0, 0x14);
+                if (D_800FDFB3_TugOWar == 0) {
+                    func_800726AC(0, 0x14);
+                } else {
+                    func_800726AC(3, 0x14);
+                }
                 func_800601D4(0x28);
                 D_800FDAF0_TugOWar = 1;
             }
@@ -267,6 +269,3 @@ void func_800F69C0_TugOWar(omObjData* obj) {
         D_800FDB10_TugOWar -= 360;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22C9E0", func_800F69C0_TugOWar);
-#endif
