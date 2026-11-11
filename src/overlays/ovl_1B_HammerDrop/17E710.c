@@ -1181,9 +1181,8 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
     }
 }
 
-// Logic-equivalent spherical displacement conversion. Control flow: retail keeps the dead
-// pitch <= 0.002f / >= -0.002f tests that GCC drops here (190 vs 174 instructions, masked 36; tried
-// wrap ternaries and Vec order, both kept, and an if/else pitch chain)
+// Spherical displacement conversion (MP2 CrazyCutters func_80107204's shape, with its dead pitch clamp).
+// Register allocation only (masked 0, raw 3): horizontal and yaw swap f22/f20; tried declaration order
 #ifdef NON_MATCHING
 void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -1210,10 +1209,11 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
-        pitch = 180.0f;
-        yaw = 0.0f;
-        if (!(delta.y > 0.0001f) && (delta.y < 0.0001f)) {
-            pitch = 0.0f;
+        yaw = horizontal;
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+            pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         yaw = (f32) ((f64) func_800FA1AC_HammerDrop(delta.x / delta.z) * D_800FB650_HammerDrop);
@@ -1228,6 +1228,9 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
     length = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
     out->z = yaw;
     out->x = length;
