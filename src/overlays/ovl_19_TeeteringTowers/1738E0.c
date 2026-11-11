@@ -245,7 +245,7 @@ const s8 D_800FB030_TeeteringTowers[33][2] = {
 /* A platform: shakes when the player lands on it, then tips over in the direction it was left
    (func_800F773C) and falls. */
 // one callee-saved register fewer (frame 120 vs 128) and ten `trans -= const` sites load the
-// field before the constant (register allocation / load order, masked ~40)
+// field before the constant (retail: constant first; `+= -c` worse); masked 63, raw 141
 #ifdef NON_MATCHING
 void func_800F6CE4_TeeteringTowers(omObjData* obj) {
     TTPlatformWork* work;
@@ -254,6 +254,7 @@ void func_800F6CE4_TeeteringTowers(omObjData* obj) {
     TTPlayerWork* pw;
     s32 state;
     s32 n;
+    s32 m;
     f32 ang;
 
     if (D_800FA934_TeeteringTowers == 2) {
@@ -302,8 +303,8 @@ void func_800F6CE4_TeeteringTowers(omObjData* obj) {
                     obj->work[2] = 0x1E;
                 }
             }
-        } else if ((n = obj->work[2]) != 0) {
-            if (((n % 10 == 0) & (n != 0)) && pw->unk_53 == work->unk_05) {
+        } else if ((m = obj->work[2]) != 0) {
+            if (((m % 10 == 0) & (m != 0)) && pw->unk_53 == work->unk_05) {
                 func_80060F04((s16)D_800FA938_TeeteringTowers, 5, 0, 5);
             }
             if (state == 1) {

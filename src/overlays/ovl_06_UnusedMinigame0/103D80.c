@@ -176,7 +176,7 @@ u32 func_800FB6FC_UnusedMinigame0(void) {
 }
 
 /* Keeps the object on the board; returns which edges it touched (1 -x, 2 +x, 4 -z, 8 +z). */
-s32 func_800FB734_UnusedMinigame0(omObjData* obj) {
+u8 func_800FB734_UnusedMinigame0(omObjData* obj) {
     s32 hit = 0;
 
     if (obj->trans.x < -350.0) {
@@ -199,7 +199,7 @@ s32 func_800FB734_UnusedMinigame0(omObjData* obj) {
 }
 
 /* The exit at (x, z) among those whose bit is in mask, or -1. */
-s16 func_800FB810_UnusedMinigame0(f32 x, f32 z, s32 mask) {
+s16 func_800FB810_UnusedMinigame0(f32 x, f32 z, u8 mask) {
     s16 i;
 
     for (i = 0; i < 5; i++) {
