@@ -549,7 +549,7 @@ const char D_800FD23C_MarioBandstand[] __attribute__((section(".rodata"))) = "";
 // NON_MATCHING: register allocation, retail sign-extends the second model id from v0 (masked 23 with
 // address shift; tried u16/s16 m2, reusing m, a chained store) (M1e)
 #ifdef NON_MATCHING
-s16 func_800F81C0_MarioBandstand(s32 cmd) {
+s32 func_800F81C0_MarioBandstand(s32 cmd) {
     u16 chr[4];
     omObjData* obj;
     omObjData* player;

@@ -801,14 +801,15 @@ void func_800F8B00_CastAways(omObjData* arg0) {
     func_800F8194_CastAways(arg0, 3);
 }
 
-// NON_MATCHING: register allocation (arg0 copy, port re-masked with andi) and one delay-slot fill (masked ~30)
+// NON_MATCHING: register allocation (arg0 copy) and one delay-slot fill (masked 29). M1g: an s16 port drops
+// our andi re-mask (retail copies it with a plain move); s32 port loses the copy (masked 57)
 #ifdef NON_MATCHING
 void func_800F8B1C_CastAways(omObjData* arg0) {
     s8 stick[3]; /* x, y, button */
     CastAwaysPlayerWork* work;
     CastAwaysRodWork* rod;
     s32 event;
-    u8 port;
+    s16 port;
     s16 r;
     s16 power;
     f32 frame;

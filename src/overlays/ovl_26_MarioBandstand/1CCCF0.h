@@ -179,7 +179,7 @@ void func_800F7C1C_MarioBandstand(s32);
 s32 func_800F7D58_MarioBandstand(void);
 void func_800F7F7C_MarioBandstand(omObjData*);
 void func_800F80B0_MarioBandstand(s16);
-s16 func_800F81C0_MarioBandstand(s32);
+s32 func_800F81C0_MarioBandstand(s32);
 void func_800F853C_MarioBandstand(void);
 void func_800F87EC_MarioBandstand(omObjData*);
 void func_800F8940_MarioBandstand(omObjData*);
