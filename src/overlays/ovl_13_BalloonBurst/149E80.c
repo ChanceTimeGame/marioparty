@@ -444,7 +444,8 @@ void func_800F71D8_BalloonBurst(omObjData *arg0) {
     arg0->func_ptr = func_800F7298_BalloonBurst;
 }
 
-// register allocation (masked 0, raw 7: a2/a3 swapped for the lo pointer and the D_800FC39C base)
+// register allocation (masked 0, raw 7: a2/a3 swapped for the lo pointer and the D_800FC39C base);
+// hi = lo chain, lo/hi declaration order and lo = hi before the D_800FC39C store tried
 #ifdef NON_MATCHING
 void func_800F7298_BalloonBurst(omObjData *arg0) {
     BalloonBurstObstacle *cur;
@@ -1071,8 +1072,6 @@ void func_800F9520_BalloonBurst(omObjData *arg0) {
     }
 }
 
-// register allocation (masked 2: the motion-index temp lands in a1, retail v0)
-#ifdef NON_MATCHING
 void func_800F95F8_BalloonBurst(omObjData *arg0) {
     Vec2f screen;
     Vec pos;
@@ -1081,7 +1080,7 @@ void func_800F95F8_BalloonBurst(omObjData *arg0) {
     f32 a;
     s32 i;
     s32 j;
-    s32 m;
+    s16 m;
 
     if ((func_8005FD5C() & 0xFFFF) + D_800F64F8 != 0 && D_800FB110_BalloonBurst != 2) {
         return;
@@ -1385,9 +1384,6 @@ void func_800F95F8_BalloonBurst(omObjData *arg0) {
 
 // unreferenced; pads the unit's .rodata after the jump table above (the asm path carries it)
 const u32 D_800FB098_BalloonBurst[2] = { 0, 0 };
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_BalloonBurst/149E80", func_800F95F8_BalloonBurst);
-#endif
 void func_800FA8A4_BalloonBurst(s32 arg0) {
     u16 model = D_800FB120_BalloonBurst[(u16)arg0].obstacles[6].model;
     u16 copy = D_800FB120_BalloonBurst[(u16)arg0].obstacles[6].unk_40;
