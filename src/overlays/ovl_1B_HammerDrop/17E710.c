@@ -280,7 +280,8 @@ void func_800F74DC_HammerDrop(omObjData* arg0) {
     func_800F6AF8_HammerDrop(arg0, 3);
 }
 
-// CPU target selection (masked 35): retail compares unk_4C with a fresh -1 and reloads it, not reusing target; tried stack copy of the height table, reloading D_800EDE70[unk_4C]
+// CPU target selection (masked 19): register allocation (retail findTarget s2, activeCount s3 zeroed at entry,
+// target s0) plus the branch offsets it shifts; tried stack copy of the height table, reloading D_800EDE70[unk_4C]
 #ifdef NON_MATCHING
 typedef struct HammerDropHeights {
     f32 h[4];
@@ -294,7 +295,7 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
     f32 distance;
     s32 activeCount = 0;
     s32 findTarget = 0;
-    s32 target = -1;
+    s32 target;
     s32 i;
     s32 temp;
 
@@ -306,9 +307,8 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
             candidate = D_800EDE70[state->unk_4C];
             distance = sqrtf((candidate->trans.x * candidate->trans.x) +
                 (candidate->trans.z * candidate->trans.z));
-            item = HAMMER_ITEM_WORK(D_800EDE70[state->unk_4C])->item;
             if ((distance >= 400.0f) ||
-                (func_800F9E68_HammerDrop(item->unk_44, 1) == 0)) {
+                (func_800F9E68_HammerDrop((item = HAMMER_ITEM_WORK(D_800EDE70[state->unk_4C])->item)->unk_44, 1) == 0)) {
                 findTarget = 1;
             }
         }
@@ -327,7 +327,7 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
             target = ((rand8() & 0xFF) % 6) & 0xFF;
             candidate = D_800EDE70[target];
             item = HAMMER_ITEM_WORK(candidate)->item;
-            if (heights.h[state->unk_50] < candidate->trans.y) {
+            if (candidate->trans.y > heights.h[state->unk_50]) {
                 target = -1;
             }
             if ((item->unk_38 == 2) &&
@@ -346,6 +346,8 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
                 }
             }
         }
+    } else {
+        target = -1;
     }
     state->unk_4C = target;
 }
@@ -1179,9 +1181,8 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
     }
 }
 
-// Logic-equivalent spherical displacement conversion. Control flow: retail keeps the dead
-// pitch <= 0.002f / >= -0.002f tests that GCC drops here (190 vs 174 instructions, masked 36; tried
-// wrap ternaries and Vec order, both kept, and an if/else pitch chain)
+// Spherical displacement conversion (MP2 CrazyCutters func_80107204's shape, with its dead pitch clamp).
+// Register allocation only (masked 0, raw 3): horizontal and yaw swap f22/f20; tried declaration order
 #ifdef NON_MATCHING
 void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -1208,10 +1209,11 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
-        pitch = 180.0f;
-        yaw = 0.0f;
-        if (!(delta.y > 0.0001f) && (delta.y < 0.0001f)) {
-            pitch = 0.0f;
+        yaw = horizontal;
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+            pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         yaw = (f32) ((f64) func_800FA1AC_HammerDrop(delta.x / delta.z) * D_800FB650_HammerDrop);
@@ -1226,6 +1228,9 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
     length = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
     out->z = yaw;
     out->x = length;

@@ -2498,7 +2498,8 @@ void func_8000F294(s16 idx, s8 mode)
   s->count = D_800CEAF5;
 }
 
-// retail places the v < 0 arm after the success arm; voiceIdx extension reuse (masked 7)
+// retail places the v < 0 arm after the success arm (masked 7); swapped arms or a continue let reorg
+// thread it into a bltzl and CSE the sll (198 vs 201); an s32 voiceIdx is worse
 #ifdef NON_MATCHING
 void func_8000F4E0(void) {
     s32 i;
