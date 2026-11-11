@@ -1240,7 +1240,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E98_
 #endif
 
 // Logic-equivalent arctangent continued fraction; twin of func_800FAB0C_CrazyCutter: f0/f2 swapped
-// around the f64 constants (raw 12, masked 0)
+// around the f64 constants (raw 12, masked 0; M1h tried direct returns, an f64 ret, a quotient temp)
 #ifdef NON_MATCHING
 f32 func_800FA1AC_HammerDrop(f32 arg0) {
     f32 temp_f0;
