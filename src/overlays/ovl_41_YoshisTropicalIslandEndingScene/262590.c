@@ -366,13 +366,16 @@ void func_800FA348_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     arg0->work[0]++;
 }
 
-// float register allocation (angle f20/f22 swapped) and centre-index scheduling
+// float register allocation: retail builds each angle in its own register f20 (raw 13, masked 0);
+// tried local order, assignment in the sinf argument, split x statement
 #ifdef NON_MATCHING
 void func_800FA580_YoshisTropicalIslandEndingScene(void) {
     s32 count;
     s32 i;
     f32 dist;
     f32 angle;
+    f32 x;
+    f32 z;
     omObjData* ring;
     Vec3f pos;
 
@@ -381,9 +384,9 @@ void func_800FA580_YoshisTropicalIslandEndingScene(void) {
     for (i = 0; i < count; i++) {
         MODEL[i] = MBModelCreate(0x25, NULL);
         angle = ((360 / count) * i) * (M_PI / 180.0);
-        func_800A0D00(&MODEL[i]->coords,
-                      (sinf(angle) * dist) + ENDING_CENTER[ENDING_BOARD].x,
-                      ENDING_CENTER[ENDING_BOARD].y,
+        x = sinf(angle) * dist;
+        x += ENDING_CENTER[ENDING_BOARD].x;
+        func_800A0D00(&MODEL[i]->coords, x, ENDING_CENTER[ENDING_BOARD].y,
                       (cosf(angle) * dist) + ENDING_CENTER[ENDING_BOARD].z);
         func_800A0D00((Vec3f*)&MODEL[i]->xScale,
                       D_8010DD1C_YoshisTropicalIslandEndingScene[ENDING_BOARD],
@@ -449,15 +452,9 @@ void func_800FA580_YoshisTropicalIslandEndingScene(void) {
                       D_8010DD1C_YoshisTropicalIslandEndingScene[ENDING_BOARD]);
         func_800A0D00(&MODEL[i + 4]->coords, ENDING_CENTER[ENDING_BOARD].x, ENDING_CENTER[ENDING_BOARD].y,
                       ENDING_CENTER[ENDING_BOARD].z);
-        {
-            Vec3f* c = &ENDING_CENTER[ENDING_BOARD];
-            f32 x;
-
-            angle = (i * 45) * (M_PI / 180.0);
-            x = (sinf(angle) * 1000.0f) + c->x;
-            c = &ENDING_CENTER[ENDING_BOARD];
-            func_800A0D00(&pos, x, ENDING_CENTER[ENDING_BOARD].y, (cosf(angle) * 1000.0f) + c->z);
-        }
+        x = ENDING_CENTER[ENDING_BOARD].x + (sinf(angle = (i * 45) * (M_PI / 180.0)) * 1000.0f);
+        z = ENDING_CENTER[ENDING_BOARD].z + (cosf(angle) * 1000.0f);
+        func_800A0D00(&pos, x, ENDING_CENTER[ENDING_BOARD].y, z);
         func_8004E3E0(0, &pos, 0x32, MODEL[i + 4]);
     }
     HuPrcSleep(0x32);
