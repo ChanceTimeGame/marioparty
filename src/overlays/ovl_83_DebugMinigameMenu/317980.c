@@ -416,7 +416,7 @@ void func_800F6BAC_DebugMinigameMenu(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_800F6BAC_DebugMinigameMenu);
 #endif
 
-// register allocation (loop constants; masked 2)
+// register allocation of the hoisted loop constants 1/10/-1 (masked 0, raw 4; j = 0 moved into the loop, if arms swapped)
 #ifdef NON_MATCHING
 void func_800F7350_DebugMinigameMenu(omObjData* arg0) {
     s32 i;
@@ -436,8 +436,8 @@ void func_800F7350_DebugMinigameMenu(omObjData* arg0) {
         D_800FAD54_DebugMinigameMenu[i] = 1;
     }
     D_800FAC40_DebugMinigameMenu = -1;
-    j = 0;
     for (i = 0; i < 9; i++) {
+        j = 0;
         base = i * 10;
     loop:
         if (D_800F98B0_DebugMinigameMenu[base + j].skip == 1) {
@@ -451,7 +451,6 @@ void func_800F7350_DebugMinigameMenu(omObjData* arg0) {
         } else {
             D_800FAC48_DebugMinigameMenu[i] = j;
         }
-        j = 0;
     }
     func_800F94C8_DebugMinigameMenu(1);
     if (D_800C596C != -1) {
