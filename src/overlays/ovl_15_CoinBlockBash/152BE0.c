@@ -243,7 +243,8 @@ void func_800F7048_CoinBlockBash(omObjData* obj) {
     D_8010252C_CoinBlockBash = 800.0f;
     D_80102534_CoinBlockBash = 0.0f;
 }
-// NON_MATCHING: register allocation of the two radii (masked ~40)
+// NON_MATCHING: register allocation, retail keeps both radii in s6/s7 (we keep one in $f28) and the
+// self offset in fp (masked 46); tried separate and chained radius inits (M1e)
 #ifdef NON_MATCHING
 s32 func_800F7148_CoinBlockBash(s32 self, Vec* pos, f32 dx_, f32 vy, f32 dz_) {
     f32 rot[3];
@@ -262,9 +263,6 @@ s32 func_800F7148_CoinBlockBash(s32 self, Vec* pos, f32 dx_, f32 vy, f32 dz_) {
 
     res = 0;
     rA = rB = 50.0f;
-    rB = 50.0f;
-    rA = rB;
-    rB = rA;
     for (i = 0; i < D_801031FC_CoinBlockBash; i++) {
         if (i == self) {
             continue;
