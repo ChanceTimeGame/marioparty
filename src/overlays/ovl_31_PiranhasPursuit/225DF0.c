@@ -1373,13 +1373,11 @@ void func_800FEF78_PiranhasPursuit(omObjData* obj, s16 anim, s16 fwd) {
 }
 
 /* The plant jumps over the piece ahead of it; at the goal it stops. */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
     PPPlant* pl = &D_80101150_PiranhasPursuit;
     PPPiece* p;
     s16 i;
-    s32 last;
+    s16 last;
 
     i = func_800FC4D0_PiranhasPursuit(obj);
     last = i == D_80101134_PiranhasPursuit - 1;
@@ -1393,25 +1391,25 @@ void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
                     if (last == 1) {
                         D_801012E8_PiranhasPursuit = 0;
                         if (obj->scale.y < 1.0) {
-                            D_80101150_PiranhasPursuit.unk10 = D_80101150_PiranhasPursuit.unk10 * 1.2;
+                            pl->unk10 = pl->unk10 * 1.2;
                         }
                     }
-                    if (D_80101150_PiranhasPursuit.unk2E == 0) {
+                    if (pl->unk2E == 0) {
                         func_800FEF78_PiranhasPursuit(obj, 1, 0);
                     }
                     obj->trans.y = 0.0f;
-                    D_80101150_PiranhasPursuit.state = 2;
+                    pl->state = 2;
                     return;
                 }
                 break;
             case 3:
                 if (obj->trans.y <= 0.0 && p->pos.x - 120.0 < obj->trans.x) {
-                    D_80101150_PiranhasPursuit.unk10 = 40.0f;
-                    if (D_80101150_PiranhasPursuit.unk2E == 0) {
+                    pl->unk10 = 40.0f;
+                    if (pl->unk2E == 0) {
                         func_800FEF78_PiranhasPursuit(obj, 1, 0);
                     }
                     obj->trans.y = 0.0f;
-                    D_80101150_PiranhasPursuit.state = 2;
+                    pl->state = 2;
                     return;
                 }
                 break;
@@ -1420,7 +1418,7 @@ void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
                     D_801012CA_PiranhasPursuit = 1;
                     D_801012EA_PiranhasPursuit = 1;
                     func_800FEF78_PiranhasPursuit(obj, 2, 1);
-                    D_80101150_PiranhasPursuit.state = 3;
+                    pl->state = 3;
                     D_800F2B7C[obj->model[0]].unk_48 = 24.0f;
                     PlaySound(0x34D);
                     func_80017C0C(D_8010110C_PiranhasPursuit, 7, obj->trans.x, 500.0f, obj->trans.z, 0.0f, 60.0f);
@@ -1429,9 +1427,6 @@ void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FF0C0_PiranhasPursuit);
-#endif
 
 /* The eaten runner bounces off a rock, stump or tree it falls on. */
 s16 func_800FF35C_PiranhasPursuit(omObjData* obj) {
