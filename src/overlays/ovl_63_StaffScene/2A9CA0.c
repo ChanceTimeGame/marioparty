@@ -2035,7 +2035,8 @@ void func_800FAA4C_StaffScene(void) {
         HuPrcVSleep();
     }
 }
-// loop-invariant hoisting: 1.0f is hoisted into an FPR here, not in retail (masked 5)
+// loop-invariant hoisting: 1.0f is hoisted into an FPR here, not in retail; retail adds 5 to the snow
+// centre y by symbol, not via the hoisted base; f/2.46f swap f20/f22 (masked 22; tried a centre pointer)
 #ifdef NON_MATCHING
 void func_800FAD30_StaffScene(void) {
     StaffSparkleDot dots[52];
