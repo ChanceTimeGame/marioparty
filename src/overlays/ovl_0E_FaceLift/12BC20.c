@@ -215,6 +215,8 @@ void func_800F6B88_FaceLift(FaceLiftWork* w, f32 spread) {
 }
 // scheduling: retail computes the D_800FC9FA_FaceLift index (sll a3) between x and y (raw 3, masked 2;
 // tried inline x/y arguments, one inlined, (s16) casts)
+// M1g: y inline (or y = ... inside the call) puts the sll right but truncates x before y is computed
+// (masked 8); retail computes x, index, y, then truncates both
 #ifdef NON_MATCHING
 void func_800F6DBC_FaceLift(omObjData* obj) {
     Vec2f pos;
@@ -1114,6 +1116,7 @@ void func_800FA5B4_FaceLift(s16 model, s16 part, Vec3f* p) {
 // scheduling: *verts loaded after g->unk_08[D_800F37F0] (masked 4); an integer-address form
 // ((u32)base + *verts * 16) matches but truncates pointers on 64-bit hosts
 // M1g: *verts + base and (u8*)-offset pointer forms are canonicalised to the same RTL (masked 4)
+// M1g: *verts + base and (u8*)-offset pointer forms are canonicalised to the same RTL (masked 4)
 #ifdef NON_MATCHING
 void func_800FA7D0_FaceLift(s16 model, s16 part, Vec3f* p) {
     unk_ovl_2D_struct* m;
@@ -1393,6 +1396,8 @@ void func_800FB858_FaceLift(s16 player, f32 x, f32 y, f32 z, u16 type) {
 }
 // register allocation (n and j swap s0/s1) and one extra instruction: retail's >= 90 loop reuses
 // the k = 0 from the max < th test's delay slot instead of its own init
+// (reorg redundant_insn). M1g: one shared k = 0 (+5, adds an entry test), n before j, inline ?: threshold
+// all no better (masked 23)
 #ifdef NON_MATCHING
 s16 func_800FB9E8_FaceLift(void) {
     f32 dist[4];

@@ -197,6 +197,8 @@ void func_800F6DB8_BobsledRun(BRWork* work, f32 x, f32 z, f32 ox, f32 oz) {
 /* The game controller (D_800F2AF8[1]): start, race, results. */
 // the photo-finish branch: retail reloads D_800F3FB0[0]/[1] through a base register (&D_800F3FB0[1]
 // and -4 in the else arm); every other difference is the unit's .bss shift (M1f: a local pointer is folded)
+// M1g: block-local sled = &D_800F3FB0[0]/[1] with sled[1]/sled[-1] also folds and CSEs with the compare's
+// loads; a block-local f32 for D_800B8980 does give retail's $f2 at the join
 #ifdef NON_MATCHING
 void func_800F6F20_BobsledRun(omObjData* obj) {
     f32 x0;
