@@ -2036,9 +2036,12 @@ void func_800FBD1C_MarioBandstand(void) {
 }
 
 /* Moves the conductor's cursor sprite toward the next beat's position on the score. */
-// NON_MATCHING: masked 200 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// address CSE: retail holds &D_800FD598 in a1 from the top for the ev[] reads but reads the other
+// fields through their own %hi/%lo (masked 35; a base pointer local gets every field CSE'd)
 #ifdef NON_MATCHING
 void func_800FBD8C_MarioBandstand(void) {
+    s16 spr;
+    s16 note;
     s32 k;
     s32 time;
     s32 dt;
@@ -2047,35 +2050,42 @@ void func_800FBD8C_MarioBandstand(void) {
     f32 y;
     f32 n;
 
-    if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) >= 0x75) {
-        func_80066DC4(D_800FD6A0_MarioBandstand[7], 0, 0x154, 0xC7);
+    spr = D_800FD6A0_MarioBandstand[7];
+    if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
+        note = D_800FD598_MarioBandstand[0].note;
+        k = note - (D_800FD598_MarioBandstand[0].base - 1);
+        if (k < D_800FD598_MarioBandstand[0].count) {
+            time = D_800FD598_MarioBandstand[0].ev[k][1];
+        } else {
+            time = D_800FD598_MarioBandstand[0].ev[D_800FD598_MarioBandstand[0].count - 1][1] + 0x1E;
+        }
+        dt = time - D_800FD598_MarioBandstand[0].timer;
+        cell = D_800FCD14_MarioBandstand[note + 1];
+        if (cell < 0) {
+            cell = 4;
+        } else {
+            cell = D_800FD590_MarioBandstand[cell];
+        }
+        x = D_800FD100_MarioBandstand[cell][0];
+        y = D_800FD100_MarioBandstand[cell][1];
+        if (dt > 0) {
+            x -= D_800FD168_MarioBandstand;
+            y -= D_800FD16C_MarioBandstand;
+            n = dt;
+            x /= n;
+            y /= n;
+            D_800FD168_MarioBandstand = x + D_800FD168_MarioBandstand;
+            y = y + D_800FD16C_MarioBandstand;
+        } else {
+            D_800FD168_MarioBandstand = x;
+        }
+        D_800FD16C_MarioBandstand = y;
+        func_80066DC4(spr, 0, (s32)D_800FD168_MarioBandstand, (s32)D_800FD16C_MarioBandstand);
+    } else {
+        func_80066DC4(spr, 0, 0x154, 0xC7);
         D_800FD168_MarioBandstand = 56.0f;
         D_800FD16C_MarioBandstand = 48.0f;
     }
-    k = D_800FD598_MarioBandstand[0].note - (D_800FD598_MarioBandstand[0].base - 1);
-    if (k < D_800FD598_MarioBandstand[0].count) {
-        time = D_800FD598_MarioBandstand[0].ev[k][1];
-    } else {
-        time = D_800FD598_MarioBandstand[0].ev[D_800FD598_MarioBandstand[0].count - 1][1] + 0x1E;
-    }
-    dt = time - D_800FD598_MarioBandstand[0].timer;
-    cell = D_800FCD14_MarioBandstand[(s16)D_800FD598_MarioBandstand[0].note + 1];
-    if (cell < 0) {
-        cell = 4;
-    } else {
-        cell = D_800FD590_MarioBandstand[cell];
-    }
-    x = D_800FD100_MarioBandstand[cell][0];
-    y = D_800FD100_MarioBandstand[cell][1];
-    if (dt > 0) {
-        n = dt;
-        D_800FD168_MarioBandstand += (x - D_800FD168_MarioBandstand) / n;
-        y = (y - D_800FD16C_MarioBandstand) / n + D_800FD16C_MarioBandstand;
-    } else {
-        D_800FD168_MarioBandstand = x;
-    }
-    D_800FD16C_MarioBandstand = y;
-    func_80066DC4(D_800FD6A0_MarioBandstand[7], 0, (s32)D_800FD168_MarioBandstand, (s32)D_800FD16C_MarioBandstand);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FBD8C_MarioBandstand);
