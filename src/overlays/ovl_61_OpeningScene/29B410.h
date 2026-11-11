@@ -73,7 +73,7 @@ void func_8004F548(void);
 void func_800FC17C_OpeningScene(OpeningModel*, Vec3f*);
 void func_800FC1F0_OpeningScene(OpeningModel*, Vec3f*);
 void func_800FC264_OpeningScene(OpeningModel*, Vec3f*);
-s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* arg2, s32 arg3);
+s16 func_800FBD98_OpeningScene(OpeningModel* arg0, s32 arg1, s32 unused, Vec3f* arg2, u16 arg3);
 s32 func_800FBEA8_OpeningScene(OpeningModel* arg0);
 void func_800FBEEC_OpeningScene(OpeningSprite* arg0, s32 arg1, u16 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 void func_800FC0BC_OpeningScene(OpeningSprite* arg0);
