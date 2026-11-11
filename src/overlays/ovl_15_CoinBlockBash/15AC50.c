@@ -479,28 +479,25 @@ s16 func_800FFD6C_CoinBlockBash(void) {
 }
 
 /* A player picks up drop. */
-// NON_MATCHING: retail returns d->type (or -1 if not active); callers ignore it and CoinBlockBash.h declares void
-#ifdef NON_MATCHING
-void func_800FFD78_CoinBlockBash(CBBDrop* drop, omObjData* obj) {
+s32 func_800FFD78_CoinBlockBash(CBBDrop* drop, omObjData* obj) {
     CBBDropFull* d = (CBBDropFull*)drop;
 
-    if (d->active != 0) {
-        d->state = 4;
-        d->active = 0;
-        d->unk_14 = 0;
-        func_801003D0_CoinBlockBash(d->bb, 0x10);
-        func_80100454_CoinBlockBash(d->shadow);
-        d->obj = obj;
-        d->unk_40 = obj->rot.y;
-        d->unk_2C = 2.5f;
-        d->unk_28 = 2.5f;
-        func_8010034C_CoinBlockBash(d->bb, 2.5f, d->unk_2C, 1.0f);
-        func_80060540(D_80101C98_CoinBlockBash[d->type][1], obj->work[0]);
+    if (d->active == 0) {
+        return -1;
     }
+    d->state = 4;
+    d->active = 0;
+    d->unk_14 = 0;
+    func_801003D0_CoinBlockBash(d->bb, 0x10);
+    func_80100454_CoinBlockBash(d->shadow);
+    d->obj = obj;
+    d->unk_40 = obj->rot.y;
+    d->unk_2C = 2.5f;
+    d->unk_28 = 2.5f;
+    func_8010034C_CoinBlockBash(d->bb, 2.5f, d->unk_2C, 1.0f);
+    func_80060540(D_80101C98_CoinBlockBash[d->type][1], obj->work[0]);
+    return d->type;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FFD78_CoinBlockBash);
-#endif
 
 void func_800FFE30_CoinBlockBash(void) {
     HuMemDirectFree(D_80103290_CoinBlockBash);

@@ -6,12 +6,14 @@ u8 D_800FA1C4_GroundPound[4] = { 0x00, 0x2A, 0x54, 0x80 };
 u8 D_800FA1C8_GroundPound[8] = { 0 }; /* unreferenced */
 u32 D_800FA1D0_GroundPound = 0; /* func_800F9F18's seed */
 
-/* NON_MATCHING: register allocation only (obj and file1/anim swap s1/s2); masked 0. */
+/* NON_MATCHING: register allocation only, masked 0 (raw 24: the player counter takes s1, retail s0;
+   splitting the random value from player did not help). */
 #ifdef NON_MATCHING
 void func_800F8C20_GroundPound(omObjData* obj) {
     unkGlobalStruct_00* w;
     s32 dir;
-    s32 file1; /* also the animation id below */
+    s32 file1;
+    s32 anim;
     s32 player; /* also the random value below */
     u8 chr;
 
@@ -58,14 +60,14 @@ void func_800F8C20_GroundPound(omObjData* obj) {
     func_8001874C(obj, 0x10, dir | 0x17, 1, 0);
     func_8001874C(obj, 0x1E, dir | 0x63, 0, 0);
     func_8001874C(obj, 0x1F, dir | 0x64, 0, 0);
-    file1 = 0x38;
+    anim = 0x38;
     player = func_800F9FEC_GroundPound();
     if (player & 1) {
-        file1 = 0xF;
+        anim = 0xF;
     }
-    func_8001874C(obj, 0xD, dir | file1, 1, 0x77);
-    file1 = (player & 8) ? 0x10 : 0x3C;
-    func_8001874C(obj, 0xE, dir | file1, 1, 0x78);
+    func_8001874C(obj, 0xD, dir | anim, 1, 0x77);
+    anim = (player & 8) ? 0x10 : 0x3C;
+    func_8001874C(obj, 0xE, dir | anim, 1, 0x78);
     func_8001874C(obj, 0x17, dir | 0x49, 1, 0);
     func_800090C4(obj, 0, 2);
     D_800F3FB0[D_800F2BC0++] = obj;

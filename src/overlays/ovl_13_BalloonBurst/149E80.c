@@ -911,7 +911,8 @@ void func_800F8670_BalloonBurst(omObjData *arg0) {
     p[6].pos.z = z;
     func_800F8D6C_BalloonBurst(idx, y / 90.0f);
 }
-// loop-tail branch layout (masked 7: retail beql exit / j top, this gives bne top / j exit)
+// loop-tail branch layout (masked 7: retail beql exit / j top, this gives bne top / j exit;
+// do-while, goto loop and continue/break tails tried)
 #ifdef NON_MATCHING
 void func_800F8D6C_BalloonBurst(u8 arg0, f32 arg1) {
     Vec pts[6];
