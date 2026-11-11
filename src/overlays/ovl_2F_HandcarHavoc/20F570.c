@@ -587,13 +587,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F7F0
 #endif
 
 /* The race: both riders' input pumps, leans and brakes the car. */
-// NON_MATCHING: retail shares the clamp stores of the speed/lean tails (cross-jumped)
-#ifdef NON_MATCHING
 void func_800F8730_HandcarHavoc(omObjData* obj) {
     Vec rot;
     Vec pos;
     HHPad pad[2];
     HHCar* w;
+    f32 friction;
     u16 team;
     s16 i;
     u16 port;
@@ -626,13 +625,14 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
             }
             w->leanIn += func_800F9774_HandcarHavoc(pad[i].stkX);
         }
+        friction = 0.2f;
         if (w->speed < 0.0f) {
-            w->speed += 0.2f;
+            w->speed += friction;
             if (w->speed > 0.0f) {
                 w->speed = 0.0f;
             }
         } else {
-            w->speed -= 0.2f;
+            w->speed -= friction;
             if (w->speed < 0.0f) {
                 w->speed = 0.0f;
             }
@@ -688,13 +688,12 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
     if (w->rot.z >= 360.0f) {
         w->rot.z -= 360.0f;
     }
-    if (w->leanIn < w->lean) {
+    if (w->lean > w->leanIn) {
         w->lean -= 2.0f;
         if (w->lean < w->leanIn) {
             w->lean = w->leanIn;
         }
-    }
-    if (w->lean < w->leanIn) {
+    } else if (w->lean < w->leanIn) {
         w->lean += 2.0f;
         if (w->leanIn < w->lean) {
             w->lean = w->leanIn;
@@ -705,10 +704,10 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
     func_800F93DC_HandcarHavoc(obj);
     func_800FCBA4_HandcarHavoc(obj);
     func_800FDBC8_HandcarHavoc(obj);
-    if (!(w->pump >= 0.1f)) {
-        w->pump = 0.0f;
-    } else {
+    if (w->pump >= 0.1f) {
         w->pump -= 0.06f;
+    } else {
+        w->pump = 0.0f;
     }
     for (i = 0; i < 3; i++) {
         (&w->prevSlope.x)[i] = (&w->slope.x)[i];
@@ -717,9 +716,6 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
     D_800FF5D8_HandcarHavoc[team] = obj->trans.y + -1500.0f;
     func_800FF0AC_HandcarHavoc(w);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F8730_HandcarHavoc);
-#endif
 
 /* Tilt from the lean and the bend; tipping and skidding. */
 void func_800F8E00_HandcarHavoc(omObjData* obj) {
