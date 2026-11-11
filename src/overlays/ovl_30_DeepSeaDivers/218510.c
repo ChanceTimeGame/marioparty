@@ -153,7 +153,6 @@ Gfx D_800FFE10_DeepSeaDivers[] = {
 s32 D_800FFE60_DeepSeaDivers[3] = { 0, 100, 220 };
 s32 D_800FFE6C_DeepSeaDivers[5] = { 30, 30, 30, 0, 0 };
 
-#ifdef NON_MATCHING
 void func_800F65E0_DeepSeaDivers(void) {
     omObjData* obj;
     u8 cam;
@@ -199,14 +198,14 @@ void func_800F65E0_DeepSeaDivers(void) {
     D_800F2AF8[D_800ED440++] = obj = omAddObj(0, 9, 0, -1, func_800F70F4_DeepSeaDivers);
     omSetStatBit(obj, 160);
     D_800F2AF8[D_800ED440++] = omAddObj(1, 6, 0, -1, func_800F791C_DeepSeaDivers);
-    D_80100C72_DeepSeaDivers[0] = 0;
-    D_80100C72_DeepSeaDivers[1] = 0;
+    D_80100C72_DeepSeaDivers[1] = D_80100C72_DeepSeaDivers[0] = 0;
     for (n = 0, j = 0; j < 4; j++) {
-        for (i = 0; i < 4; i++) {
+        do {
             if (GwPlayer[i].group == j) {
                 D_8010046A_DeepSeaDivers[n++] = i;
             }
-        }
+            i++;
+        } while (i < 4);
         i = 0;
     }
     do {
@@ -225,14 +224,10 @@ void func_800F65E0_DeepSeaDivers(void) {
     func_800234B8(0, 128, 128, 128);
     func_800234B8(1, 255, 255, 255);
     func_80023504(1, 0.0f, 128.0f, 128.0f);
-    D_801004A8_DeepSeaDivers[1] = 0;
-    D_801004A8_DeepSeaDivers[0] = 0;
+    D_801004A8_DeepSeaDivers[0] = D_801004A8_DeepSeaDivers[1] = 0;
     D_80101798_DeepSeaDivers = 0.075f;
     func_800FDBA0_DeepSeaDivers();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F65E0_DeepSeaDivers);
-#endif
 void func_800F6B1C_DeepSeaDivers(omObjData* obj) {
     obj->func_ptr = func_800F6BDC_DeepSeaDivers;
     SetFadeInTypeAndTime(0, 16);
