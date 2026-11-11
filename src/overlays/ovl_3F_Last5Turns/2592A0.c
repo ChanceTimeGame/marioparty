@@ -53,7 +53,8 @@ void func_800F65E0_Last5Turns(void) {
 }
 
 // register allocation: retail keeps the second window id in s6 behind an extra move (masked 0 besides
-// the resulting 1-instruction shift)
+// the resulting 1-instruction shift; raw 45, masked 23 from the shift); M1e tried win = Create; win0 = win,
+// win = win0 = Create (sign-extends win)
 #ifdef NON_MATCHING
 void func_800F66AC_Last5Turns(void) {
     s32 score[4];
