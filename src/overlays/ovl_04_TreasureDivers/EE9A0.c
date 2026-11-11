@@ -1061,7 +1061,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F9E
 #endif
 
 /* The nearest boat within a cone around angle ang (narrower when farther), or -1. */
-// register allocation: retail keeps dist & 0xFFFF in one register for lim and the best test (masked 6)
+// register allocation: retail keeps dist & 0xFFFF in one register for lim and the best test (masked 5);
+// M1g: the unit has the mul fix on (Makefile), tried a u32 dist with (u16) uses, a direct f32->u16 conversion
 #ifdef NON_MATCHING
 s16 func_800F9E9C_TreasureDivers(omObjData* obj, s16 ang) {
     TDWork* w;

@@ -169,7 +169,7 @@ void func_800F6B04_MarioBandstand(void);
 void func_800F6F10_MarioBandstand(void);
 void func_800F6F70_MarioBandstand(void);
 void func_800F7000_MarioBandstand(void);
-s16 func_800F7090_MarioBandstand(omObjData*, s16);
+s32 func_800F7090_MarioBandstand(omObjData*, s32);
 void func_800F73E8_MarioBandstand(void);
 void func_800F7458_MarioBandstand(void);
 void func_800F74C8_MarioBandstand(omObjData*);
@@ -202,7 +202,7 @@ s32 func_800FB0D8_MarioBandstand(omObjData*, s32, s32);
 void func_800FB1D0_MarioBandstand(void);
 void func_800FB214_MarioBandstand(void);
 void func_800FB4D8_MarioBandstand(void);
-s16 func_800FB8EC_MarioBandstand(s32);
+s32 func_800FB8EC_MarioBandstand(s32);
 s32 func_800FB99C_MarioBandstand(s32, MBBeatInfo*);
 void func_800FBB14_MarioBandstand(void);
 void func_800FBD1C_MarioBandstand(void);
@@ -219,7 +219,7 @@ void func_800FC930_MarioBandstand(f32, f32, f32, f32, f32, f32, f32);
 u32 func_800FC9D8_MarioBandstand(u32);
 u32 func_800FCAAC_MarioBandstand(void);
 #ifndef MB_1D3040
-s16 func_800FCAD4_MarioBandstand(omObjData*, s32, u16, u8, u16, s16);
+s16 func_800FCAD4_MarioBandstand(omObjData*, s32, u16, u8, s16, s16); /* defined with a u16 slot (1D3040.c); callers extend it as s16 */
 #endif
 
 /* ---------------------------------------------------------------------------------------------
