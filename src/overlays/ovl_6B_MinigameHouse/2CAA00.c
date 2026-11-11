@@ -912,7 +912,7 @@ void func_800F8540_MinigameHouse(s16 arg0) {
     func_800672DC(D_80100630_MinigameHouse, 6, hund, 0);
     func_800672B0(D_80100630_MinigameHouse, 6, 1);
 }
-// first C draft (masked 349): retail caches the pad port, ladders the result message with jumps, and allocates floats differently; call/constant sequence checked against the asm
+// first C draft (masked 345, pad port now cached; FIELDS/calls checked equal by n64nmcmp): retail ladders the result message with jumps, and allocates floats differently; call/constant sequence checked against the asm
 #ifdef NON_MATCHING
 void func_800F8860_MinigameHouse(void) {
     Vec3f rotv;
@@ -952,6 +952,7 @@ void func_800F8860_MinigameHouse(void) {
     f32 px;
     f32 pz;
     s32 msg;
+    u8 port;
 
     snd = -1;
     func_800F6970_MinigameHouse(6);
@@ -990,10 +991,11 @@ void func_800F8860_MinigameHouse(void) {
 
     /* wait for the stick to start turning, then count quarter turns for 300 frames */
     turns = 0;
-    while ((dir = func_80009E4C(GwPlayer[0].port, 1, ContStkX[GwPlayer[0].port], ContStkY[GwPlayer[0].port])) == 0) {
+    port = GwPlayer[0].port;
+    while ((dir = func_80009E4C(port, 1, ContStkX[port], ContStkY[port])) == 0) {
         HuPrcVSleep();
     }
-    startAng = func_800B0CD8(ContStkY[GwPlayer[0].port], ContStkX[GwPlayer[0].port]);
+    startAng = func_800B0CD8(ContStkY[port], ContStkX[port]);
     if (HOUSE_ABS(dir) == 1) {
         dir *= 2;
     }
@@ -1001,8 +1003,8 @@ void func_800F8860_MinigameHouse(void) {
     timer = 0;
     func_800603F0(0x7F);
     for (i = 0; i < 300; i++) {
-        r = func_80009E4C(GwPlayer[0].port, 8, ContStkX[GwPlayer[0].port], ContStkY[GwPlayer[0].port]);
-        curAng = func_800B0CD8(ContStkY[GwPlayer[0].port], ContStkX[GwPlayer[0].port]);
+        r = func_80009E4C(port, 8, ContStkX[port], ContStkY[port]);
+        curAng = func_800B0CD8(ContStkY[port], ContStkX[port]);
         if (HOUSE_ABS(r) == 2) {
             if (dir == r) {
                 turns += 4;
