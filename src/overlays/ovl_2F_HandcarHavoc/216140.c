@@ -294,10 +294,12 @@ void func_800FDEC0_HandcarHavoc(u16 sprite, HHScroll* s, f32 u, f32 v) {
 }
 
 /* Draws the two viewports' scrolling backgrounds in 40x40 CI8 tiles. */
-// NON_MATCHING: retail writes the display list through fixed offsets (not attempted)
+// control flow (masked 85, 564 of 573 instructions): retail keeps the row wrap live (its "row < 0" branch survives) and its rectangle x/yh skip the Scis clamp; added the row computation, col < 0, s16 x1/y1
 #ifdef NON_MATCHING
 void func_800FE004_HandcarHavoc(HHScroll* s) {
     Gfx* gfx;
+    s16 x1;
+    s16 y1;
     HHScroll* p;
     unk65770Obj* o;
     s16 x0;
@@ -305,6 +307,7 @@ void func_800FE004_HandcarHavoc(HHScroll* s) {
     s16 cw;
     s16 ch;
     s16 col;
+    s16 row;
     s16 c;
     s32 lastCol;
     f32 u;
@@ -331,20 +334,24 @@ void func_800FE004_HandcarHavoc(HHScroll* s) {
         o = func_800675F4(p->sprite, 0);
         gDPLoadTLUT_pal256(gfx++, o->unk4C->unkC);
         gDPSetTextureLUT(gfx++, G_TT_RGBA16);
-        x0 = p->x0;
-        y0 = p->y0;
-        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, x0, y0, p->x1, p->y1);
+        x1 = p->x1;
+        y1 = p->y1;
+        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, x0 = p->x0, y0 = p->y0, x1, y1);
         lastCol = p->w;
         u = p->u;
         v = p->v;
         cw = (1024.0f / p->sx) * 40.0f;
         ch = (1024.0f / p->sy) * 40.0f;
         col = (p->cols - u / cw) - 1.0f;
-        if (col & 0x8000) {
+        row = (p->rows - v / ch) - 1.0f;
+        if (col < 0) {
             col = p->cols + col;
         }
         if (col >= p->cols) {
             col -= p->cols;
+        }
+        if (row < 0) {
+            row = p->rows + row;
         }
         for (r = 0; r < p->rows; r++) {
             c = col;
