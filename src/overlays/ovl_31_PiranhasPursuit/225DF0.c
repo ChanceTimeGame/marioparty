@@ -1512,64 +1512,62 @@ const PPScaleSteps D_80100C00_PiranhasPursuit = {
 };
 
 /* After a splash near it the plant grows (and speeds up) in a wobble. */
-// NON_MATCHING: retail addresses the plant fields by their splat labels
-#ifdef NON_MATCHING
 void func_800FF730_PiranhasPursuit(omObjData* obj) {
     PPScaleSteps tbl = D_80100C00_PiranhasPursuit;
     f32 t;
     f32 a;
     f32 b;
-    f32 s;
-    f32 v;
+    PPPlant* pl = &D_80101150_PiranhasPursuit;
 
     if (D_8010114C_PiranhasPursuit != 0.0) {
         if (D_8010114C_PiranhasPursuit == 1.0) {
-            if ((u16)D_80101150_PiranhasPursuit.unk2C < 2) {
+            if ((u16)pl->unk2C < 2) {
                 func_800FEF78_PiranhasPursuit(obj, 6, 0);
             }
-            if (D_80101150_PiranhasPursuit.unk28 < 1.5) {
-                D_80101150_PiranhasPursuit.unk2E = 1;
-                D_80101150_PiranhasPursuit.unk24 = D_80101150_PiranhasPursuit.unk28 + 0.2;
-                D_8010114C_PiranhasPursuit += 1.0f;
+            if (pl->unk28 < 1.5) {
+                pl->unk2E = 1;
+                pl->unk24 = pl->unk28 + 0.2;
+                D_80101140_PiranhasPursuit[3] += 1.0f;
                 ++D_8010040A_PiranhasPursuit;
-                s = 24.1f;
                 if (D_801012DC_PiranhasPursuit < 24.1f) {
-                    v = func_800AEAC0(D_8010040A_PiranhasPursuit * 18);
-                    s = v * v * 4.0f + 20.1f;
+                    t = func_800AEAC0(D_8010040A_PiranhasPursuit * 18);
+                    t = t * t;
+                    D_801012DC_PiranhasPursuit = t * 4.0f + 20.1f;
+                } else {
+                    D_801012DC_PiranhasPursuit = 24.1f;
                 }
-                D_801012DC_PiranhasPursuit = s;
                 if (D_8010040A_PiranhasPursuit >= 5) {
                     D_8010040A_PiranhasPursuit = 0;
                 }
             } else {
-                D_80101150_PiranhasPursuit.unk2E = 1;
-                D_80101150_PiranhasPursuit.unk24 = D_80101150_PiranhasPursuit.unk28;
-                D_8010114C_PiranhasPursuit += 1.0f;
+                pl->unk2E = 1;
+                pl->unk24 = pl->unk28;
+                D_80101140_PiranhasPursuit[3] += 1.0f;
                 ++D_8010040A_PiranhasPursuit;
                 if (D_801012DC_PiranhasPursuit < 25.6f) {
-                    v = func_800AEAC0(D_8010040A_PiranhasPursuit * 45);
-                    D_801012DC_PiranhasPursuit = v * v * 1.5f + 24.1f;
+                    t = func_800AEAC0(D_8010040A_PiranhasPursuit * 45);
+                    t = t * t;
+                    D_801012DC_PiranhasPursuit = t * 1.5f + 24.1f;
                     return;
                 }
                 D_801012DC_PiranhasPursuit = 25.6f;
             }
         } else {
-            t = ++D_8010040E_PiranhasPursuit * 0.2;
+            t = (f32)++D_8010040E_PiranhasPursuit * 0.2;
             if (D_8010040C_PiranhasPursuit & 1) {
                 t = 1.0 - t;
             }
-            a = D_80101150_PiranhasPursuit.unk28 + tbl.v[D_8010040C_PiranhasPursuit][0];
-            b = D_80101150_PiranhasPursuit.unk28 + tbl.v[D_8010040C_PiranhasPursuit][1];
+            a = pl->unk28 + tbl.v[D_8010040C_PiranhasPursuit][0];
+            b = pl->unk28 + tbl.v[D_8010040C_PiranhasPursuit][1];
             if (D_8010040E_PiranhasPursuit >= 5) {
                 D_8010040E_PiranhasPursuit = 0;
                 if (++D_8010040C_PiranhasPursuit >= 6) {
-                    D_80101150_PiranhasPursuit.unk28 = D_80101150_PiranhasPursuit.unk24;
+                    a = pl->unk28 = pl->unk24;
                     t = 0.0f;
                     D_8010114C_PiranhasPursuit = 0.0f;
                     D_8010040C_PiranhasPursuit = 0;
-                    D_80101150_PiranhasPursuit.unk2E = 0;
-                    a = D_80101150_PiranhasPursuit.unk24;
-                    if (D_80101150_PiranhasPursuit.state == 1) {
+                    pl->unk2E = 0;
+                    if (pl->state == 1) {
                         func_800FEF78_PiranhasPursuit(obj, 0, 1);
                     }
                 }
@@ -1578,9 +1576,6 @@ void func_800FF730_PiranhasPursuit(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FF730_PiranhasPursuit);
-#endif
 
 /* The plant's lunge at a splash, and back. */
 void func_800FFB28_PiranhasPursuit(omObjData* obj) {
