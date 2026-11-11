@@ -128,43 +128,32 @@ void func_800F751C_TugOWar(void) {
 }
 
 /* Moves the strain effects with their players; hides them when their animation ends. */
-// register allocation (masked 0)
-#ifdef NON_MATCHING
-void func_800F7604_TugOWar(void) {
-    f32 t;
-    s16 m;
-    s8 i;
-
-    if (D_800FDB19_TugOWar == 1) {
-        m = D_800F3FB0[0]->model[4];
-        t = func_80025D18(m);
-        if (func_80025D40(m) <= t) {
-            func_800258EC(m, 4, 4);
-            D_800FDB19_TugOWar = 0;
-        } else {
-            func_80025798(m, D_800F3FB0[0]->trans.x + 100.0f, D_800F3FB0[0]->trans.y - 20.0f,
-                          D_800F3FB0[0]->trans.z);
-        }
+// decomp-permuter
+void func_800F7604_TugOWar(void)
+{
+  f32 t;
+  s16 m;
+  s8 i;
+  if (D_800FDB19_TugOWar == 1)
+  {
+    m = D_800F3FB0[0]->model[4];
+    t = func_80025D18(m);
+    if (func_80025D40(m) <= t)
+    {
+      func_800258EC(m, 4, 4);
+      D_800FDB19_TugOWar = 0;
     }
-    if (D_800FDB18_TugOWar == 1) {
-        m = D_800F3FB0[1]->model[4];
-        t = func_80025D18(m);
-        if (func_80025D40(m) <= t) {
-            for (i = 1; i < 4; i++) {
-                func_800258EC(D_800F3FB0[i]->model[4], 4, 4);
-            }
-            D_800FDB18_TugOWar = 0;
-            return;
-        }
-        for (i = 1; i < 4; i++) {
-            func_80025798(D_800F3FB0[i]->model[4], D_800F3FB0[i]->trans.x - 50.0f, D_800F3FB0[i]->trans.y - 20.0f,
-                          D_800F3FB0[i]->trans.z);
-        }
+    else
+    {
+      func_80025798(m, D_800F3FB0[0]->trans.x + 100.0f, D_800F3FB0[0]->trans.y - 20.0f, D_800F3FB0[0]->trans.z);
     }
+  }
+  if (D_800FDB18_TugOWar == 1)
+  {
+    m = D_800F3FB0[1]->model[4];
+ do { t = func_80025D18(m); if (func_80025D40(m) <= t) { for (i = 1; i < 4; i++) { func_800258EC(D_800F3FB0[i]->model[4], 4, 4); } D_800FDB18_TugOWar = 0; return; } for (i = 1; i < 4; i++) { func_80025798(D_800F3FB0[i]->model[4], D_800F3FB0[i]->trans.x - 50.0f, D_800F3FB0[i]->trans.y - 20.0f, D_800F3FB0[i]->trans.z); } } while (0);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F7604_TugOWar);
-#endif
 
 /* The pull: sums the players' forces and moves the rope (`rope` is func_800F95D4's object; retail
    leaves it in a0). Returns 0 when the solo player has won, 1 when the team has, 2 while it goes on. */
