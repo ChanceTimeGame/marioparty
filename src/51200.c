@@ -772,6 +772,8 @@ INCLUDE_ASM("asm/nonmatchings/51200", func_80051AE0);
 #endif
 // retail holds the return value 1 in s2 across the loop; this returns it with li (masked 5).
 // M1g: return 1 inside while (1), ret = 1; break, and an s32 ret = 1 local all fold to li (masked 6)
+// M1h: ret = 0; while (ret == 0) {...; if (btn) ret = 1;} (masked 4, bnezl), do {...; ret = 1;} while,
+// and ret = 1; while (ret) {... break;} (masked 5) do not hoist the 1 either
 #ifdef NON_MATCHING
 s32 func_80052614(s32 arg0) {
     s32 id = func_80045D84(8, 0xBC, 0);
