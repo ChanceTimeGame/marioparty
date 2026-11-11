@@ -79,7 +79,8 @@ Process* func_80042378(Object* model, Vec3f* pos, Vec3f* vel, Vec3f* scale, f32 
     work->duration = duration;
     return process;
 }
-// register allocation: hoisted constant/process swap s2/s3 and float temps (masked 13)
+// register allocation: hoisted constant/process swap s2/s3 and float temps (raw 20, masked 2; tried velp
+// hoisted, declaration order, += spelling)
 #ifdef NON_MATCHING
 void func_8004246C(void) {
     Vec3f scale;
