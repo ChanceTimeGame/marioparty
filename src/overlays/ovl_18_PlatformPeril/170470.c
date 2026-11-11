@@ -518,36 +518,44 @@ s16 func_800FC438_PlatformPeril(s32 a, s32 b, s32 c) {
     return id;
 }
 
-// the constant 1 for p->active is hoisted out of the loop (one more saved register), retail
-// loads it in the loop (masked 20); tried plain statements for the initialisers
+// masked 1, raw 10: retail compares i < count with sltu and allocates i to s0 (ours slt; s32 count is the
+// only width without an andi per use). The goto loop keeps loop.c from hoisting the 1 (masked 20 -> 1, M1g)
 #ifdef NON_MATCHING
 /* Burst of 8 sparks at the winner's position. */
 void func_800FC48C_PlatformPeril(f32 x, f32 y, f32 z) {
     PPSpark* p = D_800FE300_PlatformPeril;
     s32 base = ((rand8() << 8) | rand8()) % 181;
-    u16 count;
+    s32 count;
     s32 full;
+    s16 speed;
+    s16 life;
     u16 i;
 
+    i = 0;
     if (D_800FE2C8_PlatformPeril == -1) {
         count = 8;
         full = 360;
-        for (i = 0; i < count; i++) {
-            func_800258EC(p->model, 4, 0);
-            p->angle = base + (full / count) * i;
-            if (p->angle > 360) {
-                p->angle -= 360;
-            } else if (p->angle < 0) {
-                p->angle += 360;
-            }
-            p->speed = 28;
-            p->life = 10;
-            p->active = 1;
-            p->x = x;
-            p->y = y;
-            p->z = z;
-            func_80025798(p->model, x, y, z);
-            p++;
+        speed = 28;
+        life = 10;
+    loop:
+        func_800258EC(p->model, 4, 0);
+        p->angle = base + (full / count) * i;
+        if (p->angle > 360) {
+            p->angle -= 360;
+        } else if (p->angle < 0) {
+            p->angle += 360;
+        }
+        p->speed = speed;
+        p->life = life;
+        p->active = 1;
+        p->x = x;
+        p->y = y;
+        p->z = z;
+        func_80025798(p->model, x, y, z);
+        p++;
+        i++;
+        if (i < count) {
+            goto loop;
         }
     }
 }

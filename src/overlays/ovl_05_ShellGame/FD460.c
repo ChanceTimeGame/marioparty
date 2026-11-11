@@ -446,9 +446,6 @@ void func_800FE5BC_ShellGame(omObjData* obj) {
         break;
     }
 }
-// NON_MATCHING: retail keeps 0.0f in saved $f20 and passes it to func_80009028's arg1 with mfc1, i.e. this
-// unit saw an f32 second parameter; the shared s32 prototype is right for the other callers (M1c)
-#ifdef NON_MATCHING
 void func_800FE6BC_ShellGame(omObjData* obj) {
     SGStageWork* w;
 
@@ -460,13 +457,11 @@ void func_800FE6BC_ShellGame(omObjData* obj) {
     func_8009B770(w, 0, sizeof(SGStageWork));
     w->unk4 = 1;
     w->unk5 = 0;
-    func_80009028(obj, 0, -720.0f, -720.0f, 720.0f, 720.0f);
+    /* retail passed an f32 0.0f (func_80009028 stores the bits into a float field) */
+    ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(obj, 0.0f, -720.0f, -720.0f, 720.0f, 720.0f);
     func_80008FC4(obj, 20.0f);
     func_80008FB8(obj, 1.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FE6BC_ShellGame);
-#endif
 void func_800FE7AC_ShellGame(omObjData* arg0) {
 }
 
