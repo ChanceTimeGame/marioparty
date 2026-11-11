@@ -118,8 +118,6 @@ unk2C0C0Struct50 *func_800FE8DC_CoinBlockBash(s16 model, char *name)
   return &m->unk_A0[i];
 }
 
-// NON_MATCHING: retail keeps &D_80103222 in s6 across the block loop
-#ifdef NON_MATCHING
 void func_800FEA5C_CoinBlockBash(void) {
     CBBCoinFull* c;
     CBBDropFull* d;
@@ -131,7 +129,7 @@ void func_800FEA5C_CoinBlockBash(void) {
 
     D_80103220_CoinBlockBash = func_800174C0(0x270002, 0xD9);
     for (j = 0; j < 5; j++) {
-        D_80103228_CoinBlockBash[4 - j] = *func_80026A0C(D_80103222_CoinBlockBash, D_80101C08_CoinBlockBash[j])->unk_04;
+        D_80103228_CoinBlockBash[4 - j] = *func_80026A0C((s16)D_80103220_CoinBlockBash, D_80101C08_CoinBlockBash[j])->unk_04;
     }
     D_80103294_CoinBlockBash = HuMemDirectMalloc(9 * sizeof(CBBCoinFull));
     sz = 303.33334f; /* 910 / 3 */
@@ -162,8 +160,8 @@ void func_800FEA5C_CoinBlockBash(void) {
             c->unk_10 = 10;
             c->timer = 0;
             c->hittable = 1;
-            c->blk = func_800FE8DC_CoinBlockBash(D_80103222_CoinBlockBash, D_80101C08_CoinBlockBash[j + i * 3]);
-            c->shadow = func_800FE8DC_CoinBlockBash(D_80103222_CoinBlockBash, D_80101C50_CoinBlockBash[j + i * 3]);
+            c->blk = func_800FE8DC_CoinBlockBash((s16)D_80103220_CoinBlockBash, D_80101C08_CoinBlockBash[j + i * 3]);
+            c->shadow = func_800FE8DC_CoinBlockBash((s16)D_80103220_CoinBlockBash, D_80101C50_CoinBlockBash[j + i * 3]);
             func_800FFE64_CoinBlockBash(c->blk, c->pos.x, c->pos.y, c->pos.z);
             func_800FFE64_CoinBlockBash(c->shadow, c->pos.x, -5.0f, c->pos.z);
         }
@@ -176,9 +174,6 @@ void func_800FEA5C_CoinBlockBash(void) {
     }
     D_8010323C_CoinBlockBash = 9;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/15AC50", func_800FEA5C_CoinBlockBash);
-#endif
 
 void func_800FEE04_CoinBlockBash(void) {
     D_80101C00_CoinBlockBash = (D_80101C00_CoinBlockBash + 1) % 3;

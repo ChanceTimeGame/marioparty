@@ -725,7 +725,8 @@ void func_800F8240_BashNCash(omObjData* obj) {
 }
 
 /* CPU for a hammer player (normal). */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// register allocation: retail keeps i in a register and spills only cashIdx (masked 57, +1 instr; M1g fixed the
+// case-2 loop to for/continue)
 #ifdef NON_MATCHING
 void func_800F875C_BashNCash(omObjData* obj) {
     f32 angle[2];
@@ -793,20 +794,18 @@ void func_800F875C_BashNCash(omObjData* obj) {
                 break;
             case 2:
                 k = 0;
-                for (n = 0; n < D_800F2BC0;) {
+                for (n = 0; n < D_800F2BC0; n++) {
                     other = D_800FE710_BashNCash[n].obj;
                     if (other == NULL) {
-                        n++;
-                    } else {
-                        n++;
-                        if (other->work[0] != i) {
-                            v->x = other->trans.x;
-                            v->y = 0.0f;
-                            v->z = other->trans.z;
-                            v->x -= cash->trans.x;
-                            v->z -= cash->trans.z;
-                            angle[k++] = func_80029518(func_800B0CD8(v->x, v->z));
-                        }
+                        continue;
+                    }
+                    if (other->work[0] != i) {
+                        v->x = other->trans.x;
+                        v->y = 0.0f;
+                        v->z = other->trans.z;
+                        v->x -= cash->trans.x;
+                        v->z -= cash->trans.z;
+                        angle[k++] = func_80029518(func_800B0CD8(v->x, v->z));
                     }
                 }
                 a = func_80029518(angle[1] - angle[0]);
@@ -898,7 +897,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F875C_B
 #endif
 
 /* CPU for a hammer player (hard). */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// register allocation: retail keeps w in fp, ours spills it (masked 61, +3 instr; M1g added the pool pointer
+// and the case-2 for/continue loop)
 #ifdef NON_MATCHING
 void func_800F8FD4_BashNCash(omObjData* obj) {
     f32 angle[2];
@@ -919,11 +919,13 @@ void func_800F8FD4_BashNCash(omObjData* obj) {
     s8 target;
     u16 n;
     u16 k;
+    BashCash* pool;
 
     if (D_800ED430 == 1) {
         w = obj->unk_50;
         i = obj->work[0];
-        cash = D_800FE690_BashNCash.obj;
+        pool = &D_800FE690_BashNCash;
+        cash = pool->obj;
         cw = cash->unk_50;
         cashIdx = cash->work[0];
         in = &D_800FE6A8_BashNCash[i];
@@ -974,7 +976,7 @@ void func_800F8FD4_BashNCash(omObjData* obj) {
                 }
                 in->stickX = func_800AEAC0(dir) * 60.0f;
                 in->stickY = func_800AEFD0(dir) * 60.0f;
-                if (D_800FE690_BashNCash.unk_06 != 0) {
+                if (pool->unk_06 != 0) {
                     in->stickY = 0;
                     in->stickX = 0;
                     in->state = 0;
@@ -992,20 +994,18 @@ void func_800F8FD4_BashNCash(omObjData* obj) {
                 break;
             case 2:
                 k = 0;
-                for (n = 0; n < D_800F2BC0;) {
+                for (n = 0; n < D_800F2BC0; n++) {
                     other = D_800FE710_BashNCash[n].obj;
                     if (other == NULL) {
-                        n++;
-                    } else {
-                        n++;
-                        if (other->work[0] != i) {
-                            v->x = other->trans.x;
-                            v->y = 0.0f;
-                            v->z = other->trans.z;
-                            v->x -= cash->trans.x;
-                            v->z -= cash->trans.z;
-                            angle[k++] = func_80029518(func_800B0CD8(v->x, v->z));
-                        }
+                        continue;
+                    }
+                    if (other->work[0] != i) {
+                        v->x = other->trans.x;
+                        v->y = 0.0f;
+                        v->z = other->trans.z;
+                        v->x -= cash->trans.x;
+                        v->z -= cash->trans.z;
+                        angle[k++] = func_80029518(func_800B0CD8(v->x, v->z));
                     }
                 }
                 a = func_80029518(angle[1] - angle[0]);
@@ -1768,11 +1768,12 @@ next:
 }
 
 /* A coin's object: flies, bounces off the walls, lands and blinks out. */
-// loop layout (retail calls func_8002B3A8 before the loop and at its end) and register allocation
+// frame: retail has 24 more bytes of unused locals between normal and probe (all masked 36 is those
+// offsets) plus the D_800F2B7C base load scheduled after the index; tried local pointer, + form, mdl local
 #ifdef NON_MATCHING
 void func_800FBCC8_BashNCash(omObjData* obj) {
-    Vec3f normal;
     Vec3f hit;
+    Vec3f normal;
     Vec4f probe;
     Vec3f pos;
     BashCoinWork* w;
@@ -1789,7 +1790,9 @@ void func_800FBCC8_BashNCash(omObjData* obj) {
     f32 h;
     f32 s;
     s32 one;
+    Vec3f* p;
 
+    p = &pos;
     one = D_800ED430;
     if (one == 1) {
         w = obj->unk_50;
@@ -1797,8 +1800,7 @@ void func_800FBCC8_BashNCash(omObjData* obj) {
             x = obj->trans.x;
             y = obj->trans.y;
             z = obj->trans.z;
-            D_800F5254 = 0.0f;
-            D_800ED6B8 = 0.0f;
+            D_800ED6B8 = D_800F5254 = 0.0f;
             x += func_800AEAC0(w->unk_3C) * w->unk_40;
             z += func_800AEFD0(w->unk_3C) * w->unk_40;
             probe.x = x;
@@ -1810,13 +1812,15 @@ void func_800FBCC8_BashNCash(omObjData* obj) {
             verts = (BashColVtx*)D_800F2B7C[mdl].unk_6C->unk_78;
             func_8002AE24(mdl, &D_800EDEC0, func_80002080, &probe);
             if (D_800B8956 == one) {
-                while ((tri = (s16*)func_8002B3A8(&D_800EDEC0)) != NULL) {
+                tri = (s16*)func_8002B3A8(&D_800EDEC0);
+                while (tri != NULL) {
                     func_800295FC(&verts[tri[1]], &verts[tri[2]], &verts[tri[3]], &hit);
-                    pos.x = hit.x;
-                    pos.y = 0.0f;
-                    pos.z = hit.z;
-                    a = func_80029518(func_800B0CD8(pos.x, hit.z));
+                    p->x = hit.x;
+                    p->y = 0.0f;
+                    p->z = hit.z;
+                    a = func_80029518(func_800B0CD8(p->x, p->z));
                     w->unk_3C = a + func_80029518(a - func_80029518(w->unk_3C + 180.0f));
+                    tri = (s16*)func_8002B3A8(&D_800EDEC0);
                 }
             }
             if (D_800B8956 >= 2) {
@@ -1828,11 +1832,7 @@ void func_800FBCC8_BashNCash(omObjData* obj) {
                 if (vy > 2.0f) {
                     vy = 2.0f;
                 }
-                dy = 35.0f;
-                if (w->unk_38 >= 0.0f) {
-                    dy = -35.0f;
-                }
-                y += vy * vy * dy;
+                y += vy * vy * (w->unk_38 >= 0.0f ? -35.0f : 35.0f);
                 h = func_800FBAB8_BashNCash(obj, x, y, z, &normal);
                 if (y < h) {
                     w->unk_38 = 1000.0f;
@@ -1854,17 +1854,17 @@ void func_800FBCC8_BashNCash(omObjData* obj) {
             obj->trans.z = z + D_800F5254;
             obj->rot.y = w->unk_3C;
             if (_CheckFlag(0x45) != 0 && w->unk_38 > 0.0f) {
-                pos.x = obj->trans.x;
-                pos.y = obj->trans.y;
-                pos.z = obj->trans.z;
-                func_800F9FD0_BashNCash(obj, &pos);
+                p->x = obj->trans.x;
+                p->y = obj->trans.y;
+                p->z = obj->trans.z;
+                func_800F9FD0_BashNCash(obj, p);
             }
             if (_CheckFlag(0x45) == 0) {
                 w->unk_40 = 17.5f;
             }
             slot = &D_800FE630_BashNCash[obj->work[0]];
             if (slot->timer < 31) {
-                if (D_800F2B7C[obj->model[0]].unk_20 & 4) {
+                if ((D_800F2B7C + obj->model[0])->unk_20 & 4) {
                     func_800258EC(obj->model[0], 4, 0);
                 } else {
                     func_800258EC(obj->model[0], 4, 4);
