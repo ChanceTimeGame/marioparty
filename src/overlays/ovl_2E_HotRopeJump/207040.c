@@ -218,85 +218,45 @@ const Vtx_t D_800FE6F4_HotRopeJump[9] = {
 
 HRJSeq2 D_800FE784_HotRopeJump HRJ_RODATA_RW = { 0, 0 };
 const s16 D_800FE788_HotRopeJump[4] = { 90, 128, 128, 0 };
-// NON_MATCHING: retail keeps &home in a register and stores speed at -8 from it (masked 6)
-#ifdef NON_MATCHING
 void func_800F6C9C_HotRopeJump(omObjData* obj) {
-    HRJPlayer* p;
-    Vec* v;
-
     func_800F6EEC_HotRopeJump(obj, 0);
     func_800F8C68_HotRopeJump(obj, &D_80100328_HotRopeJump[0]);
     func_800093FC(obj, -800.0f, 0.0f, -800.0f);
-    p = &D_80100328_HotRopeJump[0];
-    v = &p->home;
-    v->x = 0.0f;
-    v->y = 0.0f;
-    v->z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[0]] * 100.0;
-    p->speed = 20;
+    D_80100328_HotRopeJump[0].home.x = 0.0f;
+    D_80100328_HotRopeJump[0].home.y = 0.0f;
+    D_80100328_HotRopeJump[0].home.z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[0]] * 100.0;
+    D_80100328_HotRopeJump[0].speed = 20;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F6C9C_HotRopeJump);
-#endif
 
-// NON_MATCHING: retail keeps &home in a register and stores speed at -8 from it (masked 6)
-#ifdef NON_MATCHING
 void func_800F6D30_HotRopeJump(omObjData* obj) {
-    HRJPlayer* p;
-    Vec* v;
-
     func_800F6EEC_HotRopeJump(obj, 1);
     func_800F8C68_HotRopeJump(obj, &D_80100328_HotRopeJump[1]);
     func_800093FC(obj, -800.0f, 0.0f, -800.0f);
-    p = &D_80100328_HotRopeJump[1];
-    v = &p->home;
-    v->x = 0.0f;
-    v->y = 0.0f;
-    v->z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[1]] * 100.0;
-    p->speed = 20;
+    D_80100328_HotRopeJump[1].home.x = 0.0f;
+    D_80100328_HotRopeJump[1].home.y = 0.0f;
+    D_80100328_HotRopeJump[1].home.z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[1]] * 100.0;
+    D_80100328_HotRopeJump[1].speed = 20;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F6D30_HotRopeJump);
-#endif
 
-// NON_MATCHING: retail keeps &home in a register and stores speed at -8 from it (masked 6)
-#ifdef NON_MATCHING
 void func_800F6DC4_HotRopeJump(omObjData* obj) {
-    HRJPlayer* p;
-    Vec* v;
-
     func_800F6EEC_HotRopeJump(obj, 2);
     func_800F8C68_HotRopeJump(obj, &D_80100328_HotRopeJump[2]);
     func_800093FC(obj, -800.0f, 0.0f, -800.0f);
-    p = &D_80100328_HotRopeJump[2];
-    v = &p->home;
-    v->x = 0.0f;
-    v->y = 0.0f;
-    v->z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[2]] * 100.0;
-    p->speed = 20;
+    D_80100328_HotRopeJump[2].home.x = 0.0f;
+    D_80100328_HotRopeJump[2].home.y = 0.0f;
+    D_80100328_HotRopeJump[2].home.z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[2]] * 100.0;
+    D_80100328_HotRopeJump[2].speed = 20;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F6DC4_HotRopeJump);
-#endif
 
-// NON_MATCHING: retail keeps &home in a register and stores speed at -8 from it (masked 6)
-#ifdef NON_MATCHING
 void func_800F6E58_HotRopeJump(omObjData* obj) {
-    HRJPlayer* p;
-    Vec* v;
-
     func_800F6EEC_HotRopeJump(obj, 3);
     func_800F8C68_HotRopeJump(obj, &D_80100328_HotRopeJump[3]);
     func_800093FC(obj, -800.0f, 0.0f, -800.0f);
-    p = &D_80100328_HotRopeJump[3];
-    v = &p->home;
-    v->x = 0.0f;
-    v->y = 0.0f;
-    v->z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[3]] * 100.0;
-    p->speed = 20;
+    D_80100328_HotRopeJump[3].home.x = 0.0f;
+    D_80100328_HotRopeJump[3].home.y = 0.0f;
+    D_80100328_HotRopeJump[3].home.z = D_800FE4AC_HotRopeJump[D_800FE464_HotRopeJump[3]] * 100.0;
+    D_80100328_HotRopeJump[3].speed = 20;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F6E58_HotRopeJump);
-#endif
 
 // NON_MATCHING: instruction-identical (raw 0 in an all-C unit), but after the INCLUDE_ASM
 // neighbours above GCC emits the a/b initialiser templates into .text; unwrap with them

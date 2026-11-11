@@ -2036,7 +2036,7 @@ void func_800FAA4C_StaffScene(void) {
     }
 }
 // loop-invariant hoisting: 1.0f is hoisted into an FPR here, not in retail; retail adds 5 to the snow
-// centre y by symbol, not via the hoisted base; f/2.46f swap f20/f22 (masked 22; tried a centre pointer)
+// register allocation: retail keeps sc in f22 apart from a (f20) and so saves f26, one FPR more (masked 24, raw 47); the 1.0f local fixed the hoisted 1.0f and the centre-y access; tried merging f/sc and a/x
 #ifdef NON_MATCHING
 void func_800FAD30_StaffScene(void) {
     StaffSparkleDot dots[52];
@@ -2113,8 +2113,9 @@ void func_800FAD30_StaffScene(void) {
                 d->pos.z = z + D_800FD9B4_StaffScene.z;
                 d->pos.y = (s32)((rand8() & 0x7F) - 0x40) + D_800FD9B4_StaffScene.y;
                 func_80025798(model, d->pos.x, d->pos.y, d->pos.z);
-                d->angle = 1.0f;
-                func_80025830(model, 1.0f, 1.0f, 1.0f);
+                a = 1.0f;
+                d->angle = a;
+                func_80025830(model, a, a, a);
                 func_800258EC(model, 4, 0);
                 d->timer = 128;
             } else {

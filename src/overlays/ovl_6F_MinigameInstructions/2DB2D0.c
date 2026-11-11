@@ -255,7 +255,7 @@ const char D_8010F058_MinigameInstructions[] __attribute__((section(".rodata")))
     "\x82\xA9\x82\xA2\x82\xCD\x82\xC2\x82\xBF\x82\xE3\x82\xA4";
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2DB2D0", func_800F6B14_MinigameInstructions);
 #endif
-// loop-invariant order: (s16)model is hoisted before the float constants (masked 2)
+// loop-invariant order: (s16)model is hoisted before the float constants -10/149 (masked 2, raw 2; t *= 66 then += 54 fixed the f20 chain)
 #ifdef NON_MATCHING
 void func_800F7398_MinigameInstructions(void) {
     Vec2f in;
@@ -313,7 +313,8 @@ void func_800F7398_MinigameInstructions(void) {
         t /= 30.0f;
         func_800257E4(model, u, t * 31.0f + 149.0f, 0.0f);
         in.x = t * -130.0f + 290.0f;
-        t = t * 66.0f + 54.0f;
+        t *= 66.0f;
+        t += 54.0f;
         in.y = t;
         func_8001DD24(0, CZoom - 300.0f, (Vec3f*) &in, &out);
         z += 20.0f;

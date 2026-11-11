@@ -1543,7 +1543,7 @@ void func_800FB1C4_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team) {
 }
 
 /* The back rider of team (sits on the sled; func_800FEC80). */
-// register allocation: retail gives flags s2 and obj s6 (masked 0, raw 39; declaration order tried)
+// register allocation: retail gives flags s2 and obj s6 (masked 0, raw 39; declaration order, u32 flags tried)
 #ifdef NON_MATCHING
 void func_800FB594_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 player, u16 team) {
     BRWork* work;
