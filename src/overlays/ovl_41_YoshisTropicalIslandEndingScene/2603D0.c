@@ -206,7 +206,8 @@ void func_800F72C4_YoshisTropicalIslandEndingScene(omObjData* arg0) {
 }
 
 // GCC CSEs &MODEL[3] into s0 and loads MODEL[11] from it; retail reloads each (count 108 vs 117, masked 18;
-// tried: no locals (masked 24), angle scaled after the loads)
+// tried: no locals (masked 24), angle scaled after the loads). M1g: this is cse.c related-value CSE of
+// MODEL+12 / MODEL+44 (one symbol); retail's separate lui per load looks like distinct symbols, not C-reachable
 #ifdef NON_MATCHING
 void func_800F7384_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     f32 angle;
