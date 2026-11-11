@@ -35,7 +35,7 @@ extern char* D_800FA46C_DebugMinigameMenu[2];
 extern char* D_800FA474_DebugMinigameMenu[4];
 extern char* D_800FA484_DebugMinigameMenu[6];
 extern char* D_800FA49C_DebugMinigameMenu[3];
-extern s32 D_800FA4A8_DebugMinigameMenu;
+extern u8 D_800FA4A8_DebugMinigameMenu;
 extern s32 D_800FA4AC_DebugMinigameMenu;
 /* D_800FA4AE: the low half of s32 D_800FA4AC. */
 extern s16 D_800FA4AE_DebugMinigameMenu;
@@ -63,7 +63,7 @@ extern s16 D_800FAD92_DebugMinigameMenu;
 extern s16 D_800FAD94_DebugMinigameMenu;
 extern u16 D_800FAD96_DebugMinigameMenu; /* cursor sprite */
 extern s16 D_800FAD98_DebugMinigameMenu;
-extern u16 D_800FADA0_DebugMinigameMenu[40];
+extern s16 D_800FADA0_DebugMinigameMenu[40];
 extern f32 D_800FADF0_DebugMinigameMenu[4];
 extern u8 D_800FAE00_DebugMinigameMenu[4]; /* menu keys this frame */
 extern u16 D_800FAE04_DebugMinigameMenu[4]; /* held direction */

@@ -29,7 +29,7 @@ s8 D_800FDC27_TugOWar = 0;
 s32 D_800FDC28_TugOWar = 0;
 
 /* A bird crossing the sky (models idx + 2 and its shadow idx + 5), every 211 frames. */
-// scheduling of the model-pointer load (masked 4)
+// scheduling of the model-pointer load (masked 4); tried idx + base, base then mp[idx + n]
 #ifdef NON_MATCHING
 void func_800FB940_TugOWar(omObjData* obj, u8 idx) {
     s16* mp;
@@ -106,11 +106,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/231D40", func_800FB940_Tug
 #endif
 
 /* Bird `idx` (models idx + 3, shadow idx + 6): circles at (x, z), leaves after `delay` frames. */
-// CSE of idx in the fall branch, scheduling (masked 15)
+// scheduling of the model-pointer load (masked 6); tried &model[i], i + model, model then mp[i + n]
 #ifdef NON_MATCHING
 void func_800FBF18_TugOWar(omObjData* obj, f32 x, f32 z, s16 delay, u8 dir, u8 idx) {
     s16* mp;
     s16 m;
+    s32 i;
 
     if (D_800FDBF0_TugOWar[idx] == 0) {
         D_800FDBF0_TugOWar[idx] = 1;
@@ -153,7 +154,8 @@ void func_800FBF18_TugOWar(omObjData* obj, f32 x, f32 z, s16 delay, u8 dir, u8 i
                 D_800F2B7C[obj->model[idx + 3]].unk_28 =
                     D_800FDE58_TugOWar[idx] - D_800FDE70_TugOWar[idx] + 450.0f;
             }
-            mp = obj->model + idx;
+            i = idx;
+            mp = obj->model + i;
             if (D_800F2B7C[mp[3]].unk_24 < 230.0f) {
                 goto fall;
             }
@@ -166,13 +168,14 @@ void func_800FBF18_TugOWar(omObjData* obj, f32 x, f32 z, s16 delay, u8 dir, u8 i
         } else {
             D_800F2B7C[obj->model[idx + 3]].unk_28 = D_800FDE58_TugOWar[idx] - D_800FDE70_TugOWar[idx] + 450.0f;
         }
-        mp = obj->model + idx;
+        i = idx;
+        mp = obj->model + i;
         if (D_800F2B7C[mp[3]].unk_24 > -230.0f) {
         fall:
             func_800258EC(mp[6], 4, 4);
-            D_800FDE60_TugOWar[idx] *= 0.94f;
-            D_800FDE58_TugOWar[idx] -= D_800FDE68_TugOWar[idx];
-            D_800FDE68_TugOWar[idx] += 1.2f;
+            D_800FDE60_TugOWar[i] *= 0.94f;
+            D_800FDE58_TugOWar[i] -= D_800FDE68_TugOWar[i];
+            D_800FDE68_TugOWar[i] += 1.2f;
         } else {
         wave:
             D_800FDE70_TugOWar[idx] = func_800AEAC0(D_800FDE50_TugOWar[idx] / 100.0f * 360.0f) * 25.0f;
@@ -417,14 +420,14 @@ void func_800FCF10_TugOWar(omObjData* obj) {
 }
 
 /* The coin pot object: the pot, its lid, and 15 coin sprites. */
-// register allocation of img/first (masked 1)
+// register allocation: img/first swap s3/s4 (masked 0, raw 5); tried init and declaration order
 #ifdef NON_MATCHING
 void func_800FD758_TugOWar(omObjData* obj) {
     unkGlobalStruct_00* w;
+    s16 first;
     u16 img;
     u16 tex;
     s16 i;
-    s16 first;
 
     first = 0;
     img = 0;

@@ -109,7 +109,8 @@ void func_800F9974_BumperBallMaze(s32 arg0) {
     omOvlReturnEx(1);
 }
 
-// Logic-equivalent water mesh and buffer setup; loop scheduling and register allocation differ.
+// Logic-equivalent water mesh and buffer setup (masked 88): retail computes right as (row * 30) * 4
+// apart from left and keeps left in a register; tried direct indexing of both / of right only.
 #ifdef NON_MATCHING
 void func_800F9990_BumperBallMaze(void) {
     BumperBallMazeAnglePair* left;
@@ -280,10 +281,8 @@ void func_800FA010_BumperBallMaze(void) {
     }
 }
 
-// Logic-equivalent animated water update; addressing and register allocation differ (masked 34).
-#ifdef NON_MATCHING
 void func_800FA620_BumperBallMaze(void) {
-    BumperBallMazeAnglePair* p;
+    f32* p;
     Vtx* vertices;
     Vtx* v0;
     Vtx* v1;
@@ -299,42 +298,44 @@ void func_800FA620_BumperBallMaze(void) {
     vertices = D_800FB190_BumperBallMaze[D_800F37F0];
     for (row = 0; row < 7; row++) {
         for (column = 0; column < 7; column++) {
-            p = &D_800FAE20_BumperBallMaze[row * 15 + column];
-            angle = p->first + 4.0f;
-            p->first = angle;
+            p = &(&D_800FAE20_BumperBallMaze[row * 15])[column].first;
+            angle = *p + 4.0f;
+            *p = angle;
             if (angle >= 360.0f) {
-                p->first = angle - 360.0f;
+                *p = angle - 360.0f;
             }
             v0 = &vertices[column * 2 + row * 30];
-            v0->n.ob[1] = func_800AEAC0(p->first) * 40.0f + -100.0f;
+            v0->n.ob[1] = func_800AEAC0(*p) * 40.0f + -100.0f;
             v0->n.tc[0] = D_800FACC4_BumperBallMaze;
             v0->n.tc[1] = D_800FACC8_BumperBallMaze;
-            angle = p->second + 4.0f;
-            p->second = angle;
+            p++;
+            angle = *p + 4.0f;
+            *p = angle;
             if (angle >= 360.0f) {
-                p->second = angle - 360.0f;
+                *p = angle - 360.0f;
             }
             v1 = v0 + 1;
-            v1->n.ob[1] = func_800AEAC0(p->second) * 40.0f + -100.0f;
+            v1->n.ob[1] = func_800AEAC0(*p) * 40.0f + -100.0f;
             v1->n.tc[0] = D_800FACCC_BumperBallMaze;
             v1->n.tc[1] = D_800FACC8_BumperBallMaze;
-            p = &BBM_FAR(row)[column];
-            angle = p->first + 4.0f;
-            p->first = angle;
+            p = &BBM_FAR(row)[column].first;
+            angle = *p + 4.0f;
+            *p = angle;
             if (angle >= 360.0f) {
-                p->first = angle - 360.0f;
+                *p = angle - 360.0f;
             }
             v2 = &vertices[column * 2 + (row * 2 + 1) * 15];
-            v2->n.ob[1] = func_800AEAC0(p->first) * 40.0f + -100.0f;
+            v2->n.ob[1] = func_800AEAC0(*p) * 40.0f + -100.0f;
             v2->n.tc[0] = D_800FACC4_BumperBallMaze;
             v2->n.tc[1] = D_800FACD0_BumperBallMaze;
-            angle = p->second + 4.0f;
-            p->second = angle;
+            p++;
+            angle = *p + 4.0f;
+            *p = angle;
             if (angle >= 360.0f) {
-                p->second = angle - 360.0f;
+                *p = angle - 360.0f;
             }
             v3 = v2 + 1;
-            v3->n.ob[1] = func_800AEAC0(p->second) * 40.0f + -100.0f;
+            v3->n.ob[1] = func_800AEAC0(*p) * 40.0f + -100.0f;
             v3->n.tc[0] = D_800FACCC_BumperBallMaze;
             v3->n.tc[1] = D_800FACD0_BumperBallMaze;
             func_800295FC(v0, v1, v2, &normal);
@@ -353,6 +354,3 @@ void func_800FA620_BumperBallMaze(void) {
     D_800FACCC_BumperBallMaze = D_800FACC4_BumperBallMaze + 1024.0f;
     D_800FACD0_BumperBallMaze = D_800FACC8_BumperBallMaze + 1024.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/240010", func_800FA620_BumperBallMaze);
-#endif

@@ -417,8 +417,6 @@ void func_800FA35C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
 }
 
 /* the minigame coins over the player: a sign, then one to three digits */
-// register allocation and hoisting of 12.5f in the minus branch (masked 12)
-#ifdef NON_MATCHING
 void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     Vec3f pos;
     Vec2f scr;
@@ -433,24 +431,22 @@ void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
         Convert3DTo2D(0, &pos, &scr);
         SetBasicSpritePos(res->sprPlus, scr.x, scr.y);
         ShowBasicSprite(res->sprPlus);
-        i = 0;
         if (res->digits[1] == 0 && res->digits[2] == 0) {
-            for (x = -25.0f; i < 4; x += 12.5f) {
-                if (!(i == 1 || i == 2)) {
-                    pos.x = x + res->pos.x;
-                    pos.y = res->pos.y + 230.0f;
-                    pos.z = res->pos.z;
-                    Convert3DTo2D(0, &pos, &scr);
-                    SetBasicSpritePos(res->digPlus[i], scr.x, scr.y);
-                    func_80018E0C(res->digPlus[i], res->digits[i]);
-                    func_80018CF8(res->digPlus[i], 0xFF);
-                    ShowBasicSprite(res->digPlus[i]);
-                    i++;
-                } else {
-                    i++;
+            for (i = 0, x = -25.0f; i < 4; i++, x += 12.5f) {
+                if (i == 1 || i == 2) {
+                    continue;
                 }
+                pos.x = x + res->pos.x;
+                pos.y = res->pos.y + 230.0f;
+                pos.z = res->pos.z;
+                Convert3DTo2D(0, &pos, &scr);
+                SetBasicSpritePos(res->digPlus[i], scr.x, scr.y);
+                func_80018E0C(res->digPlus[i], res->digits[i]);
+                func_80018CF8(res->digPlus[i], 0xFF);
+                ShowBasicSprite(res->digPlus[i]);
             }
-        } else if (i = 0, res->digits[1] == 0 && res->digits[2] != 0) {
+        } else if (res->digits[1] == 0 && res->digits[2] != 0) {
+            i = 0;
             do {
                 if (i != 1) {
                     pos.y = res->pos.y + 230.0f;
@@ -493,25 +489,23 @@ void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
         Convert3DTo2D(0, &pos, &scr);
         SetBasicSpritePos(res->sprMinus, scr.x, scr.y);
         ShowBasicSprite(res->sprMinus);
-        i = 0;
         if (res->digits[1] == 0 && res->digits[2] == 0) {
-            for (x = -25.0f; i < 4; x += 12.5f) {
-                if (!(i == 1 || i == 2)) {
-                    pos.x = x + res->pos.x;
-                    pos.y = res->pos.y - 70.0f;
-                    pos.z = res->pos.z;
-                    Convert3DTo2D(0, &pos, &scr);
-                    SetBasicSpritePos(res->digMinus[i], scr.x, scr.y);
-                    func_80018E0C(res->digMinus[i], res->digits[i]);
-                    func_80018D84(res->digMinus[i], 1);
-                    func_80018CF8(res->digMinus[i], 0xFF);
-                    ShowBasicSprite(res->digMinus[i]);
-                    i++;
-                } else {
-                    i++;
+            for (i = 0, x = -25.0f; i < 4; i++, x += 12.5f) {
+                if (i == 1 || i == 2) {
+                    continue;
                 }
+                pos.x = x + res->pos.x;
+                pos.y = res->pos.y - 70.0f;
+                pos.z = res->pos.z;
+                Convert3DTo2D(0, &pos, &scr);
+                SetBasicSpritePos(res->digMinus[i], scr.x, scr.y);
+                func_80018E0C(res->digMinus[i], res->digits[i]);
+                func_80018D84(res->digMinus[i], 1);
+                func_80018CF8(res->digMinus[i], 0xFF);
+                ShowBasicSprite(res->digMinus[i]);
             }
-        } else if (i = 0, res->digits[1] == 0 && res->digits[2] != 0) {
+        } else if (res->digits[1] == 0 && res->digits[2] != 0) {
+            i = 0;
             do {
                 if (i != 1) {
                     pos.y = res->pos.y - 70.0f;
@@ -551,9 +545,6 @@ void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     }
     res->flags |= 0x400;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800FA64C_MinigameStadiumMinigameResultsScreen);
-#endif
 
 // decomp-permuter
 void func_800FAD74_MinigameStadiumMinigameResultsScreen(PlayerRes *unused)
