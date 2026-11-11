@@ -2637,8 +2637,6 @@ void func_800FE138_SlotCarDerby(u8 count) {
 
 /* Takes a free billboard for sprite and builds its display list (texture and quad), its
    per-frame vertex copies and its per-frame material lists. Returns its id, -1 if none is free. */
-// register allocation: the vertex pointer and the quad x (masked 10)
-#ifdef NON_MATCHING
 s16 func_800FE2F0_SlotCarDerby(s16 sprite, u8 flags) {
     SCDBillboard* b;
     unk65770Anim* anim;
@@ -2699,10 +2697,10 @@ s16 func_800FE2F0_SlotCarDerby(s16 sprite, u8 flags) {
     }
     gSPVertex(gfx++, 0x01000000, 4, 0);
     gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
-    gSPEndDisplayList(gfx++);
     nh = -h;
     x = -frame->unk8;
     y = frame->unkA;
+    gSPEndDisplayList(gfx++);
     v->v.ob[0] = x;
     v->v.ob[1] = y;
     v->v.ob[2] = 0;
@@ -2770,9 +2768,6 @@ s16 func_800FE2F0_SlotCarDerby(s16 sprite, u8 flags) {
     HuMemDirectFree(dl);
     return id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FE2F0_SlotCarDerby);
-#endif
 void func_800FF53C_SlotCarDerby(s16 id, s16 frame) {
     SCDBillboard* b;
 
