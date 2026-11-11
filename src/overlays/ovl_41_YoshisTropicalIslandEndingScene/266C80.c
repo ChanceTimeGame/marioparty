@@ -695,24 +695,19 @@ void func_800FF240_YoshisTropicalIslandEndingScene(omObjData* arg0) {
 }
 const f64 D_8010F198_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
-// loop-invariant D_80110448 base not hoisted, model address order (masked ~18)
-#ifdef NON_MATCHING
 void func_800FF364_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     s32 n = D_8010DC90_YoshisTropicalIslandEndingScene[GwSystem.unk_00];
     s32 i;
     f32 a;
     f32 x;
     f32 z;
-    Object** p;
 
     for (i = 0; i < arg0->trans.y; i++) {
         a = (360 / n) * i;
         x = (sinf((a + arg0->rot.y) * D_8010F1A0_YoshisTropicalIslandEndingScene) * arg0->trans.x) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].x;
         z = (cosf((a + arg0->rot.y) * D_8010F1A0_YoshisTropicalIslandEndingScene) * arg0->trans.x) + D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].z;
-        p = D_80110448_YoshisTropicalIslandEndingScene;
-        p += i;
-        func_800A0D00(&(*p)->coords, x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y, z);
-        func_800A0D00((Vec3f*)&(*p)->xScale, arg0->scale.x, arg0->scale.x, arg0->scale.x);
+        func_800A0D00(&D_80110448_YoshisTropicalIslandEndingScene[i]->coords, x, D_8010DC9C_YoshisTropicalIslandEndingScene[D_801102B0_YoshisTropicalIslandEndingScene].y, z);
+        func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[i]->xScale, arg0->scale.x, arg0->scale.x, arg0->scale.x);
     }
     arg0->rot.y -= 2.0f;
     if (arg0->rot.y <= 0.0f) {
@@ -720,10 +715,7 @@ void func_800FF364_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
     arg0->work[0]++;
 }
-const f64 D_8010F1A0_YoshisTropicalIslandEndingScene = 0.017453292519943295;
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FF364_YoshisTropicalIslandEndingScene);
-#endif
+const f64 D_8010F1A0_YoshisTropicalIslandEndingScene __attribute__((section(".rodata"))) = 0.017453292519943295;
 
 // D_80110448 base not hoisted out of the first loop; register allocation (masked 23)
 #ifdef NON_MATCHING
