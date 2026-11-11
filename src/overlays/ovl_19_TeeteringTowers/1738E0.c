@@ -90,10 +90,9 @@ void func_800F6748_TeeteringTowers(omObjData* obj) {
     }
 }
 
-// stack frame 8 bytes larger and one extra move in the coin clamp (register allocation, masked 2); the
-// -coins store alone causes it (tried -(s32), 0 - coins, swapped sum operands); lh D_800FA93A is (s16)D_800FA938
-#ifdef NON_MATCHING
 void func_800F6780_TeeteringTowers(omObjData* obj) {
+    s32 c;
+
     func_80009468();
     switch (D_800FA934_TeeteringTowers) {
     case 0:
@@ -163,8 +162,8 @@ void func_800F6780_TeeteringTowers(omObjData* obj) {
             D_800FA934_TeeteringTowers = 5;
             D_800FA930_TeeteringTowers = 0;
             GwPlayer[D_800FA938_TeeteringTowers].coins_mg -= 5;
-            if (GwPlayer[D_800FA938_TeeteringTowers].coins_mg + GwPlayer[D_800FA938_TeeteringTowers].coins < 0) {
-                GwPlayer[D_800FA938_TeeteringTowers].coins_mg = -GwPlayer[D_800FA938_TeeteringTowers].coins;
+            if (GwPlayer[D_800FA938_TeeteringTowers].coins_mg + (c = GwPlayer[D_800FA938_TeeteringTowers].coins) < 0) {
+                GwPlayer[D_800FA938_TeeteringTowers].coins_mg = -c;
             }
         }
         break;
@@ -195,9 +194,6 @@ void func_800F6780_TeeteringTowers(omObjData* obj) {
     }
     D_800FA930_TeeteringTowers++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_TeeteringTowers/1738E0", func_800F6780_TeeteringTowers);
-#endif
 
 void func_800F6C20_TeeteringTowers(void) {
     D_800FA954_TeeteringTowers = 0;
@@ -231,9 +227,9 @@ void func_800F6CA0_TeeteringTowers(omObjData* obj) {
     }
 }
 
-/* Retail's .rodata has 8 zero bytes after func_800F6780's jump table (its .s counts them in
-   jtbl_800FB008); a C func_800F6780 needs `const s32 D_800FB028_TeeteringTowers[2] = { 0, 0 };`
-   here for func_800F6CE4's table to stay at D_800FB030. */
+/* Retail's .rodata has 8 zero bytes after func_800F6780's jump table (unreferenced; they keep
+   func_800F6CE4's table at D_800FB030). */
+const s32 D_800FB028_TeeteringTowers[2] = { 0, 0 };
 
 /* The asm path's copy source for func_800F6CE4's shake table (the C path makes its own; the
    function's doubles are in its .s). */
