@@ -605,8 +605,9 @@ void func_80039020(void) {
     }
 }
 
-// register allocation (masked 22): retail spills nframes to the stack (sh 22(sp)), ours keeps it in s4. M1g: bpp is s16
-// (halfword spill + slti; u16 gave sltiu)
+// register allocation (masked 22, raw 27): retail spills nframes to the stack (sh 22(sp) after both of its stores, lhu
+// reload in the else branch), ours spills data instead. M1g: bpp is s16 (halfword spill + slti; u16 gave sltiu). M1h: the
+// two-step nframes and separate d local follow MP3 func_800329B4_main; declaring nframes first changed nothing
 #ifdef NON_MATCHING
 s16 func_80039084(void* arg) {
     u8* arg0 = arg;
@@ -627,6 +628,7 @@ s16 func_80039084(void* arg) {
     s16 t;
     s16 total;
     s16 npal;
+    s16 d;
 
     for (slot = 0; slot < 32; slot++) {
         if (D_800F3F40[slot].unk_0C == NULL) {
@@ -638,7 +640,8 @@ s16 func_80039084(void* arg) {
     }
 
     spr = &D_800F3F40[slot];
-    nframes = (arg0[0x10] << 8) + arg0[0x11];
+    nframes = arg0[0x10];
+    nframes = (nframes << 8) + arg0[0x11];
     spr->unk_00 = nframes;
     spr->unk_0C = func_80023684(nframes * sizeof(*spr->unk_0C), slot + 20000);
     p = arg0 + (arg0[1] << 16) + (arg0[2] << 8) + arg0[3];
@@ -669,9 +672,9 @@ s16 func_80039084(void* arg) {
             for (j = 0; j < t; j++) {
                 af = &spr->unk_10[i].unk_04[j];
                 af->unk_00 = (q[0] << 8) + q[1];
-                af->unk_02 = w = (q[2] << 8) + q[3];
-                if (w > 0) {
-                    total += w;
+                af->unk_02 = d = (q[2] << 8) + q[3];
+                if (d > 0) {
+                    total += d;
                 }
                 af->unk_04 = q[4];
                 af->unk_05 = q[5];

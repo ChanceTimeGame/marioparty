@@ -549,7 +549,9 @@ void func_800F7AA0_PiranhasPursuit(omObjData* obj) {
 
 /* The solo runner: input (or the CPU), running, jumping over the course pieces, riding a log,
    being caught at the end, and the coin shower. */
-// NON_MATCHING: register allocation, CSE of the clamp/landing speed reloads (retail keeps w->unk_40 in f20), branchless index (masked 98; calls, stores and constants equal)
+// NON_MATCHING: register allocation and branchless index (masked 91, raw 252; calls and stores equal). M1h: retail's
+// speed local (f20) is reloaded at the x += join and reused by the CPU jump test, and the landing product is an if/else;
+// retail still loads (f64)0.8f first (rodata order 0.8 before the u32 fix-up; an inline rand() call changed nothing)
 #ifdef NON_MATCHING
 void func_800F8114_PiranhasPursuit(omObjData* obj) {
     Vec pos;
@@ -566,7 +568,6 @@ void func_800F8114_PiranhasPursuit(omObjData* obj) {
     f32 dx;
     f32 dist;
     f32 vy;
-    f32 k;
     f32 speed;
     f32 s;
     u32 r;
@@ -658,11 +659,11 @@ void func_800F8114_PiranhasPursuit(omObjData* obj) {
                     vy = D_800B8994;
                 }
                 vy = vy * vy;
-                k = 35.0f;
                 if (w->unk_38 >= 0.0f) {
-                    k = -35.0f;
+                    y += vy * -35.0f;
+                } else {
+                    y += vy * 35.0f;
                 }
-                y += vy * k;
                 w->unk_38 += D_800B8968 * 0.75;
                 if (flags & 0x20) {
                     p->unk40 = p->unk40 - 3.5;
@@ -698,7 +699,8 @@ void func_800F8114_PiranhasPursuit(omObjData* obj) {
                     }
                 }
             }
-            x += w->unk_40;
+            speed = w->unk_40;
+            x += speed;
             if (x - D_801001FC_PiranhasPursuit >= 250.0) {
                 if (D_801001F0_PiranhasPursuit == 3) {
                     x = D_801001FC_PiranhasPursuit + 250.0;
@@ -790,7 +792,9 @@ void func_800F8114_PiranhasPursuit(omObjData* obj) {
             } else if (GwPlayer[w->unk_58].flags & 1) {
                 if ((u32)((u16)piece->unk2 - 5) >= 2) {
                     r = func_800F9D40_PiranhasPursuit() % (GwPlayer[w->unk_58].cpu_difficulty * 2 + 6);
-                    if (dist <= (f32)((f32)(0.8f + (r + w->unk_40 * 0.075) * 0.1) * 100.0) + piece->unk4) {
+                    speed = 0.8f + (r + speed * 0.075) * 0.1;
+                    speed = speed * 100.0;
+                    if (dist <= speed + piece->unk4) {
                         if (piece->unk34 - obj->trans.x >= 0.0f) {
                             D_80100CA8_PiranhasPursuit = 1;
                         }
