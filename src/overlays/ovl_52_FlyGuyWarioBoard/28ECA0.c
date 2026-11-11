@@ -291,11 +291,9 @@ s32 func_800F6DE0_FlyGuyWarioBoard(s32 win, u8* avail) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_FlyGuyWarioBoard/28ECA0", func_800F6DE0_FlyGuyWarioBoard);
 #endif
 
-// loop-invariant choice: retail hoists 0x400 into s8, ours hoists -1; tried if-inversion, 0xFFFF (masked 5, raw 7)
-#ifdef NON_MATCHING
 s32 func_800F7070_FlyGuyWarioBoard(s32 win, u8* avail) {
-    s32 count = 0;
     s16 buttons[4];
+    s32 count = 0;
     PortMask portMask = D_800F820C_FlyGuyWarioBoard;
     s32 i;
 
@@ -306,7 +304,7 @@ s32 func_800F7070_FlyGuyWarioBoard(s32 win, u8* avail) {
                 count += count < i;
                 buttons[GwPlayer[i].port] = 0x400;
             } else {
-                func_8007155C(win, portMask.m[GwPlayer[i].port]);
+                func_8007155C(win, (s16)portMask.m[GwPlayer[i].port]);
                 buttons[GwPlayer[i].port] = -1;
             }
         } else {
@@ -335,9 +333,6 @@ s32 func_800F7070_FlyGuyWarioBoard(s32 win, u8* avail) {
     } while (i != -1 && avail[i] == 0);
     return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_FlyGuyWarioBoard/28ECA0", func_800F7070_FlyGuyWarioBoard);
-#endif
 
 
 void func_800F72DC_FlyGuyWarioBoard(omObjData* arg0) {
