@@ -417,13 +417,11 @@ void func_800F72EC_DeepSeaDivers(void) {
         D_801003F8_DeepSeaDivers[k].v.cn[3] = D_801003F8_DeepSeaDivers[k + 1].v.cn[3] = D_801003F8_DeepSeaDivers[k + 2].v.cn[3] = D_801003F8_DeepSeaDivers[k + 3].v.cn[3] = D_801003F8_DeepSeaDivers[k + 4].v.cn[3] = 0;
     }
 }
-// one instruction short and loop-temporary registers differ (masked 4); not finished in M1c
-#ifdef NON_MATCHING
 void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
     unk65770Anim* a = func_80067310(sprite);
     s16 i;
     s16 cur;
-    s16 next;
+    s16 prev;
 
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_1CYCLE);
@@ -442,22 +440,19 @@ void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
     for (i = 0; i < 20; i++) {
         gDPLoadTextureTile(gfx++, a->unk8, G_IM_FMT_CI, G_IM_SIZ_8b, 160, 0, 0, i * 12, 159, i * 12 + 11, 0,
                            G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-        next = cur + 5;
-        if (next >= 30) {
-            next = 0;
+        prev = cur;
+        cur += 5;
+        if (cur >= 30) {
+            cur = 0;
         }
-        gSPVertex(gfx++, &D_801003F8_DeepSeaDivers[(i + 1) * 5], 5, next);
-        gSP2Triangles(gfx++, cur, next, cur + 1, 0, cur + 1, next, next + 1, 0);
-        gSP2Triangles(gfx++, cur + 1, next + 1, cur + 2, 0, cur + 2, next + 1, next + 2, 0);
-        gSP2Triangles(gfx++, cur + 2, next + 2, cur + 3, 0, cur + 3, next + 2, next + 3, 0);
-        gSP2Triangles(gfx++, cur + 3, next + 3, cur + 4, 0, cur + 4, next + 3, next + 4, 0);
-        cur = next;
+        gSPVertex(gfx++, &D_801003F8_DeepSeaDivers[(i + 1) * 5], 5, cur);
+        gSP2Triangles(gfx++, prev, cur, prev + 1, 0, prev + 1, cur, cur + 1, 0);
+        gSP2Triangles(gfx++, prev + 1, cur + 1, prev + 2, 0, prev + 2, cur + 1, cur + 2, 0);
+        gSP2Triangles(gfx++, prev + 2, cur + 2, prev + 3, 0, prev + 3, cur + 2, cur + 3, 0);
+        gSP2Triangles(gfx++, prev + 3, cur + 3, prev + 4, 0, prev + 4, cur + 3, cur + 4, 0);
     }
     gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7470_DeepSeaDivers);
-#endif
 void func_800F791C_DeepSeaDivers(omObjData* obj) {
     obj->model[0] = LoadFormFile(0x16000E, 0x299);
     func_800FEA00_DeepSeaDivers(obj);
