@@ -403,7 +403,8 @@ void func_800F785C_MinigameInstructions(void) {
         HuPrcVSleep();
     }
 }
-// registers in the team loop; retail reuses one load of D_8010F4EA for the range check (masked 12)
+// registers in the team-3 loop: retail loads the character straight into a1 and steps `a`/`b` in place
+// (raw 9, masked 0); `t = a; a++;` tried
 #ifdef NON_MATCHING
 void func_800F7C58_MinigameInstructions(void) {
     s32 win;
@@ -544,11 +545,8 @@ void func_800F7C58_MinigameInstructions(void) {
                 D_8010F4EA_MinigameInstructions = 2;
             }
         }
-        if (extra == 0) {
-            if (D_8010F4EA_MinigameInstructions >= 3) {
-                D_8010F4EA_MinigameInstructions = 0;
-            }
-        } else if (D_8010F4EA_MinigameInstructions >= 5) {
+        chr = D_8010F4EA_MinigameInstructions;
+        if ((extra != 0) ? (chr >= 5) : (chr >= 3)) {
             D_8010F4EA_MinigameInstructions = 0;
         }
         if (D_8010F4EA_MinigameInstructions != prev) {
@@ -691,7 +689,8 @@ s16 func_800F8910_MinigameInstructions(s16 idx) {
     }
     return msg;
 }
-// retail reaches unk_14 through its own label D_8010F424, so &D_8010F410 is not hoisted; registers differ (masked 27)
+// retail reaches unk_14 through its own label D_8010F424, so &D_8010F410 is not hoisted; registers differ, `text` spilled (masked 27);
+// blk-> for the per-line fields and ids[n] as the index tried
 #ifdef NON_MATCHING
 void func_800F8980_MinigameInstructions(s16 idx) {
     s16 cnt[4];
