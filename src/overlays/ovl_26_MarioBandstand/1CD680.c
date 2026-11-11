@@ -2051,7 +2051,7 @@ void func_800FBD1C_MarioBandstand(void) {
 // address CSE: retail holds &D_800FD598 in a1 from the top for the ev[] reads but reads the other
 // fields through their own %hi/%lo (masked 35; a base pointer local gets every field CSE'd)
 #ifdef NON_MATCHING
-void func_800FBD8C_MarioBandstand(void) {
+void func_800FBD8C_MarioBandstand(omObjData* obj) {
     s16 spr;
     s16 note;
     s32 k;
@@ -2104,7 +2104,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB
 #endif
 
 /* The score display: the playhead, each track's note marks and their fade-out. */
-// NON_MATCHING: masked 82 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
+// address CSE: retail reads the timer test through its own %hi/%lo although &D_800FD598 is held in s1;
+// the unk34 test reloads (lhu twice); frame 8 bytes larger (masked 27)
 #ifdef NON_MATCHING
 void func_800FBF68_MarioBandstand(omObjData* obj) {
     MBTrack* t;
@@ -2118,6 +2119,7 @@ void func_800FBF68_MarioBandstand(omObjData* obj) {
     if (!(D_800FD678_MarioBandstand & 0x8000)) {
         return;
     }
+    t = D_800FD598_MarioBandstand;
     gp = &D_800FD6A0_MarioBandstand[4];
     g = *gp;
     if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
@@ -2129,14 +2131,15 @@ void func_800FBF68_MarioBandstand(omObjData* obj) {
             func_800674BC(g, 0, 0xC);
             func_80067354(g, 0, 0.5f, 1.1f);
         }
-        func_80066DC4(g, 0, ((D_800FD598_MarioBandstand[0].timer * 13) >> 3) + 0x58, 0xC7);
+        func_80066DC4(g, 0, ((t->timer * 13) >> 3) + 0x58, 0xC7);
     } else if (g >= 0) {
         func_80064D38(g);
         D_800FD6A0_MarioBandstand[4] = -1;
         t = &D_800FD598_MarioBandstand[1];
         for (i = 1; i < 4; i++, t++) {
+            slot = D_800FD158_MarioBandstand[i];
             if (t->unk2E != 0) {
-                gp = &D_800FD6A0_MarioBandstand[(s16)D_800FD158_MarioBandstand[i]];
+                gp = &D_800FD6A0_MarioBandstand[(s16)slot];
                 if (*gp >= 0) {
                     func_80064D38(*gp);
                     *gp = -1;
@@ -2148,7 +2151,7 @@ void func_800FBF68_MarioBandstand(omObjData* obj) {
             t->unk34 = 0;
         }
     }
-    func_800FBD8C_MarioBandstand();
+    func_800FBD8C_MarioBandstand(obj);
     t = D_800FD598_MarioBandstand;
     for (i = 0; i < 4; i++, t++) {
         slot = D_800FD158_MarioBandstand[i];
