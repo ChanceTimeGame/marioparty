@@ -1464,37 +1464,37 @@ void func_800FF450_PiranhasPursuit(void) {
 }
 
 /* While the plant snaps (motion 4) it catches the runner if it is in reach. */
-// NON_MATCHING: load order of the plant fields, stack copies of x/y
+// NON_MATCHING: retail loads D_800F2B7C before plant->model[3] (masked 4; tried (D_800F2B7C + i)->unk_48)
 #ifdef NON_MATCHING
 void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant) {
-    Vec pos;
+    Vec2f d;
+    Vec2f r;
+    Vec2f p;
     f32 frame;
-    f32 d;
-    f64 k;
     s16 se;
+    PPPlant* pp = &D_80101150_PiranhasPursuit;
 
-    if (((runner != NULL) & (plant != NULL)) && D_80101150_PiranhasPursuit.state == 4) {
+    if (((runner != NULL) & (plant != NULL)) && pp->state == 4) {
         frame = D_800F2B7C[plant->model[3]].unk_48;
-        if ((frame >= 15.0f) & (frame <= 17.0f)) {
-            k = 200.0;
-        } else if ((frame >= 63.0f) & (frame <= 65.0f)) {
-            k = 200.0;
+        if (((frame >= 15.0f) & (frame <= 17.0f)) || ((frame >= 63.0f) & (frame <= 65.0f))) {
+            p.x = plant->trans.x + pp->unk28 * 200.0;
         } else if ((frame >= 40.0f) & (frame <= 42.0f)) {
-            k = 250.0;
+            p.x = plant->trans.x + pp->unk28 * 250.0;
         } else {
             return;
         }
-        pos.x = plant->trans.x + D_80101150_PiranhasPursuit.unk28 * k;
         PlaySound(0x34F);
-        pos.y = plant->trans.y + 50.0;
-        d = fabsf(pos.y - (f32)(runner->trans.y + 50.0));
-        if (D_8010110C_PiranhasPursuit->trans.x < pos.x) {
-            if (d < D_80101150_PiranhasPursuit.unk28 * 100.0) {
-                if (D_80101150_PiranhasPursuit.unk28 <= 0.6) {
+        r.x = D_8010110C_PiranhasPursuit->trans.x;
+        r.y = runner->trans.y + 50.0;
+        p.y = plant->trans.y + 50.0;
+        d.y = fabsf(p.y - r.y);
+        if (r.x < p.x) {
+            if (d.y < pp->unk28 * 100.0) {
+                if (pp->unk28 <= 0.6) {
                     se = 0x349;
                 } else {
                     se = 0x34B;
-                    if (D_80101150_PiranhasPursuit.unk28 <= 1.3) {
+                    if (pp->unk28 <= 1.3) {
                         se = 0x34A;
                     }
                 }
