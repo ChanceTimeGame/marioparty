@@ -1035,7 +1035,8 @@ void func_8004A950(void) {
     }
 }
 
-// y sign extension hoisted out of the loop (masked 10)
+// retail never sign-extends y at entry, only (s16)y inside the loop for the "(yl) < 0" test (masked 10).
+// s32 y gives masked 4 (144 of 147: no in-loop extension); (s16)y in yl gets hoisted (148); s16 x too: 11
 #ifdef NON_MATCHING
 void func_8004AAA8(Gfx** gfx, void* tex, s32 x, s16 y) {
     s32 i;

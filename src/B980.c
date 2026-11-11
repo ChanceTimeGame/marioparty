@@ -2499,7 +2499,8 @@ void func_8000F294(s16 idx, s8 mode)
 }
 
 // retail places the v < 0 arm after the success arm (masked 7); swapped arms or a continue let reorg
-// thread it into a bltzl and CSE the sll (198 vs 201); an s32 voiceIdx is worse
+// thread it into a bltzl and CSE the sll (198 vs 201); an s32 voiceIdx is worse; a shared "fail:" label after the
+// success arm (for the last or for every s->id = -1 exit) gives 198 too
 #ifdef NON_MATCHING
 void func_8000F4E0(void) {
     s32 i;
