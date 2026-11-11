@@ -298,7 +298,7 @@ void func_800FCE2C_BobsledRun(s16 idx, s16 time);
 void func_800FD124_BobsledRun(void);
 void func_800FD164_BobsledRun(void);
 s16 func_800FD1BC_BobsledRun(s32 x, s32 y);
-void func_800FD36C_BobsledRun(s32 x, s32 y);
+s16 func_800FD36C_BobsledRun(s32 x, s32 y);
 void func_800FD51C_BobsledRun(omObjData* obj);
 void func_800FDCA8_BobsledRun(omObjData* obj, s16 force, f32 minSpeed, f32 rot, f32 x, f32 y, f32 z);
 void func_800FDFC8_BobsledRun(s32 team, u8 mdl);

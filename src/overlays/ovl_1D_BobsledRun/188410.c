@@ -2197,16 +2197,12 @@ s16 func_800FD1BC_BobsledRun(s32 x, s32 y) {
     return g;
 }
 
-// register allocation; the group id is stored before its copy
-#ifdef NON_MATCHING
-void func_800FD36C_BobsledRun(s32 x, s32 y) {
-    s32 g;
+s16 func_800FD36C_BobsledRun(s32 x, s32 y) {
+    s16 g;
     s32 px;
     s16 i;
 
-    /* retail's func_80064EF4 returned a full int (no extension before the store) */
-    g = ((s32(*)(s32, s32))func_80064EF4)(7, 5);
-    D_800FFAE4_BobsledRun[1] = g;
+    g = D_800FFAE4_BobsledRun[1] = func_80064EF4(7, 5);
     func_80067208(g, 0, D_800FFAE2_BobsledRun, 0);
     func_80067480(g, 0, 0xFFFF);
     func_800674BC(g, 0, 0x8000);
@@ -2227,10 +2223,8 @@ void func_800FD36C_BobsledRun(s32 x, s32 y) {
         func_80067598(g, i, 0);
     }
     func_80067480(g, 2, 0x8000);
+    return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FD36C_BobsledRun);
-#endif
 
 /* The bobsled's process: CPU riders write the shared controls, the tunnels swap in the dark
    models, then func_800F78F4 runs; the riders' real inputs are restored afterwards. */
