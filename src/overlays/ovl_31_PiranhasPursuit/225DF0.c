@@ -985,10 +985,11 @@ void func_800FD6EC_PiranhasPursuit(void) {
     D_80101108_PiranhasPursuit = omAddObj(2, 8, 0, -1, func_800FD728_PiranhasPursuit);
 }
 
-// NON_MATCHING: retail addresses the plant fields by their splat labels
-#ifdef NON_MATCHING
 void func_800FD728_PiranhasPursuit(omObjData* obj) {
+    PPPlant* pl;
+
     obj->func_ptr = func_800FD9D0_PiranhasPursuit;
+    pl = &D_80101150_PiranhasPursuit;
     obj->model[0] = LoadFormFile(0x45000A, 0x9D);
     obj->model[1] = LoadFormFile(0x45000B, 0x9D);
     obj->model[2] = LoadFormFile(0x45000C, 0x9D);
@@ -997,34 +998,31 @@ void func_800FD728_PiranhasPursuit(omObjData* obj) {
     obj->model[5] = LoadFormFile(0x45000F, 0x9D);
     obj->model[6] = LoadFormFile(0x450010, 0x9D);
     obj->model[7] = LoadFormFile(6, 0x99);
-    func_800FA508_PiranhasPursuit(obj->model[0], 0, &D_80101150_PiranhasPursuit, 0);
-    func_800FA508_PiranhasPursuit(obj->model[1], 1, &D_80101150_PiranhasPursuit, -1);
-    func_800FA508_PiranhasPursuit(obj->model[2], 2, &D_80101150_PiranhasPursuit, 0x6E);
-    func_800FA508_PiranhasPursuit(obj->model[3], 3, &D_80101150_PiranhasPursuit, -1);
-    func_800FA508_PiranhasPursuit(obj->model[4], 4, &D_80101150_PiranhasPursuit, -1);
-    func_800FA508_PiranhasPursuit(obj->model[5], 5, &D_80101150_PiranhasPursuit, 0);
-    func_800FA508_PiranhasPursuit(obj->model[6], 6, &D_80101150_PiranhasPursuit, -1);
+    func_800FA508_PiranhasPursuit(obj->model[0], 0, pl, 0);
+    func_800FA508_PiranhasPursuit(obj->model[1], 1, pl, -1);
+    func_800FA508_PiranhasPursuit(obj->model[2], 2, pl, 0x6E);
+    func_800FA508_PiranhasPursuit(obj->model[3], 3, pl, -1);
+    func_800FA508_PiranhasPursuit(obj->model[4], 4, pl, -1);
+    func_800FA508_PiranhasPursuit(obj->model[5], 5, pl, 0);
+    func_800FA508_PiranhasPursuit(obj->model[6], 6, pl, -1);
     func_800FEF78_PiranhasPursuit(obj, 0, 1);
     D_800F2B7C[obj->model[0]].unk_4C = 0.0f;
-    D_80101150_PiranhasPursuit.state = 0;
+    pl->state = 0;
     D_801012C4_PiranhasPursuit = func_8002040C(obj->model[4], 2, "pa_tst6-item_fook");
     func_800FA4CC_PiranhasPursuit(obj);
     obj->scale.x = obj->scale.y = obj->scale.z = 0.5f;
     obj->trans.x = -16700.0f;
     obj->trans.y = -80.0f;
     obj->rot.y = 89.0f;
-    D_80101150_PiranhasPursuit.timer = 0;
-    D_80101150_PiranhasPursuit.unk10 = 0;
-    D_80101150_PiranhasPursuit.unk22 = 0;
-    D_80101150_PiranhasPursuit.unk2E = 0;
-    D_80101150_PiranhasPursuit.unk24 = D_80101150_PiranhasPursuit.unk28 = 0.5f;
-    D_80101150_PiranhasPursuit.unk2C = 0;
-    D_80101150_PiranhasPursuit.unk14 = obj->trans.x;
-    D_80101150_PiranhasPursuit.unk18 = D_80101150_PiranhasPursuit.unk1C = 0.0f;
+    pl->timer = 0;
+    pl->unk10 = 0;
+    pl->unk22 = 0;
+    pl->unk2E = 0;
+    pl->unk24 = pl->unk28 = 0.5f;
+    pl->unk2C = 0;
+    pl->unk14 = obj->trans.x;
+    pl->unk18 = pl->unk1C = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FD728_PiranhasPursuit);
-#endif
 
 // NON_MATCHING: retail addresses the plant fields by their splat labels; register allocation
 #ifdef NON_MATCHING
