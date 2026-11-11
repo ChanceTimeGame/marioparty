@@ -130,11 +130,9 @@ typedef struct UM0Cell {
     /* 0x00 */ UM0CellState* state;
 } UM0Cell;
 
-/* A point of the board's collision outline (D_80103E28_UnusedMinigame0). */
-typedef struct UM0Point {
-    /* 0x00 */ s16 x;
-    /* 0x02 */ s16 z;
-} UM0Point;
+/* A point of the board's collision outline (D_80103E28_UnusedMinigame0): x, z. An array, not a
+   struct: retail reloads the cursor after the [0] store, as GCC does only for a non-struct store. */
+typedef s16 UM0Point[2];
 
 /* A 2D point (func_800FC29C_UnusedMinigame0's list). */
 typedef struct UM0Vec2 {

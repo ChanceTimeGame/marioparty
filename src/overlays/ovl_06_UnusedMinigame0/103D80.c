@@ -316,17 +316,17 @@ void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
             for (i = x0; i <= x1; i++) {
                 pz = (j - 3) * 10;
                 if (D_80108B88_UnusedMinigame0[i][j] != NULL) {
-                    D_80104248_UnusedMinigame0->x = px = (i - 4) * 10;
-                    D_80104248_UnusedMinigame0->z = pz;
+                    (*D_80104248_UnusedMinigame0)[0] = px = (i - 4) * 10;
+                    (*D_80104248_UnusedMinigame0)[1] = pz;
                     D_80104248_UnusedMinigame0++;
-                    D_80104248_UnusedMinigame0->x = px + 10;
-                    D_80104248_UnusedMinigame0->z = pz;
+                    (*D_80104248_UnusedMinigame0)[0] = px + 10;
+                    (*D_80104248_UnusedMinigame0)[1] = pz;
                     D_80104248_UnusedMinigame0++;
-                    D_80104248_UnusedMinigame0->x = px + 10;
-                    D_80104248_UnusedMinigame0->z = pz + 10;
+                    (*D_80104248_UnusedMinigame0)[0] = px + 10;
+                    (*D_80104248_UnusedMinigame0)[1] = pz + 10;
                     D_80104248_UnusedMinigame0++;
-                    D_80104248_UnusedMinigame0->x = px;
-                    D_80104248_UnusedMinigame0->z = pz + 10;
+                    (*D_80104248_UnusedMinigame0)[0] = px;
+                    (*D_80104248_UnusedMinigame0)[1] = pz + 10;
                     D_80104248_UnusedMinigame0++;
                     if (func_800FBAA0_UnusedMinigame0(i, j - 1)) {
                         *D_8010424C_UnusedMinigame0++ = n;
@@ -364,8 +364,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 #endif
 
 /* Builds the outlines of the movable pieces (D_801098B4 slots 1, 2, 4) from their model nodes. */
-// NON_MATCHING: retail reloads D_80104248 between the x and z stores (masked 4; GCC keeps a global cached across a struct-field store)
-#ifdef NON_MATCHING
 void func_800FBFE4_UnusedMinigame0(omObjData* obj) {
     Matrix4f m;
     Matrix4f c;
@@ -385,8 +383,8 @@ void func_800FBFE4_UnusedMinigame0(omObjData* obj) {
             for (j = 0; j < 4; j++) {
                 guTranslateF(c, D_80102C74_UnusedMinigame0[i][j].x / 2.0, 0.0f, D_80102C74_UnusedMinigame0[i][j].z / 2.0);
                 guMtxCatF(c, m, c);
-                D_80104248_UnusedMinigame0->x = c[3][0];
-                D_80104248_UnusedMinigame0->z = c[3][2];
+                (*D_80104248_UnusedMinigame0)[0] = c[3][0];
+                (*D_80104248_UnusedMinigame0)[1] = c[3][2];
                 D_80104248_UnusedMinigame0++;
                 *D_8010424C_UnusedMinigame0++ = D_80103E20_UnusedMinigame0++;
             }
@@ -395,9 +393,6 @@ void func_800FBFE4_UnusedMinigame0(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800FBFE4_UnusedMinigame0);
-#endif
 
 /* Moves (x, z) dist away from the edge list pts[n], along the sum of the edges' outward normals. */
 void func_800FC29C_UnusedMinigame0(f32* x, f32* z, f32 dist, UM0Vec2* pts, s16 n) {
@@ -479,10 +474,10 @@ s16 func_800FC564_UnusedMinigame0(f32* x, f32* z, f32 radius) {
     while (k < D_80103E22_UnusedMinigame0) {
         b = D_80104128_UnusedMinigame0[k++];
         if ((a >= 0) & (b >= 0)) {
-            ex = D_80103E28_UnusedMinigame0[b].x - D_80103E28_UnusedMinigame0[a].x;
-            ez = D_80103E28_UnusedMinigame0[b].z - D_80103E28_UnusedMinigame0[a].z;
-            ox = D_80103E28_UnusedMinigame0[a].x - *x;
-            oz = D_80103E28_UnusedMinigame0[a].z - *z;
+            ex = D_80103E28_UnusedMinigame0[b][0] - D_80103E28_UnusedMinigame0[a][0];
+            ez = D_80103E28_UnusedMinigame0[b][1] - D_80103E28_UnusedMinigame0[a][1];
+            ox = D_80103E28_UnusedMinigame0[a][0] - *x;
+            oz = D_80103E28_UnusedMinigame0[a][1] - *z;
             qa = ex * ex + ez * ez;
             qb = 2.0f * (ex * ox + ez * oz);
             c = -(radius * radius) + ox * ox + oz * oz;
@@ -492,14 +487,14 @@ s16 func_800FC564_UnusedMinigame0(f32* x, f32* z, f32 radius) {
                 t0 = (-qb - disc) / (2.0f * qa);
                 t1 = (-qb + disc) / (2.0f * qa);
                 if (t0 >= 0.0 && t0 <= 1.0) {
-                    hits[n].x = D_80103E28_UnusedMinigame0[a].x + t0 * ex;
-                    hits[n].z = D_80103E28_UnusedMinigame0[a].z + t0 * ez;
+                    hits[n].x = D_80103E28_UnusedMinigame0[a][0] + t0 * ex;
+                    hits[n].z = D_80103E28_UnusedMinigame0[a][1] + t0 * ez;
                     n++;
                     total++;
                 }
                 if (t1 >= 0.0 && t1 <= 1.0) {
-                    hits[n].x = D_80103E28_UnusedMinigame0[a].x + t1 * ex;
-                    hits[n].z = D_80103E28_UnusedMinigame0[a].z + t1 * ez;
+                    hits[n].x = D_80103E28_UnusedMinigame0[a][0] + t1 * ex;
+                    hits[n].z = D_80103E28_UnusedMinigame0[a][1] + t1 * ez;
                     n++;
                     total++;
                 }
