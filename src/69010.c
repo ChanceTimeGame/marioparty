@@ -422,9 +422,8 @@ void func_80068410(Gfx **arg0, unk69010Sprite *arg1)
   }
 }
 
-// register allocation: flip/dt get t1/t2/t3 swapped with hoisted temporaries; the masked residue (6) is
-// only the u16 read of D_800EE314/D_800ED0F8, which retail's object relocates against the split bss labels
-// D_800EE316/D_800ED0FA (same address once linked)
+// register allocation: flip/dt get t1/t2/t3 swapped with hoisted temporaries (masked 0, raw 31 in M1h;
+// n64nmaddr: data accesses same; moving flip's declaration first changed nothing)
 #define SPRITE_QUAD (fabs(arg1->rot) > 0.1f || (arg1->flags & 0xC0000) || (arg1->flags & 0x30000) == 0x30000)
 #ifdef NON_MATCHING
 void func_80069394(Gfx** arg0, unk69010Sprite* arg1) {

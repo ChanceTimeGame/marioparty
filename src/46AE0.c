@@ -18,13 +18,10 @@ void func_80045EE0(void) {
     D_800D6482 = -1;
 }
 
-// delay slot: bne+li filled as bnel (masked 1)
-#ifdef NON_MATCHING
 s32 func_80045EF8(s16 a, s16 b) {
     GW_PLAYER* p0;
     GW_PLAYER* p1;
     s32 i;
-    s32 ret;
 
     for (i = 0; i < 4; i++) {
         p0 = GetPlayerStruct(i);
@@ -37,11 +34,11 @@ s32 func_80045EF8(s16 a, s16 b) {
     }
     p0 = GetPlayerStruct(a);
     p1 = GetPlayerStruct(b);
-    return (p0->cur_chain != p1->cur_chain) ? 1 : ((s16)p0->cur_space != (s16)p1->cur_space);
+    if (p0->cur_chain == p1->cur_chain) {
+        return (s16)p0->cur_space != (s16)p1->cur_space;
+    }
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/46AE0", func_80045EF8);
-#endif
 
 void func_80045FF4(s16 a, s16 b) {
     if (b == GetCurrentPlayerIndex()) {
