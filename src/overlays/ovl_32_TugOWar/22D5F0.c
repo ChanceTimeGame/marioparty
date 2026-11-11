@@ -745,13 +745,11 @@ void func_800F9688_TugOWar(omObjData* obj) {
 }
 
 /* The solo player's pull: the stick angle's change (or the CPU's), as a pull strength. */
-// logic-equivalent; the angle-wrap test is written once (retail: two branches) (masked 22)
-#ifdef NON_MATCHING
 void func_800F9A90_TugOWar(omObjData* obj) {
     TWPlayerWork* w;
     TWPull* p;
     f32 t;
-    f32 d;
+    f64 e;
 
     w = obj->unk_50;
     p = w->unk_E4;
@@ -775,31 +773,17 @@ void func_800F9A90_TugOWar(omObjData* obj) {
         }
         if (D_800FDDF8_TugOWar >= 0.0f) {
             D_800FDDFC_TugOWar = D_800FDDF8_TugOWar - p->angle;
-            d = D_800FDDFC_TugOWar;
-            if (d < 0.0f) {
-                d = -d;
-            }
-            if (d >= 180.0f) {
-                if (D_800FDDFC_TugOWar <= 0.0f) {
-                    D_800FDDFC_TugOWar += 360.0f;
-                } else {
-                    D_800FDDFC_TugOWar -= 360.0f;
-                }
+            if ((D_800FDDFC_TugOWar < 0.0f ? -D_800FDDFC_TugOWar : D_800FDDFC_TugOWar) >= 180.0f) {
+                D_800FDDFC_TugOWar = (D_800FDDFC_TugOWar <= 0.0f) ? D_800FDDFC_TugOWar + 360.0f
+                                                                  : D_800FDDFC_TugOWar - 360.0f;
             }
         } else {
             D_800FDDFC_TugOWar = 0.0f;
         }
-        d = D_800FDDFC_TugOWar;
-        if (d < 0.0f) {
-            d = -d;
-        }
-        p->pull = d;
+        p->pull = D_800FDDFC_TugOWar < 0.0f ? -D_800FDDFC_TugOWar : D_800FDDFC_TugOWar;
         t = func_800AEFD0(D_800FDB10_TugOWar);
-        d = D_800FDDFC_TugOWar;
-        if (d < 0.0f) {
-            d = -d;
-        }
-        p->pull = t / 5.0f * (f64)d + d;
+        e = D_800FDDFC_TugOWar < 0.0f ? -D_800FDDFC_TugOWar : D_800FDDFC_TugOWar;
+        p->pull = t / 5.0f * e + e;
         p->angle = D_800FDDF8_TugOWar;
     }
     obj->trans.x = p->x + p->dx;
@@ -808,9 +792,6 @@ void func_800F9A90_TugOWar(omObjData* obj) {
     func_80025830(obj->model[1], 1.6f, 1.6f, 3.0f);
     func_80025798(obj->model[1], obj->trans.x + 20.0f, obj->trans.y, obj->trans.z + 30.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F9A90_TugOWar);
-#endif
 
 /* Head-swap part of each character (func_80020EA0), by GwPlayer.character. */
 char* D_800FDB9C_TugOWar[6] = {
@@ -890,13 +871,11 @@ void func_800FA1F4_TugOWar(omObjData* obj) {
 }
 
 /* A team member's pull (player w->unk_58): as func_800F9A90_TugOWar, per player. */
-// logic-equivalent; the angle-wrap test is written once (retail: two branches) (masked 28)
-#ifdef NON_MATCHING
 void func_800FA284_TugOWar(omObjData* obj) {
     TWPlayerWork* w;
     TWPull* p;
     f32 t;
-    f32 d;
+    f64 e;
 
     w = obj->unk_50;
     p = w->unk_E4;
@@ -923,26 +902,15 @@ void func_800FA284_TugOWar(omObjData* obj) {
         }
         if (D_800FDE00_TugOWar[w->unk_58] >= 0.0f) {
             D_800FDE10_TugOWar[w->unk_58] = D_800FDE00_TugOWar[w->unk_58] - p->angle;
-            d = D_800FDE10_TugOWar[w->unk_58];
-            if (d < 0.0f) {
-                d = -d;
-            }
-            if (d >= 180.0f) {
-                if (D_800FDE10_TugOWar[w->unk_58] <= 0.0f) {
-                    D_800FDE10_TugOWar[w->unk_58] += 360.0f;
-                } else {
-                    D_800FDE10_TugOWar[w->unk_58] -= 360.0f;
-                }
+            if ((D_800FDE10_TugOWar[w->unk_58] < 0.0f ? -D_800FDE10_TugOWar[w->unk_58] : D_800FDE10_TugOWar[w->unk_58]) >= 180.0f) {
+                D_800FDE10_TugOWar[w->unk_58] = (D_800FDE10_TugOWar[w->unk_58] <= 0.0f) ? D_800FDE10_TugOWar[w->unk_58] + 360.0f : D_800FDE10_TugOWar[w->unk_58] - 360.0f;
             }
         } else {
             D_800FDE10_TugOWar[w->unk_58] = 0.0f;
         }
         t = func_800AEAC0(D_800FDB10_TugOWar);
-        d = D_800FDE10_TugOWar[w->unk_58];
-        if (d < 0.0f) {
-            d = -d;
-        }
-        p->pull = t / 5.0f * (f64)d + d;
+        e = D_800FDE10_TugOWar[w->unk_58] < 0.0f ? -D_800FDE10_TugOWar[w->unk_58] : D_800FDE10_TugOWar[w->unk_58];
+        p->pull = t / 5.0f * e + e;
         p->angle = D_800FDE00_TugOWar[w->unk_58];
     }
     obj->trans.x = p->x + p->dx;
@@ -951,9 +919,6 @@ void func_800FA284_TugOWar(omObjData* obj) {
     func_80025830(obj->model[1], 1.1f, 1.1f, 2.5f);
     func_80025798(obj->model[1], obj->trans.x - 20.0f, obj->trans.y, obj->trans.z + 30.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800FA284_TugOWar);
-#endif
 
 /* A team member's object. */
 void func_800FA700_TugOWar(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z) {

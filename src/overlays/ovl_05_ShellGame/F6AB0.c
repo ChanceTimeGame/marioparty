@@ -129,7 +129,8 @@ void func_800F6A98_ShellGame(omObjData* arg0) {
     }
 }
 
-// NON_MATCHING: register allocation of two timer compares (masked 0)
+// NON_MATCHING: register allocation of two timer compares (masked 0; operand order, ternary and
+// s16 casts tried)
 #ifdef NON_MATCHING
 void func_800F6AC0_ShellGame(omObjData* arg0) {
     s16 winSe[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
@@ -515,7 +516,8 @@ void func_800F7BDC_ShellGame(void) {
         }
     }
 }
-// NON_MATCHING: constant hoisting (360.0 reloaded per use in retail), frame +8
+// NON_MATCHING: constant hoisting (360.0 reloaded per use in retail, so its pool entry follows 3.0),
+// frame +8; the show mask's and operand order (masked 17; direct array, &= and operand swaps tried)
 #ifdef NON_MATCHING
 void func_800F7DA8_ShellGame(omObjData* obj, s32 show) {
     f32* ang;
@@ -776,7 +778,8 @@ void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 typ
         func_800671DC(p->unk2, 0, 0);
     }
 }
-// NON_MATCHING: constant hoisting / FP register allocation
+// NON_MATCHING: constant hoisting: retail keeps 0.33 and both 1.0 literals unhoisted (two li.d
+// entries for 1.0 in .rodata); ours hoists them (masked 33)
 #ifdef NON_MATCHING
 void func_800F8CF8_ShellGame(void) {
     SGSprite* p;
@@ -939,8 +942,9 @@ void func_800F9618_ShellGame(void) {
         D_800FF9F0_ShellGame = 0;
     }
 }
-// NON_MATCHING: retail does not fold the shell/move clamps after the constant stores (masked 37);
-// direct field stores give retail's s0 base but fold both clamps; per-case stores tried
+// NON_MATCHING: retail does not fold the shell/move clamps after the constant stores (top block only;
+// the rest differs by branch offsets); direct field stores give retail's s0 base but fold both
+// clamps; per-case stores and while-loop clamps tried
 #ifdef NON_MATCHING
 void func_800F9738_ShellGame(void) {
     s16 cnt[3] = { 3, 3, 3 };
@@ -987,7 +991,8 @@ void func_800F9738_ShellGame(void) {
         *cap = 6;
     }
     for (i = 0; i < D_800FF9D0_ShellGame.unk2; i++) {
-        D_800FF9F8_ShellGame[i] = D_800F3FB0[i + 1] = omAddObj(2, 5, 0, -1, &func_800F9A8C_ShellGame);
+        D_800FF9F8_ShellGame[i] = omAddObj(2, 5, 0, -1, &func_800F9A8C_ShellGame);
+        D_800F3FB0[i + 1] = D_800FF9F8_ShellGame[i];
         D_800FF9F8_ShellGame[i]->work[0] = i;
         if (i == D_800FF9D0_ShellGame.unk4) {
             D_800FF7A0_ShellGame[i].unk6C = 2;
@@ -1355,8 +1360,6 @@ void func_800FAA44_ShellGame(void) {
         D_800FF100_ShellGame = 7;
     }
 }
-// NON_MATCHING: FP register allocation
-#ifdef NON_MATCHING
 void func_800FAC34_ShellGame(void) {
     omObjData* obj;
     SGShell* sh;
@@ -1380,7 +1383,7 @@ void func_800FAC34_ShellGame(void) {
             } else if (D_800FEC34_ShellGame - D_800FF9D0_ShellGame.unk12 < D_800FF104_ShellGame) {
                 vol = (f32)(D_800FEC34_ShellGame - D_800FF104_ShellGame) / (f32)D_800FF9D0_ShellGame.unk12;
             }
-            func_80060440(D_800FEC32_ShellGame, vol * 400.0f);
+            func_80060440(D_800FEC32_ShellGame, vol *= 400.0f);
         }
         if (D_800FF104_ShellGame < D_800FF9D0_ShellGame.unk12) {
             D_800FEC3C_ShellGame = D_800FEC3C_ShellGame + D_800FEC38_ShellGame;
@@ -1413,10 +1416,8 @@ void func_800FAC34_ShellGame(void) {
     }
     D_800FF104_ShellGame++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800FAC34_ShellGame);
-#endif
-// NON_MATCHING: FP register allocation of the progress quotient (masked 0; implicit casts tried)
+// NON_MATCHING: FP register allocation of the progress quotient (masked 0; implicit casts, an
+// (s32) denominator cast and a denominator local tried)
 #ifdef NON_MATCHING
 void func_800FB030_ShellGame(void) {
     u16 order[6];
@@ -1846,7 +1847,8 @@ void func_800FC7B0_ShellGame(u16 result) {
 }
 /* Builds the scrolling backdrop: `strips` rows of the I8 image `image`, each cut into tiles,
    scaled by (sx, sy) and scrolled by D_800FF728[row] (ovl_20 KnockBlockTower's func_800FA9B0). */
-// NON_MATCHING: logic-equivalent rewrite; the asm interleaves the display-list writes differently
+// NON_MATCHING: register allocation and stack-slot order (masked 31; was 88 before shx/shy became
+// s16 and the x offset a separate temp); an s16 y0 made it worse
 #ifdef NON_MATCHING
 void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16 strips, f32 sx, f32 sy) {
     unk65770AnimC* frame;
@@ -1854,10 +1856,11 @@ void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16
     s16 w;
     u16 h;
     u16 sw;
-    s32 shx;
-    s32 shy;
+    s16 shx;
+    s16 shy;
     s32 x0;
     s32 y0;
+    s32 ox;
     s32 n;
     s32 rows;
     s32 th;
@@ -1868,11 +1871,12 @@ void func_800FC800_ShellGame(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16
     timg = frame->unk0;
     h = frame->unk6;
     sw = (s32)(frame->unk4 * sx);
+    ox = (u16)frame->unk8 * sx;
     y0 = y - (s32)((u16)frame->unkA * sy);
     shx = sx / 2.0f;
     shy = sy / 2.0f;
     w = frame->unk4;
-    x0 = x - (s32)((u16)frame->unk8 * sx);
+    x0 = x - ox;
     if (w < 81) {
         n = (s16)((s16)h / 40);
     } else if (w < 161) {

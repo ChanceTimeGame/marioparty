@@ -77,10 +77,7 @@ s16 func_800F68E8_PaddleBattle(s16 player, s16 n) {
 }
 
 /* The game flow: start, race, result, exit. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 37 lines)
-#ifdef NON_MATCHING
 void func_800F695C_PaddleBattle(omObjData* obj) {
-    s32 best;
     s32 i;
     s32 win;
     s32 exit;
@@ -122,19 +119,19 @@ void func_800F695C_PaddleBattle(omObjData* obj) {
         break;
     case 2:
         if (GMesStatAllGet() == 2) {
-            best = D_80100130_PaddleBattle[D_800FFF10_PaddleBattle.seat[0]];
+            win = D_80100130_PaddleBattle[D_800FFF10_PaddleBattle.seat[0]];
             for (i = 1; i < 4; i++) {
-                if (D_80100130_PaddleBattle[D_800FFF10_PaddleBattle.seat[i]] >= best) {
+                if (D_80100130_PaddleBattle[D_800FFF10_PaddleBattle.seat[i]] >= win) {
                     break;
                 }
             }
-            if (i < 4) {
-                win = 0;
-            } else {
-                win = 1;
-                if (best >= 10) {
+            if (i >= 4) {
+                if (win >= 10) {
                     D_800FE1F0_PaddleBattle = 0x24;
                 }
+                win = 1;
+            } else {
+                win = 0;
             }
             if (D_800FFF00_PaddleBattle == 0) {
                 func_80060128(win ? 0x32 : 0x36);
@@ -142,7 +139,8 @@ void func_800F695C_PaddleBattle(omObjData* obj) {
             for (i = 0; i < 4; i++) {
                 D_800FFFA0_PaddleBattle[D_800FFF10_PaddleBattle.seat[i]].obj->work[3] = win;
                 if (i == 0) {
-                    win = (1 - win) & ((s32)(D_80100130_PaddleBattle[D_800FFF10_PaddleBattle.seat[0]] << 16) >> 31);
+                    win = 1 - win;
+                    win &= -(D_80100130_PaddleBattle[D_800FFF10_PaddleBattle.seat[i]] < 0);
                 }
                 GwPlayer[i].coins_mg += D_80100130_PaddleBattle[i];
             }
@@ -184,9 +182,6 @@ void func_800F695C_PaddleBattle(omObjData* obj) {
     }
     func_800F6DB0_PaddleBattle();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/2341E0", func_800F695C_PaddleBattle);
-#endif
 
 /* Water and paddle sounds. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 88 lines)
