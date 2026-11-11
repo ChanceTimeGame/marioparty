@@ -1285,8 +1285,8 @@ void func_800FAABC_DeepSeaDivers(s16 idx) {
         func_800FD870_DeepSeaDivers(idx);
     }
 }
-#ifdef NON_MATCHING
 void func_800FAC68_DeepSeaDivers(s16 idx) {
+    f32 t;
     f64 x0;
 
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
@@ -1300,13 +1300,15 @@ void func_800FAC68_DeepSeaDivers(s16 idx) {
         D_80100C80_DeepSeaDivers[idx].unk26 = (func_800FC1F4_DeepSeaDivers() & 0x1F) - 16;
         D_80100C80_DeepSeaDivers[idx].sy = 0.75f;
         D_80100C80_DeepSeaDivers[idx].sx = 0.75f;
+        return;
     }
+    t = (24.0 - (f32)D_80100C80_DeepSeaDivers[idx].timer) / 24.0;
     x0 = (f32)D_80100C80_DeepSeaDivers[idx].unk20;
     D_80100C80_DeepSeaDivers[idx].x =
         x0 + ((D_80101780_DeepSeaDivers[D_80100C80_DeepSeaDivers[idx].target >> 8].boat->trans.x +
                D_80100C80_DeepSeaDivers[idx].unk26 * 5.0) -
               x0) *
-                 (f32)((24.0 - (f32)D_80100C80_DeepSeaDivers[idx].timer) / 24.0);
+                 t;
     D_80100C80_DeepSeaDivers[idx].y =
         D_80100C80_DeepSeaDivers[idx].y + (f32)(D_80100C80_DeepSeaDivers[idx].unk1E / 16.0) * 5.0;
     D_80100C80_DeepSeaDivers[idx].unk1E -= 8;
@@ -1318,15 +1320,13 @@ void func_800FAC68_DeepSeaDivers(s16 idx) {
         if (--D_80100C80_DeepSeaDivers[idx].unk22 == 0) {
             PlaySound(0xFC);
             func_800FD870_DeepSeaDivers(idx);
+        } else {
+            D_80100C80_DeepSeaDivers[idx].unk24 /= 2;
+            D_80100C80_DeepSeaDivers[idx].unk1E = D_80100C80_DeepSeaDivers[idx].unk24;
+            PlaySound(0x108);
         }
-        D_80100C80_DeepSeaDivers[idx].unk1E = D_80100C80_DeepSeaDivers[idx].unk24 =
-            D_80100C80_DeepSeaDivers[idx].unk24 / 2;
-        PlaySound(0x108);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FAC68_DeepSeaDivers);
-#endif
 void func_800FB010_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
