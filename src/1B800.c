@@ -533,7 +533,7 @@ u8* func_8001C378(u8* arg0) {
     return arg0;
 }
 
-// the unk_80 base load is emitted after the index multiply instead of before it (masked 2); M1g: unk_80 + arg1, inline unk_80[arg1] (masked 6), assignment inside the load (no change)
+// the unk_80 base load is emitted after the index multiply instead of before it (masked 2); M1g: unk_80 + arg1, inline unk_80[arg1] (masked 6), assignment inside the load (no change); M1h: entry = unk_80 then += arg1 (raw 10); inline load+store (base order right, store re-addressed, masked 6); inline load then entry store (one extra move, masked 3)
 #ifdef NON_MATCHING
 void func_8001C3A8(unk2C0C0StructC0* arg0, s16 arg1, s16 arg2, s16 arg3) {
     u16 flags;
@@ -636,7 +636,7 @@ void func_8001C3A8(unk2C0C0StructC0* arg0, s16 arg1, s16 arg2, s16 arg3) {
 #else
 INCLUDE_ASM("asm/nonmatchings/1B800", func_8001C3A8);
 #endif
-// register allocation of the two packed-word sums (masked 0, raw 4)
+// register allocation of the two packed-word sums (masked 0, raw 4); tried addend order, u32 pointers
 #ifdef NON_MATCHING
 void func_8001C75C(unk2C0C0Struct20* arg0, u8* arg1, unk2C0C0StructC0* arg2, u16* arg3) {
     s32* uv0;
