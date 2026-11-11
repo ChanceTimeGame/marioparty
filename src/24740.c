@@ -439,7 +439,8 @@ void func_80024754(void) {
     func_8002854C();
     D_800ED3E4[0] = D_800ED3E4[1] = NULL;
 }
-// register allocation; D_800ED0D8 address not folded into the load (masked 25)
+// register allocation; retail materialises &D_800ED0D8[i] in t3 before the inner index, ours folds it
+// into the load (masked 25; M1f tried (*(D + i))[j], (D + i)[0][j], a local table pointer)
 #ifdef NON_MATCHING
 void func_800247FC(OSMesgQueue* arg0, s32 arg1) {
     Matrix4f sp18;

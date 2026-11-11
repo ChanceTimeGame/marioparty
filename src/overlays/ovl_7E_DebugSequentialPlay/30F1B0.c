@@ -489,12 +489,6 @@ void func_800F6EF4_DebugSequentialPlay(u16 arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7E_DebugSequentialPlay/30F1B0", func_800F6EF4_DebugSequentialPlay);
 #endif
 
-/* func_800F70D0's team-letter templates (named so its INCLUDE_ASM build finds them) */
-const u8 D_800F9284_DebugSequentialPlay[4] __attribute__((section(".rodata"))) = { 12, 0, 8, 13 };
-const u8 D_800F9288_DebugSequentialPlay[4] __attribute__((section(".rodata"))) = { 18, 20, 1, 25 };
-
-// scheduling of the sprite x (masked 2)
-#ifdef NON_MATCHING
 void func_800F70D0_DebugSequentialPlay(u16 arg0) {
     u16 sum = 0;
     u8 team0[4] = { 12, 0, 8, 13 };
@@ -519,15 +513,12 @@ void func_800F70D0_DebugSequentialPlay(u16 arg0) {
         ShowBasicSprite(D_800F92E0_DebugSequentialPlay[arg0][i]);
         func_80018E50(D_800F92E0_DebugSequentialPlay[arg0][i], *text++, 0);
         func_80018E98(D_800F92E0_DebugSequentialPlay[arg0][i], 1);
-        SetBasicSpritePos(D_800F92E0_DebugSequentialPlay[arg0][i], (i * 16 + 0x48) + D_800F8C10_DebugSequentialPlay[arg0], D_800F8C20_DebugSequentialPlay[arg0] + 8);
+        SetBasicSpritePos(D_800F92E0_DebugSequentialPlay[arg0][i], 0x48 + D_800F8C10_DebugSequentialPlay[arg0] + i * 16, D_800F8C20_DebugSequentialPlay[arg0] + 8);
     }
     if (GwPlayer[arg0].group == 1) {
         func_80018C90(D_800F92E0_DebugSequentialPlay[arg0][3]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7E_DebugSequentialPlay/30F1B0", func_800F70D0_DebugSequentialPlay);
-#endif
 
 void func_800F72D0_DebugSequentialPlay(omObjData* arg0) {
     char buf[0x200]; /* unused */
@@ -760,11 +751,8 @@ void func_800F7B5C_DebugSequentialPlay(void) {
     }
 }
 
-// register allocation: retail keeps &n in a saved register (masked ~5)
-#ifdef NON_MATCHING
 void func_800F7D70_DebugSequentialPlay(void) {
     f32 n[3];
-    f32* np;
     Vtx* v;
     Vtx* p;
     f32 x;
@@ -787,20 +775,16 @@ void func_800F7D70_DebugSequentialPlay(void) {
         }
     }
     D_800F95C0_DebugSequentialPlay += 1.0f;
-    np = n;
     for (row = 0; row < 14; row++) {
         for (col = 0; col < 14; col++) {
             p = &v[col + row * 15];
-            func_800295FC(p, &v[col + (row * 15 + 1)], &v[col + (row + 1) * 15], (Vec3f*)np);
+            func_800295FC(p, &v[(col + 1) + row * 15], &v[col + (row + 1) * 15], (Vec3f*)n);
             for (k = 0; k < 3; k++) {
-                p->n.n[k] = np[k] * 127.0f;
+                p->n.n[k] = n[k] * 127.0f;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7E_DebugSequentialPlay/30F1B0", func_800F7D70_DebugSequentialPlay);
-#endif
 
 void func_800F7FC0_DebugSequentialPlay(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);

@@ -689,17 +689,18 @@ omObjData* func_800F8A58_WhackAPlant(omObjData* arg0, u16 arg1, void* arg2) {
     p->unk2 = mdl;
     return obj;
 }
-// NON_MATCHING: register allocation; the rise-end model id is sign-extended once per branch in retail (masked 26, 559/558)
+// NON_MATCHING: register allocation: the per-branch (s16)mdl goes through v0 before s0 (raw 3, masked 0;
+// tried one assignment before the if, the assignment inside the call argument)
 #ifdef NON_MATCHING
 void func_800F8BE8_WhackAPlant(omObjData* arg0) {
     WAPPlantWork* w;
     WAPPlant* p;
     u16 pot;
-    s16 mdl;
+    u16 mdl;
     WAPPots* pots;
     f32 y;
     f32 a;
-    s16 m;
+    s32 m;
 
     w = arg0->unk_50;
     p = w->unk68;
@@ -723,10 +724,11 @@ void func_800F8BE8_WhackAPlant(omObjData* arg0) {
         if (p->unk6 == 0) {
             p->unk6 = p->unkA;
             p->unk0 = 1;
-            m = mdl;
             if (rand8() & 1) {
+                m = (s16)mdl;
                 func_80025BB8(m, (s16)D_800FB6FC_WhackAPlant->motion[1]);
             } else {
+                m = (s16)mdl;
                 func_80025BB8(m, (s16)D_800FB6FC_WhackAPlant->motion[0]);
             }
             func_80025EB4(m, 2, 2);
@@ -1228,7 +1230,8 @@ void func_800FA6AC_WhackAPlant(s16 arg0, f32 arg1) {
         v++;
     }
 }
-// NON_MATCHING: w/cpu in swapped saved registers, one load/store order (masked 2)
+// NON_MATCHING: w/cpu in swapped saved registers (s1/s0 for retail s0/s1), masked 0 (the masked 2 is
+// branch targets shifted by func_800F8BE8); tried w declared first, no port local (M1f)
 #ifdef NON_MATCHING
 void func_800FA760_WhackAPlant(omObjData* arg0) {
     f32 dist;

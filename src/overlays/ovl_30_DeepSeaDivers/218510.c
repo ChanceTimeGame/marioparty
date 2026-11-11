@@ -726,6 +726,8 @@ void func_800F8680_DeepSeaDivers(omObjData* obj) {
     dw->unk44 = player;
     D_80100C72_DeepSeaDivers[1]++;
 }
+// register allocation and local shapes (masked 69, 1315/1316): retail keeps 16 in s0 for the
+// unk5C/unk_AE stores, chains the n zero stores and passes the hit flag straight in a3 (M1f)
 #ifdef NON_MATCHING
 void func_800F88E0_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* pl;
@@ -774,6 +776,7 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
         D_80100478_DeepSeaDivers[w->unkC].bottom.x = obj->trans.x;
         D_80100478_DeepSeaDivers[w->unkC].bottom.y = obj->trans.y;
         D_80100478_DeepSeaDivers[w->unkC].bottom.z = obj->trans.z;
+        return;
     }
     cur = pl->unk_3C;
     port = pl->unk_56;
@@ -809,8 +812,7 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
                 func_80060F04(w->unk44, 5, 0, 5);
                 pl->unk_AE = 16;
             }
-        }
-        if (w->unk5C != 0) {
+        } else if (w->unk5C != 0) {
             w->unk5C--;
         } else {
             w->unk24 = w->unk24 - 0.1;
@@ -839,14 +841,12 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
             }
         }
     } else {
-        sy = 0;
         if (!(GwPlayer[w->unk44].flags & 1)) {
             func_80009C90(obj, ContStkX[port], ContStkY[port]);
-            sy = 0;
         }
+        sy = 0;
         sx = 0;
-        pl->unk_40 = 0.0f;
-        w->unk24 = 0.0f;
+        w->unk24 = pl->unk_40 = 0.0f;
     }
     if (pl->unk_40 != w->unk24) {
         if (w->unk24 < pl->unk_40) {
@@ -923,7 +923,10 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
     pl->unk_3C = cur;
     q = (s32)(cur / 90.0);
     t = (cur - q * 90.0) / 90.0;
-    k = (q + 1 < 4) ? q + 1 : 0;
+    k = q + 1;
+    if (k >= 4) {
+        k = 0;
+    }
     w->unk28 = t * (D_800FF974_DeepSeaDivers[k][0] - D_800FF974_DeepSeaDivers[q][0]) + D_800FF974_DeepSeaDivers[q][0];
     w->unk28 = w->unk28 * (pl->unk_40 / 2.0);
     w->unk2C = t * (D_800FF974_DeepSeaDivers[k][1] - D_800FF974_DeepSeaDivers[q][1]) + D_800FF974_DeepSeaDivers[q][1];
@@ -1099,6 +1102,8 @@ void func_800F9AF4_DeepSeaDivers(omObjData* obj) {
     w->unk34 = obj->scale.x;
     D_8010040C_DeepSeaDivers++;
 }
+// register allocation: t and x take $f4/$f6, retail $f6/$f4 (raw 9, masked 0; tried declaration orders,
+// sc/s/t as one variable, x sharing h)
 #ifdef NON_MATCHING
 void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
@@ -1107,10 +1112,10 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
     unk2C0C0Struct50* anim;
     DSDPlayerWork* plw;
     Matrix4f m;
-    f64 sc;
     f32 h;
     f32 t;
-    f32 s;
+    f32 x;
+    f32 y;
 
     w = func_800FC1C8_DeepSeaDivers(obj);
     if (w->unk0 >= 0) {
@@ -1119,6 +1124,7 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
         w->unk14 = D_800F2B7C[obj->model[0]].unk_28;
         w->unk18 = D_800F2B7C[obj->model[0]].unk_2C;
         w->unk42 = (u32)(func_800FC1F4_DeepSeaDivers() * 3) >> 16;
+        h = D_800F2B7C[obj->model[0]].unk_3C;
         if (w->unk4E < 10) {
             w->unk50 = 4;
             w->unk52 = 0xE0;
@@ -1128,9 +1134,9 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
         }
         w->unk5C = 24;
         w->unk5E = -1;
-        sc = D_800F2B7C[obj->model[0]].unk_3C;
-        w->unk4 = sc * 9.0 * 5.0;
-        w->unk6 = sc * 7.5 * 5.0;
+        w->unk4 = h * 9.0 * 5.0;
+        w->unk6 = h * 7.5 * 5.0;
+        return;
     }
     switch (w->unk8) {
         case 0:
@@ -1159,8 +1165,8 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
         case 1:
             if (w->unk5C != 0) {
                 w->unk5C--;
-                s = (f32)(fabs(func_800AEAC0(w->unk5C * 22.5)) * 0.5 + 1.0) * w->unk34;
-                obj->scale.x = obj->scale.y = s;
+                t = fabs(func_800AEAC0(w->unk5C * 22.5)) * 0.5 + 1.0;
+                obj->scale.x = obj->scale.y = t * w->unk34;
             }
             diver = D_80101780_DeepSeaDivers[w->unk5E].diver;
             pw = func_800FC1C8_DeepSeaDivers(diver);
@@ -1175,15 +1181,17 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
                 MtxRotate(m, pw->unk28 + anim->unk_44.x - 90.0, pw->unk2C + anim->unk_44.y, 0.0f);
                 MtxTranslate(m, D_800FF994_DeepSeaDivers[plw->unk_58].x, D_800FF994_DeepSeaDivers[plw->unk_58].y,
                              D_800FF994_DeepSeaDivers[plw->unk_58].z);
+                x = m[3][0];
+                y = m[3][1];
                 if (w->unk40 != 0) {
                     t = (f32)(16 - w->unk40) / 16.0;
-                    obj->trans.x = t * (m[3][0] - obj->trans.x) + obj->trans.x;
-                    obj->trans.y = t * (m[3][1] - obj->trans.y) + obj->trans.y;
+                    obj->trans.x = t * (x - obj->trans.x) + obj->trans.x;
+                    obj->trans.y = t * (y - obj->trans.y) + obj->trans.y;
                     obj->trans.z = t * 108.0 * 5.0 + -600.0;
                     w->unk40--;
                 } else {
-                    obj->trans.x = m[3][0];
-                    obj->trans.y = m[3][1];
+                    obj->trans.x = x;
+                    obj->trans.y = y;
                     obj->trans.z = -60.0f;
                 }
             }
@@ -1204,7 +1212,7 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
                 w->unk40 = 80;
                 PlaySound(0x196);
                 w->unk54 = w->unk4E;
-                GwPlayer[D_8010046A_DeepSeaDivers[w->unk5E * 2]].coins_mg += w->unk4E;
+                GwPlayer[D_8010046A_DeepSeaDivers[w->unk5E * 2]].coins_mg += w->unk54;
                 GwPlayer[D_8010046A_DeepSeaDivers[w->unk5E * 2 + 1]].coins_mg += w->unk54;
                 D_80100406_DeepSeaDivers = 1;
             }
@@ -2421,9 +2429,7 @@ void func_800FED88_DeepSeaDivers(omObjData* obj, s16 idx) {
         func_800258EC(obj->model[idx * 3 + 2], 4, 4);
     }
 }
-#ifdef NON_MATCHING
 void func_800FEF34_DeepSeaDivers(omObjData* obj) {
-    DSDFish* t;
     s16 i;
     s16 j;
     s16 k;
@@ -2433,15 +2439,14 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
         if ((f32)D_800FFE6C_DeepSeaDivers[i] < D_801006D8_DeepSeaDivers[i].vx) {
             D_800FFE6C_DeepSeaDivers[i]++;
         }
-        if (D_801006D8_DeepSeaDivers[i].vx < (f32)D_800FFE6C_DeepSeaDivers[i]) {
+        if ((f32)D_800FFE6C_DeepSeaDivers[i] > D_801006D8_DeepSeaDivers[i].vx) {
             D_800FFE6C_DeepSeaDivers[i]--;
         }
-        t = &D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers];
-        t->pos.x = D_801006D8_DeepSeaDivers[i].pos.x;
-        t->pos.y = D_801006D8_DeepSeaDivers[i].pos.y;
-        t->pos.z = D_801006D8_DeepSeaDivers[i].pos.z;
-        t->rot.y = D_801006D8_DeepSeaDivers[i].rot.y;
-        t->rot.z = D_801006D8_DeepSeaDivers[i].rot.z;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].pos.x = D_801006D8_DeepSeaDivers[i].pos.x;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].pos.y = D_801006D8_DeepSeaDivers[i].pos.y;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].pos.z = D_801006D8_DeepSeaDivers[i].pos.z;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].rot.y = D_801006D8_DeepSeaDivers[i].rot.y;
+        D_80100758_DeepSeaDivers[i][D_80100C50_DeepSeaDivers].rot.z = D_801006D8_DeepSeaDivers[i].rot.z;
         D_800FFE60_DeepSeaDivers[i] += 2 + ((u32)(func_800FC1F4_DeepSeaDivers() * 3) >> 16);
         if (D_800FFE60_DeepSeaDivers[i] >= 361) {
             D_800FFE60_DeepSeaDivers[i] = 0;
@@ -2471,15 +2476,15 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
             }
         }
         if (i == 0) {
-            obj->scale.x = D_80100C54_DeepSeaDivers[0];
-            obj->scale.y = D_80100C54_DeepSeaDivers[0];
-            obj->scale.z = D_80100C54_DeepSeaDivers[0];
-            obj->rot.x = D_801006D8_DeepSeaDivers[0].rot.x;
-            obj->rot.y = D_801006D8_DeepSeaDivers[0].rot.y;
-            obj->rot.z = D_801006D8_DeepSeaDivers[0].rot.z;
-            obj->trans.x = D_801006D8_DeepSeaDivers[0].pos.x;
-            obj->trans.y = D_801006D8_DeepSeaDivers[0].pos.y;
-            obj->trans.z = D_801006D8_DeepSeaDivers[0].pos.z;
+            obj->scale.x = D_80100C54_DeepSeaDivers[i];
+            obj->scale.y = D_80100C54_DeepSeaDivers[i];
+            obj->scale.z = D_80100C54_DeepSeaDivers[i];
+            obj->rot.x = D_801006D8_DeepSeaDivers[i].rot.x;
+            obj->rot.y = D_801006D8_DeepSeaDivers[i].rot.y;
+            obj->rot.z = D_801006D8_DeepSeaDivers[i].rot.z;
+            obj->trans.x = D_801006D8_DeepSeaDivers[i].pos.x;
+            obj->trans.y = D_801006D8_DeepSeaDivers[i].pos.y;
+            obj->trans.z = D_801006D8_DeepSeaDivers[i].pos.z;
         } else {
             func_80025830(obj->model[i * 3], D_80100C54_DeepSeaDivers[i], D_80100C54_DeepSeaDivers[i],
                           D_80100C54_DeepSeaDivers[i]);
@@ -2492,10 +2497,10 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
     if (++D_80100C50_DeepSeaDivers >= 10) {
         D_80100C50_DeepSeaDivers = 0;
     }
-    for (i = 0; i < 2; i++) {
-        for (j = 0; j < 2; j++) {
-            k = j + (i * 3 + 1);
-            if (j == 0) {
+    for (j = 0; j < 2; j++) {
+        for (i = 0; i < 2; i++) {
+            k = i + (s16)(j * 3 + 1);
+            if (i == 0) {
                 n = D_80100C50_DeepSeaDivers - 5;
             } else {
                 n = D_80100C50_DeepSeaDivers - 7;
@@ -2503,25 +2508,22 @@ void func_800FEF34_DeepSeaDivers(omObjData* obj) {
             if (n < 0) {
                 n += 10;
             }
-            func_80025830(obj->model[k], D_80100C54_DeepSeaDivers[i], D_80100C54_DeepSeaDivers[i],
-                          D_80100C54_DeepSeaDivers[i]);
-            func_800257E4(obj->model[k], D_80100758_DeepSeaDivers[i][n].rot.x, D_80100758_DeepSeaDivers[i][n].rot.y,
-                          D_80100758_DeepSeaDivers[i][n].rot.z);
-            if (j == 0) {
-                func_80025798(obj->model[k], (f32)(D_800FFE6C_DeepSeaDivers[i] * 3) + D_80100758_DeepSeaDivers[i][n].pos.x,
-                              (f32)(D_800FFE6C_DeepSeaDivers[i] * 3) + D_80100758_DeepSeaDivers[i][n].pos.y,
-                              (f32)(D_800FFE6C_DeepSeaDivers[i] * 3) + D_80100758_DeepSeaDivers[i][n].pos.z);
+            func_80025830(obj->model[k], D_80100C54_DeepSeaDivers[j], D_80100C54_DeepSeaDivers[j],
+                          D_80100C54_DeepSeaDivers[j]);
+            func_800257E4(obj->model[k], D_80100758_DeepSeaDivers[j][n].rot.x, D_80100758_DeepSeaDivers[j][n].rot.y,
+                          D_80100758_DeepSeaDivers[j][n].rot.z);
+            if (i == 0) {
+                func_80025798(obj->model[k], (f32)(D_800FFE6C_DeepSeaDivers[j] * 3) + D_80100758_DeepSeaDivers[j][n].pos.x,
+                              (f32)(D_800FFE6C_DeepSeaDivers[j] * 3) + D_80100758_DeepSeaDivers[j][n].pos.y,
+                              (f32)(D_800FFE6C_DeepSeaDivers[j] * 3) + D_80100758_DeepSeaDivers[j][n].pos.z);
             } else {
-                func_80025798(obj->model[k], D_80100758_DeepSeaDivers[i][n].pos.x - (f32)(D_800FFE6C_DeepSeaDivers[i] * 3),
-                              D_80100758_DeepSeaDivers[i][n].pos.y - (f32)(D_800FFE6C_DeepSeaDivers[i] * 3),
-                              D_80100758_DeepSeaDivers[i][n].pos.z - (f32)(D_800FFE6C_DeepSeaDivers[i] * 3));
+                func_80025798(obj->model[k], D_80100758_DeepSeaDivers[j][n].pos.x - (f32)(D_800FFE6C_DeepSeaDivers[j] * 3),
+                              D_80100758_DeepSeaDivers[j][n].pos.y - (f32)(D_800FFE6C_DeepSeaDivers[j] * 3),
+                              D_80100758_DeepSeaDivers[j][n].pos.z - (f32)(D_800FFE6C_DeepSeaDivers[j] * 3));
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FEF34_DeepSeaDivers);
-#endif
 void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80026040(obj->model[1]);
     D_80100C5C_DeepSeaDivers = 0.0f;
