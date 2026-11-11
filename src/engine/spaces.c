@@ -99,18 +99,15 @@ void func_800A0B90(Matrix4f, void*);
 #define SPACE_VTX_LARGE (&D_800C50A0[0])
 #define SPACE_VTX_SMALL (&D_800C50A0[4])
 
-// loop-invariant hoisting and register allocation: retail hoists the tile size and w*w out of
-// the type loop and spills `camera`; this hoists the second SetTile word instead (masked 58)
-#ifdef NON_MATCHING
 void RenderSpaces(Gfx** displayList, u8* camera, u8 skip) {
     Matrix4f mtxf;
-    s32 type;
-    s32 i;
-    BoardSpace* space;
-    Mtx* mtx;
     Vtx* vtx; // physical address
     f32* scaleTbl;
-    s32 size;
+    BoardSpace* space;
+    s32 type;
+    s32 i;
+    s16 size;
+    Mtx* mtx;
     f32 scale;
 
     if (skip == 0 && D_800F3290 != 0) {
@@ -119,47 +116,45 @@ void RenderSpaces(Gfx** displayList, u8* camera, u8 skip) {
         func_8001D7DC(0, displayList);
         switch (D_800D8140) {
             case 0:
+                size = 32;
                 vtx = (Vtx*)OS_K0_TO_PHYSICAL(SPACE_VTX_LARGE);
                 scaleTbl = D_800C504C;
-                size = 32;
                 break;
             case 1:
+                size = 8;
                 vtx = (Vtx*)OS_K0_TO_PHYSICAL(SPACE_VTX_SMALL);
                 scaleTbl = D_800C504C;
-                size = 8;
                 break;
             default:
+                size = 32;
                 vtx = (Vtx*)OS_K0_TO_PHYSICAL(SPACE_VTX_LARGE);
                 scaleTbl = D_800C5074;
-                size = 32;
                 break;
         }
         for (type = 0; type < SPACE_TYPE_TOTAL; type++) {
-            if (D_800D8118[type] != NULL) {
-                scale = scaleTbl[type];
-                gDPLoadTextureBlock((*displayList)++, (u8*)D_800D8118[type] + 0x10, G_IM_FMT_RGBA, G_IM_SIZ_32b, size, size, 0,
-                                    G_TX_CLAMP, G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-                for (i = 0; i < spaceCnt; i++) {
-                    space = BoardSpaceGet(i);
-                    if (space->spaceType == type && (space->unk0 & 1)) {
-                        func_800A0B90(mtxf, camera + 0x40);
-                        MtxTranslate(mtxf, space->coords.x, space->coords.y, space->coords.z);
-                        MtxScale(mtxf, scale * space->sx, 1.0f, scale * space->sz);
-                        mtx = (Mtx*)D_800F374C + D_800ED52C++;
-                        func_800A0A20(mtxf, mtx);
-                        gSPMatrix((*displayList)++, OS_K0_TO_PHYSICAL(mtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-                        gSPVertex((*displayList)++, vtx, 4, 0);
-                        gSP2Triangles((*displayList)++, 0, 1, 2, 0, 0, 2, 3, 0);
-                    }
+            if (D_800D8118[type] == NULL) {
+                continue;
+            }
+            scale = scaleTbl[type];
+            gDPLoadTextureBlock((*displayList)++, (u8*)D_800D8118[type] + 0x10, G_IM_FMT_RGBA, G_IM_SIZ_32b, size, size, 0,
+                                G_TX_CLAMP, G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            for (i = 0; i < spaceCnt; i++) {
+                space = BoardSpaceGet(i);
+                if (space->spaceType != type || !(space->unk0 & 1)) {
+                    continue;
                 }
+                func_800A0B90(mtxf, camera + 0x40);
+                MtxTranslate(mtxf, space->coords.x, space->coords.y, space->coords.z);
+                MtxScale(mtxf, scale * space->sx, 1.0f, scale * space->sz);
+                mtx = (Mtx*)D_800F374C + D_800ED52C++;
+                func_800A0A20(mtxf, mtx);
+                gSPMatrix((*displayList)++, OS_K0_TO_PHYSICAL(mtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                gSPVertex((*displayList)++, vtx, 4, 0);
+                gSP2Triangles((*displayList)++, 0, 1, 2, 0, 0, 2, 3, 0);
             }
         }
     }
 }
-#else
-void RenderSpaces(Gfx** displayList, u8* camera, u8 skip);
-INCLUDE_ASM("asm/nonmatchings/engine/spaces", RenderSpaces);
-#endif
 
 /* Get pointer to space data section */
 /* The board-space file is big-endian and read in place: the host swaps each halfword and float as
