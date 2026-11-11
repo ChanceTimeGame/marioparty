@@ -74,6 +74,9 @@ typedef struct CrazyCutterShadow {
     /* 0x08 */ f32 unk8;
 } CrazyCutterShadow; /* sizeof 0xC */
 
+/* Retail stores func_80023FC8's result without sign-extending it (an int-returning declaration). */
+#define func_80023FC8_s32(id) ((s32 (*)(s16))func_80023FC8)(id)
+
 /* An expanding/shrinking cut ring (omObjData.unk_50 of the func_800FB778_CrazyCutter objects).
    The N64 allocation is 0x1C bytes; the host's is sizeof (the mask pointer is 8 bytes there). */
 typedef struct CrazyCutterRing {

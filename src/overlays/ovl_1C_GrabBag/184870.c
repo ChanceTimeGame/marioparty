@@ -428,8 +428,6 @@ void func_800F8984_GrabBag(void)
     D_800FB290_GrabBag = 1;
   }
 }
-// scheduling: retail keeps the second angle store out of the delay slot (2 instructions)
-#ifdef NON_MATCHING
 void func_800F8A18_GrabBag(omObjData* arg0) {
     GrabBagPlayerWork* work;
     s16 coins;
@@ -457,17 +455,16 @@ void func_800F8A18_GrabBag(omObjData* arg0) {
             } else {
                 func_800184BC(arg0, 0);
             }
-        } else {
+        } else if (work->start_total > work->total) {
             work->angle = 0.0f;
-            if (work->start_total > work->total) {
-                if (_CheckFlag(0x2B) == 0) {
-                    func_800184BC(arg0, 0xE);
-                } else {
-                    func_800184BC(arg0, 0);
-                }
+            if (_CheckFlag(0x2B) == 0) {
+                func_800184BC(arg0, 0xE);
             } else {
                 func_800184BC(arg0, 0);
             }
+        } else {
+            work->angle = 0.0f;
+            func_800184BC(arg0, 0);
         }
         func_80017DB0(arg0);
         return;
@@ -477,9 +474,6 @@ void func_800F8A18_GrabBag(omObjData* arg0) {
         arg0->trans.y = 3.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F8A18_GrabBag);
-#endif
 // CSE: retail reloads the screen position for each bounds test and keeps 165.0f in a register (masked 39)
 #ifdef NON_MATCHING
 void func_800F8BDC_GrabBag(void) {
@@ -933,7 +927,8 @@ void func_800F9ED0_GrabBag(omObjData* arg0, omObjData* arg1) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
 #endif
-// control flow: GCC if-converts the ±1 returns (masked 39)
+// control flow: GCC if-converts the ±1 returns and drops the final compare; frame 48 vs retail 24
+// (masked 39; tried inverted tests, a ret local with if/else)
 #ifdef NON_MATCHING
 s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
     GrabBagPlayerWork* work0;

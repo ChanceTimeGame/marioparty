@@ -90,7 +90,8 @@ void func_800F69F8_KnockBlockTower(omObjData* obj) {
 }
 
 /* Builds the tower: 5 or 6 blocks, two of them (type 1) bombs. */
-// list-head stores: retail addresses D_800FB650[0]'s fields by symbol, GCC reuses the base register (masked ~24)
+// list-head stores: retail addresses D_800FB650[0]'s type/next by symbol, GCC reuses the base register;
+// loop computes n + 1 at the loop head (masked 18; tried n = D for the obj store, n = n->next)
 #ifdef NON_MATCHING
 void func_800F6A10_KnockBlockTower(void) {
     KBTNode* n;
@@ -350,17 +351,18 @@ void func_800F7320_KnockBlockTower(omObjData* obj) {
 }
 
 /* Knocks the block `id` out of the tower. */
-// register allocation: the found node is copied through v1 first (masked 3)
+// register allocation: the found node is copied through v1 first (masked 1; tried a separate found
+// local)
 #ifdef NON_MATCHING
 void func_800F7398_KnockBlockTower(omObjData* obj, s32 id) {
     KBTPlayerWork* work = obj->unk_50;
     KBTNode* n;
     KBTNode* prev;
-    omObjData* o;
 
     KBTNode* next;
 
-    if ((n = func_800F72E8_KnockBlockTower(id)) == NULL) {
+    n = func_800F72E8_KnockBlockTower(id);
+    if (n == NULL) {
         return;
     }
     next = n->next;
@@ -374,8 +376,7 @@ void func_800F7398_KnockBlockTower(omObjData* obj, s32 id) {
     func_800258EC(obj->model[10], 4, 0);
     func_8001E2A8(work->unk_21[10], 0);
     func_8001E268(work->unk_21[10], 4, 4);
-    o = n->obj;
-    func_80025798(obj->model[10], o->trans.x, o->trans.y, o->trans.z + 200.0f);
+    func_80025798(obj->model[10], n->obj->trans.x, n->obj->trans.y, n->obj->trans.z + 200.0f);
     func_80025830(obj->model[10], 5.0f, 5.0f, 5.0f);
     PlaySound(0x2B2);
     n->obj->func_ptr = NULL;
@@ -403,17 +404,17 @@ f32 func_800F74BC_KnockBlockTower(KBTNode* node) {
     return prev->obj->trans.y + 150.0f;
 }
 
-// register allocation: a0/v1 swapped in the list walks (masked 4)
+// register allocation: &vec set before the D_800F3FB0 load, prev->obj in v0 not a1 (raw 4, masked 2;
+// tried vp after the call, the o local in the second walk)
 #ifdef NON_MATCHING
 void func_800F7524_KnockBlockTower(omObjData* obj) {
     Vec3f vec;
     Vec3f* vp;
     KBTNode* prev;
     KBTNode* n;
+    omObjData* o;
     f32 below;
     f32 top;
-    f32 s;
-    f32 d;
 
     vp = &vec;
     func_800A0D00(vp, D_800F3FB0[0]->trans.x, 0.0f, D_800F3FB0[0]->trans.z);
@@ -433,9 +434,10 @@ void func_800F7524_KnockBlockTower(omObjData* obj) {
     }
     n = prev->next;
     if (n != NULL) {
+        o = prev->obj;
         below = -150.0f;
-        if (prev->obj != NULL) {
-            below = prev->obj->trans.y;
+        if (o != NULL) {
+            below = o->trans.y;
         }
         if (obj->trans.y < n->baseY + 150.0f && n->state == 2 && n->vel == 0.0f) {
             obj->trans.y += 5.0f;
@@ -488,13 +490,13 @@ void func_800F7524_KnockBlockTower(omObjData* obj) {
         }
         top = func_800F74BC_KnockBlockTower(n);
         func_80025798(obj->model[1], obj->trans.x, top + 1.0f, obj->trans.z);
-        d = obj->trans.y - top;
-        if (d > 200.0f) {
-            s = 0.6f;
+        top = obj->trans.y - top;
+        if (top > 200.0f) {
+            top = 0.6f;
         } else {
-            s = 0.8f - d / 2000.0001f;
+            top = 0.8f - top / 2000.0001f;
         }
-        func_80025830(obj->model[1], s, s, s);
+        func_80025830(obj->model[1], top, top, top);
     }
     if (n->state == 1) {
         n->state = 0;
@@ -560,7 +562,7 @@ void func_800F7B04_KnockBlockTower(KBTNode* node) {
     PlaySound(0x2B1);
 }
 
-// register allocation: v0/v1 in the final next test (masked 0)
+// register allocation: v0/v1 in the final next test (masked 0; tried a ret local, early return 0)
 #ifdef NON_MATCHING
 s32 func_800F7B90_KnockBlockTower(s32 idx) {
     KBTNode* n = D_800FB650_KnockBlockTower[0].next;
