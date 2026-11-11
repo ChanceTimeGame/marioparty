@@ -1502,18 +1502,11 @@ void func_800FB860_DeepSeaDivers(void) {
     Center.y = -580.0f;
     Center.z = -110.0f;
 }
-// retail keeps out + 4 in a register (masked 3); tried *o++ x3, explicit o = out + 4 (CSE folds both)
-#ifdef NON_MATCHING
-void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    f32* o = (f32*)out;
-
+void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
     *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    o[0] = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    o[1] = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB8C8_DeepSeaDivers);
-#endif
 void func_800FB964_DeepSeaDivers(void) {
     D_801004B4_DeepSeaDivers = 0;
     D_801004B0_DeepSeaDivers = 0;
@@ -1533,7 +1526,7 @@ void func_800FB984_DeepSeaDivers(void) {
     D_801004D0_DeepSeaDivers = D_801004F8_DeepSeaDivers = CZoom;
     guTranslateF(m, Center.x, Center.y, Center.z);
     MtxRotate(m, CRot.x, CRot.y, CRot.z);
-    func_800FB8C8_DeepSeaDivers(m, 0.0f, 0.0f, CZoom, &v);
+    func_800FB8C8_DeepSeaDivers(m, 0.0f, 0.0f, CZoom, &v.x);
     D_801004D4_DeepSeaDivers.x = D_801004FC_DeepSeaDivers.x = v.x;
     D_801004D4_DeepSeaDivers.y = D_801004FC_DeepSeaDivers.y = v.y;
     D_801004D4_DeepSeaDivers.z = D_801004FC_DeepSeaDivers.z = v.z;
@@ -1596,7 +1589,7 @@ void func_800FBB30_DeepSeaDivers(void) {
     t = t / func_800AEFD0(D_800C3110->unk_40 * 0.5);
     for (i = 0; i < D_801004B4_DeepSeaDivers; i++) {
         func_800FB8C8_DeepSeaDivers(m, D_80100508_DeepSeaDivers[i].x - mid[0], D_80100508_DeepSeaDivers[i].y - mid[1],
-                                    D_80100508_DeepSeaDivers[i].z - mid[2], &r);
+                                    D_80100508_DeepSeaDivers[i].z - mid[2], &r.x);
         dx = (r.x < 0.0f) ? -r.x : r.x;
         dx = dx / t + r.z;
         dy = (r.y < 0.0f) ? -r.y : r.y;
