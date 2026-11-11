@@ -280,7 +280,8 @@ void func_800F74DC_HammerDrop(omObjData* arg0) {
     func_800F6AF8_HammerDrop(arg0, 3);
 }
 
-// CPU target selection (masked 35): retail compares unk_4C with a fresh -1 and reloads it, not reusing target; tried stack copy of the height table, reloading D_800EDE70[unk_4C]
+// CPU target selection (masked 19): register allocation (retail findTarget s2, activeCount s3 zeroed at entry,
+// target s0) plus the branch offsets it shifts; tried stack copy of the height table, reloading D_800EDE70[unk_4C]
 #ifdef NON_MATCHING
 typedef struct HammerDropHeights {
     f32 h[4];
@@ -294,7 +295,7 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
     f32 distance;
     s32 activeCount = 0;
     s32 findTarget = 0;
-    s32 target = -1;
+    s32 target;
     s32 i;
     s32 temp;
 
@@ -306,9 +307,8 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
             candidate = D_800EDE70[state->unk_4C];
             distance = sqrtf((candidate->trans.x * candidate->trans.x) +
                 (candidate->trans.z * candidate->trans.z));
-            item = HAMMER_ITEM_WORK(D_800EDE70[state->unk_4C])->item;
             if ((distance >= 400.0f) ||
-                (func_800F9E68_HammerDrop(item->unk_44, 1) == 0)) {
+                (func_800F9E68_HammerDrop((item = HAMMER_ITEM_WORK(D_800EDE70[state->unk_4C])->item)->unk_44, 1) == 0)) {
                 findTarget = 1;
             }
         }
@@ -327,7 +327,7 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
             target = ((rand8() & 0xFF) % 6) & 0xFF;
             candidate = D_800EDE70[target];
             item = HAMMER_ITEM_WORK(candidate)->item;
-            if (heights.h[state->unk_50] < candidate->trans.y) {
+            if (candidate->trans.y > heights.h[state->unk_50]) {
                 target = -1;
             }
             if ((item->unk_38 == 2) &&
@@ -346,6 +346,8 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
                 }
             }
         }
+    } else {
+        target = -1;
     }
     state->unk_4C = target;
 }
