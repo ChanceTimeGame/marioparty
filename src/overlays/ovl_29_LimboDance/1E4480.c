@@ -460,7 +460,8 @@ void func_800FC4FC_LimboDance(s32 id, f32 amp, f32 angle) {
 
 
 /* Takes a free billboard for sprite and builds its display list (ovl_25's func_800FE2F0). */
-// NON_MATCHING: register allocation / scheduling
+// register allocation (masked 13): the vertex pointer is t1 in retail, t0 here, and one DL store schedules
+// differently; M1g fixed two render modes to retail's 0x5049D8/0x553078 (ovl_25's twin really uses 0x4049D8/0x443078)
 #ifdef NON_MATCHING
 s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     LDBillboard* b;
@@ -497,10 +498,10 @@ s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     anim = D_800EC700[b->unk_22];
     if (anim->unk18 & 0x8000) {
         gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
-        gDPSetRenderMode(gfx++, 0x4049D8, 0);
+        gDPSetRenderMode(gfx++, 0x5049D8, 0);
         gDPSetBlendColor(gfx++, 1, 1, 1, 1);
     } else if (b->unk_29 == 0xFF) {
-        gDPSetRenderMode(gfx++, 0x443078, 0);
+        gDPSetRenderMode(gfx++, 0x553078, 0);
         gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
     } else {
         gDPSetBlendColor(gfx++, 0, 0, 0, 1);
