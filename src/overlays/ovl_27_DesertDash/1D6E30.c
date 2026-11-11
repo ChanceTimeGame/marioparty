@@ -545,8 +545,6 @@ void func_800FB6B8_DesertDash(void) {
 /* Builds a team banner's display list into *buf: frame `frame` of sprite animation `anim` (an I4
    image) drawn at (x, y) scaled by (sx, sy), `strips` texture loads of `rows` lines each, every
    `band` lines a rectangle shifted sideways by sin(phase) * amp (phase advances by `step`). */
-// logic-equivalent gbi-macro rewrite (ovl_20 func_800FA9B0's shape); retail interleaves the writes
-#ifdef NON_MATCHING
 void func_800FB750_DesertDash(Gfx** buf, s16 anim, s32 frame, s32 x, s32 y, s32 phase, s32 band, f32 amp, s32 step,
                               s32 strips, f32 sx, f32 sy) {
     unk65770AnimC* f;
@@ -559,8 +557,6 @@ void func_800FB750_DesertDash(Gfx** buf, s16 anim, s32 frame, s32 x, s32 y, s32 
     s32 i;
     s32 j;
     s32 wave;
-    f32 top;
-    f32 h;
 
     ang = step * phase;
     gfx = *buf;
@@ -574,7 +570,7 @@ void func_800FB750_DesertDash(Gfx** buf, s16 anim, s32 frame, s32 x, s32 y, s32 
     gDPSetTexturePersp(gfx++, G_TP_NONE);
     gDPSetTextureLUT(gfx++, G_TT_NONE);
     gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x004041C8);
-    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureFilter(gfx++, G_TF_AVERAGE);
     gSPSetOtherMode(gfx++, G_SETOTHERMODE_H, G_MDSFT_RGBDITHER, 2, 0x40);
     gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFDF2F9);
     gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0x00, 0xFF);
@@ -592,16 +588,11 @@ void func_800FB750_DesertDash(Gfx** buf, s16 anim, s32 frame, s32 x, s32 y, s32 
         for (j = 0; j < rows / band; j++) {
             wave = func_800AEAC0(ang) * amp * 4.0f * sx;
             ang = (ang + step) % 360;
-            top = (f32)y0 + rows * sy * i;
-            h = band * sy;
-            gSPScisTextureRectangle(gfx++, x0 * 4 + wave, (s16)(s32)(top + h * j) << 2, x1 * 4 + wave,
-                                    (s32)(top + h * (j + 1)) * 4, G_TX_RENDERTILE, 0, (rows * i + band * j) << 5,
+            gSPScisTextureRectangle(gfx++, x0 * 4 + wave, (s16)(s32)(y0 + rows * sy * i + band * sy * j) << 2,
+                                    x1 * 4 + wave, (s32)(y0 + rows * sy * i + band * sy * (j + 1)) * 4, G_TX_RENDERTILE, 0, (rows * i + band * j) << 5,
                                     (s32)(1.0 / sx * 1024.0), (s32)(1.0 / sy * 1024.0));
         }
     }
     gDPPipeSync(gfx++);
     gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FB750_DesertDash);
-#endif
