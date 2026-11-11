@@ -2,6 +2,8 @@
 
 // register allocation: retail copies each value normalised by `len` through $f2 before storing
 // (masked 19); the same residue as HuGuLookAtF (9CE40.c). Every other instruction matches.
+// The copy is -O0's want-value move of an assignment (x = (x = x * len) gives it, plus a second
+// store); x *= len, len * x, a (f64) operand, (void)/(f32)/unary-plus/comma wrappers do not.
 #ifdef NON_MATCHING
 /* guLookAtHiliteF (Hudson): single-precision eye - at, the matrix written as it is built, and
    squared-length highlight tests. */
