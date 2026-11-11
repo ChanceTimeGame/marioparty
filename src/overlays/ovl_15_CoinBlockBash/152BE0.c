@@ -1402,8 +1402,8 @@ void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
         p->unk_9E = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 3 / 65536;
     }
 }
-// NON_MATCHING: register allocation (level in s1 and p in s2 in retail) and one
-// missing `andi 0xff` after `& 3` on the difficulty (tried (u8) casts, % 4, a u8 temporary)
+// NON_MATCHING: register allocation (masked 2): idx in s3 (ours s0) and the final 30 : 12 kept in level's s1;
+// M1g: level is s16 (gives retail's andi 3; andi 0xff, masked 44 -> 2); tried an if/else for 30 : 12
 #ifdef NON_MATCHING
 void func_800FB900_CoinBlockBash(omObjData* obj) {
     f32 d;
@@ -1417,13 +1417,13 @@ void func_800FB900_CoinBlockBash(omObjData* obj) {
     s32 chance;
     s32 idx;
     s32 i;
-    s32 level;
+    s16 level;
 
     p = func_800F7644_CoinBlockBash(obj);
     if (D_801024F0_CoinBlockBash.timer < 4) {
         return;
     }
-    level = (u8)(GwPlayer[obj->work[0]].cpu_difficulty & 3);
+    level = GwPlayer[obj->work[0]].cpu_difficulty & 3;
     maxspd = 1.0 - (f32)(3 - level) * 0.03;
     if (p->unk_98 != 0) {
         p->unk_80 = 0.0f;
