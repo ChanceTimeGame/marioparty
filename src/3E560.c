@@ -418,8 +418,7 @@ void MBModelIDSet(Object* arg0, u8 id) {
     }
 }
 
-// register allocation (masked 9): retail stores a copy of the model index (s1) and sets i = 0 late; tried s32 model, decl order, u16 return cast
-#ifdef NON_MATCHING
+// Retail called func_80023FC8 as returning int here: it narrows the result itself.
 Object* MBModelParamCreate(Object* arg0) {
     MBModel* m;
     omObjData* obj;
@@ -431,7 +430,7 @@ Object* MBModelParamCreate(Object* arg0) {
     if (m != NULL) {
         m->id = MB(arg0)->id;
         obj = m->obj = omAddObj(0x4000, 1, MB(arg0)->obj->mtncnt, -1, func_8003DE60);
-        model = func_80023FC8(*MB(arg0)->obj->model);
+        model = ((s32 (*)(s16))func_80023FC8)(*MB(arg0)->obj->model);
         omSetStatBit(obj, 0x80);
         *obj->model = model;
         omSetRot(obj, 0.0f, 0.0f, 0.0f);
@@ -447,7 +446,7 @@ Object* MBModelParamCreate(Object* arg0) {
         }
         if (D_800C4350[m->id].shadowScale > 0.0f) {
             obj = m->shadow = omAddObj(0x4000, 1, 0, -1, func_8003E040);
-            model = func_80023FC8(*MB(arg0)->shadow->model);
+            model = ((s32 (*)(s16))func_80023FC8)(*MB(arg0)->shadow->model);
             omSetStatBit(obj, 0x80);
             *obj->model = model;
             omSetRot(obj, 0.0f, 0.0f, 0.0f);
@@ -462,9 +461,6 @@ Object* MBModelParamCreate(Object* arg0) {
     }
     return (Object*)m;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/3E560", MBModelParamCreate);
-#endif
 
 void MBModelAttrSetDispOn(Object* arg0) {
     func_800258EC(*arg0->unk_3C->unk_40, 4, 0);
