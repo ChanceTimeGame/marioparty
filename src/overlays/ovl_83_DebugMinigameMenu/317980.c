@@ -204,14 +204,14 @@ char* D_800FA46C_DebugMinigameMenu[2] = { "HUMAN", "COM" };
 char* D_800FA474_DebugMinigameMenu[4] = { "EASY", "NORMAL", "HARD", "VERYHARD" };
 char* D_800FA484_DebugMinigameMenu[6] = { "MARIO", "LUIGI", "PEACH", "YOSI", "WARIO", "DONKEY" };
 char* D_800FA49C_DebugMinigameMenu[3] = { "GAME", "BOARD", "QUEST" };
-s32 D_800FA4A8_DebugMinigameMenu = 0;
+u8 D_800FA4A8_DebugMinigameMenu = 0;
 s32 D_800FA4AC_DebugMinigameMenu = 0; /* scroll; D_800FA4AE is its low half */
 s32 D_800FA4B0_DebugMinigameMenu = 0;
 s32 D_800FA4B4_DebugMinigameMenu = 1;
 /* 0x800FA4B8: two unreferenced zero words (0, 0) pad .data */
 
 
-// one redundant andi 0xff on the rand8 result (u8 truncation retail keeps)
+// one redundant andi 0xff on the rand8 result (u8 truncation retail keeps; raw 1); tried (u8) casts, % 8
 #ifdef NON_MATCHING
 void func_800F65E0_DebugMinigameMenu(void) {
     omObjData* obj;
@@ -472,13 +472,13 @@ void func_800F7350_DebugMinigameMenu(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_800F7350_DebugMinigameMenu);
 #endif
 
-// menu page: branch layout differs (masked ~65, logic per m2c)
+// menu page (masked 31, mostly shifted offsets): retail passes x = 0x40 through a register (andi at
+// the call) and loads the colour pair after the skip test; tried an s32 x local (hoisted)
 #ifdef NON_MATCHING
 void func_800F75CC_DebugMinigameMenu(omObjData* arg0) {
     DebugMgEntry* e;
     u16* c;
     s32 i;
-    s32 dir;
 
     rand8();
     e = &D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10];
@@ -504,37 +504,39 @@ void func_800F75CC_DebugMinigameMenu(omObjData* arg0) {
         if ((D_800FAE00_DebugMinigameMenu[i] & 0x90) && D_800F98B0_DebugMinigameMenu[D_800FAC40_DebugMinigameMenu * 10 + D_800FAC42_DebugMinigameMenu].skip == 0) {
             if (D_800FA4A8_DebugMinigameMenu == 0) {
                 omAddObj(2, 0, 0, -1, func_800F8A24_DebugMinigameMenu);
-                *(u8*)&D_800FA4A8_DebugMinigameMenu = 1; /* retail: the word's high byte (any nonzero) */
+                D_800FA4A8_DebugMinigameMenu = 1;
                 func_80018C90(D_800FAD96_DebugMinigameMenu);
                 arg0->func_ptr = func_800F855C_DebugMinigameMenu;
                 func_800F9400_DebugMinigameMenu(1);
             }
-        } else {
-            dir = -1;
-            if ((D_800FAE00_DebugMinigameMenu[i] & 1) || (dir = 1, D_800FAE00_DebugMinigameMenu[i] & 2)) {
-                func_800F944C_DebugMinigameMenu(dir);
-                func_800F9678_DebugMinigameMenu();
-                func_800F9400_DebugMinigameMenu(0);
-            } else {
-                dir = -1;
-                if ((D_800FAE00_DebugMinigameMenu[i] & 4) || (dir = 1, D_800FAE00_DebugMinigameMenu[i] & 8)) {
-                    func_800F94C8_DebugMinigameMenu(dir);
-                    func_800F9678_DebugMinigameMenu();
-                    func_800F9400_DebugMinigameMenu(4);
-                } else if (D_800FAE00_DebugMinigameMenu[i] & 0x40) {
-                    D_800FAC5A_DebugMinigameMenu = 0;
-                    D_800FAC5C_DebugMinigameMenu = 0;
-                    D_800FAC5E_DebugMinigameMenu = 0;
-                    arg0->func_ptr = func_800F7BD4_DebugMinigameMenu;
-                } else if (ContBtnTrg[i] & 0x10) {
-                    if (++D_800C5970 >= 3) {
-                        D_800C5970 = 0;
-                    }
-                } else if (D_800FAE00_DebugMinigameMenu[i] & 0x20) {
-                    func_80018C90(D_800FAD96_DebugMinigameMenu);
-                    arg0->func_ptr = func_800F79E0_DebugMinigameMenu;
-                }
+        } else if (D_800FAE00_DebugMinigameMenu[i] & 1) {
+            func_800F944C_DebugMinigameMenu(-1);
+            func_800F9678_DebugMinigameMenu();
+            func_800F9400_DebugMinigameMenu(0);
+        } else if (D_800FAE00_DebugMinigameMenu[i] & 2) {
+            func_800F944C_DebugMinigameMenu(1);
+            func_800F9678_DebugMinigameMenu();
+            func_800F9400_DebugMinigameMenu(0);
+        } else if (D_800FAE00_DebugMinigameMenu[i] & 4) {
+            func_800F94C8_DebugMinigameMenu(-1);
+            func_800F9678_DebugMinigameMenu();
+            func_800F9400_DebugMinigameMenu(4);
+        } else if (D_800FAE00_DebugMinigameMenu[i] & 8) {
+            func_800F94C8_DebugMinigameMenu(1);
+            func_800F9678_DebugMinigameMenu();
+            func_800F9400_DebugMinigameMenu(4);
+        } else if (D_800FAE00_DebugMinigameMenu[i] & 0x40) {
+            D_800FAC5A_DebugMinigameMenu = 0;
+            D_800FAC5C_DebugMinigameMenu = 0;
+            D_800FAC5E_DebugMinigameMenu = 0;
+            arg0->func_ptr = func_800F7BD4_DebugMinigameMenu;
+        } else if (ContBtnTrg[i] & 0x10) {
+            if (++D_800C5970 >= 3) {
+                D_800C5970 = 0;
             }
+        } else if (D_800FAE00_DebugMinigameMenu[i] & 0x20) {
+            func_80018C90(D_800FAD96_DebugMinigameMenu);
+            arg0->func_ptr = func_800F79E0_DebugMinigameMenu;
         }
     }
 }
@@ -765,7 +767,7 @@ void func_800F855C_DebugMinigameMenu(omObjData* arg0) {
     y = (D_800FAC42_DebugMinigameMenu + 10) * 9;
     if (y - D_800FA4AC_DebugMinigameMenu >= 0x31) {
         if (--D_800FA4B4_DebugMinigameMenu == 0) {
-            p = &D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu];
+            p = (u16*)&D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu];
             *p = func_80019060(D_800FAD98_DebugMinigameMenu, 0, 1);
             func_80018D44(*p, 0x4000);
             func_80018D84(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0x8000);
@@ -774,7 +776,7 @@ void func_800F855C_DebugMinigameMenu(omObjData* arg0) {
             SetBasicSpritePos(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], x, (y - D_800FA4AE_DebugMinigameMenu) + dy2 + 8);
             func_80018F68(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0xFF, 0xFF, 0xBE);
             D_800FA4B0_DebugMinigameMenu++;
-            p = &D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu];
+            p = (u16*)&D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu];
             *p = func_80019060(D_800FAD98_DebugMinigameMenu, 0, 1);
             func_80018D44(*p, 0x4000);
             func_80018D84(D_800FADA0_DebugMinigameMenu[D_800FA4B0_DebugMinigameMenu], 0x8000);
