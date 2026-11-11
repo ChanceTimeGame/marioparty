@@ -401,14 +401,17 @@ void func_800F7600_MushroomBank(s32 arg0) {
 }
 
 
-// scheduling: the model id load comes before the shelf offsets (masked 14 with the unit shift)
-#ifdef NON_MATCHING
 void func_800F7620_MushroomBank(omObjData* obj) {
     s32 i;
+    f32 x;
+    f32 y;
+    f32 z;
 
     for (i = 0; i < 12; i++) {
-        func_80025798((obj->model + 1)[i], obj->trans.x + D_800F89C0_MushroomBank[i].pos.x,
-                      obj->trans.y + D_800F89C0_MushroomBank[i].pos.y, obj->trans.z + D_800F89C0_MushroomBank[i].pos.z);
+        x = obj->trans.x + D_800F89C0_MushroomBank[i].pos.x;
+        y = obj->trans.y + D_800F89C0_MushroomBank[i].pos.y;
+        z = obj->trans.z + D_800F89C0_MushroomBank[i].pos.z;
+        func_80025798(obj->model[i + 1], x, y, z);
         if (func_80059B48(D_800F89C0_MushroomBank[i].unlock) == 0 || D_800F89B8_MushroomBank != 0) {
             func_800258EC(obj->model[i + 1], 4, 4);
         } else if (func_80059B10(D_800F89C0_MushroomBank[i].reward) != 0) {
@@ -418,17 +421,14 @@ void func_800F7620_MushroomBank(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_MushroomBank/2D6FC0", func_800F7620_MushroomBank);
-#endif
-// register: the shelf model id is sign-extended at each use instead of once (masked 19 with the unit shift)
+// NON_MATCHING: register: the shelf model id is sign-extended at each use instead of once (masked 9; a direct
+// s16 assignment and a chained store change nothing)
 #ifdef NON_MATCHING
 void func_800F7754_MushroomBank(void) {
     omObjData* obj;
     unk_ovl_2D_struct* m;
     void* file;
     s16 model;
-    u16 file16;
     s32 i;
 
     obj = omAddObj(1, 13, 0, -1, func_800F7620_MushroomBank);
@@ -458,9 +458,7 @@ void func_800F7754_MushroomBank(void) {
         obj->rot.z = 0.0f;
     }
     for (i = 0; i < 12; i++) {
-        file16 = LoadFormFile(D_800F89C0_MushroomBank[i].model | 0x90000, 0x2A9);
-        obj->model[i + 1] = file16;
-        model = file16;
+        model = obj->model[i + 1] = LoadFormFile(D_800F89C0_MushroomBank[i].model | 0x90000, 0x2A9);
         func_80025830(model, 0.6f, 0.6f, 0.6f);
         if (func_80059B48(D_800F89C0_MushroomBank[i].unlock) == 0 || D_800F89B8_MushroomBank != 0) {
             func_800258EC(model, 4, 4);
