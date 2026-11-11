@@ -588,8 +588,6 @@ s32 func_800F758C_StaffScene(StaffModel* m, s32 check) {
     *rz = v;
     return 0;
 }
-// register allocation (24.0f and 360.0f swap between FPR and GPR)
-#ifdef NON_MATCHING
 void func_800F7684_StaffScene(StaffModel* m) {
     StaffScaleKey* k;
     Vec3f* sc;
@@ -597,10 +595,8 @@ void func_800F7684_StaffScene(StaffModel* m) {
     f32 d;
     f32 step;
     Vec3f* p;
-    f32 tt;
     f32 vx;
     f32 ax;
-    f32 dr;
     f32* ry;
     f32* rx;
     f32 vy;
@@ -610,7 +606,8 @@ void func_800F7684_StaffScene(StaffModel* m) {
     k = D_800FD394_StaffScene;
     sc = &m->scale;
     for (; k->frames != 0; k++) {
-        step = (k->scale - sc->x) / k->frames;
+        step = k->scale - sc->x;
+        step /= k->frames;
         for (i = k->frames; i != 0; i--) {
             if (i == 1) {
                 sc->x = k->scale;
@@ -626,14 +623,15 @@ void func_800F7684_StaffScene(StaffModel* m) {
     }
     HuPrcSleep(6);
     p = &m->pos;
-    tt = 3600.0f;
+    step = 3600.0f;
     d = D_800FD348_StaffScene.y - p->y;
     vy = -10.0f;
-    ay = 2.0f * d / tt - 2.0f * vy / 60.0f;
+    d = 2.0f * d / step;
+    ay = d - 2.0f * vy / 60.0f;
     vz = (D_800FD348_StaffScene.z - p->z) / 60.0f;
     vx = -12.0f;
     ax = 0.4f;
-    dr = 24.0f;
+    d = 24.0f;
     ry = &m->rot.y;
     rx = &m->rot.x;
     i = 60;
@@ -643,7 +641,7 @@ void func_800F7684_StaffScene(StaffModel* m) {
         p->y = vy + p->y;
         vy += ay;
         p->z = vz + p->z;
-        *ry -= dr;
+        *ry -= d;
         if (*ry < 0.0f) {
             *ry += 360.0f;
         }
@@ -657,9 +655,6 @@ void func_800F7684_StaffScene(StaffModel* m) {
     *ry = 0.0f;
     HuPrcSleep(2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F7684_StaffScene);
-#endif
 // register allocation only (masked 0): d and the folded 2*vy/60 constant swap $f2/$f0; tried d inline, no tt, tt*tt, 2*vy/60 via a local
 #ifdef NON_MATCHING
 void func_800F78F8_StaffScene(StaffModel* m) {
