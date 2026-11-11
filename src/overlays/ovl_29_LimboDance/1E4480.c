@@ -700,7 +700,7 @@ void func_800FDE38_LimboDance(s16 id) {
             }
             HuMemDirectFree(b->unk_00);
             b->unk_00 = (Gfx*)-1;
-            b->unk_1C = 0;
+            b->unk_1C = NULL;
             b->unk_20 = 0;
             b->unk_28 = 0;
             b->unk_22 = 0;
@@ -789,7 +789,8 @@ void func_800FDF58_LimboDance(void) {
 }
 
 /* Builds this frame's billboard display list (ovl_25's func_800FFD18). */
-// NON_MATCHING: register allocation / scheduling
+// load order (masked 18): retail loads D_800C3110 before D_800F3FA8, b->unk_1C before D_800F37F0,
+// and &Center after the first mul.s, as in the ovl_25 twin; tried [] vs + forms and a Vtx** unk_1C.
 #ifdef NON_MATCHING
 void func_800FE3CC_LimboDance(void) {
     Mtx view;
@@ -850,7 +851,7 @@ void func_800FE3CC_LimboDance(void) {
             MtxMult(sc, tmp, mf);
         }
         if (b->unk_20 != 0) {
-            gSPSegment(gfx++, 1, osVirtualToPhysical(*((Vtx**)b->unk_1C + D_800F37F0 + 2)));
+            gSPSegment(gfx++, 1, osVirtualToPhysical(b->unk_1C[D_800F37F0 + 2]));
         }
         func_800A0A20(mf, mtx);
         gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
