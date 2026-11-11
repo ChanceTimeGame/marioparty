@@ -1381,7 +1381,6 @@ s32 func_800FB27C_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB27C_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
     DSDWork* w;
     DSDWork* t;
@@ -1404,9 +1403,17 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
                 case 0:
                 case 2:
                     if (obj->trans.x >= 0.0f) {
-                        w->unk42 = (w->unk2 & 8) ? 45 : 90;
+                        if (!(w->unk2 & 8)) {
+                            w->unk42 = 90;
+                        } else {
+                            w->unk42 = 45;
+                        }
                     } else {
-                        w->unk42 = (w->unk2 & 8) ? 270 : 315;
+                        if (!(w->unk2 & 8)) {
+                            w->unk42 = 315;
+                        } else {
+                            w->unk42 = 270;
+                        }
                     }
                     if (fabs(obj->trans.x) < 250.0) {
                         w->unk42 = -w->unk42;
@@ -1443,7 +1450,7 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
                 sel = -1;
                 for (i = 0; i < D_80100410_DeepSeaDivers; i++) {
                     /* a new best is always taken; a tie only on a coin flip */
-                    if (best < D_80100418_DeepSeaDivers[i]->unk4E) {
+                    if (D_80100418_DeepSeaDivers[i]->unk4E > best) {
                         best = D_80100418_DeepSeaDivers[i]->unk4E;
                         sel = i;
                     } else if (D_80100418_DeepSeaDivers[i]->unk4E == best && (func_800FC1F4_DeepSeaDivers() & 1)) {
@@ -1455,7 +1462,7 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
                 w->unk2 |= 0x10;
             } else {
                 w->unk40 =
-                    D_80100440_DeepSeaDivers[(func_800FC1F4_DeepSeaDivers() * D_80100438_DeepSeaDivers) >> 16]->unkA;
+                    D_80100440_DeepSeaDivers[(s32)(func_800FC1F4_DeepSeaDivers() * D_80100438_DeepSeaDivers) >> 16]->unkA;
                 w->unk2 &= ~0x10;
             }
         }
@@ -1470,7 +1477,7 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
             dy = t->unk14 - w->unk14;
             w->unk42 = (s32)func_800B0CD8(dx, -dy) + 180;
             if (sqrtf(dx * dx + dy * dy) < 80.0) {
-                btn = 0x4000;
+                btn |= 0x4000;
             }
         }
     }
@@ -1481,9 +1488,6 @@ s16 func_800FB310_DeepSeaDivers(omObjData* obj) {
     }
     return btn;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB310_DeepSeaDivers);
-#endif
 void func_800FB860_DeepSeaDivers(void) {
     CZoom = 21000.0f;
     CRot.x = 2.9249f;
