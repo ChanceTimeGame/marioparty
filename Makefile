@@ -234,6 +234,8 @@ build/src/overlays/ovl_09_PipeMaze/113DC0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32
 build/src/overlays/ovl_1B_HammerDrop/17E710.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_34 23CF40.c (Bumper Ball Maze): mul fix on, blank-line strip (func_800F7240: nop between a delay-slot mul.s and the next)
 build/src/overlays/ovl_34_BumperBallMaze/23CF40.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_05 FD460.c (Shell Game): mul fix on, blank lines stripped (rule below; func_800FE87C)
+build/src/overlays/ovl_05_ShellGame/FD460.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_69 2BB5F0.c (Game Mode Overworld): mul fix on (func_800F907C: nop between back-to-back mul.s)
 build/src/overlays/ovl_69_GameModeOverworld/2BB5F0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 
@@ -636,6 +638,14 @@ $(BUILD_DIR)/src/overlays/ovl_24_FlowerShower/1BD640.c.o $(BUILD_DIR)/src/overla
 # ovl_00 CDA50.c: mul fix on (CFLAGS line above) with blank lines stripped: mul.s right after
 # func_800AEAC0's return in func_800FA400. A separate rule so the shared target list is not edited.
 $(BUILD_DIR)/src/overlays/ovl_00_MemoryMatch/CDA50.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+
+# ovl_05 FD460.c: mul fix on with blank lines stripped (func_800FE87C's mul.s pair; calls before mul.s gain no nop).
+$(BUILD_DIR)/src/overlays/ovl_05_ShellGame/FD460.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<

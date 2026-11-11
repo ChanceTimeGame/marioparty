@@ -773,7 +773,8 @@ void func_800F8968_HotRopeJump(f32 x, f32 y, f32 z) {
     func_800F8F04_HotRopeJump(id, 4.0f);
 }
 
-// NON_MATCHING: register allocation of the hit point (t/dy swap f4/f6) and ret in a2 not v0 (masked 7, 2 instructions long); tried explicit returns, declaration order
+// NON_MATCHING: register allocation only (masked 0, raw 14): t and dy swap $f4/$f6; early returns fixed
+// the result register (M1g); tried one-expression dx/dy/dz (worse)
 #ifdef NON_MATCHING
 s32 func_800F8A14_HotRopeJump(omObjData* obj) {
     HRJSeg* seg;
@@ -782,7 +783,6 @@ s32 func_800F8A14_HotRopeJump(omObjData* obj) {
     f32 dy;
     f32 dz;
     s32 i;
-    s32 ret;
 
     seg = D_80100854_HotRopeJump;
     for (i = 0; i < 12; i++, seg++) {
@@ -793,21 +793,22 @@ s32 func_800F8A14_HotRopeJump(omObjData* obj) {
             break;
         }
     }
-    ret = 0;
-    if (i != 12) {
-        dx = t * seg->dir.x + seg->pos.x;
-        dy = t * seg->dir.y + seg->pos.y;
-        dz = t * seg->dir.z + seg->pos.z;
-        dx -= obj->trans.x;
-        dy -= obj->trans.y + 50.0;
-        dz -= obj->trans.z;
-        if (dx * dx + dy * dy + dz * dz <= 2500.0) {
-            ret = 1;
-        } else if (seg->angle >= 225.0 - D_801004BC_HotRopeJump * 7.5 && seg->angle <= 270.0f) {
-            ret = 2;
-        }
+    if (i == 12) {
+        return 0;
     }
-    return ret;
+    dx = t * seg->dir.x + seg->pos.x;
+    dy = t * seg->dir.y + seg->pos.y;
+    dz = t * seg->dir.z + seg->pos.z;
+    dx -= obj->trans.x;
+    dy -= obj->trans.y + 50.0;
+    dz -= obj->trans.z;
+    if (dx * dx + dy * dy + dz * dz <= 2500.0) {
+        return 1;
+    }
+    if (seg->angle >= 225.0 - D_801004BC_HotRopeJump * 7.5 && seg->angle <= 270.0f) {
+        return 2;
+    }
+    return 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800F8A14_HotRopeJump);
