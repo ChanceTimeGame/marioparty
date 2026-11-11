@@ -525,6 +525,7 @@ void func_800F7914_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col
 
 /* lower a coin out of the column (coins lost) */
 // retail computes res->coins % 20 up to the quotient and drops it (dead code GCC kept); C has no use for it
+// (masked 37, 11 of them that dead chain): an expression statement, an unused u16/f32 target and q*20 spelled out are all deleted whole; n64nmaddr: data accesses same (M1g)
 #ifdef NON_MATCHING
 void func_800F7A40_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col, PlayerRes* res) {
     f32 rem;
