@@ -223,7 +223,7 @@ void func_800FBC34_MemoryMatch(omObjData* arg0) {
     func_80025830(arg0->model[1], arg0->scale.x, arg0->scale.y, arg0->scale.z);
     D_800FE1DE_MemoryMatch++;
 }
-// index register copies and scheduling (masked 21)
+// register/schedule: retail copies i into v1/s0 per block, 6 instructions we lack (masked 32); tried u8 i (adds andi), compare operand order
 #ifdef NON_MATCHING
 void func_800FBF24_MemoryMatch(omObjData* arg0) {
     s32 i = arg0->work[0];
@@ -244,7 +244,7 @@ void func_800FBF24_MemoryMatch(omObjData* arg0) {
     case 1:
         if (!(D_800FE234_MemoryMatch[i] & 1)) {
             arg0->trans.y += 5.0;
-            if ((D_800FE248_MemoryMatch[i] + 25.0) * 5.0 <= arg0->trans.y) {
+            if (arg0->trans.y >= (D_800FE248_MemoryMatch[i] + 25.0) * 5.0) {
                 D_800FE230_MemoryMatch[i] = 0;
             }
         } else {
@@ -419,7 +419,7 @@ void func_800FC9E4_MemoryMatch(s16 arg0, Vec3f* arg1, Vec3f* arg2) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/D27D0", func_800FC9E4_MemoryMatch);
 #endif
-// switch compare tree, counter reload and loop index shape (masked 55)
+// register/schedule (masked 35): ++counter copy, obj index as j*16 + (unsigned)n*4, f22/f26 swap; tried u16 n, assign-in-test
 #ifdef NON_MATCHING
 void func_800FCD58_MemoryMatch(omObjData* arg0) {
     Vec3f a;
@@ -433,6 +433,8 @@ void func_800FCD58_MemoryMatch(omObjData* arg0) {
     f32 s;
     s16 n;
     s16 j;
+    u16 cnt;
+    unk65770Obj* o;
 
     w = arg0->unk_50;
     idx = arg0->work[3];
@@ -465,10 +467,9 @@ void func_800FCD58_MemoryMatch(omObjData* arg0) {
             w->unk_38 += 0.25;
             arg0->trans.y += w->unk_38;
         }
+    case 3:
         h = 120.0f;
         f = 0.5f;
-        break;
-    case 3:
         break;
     }
     a.x = arg0->trans.x + D_800FE290_MemoryMatch[idx][0];
@@ -527,8 +528,8 @@ void func_800FCD58_MemoryMatch(omObjData* arg0) {
         arg0->work[1]--;
     }
     if (func_8005FD5C() + D_800F64F8 == 0) {
-        if (!(++D_800FE2B0_MemoryMatch[idx] & 3)) {
-            n = (D_800FE2B0_MemoryMatch[idx] >> 2) & 3;
+        if (!((cnt = ++D_800FE2B0_MemoryMatch[idx]) & 3)) {
+            n = (cnt >> 2) & 3;
             if ((arg0->work[0] & 0x7F) == 1) {
                 for (j = 0; j < 2; j++) {
                     if (j == 0) {
@@ -538,9 +539,10 @@ void func_800FCD58_MemoryMatch(omObjData* arg0) {
                     }
                     func_80067480(arg0->work[2], n + j * 4, 0x8000);
                     func_80067284(arg0->work[2], n + j * 4, 1.0f);
-                    D_800EE330[arg0->work[2]]->obj[n + j * 4]->unk58 = 0.0f;
-                    D_800EE330[arg0->work[2]]->obj[n + j * 4]->unk50 = 0;
-                    D_800EE330[arg0->work[2]]->obj[n + j * 4]->unkA = 1;
+                    o = D_800EE330[arg0->work[2]]->obj[n + j * 4];
+                    o->unk58 = 0.0f;
+                    o->unk50 = 0;
+                    o->unkA = 1;
                 }
             } else {
                 func_800674BC(arg0->work[2], n, 0x8000);
@@ -561,16 +563,14 @@ void func_800FCD58_MemoryMatch(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/D27D0", func_800FCD58_MemoryMatch);
 #endif
-// retail stores D_800FE250/54/70/74 as separate symbols (masked 11)
-#ifdef NON_MATCHING
 void func_800FD6A0_MemoryMatch(omObjData* arg0, omObjData* arg1) {
     f32 dx, dz, d;
     s16 i = 0;
 
-    D_800FE250_MemoryMatch[0][0] = arg0->trans.x;
-    D_800FE250_MemoryMatch[0][1] = arg0->trans.z;
-    D_800FE270_MemoryMatch[0][0] = arg1->trans.x;
-    D_800FE270_MemoryMatch[0][1] = arg1->trans.z;
+    D_800FE250_MemoryMatch[i][0] = arg0->trans.x;
+    D_800FE250_MemoryMatch[i][1] = arg0->trans.z;
+    D_800FE270_MemoryMatch[i][0] = arg1->trans.x;
+    D_800FE270_MemoryMatch[i][1] = arg1->trans.z;
     dx = arg1->trans.x - arg0->trans.x;
     dz = arg1->trans.z - arg0->trans.z;
     d = sqrtf(dx * dx + dz * dz);
@@ -585,6 +585,3 @@ void func_800FD6A0_MemoryMatch(omObjData* arg0, omObjData* arg1) {
     D_800FE2B0_MemoryMatch[i] = 0;
     D_800EDE70[i]->work[0] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/D27D0", func_800FD6A0_MemoryMatch);
-#endif

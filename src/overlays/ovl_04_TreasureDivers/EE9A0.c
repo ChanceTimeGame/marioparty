@@ -1,6 +1,9 @@
 #include "common.h"
 #include "TreasureDivers.h"
 
+s16 func_800F9E08_TreasureDivers(omObjData* obj);
+s16 func_800F9E9C_TreasureDivers(omObjData* obj, s16 ang);
+
 s32 func_8000C144(void);
 u8 func_80067328(s16 grpIdx, s16 idx);
 extern omObjData* D_800F2AF8[];
@@ -967,7 +970,7 @@ void func_800F9728_TreasureDivers(s16 i) {
 }
 
 /* A coin jumping out of a treasure. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING: one instruction (masked 1): unk18 / 2 ends srl where retail keeps sra; tried chained store, /=
 #ifdef NON_MATCHING
 void func_800F98B8_TreasureDivers(s16 i) {
     f32 x0;
@@ -1026,8 +1029,6 @@ void func_800F9BAC_TreasureDivers(s16 i) {
 }
 
 /* Lists the free treasures (D_800FE708) and the divers carrying one (D_800FE738). */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 s16 func_800F9CB0_TreasureDivers(void) {
     TDWork* w;
     s16 i;
@@ -1048,9 +1049,6 @@ s16 func_800F9CB0_TreasureDivers(void) {
     }
     return -(D_800FE704_TreasureDivers == 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F9CB0_TreasureDivers);
-#endif
 
 /* Whether the diver faces away (more than 90 degrees) from where its CPU wants to go. */
 // NON_MATCHING: register allocation / scheduling
@@ -1112,8 +1110,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F9E
 #endif
 
 /* A CPU diver's button presses: steers w->unk3E towards a treasure or a diver carrying one. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 s16 func_800FA084_TreasureDivers(omObjData* obj) {
     TDPlayerWork* pw;
     TDWork* w;
@@ -1141,7 +1137,7 @@ s16 func_800FA084_TreasureDivers(omObjData* obj) {
             if ((func_800FA640_TreasureDivers() & 0xFF) < 4) {
                 r = (func_800FA640_TreasureDivers() * 90) >> 16;
                 w->unk3E = r - 45;
-                if (w->unk3E & 0x8000) {
+                if (w->unk3E < 0) {
                     w->unk3E = r + 315;
                 }
             }
@@ -1149,10 +1145,10 @@ s16 func_800FA084_TreasureDivers(omObjData* obj) {
     } else {
         if (w->unk3C < 0) {
             if (D_800FE704_TreasureDivers != 0) {
-                w->unk3C = D_800FE708_TreasureDivers[(func_800FA640_TreasureDivers() * D_800FE704_TreasureDivers) >> 16]->unkA;
+                w->unk3C = D_800FE708_TreasureDivers[(s32)(func_800FA640_TreasureDivers() * D_800FE704_TreasureDivers) >> 16]->unkA;
                 w->unk2 |= 0x10;
             } else {
-                w->unk3C = D_800FE738_TreasureDivers[(func_800FA640_TreasureDivers() * D_800FE730_TreasureDivers) >> 16]->unkA;
+                w->unk3C = D_800FE738_TreasureDivers[(s32)(func_800FA640_TreasureDivers() * D_800FE730_TreasureDivers) >> 16]->unkA;
                 w->unk2 &= ~0x10;
             }
         }
@@ -1164,7 +1160,7 @@ s16 func_800FA084_TreasureDivers(omObjData* obj) {
                 w->unk3C = -1;
             }
             if (w->unk52 == 0) {
-                w->unk3E = func_800B0CD8(t->pos.x - w->pos.x, t->pos.y - w->pos.y) + 180;
+                w->unk3E = (s32)func_800B0CD8(t->pos.x - w->pos.x, t->pos.y - w->pos.y) + 180;
                 if (w->unk46 == 0 && (u16)func_800F9E9C_TreasureDivers(obj, w->unk3E) < 64) {
                     w->unk52 = (u32)(func_800FA640_TreasureDivers() & 3) + pw->unk_40 * 4.0;
                 }
@@ -1173,13 +1169,10 @@ s16 func_800FA084_TreasureDivers(omObjData* obj) {
     }
     if (func_800F9E08_TreasureDivers(obj) == 0 &&
         (func_800FA640_TreasureDivers() & 0xFF) < GwPlayer[w->unk40].cpu_difficulty * 4 + 28 && w->unk52 == 0) {
-        btn = 0x8000;
+        btn |= 0x8000;
     }
     if (w->unk52 != 0) {
         w->unk52--;
     }
     return btn;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800FA084_TreasureDivers);
-#endif

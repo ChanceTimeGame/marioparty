@@ -279,9 +279,14 @@ void func_800F74DC_HammerDrop(omObjData* arg0) {
     func_800F6AF8_HammerDrop(arg0, 3);
 }
 
-// Logic-equivalent CPU target selection; retail copies the height table to the stack.
+// CPU target selection (masked 35): retail compares unk_4C with a fresh -1 and reloads it, not reusing target; tried stack copy of the height table, reloading D_800EDE70[unk_4C]
 #ifdef NON_MATCHING
+typedef struct HammerDropHeights {
+    f32 h[4];
+} HammerDropHeights;
+
 void func_800F74F8_HammerDrop(omObjData* arg0) {
+    HammerDropHeights heights = *(HammerDropHeights*) D_800FB5F8_HammerDrop;
     HammerDropPlayerState* state = (HammerDropPlayerState*) ((unkGlobalStruct_00*) arg0->unk_50)->unk_E4;
     HammerDropItemState* item;
     omObjData* candidate;
@@ -300,7 +305,7 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
             candidate = D_800EDE70[state->unk_4C];
             distance = sqrtf((candidate->trans.x * candidate->trans.x) +
                 (candidate->trans.z * candidate->trans.z));
-            item = HAMMER_ITEM_WORK(candidate)->item;
+            item = HAMMER_ITEM_WORK(D_800EDE70[state->unk_4C])->item;
             if ((distance >= 400.0f) ||
                 (func_800F9E68_HammerDrop(item->unk_44, 1) == 0)) {
                 findTarget = 1;
@@ -321,7 +326,7 @@ void func_800F74F8_HammerDrop(omObjData* arg0) {
             target = ((rand8() & 0xFF) % 6) & 0xFF;
             candidate = D_800EDE70[target];
             item = HAMMER_ITEM_WORK(candidate)->item;
-            if (D_800FB5F8_HammerDrop[state->unk_50] < candidate->trans.y) {
+            if (heights.h[state->unk_50] < candidate->trans.y) {
                 target = -1;
             }
             if ((item->unk_38 == 2) &&
