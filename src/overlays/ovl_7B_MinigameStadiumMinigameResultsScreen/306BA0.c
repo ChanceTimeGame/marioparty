@@ -14,8 +14,6 @@ f32 D_800FB108_MinigameStadiumMinigameResultsScreen = 10.0f; /* its step */
 f32 D_800FB10C_MinigameStadiumMinigameResultsScreen = 100.0f; /* its height */
 
 /* One player: model, coin counter and the minigame coins' digits. */
-// block layout: the else-if path reloads flags (retail) / reuses them (C) (masked 33)
-#ifdef NON_MATCHING
 void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
     PlayerRes* all[4];
     Process* proc;
@@ -33,7 +31,7 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
     func_800F9A0C_MinigameStadiumMinigameResultsScreen(res);
     HuPrcSleep(2);
     func_800F9B34_MinigameStadiumMinigameResultsScreen(res);
-    func_800F9BF0_MinigameStadiumMinigameResultsScreen();
+    func_800F9BF0_MinigameStadiumMinigameResultsScreen(res);
     func_800F9C94_MinigameStadiumMinigameResultsScreen(res, col);
     func_80025798(res->model, res->pos.x, res->pos.y, res->pos.z);
     func_80025798(res->model2, D_800FB0E0[res->index], 0.0f, 0.0f);
@@ -64,15 +62,15 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
                 }
             }
         }
-    } else if ((res->flags & 2) && res->flags == 2) {
-        do {
+    } else if (res->flags & 2) {
+        while (res->flags == 2) {
             HuPrcVSleep();
             func_800F9F94_MinigameStadiumMinigameResultsScreen(res);
             func_800FA1C0_MinigameStadiumMinigameResultsScreen(res, col);
             if ((col->flags & 0x400) && !(res->flags & 0x40)) {
                 break;
             }
-        } while (res->flags == 2);
+        }
     }
     res->flags |= 0x80;
     if (res->unk_7A == 0) {
@@ -91,7 +89,8 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
         func_800FAD74_MinigameStadiumMinigameResultsScreen(res);
     }
     for (i = 0; i < 4; i++) {
-        all[i] = main->player[i]->user_data;
+        proc = main->player[i];
+        all[i] = proc->user_data;
     }
     if ((all[0]->flags & 0x800) && (all[1]->flags & 0x800) && (all[2]->flags & 0x800) && (all[3]->flags & 0x800)) {
         D_800FB2A4_MinigameStadiumMinigameResultsScreen = 1;
@@ -100,9 +99,6 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9310_MinigameStadiumMinigameResultsScreen);
-#endif
 
 // scheduling: the index shift of &D_800FB0F0[c] comes before the table base (raw 2, masked 2);
 // `D_800FB0F0 + c` tried
@@ -198,33 +194,30 @@ void func_800F9A0C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
 }
 
 /* the player's rank by minigame coins (1 + how many won more) */
-// register allocation and loop scheduling (masked 12)
-#ifdef NON_MATCHING
 void func_800F9B34_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     PlayerRes* all[4];
     ResMain* main;
-    PlayerRes* me;
+    Process* p;
     s32 i;
-    s32 n;
+    s8 n;
 
     main = HuPrcCurrentGet()->relative->user_data;
     for (i = 0; i < 4; i++) {
-        all[i] = main->player[i]->user_data;
+        p = main->player[i];
+        all[i] = p->user_data;
     }
-    n = 0;
-    me = all[res->index];
-    for (i = 0; i < 4; i++) {
-        if (me != all[i] && me->coinsMg < all[i]->coinsMg) {
+    for (i = 0, n = 0; i < 4; i++) {
+        if (all[res->index] == all[i]) {
+            continue;
+        }
+        if (all[res->index]->coinsMg < all[i]->coinsMg) {
             n++;
         }
     }
     res->rank += n;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9B34_MinigameStadiumMinigameResultsScreen);
-#endif
 
-void func_800F9BF0_MinigameStadiumMinigameResultsScreen(void) {
+void func_800F9BF0_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     PlayerRes* all[4];
     ResMain* main;
     Process* prc;
@@ -320,8 +313,6 @@ void func_800F9F94_MinigameStadiumMinigameResultsScreen(PlayerRes *res)
 }
 
 /* climb with the counted coins */
-// retail recomputes coins % 20 in its own block; C shares it (masked 21)
-#ifdef NON_MATCHING
 void func_800FA020_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     f32 top;
 
@@ -332,22 +323,15 @@ void func_800FA020_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     if ((s16)(res->coins % 20) + res->coinsMg < 20) {
         if (res->pos.y > top) {
             res->pos.y = top;
-        } else {
-            if ((s16)(res->coins % 20) == 0 && res->coins != 0) {
-                res->pos.y = 600.0f;
-            }
-            goto end;
         }
-    }
-    if (res->pos.y > 600.0f) {
+        if ((s16)(res->coins % 20) == 0 && res->coins != 0) {
+            res->pos.y = 600.0f;
+        }
+    } else if (res->pos.y > 600.0f) {
         res->pos.y = 600.0f;
     }
-end:
     func_80025798(res->model, res->pos.x, res->pos.y, res->pos.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800FA020_MinigameStadiumMinigameResultsScreen);
-#endif
 
 /* sink with the coins lost */
 void func_800FA1C0_MinigameStadiumMinigameResultsScreen(PlayerRes* res, ColWork* col) {
@@ -582,8 +566,6 @@ void func_800FAE64_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
 }
 
 /* the end pose: cheer (won coins) or sulk (lost) */
-// block layout: retail branches into the cheer/sulk tails with gotos (masked 14)
-#ifdef NON_MATCHING
 void func_800FAEE0_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     s8 t;
 
@@ -593,7 +575,12 @@ void func_800FAEE0_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
             func_80025C20(res->model, func_80025E48(res->mot[2]), 0, 8, 0);
         }
         HuPrcVSleep();
-    } else if (res->coinsMg < 0 || (t == 0 && res->coinsMg < 0)) {
+    } else if (res->coinsMg < 0) {
+        if (func_80025E48(res->model) != func_80025E48(res->mot[3])) {
+            func_80025C20(res->model, func_80025E48(res->mot[3]), 0, 8, 0);
+        }
+        HuPrcVSleep();
+    } else if (t == 0 && res->coinsMg < 0) {
         if (func_80025E48(res->model) != func_80025E48(res->mot[3])) {
             func_80025C20(res->model, func_80025E48(res->mot[3]), 0, 8, 0);
         }
@@ -603,6 +590,3 @@ void func_800FAEE0_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
         res->flags |= 0x800;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800FAEE0_MinigameStadiumMinigameResultsScreen);
-#endif

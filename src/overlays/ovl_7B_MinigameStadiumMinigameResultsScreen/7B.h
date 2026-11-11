@@ -165,7 +165,7 @@ void func_800F9654_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800F97FC_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800F9A0C_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800F9B34_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
-void func_800F9BF0_MinigameStadiumMinigameResultsScreen(void);
+void func_800F9BF0_MinigameStadiumMinigameResultsScreen(PlayerRes* res);
 void func_800F9C94_MinigameStadiumMinigameResultsScreen(PlayerRes* res, ColWork* col);
 void func_800F9CB8_MinigameStadiumMinigameResultsScreen(ColWork* col, PlayerRes* res);
 void func_800F9F54_MinigameStadiumMinigameResultsScreen(PlayerRes* res);

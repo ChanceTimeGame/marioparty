@@ -195,7 +195,8 @@ void func_800F6DB8_BobsledRun(BRWork* work, f32 x, f32 z, f32 ox, f32 oz) {
 }
 
 /* The game controller (D_800F2AF8[1]): start, race, results. */
-// the photo-finish branch: retail reloads D_800F3FB0[0]/[1] through a base register
+// the photo-finish branch: retail reloads D_800F3FB0[0]/[1] through a base register (&D_800F3FB0[1]
+// and -4 in the else arm); every other difference is the unit's .bss shift (M1f: a local pointer is folded)
 #ifdef NON_MATCHING
 void func_800F6F20_BobsledRun(omObjData* obj) {
     f32 x0;
@@ -414,7 +415,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800F6F20_
 #endif
 
 /* The bobsled (D_800F3FB0[team]): steering, jumps, bumps and both cameras. */
-// trans.y kept in an integer register, the bump branches not cross-jumped, block layout
+// trans.y kept in an integer register (z in f30), the bump branches not cross-jumped, block layout,
+// ground0 read lbu+sll/sra; M1f matched the fade-out sprite call (masked ~227 incl. the unit's .bss shift)
 #ifdef NON_MATCHING
 void func_800F78F4_BobsledRun(omObjData* obj) {
     s16 stkX;
@@ -452,7 +454,6 @@ void func_800F78F4_BobsledRun(omObjData* obj) {
     u32 ust;
     u32 hi;
     f32 ny;
-    u16 spr;
     s16 ah;
 
     accel = 0.0f;
@@ -761,11 +762,10 @@ void func_800F78F4_BobsledRun(omObjData* obj) {
     } else if (D_800FF2A8_BobsledRun[work->unk_58].timer > 40) {
         obj->func_ptr = NULL;
         if (work->unk_58 == 0) {
-            spr = D_800FFADA_BobsledRun;
+            func_80018FBC(D_800FFADA_BobsledRun, 0, 255, -16);
         } else {
-            spr = D_800FFADC_BobsledRun;
+            func_80018FBC(D_800FFADC_BobsledRun, 0, 255, -16);
         }
-        func_80018FBC(spr, 0, 255, -16);
         func_80018FBC(D_800FF2A8_BobsledRun[work->unk_58].sprite, 0, 255, -16);
         func_80018FBC(D_800FF2A8_BobsledRun[work->unk_58].sprite2, 0, 255, -16);
         func_800258EC(obj->model[0], 4, 4);
@@ -2401,7 +2401,9 @@ void func_800FDFC8_BobsledRun(s32 team, u8 mdl) {
 }
 
 /* The bobsled after the crash zone or the goal: the winner slides to a stop, the loser spins out. */
-// trans.z kept in an integer register, delay-slot fill of the jump arc
+// register allocation: retail keeps seven floats across calls (x f30, y f28, spin f26, speed f24, h/cy f22,
+// 180.0f f20) and so trans.z in s5; masked ~93, all else is the unit's .bss shift. M1f tried cy reusing h and
+// d reusing speed (six FP registers, z still in FP)
 #ifdef NON_MATCHING
 void func_800FE080_BobsledRun(omObjData* obj) {
     BRWork* work;
