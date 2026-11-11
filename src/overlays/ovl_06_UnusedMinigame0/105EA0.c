@@ -1113,8 +1113,11 @@ void func_800FFA64_UnusedMinigame0(void) {
     }
     gSPEndDisplayList(gfx++);
 }
-// register allocation and block order (masked 540; logic checked against the asm, stores per field equal): retail keeps 180.0f in s3 (ours 0.0f),
-// does not hoist D_8010AF60[i] / CSE the ob[2] load in the first loop, and cross-jumps the 4.0f spin store in state 3
+// register allocation and block order (2350 vs 2349 instructions; masked 540 is mostly the 16-byte data shift
+// that one extra instruction causes, the opcode-only diff is 63 lines; logic and stores checked against the asm,
+// the census store difference is the cross-jumped spin store): retail keeps 180.0f in s3 (ours 0.0f), loads
+// D_801034A8[n].v.ob[2] twice in the second vertex statement (ours CSEs it; tried .n.ob, operand order), does not
+// hoist D_8010AF60[i], and cross-jumps the 4.0f/-4.0f spin stores in state 3 (ours recomputes i << 6 at the join)
 #ifdef NON_MATCHING
 s32 func_80100850_UnusedMinigame0(void) {
     s32* p;

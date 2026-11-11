@@ -183,7 +183,8 @@ void func_8010920C_YoshisTropicalIslandEndingScene(Gfx** arg0) {
 
 
 
-// register allocation (masked 0): the j * 0.04f temporary lands in $f20, retail $f0
+// register allocation (raw 2, masked 0): the j * 0.04f temporary lands in $f20, retail $f0 (tried
+// (j * 0.04f) * (j * 0.04f), a separate temp local: both raw 4)
 #ifdef NON_MATCHING
 void func_80109294_YoshisTropicalIslandEndingScene(void) {
     Vec3f from;
