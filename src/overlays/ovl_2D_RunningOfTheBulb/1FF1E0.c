@@ -1868,7 +1868,7 @@ void func_800FBF74_RunningOfTheBulb(omObjData* arg0) {
     ContBtnTrg[temp_s0] = 0;
 }
 
-// register allocation and branch layout
+// register allocation only (raw 150, masked 0): s/f registers rotated; spill-slot declaration order fixed
 #ifdef NON_MATCHING
 void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     struct {
@@ -1881,6 +1881,8 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* bulb;
     omObjData* target;
     omObjData* obj;
+    u16 port;
+    u16 chance;
     f32 speed;
     f32 maxA;
     f32 range;
@@ -1894,12 +1896,12 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     f32 y;
     f32 lim;
     f32 dir;
+    f32 dist;
+    f32 step;
     s32 i;
-    u16 diff;
-    u16 port;
-    u16 chance;
     u16 track;
-    s32 cnt;
+    u16 diff;
+    u16 cnt;
     u16 n;
     u16 useLeader;
     u16 visible;
@@ -1956,8 +1958,10 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
     useLeader = 0;
     if (arg0 == D_800FE4A0_RunningOfTheBulb) {
         /* Retail computes the distance and angle to the goal and drops both. */
-        func_800B1750((0.0f - arg0->trans.x) * (0.0f - arg0->trans.x) + (-2350.0f - arg0->trans.z) * (-2350.0f - arg0->trans.z));
-        func_800B0CD8(0.0f - arg0->trans.x, -2350.0f - arg0->trans.z);
+        tx = 0.0f;
+        tz = -2350.0f;
+        func_800B1750((tx - arg0->trans.x) * (tx - arg0->trans.x) + (tz - arg0->trans.z) * (tz - arg0->trans.z));
+        func_800B0CD8(tx - arg0->trans.x, tz - arg0->trans.z);
         cnt = func_800FDAC4_RunningOfTheBulb(arg0, near.obj, near.dist);
         n = 0;
         for (i = 0; i < (u16)cnt; i++) {
@@ -1987,12 +1991,10 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
                     if (ROTB_BODY(obj)->unk_68.bulb->unk_00 & 0x14) {
                         continue;
                     }
-                    /* Retail keeps the last distance checked, not the smallest (the store sits
-                       in the branch delay slot), while the target is the first nearer one. */
                     if (near.dist[i] < best) {
+                        best = near.dist[i];
                         target = obj;
                     }
-                    best = near.dist[i];
                 }
                 if (target == NULL) {
                     target = D_800FE4A0_RunningOfTheBulb;
@@ -2005,7 +2007,8 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
                 bulb->unk_08 = arg0;
                 ext->unk_30 = target;
             }
-        } else if (!useLeader) {
+        }
+        if (!useLeader) {
             target = ext->unk_30;
         }
         if ((ROTB_PLAYER(D_800FE4A0_RunningOfTheBulb)->unk_E4->unk_00 & 4) && D_800FE4A0_RunningOfTheBulb->trans.y < 30.0f) {
@@ -2083,16 +2086,15 @@ void func_800FC0F4_RunningOfTheBulb(omObjData* arg0) {
                 ContBtnTrg[port] |= 0x4000;
             }
         }
-        best = func_800B1750((tx - arg0->trans.x) * (tx - arg0->trans.x) + (tz - arg0->trans.z) * (tz - arg0->trans.z));
-        if (best < 160.0f) {
-            speed = 30.0f;
+        dist = func_800B1750((tx - arg0->trans.x) * (tx - arg0->trans.x) + (tz - arg0->trans.z) * (tz - arg0->trans.z));
+        if (dist < 160.0f) {
+            step = 30.0f;
+        } else if (dist < 500.0f) {
+            step = 40.0f;
         } else {
-            speed = 80.0f;
-            if (best < 500.0f) {
-                speed = 40.0f;
-            }
+            step = 80.0f;
         }
-        speed = mult * speed;
+        speed = mult * step;
         if (jitterX != 0.0f) {
             tx += func_8009B618((f32)rand8(), jitterX) - jitterX / 2.0f;
         }
