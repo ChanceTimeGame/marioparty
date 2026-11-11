@@ -2325,12 +2325,9 @@ void func_800FCF50_SlotCarDerby(omObjData* obj) {
     }
     func_80017DB0(obj);
 }
-// addu operand order for one array address (masked 0)
-#ifdef NON_MATCHING
 void func_800FD2C4_SlotCarDerby(omObjData* obj) {
     SCDObj* rec = func_800FDD28_SlotCarDerby(obj);
     SCDObj* o;
-    s32* p;
     s32* digits;
     s32 i;
     s32 d;
@@ -2390,9 +2387,8 @@ void func_800FD2C4_SlotCarDerby(omObjData* obj) {
                     func_800FF53C_SlotCarDerby(o->unk_40[0], d);
                     func_800671DC(D_80102476_SlotCarDerby, 4, d);
                 } else {
-                    p = i + digits;
-                    func_800FF53C_SlotCarDerby(o->unk_40[0], (s16)*p);
-                    func_800671DC(D_80102476_SlotCarDerby, i, (s16)*p);
+                    func_800FF53C_SlotCarDerby(o->unk_40[0], (s16)digits[i]);
+                    func_800671DC(D_80102476_SlotCarDerby, i, (s16)digits[i]);
                 }
             i++;
             } while (i < 5);
@@ -2415,9 +2411,6 @@ void func_800FD2C4_SlotCarDerby(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FD2C4_SlotCarDerby);
-#endif
 
 void func_800FD658_SlotCarDerby(omObjData* obj) {
     Vec pos;
@@ -2558,8 +2551,6 @@ SCDObj* func_800FDD28_SlotCarDerby(omObjData* obj) {
 #define SCD_MTX_H(mtx, n) (((u16*)&(mtx))[n])
 
 /* Projects pos through camera cam's view into screen x, y and a perspective scale (z). */
-// scheduling of &Center and the viewport register (masked 4)
-#ifdef NON_MATCHING
 void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
     Mtx look;
     Mtx mtx;
@@ -2569,6 +2560,7 @@ void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
     unk_Struct00* c = &D_800C3110[cam];
     Mtx* m = &mtx;
     unk_Struct00* vp;
+    unk_Struct00* vp2;
     f32 rx;
     f32 ry;
     f32 sx;
@@ -2579,7 +2571,7 @@ void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
 
     rx = CRot.x;
     ry = CRot.y;
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -2600,14 +2592,11 @@ void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
         /* written through f32* (not Vec fields): retail reloads D_800F3FA8 after the store */
         ((f32*)screen)[0] = (s16)(vp->unk58 / 4.0 * sx / dist / 1.3333334f) + vp->unk60 / 4.0;
-        vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        ((f32*)screen)[1] = (s16)(vp->unk5A / 4.0 * -sy / dist) + vp->unk62 / 4.0;
-        ((f32*)screen)[2] = vp->unk5A / 4.0 / dist;
+        vp2 = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
+        ((f32*)screen)[1] = (s16)(vp2->unk5A / 4.0 * -sy / dist) + vp2->unk62 / 4.0;
+        ((f32*)screen)[2] = vp2->unk5A / 4.0 / dist;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FDD54_SlotCarDerby);
-#endif
 /* Allocates count billboards and the per-frame display-list and matrix buffers. */
 void func_800FE138_SlotCarDerby(u8 count) {
     SCDBillboard* b;
