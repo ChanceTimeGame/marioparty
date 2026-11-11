@@ -81,8 +81,6 @@ void func_800F6A38_SlotCarDerby(omObjData* obj) {
     func_800FB2FC_SlotCarDerby(0, 400, 400);
 }
 
-// register allocation: base/index operand order of the segment pointers (masked 0; tried index-first arithmetic, a/b order, an inline dx)
-#ifdef NON_MATCHING
 void func_800F6AEC_SlotCarDerby(void) {
     f32 dx;
     f32 dy;
@@ -90,9 +88,6 @@ void func_800F6AEC_SlotCarDerby(void) {
     f32 total;
     s32 i;
     s32 j;
-    Vec* base;
-    Vec* a;
-    Vec* b;
 
     D_80101424_SlotCarDerby = D_80100C70_SlotCarDerby[D_80101420_SlotCarDerby];
     D_80101428_SlotCarDerby = D_80100C78_SlotCarDerby[D_80101420_SlotCarDerby];
@@ -101,19 +96,15 @@ void func_800F6AEC_SlotCarDerby(void) {
     total = 0.0f;
     for (i = 0; i < D_80101428_SlotCarDerby; i++) {
         j = (i + 1) % D_80101428_SlotCarDerby;
-        base = D_80101424_SlotCarDerby;
-        b = &base[j];
-        a = &base[i];
-        dx = b->x - a->x;
-        dy = b->y - a->y;
-        dz = b->z - a->z;
+        dx = D_80101424_SlotCarDerby[j].x - D_80101424_SlotCarDerby[i].x;
+        dy = D_80101424_SlotCarDerby[j].y - D_80101424_SlotCarDerby[i].y;
+        dz = D_80101424_SlotCarDerby[j].z - D_80101424_SlotCarDerby[i].z;
         D_8010142C_SlotCarDerby[i] = sqrtf(dx * dx + dy * dy + dz * dz);
         D_80101430_SlotCarDerby[i] = total;
         total += D_8010142C_SlotCarDerby[i];
-        a = &D_80101424_SlotCarDerby[i];
-        D_80101440_SlotCarDerby[i].x = a->x + dx * 0.5;
-        D_80101440_SlotCarDerby[i].y = a->y + dy * 0.5;
-        D_80101440_SlotCarDerby[i].z = a->z + dz * 0.5;
+        D_80101440_SlotCarDerby[i].x = D_80101424_SlotCarDerby[i].x + dx * 0.5;
+        D_80101440_SlotCarDerby[i].y = D_80101424_SlotCarDerby[i].y + dy * 0.5;
+        D_80101440_SlotCarDerby[i].z = D_80101424_SlotCarDerby[i].z + dz * 0.5;
     }
     D_80101430_SlotCarDerby[i] = total;
     D_80101434_SlotCarDerby = total;
@@ -121,9 +112,6 @@ void func_800F6AEC_SlotCarDerby(void) {
         D_80101DA0_SlotCarDerby[i] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800F6AEC_SlotCarDerby);
-#endif
 void func_800F6D90_SlotCarDerby(void) {
     s32 i;
     s32 j;
@@ -598,12 +586,9 @@ s32 D_80100F58_SlotCarDerby[6] = { 30, 2, 27, 2, 27, 2 };
 s32 D_80100F70_SlotCarDerby[6] = { 0, 0, 0, 0, 0, 0 };
 s16 D_80100F88_SlotCarDerby[4] = { 0, 0x3000, 0x2000, 0 };
 
-// register allocation of the D_800C59AC file-id load (masked 0)
-#ifdef NON_MATCHING
 void func_800F76E8_SlotCarDerby(omObjData* obj, s16 player) {
     SCDPlayerWork* work;
     unk2C0C0Struct50* head;
-    s32 file;
     u32 chr;
 
     obj->func_ptr = func_800F7A00_SlotCarDerby;
@@ -618,12 +603,11 @@ void func_800F76E8_SlotCarDerby(omObjData* obj, s16 player) {
         chr = 6;
     }
     if (chr < 6) {
-        file = D_800C59AC[chr].unk_00 | D_800C59AC[chr].unk_08;
+        obj->model[1] = LoadFormFile(D_800C59AC[chr].unk_00 | D_800C59AC[chr].unk_08, 0x6BD);
     } else {
         chr = 6;
-        file = 0x70000;
+        obj->model[1] = LoadFormFile(0x70000, 0x6BD);
     }
-    obj->model[1] = LoadFormFile(file, 0x6BD);
     obj->model[0] = LoadFormFile(D_80100CD8_SlotCarDerby[chr] | 0x390000, 0x6B9);
     func_800343C8(D_800F2B7C[obj->model[1]].unk_08);
     head = func_80026A0C(obj->model[0], "head");
@@ -645,9 +629,6 @@ void func_800F76E8_SlotCarDerby(omObjData* obj, s16 player) {
     func_800F7084_SlotCarDerby(obj);
     func_800F70C4_SlotCarDerby(obj)->unk_0A = chr;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800F76E8_SlotCarDerby);
-#endif
 void func_800F7A00_SlotCarDerby(omObjData* obj) {
     SCDCar* car;
     s32 throttle;
@@ -665,7 +646,8 @@ void func_800F7A00_SlotCarDerby(omObjData* obj) {
         func_80017DB0(obj);
     }
 }
-// register allocation; the CPU speed-step random term is computed before lvl (masked 2)
+// register allocation (masked 0, raw 115): retail puts car/throttle/diff (shared with go) in s1/s2/s3,
+// ours diff/car/throttle. Tried declaration orders, go merged into diff
 #ifdef NON_MATCHING
 s32 func_800F7A7C_SlotCarDerby(omObjData* obj) {
     SCDCar* car;
@@ -740,7 +722,7 @@ s32 func_800F7A7C_SlotCarDerby(omObjData* obj) {
                     throttle = 0;
                     car->unk_6E = 0;
                 }
-                step = 4500 / (car->unk_72 + 1) - ((((rand8() << 8) | rand8()) * 100 * lvl) >> 16) - car->unk_6A * 0.5;
+                step = 4500 / (car->unk_72 + 1) - ((((rand8() << 8) | rand8()) * (100 * lvl)) >> 16) - car->unk_6A * 0.5;
             }
             car->unk_6C = throttle;
         }
@@ -943,7 +925,9 @@ void func_800F87E4_SlotCarDerby(SCDCar* car, f32 ahead) {
     }
     car->unk_44 = d * 0.3;
 }
-// float register allocation; GCC shares the braking subtraction (masked 50)
+// float register allocation (masked 15): the braking arm's sub.d lands in f4 (retail f0, sharing the
+// cvt.s.d tail) and the pitch d = f / 0.8 path uses f2/f0 swapped. Tried d = cur; d -= x, folded
+// constants, one-expression arms
 #ifdef NON_MATCHING
 void func_800F88CC_SlotCarDerby(omObjData* obj, f32 throttle) {
     Vec a;
@@ -978,11 +962,10 @@ void func_800F88CC_SlotCarDerby(omObjData* obj, f32 throttle) {
         }
     } else if (target < cur) {
         if (car->unk_60 != 0) {
-            d = cur - (f32)(20 - car->unk_60) / 10.0 * 0.42;
+            speed = cur - (f32)(20 - car->unk_60) / 10.0 * 0.42;
         } else {
-            d = car->unk_50 - 0.42;
+            speed = car->unk_50 - 0.42;
         }
-        speed = d;
         if (speed < target) {
             speed = target;
         }
@@ -1170,7 +1153,7 @@ void func_800F91B4_SlotCarDerby(omObjData* obj) {
         car->unk_18.y = -20.0f;
     }
     if (car->unk_18.y < 0.0f) {
-        r = func_800F9A0C_SlotCarDerby(&car->unk_0C, &ground);
+        r = func_800F9A0C_SlotCarDerby(&car->unk_0C.x, &ground);
         if (r != 0) {
             if (r > 0) {
                 car->unk_0C.y = ground;
@@ -1290,13 +1273,10 @@ f32 func_800F96F4_SlotCarDerby(f32 start, f32 dist, f32 step, Vec* pos, Vec* dir
     func_800F9CB4_SlotCarDerby(t, &D_80101440_SlotCarDerby[i], &D_80101424_SlotCarDerby[next], &D_80101440_SlotCarDerby[next], dir);
     return d;
 }
-// retail keeps the pos pointer increment (addiu; lwc1 0/4) where GCC folds it (masked 13; tried three increment spellings)
-#ifdef NON_MATCHING
-s32 func_800F9A0C_SlotCarDerby(Vec* pos, f32* groundY) {
+s32 func_800F9A0C_SlotCarDerby(f32* pos, f32* groundY) {
     f32 best;
     Vec* mid;
     f32* len;
-    f32* p;
     f32 x, y, z;
     f32 r;
     s32 i;
@@ -1305,10 +1285,9 @@ s32 func_800F9A0C_SlotCarDerby(Vec* pos, f32* groundY) {
     best = 30000.0f;
     mid = D_80101440_SlotCarDerby;
     len = D_8010142C_SlotCarDerby;
-    p = (f32*)pos;
-    x = *p++;
-    y = *p++;
-    z = *p;
+    x = *pos++;
+    y = *pos++;
+    z = *pos;
     hit = 0;
     for (i = 0; i < D_80101428_SlotCarDerby; i++, mid++) {
         r = *len++ * 0.75;
@@ -1328,9 +1307,6 @@ s32 func_800F9A0C_SlotCarDerby(Vec* pos, f32* groundY) {
     *groundY = best;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800F9A0C_SlotCarDerby);
-#endif
 f32 func_800F9B60_SlotCarDerby(f32 t, f32 a, f32 b, f32 c) {
     f32 u = 1.0 - t;
 
@@ -1466,7 +1442,9 @@ void func_800FA32C_SlotCarDerby(s32 x, s32 y, s32 z, s32 weight) {
     v.z = z * 0.01;
     func_800FA2C0_SlotCarDerby(&v.x, weight * 0.01);
 }
-// register allocation: ease not in f26, so 1.0 is hoisted out of the zoom loop (masked 14)
+// register allocation (masked 12): retail keeps ease in f26 from the start (as if live across the
+// if-branch calls), so 1.0 is not hoisted into f26; min/max loop pointers in other registers.
+// Tried up[] = 0.0f directly, a chained d, increment orders
 #ifdef NON_MATCHING
 void func_800FA3B4_SlotCarDerby(Vec* look) {
     f32 max[3];
@@ -1503,7 +1481,7 @@ void func_800FA3B4_SlotCarDerby(Vec* look) {
         for (i = 0; i < D_80102318_SlotCarDerby; i++) {
             pmax = max;
             pmin = min;
-            for (j = 0, p = &D_80102320_SlotCarDerby[i].pos.x; j < 3; j++, pmax++, pmin++) {
+            for (j = 0, p = &D_80102320_SlotCarDerby[i].pos.x; j < 3; pmax++, j++, pmin++) {
                 if (p[j] > *pmax) {
                     *pmax = p[j];
                 }
@@ -2351,12 +2329,9 @@ void func_800FCF50_SlotCarDerby(omObjData* obj) {
     }
     func_80017DB0(obj);
 }
-// addu operand order for one array address (masked 0)
-#ifdef NON_MATCHING
 void func_800FD2C4_SlotCarDerby(omObjData* obj) {
     SCDObj* rec = func_800FDD28_SlotCarDerby(obj);
     SCDObj* o;
-    s32* p;
     s32* digits;
     s32 i;
     s32 d;
@@ -2416,9 +2391,8 @@ void func_800FD2C4_SlotCarDerby(omObjData* obj) {
                     func_800FF53C_SlotCarDerby(o->unk_40[0], d);
                     func_800671DC(D_80102476_SlotCarDerby, 4, d);
                 } else {
-                    p = i + digits;
-                    func_800FF53C_SlotCarDerby(o->unk_40[0], (s16)*p);
-                    func_800671DC(D_80102476_SlotCarDerby, i, (s16)*p);
+                    func_800FF53C_SlotCarDerby(o->unk_40[0], (s16)digits[i]);
+                    func_800671DC(D_80102476_SlotCarDerby, i, (s16)digits[i]);
                 }
             i++;
             } while (i < 5);
@@ -2441,9 +2415,6 @@ void func_800FD2C4_SlotCarDerby(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FD2C4_SlotCarDerby);
-#endif
 
 void func_800FD658_SlotCarDerby(omObjData* obj) {
     Vec pos;
@@ -2584,8 +2555,6 @@ SCDObj* func_800FDD28_SlotCarDerby(omObjData* obj) {
 #define SCD_MTX_H(mtx, n) (((u16*)&(mtx))[n])
 
 /* Projects pos through camera cam's view into screen x, y and a perspective scale (z). */
-// scheduling of &Center and the viewport register (masked 4)
-#ifdef NON_MATCHING
 void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
     Mtx look;
     Mtx mtx;
@@ -2595,6 +2564,7 @@ void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
     unk_Struct00* c = &D_800C3110[cam];
     Mtx* m = &mtx;
     unk_Struct00* vp;
+    unk_Struct00* vp2;
     f32 rx;
     f32 ry;
     f32 sx;
@@ -2605,7 +2575,7 @@ void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
 
     rx = CRot.x;
     ry = CRot.y;
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -2626,14 +2596,11 @@ void func_800FDD54_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
         vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
         /* written through f32* (not Vec fields): retail reloads D_800F3FA8 after the store */
         ((f32*)screen)[0] = (s16)(vp->unk58 / 4.0 * sx / dist / 1.3333334f) + vp->unk60 / 4.0;
-        vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-        ((f32*)screen)[1] = (s16)(vp->unk5A / 4.0 * -sy / dist) + vp->unk62 / 4.0;
-        ((f32*)screen)[2] = vp->unk5A / 4.0 / dist;
+        vp2 = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
+        ((f32*)screen)[1] = (s16)(vp2->unk5A / 4.0 * -sy / dist) + vp2->unk62 / 4.0;
+        ((f32*)screen)[2] = vp2->unk5A / 4.0 / dist;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FDD54_SlotCarDerby);
-#endif
 /* Allocates count billboards and the per-frame display-list and matrix buffers. */
 void func_800FE138_SlotCarDerby(u8 count) {
     SCDBillboard* b;
@@ -2979,7 +2946,8 @@ void func_800FF8A4_SlotCarDerby(void) {
 }
 /* Builds this frame's billboard display list: each visible billboard's matrix (camera-facing
    unless flag 0x80) and material list, then restores the viewport's matrix. */
-// scheduling: &Center, the viewport index and the unk_1C base loads (masked 10)
+// scheduling (masked 2, raw 2): retail loads b->unk_1C after the G_MOVEWORD w0 store and before
+// D_800F37F0; ours loads the index first. Tried [i + 2], *(p + 2 + i), (p + 2)[i], (p + i)[2], a local
 #ifdef NON_MATCHING
 void func_800FFD18_SlotCarDerby(void) {
     Mtx view;
@@ -2991,6 +2959,8 @@ void func_800FFD18_SlotCarDerby(void) {
     Vec at;
     Vec up;
     SCDBillboard* b;
+    unk_Struct00* cam;
+    unk_Struct00* vp;
     Gfx* gfx;
     Mtx* mtx;
     f32 rx;
@@ -3001,10 +2971,12 @@ void func_800FFD18_SlotCarDerby(void) {
     D_800F2B7C[D_801024A8_SlotCarDerby].unk_6C->unk_00 = &D_80102490_SlotCarDerby[D_80100EA8_SlotCarDerby];
     gfx = D_80102490_SlotCarDerby[D_80100EA8_SlotCarDerby];
     mtx = D_8010249C_SlotCarDerby[D_80100EA8_SlotCarDerby];
-    proj = *(&D_800C3110->unk_138 + D_800F3FA8 * 2); /* the viewport's projection pair */
+    cam = D_800C3110;
+    vp = (unk_Struct00*)((u8*)cam + D_800F3FA8 * 128);
+    proj = vp->unk_138; /* the viewport's projection pair */
     rx = CRot.x;
     ry = CRot.y;
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -3040,7 +3012,7 @@ void func_800FFD18_SlotCarDerby(void) {
             MtxMult(sc, tmp, mf);
         }
         if (b->unk_20 != 0) {
-            gSPSegment(gfx++, 1, osVirtualToPhysical(*((Vtx**)b->unk_1C + D_800F37F0 + 2)));
+            gSPSegment(gfx++, 1, osVirtualToPhysical(b->unk_1C[D_800F37F0 + 2]));
         }
         func_800A0A20(mf, mtx);
         gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
