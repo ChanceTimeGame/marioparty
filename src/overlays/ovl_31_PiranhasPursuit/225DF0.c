@@ -810,10 +810,9 @@ void func_800FC9C4_PiranhasPursuit(Gfx* g, PPDrop* d, u16 frame) {
     gSPEndDisplayList(g++);
 }
 
-// NON_MATCHING: Vtx field store order
-#ifdef NON_MATCHING
 void func_800FCABC_PiranhasPursuit(PPDrop* d) {
     Vtx* v;
+    Vtx* v1;
     f32 s;
     u16 i;
     u16 j;
@@ -836,39 +835,37 @@ void func_800FCABC_PiranhasPursuit(PPDrop* d) {
         d->vy = s * 80.0;
         for (j = 0; j < (u8)D_800F37DA; j++) {
             v = d->v[j];
-            v[0].v.ob[0] = d->x;
-            v[0].v.ob[1] = d->y;
-            v[0].v.ob[2] = d->z;
-            v[0].v.flag = 0;
-            v[0].v.tc[0] = 0; /* retail leaves tc[1] */
-            v[0].v.cn[0] = 0xF0;
-            v[0].v.cn[1] = 0xF0;
-            v[0].v.cn[2] = 0xFF;
-            v[0].v.cn[3] = d->depth * 100.0 + 120.0;
-            v[1].v.ob[0] = v[0].v.ob[0] + d->len * 20.0;
-            v[1].v.ob[1] = v[0].v.ob[1] + d->len * 80.0;
-            v[1].v.ob[2] = 0;
-            v[1].v.flag = 0;
-            v[1].v.tc[0] = 0; /* retail leaves tc[1] */
-            v[1].v.cn[0] = 0xB4;
-            v[1].v.cn[1] = 0xB4;
-            v[1].v.cn[2] = 0xFF;
-            v[1].v.cn[3] = 0;
+            v1 = &v[1];
+            v->n.ob[0] = d->x;
+            v->n.ob[1] = d->y;
+            v->n.ob[2] = d->z;
+            /* retail writes tc[2] (offset 12, the colour bytes stored next) and leaves tc[1] */
+            v->n.flag = v->n.tc[0] = v->n.tc[2] = 0;
+            v->n.n[0] = 0xF0;
+            v->n.n[1] = 0xF0;
+            v->n.n[2] = 0xFF;
+            v->n.a = d->depth * 100.0 + 120.0;
+            v1->n.ob[0] = v->n.ob[0] + d->len * 20.0;
+            v1->n.ob[1] = v->n.ob[1] + d->len * 80.0;
+            v1->n.ob[2] = 0;
+            v1->n.flag = v1->n.tc[0] = v1->n.tc[2] = 0;
+            v1->n.n[0] = 0xB4;
+            v1->n.n[1] = 0xB4;
+            v1->n.n[2] = 0xFF;
+            v1->n.a = 0;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FCABC_PiranhasPursuit);
-#endif
 
-// NON_MATCHING: Vtx field store order, register allocation
-#ifdef NON_MATCHING
 void func_800FCE78_PiranhasPursuit(PPDrop* d, u16 frame) {
     Vtx* v;
+    Vtx* v1;
     f32 s;
     f32 f;
+    f32 k;
     u16 i;
 
+    k = 0.0015151515f;
     for (i = 0; i < 64; i++, d++) {
         if (d->state == 1) {
             d->x = d->x - (d->vx + D_801012E0_PiranhasPursuit);
@@ -900,40 +897,39 @@ void func_800FCE78_PiranhasPursuit(PPDrop* d, u16 frame) {
             }
         }
         v = d->v[frame];
+        v1 = &v[1];
         if (d->state == 1) {
-            v[0].v.ob[0] = d->x;
-            v[0].v.ob[1] = d->y;
-            v[0].v.ob[2] = d->z;
-            v[0].v.cn[3] = d->depth * 100.0 + 120.0;
-            f = 1.0 - 0.0015151515f * d->y;
+            v->n.ob[0] = d->x;
+            v->n.ob[1] = d->y;
+            v->n.ob[2] = d->z;
+            v->n.a = d->depth * 100.0 + 120.0;
+            f = k * d->y;
+            f = 1.0 - f;
             if (f > 1.0) {
                 f = 1.0f;
             } else if (f < 0.0) {
                 f = 0.0f;
             }
-            v[0].v.cn[3] -= (u8)(f * 100.0);
-            v[1].v.ob[0] = v[0].v.ob[0] + d->len * 20.0;
-            v[1].v.ob[1] = v[0].v.ob[1] + d->len * 80.0;
-            v[1].v.ob[2] = v[0].v.ob[2];
-            v[1].v.cn[3] = 0;
-            if (v[1].v.ob[0] < v[0].v.ob[0]) {
-                v[1].v.ob[0] = v[1].v.ob[0] + 2.0 * (d->len * 20.0);
+            v->n.a -= (u8)(f * 100.0);
+            v1->n.ob[0] = v->n.ob[0] + d->len * 20.0;
+            v1->n.ob[1] = v->n.ob[1] + d->len * 80.0;
+            v1->n.ob[2] = v->n.ob[2];
+            v1->n.a = 0;
+            if (v->n.ob[0] > v1->n.ob[0]) {
+                v1->n.ob[0] = v1->n.ob[0] + 2.0 * (d->len * 20.0);
             }
         } else {
-            v[0].v.ob[0] = d->x;
-            v[0].v.ob[1] = d->y;
-            v[0].v.ob[2] = d->z;
-            v[0].v.cn[3] = d->depth * 100.0 + 20.0;
-            v[1].v.ob[0] = v[0].v.ob[0] + d->len * 20.0;
-            v[1].v.ob[1] = v[0].v.ob[1] - d->len * 80.0;
-            v[1].v.ob[2] = v[0].v.ob[2];
-            v[1].v.cn[3] = 0;
+            v->n.ob[0] = d->x;
+            v->n.ob[1] = d->y;
+            v->n.ob[2] = d->z;
+            v->n.a = d->depth * 100.0 + 20.0;
+            v1->n.ob[0] = v->n.ob[0] + d->len * 20.0;
+            v1->n.ob[1] = v->n.ob[1] - d->len * 80.0;
+            v1->n.ob[2] = v->n.ob[2];
+            v1->n.a = 0;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FCE78_PiranhasPursuit);
-#endif
 
 /* A splash where the runner lands in the water; close to the plant it makes it lunge. */
 void func_800FD4BC_PiranhasPursuit(f32 x, f32 y) {
