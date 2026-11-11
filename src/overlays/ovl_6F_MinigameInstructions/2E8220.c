@@ -1383,7 +1383,8 @@ void func_801083DC_MinigameInstructions(Ovl6FPlayerWork* work) {
     }
     D_800F2B7C[work->unk_4E].unk_12 = work->unk_B6;
 }
-// register allocation, D_8010EF10 base CSE and one threaded branch (masked 37)
+// register allocation, D_8010EF10 base CSE and one threaded branch (masked 37); retail keeps &D_8010EF10[0][1]
+// in s3 and the [chr][1] address in s1 (tried: {model, anim} struct = no change, a [chr][1] pointer local = masked 39)
 #ifdef NON_MATCHING
 void func_80108624_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f in;
@@ -2296,7 +2297,13 @@ void func_8010BB04_MinigameInstructions(Ovl6FPlayerWork* work) {
             break;
     }
 }
-// register allocation: a copy of group takes s5 (one extra saved register), store/move order (masked 20)
+/* D_8010F50C's model pairs as two s16 arrays with stride 2 (retail addresses D_8010F50C and
+   D_8010F50E as separate bases; the pair halves are s16 so this is endian-neutral). */
+#define OVL6F_F50C(g) ((&D_8010F50C_MinigameInstructions[0].unk_00)[(g) * 2])
+#define OVL6F_F50E(g) ((&D_8010F50C_MinigameInstructions[0].unk_02)[(g) * 2])
+
+// register allocation: the group copy takes s2 (retail s1) and other s1 (retail s0) (masked 2; tried: declaration
+// order, count as base + group)
 #ifdef NON_MATCHING
 void func_8010BF20_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
@@ -2308,7 +2315,6 @@ void func_8010BF20_MinigameInstructions(Ovl6FPlayerWork* work) {
     u16 m0;
     u16 m1;
     s16 i;
-    s32 pad[8]; /* unused: retail's frame is 0x60 */
 
     ch = GwPlayer[work->unk_38].character;
     group = GwPlayer[work->unk_38].group;
@@ -2330,16 +2336,12 @@ void func_8010BF20_MinigameInstructions(Ovl6FPlayerWork* work) {
     if (*count == 0) {
         other = group ^ 1;
         if (D_8010EF60_MinigameInstructions == 0) {
-            m0 = LoadFormFile(0x430003, 0x299);
-            D_8010F50C_MinigameInstructions[group].unk_00 = m0;
-            m1 = LoadFormFile(0x430004, 0x299);
-            D_8010F50C_MinigameInstructions[group].unk_02 = m1;
+            m0 = OVL6F_F50C(group) = LoadFormFile(0x430003, 0x299);
+            m1 = OVL6F_F50E(group) = LoadFormFile(0x430004, 0x299);
             D_8010EF60_MinigameInstructions = 1;
         } else {
-            m0 = func_80023FC8(D_8010F50C_MinigameInstructions[other].unk_00);
-            D_8010F50C_MinigameInstructions[group].unk_00 = m0;
-            m1 = func_80023FC8(D_8010F50C_MinigameInstructions[other].unk_02);
-            D_8010F50C_MinigameInstructions[group].unk_02 = m1;
+            m0 = OVL6F_F50C(group) = func_80023FC8(OVL6F_F50C(other));
+            m1 = OVL6F_F50E(group) = func_80023FC8(OVL6F_F50E(other));
         }
         func_80025830(m0, 0.0f, 0.0f, 0.0f);
         func_80025830(m1, 0.0f, 0.0f, 0.0f);
@@ -2352,7 +2354,7 @@ void func_8010BF20_MinigameInstructions(Ovl6FPlayerWork* work) {
         func_80025798(m1, out.x, out.y, -180.0f);
         D_8010F524_MinigameInstructions[group] = 1.0f;
         D_8010F530_MinigameInstructions[group] = 0.0f;
-        D_8010F52C_MinigameInstructions = func_80025D40(D_8010F50C_MinigameInstructions[group].unk_02);
+        D_8010F52C_MinigameInstructions = func_80025D40(OVL6F_F50E(group));
     }
     /* retail indexes the model pairs as an s16 array here (group 1 reads pair 0's second model) */
     work->unk_2C = D_800F2B7C[work->unk_4E].unk_24 - D_800F2B7C[(&D_8010F50C_MinigameInstructions[0].unk_00)[group]].unk_24;
@@ -2368,13 +2370,6 @@ void func_8010BF20_MinigameInstructions(Ovl6FPlayerWork* work) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2E8220", func_8010BF20_MinigameInstructions);
 #endif
-/* D_8010F50C's model pairs as two s16 arrays with stride 2 (retail addresses D_8010F50C and
-   D_8010F50E as separate bases; the pair halves are s16 so this is endian-neutral). */
-#define OVL6F_F50C(g) ((&D_8010F50C_MinigameInstructions[0].unk_00)[(g) * 2])
-#define OVL6F_F50E(g) ((&D_8010F50C_MinigameInstructions[0].unk_02)[(g) * 2])
-
-// register allocation: v0/v1 swapped around the D_8010F514 store (masked 0, raw 6)
-#ifdef NON_MATCHING
 void func_8010C3A4_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;
@@ -2407,11 +2402,9 @@ void func_8010C3A4_MinigameInstructions(Ovl6FPlayerWork* work) {
     func_80025798(work->unk_4E, out.x, out.y, -180.0f);
     if (work->unk_38 > work->unk_B6) {
         s32 g = work->unk_3E;
-        f32* speed = D_8010F514_MinigameInstructions;
 
-        speed = g + speed;
-        *speed = 0.0f;
-        func_80025CA8(OVL6F_F50E(work->unk_3E), *speed);
+        D_8010F514_MinigameInstructions[g] = 0.0f;
+        func_80025CA8(OVL6F_F50E(work->unk_3E), D_8010F514_MinigameInstructions[g]);
         rot = 90;
         do {
             func_800257E4(work->unk_4E, 0.0f, rot, 0.0f);
@@ -2467,9 +2460,6 @@ void func_8010C3A4_MinigameInstructions(Ovl6FPlayerWork* work) {
     }
     work->unk_BC = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2E8220", func_8010C3A4_MinigameInstructions);
-#endif
 void func_8010C8CC_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;

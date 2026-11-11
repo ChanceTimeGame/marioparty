@@ -203,7 +203,7 @@ extern char D_800FB670_HammerDrop[];
 extern char D_800FB67C_HammerDrop[20];
 extern f64 D_800FB690_HammerDrop;
 extern f64 D_800FB698_HammerDrop;
-extern HammerDropAnglePair D_800FB6D0_HammerDrop[];
+extern HammerDropAnglePair D_800FB6D0_HammerDrop[12][6]; /* one line per vertex row (row * 2, row * 2 + 1) */
 extern unk2C0C0Struct70* D_800FB910_HammerDrop;
 extern unk2C0C0Struct70* D_800FB914_HammerDrop;
 extern Gfx* D_800FB918_HammerDrop[8];
