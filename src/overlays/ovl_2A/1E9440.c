@@ -1622,8 +1622,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA614_name_2A);
 #endif
 
 /* CPU holding the ball: shoot when near the hoop, else pass or run. */
-// index-before-base order of the teammate pointer (one sll; masked 12); tried &D_800FE030[f()],
-// f() + D_800FE030 and an index local.
+// index-before-base order of the teammate pointer (one sll; masked 2); tried &D_800FE030[f()],
+// f() + D_800FE030, an index local and (M1g) p = D_800FE030; p += f() (masked 21).
 #ifdef NON_MATCHING
 void func_800FA8EC_name_2A(omObjData* obj) {
     Vec from;
