@@ -184,14 +184,11 @@ void func_800F695C_PaddleBattle(omObjData* obj) {
 }
 
 /* Water and paddle sounds. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 88 lines)
-#ifdef NON_MATCHING
 void func_800F6DB0_PaddleBattle(void) {
     s32 i;
-    s32 d;
     s32 vol;
     f32 v;
-    f32 w;
+    f64 w;
     f64 l;
 
     if (D_800FFF02_PaddleBattle.state == 1 && D_800FFF02_PaddleBattle.timer >= 31) {
@@ -223,18 +220,14 @@ void func_800F6DB0_PaddleBattle(void) {
     case 0:
         w = func_800FAE48_PaddleBattle(D_800FFF10_PaddleBattle.dist);
         l = 0.5 - D_800FFF10_PaddleBattle.lateral;
-        if (l < 0.0) {
-            l += 0.35;
-        } else {
-            l = 0.35 - (0.5 - D_800FFF10_PaddleBattle.lateral);
-        }
-        vol = 127.0 - (f32)(l * w) / 700.0 * 40.0;
+        vol = 127.0 - (f32)((l < 0.0 ? l + 0.35 : 0.35 - (0.5 - D_800FFF10_PaddleBattle.lateral)) * w) / 700.0 * 40.0;
         if (vol < 90) {
             vol = 90;
         } else if (vol > 127) {
             vol = 127;
         }
-        func_80060214(vol * D_800FE200_PaddleBattle + (1.0 - D_800FE200_PaddleBattle) * 127.0);
+        vol = vol * D_800FE200_PaddleBattle + (1.0 - D_800FE200_PaddleBattle) * 127.0;
+        func_80060214(vol);
         break;
     case 1:
         vol = D_800FFF10_PaddleBattle.lateral * 127.0f;
@@ -258,16 +251,14 @@ void func_800F6DB0_PaddleBattle(void) {
         break;
     case 2:
         v = 0.0f;
-        d = D_800FFF10_PaddleBattle.dist;
+        vol = D_800FFF10_PaddleBattle.dist;
         for (i = 0; i < 3; i++) {
-            if (D_800FE1F4_PaddleBattle[i].start - 200 < d && d < D_800FE1F4_PaddleBattle[i].end + 200) {
+            if (D_800FE1F4_PaddleBattle[i].start - 200 < vol && vol < D_800FE1F4_PaddleBattle[i].end + 200) {
                 v = 1.0f;
-                if (D_800FE1F4_PaddleBattle[i].start < d) {
-                    if (d >= D_800FE1F4_PaddleBattle[i].end) {
-                        v = 1.0f - (d - D_800FE1F4_PaddleBattle[i].end) / 198.0;
-                    }
-                } else {
-                    v = (d - D_800FE1F4_PaddleBattle[i].start) / 198.0 + 1.0f;
+                if (vol <= D_800FE1F4_PaddleBattle[i].start) {
+                    v = v + (vol - D_800FE1F4_PaddleBattle[i].start) / 198.0;
+                } else if (vol >= D_800FE1F4_PaddleBattle[i].end) {
+                    v = v - (vol - D_800FE1F4_PaddleBattle[i].end) / 198.0;
                 }
                 break;
             }
@@ -290,9 +281,6 @@ void func_800F6DB0_PaddleBattle(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/2341E0", func_800F6DB0_PaddleBattle);
-#endif
 
 void func_800F7310_PaddleBattle(void) {
     func_800FBBD8_PaddleBattle();

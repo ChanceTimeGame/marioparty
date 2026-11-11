@@ -308,7 +308,7 @@ void func_800F6724_UnknownResultsScreen(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F6724_UnknownResultsScreen);
 #endif
 
-// register allocation of the loop counters (masked 2)
+// register allocation of the loop counters, and j*16+24 added after the table read (masked 2)
 #ifdef NON_MATCHING
 void func_800F7310_UnknownResultsScreen(void) {
     s16 coins[4];
@@ -564,7 +564,7 @@ void func_800F7DB4_UnknownResultsScreen(void) {
     }
 }
 
-// register allocation of the rank counter (masked 2)
+// register allocation: the rank r is a1, retail t0 (masked 0, raw 3)
 #ifdef NON_MATCHING
 void func_800F7F38_UnknownResultsScreen(void) {
     s32 score[4];
@@ -596,9 +596,7 @@ void func_800F7F38_UnknownResultsScreen(void) {
     }
     D_800FA0E0_UnknownResultsScreen[0].rank = 0;
     D_800FA0E0_UnknownResultsScreen[0].place = who[0];
-    r = 0;
-    k = 0;
-    for (i = 1; i < 4; i++) {
+    for (i = 1, r = 0, k = 0; i < 4; i++) {
         k++;
         if (score[i - 1] != score[i]) {
             r = k;
@@ -642,7 +640,7 @@ void func_800F8194_UnknownResultsScreen(void) {
 void func_800F82C4_UnknownResultsScreen(void) {
     s16 nd[4];
     s16 digits[4][3];
-    s16 n;
+    s32 n;
     s32 j;
     s32 i;
     void* file;
@@ -741,7 +739,7 @@ void func_800F8B44_UnknownResultsScreen(void) {
     s16 digits[4][3];
     s32 i;
     s32 j;
-    s16 n;
+    s32 n;
 
     for (i = 0; i < 4; i++) {
         left[i] = D_800FA0D8_UnknownResultsScreen[i] - (GwPlayer[i].coins - D_800FA0F0_UnknownResultsScreen[i]);
