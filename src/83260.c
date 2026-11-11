@@ -15,7 +15,7 @@ OSPiHandle* func_80082660(void) {
 
     __osPiGetAccess();
     if (!D_800C63E0) {
-        // retail returns here without __osPiRelAccess
+        __osPiRelAccess();
         return &D_800E9890;
     }
     D_800C63E0 = 0;
