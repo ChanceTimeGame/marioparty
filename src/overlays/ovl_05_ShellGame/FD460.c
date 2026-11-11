@@ -211,13 +211,10 @@ void func_800FD538_ShellGame(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FD538_ShellGame);
 #endif
-// NON_MATCHING: branch-likely choice in two angle wraps
-#ifdef NON_MATCHING
 void func_800FD808_ShellGame(omObjData* obj) {
     SGPlayer* pl;
     f32 a;
     f32 d;
-    s32 show;
 
     pl = &D_800FFA10_ShellGame[obj->work[0]];
     func_80025798(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
@@ -246,10 +243,12 @@ void func_800FD808_ShellGame(omObjData* obj) {
     } else {
         if (D_800FF9EC_ShellGame == 2) {
             if (D_800FEC54_ShellGame++ >= 4) {
+                f32 dx;
+
                 D_800FEC4C_ShellGame = func_800F719C_ShellGame(360);
-                a = func_800AEAC0(D_800FEC4C_ShellGame) * 40.0 - obj->trans.x;
+                dx = func_800AEAC0(D_800FEC4C_ShellGame) * 40.0 - obj->trans.x;
                 D_800FEC4C_ShellGame =
-                    func_800F7398_ShellGame(a, func_800AEFD0(D_800FEC4C_ShellGame) * 40.0 - obj->trans.z);
+                    func_800F7398_ShellGame(dx, func_800AEFD0(D_800FEC4C_ShellGame) * 40.0 - obj->trans.z);
                 D_800FEC50_ShellGame = (f32)func_800F719C_ShellGame(100) / 100.0;
                 D_800FEC50_ShellGame = D_800FEC50_ShellGame * D_800B8984;
                 D_800FEC54_ShellGame = 0;
@@ -266,9 +265,9 @@ void func_800FD808_ShellGame(omObjData* obj) {
                 } else if (obj->rot.y < 0.0) {
                     obj->rot.y += 360.0;
                 }
-                pl->unkC = pl->unk8 = obj->rot.y;
+                pl->unk8 = pl->unkC = obj->rot.y;
                 func_800FDE08_ShellGame(obj, 0x23);
-                show = 1;
+                func_800F7DA8_ShellGame(obj, 1);
             } else if (D_800FFA3C_ShellGame == 0x14D) {
                 obj->rot.y = func_800F7230_ShellGame(0.0f, obj->rot.y, 25.0f) + obj->rot.y;
                 if (obj->rot.y > 360.0) {
@@ -277,7 +276,7 @@ void func_800FD808_ShellGame(omObjData* obj) {
                     obj->rot.y += 360.0;
                 }
                 func_800FDE08_ShellGame(obj, 0x25);
-                show = 0;
+                func_800F7DA8_ShellGame(obj, 0);
             } else if (D_800FFA3C_ShellGame == 0x309) {
                 obj->rot.y = func_800F7230_ShellGame(0.0f, obj->rot.y, 25.0f) + obj->rot.y;
                 if (obj->rot.y > 360.0) {
@@ -286,18 +285,14 @@ void func_800FD808_ShellGame(omObjData* obj) {
                     obj->rot.y += 360.0;
                 }
                 func_800FDE08_ShellGame(obj, 0x24);
-                show = 0;
+                func_800F7DA8_ShellGame(obj, 0);
             } else {
                 func_800FDE08_ShellGame(obj, 0);
-                show = 0;
+                func_800F7DA8_ShellGame(obj, 0);
             }
-            func_800F7DA8_ShellGame(obj, show);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/FD460", func_800FD808_ShellGame);
-#endif
 void func_800FDD94_ShellGame(u16 n) {
     if (n == 0) {
         D_800FFA10_ShellGame[n].unk0 = 0;
