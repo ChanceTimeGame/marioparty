@@ -1566,14 +1566,14 @@ void func_800FC39C_PaddleBattle(omObjData* obj) {
 }
 
 /* A light ring: appears over the bank the raft drifts toward, every 64 frames. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 22 lines)
+// masked 46: retail evaluates func_800FAC70's side ? 1.0f : 0.0f argument before RAFT.dist + 10.0f
+// and loads p.x once before the +/- s branch; tried a ternary and the reversed if.
 #ifdef NON_MATCHING
 void func_800FC784_PaddleBattle(omObjData* obj) {
     Matrix4f m;
     Vec p;
     PBRingWork* w;
     s32 side;
-    f32 r;
     f32 s;
 
     w = obj->unk_50;
@@ -1592,11 +1592,11 @@ void func_800FC784_PaddleBattle(omObjData* obj) {
             func_800258EC(obj->model[0], 4, 0);
             side = obj->work[0] & 1;
             func_800FAC70_PaddleBattle(RAFT.dist + 10.0f, side ? 1.0f : 0.0f, &p);
-            r = PB_RAND16() * 800.0 / 65536.0 + 200.0;
+            s = PB_RAND16() * 800.0 / 65536.0 + 200.0;
             if (side == 0) {
-                obj->trans.x = p.x + r;
+                obj->trans.x = p.x + s;
             } else {
-                obj->trans.x = p.x - r;
+                obj->trans.x = p.x - s;
             }
             obj->trans.z = p.z + PB_RAND16() * 200.0 / 65536.0 - 300.0;
             obj->trans.y = p.y + 900.0;
@@ -1623,18 +1623,18 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FC78
 #endif
 
 /* Builds a textured quad model (the waterfall) from `vtx`; its texture is segment 2. */
-// logic-equivalent; retail copies the quad with unaligned word copies and writes the list through fixed offsets (normalised diff 253 lines)
-#ifdef NON_MATCHING
-s16 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
+s32 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
     Gfx* buf;
     Gfx* gfx;
+    unk2C0C0StructE0* src;
+    unk2C0C0StructE0* dst;
     unk2C0C0StructC0* m;
-    s16 model;
+    s32 model;
     s32 size;
     s32 i;
     s32 j;
 
-    buf = func_80023668(0x800 * sizeof(Gfx));
+    buf = gfx = func_80023668(0x800 * sizeof(Gfx));
     model = func_80024198(0xC0, buf, 4);
     m = D_800F2B7C[model].unk_6C;
     m->unk_80->unk_14 |= 0x01010000;
@@ -1642,12 +1642,12 @@ s16 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
     func_80023728(m->unk_00);
     m->unk_00 = func_80023684(8 * sizeof(Gfx*), m->unk_68);
     for (i = 0; i < D_800F37DA; i++) {
-        m->unk_08[i] = func_80023684(4 * sizeof(Vtx), m->unk_68);
+        dst = m->unk_08[i] = func_80023684(4 * sizeof(Vtx), m->unk_68);
+        src = (unk2C0C0StructE0*)vtx;
         for (j = 0; j < 4; j++) {
-            ((Vtx*)m->unk_08[i])[j] = vtx[j];
+            *dst++ = *src++;
         }
     }
-    gfx = buf;
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_1CYCLE);
     gDPPipeSync(gfx++);
@@ -1671,7 +1671,7 @@ s16 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
     gSP2Triangles(gfx++, 0, 1, 2, 0, 0, 2, 3, 0);
     gSPEndDisplayList(gfx++);
     size = (u8*)gfx - (u8*)buf;
-    m->unk_00[4] = m->unk_00[0] = func_80023684(size, m->unk_68);
+    m->unk_00[0] = m->unk_00[4] = func_80023684(size, m->unk_68);
     func_80023A38(buf, m->unk_00[4], size);
     func_80023728(buf);
     for (i = 0; i < D_800F37DA; i++) {
@@ -1679,9 +1679,6 @@ s16 func_800FCC04_PaddleBattle(Vtx* vtx, unk65770Anim* anim) {
     }
     return model;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FCC04_PaddleBattle);
-#endif
 
 /* The waterfalls: one model, 15 copies. */
 void func_800FD0B0_PaddleBattle(omObjData* obj) {

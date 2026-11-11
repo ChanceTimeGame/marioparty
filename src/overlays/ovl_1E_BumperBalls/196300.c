@@ -44,11 +44,11 @@ void func_800FB2D0_BumperBalls(s32 arg0) {
     omOvlReturnEx(1);
 }
 
-// Logic-equivalent water mesh setup; wave-table addressing and register allocation differ (masked 89).
+// Logic-equivalent water mesh setup (masked 70): retail keeps row*2 unfolded (hence row << 1) and
+// hoists the wave-row bases (row offset + base) into registers; tried pointer locals, a row*2 local,
+// direct [row][column] indexing.
 #ifdef NON_MATCHING
 void func_800FB2EC_BumperBalls(void) {
-    BumperBallsAnglePair* near;
-    BumperBallsAnglePair* far;
     unk2C0C0Struct70* texture;
     Vtx* source;
     Vtx* dst;
@@ -77,8 +77,6 @@ void func_800FB2EC_BumperBalls(void) {
     rowAngle = 0.0f;
     angle = 0.0f;
     for (row = 0; row < 6; row++) {
-        near = D_800FCD40_BumperBalls[row];
-        far = D_800FCD70_BumperBalls[row * 2];
         for (column = 0; column < 6; column++) {
             second = angle + 90.0f;
             if (second >= 360.0f) {
@@ -92,11 +90,11 @@ void func_800FB2EC_BumperBalls(void) {
             if (farSecond >= 360.0f) {
                 farSecond -= 360.0f;
             }
-            near[column].first = angle;
-            near[column].second = second;
-            far[column].first = farFirst;
+            (D_800FCD40_BumperBalls[row] + column)->first = angle;
+            (D_800FCD40_BumperBalls[row] + column)->second = second;
+            (D_800FCD70_BumperBalls[row << 1] + column)->first = farFirst;
             angle += 90.0f;
-            far[column].second = farSecond;
+            (D_800FCD70_BumperBalls[row << 1] + column)->second = farSecond;
             if (angle >= 360.0f) {
                 angle -= 360.0f;
             }
@@ -109,12 +107,11 @@ void func_800FB2EC_BumperBalls(void) {
     }
     source = D_800FCFA8_BumperBalls[D_800F37F0];
     for (row = 0; row < 6; row++) {
-        near = D_800FCD40_BumperBalls[row];
         for (column = 0; column < 6; column++) {
             v = &source[column * 2 + row * 24];
             x0 = column * 400.0f - 1200.0f;
             v->n.ob[0] = x0;
-            v->n.ob[1] = func_800AEAC0(near[column].first) * 40.0f;
+            v->n.ob[1] = func_800AEAC0((D_800FCD40_BumperBalls[row] + column)->first) * 40.0f;
             z0 = row * 400.0f - 1200.0f + -350.0f;
             v->n.ob[2] = z0;
             v->n.n[0] = 0;
@@ -126,7 +123,7 @@ void func_800FB2EC_BumperBalls(void) {
             v = &source[column * 2 + (row * 24 + 1)];
             x1 = (column + 1) * 400.0f - 1200.0f;
             v->n.ob[0] = x1;
-            v->n.ob[1] = func_800AEAC0(near[column].second) * 40.0f;
+            v->n.ob[1] = func_800AEAC0((D_800FCD40_BumperBalls[row] + column)->second) * 40.0f;
             v->n.ob[2] = z0;
             v->n.n[0] = 0;
             v->n.n[1] = -0x80;
@@ -134,9 +131,9 @@ void func_800FB2EC_BumperBalls(void) {
             v->n.tc[0] = 0;
             v->n.tc[1] = 0;
             v->n.a = 0x90;
-            v = &source[column * 2 + (row * 2 + 1) * 12];
+            v = &source[column * 2 + ((row << 1) + 1) * 12];
             v->n.ob[0] = x0;
-            v->n.ob[1] = func_800AEAC0(D_800FCD70_BumperBalls[row * 2][column].first) * 40.0f;
+            v->n.ob[1] = func_800AEAC0((D_800FCD70_BumperBalls[row << 1] + column)->first) * 40.0f;
             z1 = (row + 1) * 400.0f - 1200.0f + -350.0f;
             v->n.ob[2] = z1;
             v->n.n[0] = 0;
@@ -145,9 +142,9 @@ void func_800FB2EC_BumperBalls(void) {
             v->n.tc[0] = 0x400;
             v->n.tc[1] = 0x400;
             v->n.a = 0x90;
-            v = &source[column * 2 + ((row * 2 + 1) * 12 + 1)];
+            v = &source[column * 2 + (((row << 1) + 1) * 12 + 1)];
             v->n.ob[0] = x1;
-            v->n.ob[1] = func_800AEAC0(D_800FCD70_BumperBalls[row * 2][column].second) * 40.0f;
+            v->n.ob[1] = func_800AEAC0((D_800FCD70_BumperBalls[row << 1] + column)->second) * 40.0f;
             v->n.ob[2] = z1;
             v->n.n[0] = 0;
             v->n.n[1] = -0x80;
@@ -289,8 +286,6 @@ void func_800FBA20_BumperBalls(void) {
     }
 }
 
-// register allocation (column counter and v1 swap s3/s4; masked 0)
-#ifdef NON_MATCHING
 void func_800FC618_BumperBalls(void) {
     Vec3f normal;
     f32* p;
@@ -299,8 +294,6 @@ void func_800FC618_BumperBalls(void) {
     Vtx* v2;
     Vtx* v1;
     Vtx* v3;
-    Vtx* src;
-    Vtx* dst;
     f32 angle;
     s32 row;
     s32 column;
@@ -365,17 +358,14 @@ void func_800FC618_BumperBalls(void) {
     D_800FCBC8_BumperBalls = func_8009B618(D_800FCBC8_BumperBalls, 1024.0);
     D_800FCBCC_BumperBalls = D_800FCBC4_BumperBalls + 1024.0f;
     D_800FCBD0_BumperBalls = D_800FCBC8_BumperBalls + 1024.0f;
-    src = D_800FCFA8_BumperBalls[D_800F37F0];
-    dst = D_800FCFC8_BumperBalls[D_800F37F0];
+    v0 = D_800FCFA8_BumperBalls[D_800F37F0];
+    v1 = D_800FCFC8_BumperBalls[D_800F37F0];
     for (k = 0; k < 144; k++) {
-        dst->n.ob[1] = src->n.ob[1];
-        dst->n.n[0] = src->n.n[0];
-        dst->n.n[1] = src->n.n[1];
-        dst->n.n[2] = src->n.n[2];
-        src++;
-        dst++;
+        v1->n.ob[1] = v0->n.ob[1];
+        v1->n.n[0] = v0->n.n[0];
+        v1->n.n[1] = v0->n.n[1];
+        v1->n.n[2] = v0->n.n[2];
+        v0++;
+        v1++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1E_BumperBalls/196300", func_800FC618_BumperBalls);
-#endif

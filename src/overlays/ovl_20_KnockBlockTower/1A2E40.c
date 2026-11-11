@@ -16,8 +16,6 @@ s32 D_800FB534_KnockBlockTower[3] = { 0, 0, 0 }; /* unreferenced */
 #define KBT_ABS(x) (((x) < 0.0f) ? -(x) : (x))
 
 /* The game flow (stage object). */
-// scheduling: one unfilled delay slot in case 3's compare tree, v0/v1 swapped on D_800FB52C (masked ~39, mostly branch offsets)
-#ifdef NON_MATCHING
 void func_800F9540_KnockBlockTower(omObjData* obj) {
     omObjData* p;
     KBTPlayerWork* work;
@@ -141,24 +139,24 @@ void func_800F9540_KnockBlockTower(omObjData* obj) {
             if (_CheckFlag(0x2B) == 0) {
                 switch (D_800FB8D4_KnockBlockTower) {
                 case 0:
-                    t = D_800FB52C_KnockBlockTower++ < 57;
+                    if (D_800FB52C_KnockBlockTower++ < 57) {
+                        return;
+                    }
                     break;
                 case 1:
-                    t = D_800FB52C_KnockBlockTower++ < 72;
+                    if (D_800FB52C_KnockBlockTower++ < 72) {
+                        return;
+                    }
                     break;
                 case 2:
-                    t = D_800FB52C_KnockBlockTower++ < 90;
+                    if (D_800FB52C_KnockBlockTower++ < 90) {
+                        return;
+                    }
                     break;
-                default:
-                    goto proceed;
                 }
-            } else {
-                t = D_800FB52C_KnockBlockTower++ < 20;
-            }
-            if (t != 0) {
+            } else if (D_800FB52C_KnockBlockTower++ < 20) {
                 break;
             }
-        proceed:
             if (_CheckFlag(0x2B) == 0 || GMesWait() != 1) {
                 func_800726AC(0, 0x14);
                 D_800FB528_KnockBlockTower = 1;
@@ -175,9 +173,6 @@ void func_800F9540_KnockBlockTower(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_KnockBlockTower/1A2E40", func_800F9540_KnockBlockTower);
-#endif
 
 /* The stage. */
 void func_800F9BD0_KnockBlockTower(omObjData* obj) {

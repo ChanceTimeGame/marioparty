@@ -1145,7 +1145,8 @@ void func_800F8940_name_2A(omObjData* obj, s32 player) {
 }
 
 /* A player's frame: input (CPU or pad), catching, passing, shooting, and the after-goal walk. */
-// register allocation: retail keeps a second copy of the hit flags and the ball pointer in s6
+// register allocation (masked 112): retail keeps hit and its copy hit2 in s1/s5 (one extra saved
+// register, so ball lands in s6); tried hit = f(); hit2 = hit; and hit = hit2 = f().
 #ifdef NON_MATCHING
 void func_800F9050_name_2A(omObjData* obj) {
     Vec from;
@@ -1621,7 +1622,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FA614_name_2A);
 #endif
 
 /* CPU holding the ball: shoot when near the hoop, else pass or run. */
-// index-before-base order of the teammate pointer (one sll)
+// index-before-base order of the teammate pointer (one sll; masked 12); tried &D_800FE030[f()],
+// f() + D_800FE030 and an index local.
 #ifdef NON_MATCHING
 void func_800FA8EC_name_2A(omObjData* obj) {
     Vec from;
@@ -1921,7 +1923,8 @@ void func_800FB878_name_2A(N2APlayerExt* ext) {
 }
 
 /* After a goal: send each team-0 player to the free end of the court (ext->unk_48/4C). */
-// register allocation; retail tests the end counters through hoisted pointers
+// masked 21: retail tests the end counters through the hoisted &D_800FDFA4[0]/[1] registers it
+// increments through; tried goto arms and four nested arms (no cross-jump).
 #ifdef NON_MATCHING
 void func_800FB8BC_name_2A(void) {
     f32 homeX[2];
@@ -1953,22 +1956,14 @@ void func_800FB8BC_name_2A(void) {
             to.y = 0.0f;
             to.z = homeZ[1];
             func_800FD880_name_2A(&from, &to, &out);
-            if (d < out.x) {
-                if (D_800FDFA4_name_2A[0] == 0) {
-                    goto home0;
-                }
-                goto home1;
-            }
-            if (D_800FDFA4_name_2A[1] != 0) {
-            home0:
-                ext->unk_48 = homeX[0];
-                ext->unk_4C = homeZ[0];
-                D_800FDFA4_name_2A[0]++;
-            } else {
-            home1:
+            if (d < out.x ? D_800FDFA4_name_2A[0] != 0 : D_800FDFA4_name_2A[1] == 0) {
                 ext->unk_48 = homeX[1];
                 ext->unk_4C = homeZ[1];
                 D_800FDFA4_name_2A[1]++;
+            } else {
+                ext->unk_48 = homeX[0];
+                ext->unk_4C = homeZ[0];
+                D_800FDFA4_name_2A[0]++;
             }
             if (D_800FDFA4_name_2A[0] == 2) {
                 ext->unk_48 = homeX[1];
