@@ -1084,8 +1084,6 @@ void func_800F98F0_RunningOfTheBulb(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800F98F0_RunningOfTheBulb);
 #endif
-// CSE of 360-d and fabs register allocation
-#ifdef NON_MATCHING
 void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
     f32 dist;
     RotbBodyWork* body;
@@ -1096,11 +1094,9 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
     f32 ty;
     f32 tz;
     f32 d;
-    f32 step;
     f32 vx;
     f32 vy;
     f32 vz;
-    f64 dd;
 
     body = arg0->unk_50;
     ext = body->unk_68.bulb;
@@ -1134,12 +1130,10 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
                 } else {
                     ext->unk_20 = d + ext->unk_20;
                 }
+            } else if (360.0f - d > 2.0f) {
+                ext->unk_20 = ext->unk_20 - 2.0f;
             } else {
-                step = 2.0f;
-                if (!(360.0f - d > step)) {
-                    step = 360.0f - d;
-                }
-                ext->unk_20 = ext->unk_20 - step;
+                ext->unk_20 = ext->unk_20 - (360.0f - d);
             }
         }
         if (ext->unk_20 < 0.0f) {
@@ -1194,16 +1188,14 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
                 vz = func_800AEFD0(tz) * body->unk_40;
             }
             if (ty < arg0->trans.y) {
-                dd = fabs(ty - arg0->trans.y);
-                if (dd < body->unk_40) {
-                    vy = vy - dd;
+                if (fabs(ty - arg0->trans.y) < body->unk_40) {
+                    vy = vy - fabs(ty - arg0->trans.y);
                 } else {
                     vy = vy - body->unk_40;
                 }
             } else if (arg0->trans.y < ty) {
-                dd = fabs(ty - arg0->trans.y);
-                if (dd < body->unk_40) {
-                    vy = vy + dd;
+                if (fabs(ty - arg0->trans.y) < body->unk_40) {
+                    vy = vy + fabs(ty - arg0->trans.y);
                 } else {
                     vy = vy + body->unk_40;
                 }
@@ -1216,9 +1208,6 @@ void func_800F9C2C_RunningOfTheBulb(omObjData* arg0) {
         ext->unk_02--;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_RunningOfTheBulb/1FF1E0", func_800F9C2C_RunningOfTheBulb);
-#endif
 void func_800FA2B8_RunningOfTheBulb(omObjData* arg0) {
     RotbBulbExt* temp = ROTB_BODY(arg0)->unk_68.bulb;
 
