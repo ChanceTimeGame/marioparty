@@ -82,10 +82,8 @@ void func_800F6F70_MarioBandstand(void) {
     D_800FD718_MarioBandstand = omAddObj(8, 0x1C, 0, -1, func_800F8940_MarioBandstand);
 }
 
-// NON_MATCHING: retail sign-extends sound before PlaySound (2 instructions short, masked 8); tried s32 sound, (s16) cast, sound reused for the handle (M1c)
-#ifdef NON_MATCHING
 void func_800F7000_MarioBandstand(void) {
-    s16 sound;
+    s32 sound;
     s16 handle;
 
     if (func_800FC8A8_MarioBandstand(0x4000) == 0) {
@@ -94,15 +92,13 @@ void func_800F7000_MarioBandstand(void) {
             sound = 0x2DF;
         }
         D_800FD2B8_MarioBandstand ^= 1;
-        handle = PlaySound(sound);
+        handle = PlaySound((s16)sound);
         if (handle >= 0) {
-            func_80060440(handle, (func_800FCAAC_MarioBandstand() & 0x1FF) - 0x100);
+            sound = (func_800FCAAC_MarioBandstand() & 0x1FF) - 0x100;
+            func_80060440(handle, sound);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F7000_MarioBandstand);
-#endif
 
 // NON_MATCHING: masked 31 (first pass, inflated by address shift); calls/stores checked with n64nmcmp
 #ifdef NON_MATCHING
@@ -1899,9 +1895,11 @@ void func_800FB4D8_MarioBandstand(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB4D8_MarioBandstand);
 #endif
 
-// NON_MATCHING: 1 instruction short, masked 7: retail loads the timer test through its own lui and the table base separately; tried s32 d, s16 timer local (kept), s32 diff, s32 return (M1c)
+// NON_MATCHING: register allocation (raw 12, masked 0): retail keeps the timer in a0 and k in v1.
+// M1g: s32 return (retail returns diff unextended), base hoisted, `D->timer` keeps the test's own
+// %hi/%lo; tried declaration order; tried s32 d, s16 timer local (kept), s32 diff (M1c)
 #ifdef NON_MATCHING
-s16 func_800FB8EC_MarioBandstand(s32 track) {
+s32 func_800FB8EC_MarioBandstand(s32 track) {
     MBTrack* t;
     s32 k;
     s32 diff;
@@ -1912,8 +1910,9 @@ s16 func_800FB8EC_MarioBandstand(s32 track) {
     if (!(D_800FD678_MarioBandstand & 0x8000)) {
         return 0;
     }
-    if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
-        t = &D_800FD598_MarioBandstand[track];
+    t = D_800FD598_MarioBandstand;
+    if ((u16)(D_800FD598_MarioBandstand->timer + 0x13) < 0x75) {
+        t += track;
         k = t->note - t->base;
         timer = t->timer;
         diff = timer - t->ev[k][1];
@@ -1933,8 +1932,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB
 
 /* The next beat of a track: fills `info` (timing difference, length, beat index) and returns the
    note (the conductor's direction + 1 for track 0). */
-// address CSE: retail reads the timer test through its own %hi/%lo (GCC reuses the &D_800FD598 base),
-// so track is copied out of a0 (masked 11; tried hoisting the base, D + track, base-first song)
+// register allocation (1 extra, masked 13): GCC puts t in a0 and copies track to t1; retail keeps
+// track in a0 and t in t0. M1g: `D->timer` gives the test its own %hi/%lo, `song = D; song += track`
+// loads the base first; tried hoisting the base, D + track (earlier waves)
 #ifdef NON_MATCHING
 s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
     MBTrack* t;
@@ -1954,7 +1954,7 @@ s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
         return 0;
     }
     t = D_800FD598_MarioBandstand;
-    if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
+    if ((u16)(D_800FD598_MarioBandstand->timer + 0x13) < 0x75) {
         t += track;
         pos = t->note;
         k = pos - t->base;
@@ -1973,7 +1973,8 @@ s32 func_800FB99C_MarioBandstand(s32 track, MBBeatInfo* info) {
             info->len = D_800FD570_MarioBandstand[track][t->idx * 2 + 1];
         }
         info->unk8 = pos - (u16)t->base;
-        song = &D_800FD568_MarioBandstand[track];
+        song = D_800FD568_MarioBandstand;
+        song += track;
         n = song->count;
         i = info->idx;
         b = &song->beats[i];
@@ -2048,8 +2049,9 @@ void func_800FBD1C_MarioBandstand(void) {
 }
 
 /* Moves the conductor's cursor sprite toward the next beat's position on the score. */
-// address CSE: retail holds &D_800FD598 in a1 from the top for the ev[] reads but reads the other
-// fields through their own %hi/%lo (masked 35; a base pointer local gets every field CSE'd)
+// NON_MATCHING: masked 2 (raw 18): retail computes `base - 1` before subtracting it from note (tried
+// `note - (base - 1)`, a two-statement k, `k = base; note - (k - 1)`); float registers otherwise.
+// M1g: `D->field` reads keep their own %hi/%lo, the ev[] reads go through t, y stored in both arms
 #ifdef NON_MATCHING
 void func_800FBD8C_MarioBandstand(omObjData* obj) {
     s16 spr;
@@ -2061,17 +2063,19 @@ void func_800FBD8C_MarioBandstand(omObjData* obj) {
     f32 x;
     f32 y;
     f32 n;
+    MBTrack* t;
 
+    t = D_800FD598_MarioBandstand;
     spr = D_800FD6A0_MarioBandstand[7];
-    if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
-        note = D_800FD598_MarioBandstand[0].note;
-        k = note - (D_800FD598_MarioBandstand[0].base - 1);
-        if (k < D_800FD598_MarioBandstand[0].count) {
-            time = D_800FD598_MarioBandstand[0].ev[k][1];
+    if ((u16)(D_800FD598_MarioBandstand->timer + 0x13) < 0x75) {
+        note = D_800FD598_MarioBandstand->note;
+        k = note - D_800FD598_MarioBandstand->base + 1;
+        if (k < D_800FD598_MarioBandstand->count) {
+            time = t->ev[k][1];
         } else {
-            time = D_800FD598_MarioBandstand[0].ev[D_800FD598_MarioBandstand[0].count - 1][1] + 0x1E;
+            time = t->ev[t->count - 1][1] + 0x1E;
         }
-        dt = time - D_800FD598_MarioBandstand[0].timer;
+        dt = time - t->timer;
         cell = D_800FCD14_MarioBandstand[note + 1];
         if (cell < 0) {
             cell = 4;
@@ -2088,10 +2092,11 @@ void func_800FBD8C_MarioBandstand(omObjData* obj) {
             y /= n;
             D_800FD168_MarioBandstand = x + D_800FD168_MarioBandstand;
             y = y + D_800FD16C_MarioBandstand;
+            D_800FD16C_MarioBandstand = y;
         } else {
             D_800FD168_MarioBandstand = x;
+            D_800FD16C_MarioBandstand = y;
         }
-        D_800FD16C_MarioBandstand = y;
         func_80066DC4(spr, 0, (s32)D_800FD168_MarioBandstand, (s32)D_800FD16C_MarioBandstand);
     } else {
         func_80066DC4(spr, 0, 0x154, 0xC7);
@@ -2104,8 +2109,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800FB
 #endif
 
 /* The score display: the playhead, each track's note marks and their fade-out. */
-// address CSE: retail reads the timer test through its own %hi/%lo although &D_800FD598 is held in s1;
-// the unk34 test reloads (lhu twice); frame 8 bytes larger (masked 27)
+// NON_MATCHING: count equal since M1g (`D->timer` gives the test its own %hi/%lo); left: the unk34 test
+// reloads (lhu twice), the playhead x is computed before g's sign extension, frame 8 bytes larger
+// (masked 36, most of it branch offsets)
 #ifdef NON_MATCHING
 void func_800FBF68_MarioBandstand(omObjData* obj) {
     MBTrack* t;
@@ -2122,7 +2128,7 @@ void func_800FBF68_MarioBandstand(omObjData* obj) {
     t = D_800FD598_MarioBandstand;
     gp = &D_800FD6A0_MarioBandstand[4];
     g = *gp;
-    if ((u16)(D_800FD598_MarioBandstand[0].timer + 0x13) < 0x75) {
+    if ((u16)(D_800FD598_MarioBandstand->timer + 0x13) < 0x75) {
         if (g < 0) {
             g = func_80064EF4(1, 0);
             *gp = g;

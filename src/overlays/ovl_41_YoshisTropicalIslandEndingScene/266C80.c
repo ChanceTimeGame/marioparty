@@ -622,7 +622,7 @@ omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32
   return obj;
 }
 // scheduling: both index shifts are emitted before their base `lui/addiu` (raw 4, masked 4);
-// `base; base += i`, `base + i` and fully indexed spellings tried
+// `base; base += i`, `base + i`, `i + base`, `b = base; &b[i]` and fully indexed spellings tried (M1g)
 #ifdef NON_MATCHING
 void func_800FEFE0_YoshisTropicalIslandEndingScene(s32 arg0) {
     omObjData** o;
