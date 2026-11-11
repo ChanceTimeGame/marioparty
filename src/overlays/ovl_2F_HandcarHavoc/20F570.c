@@ -17,11 +17,9 @@ f32 D_800FF434_HandcarHavoc[7] = { 260.0f, 200.0f, 120.0f, 200.0f, 0.0f, 0.0f, 0
 
 const char D_800FF450_HandcarHavoc[] = "\x82\x60\x82\x61\x82\x62"; /* "ＡＢＣ" */
 
-// NON_MATCHING: register allocation of the camera loop counter
-#ifdef NON_MATCHING
 void func_800F65E0_HandcarHavoc(void) {
     omObjData* obj;
-    s16 i;
+    s32 i;
 
     omInitObjMan(20, 0);
     func_80060088();
@@ -75,9 +73,7 @@ void func_800F65E0_HandcarHavoc(void) {
     D_800FF62C_HandcarHavoc = omAddObj(600, 0, 0, -1, func_800FCE3C_HandcarHavoc);
     omSetStatBit(omAddObj(1000, 0, 0, -1, func_800FD1B0_HandcarHavoc), 0x80);
     omAddObj(0, 0, 0, -1, func_800F72B0_HandcarHavoc);
-    obj = omAddObj(50, 9, 0, -1, func_800F757C_HandcarHavoc);
-    D_800FF620_HandcarHavoc = obj;
-    omSetStatBit(obj, 0xA0);
+    omSetStatBit(D_800FF620_HandcarHavoc = omAddObj(50, 9, 0, -1, func_800F757C_HandcarHavoc), 0xA0);
     omAddObj(10000, 0, 0, -1, func_800FBF5C_HandcarHavoc);
     D_80101C8E_HandcarHavoc = InitSprite(0x43000D);
     D_80101CA2_HandcarHavoc = InitSprite(0x43000E);
@@ -90,9 +86,6 @@ void func_800F65E0_HandcarHavoc(void) {
     D_800FF5D0_HandcarHavoc = _CheckFlag(0x2B);
     SetFadeInTypeAndTime(0, 16);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F65E0_HandcarHavoc);
-#endif
 
 /* A COM rider's input for this frame, by difficulty. */
 // NON_MATCHING: register allocation and branch layout of the difficulty switches
