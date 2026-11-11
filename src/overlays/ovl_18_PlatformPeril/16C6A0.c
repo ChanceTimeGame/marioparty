@@ -319,8 +319,6 @@ void func_800F76E4_PlatformPeril(void) {
 /* Item kinds, shuffled by func_800F7070. */
 const s32 D_800FDFD0_PlatformPeril[4] __attribute__((section(".rodata"))) = { 5, 1, 1, 0 };
 
-// register allocation in the scenery switch (masked ~20)
-#ifdef NON_MATCHING
 /* Platform / scenery object set-up (D_800FD2A0[D_800FE1D0]). */
 void func_800F7868_PlatformPeril(omObjData* obj) {
     PPPlatWork* w;
@@ -352,10 +350,6 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
         obj->model[0] = func_800174C0(0x2A0000, 0x99);
         obj->model[1] = -1;
         break;
-    case 3:
-        obj->model[0] = func_800174C0(0x2A0001, 0x99);
-        obj->model[1] = -1;
-        break;
     case 4:
         obj->model[0] = func_800174C0(0x2A0000, 0x99);
         obj->model[1] = func_800174C0(0x2A0004, 0x99);
@@ -364,6 +358,10 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
         func_80025798(obj->model[1], obj->trans.x + D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].ofs.x,
                       obj->trans.y + D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].ofs.y,
                       obj->trans.z + D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].ofs.z);
+        break;
+    case 3:
+        obj->model[0] = func_800174C0(0x2A0001, 0x99);
+        obj->model[1] = -1;
         break;
     case 10:
         obj->model[0] = func_800174C0(0x2A0001, 0x99);
@@ -386,22 +384,26 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
         case 0:
             obj->model[0] = func_800174C0(0x2A0005, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 401 - 500;
-            y = ((rand8() << 8) | rand8()) % 401 - 1000;
+            y = ((rand8() << 8) | rand8()) % 401;
+            y -= 1000;
             break;
         case 1:
             obj->model[0] = func_800174C0(0x2A0006, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 901 - 1000;
-            y = ((rand8() << 8) | rand8()) % 501 - 1500;
+            y = ((rand8() << 8) | rand8()) % 501;
+            y -= 1500;
             break;
         case 2:
             obj->model[0] = func_800174C0(0x2A0007, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 1901 - 2000;
-            y = ((rand8() << 8) | rand8()) % 501 - 2000;
+            y = ((rand8() << 8) | rand8()) % 501;
+            y -= 2000;
             break;
         default:
             obj->model[0] = func_800174C0(0x2A0008, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 2901 - 3000;
-            y = ((rand8() << 8) | rand8()) % 1001 - 3000;
+            y = ((rand8() << 8) | rand8()) % 1001;
+            y -= 3000;
             break;
         }
         obj->trans.y = y;
@@ -413,9 +415,6 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
     }
     D_800FE1D0_PlatformPeril++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F7868_PlatformPeril);
-#endif
 
 /* Scenery: scrolls towards the camera and wraps. */
 void func_800F815C_PlatformPeril(omObjData* obj) {
@@ -434,12 +433,9 @@ void func_800F815C_PlatformPeril(omObjData* obj) {
 void func_800F8218_PlatformPeril(omObjData* obj) {
 }
 
-// float register choice (masked 4)
-#ifdef NON_MATCHING
 /* Falling platform: shakes (state 1), falls (2, 3), parks (4). */
 void func_800F8220_PlatformPeril(omObjData* obj) {
     PPPlatWork* w = obj->unk_50;
-    f32 rz;
 
     switch (D_800FD2A0_PlatformPeril[w->index].state) {
     case 1:
@@ -450,11 +446,11 @@ void func_800F8220_PlatformPeril(omObjData* obj) {
         }
         obj->rot.x = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
         obj->rot.y = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
-        obj->rot.z = rz = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
+        obj->rot.z = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
         if (obj->model[1] != -1) {
             func_80025798(obj->model[1], obj->trans.x + D_800FD2A0_PlatformPeril[w->index].ofs.x + obj->rot.x * 5.0f,
                           obj->trans.y + D_800FD2A0_PlatformPeril[w->index].ofs.y + obj->rot.y * 10.0f,
-                          obj->trans.z + D_800FD2A0_PlatformPeril[w->index].ofs.z + rz * 5.0f);
+                          obj->trans.z + D_800FD2A0_PlatformPeril[w->index].ofs.z + obj->rot.z * 5.0f);
         }
         if (obj->work[0]++ >= 0x33) {
             D_800FD2A0_PlatformPeril[w->index].state = 2;
@@ -507,9 +503,6 @@ void func_800F8220_PlatformPeril(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F8220_PlatformPeril);
-#endif
 
 /* Start platform: drops once the race is on. */
 void func_800F87A0_PlatformPeril(omObjData* obj) {
