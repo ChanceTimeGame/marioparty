@@ -109,13 +109,11 @@ void func_800FBF38_TightropeTreachery(omObjData* obj) {
 }
 
 /* A thrown bomb's flight: splashes in the water, or explodes on the rope or a team member. */
-// register allocation of the rope-hit flag (masked ~3)
-#ifdef NON_MATCHING
 void func_800FC180_TightropeTreachery(omObjData* obj) {
     TTPlayerWork* w = D_800F3FB0[0]->unk_50;
     TTBomb* b = ((TTItemWork*)obj->unk_50)->bomb;
     s16 i;
-    s32 rope;
+    s16 rope;
     f32 rx;
 
     if (b != NULL) {
@@ -170,9 +168,6 @@ void func_800FC180_TightropeTreachery(omObjData* obj) {
         obj->trans.x = obj->trans.y = obj->trans.z = 1000.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19D510", func_800FC180_TightropeTreachery);
-#endif
 
 /* A bomb object's update: waits 30 frames after a throw, then flies when its team member throws. */
 void func_800FC598_TightropeTreachery(omObjData* obj) {
