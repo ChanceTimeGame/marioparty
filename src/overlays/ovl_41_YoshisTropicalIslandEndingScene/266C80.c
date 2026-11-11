@@ -264,7 +264,8 @@ void func_800FDACC_YoshisTropicalIslandEndingScene(s16 arg0) {
     e->unk_10 &= 0xFF7F;
     func_800258EC(e->unk_00, 4, 4);
 }
-// s->id reload in the loop and the base register of the last record (masked 8)
+// loop: retail reloads s->id from s1 for func_8001E2F8 where ours keeps it (masked 11, mostly branch
+// offsets); reading the first or second id through D_8010F880[i] tried
 #ifdef NON_MATCHING
 void func_800FDB24_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     Unk266Spr* s;
@@ -309,7 +310,7 @@ void func_800FDB24_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     b = D_8010F880_YoshisTropicalIslandEndingScene;
     s = &b[16];
     id = D_800ECDE0[b[16].id].unk_00;
-    t = b[16].t;
+    t = s->t;
     func_8001E2F8(s->id, (1.0f - func_800B1750(t)) * 255.0f);
     {
         f32 k = 1.01f - func_800B1750(t);
@@ -334,7 +335,8 @@ const f64 D_8010F178_YoshisTropicalIslandEndingScene = 0.6f;
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/266C80", func_800FDB24_YoshisTropicalIslandEndingScene);
 #endif
 
-// D_800ECDE0 load scheduled before the index scaling in the loop (masked 4)
+// scheduling: D_800ECDE0 load before the index scaling in the loop (raw 6, masked 4); `(p + i)->`,
+// `(s32)` index and `(&p[i])->` tried
 #ifdef NON_MATCHING
 omObjData* func_800FDF78_YoshisTropicalIslandEndingScene(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     omObjData* obj;
