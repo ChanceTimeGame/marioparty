@@ -317,16 +317,17 @@ f32 func_800F7320_UnusedMinigame0(f32 cur, f32 target, f32 step) {
     }
 
 /* The player: intro, walking (or the CPU's moves), pushing an exit gate, reaching the treasure. */
-// NON_MATCHING: register allocation and addressing forms (labels vs struct offsets); stores and loads checked against retail
+// NON_MATCHING: masked 17: d/s/a FP registers, `edges` kept in s1, a +100/-100 p.x reload order; retail
+// tests the CPU arrival flags with a word load at w+0 (lw), written here as the unk2 halfword it reads
 #ifdef NON_MATCHING
 void func_800F75C0_UnusedMinigame0(omObjData* obj) {
     UM0MgWork* mg = obj->unk_50;
     UM0Work* w = func_800FB6D0_UnusedMinigame0(obj);
     u8 port;
-    u16 prev;
+    s32 prev;
     s16 k;
     s16 e;
-    u8 edges;
+    s32 edges;
     f32 dx;
     f32 dz;
     f32 d;
@@ -447,28 +448,24 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                 ContBtn[(s8)port] = 0;
                 if (!(w->unk2 & 2)) {
                     if (!(w->unk2 & 8)) {
-                        k = w->unk48++;
-                        if (w->unk48 > D_80103E18_UnusedMinigame0) {
+                        s32 cx = D_80103DB8_UnusedMinigame0[w->unk48][0];
+                        s32 cz = D_80103DB8_UnusedMinigame0[w->unk48][1];
+
+                        if (++w->unk48 <= D_80103E18_UnusedMinigame0) {
+                            w->unk44 = (cx - 4) * 10.0 * 10.0 + 50.0;
+                            w->unk46 = (cz - 3) * 10.0 * 10.0 + 50.0;
+                        } else {
                             w->unk2 |= 8;
                             w->unk5A = func_800FB904_UnusedMinigame0(&w->unk44, &w->unk46);
-                        } else {
-                            w->unk44 = (D_80103DB8_UnusedMinigame0[k][0] - 4) * 10.0 * 10.0 + 50.0;
-                            w->unk46 = (D_80103DB8_UnusedMinigame0[k][1] - 3) * 10.0 * 10.0 + 50.0;
                         }
                     }
                     w->unk2 |= 2;
-                } else if (w->unk2 & 4) {
-                    if ((w->unk0 & 0xC) == 4) {
-                        if (!(mg->unk_5C & 0x20)) {
-                            ContBtnTrg[(s8)port] = ContBtn[(s8)port] = 0x8000;
-                        } else if (!(mg->unk_5C & 0x200) && obj->trans.y >= 200.0) {
-                            ContBtnTrg[(s8)port] = ContBtn[(s8)port] = 0x2000;
-                        }
-                    }
-                } else {
+                } else if (!(w->unk2 & 4)) {
                     if (!(w->unk2 & 0x80) && w->unk4A < 0x10) {
-                        p.x = w->unk44 - obj->trans.x;
-                        p.y = w->unk46 - obj->trans.z;
+                        p.x = w->unk44;
+                        p.x -= obj->trans.x;
+                        p.y = w->unk46;
+                        p.y -= obj->trans.z;
                     } else if (!(w->unk2 & 8)) {
                         if (w->unk44 > 0) {
                             p.x = 100.0f;
@@ -493,12 +490,18 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                         w->unk2 |= 4;
                     }
                     if (w->unk2 & 0x10) {
-                        ContBtnTrg[(s8)port] = ContBtn[(s8)port] = 0x8000;
+                        ContBtn[(s8)port] = ContBtnTrg[(s8)port] = 0x8000;
                     }
-                    if (!(w->unk2 & 0x80)) {
-                        w->unk4A = 0;
-                    } else {
+                    if (w->unk2 & 0x80) {
                         w->unk4A++;
+                    } else {
+                        w->unk4A = 0;
+                    }
+                } else if ((w->unk2 & 0xC) == 4) {
+                    if (!(mg->unk_5C & 0x20)) {
+                        ContBtn[(s8)port] = ContBtnTrg[(s8)port] = 0x8000;
+                    } else if (!(mg->unk_5C & 0x200) && obj->trans.y >= 200.0) {
+                        ContBtn[(s8)port] = ContBtnTrg[(s8)port] = 0x2000;
                     }
                 }
             }
@@ -578,7 +581,7 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                 w->unk5E = -1;
             }
             if (D_80103D84_UnusedMinigame0 == 0 && obj->trans.y < 100.0) {
-                k = func_800FCA40_UnusedMinigame0(obj, obj->trans.x - w->unk1C, obj->trans.z - w->unk24, w->unk4 * 10.0);
+                k = func_800FCA40_UnusedMinigame0(obj, obj->trans.x - w->unk1C, obj->trans.z - w->unk24, (f32)w->unk4 * 10.0);
                 if (k >= 0 && D_80108C4C_UnusedMinigame0[k]->work[0] == 0 && w->unk58 < 0 && obj->trans.y < 100.0) {
                     w->unk2 |= 0x20;
                     w->unk58 = k;
@@ -620,8 +623,9 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                 case 1:
                     if (--w->unk42 == 0) {
                         w->unk40++;
-                        w->unk42 = 0x78;
-                        if (D_80103D9E_UnusedMinigame0 == 0) {
+                        if (D_80103D9E_UnusedMinigame0 != 0) {
+                            w->unk42 = 0x78;
+                        } else {
                             w->unk42 = 0x20;
                         }
                         func_800184BC(obj, 1);
