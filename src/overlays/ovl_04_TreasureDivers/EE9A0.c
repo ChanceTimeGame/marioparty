@@ -774,11 +774,9 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F78D8_TreasureDivers);
 #endif
 
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F8B98_TreasureDivers(omObjData* obj) {
-    Matrix4f m;
     Vec v;
+    Matrix4f m;
     TDWork* w;
     TDWork* d;
     omObjData* dobj;
@@ -786,6 +784,7 @@ void func_800F8B98_TreasureDivers(omObjData* obj) {
     unk2C0C0Struct50* s50;
     f32 oy;
     f32 t;
+    s16 h;
     f32 sc;
 
     w = func_800FA614_TreasureDivers(obj);
@@ -811,11 +810,11 @@ void func_800F8B98_TreasureDivers(omObjData* obj) {
             }
             w->pos.x += w->unk18;
             w->pos.y += w->unk1C;
-            t = func_800FB1D4_TreasureDivers(w->pos.x);
-            if (t < w->pos.y) {
-                w->pos.y = t;
+            h = func_800FB1D4_TreasureDivers(w->pos.x);
+            if (h < w->pos.y) {
+                w->pos.y = h;
             }
-            if (func_800FB620_TreasureDivers(w, w->pos.y - oy) & 0x8000) {
+            if (func_800FB620_TreasureDivers(w, w->pos.y - oy) < 0) {
                 w->unk18 = 0.0f;
             }
             func_800FA984_TreasureDivers(0, &w->pos.x, &w->pos.y, &w->pos.z);
@@ -825,8 +824,8 @@ void func_800F8B98_TreasureDivers(omObjData* obj) {
         case 1:
             if (w->unk58 != 0) {
                 w->unk58--;
-                sc = (f32)(fabs(func_800AEAC0(w->unk58 * 22.5)) * 0.5 + 1.0) * w->unk30;
-                obj->scale.x = obj->scale.y = obj->scale.z = sc;
+                sc = fabs(func_800AEAC0(w->unk58 * 22.5)) * 0.5 + 1.0;
+                obj->scale.x = obj->scale.y = obj->scale.z = sc * w->unk30;
             }
             d = func_800FA614_TreasureDivers(D_800F3FB0[w->unk5A]);
             if ((u16)d->unk8 >= 3) {
@@ -841,14 +840,16 @@ void func_800F8B98_TreasureDivers(omObjData* obj) {
                 MtxRotate(m, -(d->unk24 + s50->unk_44.x - 90.0), d->unk28 + s50->unk_44.y, 0.0f);
                 MtxTranslate(m, D_800FE3E4_TreasureDivers[pw->unk_58].x, D_800FE3E4_TreasureDivers[pw->unk_58].y,
                              D_800FE3E4_TreasureDivers[pw->unk_58].z);
+                t = m[3][0];
+                oy = m[3][1];
                 if (w->unk3C != 0) {
-                    t = (f32)(16 - w->unk3C) / 16.0;
-                    w->pos.x = t * (m[3][0] - w->pos.x) + w->pos.x;
-                    w->pos.y = t * (m[3][1] - w->pos.y) + w->pos.y;
+                    sc = (f32)(16 - w->unk3C) / 16.0;
+                    w->pos.x = sc * (t - w->pos.x) + w->pos.x;
+                    w->pos.y = sc * (oy - w->pos.y) + w->pos.y;
                     w->unk3C--;
                 } else {
-                    w->pos.x = m[3][0];
-                    w->pos.y = m[3][1];
+                    w->pos.x = t;
+                    w->pos.y = oy;
                 }
             }
             if (d->pos.y <= -44.0) {
@@ -891,9 +892,6 @@ void func_800F8B98_TreasureDivers(omObjData* obj) {
     obj->trans.y = v.y;
     obj->trans.z = v.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F8B98_TreasureDivers);
-#endif
 
 /* A bubble. */
 void func_800F92A0_TreasureDivers(s16 i) {
