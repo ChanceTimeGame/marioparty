@@ -1746,31 +1746,29 @@ void func_800FD0B0_PaddleBattle(omObjData* obj) {
 }
 
 /* The waterfalls: next texture frame. */
-// logic-equivalent; retail writes the list at fixed offsets (normalised diff 52 lines)
-#ifdef NON_MATCHING
 void func_800FD29C_PaddleBattle(omObjData* obj) {
     unk2C0C0StructC0* m;
     unk65770Anim* anim;
     Gfx* gfx;
+    Gfx** list;
 
-    if (++obj->work[1] >= 7) {
+    obj->work[1]++;
+    if (obj->work[1] >= 7) {
         obj->work[1] = 0;
     }
     if (obj->model[0] != 0) {
         m = D_800F2B7C[obj->model[0]].unk_6C;
         anim = func_80067310(D_800FFB64_PaddleBattle);
-        gfx = m->unk_00[D_800F37F0 + 1];
-        m->unk_00[0] = gfx;
-        gDPPipeSync(gfx++);
-        gSPSegment(gfx++, 2, osVirtualToPhysical(anim->unk0[obj->work[1]].unk0));
-        gSPDisplayList(gfx++, osVirtualToPhysical(m->unk_00[4]));
-        gDPPipeSync(gfx++);
-        gSPEndDisplayList(gfx++);
+        list = m->unk_00;
+        gfx = list[D_800F37F0 + 1];
+        list[0] = gfx;
+        gDPPipeSync(&gfx[0]);
+        gSPSegment(&gfx[1], 2, osVirtualToPhysical(anim->unk0[obj->work[1]].unk0));
+        gSPDisplayList(&gfx[2], osVirtualToPhysical(m->unk_00[4]));
+        gDPPipeSync(&gfx[3]);
+        gSPEndDisplayList(&gfx[4]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD29C_PaddleBattle);
-#endif
 
 void func_800FD3A8_PaddleBattle(omObjData* obj) {
     s32 i;
