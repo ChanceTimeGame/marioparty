@@ -282,7 +282,8 @@ void func_800FCF5C_TreasureDivers(omObjData* obj) {
 }
 
 /* The two fish, each followed by two models replaying its recorded positions. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING (masked 59): retail keeps &D_800F2B7C[m] after the malloc in s0 (computed before
+// the call, m in s3); tried direct indexing, reassigning mp, split nx++
 #ifdef NON_MATCHING
 void func_800FD00C_TreasureDivers(omObjData* obj) {
     s32 i;
@@ -415,7 +416,8 @@ void func_800FD96C_TreasureDivers(omObjData* obj) {
 }
 
 /* Grids model m's vertices: each vertex's column (x rank) and row (y rank) go to D_800FECF0. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING (masked 59): retail keeps &D_800F2B7C[m] after the malloc in s0 (computed before
+// the call, m in s3); tried direct indexing, reassigning mp, split nx++
 #ifdef NON_MATCHING
 void func_800FD98C_TreasureDivers(s16 m) {
     u16 d[3];
@@ -454,8 +456,9 @@ void func_800FD98C_TreasureDivers(s16 m) {
         D_800FECEC_TreasureDivers = (f32)u / 228.0;
     }
     D_800FECF0_TreasureDivers = HuMemDirectMalloc(400);
-    v = D_800F2B7C[m].unk_6C->unk_04;
-    n = D_800F2B7C[m].unk_6C->unk_72;
+    mp = &D_800F2B7C[m];
+    v = mp->unk_6C->unk_04;
+    n = mp->unk_6C->unk_72;
     for (i = 0; i < n; i++) {
         for (j = 0; j < nx; j++) {
             if (v->unk_00 == D_800FECC8_TreasureDivers[j]) {
@@ -463,7 +466,8 @@ void func_800FD98C_TreasureDivers(s16 m) {
             }
         }
         if (j >= nx) {
-            D_800FECC8_TreasureDivers[nx++] = v->unk_00;
+            D_800FECC8_TreasureDivers[nx] = v->unk_00;
+            nx++;
         }
         for (j = 0; j < ny; j++) {
             if (v->unk_02 == D_800FECDE_TreasureDivers[j]) {
@@ -471,7 +475,8 @@ void func_800FD98C_TreasureDivers(s16 m) {
             }
         }
         if (j >= ny) {
-            D_800FECDE_TreasureDivers[ny++] = v->unk_02;
+            D_800FECDE_TreasureDivers[ny] = v->unk_02;
+            ny++;
         }
         v++;
     }
