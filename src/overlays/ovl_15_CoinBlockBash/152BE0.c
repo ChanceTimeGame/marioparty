@@ -839,13 +839,13 @@ void func_800F96A0_CoinBlockBash(omObjData* obj, Matrix4f parent) {
         D_80102538_CoinBlockBash.unk_34[3][2] += -70.0;
     }
 }
-// NON_MATCHING: KMC as nop placement after the func_800FDD50 call (mul fix), one float register
+// NON_MATCHING: KMC as nop placement only (masked 6): retail has jal sqrtf; nop; nop; mul.s, the blank-line strip
+// gives one nop there (without the strip the extra nop lands after the func_800FDD50 call instead). M1g: one lim variable fixed the float register
 #ifdef NON_MATCHING
 s32 func_800F9814_CoinBlockBash(f32 x, f32 y, f32 z, f32 r) {
     Vec p;
     f32 dist;
     f32 lim;
-    f32 dy;
 
     func_800FDD50_CoinBlockBash(D_80102538_CoinBlockBash.unk_34, x, y, z, &p);
     lim = r * r + 10000.0;
@@ -856,12 +856,12 @@ s32 func_800F9814_CoinBlockBash(f32 x, f32 y, f32 z, f32 r) {
     if (r + 90.0 < abs((s32)p.y)) {
         return 0;
     }
-    dy = abs((s32)p.y) - 90.0;
-    if (dy <= 0.0f) {
+    lim = abs((s32)p.y) - 90.0;
+    if (lim <= 0.0f) {
         return 1;
     }
-    dy = sqrtf(dy * dy + r * r);
-    lim = dy * dy + 10000.0;
+    lim = sqrtf(lim * lim + r * r);
+    lim = lim * lim + 10000.0;
     if (lim < dist) {
         return 0;
     }
@@ -2217,8 +2217,6 @@ s32 func_800FE294_CoinBlockBash(Vec* pos, Vec* vel, Vec* out, Vec* n, s32 unused
     }
     return r;
 }
-// NON_MATCHING: retail reloads D_800F3FA8 and recomputes the viewport address for unk5A after the out->x store (masked 8)
-#ifdef NON_MATCHING
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out) {
     Vec v;
     Matrix4f mtx;
@@ -2241,10 +2239,8 @@ void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out) {
     }
     /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 */
     vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
-    out->x = vp->unk58 / 4.0 * v.x / d * 0.75;
-    out->y = vp->unk5A / 4.0 * -v.y / d;
-    out->z = 400.0 / d;
+    ((f32*)out)[0] = vp->unk58 / 4.0 * v.x / d * 0.75;
+    vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
+    ((f32*)out)[1] = vp->unk5A / 4.0 * -v.y / d;
+    ((f32*)out)[2] = 400.0 / d;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800FE470_CoinBlockBash);
-#endif

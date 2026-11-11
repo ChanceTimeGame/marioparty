@@ -232,7 +232,8 @@ void func_800F9814_HotBobOmb(s32 port) {
     D_800FA5B4_HotBobOmb[port]++;
 }
 
-// sign tests: GCC if-converts dy/dx = +-1 to slti/negu/ori where retail branches (masked 20, raw 59); tried if/else, the s8 parameters directly
+// sign tests: GCC if-converts dy/dx = +-1 to slti/negu/ori where retail branches (bgtz, li 1 in the slot, li -1; masked 24, raw 59);
+// M1g fixed the block order (nonzero arm first) and the return sum; tried if/else, ternary, the s8 parameters directly
 #ifdef NON_MATCHING
 s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
     s32 x;
@@ -253,13 +254,10 @@ s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
         ay = -ay;
     }
     if (ay < ax) {
-        if (ax / 2 >= ay) {
-            dy = 0;
+        if (ax / 2 < ay) {
+            dy = (y > 0) ? 1 : -1;
         } else {
-            dy = 1;
-            if (y <= 0) {
-                dy = -1;
-            }
+            dy = 0;
         }
         if (x > 10) {
             dx = 1;
@@ -267,13 +265,10 @@ s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
             dx = -(x < -10);
         }
     } else {
-        if (ay / 2 >= ax) {
-            dx = 0;
+        if (ay / 2 < ax) {
+            dx = (x > 0) ? 1 : -1;
         } else {
-            dx = 1;
-            if (x <= 0) {
-                dx = -1;
-            }
+            dx = 0;
         }
         if (y > 10) {
             dy = 1;
@@ -281,7 +276,7 @@ s32 func_800F99F4_HotBobOmb(s8 arg0, s8 arg1) {
             dy = -(y < -10);
         }
     }
-    return (dy + 1) * 3 + 1 + dx;
+    return (dy + 1) * 3 + (dx + 1);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F99F4_HotBobOmb);

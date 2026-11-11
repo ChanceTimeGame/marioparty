@@ -347,7 +347,7 @@ s32 func_800F7B7C_SkateBoardSkamper(s32 n, s32 player) {
 }
 
 /* The player's rank (0 leads). */
-// if-conversion (masked 10): GCC turns the last rank test into xor/sltu/negu (retail branches), and retail's leaf frame is 0x18 with no stack use; early-return form is the same; addresses agree; a search loop is another shape
+// if-conversion (masked 10): GCC turns the last rank test into xor/sltu/negu (retail branches), and retail's leaf frame is 0x18 with no stack use; early-return form is the same; addresses agree; a search loop is another shape; M1g: an unused 16-byte local array reproduces retail's j/frame shape (frame 0x10, retail 0x18 = 17-24 bytes of dead locals or a dead call), so the frame is the cause, but the last test still if-converts
 #ifdef NON_MATCHING
 s32 func_800F7BC4_SkateBoardSkamper(s32 player) {
     s32 rank;
