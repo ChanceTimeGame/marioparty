@@ -153,7 +153,8 @@ extern f32 D_800FD310_BowlOver[3][2]; /* bowler x range per alley */
 extern u8 D_800FD328_BowlOver;
 extern u8 D_800FD329_BowlOver;
 extern u8 D_800FD32A_BowlOver;
-extern u16 D_800FD32C_BowlOver[2]; /* CPU: set up, last buttons */
+extern u16 D_800FD32C_BowlOver; /* CPU: set up */
+extern u16 D_800FD32E_BowlOver; /* CPU: last buttons */
 extern s32 D_800FD330_BowlOver;   /* CPU frames */
 extern f32 D_800FD334_BowlOver;   /* CPU stick x, -1 none */
 extern u8 D_800FD338_BowlOver[4];

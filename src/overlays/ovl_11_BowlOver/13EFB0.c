@@ -46,7 +46,8 @@ u8 D_800FD328_BowlOver = 0;
 u8 D_800FD329_BowlOver = 0;
 u8 D_800FD32A_BowlOver = 1;
 u8 D_800FD32B_BowlOver = 0; /* unreferenced */
-u16 D_800FD32C_BowlOver[2] = { 0, 0 };
+u16 D_800FD32C_BowlOver = 0;
+u16 D_800FD32E_BowlOver = 0;
 s32 D_800FD330_BowlOver = 0;
 f32 D_800FD334_BowlOver = -1.0f;
 u8 D_800FD338_BowlOver[4] = { 0, 0, 0, 0 };
@@ -590,7 +591,8 @@ void func_800F7E20_BowlOver(omObjData* obj) {
     }
 }
 
-// switch shapes and register allocation
+// scheduling: one sll of the port index lands after the ContBtnTrg base (masked 2); tried trg = ContBtnTrg + i,
+// no trg local, an s8 port local
 #ifdef NON_MATCHING
 void func_800F8274_BowlOver(omObjData* obj) {
     BowlPlayerWork* w;
@@ -605,7 +607,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
     port = w->unk_56;
     btn = 0;
     if (GwPlayer[w->unk_58].flags & 1) {
-        if (D_800FD32C_BowlOver[0] == 0) {
+        if (D_800FD32C_BowlOver == 0) {
             switch (GwPlayer[w->unk_58].cpu_difficulty) {
                 case 0:
                     D_800FD834_BowlOver = -10.0f;
@@ -650,8 +652,12 @@ void func_800F8274_BowlOver(omObjData* obj) {
                 case 1:
                     D_800FD83E_BowlOver -= guRandom() % 10;
                     break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
-            D_800FD32C_BowlOver[0] = 1;
+            D_800FD32C_BowlOver = 1;
         }
         sum = 0.0f;
         for (i = 0; i < 3; i++) {
@@ -664,6 +670,8 @@ void func_800F8274_BowlOver(omObjData* obj) {
                     D_800FD334_BowlOver = 0.0f;
                     break;
                 case 1:
+                    D_800FD334_BowlOver = -50.0f;
+                    break;
                 case 2:
                     D_800FD334_BowlOver = -50.0f;
                     break;
@@ -714,7 +722,6 @@ void func_800F8274_BowlOver(omObjData* obj) {
         if (D_800FD840_BowlOver < D_800FD330_BowlOver) {
             switch (D_800FD3D0_BowlOver) {
                 case 0:
-                case 2:
                     if (D_800FD878_BowlOver->trans.x < avg) {
                         D_800FD334_BowlOver = D_800FD834_BowlOver + 40.0f;
                     } else {
@@ -728,6 +735,13 @@ void func_800F8274_BowlOver(omObjData* obj) {
                         D_800FD334_BowlOver = -16.0f - D_800FD834_BowlOver;
                     }
                     break;
+                case 2:
+                    if (D_800FD878_BowlOver->trans.x < avg) {
+                        D_800FD334_BowlOver = D_800FD834_BowlOver + 40.0f;
+                    } else {
+                        D_800FD334_BowlOver = -40.0f - D_800FD834_BowlOver;
+                    }
+                    break;
             }
         }
         if (ContBtn[(s8)port] & 0x1000) {
@@ -736,8 +750,8 @@ void func_800F8274_BowlOver(omObjData* obj) {
         trg = &ContBtnTrg[(s8)port];
         ContBtn[(s8)port] = btn;
         *trg = btn;
-        *trg = btn & (btn ^ D_800FD32C_BowlOver[1]);
-        D_800FD32C_BowlOver[1] = btn;
+        *trg = btn & (btn ^ D_800FD32E_BowlOver);
+        D_800FD32E_BowlOver = btn;
         if (D_800FD334_BowlOver == -1.0f) {
             ContStkX[(s8)port] = 0;
             ContStkY[(s8)port] = 0;
