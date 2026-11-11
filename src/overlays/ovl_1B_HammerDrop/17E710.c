@@ -724,8 +724,8 @@ void func_800F84A0_HammerDrop(omObjData* arg0) {
     }
 }
 
-// Logic-equivalent hammer construction; local angle wrapping differs.
-#ifdef NON_MATCHING
+#define HAMMER_WRAP360(x) ((x) >= 360.0f ? (x) - 360.0f : (x) < 0.0f ? (x) + 360.0f : (x))
+
 void func_800F8508_HammerDrop(void) {
     omObjData* obj;
     HammerDropItemWork* work;
@@ -734,8 +734,7 @@ void func_800F8508_HammerDrop(void) {
 
     obj = omAddObj(5, 3, 3, -1, func_800F896C_HammerDrop);
     D_800FB990_HammerDrop = obj;
-    work = func_80023684(sizeof(HammerDropItemWork), 0x7918);
-    obj->unk_50 = work;
+    obj->unk_50 = func_80023684(sizeof(HammerDropItemWork), 0x7918);
     obj->model[0] = LoadFormFile(0x2E0002, 0x699);
     obj->model[1] = LoadFormFile(0x2E0000, 0x699);
     obj->model[2] = LoadFormFile(6, 0x699);
@@ -748,8 +747,8 @@ void func_800F8508_HammerDrop(void) {
     obj->scale.x = 1.0f;
     obj->scale.y = 1.0f;
     obj->scale.z = 1.0f;
-    state = func_80023684(sizeof(HammerDropTargetState), 0x7918);
-    work->item = (HammerDropItemState*) state;
+    work = HAMMER_ITEM_WORK(obj);
+    work->item = func_80023684(sizeof(HammerDropTargetState), 0x7918);
     work->unk_48 = 40.0f;
     work->unk_34 = 40.0f;
     work->unk_38 = 1000.0f;
@@ -757,27 +756,18 @@ void func_800F8508_HammerDrop(void) {
     work->unk_58 = 0.8f;
     work->unk_4C = 0.5f;
     work->unk_40 = 0.0f;
+    state = (HammerDropTargetState*) work->item;
     state->unk_08 = 12.0f;
-    angle = obj->rot.y + 180.0f;
-    if (angle >= 360.0f) {
-        angle -= 360.0f;
-    } else if (angle < 0.0f) {
-        angle += 360.0f;
-    }
-    state->unk_04 = angle;
+    state->unk_04 = HAMMER_WRAP360(obj->rot.y + 180.0f);
     state->unk_0C = 0;
     state->unk_10 = 1.0f;
-    state->unk_14 = ((rand8() & 0xFF) * 2) % 350;
+    angle = ((rand8() & 0xFF) * 2) % 350;
+    state->unk_14 = angle;
     state->unk_18 = 0;
     state->unk_1C = 5.0f;
-    angle = (f32) (((rand8() & 0xFF) * 2) % 360) + obj->rot.y;
-    if (angle >= 360.0f) {
-        angle -= 360.0f;
-    } else if (angle < 0.0f) {
-        angle += 360.0f;
-    }
-    state->unk_20 = angle;
-    state->unk_28 = angle + 180.0f;
+    angle = ((rand8() & 0xFF) * 2) % 360;
+    state->unk_20 = HAMMER_WRAP360(angle + obj->rot.y);
+    state->unk_28 = state->unk_20 + 180.0f;
     state->unk_24 = 0;
     omSetTra(obj, obj->trans.x, obj->trans.y, obj->trans.z);
     func_80025798(obj->model[1], obj->trans.x - 50.0f, obj->trans.y + 50.0f,
@@ -796,9 +786,6 @@ void func_800F8508_HammerDrop(void) {
     state->unk_30 = -60.0f;
     func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 2, 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8508_HammerDrop);
-#endif
 
 // Logic-equivalent hammer movement/strike state machine; angle-wrap scheduling differs.
 #ifdef NON_MATCHING
