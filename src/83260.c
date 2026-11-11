@@ -1,7 +1,8 @@
 #include "common.h"
 #include "sdk_leo.h"
 
-// libultra osDriveRomInit: the 64DD IPL ROM's PI handle (IDO-compiled with libleo: NON_MATCHING).
+// libultra osDriveRomInit: the 64DD IPL ROM's PI handle (IDO-compiled with libleo: NON_MATCHING;
+// GCC cannot reproduce it, but the C is logic-equivalent).
 
 #ifdef NON_MATCHING
 OSPiHandle* func_80082660(void) {
@@ -14,7 +15,7 @@ OSPiHandle* func_80082660(void) {
 
     __osPiGetAccess();
     if (!D_800C63E0) {
-        __osPiRelAccess();
+        // retail returns here without __osPiRelAccess
         return &D_800E9890;
     }
     D_800C63E0 = 0;
