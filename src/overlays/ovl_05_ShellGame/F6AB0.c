@@ -559,14 +559,15 @@ void func_800F7DA8_ShellGame(omObjData* obj, s32 show) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F7DA8_ShellGame);
 #endif
-// NON_MATCHING: retail computes an unused (sec / 10)
-#ifdef NON_MATCHING
 s16 func_800F8154_ShellGame(void) {
     u16 sec;
     u16 tens;
 
     sec = D_800FF10C_ShellGame / 30;
-    tens = sec / 10;
+    tens = sec / 10; /* clamped below but never used: retail keeps the division */
+    if (tens > 9) {
+        tens = 9;
+    }
     if (D_800FF10C_ShellGame == 0x14A) {
         GMesCreate(8, 10, 160, 32);
     } else {
@@ -583,9 +584,6 @@ s16 func_800F8154_ShellGame(void) {
     D_800FEC14_ShellGame = 0;
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_ShellGame/F6AB0", func_800F8154_ShellGame);
-#endif
 s16 func_800F8238_ShellGame(s32 a, s32 b, s32 c) {
     s16 id;
 
@@ -779,7 +777,8 @@ void func_800F88E8_ShellGame(omObjData* from, omObjData* to, s16 frames, s16 typ
     }
 }
 // NON_MATCHING: constant hoisting: retail keeps 0.33 and both 1.0 literals unhoisted (two li.d
-// entries for 1.0 in .rodata); ours hoists them (masked 33)
+// entries for 1.0 in .rodata); ours hoists them (masked 33). Retail hoists only 2^31, 0.0 and 360.0 (each
+// used twice); loop.c merges our two 1.0 loads and moves them (M1g: -= form no change)
 #ifdef NON_MATCHING
 void func_800F8CF8_ShellGame(void) {
     SGSprite* p;
@@ -944,7 +943,8 @@ void func_800F9618_ShellGame(void) {
 }
 // NON_MATCHING: retail does not fold the shell/move clamps after the constant stores (top block only;
 // the rest differs by branch offsets); direct field stores give retail's s0 base but fold both
-// clamps; per-case stores and while-loop clamps tried
+// clamps; per-case stores and while-loop clamps tried. M1g: cap-pointer clamps with direct middle stores also
+// fold both (retail stores unk0/unk2 by symbol, then reloads through a fresh &unk2 register)
 #ifdef NON_MATCHING
 void func_800F9738_ShellGame(void) {
     s16 cnt[3] = { 3, 3, 3 };

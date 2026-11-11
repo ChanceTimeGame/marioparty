@@ -369,7 +369,7 @@ void func_800F73AC_CastAways(omObjData* arg0, s32 arg1) {
         func_80025EB4(set->models[2][i], 1, 1);
     }
 }
-s32 func_800F75BC_CastAways(CastAwaysItemSet* arg0, s32 arg1) {
+s16 func_800F75BC_CastAways(CastAwaysItemSet* arg0, u8 arg1) {
     s32 slotIndex;
     s32 pad[1]; // Original function has an otherwise-unused 8-byte stack frame.
 
@@ -398,12 +398,8 @@ void func_800F7684_CastAways(omObjData* arg0) {
     arg0->func_ptr = &func_800F76B8_CastAways;
 }
 
-// register allocation and block order of the switch arms (masked 27); retail keeps arg0 in $s2 and
-// reuses it for the new fish object (masked 26 that way); tried a chained work store
-#ifdef NON_MATCHING
 void func_800F76B8_CastAways(omObjData* arg0) {
     CastAwaysItemSet* set;
-    omObjData* fish;
     CastAwaysFishWork* work;
     s16 type;
     s16 slot;
@@ -414,9 +410,8 @@ void func_800F76B8_CastAways(omObjData* arg0) {
         if (set->timer == 0) {
             if (set->spawned != set->count) {
                 set->timer = (u8)(rand8() % 20) + set->interval;
-                fish = omAddObj(0xC, 1, 0, set->id, &func_800F7A38_CastAways);
-                work = func_80023684(sizeof(CastAwaysFishWork), 0x7918);
-                fish->unk_50 = work;
+                arg0 = omAddObj(0xC, 1, 0, set->id, &func_800F7A38_CastAways);
+                work = arg0->unk_50 = func_80023684(sizeof(CastAwaysFishWork), 0x7918);
                 type = func_800FABE4_CastAways(set->id);
                 switch (type) {
                 case 0:
@@ -424,27 +419,27 @@ void func_800F76B8_CastAways(omObjData* arg0) {
                     D_800ECDE0[set->spriteIds[slot]].unk_02 = D_800FBB04_CastAways[0];
                     func_8001E268(set->spriteIds[slot], 1, 0);
                     func_8001E2A8(set->spriteIds[slot], 0);
-                    fish->model[0] = set->models[0][slot];
-                    omSetTra(fish, set->x, func_800AEAC0(set->angle) + set->y, set->z);
-                    omSetSca(fish, 4.0f, 4.0f, 4.0f);
+                    arg0->model[0] = set->models[0][slot];
+                    omSetTra(arg0, set->x, func_800AEAC0(set->angle) + set->y, set->z);
+                    omSetSca(arg0, 4.0f, 4.0f, 4.0f);
                     break;
                 case 1:
                     slot = func_800F75BC_CastAways(set, 0);
                     D_800ECDE0[set->spriteIds[slot]].unk_02 = D_800FBB06_CastAways;
                     func_8001E268(set->spriteIds[slot], 1, 0);
                     func_8001E2A8(set->spriteIds[slot], 0);
-                    fish->model[0] = set->models[0][slot];
-                    omSetTra(fish, set->x, func_800AEAC0(set->angle) + set->y, set->z);
-                    omSetSca(fish, 4.0f, 4.0f, 4.0f);
+                    arg0->model[0] = set->models[0][slot];
+                    omSetTra(arg0, set->x, func_800AEAC0(set->angle) + set->y, set->z);
+                    omSetSca(arg0, 4.0f, 4.0f, 4.0f);
                     break;
                 case 2:
                     slot = func_800F75BC_CastAways(set, type);
-                    fish->model[0] = set->models[type][slot];
-                    omSetTra(fish, set->x, func_800AEAC0(set->angle) + set->y + 30.0f, set->z + -150.0f);
-                    omSetSca(fish, 1.5f, 1.5f, 1.5f);
+                    arg0->model[0] = set->models[type][slot];
+                    omSetTra(arg0, set->x, func_800AEAC0(set->angle) + set->y + 30.0f, set->z + -150.0f);
+                    omSetSca(arg0, 1.5f, 1.5f, 1.5f);
                     break;
                 }
-                func_800258EC(fish->model[0], 4, 0);
+                func_800258EC(arg0->model[0], 4, 0);
                 work->state = 0;
                 work->type = type;
                 work->slot = slot;
@@ -463,9 +458,6 @@ void func_800F76B8_CastAways(omObjData* arg0) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F76B8_CastAways);
-#endif
 void func_800F7A38_CastAways(omObjData* arg0) {
     Vec3f pos;
     Vec2f scr;
@@ -809,14 +801,15 @@ void func_800F8B00_CastAways(omObjData* arg0) {
     func_800F8194_CastAways(arg0, 3);
 }
 
-// NON_MATCHING: register allocation (arg0 copy, port re-masked with andi) and one delay-slot fill (masked ~30)
+// NON_MATCHING: register allocation (arg0 copy) and one delay-slot fill (masked 29). M1g: an s16 port drops
+// our andi re-mask (retail copies it with a plain move); s32 port loses the copy (masked 57)
 #ifdef NON_MATCHING
 void func_800F8B1C_CastAways(omObjData* arg0) {
     s8 stick[3]; /* x, y, button */
     CastAwaysPlayerWork* work;
     CastAwaysRodWork* rod;
     s32 event;
-    u8 port;
+    s16 port;
     s16 r;
     s16 power;
     f32 frame;
@@ -1576,7 +1569,8 @@ s32 func_800FACEC_CastAways(CastAwaysPlayerWork* arg0) {
 extern f32 D_800FBA24_CastAways[];
 
 // NON_MATCHING: retail shares the bc1f after the two direction compares (the dir > 0 arm jumps to it); ours
-// branches from each arm (4 instructions longer)
+// branches from each arm (4 instructions longer); retail also loads lure->frame before the table entry.
+// M1g: without the target local the load order matches but the store reloads (masked 22)
 #ifdef NON_MATCHING
 void func_800FAD2C_CastAways(omObjData* arg0) {
     CastAwaysPlayerWork* work;

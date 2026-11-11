@@ -515,7 +515,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F4420", func_800FD9
 #endif
 
 /* Waves model m's vertices (the sea surface) and scrolls its texture. */
-// NON_MATCHING: p[1] is CSE'd into a0 for the p[1] & 1 test where retail reloads it (masked 2)
+// NON_MATCHING: p[1] is CSE'd into a0 for the p[1] & 1 test where retail reloads it (masked 2); M1g: two separate
+// continue tests give the same code
 #ifdef NON_MATCHING
 void func_800FDEB4_TreasureDivers(s16 m) {
     unk2C0C0StructC0* c;
