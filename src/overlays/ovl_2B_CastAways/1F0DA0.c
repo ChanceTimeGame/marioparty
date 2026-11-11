@@ -975,7 +975,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F8B1C_CastAways);
 #endif
-// register allocation and block order
+// register allocation only (masked 0, raw 7: z/y registers in the castState == 4 block); tried y = z - b; y *= s, separate locals
 #ifdef NON_MATCHING
 void func_800F92FC_CastAways(omObjData* arg0) {
     CastAwaysRodWork* rod;
@@ -989,10 +989,9 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     f32 half;
     f32 y;
     f32 z;
+    f32 fishX;
     f32 fishY;
     f32 fishZ;
-    f32 drop;
-    u16 n;
 
     reel = 0;
     if (D_800FBB7C_CastAways != 1) {
@@ -1003,7 +1002,8 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     event = arg0->unk_10;
     if (event != 0) {
         arg0->unk_10 = 0;
-        if (event == D_800FBB7C_CastAways) {
+        switch (event) {
+        case 1:
             if (rod->state == 0) {
                 rod->state = 1;
                 rod->counter = 0;
@@ -1012,15 +1012,19 @@ void func_800F92FC_CastAways(omObjData* arg0) {
                 rod->startY = arg0->trans.y;
                 rod->stepZ = fabsf((half + half) / 45.0f);
                 rod->stepY = rod->velY;
-                rod->gravity = fabsf((rod->velY + rod->velY) / 41.0f);
+                rod->gravity = fabsf((rod->stepY + rod->stepY) / 41.0f);
                 func_800258EC(player->spriteData->model, 4, 0);
                 player->sound = func_80060540(0x314, player->playerNo);
             }
-        } else if (event == 2) {
+            break;
+        case 2:
             reel = 1;
+            break;
         }
     }
     switch (rod->state) {
+    case 0:
+        break;
     case 1:
         z = arg0->trans.z - rod->stepZ;
         y = arg0->trans.y - fabs(rod->stepY) * rod->stepY;
@@ -1041,6 +1045,7 @@ void func_800F92FC_CastAways(omObjData* arg0) {
                 continue;
             }
             fishWork = fish[i]->unk_50;
+            fishX = fish[i]->trans.x;
             if (fishWork->type != 2) {
                 fishY = fish[i]->trans.y;
                 fishZ = fish[i]->trans.z;
@@ -1049,7 +1054,7 @@ void func_800F92FC_CastAways(omObjData* arg0) {
                 fishZ = fish[i]->trans.z - -150.0f;
             }
             if ((u16)func_800FB4D4_CastAways(arg0->trans.x, arg0->trans.y + 8.0f, arg0->trans.z, fishWork->type,
-                                             fish[i]->trans.x, fishY, fishZ) != 1) {
+                                             fishX, fishY, fishZ) != 1) {
                 continue;
             }
             player->sound = func_80060540(0x315, player->playerNo);
@@ -1151,8 +1156,8 @@ void func_800F92FC_CastAways(omObjData* arg0) {
             player->samples[player->sampleCount].x = arg0->trans.x;
             player->samples[player->sampleCount].y = arg0->trans.y;
             player->samples[player->sampleCount].z = arg0->trans.z;
-            n = player->sampleCount;
-            if (n >= 2 && player->samples[n - 1].z < player->samples[n].z) {
+            if (player->sampleCount >= 2 &&
+                player->samples[player->sampleCount].z > player->samples[player->sampleCount - 1].z) {
                 player->sampleCount--;
                 player->samples[player->sampleCount].x = arg0->trans.x;
                 player->samples[player->sampleCount].y = arg0->trans.y;
@@ -1163,7 +1168,8 @@ void func_800F92FC_CastAways(omObjData* arg0) {
             }
             if (++rod->counter == 5) {
                 rod->state = 2;
-                if (++arg0->work[0] == rod->steps) {
+                arg0->work[0]++;
+                if (arg0->work[0] == rod->steps) {
                     rod->state = 0;
                     func_800258EC(player->spriteData->model, 4, 4);
                     player->castState = 1;
@@ -1189,13 +1195,12 @@ void func_800F92FC_CastAways(omObjData* arg0) {
     }
     if (rod->state != 0) {
         if (player->castState == 2) {
-            drop = 7.0f;
+            func_800F9EAC_CastAways(player, 7.0f);
         } else if (player->castState == 1) {
-            drop = 7.0f;
+            func_800F9EAC_CastAways(player, 7.0f);
         } else {
-            drop = 1.0f;
+            func_800F9EAC_CastAways(player, 1.0f);
         }
-        func_800F9EAC_CastAways(player, drop);
         func_800FB0C8_CastAways(player->spriteData, player->samples, player->sampleCount + 1);
     }
 }
