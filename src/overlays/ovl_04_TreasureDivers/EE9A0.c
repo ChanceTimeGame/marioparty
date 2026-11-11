@@ -1045,7 +1045,8 @@ s16 func_800F9CB0_TreasureDivers(void) {
 }
 
 /* Whether the diver faces away (more than 90 degrees) from where its CPU wants to go. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING: register allocation / scheduling (masked 0, raw 15): d in a0, retail v1; M1h tried the
+// modulo inline in the return and an if-set result local
 #ifdef NON_MATCHING
 s16 func_800F9E08_TreasureDivers(omObjData* obj) {
     s32 d = (s16)((TDPlayerWork*)obj->unk_50)->unk_3C - func_800FA614_TreasureDivers(obj)->unk3E;

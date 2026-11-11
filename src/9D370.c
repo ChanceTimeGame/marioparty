@@ -1,7 +1,8 @@
 #include "sdk_hu1.h"
 
 // register allocation: retail copies each normalised value through $f2 before storing (masked 9),
-// as HuGuLookAtF (9CE40.c).
+// as HuGuLookAtF (9CE40.c). M1h: *= len, and a block-local register temporary (worse); only the
+// x = x * len stores get the copy (sub.s results store directly), same in 9D9B0.c.
 #ifdef NON_MATCHING
 /* guLookAtReflectF (Hudson): HuGuLookAtF's single-precision eye - at, plus the LookAt directions. */
 void func_8009C770(Matrix4f mf, LookAt* l, f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt,

@@ -1004,7 +1004,8 @@ void func_800FD728_PiranhasPursuit(omObjData* obj) {
 }
 
 // NON_MATCHING: the first three plant reads use retail's direct labels (GCC CSEs them through pl);
-// one -PP_RND() * 0.5 argument loads trans.x late; register allocation
+// one -PP_RND() * 0.5 argument loads trans.x late; register allocation. M1h: the census field flag is only
+// those three labels (same addresses); assigning pl after the first statement still CSEs them
 #ifdef NON_MATCHING
 void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
     unk_ovl_2D_struct* m;
