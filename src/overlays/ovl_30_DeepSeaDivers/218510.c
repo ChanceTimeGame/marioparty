@@ -2040,7 +2040,8 @@ void func_800FD870_DeepSeaDivers(s16 idx) {
         func_800674BC(D_80100C80_DeepSeaDivers[idx].sprite, 0, 0x8000);
     }
 }
-// code identical; as C, .rodata differs: retail pads after jtbl_801002A0 to 16 bytes before the next doubles (12 zero bytes in the .s)
+// code identical; retail starts a new TU at 0x800FDBA0 (func_800FDBA0 is 16-aligned after a padding nop, its .rodata
+// 16-aligned after jtbl_801002A0's 12 zero bytes): needs a splat split there, not a C change
 #ifdef NON_MATCHING
 void func_800FD8C8_DeepSeaDivers(void) {
     Vec3f p;
@@ -2539,8 +2540,6 @@ void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80039C48("dmy_I8", &D_80100C60_DeepSeaDivers);
     D_80100C64_DeepSeaDivers = D_80100C68_DeepSeaDivers = 0.0f;
 }
-// code identical (s16 counter); as C the unit's .rodata gains a zero word before "dmy_I8", moving "yura_1_1" +4 (masked 1). Tried named f64 consts
-#ifdef NON_MATCHING
 void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructC0* m;
     unk2C0C0StructE0* src;
@@ -2576,44 +2575,3 @@ void func_800FF730_DeepSeaDivers(omObjData* obj) {
     }
     D_80100C5C_DeepSeaDivers = func_8009B618(D_80100C5C_DeepSeaDivers + 4.0, 360.0);
 }
-#else
-#ifdef NON_MATCHING
-void func_800FF730_DeepSeaDivers(omObjData* obj) {
-    unk2C0C0StructC0* m;
-    unk2C0C0StructE0* src;
-    unk2C0C0StructE0* dst;
-    s16 flip = 0;
-    s16 row = 0;
-    s16 i;
-
-    m = D_800F2B7C[obj->model[1]].unk_6C;
-    D_80100C64_DeepSeaDivers -= 0.1f;
-    func_80027E48(obj->model[1], D_80100C64_DeepSeaDivers, D_80100C68_DeepSeaDivers, D_80100C60_DeepSeaDivers[0],
-                  D_80100C60_DeepSeaDivers[1], "yura_1_1", 1);
-    src = m->unk_04;
-    dst = m->unk_08[D_800F37F0];
-    for (i = 0; i < m->unk_72; i++) {
-        if (!(i & 3)) {
-            flip = row ^ 1;
-            if (!(i & 4)) {
-                flip = row;
-            }
-        }
-        if (flip == 0) {
-            dst->unk_00 = src->unk_00 + func_800AEAC0(D_80100C5C_DeepSeaDivers) * 40.0;
-        } else {
-            dst->unk_00 = src->unk_00 - func_800AEAC0(D_80100C5C_DeepSeaDivers) * 40.0;
-        }
-        flip ^= 1;
-        if ((i + 1) % 40 == 0) {
-            row ^= 1;
-        }
-        src++;
-        dst++;
-    }
-    D_80100C5C_DeepSeaDivers = func_8009B618(D_80100C5C_DeepSeaDivers + 4.0, 360.0);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FF730_DeepSeaDivers);
-#endif
-#endif
