@@ -246,14 +246,13 @@ void func_800F9BA0_TightropeTreachery(void) {
 }
 
 /* The leaves (models 4..7 of the water object). */
-// scheduling of the leaf pointer and a 0.0f constant (masked ~8)
-#ifdef NON_MATCHING
 void func_800F9FD8_TightropeTreachery(omObjData* obj) {
     f32 r[2];
     TTLeaf* leaf;
     f32 ang;
     f32 bob;
     f32 base;
+    f32 ofs;
     s16 i;
     s16 j;
 
@@ -263,7 +262,8 @@ void func_800F9FD8_TightropeTreachery(omObjData* obj) {
                 for (j = 0; j < 2; j++) {
                     r[j] = guRandom() % 100 - 50.0f;
                 }
-                ang = (f32)(guRandom() % 90) - 45.0;
+                ang = guRandom() % 90;
+                ang -= 45.0;
                 ang += D_800FE360_TightropeTreachery[D_800FE37C_TightropeTreachery];
                 ang -= ang / 360.0f * ang;
                 D_800FE3B4_TightropeTreachery[i].phase = guRandom() % 180;
@@ -282,13 +282,13 @@ void func_800F9FD8_TightropeTreachery(omObjData* obj) {
         } else {
             D_800FE3B4_TightropeTreachery[i].phase %= 360;
             bob = func_800AEAC0(D_800FE3B4_TightropeTreachery[i].phase);
-            leaf = &D_800FE3B4_TightropeTreachery[i];
-            leaf->vx =
+            (leaf = &D_800FE3B4_TightropeTreachery[i])->vx =
                 func_800AEAC0(D_800FE360_TightropeTreachery[D_800FE37C_TightropeTreachery]) * (D_800FE380_TightropeTreachery / 2.0f) + D_800FE3B4_TightropeTreachery[i].vx;
             D_800FE3B4_TightropeTreachery[i].x = leaf->vx + D_800FE3B4_TightropeTreachery[i].x;
             leaf->vz =
                 func_800AEFD0(D_800FE360_TightropeTreachery[D_800FE37C_TightropeTreachery]) * (D_800FE380_TightropeTreachery / 2.0f) + D_800FE3B4_TightropeTreachery[i].vz;
             D_800FE3B4_TightropeTreachery[i].z = leaf->vz + D_800FE3B4_TightropeTreachery[i].z;
+            ofs = 0.0f;
             bob *= 40.0f;
             if (D_800FE3B4_TightropeTreachery[i].dir == 1) {
                 D_800FE3B4_TightropeTreachery[i].tilt -= 3.0f;
@@ -304,7 +304,7 @@ void func_800F9FD8_TightropeTreachery(omObjData* obj) {
                 }
             }
             func_800257E4(obj->model[i + 4], 0.0f, D_800FE3B4_TightropeTreachery[i].spin, D_800FE3B4_TightropeTreachery[i].tilt);
-            func_80025798(obj->model[i + 4], 0.0f + D_800FE3B4_TightropeTreachery[i].x, bob + D_800FE3B4_TightropeTreachery[i].y,
+            func_80025798(obj->model[i + 4], ofs + D_800FE3B4_TightropeTreachery[i].x, bob + D_800FE3B4_TightropeTreachery[i].y,
                           D_800FE3B4_TightropeTreachery[i].z);
             /* a leaf out of both ranges is gone */
             base = D_800FE7C0_TightropeTreachery - 85.0f + 1150.0f - 200.0f;
@@ -317,9 +317,6 @@ void func_800F9FD8_TightropeTreachery(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19ACC0", func_800F9FD8_TightropeTreachery);
-#endif
 
 /* Scrolls the texture coordinates of material `name` of a model. */
 // load order of the material table base: retail loads m->unk_80 before the index math (masked 2); tried m->unk_80 + k, k inlined
@@ -526,11 +523,11 @@ void func_800FB360_TightropeTreachery(s16 model, s16 src, s16 arg2, f32 t) {
 /* The rescuer: fishes a fallen walker out of the water and carries it back to the shore.
    work[0]: 0 wait, 1 fly to the walker, 2/3 carry it right/left, 4 done; work[2] wing phase;
    work[3] side. */
-// scheduling of the show flag (masked ~7)
+// register allocation: show and k4 swap s3/s4 (masked 0, raw 7); declaration order does not change it
 #ifdef NON_MATCHING
 void func_800FB3F4_TightropeTreachery(omObjData* obj) {
     omObjData* p;
-    s32 show;
+    s16 show;
     f32 dx;
     f32 dz;
     f32 ang;
@@ -601,7 +598,8 @@ void func_800FB3F4_TightropeTreachery(omObjData* obj) {
         break;
     default:
         show = 0;
-        func_800258EC(D_800F3FB0[0]->model[0], 4, 4);
+        p = D_800F3FB0[0];
+        func_800258EC(p->model[0], 4, 4);
         func_800258EC(obj->model[0], 4, 4);
         break;
     }
