@@ -49,8 +49,6 @@ void func_800FA110_LimboDance(omObjData* obj) {
 
 /* The scenery: the sea strip (a display list scrolled by func_800FB504), three torches, trees,
    bushes and rocks recycled 2100 ahead as the camera passes them. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800FA418_LimboDance(omObjData* obj) {
     LDSceneWork* w;
     LDScenery* s;
@@ -59,9 +57,9 @@ void func_800FA418_LimboDance(omObjData* obj) {
     Vtx* v;
     void* data;
     s32 size;
-    s16 sprGlow;
-    s16 sprFlame;
-    s16 sprFire;
+    s32 sprGlow;
+    s32 sprFlame;
+    s32 sprFire;
     s32 i;
     s32 j;
     s32 k;
@@ -102,7 +100,7 @@ void func_800FA418_LimboDance(omObjData* obj) {
     DataClose(data);
     for (i = 0; i < 8; i++) {
         if (i == 6) {
-            obj->model[6] = func_800174C0(D_800FEA00_LimboDance[6] | 0x3D0000, 0x2B9);
+            obj->model[i] = func_800174C0(D_800FEA00_LimboDance[i] | 0x3D0000, 0x2B9);
         } else if (D_800FEA00_LimboDance[i] != -1) {
             obj->model[i] = func_800174C0(D_800FEA00_LimboDance[i] | 0x3D0000, 0x2D9);
         }
@@ -151,7 +149,7 @@ void func_800FA418_LimboDance(omObjData* obj) {
         for (j = 0; j < 3; j++) {
             v = func_800FDDA0_LimboDance(s->sub[1], j);
             for (k = 0; k < 4; k++) {
-                v[k] = D_800FE9C0_LimboDance[k];
+                v[k].v = D_800FE9C0_LimboDance[k].v;
             }
         }
     }
@@ -211,9 +209,6 @@ void func_800FA418_LimboDance(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E4480", func_800FA418_LimboDance);
-#endif
 
 void func_800FB04C_LimboDance(f32 x) {
     D_800FE9B4_LimboDance = x;

@@ -1,4 +1,5 @@
 #include "CoinBlockBash.h"
+int abs(int);
 
 /* .data (0x80101B20..0x80101BF4) */
 u8 D_80101B20_CoinBlockBash[2][2] = { { 0, 1 }, { 1, 5 } };
@@ -531,14 +532,13 @@ void func_800F8184_CoinBlockBash(s16 type, f32 x, f32 y, f32 z, s16 arg) {
     rot.x = rot.y = rot.z = 0.0f;
     func_800F81E0_CoinBlockBash(NULL, type, &pos, &rot, arg);
 }
-// NON_MATCHING: register allocation: obj reloaded from its spill slot, case 1 float registers (masked 9)
+// NON_MATCHING: register allocation: left and base swap s6/s7 (masked 0, raw 9); declaration order does not change it
 #ifdef NON_MATCHING
 void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s16 arg) {
     Vec v;
     Matrix4f m;
     s16 ids[16];
-    CBBFx* fxs[8];
-    s32 pad[8]; /* retail's frame */
+    CBBFx* fxs[16];
     CBBFx* fx;
     s32 left;
     s32 cnt;
@@ -555,10 +555,7 @@ void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s
     n = 0;
     cnt = D_80101B24_CoinBlockBash[type].count;
     all = cnt < 0;
-    left = cnt;
-    if (left < 0) {
-        left = -left;
-    }
+    left = abs(cnt);
     if (obj != NULL) {
         base = obj->work[0] * 8;
     } else {
@@ -618,10 +615,9 @@ void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s
         }
         break;
     case 1:
-        x = ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536) * 0.01 * 0.15 * 100.0;
-        y = ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536) * 0.01 * 0.15 * 100.0;
-        z = (((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 50 / 65536) * 0.01 + 0.5) * 0.1 * 100.0;
-        func_800FDD50_CoinBlockBash(m, x, y, z, &v);
+        func_800FDD50_CoinBlockBash(m, ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536) * 0.01 * 0.15 * 100.0,
+                                    ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536) * 0.01 * 0.15 * 100.0,
+                                    (((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 50 / 65536) * 0.01 + 0.5) * 0.1 * 100.0, &v);
         fx->vel.x = v.x;
         fx->vel.y = v.y;
         fx->vel.z = v.z;
@@ -704,8 +700,6 @@ void func_800F8CD0_CoinBlockBash(void) {
     func_800FBF70_CoinBlockBash(D_801025B0_CoinBlockBash[i].obj);
     func_800F7048_CoinBlockBash(D_801025B0_CoinBlockBash[i].obj);
 }
-// NON_MATCHING: float register allocation only (masked 0)
-#ifdef NON_MATCHING
 void func_800F8D98_CoinBlockBash(void) {
     Matrix4f m;
     Vec a;
@@ -716,9 +710,7 @@ void func_800F8D98_CoinBlockBash(void) {
     CBBBlock* b;
     s32 i;
     s32 j;
-    f32 ang;
     f32 h;
-    f32 s;
 
     b = (CBBBlock*)&D_80102538_CoinBlockBash;
     if (D_8010253C_CoinBlockBash >= 0) {
@@ -740,13 +732,11 @@ void func_800F8D98_CoinBlockBash(void) {
         b->unk_10.y += b->unk_1C.y;
         b->unk_10.z += b->unk_1C.z;
         b->unk_1C.y -= 5.0;
-        ang = b->unk_28.x + 20.0;
-        b->unk_28.x = ang - (s32)(ang / 360.0f) * 360;
+        b->unk_28.x = (f32)(b->unk_28.x + 20.0) - (s32)((f32)(b->unk_28.x + 20.0) / 360.0f) * 360;
         if (b->unk_28.x < 0.0) {
             b->unk_28.x += 360.0;
         }
-        ang = b->unk_28.y + 5.0;
-        b->unk_28.y = ang - (s32)(ang / 360.0f) * 360;
+        b->unk_28.y = (f32)(b->unk_28.y + 5.0) - (s32)((f32)(b->unk_28.y + 5.0) / 360.0f) * 360;
         if (b->unk_28.y < 0.0) {
             b->unk_28.y += 360.0;
         }
@@ -819,13 +809,10 @@ void func_800F8D98_CoinBlockBash(void) {
     r.y = func_800FDEA0_CoinBlockBash(a.z, a.x);
     func_800257E4(b->unk_02, 0.0f, r.y, 0.0f);
     a.z = sqrtf(a.x * a.x + a.z * a.z) / 90.0 + 1.0;
-    s = (1.0 - (b->unk_10.y - h) / 800.0) * 1.2;
-    func_80025830(b->unk_02, s, 1.0f, s * a.z);
+    h = (1.0 - (b->unk_10.y - h) / 800.0) * 1.2;
+    func_80025830(b->unk_02, h, 1.0f, h * a.z);
     func_800258EC(b->unk_02, 4, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F8D98_CoinBlockBash);
-#endif
 void func_800F96A0_CoinBlockBash(omObjData* obj, Matrix4f parent) {
     Matrix4f m;
 
@@ -1415,10 +1402,11 @@ void func_800FB71C_CoinBlockBash(omObjData* obj, CBBPlayer* p) {
         p->unk_9E = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 3 / 65536;
     }
 }
-// NON_MATCHING: register allocation and branch layout (frame, case 1 count test); logic checked against the asm
+// NON_MATCHING: register allocation (level in s1 and p in s2 in retail) and one
+// missing `andi 0xff` after `& 3` on the difficulty (tried (u8) casts, % 4, a u8 temporary)
 #ifdef NON_MATCHING
 void func_800FB900_CoinBlockBash(omObjData* obj) {
-    f32 d[4]; /* d[0]: distance; retail's frame holds 16 bytes here */
+    f32 d;
     CBBPlayer* p;
     CBBBlock* b;
     omObjData* o;
@@ -1427,8 +1415,8 @@ void func_800FB900_CoinBlockBash(omObjData* obj) {
     f32 dx;
     f32 dz;
     s32 chance;
-    s16 idx;
-    s16 i;
+    s32 idx;
+    s32 i;
     s32 level;
 
     p = func_800F7644_CoinBlockBash(obj);
@@ -1447,14 +1435,14 @@ void func_800FB900_CoinBlockBash(omObjData* obj) {
     case 1:
         dx = p->unk_8C.x - obj->trans.x;
         dz = p->unk_8C.z - obj->trans.z;
-        d[0] = dist = sqrtf(dx * dx + dz * dz);
+        d = dist = sqrtf(dx * dx + dz * dz);
         p->unk_9E++;
         if (dist <= 100.0 && !(p->unk_9E & 3)) {
             if ((((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) * 100 / 65536 < ((level << 2) | level) * 2 + 15) {
                 p->unk_84 = 1;
             }
         }
-        p->unk_80 = d[0] / (f32)((2.0 - (f32)level / 2.0) * 100.0);
+        p->unk_80 = d / (f32)((2.0 - (f32)level / 2.0) * 100.0);
         if (p->unk_80 > 0.2) {
             if (maxspd <= p->unk_80) {
                 p->unk_80 = maxspd;
@@ -1471,32 +1459,32 @@ void func_800FB900_CoinBlockBash(omObjData* obj) {
         idx = p->unk_9C;
         dx = p->unk_8C.x - obj->trans.x;
         dz = p->unk_8C.z - obj->trans.z;
-        d[0] = dist = sqrtf(dx * dx + dz * dz);
+        d = dist = sqrtf(dx * dx + dz * dz);
         p->unk_80 = dist / 50.0;
-        if (p->unk_64 != 0 && dist < 140.0 && (s16)func_800FA944_CoinBlockBash(p, d) >= 0 && d[0] < 200.0) {
+        if (p->unk_64 != 0 && dist < 140.0 && (s16)func_800FA944_CoinBlockBash(p, &d) >= 0 && d < 200.0) {
             p->unk_88 = 1;
         }
-        if (!(p->unk_80 >= 0.2)) {
-            p->unk_80 = 0.0f;
-        } else {
+        if (p->unk_80 >= 0.2) {
             if (maxspd <= p->unk_80) {
                 p->unk_80 = maxspd;
             }
             p->unk_7C = func_800FDEA0_CoinBlockBash(dz, dx);
+        } else {
+            p->unk_80 = 0.0f;
         }
-        if (D_80103290_CoinBlockBash[idx].active != 0) {
+        if (D_80103290_CoinBlockBash[idx].active == 0) {
+            p->unk_98 = 0;
+        } else {
             p->unk_8C.x = D_80103290_CoinBlockBash[idx].pos.x;
             p->unk_8C.y = D_80103290_CoinBlockBash[idx].pos.y;
             p->unk_8C.z = D_80103290_CoinBlockBash[idx].pos.z;
-        } else {
-            p->unk_98 = 0;
         }
         break;
     case 3:
         b = &D_80102538_CoinBlockBash;
         dx = D_80102548_CoinBlockBash - obj->trans.x;
         dz = D_80102550_CoinBlockBash - obj->trans.z;
-        d[0] = sqrtf(dx * dx + dz * dz);
+        d = sqrtf(dx * dx + dz * dz);
         p->unk_80 = maxspd;
         p->unk_7C = func_800FDEA0_CoinBlockBash(dz, dx);
         if (b->unk_04 >= 0) {
@@ -1504,8 +1492,8 @@ void func_800FB900_CoinBlockBash(omObjData* obj) {
         }
         break;
     }
-    i = func_800FA944_CoinBlockBash(p, d);
-    if (i >= 0 && d[0] < 150.0) {
+    i = func_800FA944_CoinBlockBash(p, &d);
+    if (i >= 0 && d < 150.0) {
         if (p->unk_64 != 0) {
             chance = level * 15;
         } else {
