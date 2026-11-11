@@ -227,11 +227,10 @@ void func_800FA460_DesertDash(omObjData* obj) {
     D_800FC620_DesertDash[(u16)w].unk14 = 1.0f;
 }
 
-// masked 4: the final call loads obj->model[0] before the trans.z / 16.0 divide, retail after it (s16 t fixed the index copy)
-#ifdef NON_MATCHING
 void func_800FA724_DesertDash(omObjData* obj) {
     s16 t;
     s16 i;
+    f64 z;
 
     t = obj->work[1];
     obj->trans.z = D_800FC658_DesertDash[t];
@@ -252,13 +251,12 @@ void func_800FA724_DesertDash(omObjData* obj) {
         func_800258EC(obj->model[4], 4, 0);
         func_80025798(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z + 2100.0f);
     }
-    func_80027C1C(obj->model[0], 0.0f, obj->trans.z / 16.0, 0x40, 0x40);
+    z = obj->trans.z / 16.0;
+    func_80027C1C(obj->model[0], 0.0f, z, 0x40, 0x40);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FA724_DesertDash);
-#endif
 
 // masked 2: GCC regroups i * 800 - 200 + rand as i * 800 + (rand - 200); retail adds (i * 800 - 200) + rand
+// (M1g: tried rand + (i * 800 - 200) (masked 4), an s32 local for i * 800 - 200 (masked 28))
 #ifdef NON_MATCHING
 /* The desert scenery: 16 random cacti/rocks (D_800FC4F8) and the obstacles. */
 void func_800FA9E0_DesertDash(omObjData* obj) {
@@ -363,7 +361,8 @@ void func_800FAE60_DesertDash(void) {
     }
 }
 
-// loop-head branch layout (bnez/j where retail has beqzl) and FPR constants
+// FPR constants (1.0f hoisted in a different order) and a leftover j over the stolen else block at the
+// loop tail (masked 17; M1g: unk0 != 0 arm first gave retail's beqzl, was masked 42)
 #ifdef NON_MATCHING
 /* Moves the obstacles up and down; plays the slam sound for the teams that see one land. */
 void func_800FAFD4_DesertDash(void) {
@@ -379,9 +378,7 @@ void func_800FAFD4_DesertDash(void) {
     o = D_800FC670_DesertDash;
     i = 0;
     do {
-        if (o->unk0 == 0) {
-            i++;
-        } else {
+        if (o->unk0 != 0) {
         switch (o->unk4) {
             case 2:
                 o->unk10 = 0.0f;
@@ -451,6 +448,8 @@ void func_800FAFD4_DesertDash(void) {
         func_80025830(o->unk8, 2.0 * s, 1.0f, s);
         func_80025798(o->unkA, 0.0f, 0.0f, o->unk14);
         func_80025830(o->unkA, 3.0f, 3.0f, 3.0f);
+        } else {
+            i++;
         }
         o++;
     } while (i < 5);

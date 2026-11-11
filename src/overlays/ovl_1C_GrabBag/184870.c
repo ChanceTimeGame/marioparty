@@ -924,12 +924,15 @@ void func_800F9ED0_GrabBag(omObjData* arg0, omObjData* arg1) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800F9ED0_GrabBag);
 #endif
-// control flow: GCC if-converts the ±1 returns and drops the final compare; frame 48 vs retail 24
-// (masked 39; tried inverted tests, a ret local with if/else, s32 temps for the rand tests, ret = a < b tail, goto to a shared return 1)
+// control flow: GCC if-converts the rand8 ±1 returns (sltu/negu/ori), retail branches to each return
+// (masked 30; M1g: the slt-as-return-value tail fixed the frame (48 -> 24); MP2's matched twin
+// func_80109210_112820_GrabBag compiles to the same if-conversion here; tried inverted tests,
+// a ret local with if/else, s32 temps, goto to the tail's ret = 1)
 #ifdef NON_MATCHING
 s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
     GrabBagPlayerWork* work0;
     GrabBagPlayerWork* work1;
+    s32 ret;
 
     work0 = GB_PLAYER(arg0);
     work1 = GB_PLAYER(arg1);
@@ -950,7 +953,7 @@ s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
             return 1;
         }
         if (GwPlayer[work0->player].cpu_difficulty == 2) {
-            if ((u32)(rand8() * 5) >> 7 < 8) {
+            if ((s32)((u32)(rand8() * 5) >> 7) < 8) {
                 return 1;
             }
             return -1;
@@ -963,10 +966,11 @@ s32 func_800FA184_GrabBag(omObjData* arg0, omObjData* arg1) {
         }
     }
     /* Retail returns 1 either way. */
-    if (work0->button_press_count < work1->button_press_count) {
-        return 1;
+    ret = work0->button_press_count < work1->button_press_count;
+    if (ret == 0) {
+        ret = 1;
     }
-    return 1;
+    return ret;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_GrabBag/184870", func_800FA184_GrabBag);

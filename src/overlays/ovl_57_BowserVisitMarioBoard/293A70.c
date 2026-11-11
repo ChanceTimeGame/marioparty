@@ -330,45 +330,57 @@ void func_800F71F8_name_57(void) {
 }
 
 /* Bowser and the star giver swap places: one turns around the pivot D_800F7EDC opposite the other. */
-// register allocation / scheduling: retail keeps the angle and radians in f20, 200.0f in f22, and loads &D_800F7EDC before the constant (masked 8); tried angle reused for radians, d *= then rad = d
-#ifdef NON_MATCHING
 void func_800F74E8_name_57(f32 angle) {
-    f32 rad;
-    f64 d = angle;
-    Object* o;
+    Object* temp_s0;
+    Object* var_s0;
+    Vec3f* temp;
 
     if (GwCommon.boardWork[0] != 0) {
-        o = D_800F7FC4_name_57;
-        rad = d * 0.017453292519943295;
-        o->coords.x = sinf(rad) * 200.0f + D_800F7EDC_name_57.x;
-        D_800F7FC4_name_57->coords.z = cosf(rad) * 200.0f + D_800F7EDC_name_57.z;
-        D_800F7FC4_name_57->unk_18.x = sinf(rad);
-        D_800F7FC4_name_57->unk_18.z = cosf(rad);
-        D_800F7FCC_name_57->unk_18.x = sinf(rad);
-        D_800F7FCC_name_57->unk_18.z = cosf(rad);
-        D_800F7FC8_name_57->coords.x = D_800F7EDC_name_57.x - sinf(rad) * 200.0f;
-        D_800F7FC8_name_57->coords.z = D_800F7EDC_name_57.z - cosf(rad) * 200.0f;
-        D_800F7FC8_name_57->unk_18.x = -sinf(rad);
-        o = D_800F7FC8_name_57;
+        temp_s0 = D_800F7FC4_name_57;
+        temp = &D_800F7EDC_name_57;
+        temp_s0->coords.x = temp->x + (sinf(angle * (M_PI / 180)) * 200.0f);
+        temp_s0 = D_800F7FC4_name_57;
+        temp_s0->coords.z = (cosf(angle * (M_PI / 180)) * 200.0f) + D_800F7EDC_name_57.z;
+        temp_s0 = D_800F7FC4_name_57;
+        temp_s0->unk_18.x = sinf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FC4_name_57;
+        temp_s0->unk_18.z = cosf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FCC_name_57;
+        temp_s0->unk_18.x = sinf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FCC_name_57;
+        temp_s0->unk_18.z = cosf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FC8_name_57;
+        temp_s0->coords.x = temp->x - (sinf(angle * (M_PI / 180)) * 200.0f);
+        temp_s0 = D_800F7FC8_name_57;
+        temp_s0->coords.z = temp->z - (cosf(angle * (M_PI / 180)) * 200.0f);
+        temp_s0 = D_800F7FC8_name_57;
+        temp_s0->unk_18.x = -sinf(angle * (M_PI / 180));
+        var_s0 = D_800F7FC8_name_57;
+        var_s0->unk_18.z = -cosf(angle * (M_PI / 180));
     } else {
-        o = D_800F7FC8_name_57;
-        rad = d * 0.017453292519943295;
-        o->coords.x = sinf(rad) * 200.0f + D_800F7EDC_name_57.x;
-        D_800F7FC8_name_57->coords.z = cosf(rad) * 200.0f + D_800F7EDC_name_57.z;
-        D_800F7FC8_name_57->unk_18.x = sinf(rad);
-        D_800F7FC8_name_57->unk_18.z = cosf(rad);
-        D_800F7FCC_name_57->unk_18.x = sinf(rad);
-        D_800F7FCC_name_57->unk_18.z = cosf(rad);
-        D_800F7FC4_name_57->coords.x = D_800F7EDC_name_57.x - sinf(rad) * 200.0f;
-        D_800F7FC4_name_57->coords.z = D_800F7EDC_name_57.z - cosf(rad) * 200.0f;
-        D_800F7FC4_name_57->unk_18.x = -sinf(rad);
-        o = D_800F7FC4_name_57;
+        temp_s0 = D_800F7FC8_name_57;
+        temp = &D_800F7EDC_name_57;
+        temp_s0->coords.x = (sinf(angle * (M_PI / 180)) * 200.0f) + temp->x;
+        temp_s0 = D_800F7FC8_name_57;
+        temp_s0->coords.z = (cosf(angle * (M_PI / 180)) * 200.0f) + D_800F7EDC_name_57.z;
+        temp_s0 = D_800F7FC8_name_57;
+        temp_s0->unk_18.x = sinf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FC8_name_57;
+        temp_s0->unk_18.z = cosf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FCC_name_57;
+        temp_s0->unk_18.x = sinf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FCC_name_57;
+        temp_s0->unk_18.z = cosf(angle * (M_PI / 180));
+        temp_s0 = D_800F7FC4_name_57;
+        temp_s0->coords.x = temp->x - (sinf(angle * (M_PI / 180)) * 200.0f);
+        temp_s0 = D_800F7FC4_name_57;
+        temp_s0->coords.z = D_800F7EDC_name_57.z - (cosf(angle * (M_PI / 180)) * 200.0f);
+        temp_s0 = D_800F7FC4_name_57;
+        temp_s0->unk_18.x = -sinf(angle * (M_PI / 180));
+        var_s0 = D_800F7FC4_name_57;
+        var_s0->unk_18.z = -cosf(angle * (M_PI / 180));
     }
-    o->unk_18.z = -cosf(rad);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_57_BowserVisitMarioBoard/293A70", func_800F74E8_name_57);
-#endif
 
 void func_800F7768_name_57(void) {
     f32 scale;
