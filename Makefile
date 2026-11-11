@@ -253,6 +253,8 @@ build/src/1B800.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/2C0C0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/99E0.c.o:  CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_7C_UnknownResultsScreen/308A50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_7E 30F1B0.c (func_800F7D70: nop between back-to-back mul.s) has the mul fix on
+build/src/overlays/ovl_7E_DebugSequentialPlay/30F1B0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_7D 30C540.c (func_800F8898: nop before mult) has the mul fix on
 build/src/overlays/ovl_7D_MinigameIslandMISS/30C540.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_14_CoinBlockBlitz/14E940.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
