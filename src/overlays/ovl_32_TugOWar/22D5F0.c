@@ -30,13 +30,13 @@ s8 D_800FDB3D_TugOWar = 0;
 s8 D_800FDB3E_TugOWar = 0;
 s8 D_800FDB3F_TugOWar = 0;
 s8 D_800FDB40_TugOWar = 0;
-s8 D_800FDB44_TugOWar[8] = { 0, 2, 3, 4, 5, 6, 0, 0 };
-s8 D_800FDB4C_TugOWar[10] = { 6, 12, 14, 15, 16, 17, 18, 19, 20, 21 };
-u16 D_800FDB56_TugOWar = 0;
+u8 D_800FDB44_TugOWar[8] = { 0, 2, 3, 4, 5, 6, 0, 0 };
+u8 D_800FDB4C_TugOWar[10] = { 6, 12, 14, 15, 16, 17, 18, 19, 20, 21 };
+s16 D_800FDB56_TugOWar = 0;
 f32 D_800FDB58_TugOWar = 0.0f;
 f32 D_800FDB5C_TugOWar = 0.0f;
 u16 D_800FDB60_TugOWar = 0;
-u16 D_800FDB62_TugOWar = 0;
+s16 D_800FDB62_TugOWar = 0;
 s8 D_800FDB64_TugOWar = 0;
 s8 D_800FDB65_TugOWar = 0;
 s8 D_800FDB66_TugOWar = 0;
@@ -415,8 +415,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F77EC_Tug
 #endif
 
 /* The solo player won: the team is pulled into the water. */
-// logic-equivalent; temporaries and branch layout differ (masked 26)
-#ifdef NON_MATCHING
 void func_800F851C_TugOWar(omObjData* obj) {
     TWPlayerWork* w[4];
     TWPull* p[4];
@@ -450,12 +448,13 @@ void func_800F851C_TugOWar(omObjData* obj) {
         if (D_800FDB3C_TugOWar == 0) {
             func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB44_TugOWar[D_800FDB60_TugOWar + 1]],
                                   obj->model[D_800FDB44_TugOWar[D_800FDB60_TugOWar]], D_800FDB58_TugOWar);
-        }
-        if (D_800FDBE4_TugOWar == 0) {
+        } else if (D_800FDBE4_TugOWar == 0) {
             func_800FB718_TugOWar(obj->model[0], obj->model[6], obj->model[5], 1.0f);
+        } else {
+            func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar + 1]],
+                                  obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar]], D_800FDB5C_TugOWar);
         }
-        func_800FB718_TugOWar(obj->model[0], obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar + 1]],
-                              obj->model[D_800FDB4C_TugOWar[D_800FDB56_TugOWar]], D_800FDB5C_TugOWar);
+        return;
     }
     if (D_800FDB3C_TugOWar == 0) {
         obj->trans.x -= 8.0f;
@@ -464,7 +463,8 @@ void func_800F851C_TugOWar(omObjData* obj) {
                               obj->model[D_800FDB44_TugOWar[D_800FDB60_TugOWar]], D_800FDB58_TugOWar);
         if ((D_800FDB58_TugOWar += 0.2) >= 1.0) {
             D_800FDB58_TugOWar = 0.0f;
-            if (++D_800FDB60_TugOWar >= 5) {
+            D_800FDB60_TugOWar++;
+            if (D_800FDB60_TugOWar >= 5) {
                 D_800FDB3C_TugOWar = 1;
             }
         }
@@ -543,9 +543,6 @@ void func_800F851C_TugOWar(omObjData* obj) {
         D_800FDFB2_TugOWar = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800F851C_TugOWar);
-#endif
 
 /* The team won: the solo player is pulled into the water. */
 void func_800F8DA0_TugOWar(omObjData* obj) {
