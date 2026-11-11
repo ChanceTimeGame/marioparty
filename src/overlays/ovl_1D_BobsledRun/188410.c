@@ -1719,35 +1719,27 @@ void func_800FBB5C_BobsledRun(omObjData* obj) {
     SetBasicSpritePos(D_800FF2A8_BobsledRun[1].sprite, 0x20, 0x5E);
 }
 
-// argument evaluation order (a2 before a1)
-#ifdef NON_MATCHING
 void func_800FBCB8_BobsledRun(omObjData* obj) {
     s8 p = D_800FF2A8_BobsledRun[0].player[1];
+    s32 file = D_800C59AC[GwPlayer[p].character].unk_04;
+    s32 dir = D_800C59AC[GwPlayer[p].character].unk_00;
 
-    func_800FB594_BobsledRun(obj, D_800C59AC[GwPlayer[p].character].unk_00, D_800C59AC[GwPlayer[p].character].unk_04, p,
-                             0);
+    func_800FB594_BobsledRun(obj, dir, file, p, 0);
     func_800184BC(obj, 0);
     func_80018D84(D_800FF2A8_BobsledRun[0].sprite2, 9);
     SetBasicSpritePos(D_800FF2A8_BobsledRun[0].sprite2, 0x16, 0x5A);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FBCB8_BobsledRun);
-#endif
 
-// argument evaluation order (a2 before a1)
-#ifdef NON_MATCHING
 void func_800FBD5C_BobsledRun(omObjData* obj) {
     s8 p = D_800FF2A8_BobsledRun[1].player[1];
+    s32 file = D_800C59AC[GwPlayer[p].character].unk_04;
+    s32 dir = D_800C59AC[GwPlayer[p].character].unk_00;
 
-    func_800FB594_BobsledRun(obj, D_800C59AC[GwPlayer[p].character].unk_00, D_800C59AC[GwPlayer[p].character].unk_04, p,
-                             1);
+    func_800FB594_BobsledRun(obj, dir, file, p, 1);
     func_800184BC(obj, 0);
     func_80018D84(D_800FF2A8_BobsledRun[1].sprite2, 7);
     SetBasicSpritePos(D_800FF2A8_BobsledRun[1].sprite2, 0x16, 0x5E);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FBD5C_BobsledRun);
-#endif
 
 /* Tilt the sled (rot.x / rot.z) towards the ground normal. */
 void func_800FBE04_BobsledRun(omObjData* obj, Vec3f* normal) {
