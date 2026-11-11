@@ -690,7 +690,7 @@ omObjData* func_800F8A58_WhackAPlant(omObjData* arg0, u16 arg1, void* arg2) {
     return obj;
 }
 // NON_MATCHING: register allocation: the per-branch (s16)mdl goes through v0 before s0 (raw 3, masked 0;
-// tried one assignment before the if, the assignment inside the call argument)
+// tried one assignment before the if, the assignment inside the call argument, s16 m (masked 25))
 #ifdef NON_MATCHING
 void func_800F8BE8_WhackAPlant(omObjData* arg0) {
     WAPPlantWork* w;

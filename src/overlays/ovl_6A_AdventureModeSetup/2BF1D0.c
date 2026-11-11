@@ -1054,7 +1054,9 @@ s32 func_800F9030_AdventureModeSetup(s32 arg0, s32 arg1) {
     }
 }
 
-// regalloc, hoisting, and two byte tests retail merges into one word test (masked 579; 116/2194 normalised)
+// regalloc and loop-invariant hoisting (masked 570): retail keeps &D_80102588 in s8 and the piece
+// base in s0 across the loops, ours rematerialises them; the byte tests merge into one word test once
+// they go through omObjData::work (4-aligned), and p = &AMS_PIECES[i] gives retail's base-register stores
 #ifdef NON_MATCHING
 void func_800F9090_AdventureModeSetup(void) {
     s32 prev[4];
@@ -1062,6 +1064,7 @@ void func_800F9090_AdventureModeSetup(void) {
     omObjData* o;
     omObjData* q;
     unkAMSetupMove* c;
+    AMSPiece* p;
     s32 i;
     s32 j;
     s32 k;
@@ -1077,10 +1080,11 @@ void func_800F9090_AdventureModeSetup(void) {
         case 1:
             for (i = 0; i < 6; i++) {
                 func_800258EC(*D_80101F88_AdventureModeSetup[i]->model, 4, 0);
-                AMS_PIECES[i].unkC.x = D_80101970_AdventureModeSetup[i][0];
-                AMS_PIECES[i].unkC.y = D_80101970_AdventureModeSetup[i][1];
-                AMS_PIECES[i].unk1C = D_80101970_AdventureModeSetup[i][2];
-                AMS_PIECES[i].unkC.z = D_80101970_AdventureModeSetup[i][3];
+                p = &AMS_PIECES[i];
+                p->unkC.x = D_80101970_AdventureModeSetup[i][0];
+                p->unkC.y = D_80101970_AdventureModeSetup[i][1];
+                p->unk1C = D_80101970_AdventureModeSetup[i][2];
+                p->unkC.z = D_80101970_AdventureModeSetup[i][3];
             }
         case 2:
             for (i = 0; i < 6; i++) {
@@ -1133,8 +1137,8 @@ void func_800F9090_AdventureModeSetup(void) {
             }
             for (j = 0, n = 0; j < 4; j++) {
                 if (AMS_SLOTS[j] != -1) {
-                    n += AMS_WORK(D_80101F88_AdventureModeSetup[AMS_SLOTS[j]])->w1 == 0 &&
-                         (AMS_WORK(D_80101F88_AdventureModeSetup[AMS_SLOTS[j]])->w3 & 4);
+                    n += D_80101F88_AdventureModeSetup[AMS_SLOTS[j]]->work[1] == 0 &&
+                         (D_80101F88_AdventureModeSetup[AMS_SLOTS[j]]->work[3] & 4);
                 }
             }
             if (n >= AMS_COUNT) {
@@ -1423,7 +1427,7 @@ void func_800F9090_AdventureModeSetup(void) {
                 if (j < 4) {
                     for (k = 0; k < 6; k++) {
                         o = D_80101F88_AdventureModeSetup[k];
-                        if (AMS_WORK(o)->w1 == 0 && AMS_WORK(o)->w2 == 0) {
+                        if (o->work[1] == 0 && o->work[2] == 0) {
                             q = D_80101FC8_AdventureModeSetup[AMS_CUR];
                             q->work[1] = 2;
                             q->trans.x = o->trans.x;
@@ -1493,10 +1497,11 @@ void func_800F9090_AdventureModeSetup(void) {
         case 12:
             for (i = 0; i < 6; i++) {
                 if (D_80101F88_AdventureModeSetup[i]->work[2] == 0) {
-                    AMS_PIECES[i].unkC.x = D_80101970_AdventureModeSetup[i][0];
-                    AMS_PIECES[i].unkC.y = D_80101970_AdventureModeSetup[i][1];
-                    AMS_PIECES[i].unk1C = D_80101970_AdventureModeSetup[i][2];
-                    AMS_PIECES[i].unkC.z = D_80101970_AdventureModeSetup[i][3];
+                    p = &AMS_PIECES[i];
+                    p->unkC.x = D_80101970_AdventureModeSetup[i][0];
+                    p->unkC.y = D_80101970_AdventureModeSetup[i][1];
+                    p->unk1C = D_80101970_AdventureModeSetup[i][2];
+                    p->unkC.z = D_80101970_AdventureModeSetup[i][3];
                     D_80101F88_AdventureModeSetup[i]->work[1] = 1;
                 }
             }
