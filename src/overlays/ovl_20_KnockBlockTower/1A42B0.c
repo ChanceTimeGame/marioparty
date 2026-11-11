@@ -12,16 +12,16 @@ extern unk65770Anim* D_800EC700[256]; /* src/65770.c */
 
 /* Builds the scrolling background: `strips` rows of the I8 image `image`, each cut into tiles,
    scaled by (sx, sy) and scrolled by D_800FB5E8[row]. */
-// logic-equivalent rewrite; the asm interleaves the display-list writes differently (not attempted)
+// register allocation (masked 31): retail copies gfx out of a0 only after timg, freeing a0 for x0's product; a late "gfx = dl" copy gives masked 29 (not kept)
 #ifdef NON_MATCHING
 void func_800FA9B0_KnockBlockTower(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 y, u16 strips, f32 sx, f32 sy) {
-    unk65770AnimC* frame;
+    u16 sw;
+    s16 shx;
     u8* timg;
+    unk65770AnimC* frame;
     s16 w;
     u16 h;
-    u16 sw;
-    s32 shx;
-    s32 shy;
+    s16 shy;
     s32 x0;
     s32 y0;
     s32 n;
@@ -34,11 +34,11 @@ void func_800FA9B0_KnockBlockTower(Gfx* gfx, s16 image, u16 rowStep, s32 x, s32 
     timg = frame->unk0;
     h = frame->unk6;
     sw = (s32)(frame->unk4 * sx);
+    x0 = x - (s32)((u16)frame->unk8 * sx);
     y0 = y - (s32)((u16)frame->unkA * sy);
     shx = sx / 2.0f;
     shy = sy / 2.0f;
     w = frame->unk4;
-    x0 = x - (s32)((u16)frame->unk8 * sx);
     if (w < 81) {
         n = (s16)((s16)h / 40);
     } else if (w < 161) {

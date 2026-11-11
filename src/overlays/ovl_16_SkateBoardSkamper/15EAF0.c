@@ -347,7 +347,7 @@ s32 func_800F7B7C_SkateBoardSkamper(s32 n, s32 player) {
 }
 
 /* The player's rank (0 leads). */
-// if-conversion (masked 9): GCC turns the last rank test into xor/sltu/negu (retail branches), and retail's frame is 0x18
+// if-conversion (masked 10): GCC turns the last rank test into xor/sltu/negu (retail branches), and retail's leaf frame is 0x18 with no stack use; early-return form is the same; addresses agree
 #ifdef NON_MATCHING
 s32 func_800F7BC4_SkateBoardSkamper(s32 player) {
     s32 rank;

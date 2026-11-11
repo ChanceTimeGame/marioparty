@@ -77,7 +77,7 @@ void func_80018AFC(void) {
     func_80023728(D_800ED60C);
     D_800ED60C = NULL;
 }
-// Logic-equivalent; GCC schedules the two clamp branches differently (masked ~33).
+// Logic-equivalent; retail loads D_800ED60C before the index and cross-jumps the clamp compare (masked 31); tried lo/hi locals, D+i, a ternary test
 #ifdef NON_MATCHING
 void func_80018B2C(void) {
     s32 i;

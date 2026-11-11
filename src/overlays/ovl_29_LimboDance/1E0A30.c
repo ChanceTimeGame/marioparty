@@ -182,13 +182,11 @@ void func_800F6AB8_LimboDance(omObjData* obj) {
 }
 
 /* Result: coins (+10 cleared, -5 failed), the zoom on the dancer, the voice, then the exit. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F6C7C_LimboDance(omObjData* obj) {
     s16 cleared[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
     s16 failed[6] = { 0x44A, 0x44B, 0x44C, 0x44D, 0x44E, 0x44F };
     f32 t;
-    s32 go;
+    s16 go;
     s32 msg;
 
     if (D_800FE992_LimboDance != 0) {
@@ -206,7 +204,9 @@ void func_800F6C7C_LimboDance(omObjData* obj) {
     }
     switch (D_800FE98E_LimboDance) {
     case 0:
-        if (D_800FE990_LimboDance == 0 || D_800FE990_LimboDance < 0) {
+        if (D_800FE990_LimboDance == 0) {
+            D_800FE990_LimboDance++;
+        } else if (D_800FE990_LimboDance < 0) {
             D_800FE990_LimboDance++;
         } else {
             if (D_800FF1BC_LimboDance != 0) {
@@ -284,13 +284,6 @@ void func_800F6C7C_LimboDance(omObjData* obj) {
     func_800F756C_LimboDance();
     func_800F723C_LimboDance(obj);
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", D_800FEAE0_LimboDance);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", D_800FEAEC_LimboDance);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F6C7C_LimboDance);
-#endif
 
 /* Practice result (_CheckFlag(0x2B)). */
 void func_800F70C0_LimboDance(omObjData* obj) {
@@ -405,7 +398,7 @@ void func_800F750C_LimboDance(s16 id, s16 delay) {
     }
 }
 
-// NON_MATCHING: register allocation / scheduling
+// register allocation (masked 12): GCC hoists &D_800FF1C8 for the delay store into s3 (retail stores via %lo(D+2)); tried --, -= 1, a separate decrement
 #ifdef NON_MATCHING
 void func_800F756C_LimboDance(void) {
     s16 i;
@@ -425,19 +418,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F756C_
 #endif
 
 /* Random number below n (0: the whole low half of the seed). */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 u16 func_800F7628_LimboDance(u16 n) {
     D_800FE980_LimboDance = (D_800FE980_LimboDance * 0x19971204 + 0x19760831) >> 16;
-    if (n != 0) {
-        return D_800FE980_LimboDance % n;
-    } else {
+    if (n == 0) {
         return (u16)D_800FE980_LimboDance;
     }
+    return D_800FE980_LimboDance % n;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F7628_LimboDance);
-#endif
 
 void func_800F7698_LimboDance(u16 seed) {
     D_800FE980_LimboDance = seed + seed * D_800FE980_LimboDance;
@@ -1002,8 +989,6 @@ end:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F8CA0_LimboDance);
 #endif
 
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F9080_LimboDance(omObjData* obj) {
     LDPlayer* p = &D_800FF008_LimboDance[obj->work[0]];
     s16 i;
@@ -1011,8 +996,7 @@ void func_800F9080_LimboDance(omObjData* obj) {
     func_8009B770(p, 0, sizeof(LDPlayer));
     p->active = 1;
     p->port = -1;
-    p->vel = 0.0f;
-    p->lean = 0.0f;
+    p->lean = p->vel = 0.0f;
     p->skill = func_800F7628_LimboDance(10) + 1;
     p->skill -= D_800FEFF4_LimboDance * 2;
     if (p->skill <= 0) {
@@ -1020,31 +1004,31 @@ void func_800F9080_LimboDance(omObjData* obj) {
     }
     switch (D_800FEFF4_LimboDance) {
     case 0:
-        if (func_800F7628_LimboDance(100) < 26) {
-            p->bold = 0;
-        } else {
+        if (func_800F7628_LimboDance(100) >= 26) {
             p->bold = 1;
+        } else {
+            p->bold = 0;
         }
         break;
     case 1:
-        if (func_800F7628_LimboDance(100) < 51) {
-            p->bold = 0;
-        } else {
+        if (func_800F7628_LimboDance(100) >= 51) {
             p->bold = 1;
+        } else {
+            p->bold = 0;
         }
         break;
     case 2:
-        if (func_800F7628_LimboDance(100) < 76) {
-            p->bold = 0;
-        } else {
+        if (func_800F7628_LimboDance(100) >= 76) {
             p->bold = 1;
+        } else {
+            p->bold = 0;
         }
         break;
     case 3:
-        if (func_800F7628_LimboDance(100) < 101) {
-            p->bold = 0;
-        } else {
+        if (func_800F7628_LimboDance(100) >= 101) {
             p->bold = 1;
+        } else {
+            p->bold = 0;
         }
         break;
     }
@@ -1054,9 +1038,6 @@ void func_800F9080_LimboDance(omObjData* obj) {
         p->hist[i] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F9080_LimboDance);
-#endif
 
 void func_800F922C_LimboDance(void) {
     D_800F2AF8[D_800ED440] = omAddObj(2, 31, 0, -1, func_800F929C_LimboDance);
@@ -1237,11 +1218,11 @@ s16 func_800F9CFC_LimboDance(f32 x) {
 }
 
 /* Knocks off the bar the dancer at x (leaning back lean) hits; 1 on a hit. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 s16 func_800F9D48_LimboDance(f32 x, f32 lean) {
     LDBar* b;
-    s32 still;
+    s32 tall;
+    f32 left;
+    s16 still;
     s16 i;
 
     if (D_800FF1BE_LimboDance != 0) {
@@ -1270,9 +1251,10 @@ s16 func_800F9D48_LimboDance(f32 x, f32 lean) {
         }
     }
     b = D_800FF068_LimboDance;
+    left = x - 100.0f;
     for (i = 0; i < D_800FF064_LimboDance; i++, b++) {
-        if (b->active != 0 && ((b->height >= 40.0f) & still) && lean < D_800FE9AC_LimboDance &&
-            x - 100.0f <= b->x0 && b->x0 < x && lean < b->height - 10.0f) {
+        if (b->active != 0 && ((tall = (b->height >= 40.0f)) & still) && lean < D_800FE9AC_LimboDance &&
+            left <= b->x0 && b->x0 < x && lean < b->height - 10.0f) {
             D_800FE9A8_LimboDance = x;
             D_800FE9AC_LimboDance = lean;
             b->state = 1;
@@ -1284,6 +1266,3 @@ s16 func_800F9D48_LimboDance(f32 x, f32 lean) {
     D_800FE9AC_LimboDance = lean;
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F9D48_LimboDance);
-#endif
