@@ -726,7 +726,9 @@ void func_800F87EC_MarioBandstand(omObjData* obj) {
    Thrown items
    --------------------------------------------------------------------------------------------- */
 
-// NON_MATCHING: register allocation (raw 20, masked 10): retail keeps the 5-loop bound in s5 and the swap indices in s4/s5; tried s32 type, a bound local, b as bound (M1c)
+// NON_MATCHING: register allocation (1 extra, raw 23, masked 4): retail gives slot s5, a s4, type s0.
+// M1g: slot doubles as the 5-loop bound and the second swap index, type as the swap temporary (retail's
+// saved registers); tried a as type (adds an andi); tried s32 type, a bound local (M1c)
 #ifdef NON_MATCHING
 void func_800F8940_MarioBandstand(omObjData* obj) {
     s16 shared[3];
@@ -735,8 +737,6 @@ void func_800F8940_MarioBandstand(omObjData* obj) {
     s32 i;
     s32 slot;
     s32 a;
-    s32 b;
-    u8 tmp;
     u8 type;
     u16 m;
 
@@ -746,7 +746,8 @@ void func_800F8940_MarioBandstand(omObjData* obj) {
     obj->unk_50 = func_80023684(8 * sizeof(MBItem), 0x7918);
     func_8009B770(obj->unk_50, 0, 8 * sizeof(MBItem));
     it = obj->unk_50;
-    for (i = 0; i < 5; i++) {
+    slot = 5;
+    for (i = 0; i < slot; i++) {
         types[i] = 0;
     }
     for (; i < 8; i++) {
@@ -756,10 +757,10 @@ void func_800F8940_MarioBandstand(omObjData* obj) {
     do {
         i--;
         a = func_800FCAAC_MarioBandstand() & 7;
-        b = func_800FCAAC_MarioBandstand() & 7;
-        tmp = types[a];
-        types[a] = types[b];
-        types[b] = tmp;
+        slot = func_800FCAAC_MarioBandstand() & 7;
+        type = types[a];
+        types[a] = types[slot];
+        types[slot] = type;
     } while (i != 0);
     slot = 1;
     shared[0] = -1;
@@ -1266,8 +1267,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_MarioBandstand/1CD680", func_800F9
 #endif
 
 /* The backing musicians next to a player's instrument (kinds 1-3: two of them for kind 1). */
-// NON_MATCHING: retail reads obj->work[0] once and tests (u16)(kind) with its own andi; GCC reloads it
-// (raw 8, masked 2); tried a u8/s32 work local, kind = work then kind-- (M1e)
+// NON_MATCHING: register allocation (raw 4, masked 0): the D_800FD714 model store swaps v0/v1.
+// M1g: `kind = work; if (kind == 0) return; kind--;` reads work[0] once; tried a chained h store
 #ifdef NON_MATCHING
 s32 func_800FA028_MarioBandstand(omObjData* obj, s32 slot) {
     s32 count;
@@ -1279,10 +1280,11 @@ s32 func_800FA028_MarioBandstand(omObjData* obj, s32 slot) {
     u16 h;
     s32 clap;
 
-    if (obj->work[0] == 0) {
+    kind = obj->work[0];
+    if (kind == 0) {
         return slot;
     }
-    kind = obj->work[0] - 1;
+    kind--;
     count = 2;
     if (kind != 0) {
         count = 1;
