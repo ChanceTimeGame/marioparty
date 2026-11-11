@@ -245,7 +245,8 @@ void func_8006BFF0(omObjData* obj) {
     }
 }
 
-// register choice and scheduling: f2/f6 for the scale step, obj->model load order (masked 6)
+// register choice and scheduling: f2/f6 for the scale step, obj->model load order (masked 6); M1g tried
+// operand orders of x + c * 10.0f and dx/dz locals
 #ifdef NON_MATCHING
 s32 func_8006C058(omObjData* obj) {
     Unk6C470Work* w = obj->unk_50;
