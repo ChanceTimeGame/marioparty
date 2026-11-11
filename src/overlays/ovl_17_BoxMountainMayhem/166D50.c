@@ -284,9 +284,6 @@ void func_800F79F4_BoxMountainMayhem(omObjData* obj) {
     }
 }
 
-// register allocation: i in $v1 and table base in $a0, retail the reverse (raw 20, masked 1);
-// tried i reused for the int angle, decl order, a local base pointer
-#ifdef NON_MATCHING
 void func_800F7C30_BoxMountainMayhem(Vec* pos, omObjData* player, s8 count) {
     BMMBodyWork* work;
     BMMBoxExt* ext;
@@ -314,7 +311,10 @@ void func_800F7C30_BoxMountainMayhem(Vec* pos, omObjData* player, s8 count) {
         } else {
             angle -= 45.5f;
         }
-        angle = (s32)angle / 90 * 90;
+        i = angle;
+        i /= 90;
+        i *= 90;
+        angle = i;
         if (angle > 180.0f) {
             angle -= 360.0f;
         } else if (angle < -180.0f) {
@@ -336,9 +336,6 @@ void func_800F7C30_BoxMountainMayhem(Vec* pos, omObjData* player, s8 count) {
         func_80060F04(BMM_PLAYER(player)->unk_58, 20, 0, 20);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F7C30_BoxMountainMayhem);
-#endif
 
 // retail sets n in $a1 and copies it to $s2 before the shuffle; ours sets $s2 directly (one move;
 // chkf masked 21, the rest are NON_MATCHING data offsets); tried a ternary

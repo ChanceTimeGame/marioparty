@@ -86,15 +86,12 @@ void func_800F67D0_MinigameStadiumMinigameResultsScreen(void) {
 }
 
 /* 1: one player won coins and the rest none, 2: one player lost coins, else 0 */
-// init order: the counters' two `move rN,zero` are swapped (raw 2, masked 0); declaration and
-// init orders, chained and for-clause inits tried
-#ifdef NON_MATCHING
 s32 func_800F6A3C_MinigameStadiumMinigameResultsScreen(void) {
     s32 i;
-    s32 neg;
     s32 zero;
+    s32 neg;
 
-    for (i = 0, neg = 0, zero = 0; i < 4; i++) {
+    for (i = 0, zero = 0, neg = 0; i < 4; i++) {
         if (GwPlayer[i].coins_mg == 0) {
             zero++;
         } else if (GwPlayer[i].coins_mg < 0) {
@@ -106,9 +103,6 @@ s32 func_800F6A3C_MinigameStadiumMinigameResultsScreen(void) {
     }
     return (neg == 1) * 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/303E70", func_800F6A3C_MinigameStadiumMinigameResultsScreen);
-#endif
 
 s8 func_800F6AC8_MinigameStadiumMinigameResultsScreen(void) {
     s8 ret;
