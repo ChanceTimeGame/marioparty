@@ -153,7 +153,6 @@ Gfx D_800FFE10_DeepSeaDivers[] = {
 s32 D_800FFE60_DeepSeaDivers[3] = { 0, 100, 220 };
 s32 D_800FFE6C_DeepSeaDivers[5] = { 30, 30, 30, 0, 0 };
 
-#ifdef NON_MATCHING
 void func_800F65E0_DeepSeaDivers(void) {
     omObjData* obj;
     u8 cam;
@@ -199,14 +198,14 @@ void func_800F65E0_DeepSeaDivers(void) {
     D_800F2AF8[D_800ED440++] = obj = omAddObj(0, 9, 0, -1, func_800F70F4_DeepSeaDivers);
     omSetStatBit(obj, 160);
     D_800F2AF8[D_800ED440++] = omAddObj(1, 6, 0, -1, func_800F791C_DeepSeaDivers);
-    D_80100C72_DeepSeaDivers[0] = 0;
-    D_80100C72_DeepSeaDivers[1] = 0;
+    D_80100C72_DeepSeaDivers[1] = D_80100C72_DeepSeaDivers[0] = 0;
     for (n = 0, j = 0; j < 4; j++) {
-        for (i = 0; i < 4; i++) {
+        do {
             if (GwPlayer[i].group == j) {
                 D_8010046A_DeepSeaDivers[n++] = i;
             }
-        }
+            i++;
+        } while (i < 4);
         i = 0;
     }
     do {
@@ -225,14 +224,10 @@ void func_800F65E0_DeepSeaDivers(void) {
     func_800234B8(0, 128, 128, 128);
     func_800234B8(1, 255, 255, 255);
     func_80023504(1, 0.0f, 128.0f, 128.0f);
-    D_801004A8_DeepSeaDivers[1] = 0;
-    D_801004A8_DeepSeaDivers[0] = 0;
+    D_801004A8_DeepSeaDivers[0] = D_801004A8_DeepSeaDivers[1] = 0;
     D_80101798_DeepSeaDivers = 0.075f;
     func_800FDBA0_DeepSeaDivers();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F65E0_DeepSeaDivers);
-#endif
 void func_800F6B1C_DeepSeaDivers(omObjData* obj) {
     obj->func_ptr = func_800F6BDC_DeepSeaDivers;
     SetFadeInTypeAndTime(0, 16);
@@ -514,14 +509,14 @@ void func_800F7968_DeepSeaDivers(omObjData* obj) {
     dw->unk44 = player;
     D_80100C72_DeepSeaDivers[0]++;
 }
-#ifdef NON_MATCHING
 void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
+    f32 spd = 0.0f;
     f32 dirs[4][2] = { { 64.0f, 0.0f }, { 0.0f, 64.0f }, { -64.0f, 0.0f }, { 0.0f, -64.0f } };
     DSDPlayerWork* pl;
     DSDWork* w;
     omObjData* diver;
     DSDWork* dw;
-    f32 spd = 0.0f;
+    s16 mdl;
     f32 ang;
     s16 sx;
     s16 sy;
@@ -625,15 +620,15 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
                     }
                     w->unk4A = 5;
                 }
-                if (w->unk4A != 0) {
-                    w->unk48 = q;
-                } else {
+                if (w->unk4A == 0) {
                     if (q == 1 && w->unk10 > -10.0) {
                         w->unk10 = w->unk10 - 2.0;
                     }
                     if (q == 3 && w->unk10 < 10.0) {
                         w->unk10 = w->unk10 + 2.0;
                     }
+                    w->unk48 = q;
+                } else {
                     w->unk48 = q;
                 }
             } else {
@@ -648,11 +643,12 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
                 }
             }
             if (w->unk4C == 0) {
-                spd = 10.0f;
                 D_800F2B7C[obj->model[0]].unk_4C = 1.0f;
+                spd = 10.0f;
             } else {
-                D_800F2B7C[obj->model[0]].unk_4C = 0.0f;
-                spd = D_800F2B7C[obj->model[0]].unk_4C;
+                mdl = obj->model[0];
+                D_800F2B7C[mdl].unk_4C = 0.0f;
+                spd = D_800F2B7C[mdl].unk_4C;
             }
             if (pressed == 0 && w->unk10 != 0.0) {
                 if (w->unk10 > 0.0) {
@@ -695,10 +691,6 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
         func_800FBAC8_DeepSeaDivers(obj->trans.x, obj->trans.y + 200.0, obj->trans.z, 0.0f);
     }
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_800FFEC0_DeepSeaDivers);
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7C9C_DeepSeaDivers);
-#endif
 void func_800F8680_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* w;
     DSDWork* dw;
@@ -1293,8 +1285,8 @@ void func_800FAABC_DeepSeaDivers(s16 idx) {
         func_800FD870_DeepSeaDivers(idx);
     }
 }
-#ifdef NON_MATCHING
 void func_800FAC68_DeepSeaDivers(s16 idx) {
+    f32 t;
     f64 x0;
 
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
@@ -1308,13 +1300,15 @@ void func_800FAC68_DeepSeaDivers(s16 idx) {
         D_80100C80_DeepSeaDivers[idx].unk26 = (func_800FC1F4_DeepSeaDivers() & 0x1F) - 16;
         D_80100C80_DeepSeaDivers[idx].sy = 0.75f;
         D_80100C80_DeepSeaDivers[idx].sx = 0.75f;
+        return;
     }
+    t = (24.0 - (f32)D_80100C80_DeepSeaDivers[idx].timer) / 24.0;
     x0 = (f32)D_80100C80_DeepSeaDivers[idx].unk20;
     D_80100C80_DeepSeaDivers[idx].x =
         x0 + ((D_80101780_DeepSeaDivers[D_80100C80_DeepSeaDivers[idx].target >> 8].boat->trans.x +
                D_80100C80_DeepSeaDivers[idx].unk26 * 5.0) -
               x0) *
-                 (f32)((24.0 - (f32)D_80100C80_DeepSeaDivers[idx].timer) / 24.0);
+                 t;
     D_80100C80_DeepSeaDivers[idx].y =
         D_80100C80_DeepSeaDivers[idx].y + (f32)(D_80100C80_DeepSeaDivers[idx].unk1E / 16.0) * 5.0;
     D_80100C80_DeepSeaDivers[idx].unk1E -= 8;
@@ -1326,15 +1320,13 @@ void func_800FAC68_DeepSeaDivers(s16 idx) {
         if (--D_80100C80_DeepSeaDivers[idx].unk22 == 0) {
             PlaySound(0xFC);
             func_800FD870_DeepSeaDivers(idx);
+        } else {
+            D_80100C80_DeepSeaDivers[idx].unk24 /= 2;
+            D_80100C80_DeepSeaDivers[idx].unk1E = D_80100C80_DeepSeaDivers[idx].unk24;
+            PlaySound(0x108);
         }
-        D_80100C80_DeepSeaDivers[idx].unk1E = D_80100C80_DeepSeaDivers[idx].unk24 =
-            D_80100C80_DeepSeaDivers[idx].unk24 / 2;
-        PlaySound(0x108);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FAC68_DeepSeaDivers);
-#endif
 void func_800FB010_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
@@ -1502,18 +1494,11 @@ void func_800FB860_DeepSeaDivers(void) {
     Center.y = -580.0f;
     Center.z = -110.0f;
 }
-// retail keeps out + 4 in a register (masked 3); tried *o++ x3, explicit o = out + 4 (CSE folds both)
-#ifdef NON_MATCHING
-void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    f32* o = (f32*)out;
-
+void func_800FB8C8_DeepSeaDivers(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
     *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    o[0] = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    o[1] = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FB8C8_DeepSeaDivers);
-#endif
 void func_800FB964_DeepSeaDivers(void) {
     D_801004B4_DeepSeaDivers = 0;
     D_801004B0_DeepSeaDivers = 0;
@@ -1533,7 +1518,7 @@ void func_800FB984_DeepSeaDivers(void) {
     D_801004D0_DeepSeaDivers = D_801004F8_DeepSeaDivers = CZoom;
     guTranslateF(m, Center.x, Center.y, Center.z);
     MtxRotate(m, CRot.x, CRot.y, CRot.z);
-    func_800FB8C8_DeepSeaDivers(m, 0.0f, 0.0f, CZoom, &v);
+    func_800FB8C8_DeepSeaDivers(m, 0.0f, 0.0f, CZoom, &v.x);
     D_801004D4_DeepSeaDivers.x = D_801004FC_DeepSeaDivers.x = v.x;
     D_801004D4_DeepSeaDivers.y = D_801004FC_DeepSeaDivers.y = v.y;
     D_801004D4_DeepSeaDivers.z = D_801004FC_DeepSeaDivers.z = v.z;
@@ -1596,7 +1581,7 @@ void func_800FBB30_DeepSeaDivers(void) {
     t = t / func_800AEFD0(D_800C3110->unk_40 * 0.5);
     for (i = 0; i < D_801004B4_DeepSeaDivers; i++) {
         func_800FB8C8_DeepSeaDivers(m, D_80100508_DeepSeaDivers[i].x - mid[0], D_80100508_DeepSeaDivers[i].y - mid[1],
-                                    D_80100508_DeepSeaDivers[i].z - mid[2], &r);
+                                    D_80100508_DeepSeaDivers[i].z - mid[2], &r.x);
         dx = (r.x < 0.0f) ? -r.x : r.x;
         dx = dx / t + r.z;
         dy = (r.y < 0.0f) ? -r.y : r.y;
@@ -2047,7 +2032,8 @@ void func_800FD870_DeepSeaDivers(s16 idx) {
         func_800674BC(D_80100C80_DeepSeaDivers[idx].sprite, 0, 0x8000);
     }
 }
-// code identical; as C, .rodata differs: retail pads after jtbl_801002A0 to 16 bytes before the next doubles (12 zero bytes in the .s)
+// code identical; retail starts a new TU at 0x800FDBA0 (func_800FDBA0 is 16-aligned after a padding nop, its .rodata
+// 16-aligned after jtbl_801002A0's 12 zero bytes): needs a splat split there, not a C change
 #ifdef NON_MATCHING
 void func_800FD8C8_DeepSeaDivers(void) {
     Vec3f p;
@@ -2176,49 +2162,50 @@ void func_800FDE04_DeepSeaDivers(s16 idx, f32 speed, Vec* top) {
     r->top.y = top->y;
     r->top.z = top->z;
 }
-#ifdef NON_MATCHING
 void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
     DSDRopeNode* first;
     DSDRopeNode* last;
-    f32 dx;
-    f32 dy;
-    f32 dz;
+    f32 d;
     f32 dist;
     f32 cur;
     f32 slack;
-    f32 len;
-    f32 want;
     f32 t;
 
     r->bottom.x = bottom->x;
     r->bottom.y = bottom->y;
     r->bottom.z = bottom->z;
-    dx = r->top.x - r->bottom.x;
-    dy = r->top.y - r->bottom.y;
-    dz = r->top.z - r->bottom.z;
-    dist = sqrtf(dx * dx + dy * dy + dz * dz);
+    d = r->top.x - r->bottom.x;
+    dist = d * d;
+    d = r->top.y - r->bottom.y;
+    dist += d * d;
+    d = r->top.z - r->bottom.z;
+    dist += d * d;
+    dist = sqrtf(dist);
     first = r->nodes;
-    dx = r->top.x - first->pos.x;
-    dy = r->top.y - first->pos.y;
-    dz = r->top.z - first->pos.z;
-    cur = sqrtf(dx * dx + dy * dy + dz * dz);
-    last = &first[r->n];
+    last = &r->nodes[r->n];
+    d = r->top.x - first->pos.x;
+    cur = d * d;
+    d = r->top.y - first->pos.y;
+    cur += d * d;
+    d = r->top.z - first->pos.z;
+    cur += d * d;
+    cur = sqrtf(cur);
     slack = dist - cur;
     if (slack < 0.0) {
         slack = 0.0f;
     }
-    len = r->unk8 - r->unkC;
-    if (len < 200.0) {
-        len = 200.0f;
+    d = r->unk8 - r->unkC;
+    if (d < 200.0) {
+        d = 200.0f;
     }
-    r->unk8 = len;
-    if (len < dist) {
-        r->unk8 = want = slack + len;
+    r->unk8 = d;
+    if (d < dist) {
+        cur = r->unk8 = slack + d;
     } else {
-        want = dist;
+        cur = dist;
     }
-    if (r->unkC != 0.0f && r->unk8 < dist + 10.0) {
+    if (r->unkC != 0.0f && dist + 10.0 > r->unk8) {
         r->unk10 -= 0.05;
         if (r->unk10 < 0.0) {
             r->unk10 = 0.0f;
@@ -2229,7 +2216,7 @@ void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
             r->unk10 = 1.0f;
         }
     }
-    t = 1.0 / dist * want;
+    t = 1.0 / dist * cur;
     first->pos.x = r->bottom.x = (r->bottom.x - r->top.x) * t + r->top.x;
     first->pos.y = r->bottom.y = (r->bottom.y - r->top.y) * t + r->top.y;
     first->pos.z = r->bottom.z = (r->bottom.z - r->top.z) * t + r->top.z;
@@ -2240,9 +2227,6 @@ void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
     out->y = first->pos.y;
     out->z = first->pos.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDE44_DeepSeaDivers);
-#endif
 void func_800FE170_DeepSeaDivers(s16 idx, Vec* top, Vec* bottom) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
     DSDRopeNode* first = r->nodes;
@@ -2284,16 +2268,18 @@ s16 func_800FE2C0_DeepSeaDivers(s16 idx) {
     }
     return model;
 }
+// float register allocation (masked 1, raw 45: s (sag, then slack) in f10 not f22, t/ang swapped, one bnezl); tried
+// merging sag into s, u8 col, k reused as the colour temp
 #ifdef NON_MATCHING
 void func_800FE378_DeepSeaDivers(Gfx** gfx) {
     DSDRope* r;
     DSDRopeNode* first;
     DSDRopeNode* last;
     Vtx* v;
+    unk2C0C0StructC0* m;
     f32 p[9];
     Vec mid;
     Vec d;
-    f32 sag;
     f32 len;
     f32 s;
     f32 t;
@@ -2303,7 +2289,7 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
     f32 c;
     f32 ang;
     f32 amp;
-    s32 col;
+    u8 col;
     s32 i;
     s32 k;
 
@@ -2316,21 +2302,23 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
         r = &D_80100610_DeepSeaDivers[i];
         if (!(r->active & 0x80)) {
             r->active |= 0x80;
+            return;
         }
         gSPDisplayList((*gfx)++, osVirtualToPhysical(D_800FFDD0_DeepSeaDivers));
         func_8001D658(0, gfx);
         gSPDisplayList((*gfx)++, osVirtualToPhysical(D_800FFE10_DeepSeaDivers));
+        m = D_800F2B7C[D_800ED728].unk_6C;
         first = r->nodes;
-        last = &first[r->n];
-        v = (Vtx*)D_800F2B7C[D_800ED728].unk_6C->unk_08[D_800F37F0];
+        last = &r->nodes[r->n];
+        v = (Vtx*)m->unk_08[D_800F37F0];
         d.x = last->pos.x - first->pos.x;
         d.y = last->pos.y - first->pos.y;
         d.z = last->pos.z - first->pos.z;
-        sag = (-func_800AEAC0(func_800B0CD8(d.y, sqrtf(d.x * d.x + d.z * d.z))) + 1.0) * 0.5;
-        mid.x = sag * d.x + first->pos.x;
-        mid.y = sag * d.y + first->pos.y;
+        s = (-func_800AEAC0(func_800B0CD8(d.y, sqrtf(d.x * d.x + d.z * d.z))) + 1.0) * 0.5;
+        mid.x = s * d.x + first->pos.x;
+        mid.y = s * d.y + first->pos.y;
+        mid.z = s * d.z + first->pos.z;
         len = sqrtf(d.x * d.x + d.y * d.y + d.z * d.z);
-        mid.z = sag * d.z + first->pos.z;
         s = r->unk8 - len;
         if (s < 0.0) {
             s = 0.0f;
@@ -2363,17 +2351,11 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
             }
             col = 0xFF;
             if (v->v.ob[1] < 1250) {
-                if (func_800AEAC0(ang) < 0.0f) {
-                    s = -func_800AEAC0(ang);
-                } else {
-                    s = func_800AEAC0(ang);
+                k = (1.0 - ((func_800AEAC0(ang) < 0.0f) ? -func_800AEAC0(ang) : func_800AEAC0(ang))) * 127.0;
+                if (k < 72) {
+                    k = k * 0.25 + 24.0;
                 }
-                col = (1.0 - s) * 127.0;
-                if (col < 72) {
-                    col = (s32)(col * 0.25 + 24.0) - 128;
-                } else {
-                    col = col - 128;
-                }
+                col = k - 128;
             }
             v->v.cn[0] = v->v.cn[1] = col;
             v->v.cn[3] = 0xFF;
@@ -2546,8 +2528,6 @@ void func_800FF6E0_DeepSeaDivers(omObjData* obj) {
     func_80039C48("dmy_I8", &D_80100C60_DeepSeaDivers);
     D_80100C64_DeepSeaDivers = D_80100C68_DeepSeaDivers = 0.0f;
 }
-// code identical (s16 counter); as C the unit's .rodata gains a zero word before "dmy_I8", moving "yura_1_1" +4 (masked 1). Tried named f64 consts
-#ifdef NON_MATCHING
 void func_800FF730_DeepSeaDivers(omObjData* obj) {
     unk2C0C0StructC0* m;
     unk2C0C0StructE0* src;
@@ -2583,44 +2563,3 @@ void func_800FF730_DeepSeaDivers(omObjData* obj) {
     }
     D_80100C5C_DeepSeaDivers = func_8009B618(D_80100C5C_DeepSeaDivers + 4.0, 360.0);
 }
-#else
-#ifdef NON_MATCHING
-void func_800FF730_DeepSeaDivers(omObjData* obj) {
-    unk2C0C0StructC0* m;
-    unk2C0C0StructE0* src;
-    unk2C0C0StructE0* dst;
-    s16 flip = 0;
-    s16 row = 0;
-    s16 i;
-
-    m = D_800F2B7C[obj->model[1]].unk_6C;
-    D_80100C64_DeepSeaDivers -= 0.1f;
-    func_80027E48(obj->model[1], D_80100C64_DeepSeaDivers, D_80100C68_DeepSeaDivers, D_80100C60_DeepSeaDivers[0],
-                  D_80100C60_DeepSeaDivers[1], "yura_1_1", 1);
-    src = m->unk_04;
-    dst = m->unk_08[D_800F37F0];
-    for (i = 0; i < m->unk_72; i++) {
-        if (!(i & 3)) {
-            flip = row ^ 1;
-            if (!(i & 4)) {
-                flip = row;
-            }
-        }
-        if (flip == 0) {
-            dst->unk_00 = src->unk_00 + func_800AEAC0(D_80100C5C_DeepSeaDivers) * 40.0;
-        } else {
-            dst->unk_00 = src->unk_00 - func_800AEAC0(D_80100C5C_DeepSeaDivers) * 40.0;
-        }
-        flip ^= 1;
-        if ((i + 1) % 40 == 0) {
-            row ^= 1;
-        }
-        src++;
-        dst++;
-    }
-    D_80100C5C_DeepSeaDivers = func_8009B618(D_80100C5C_DeepSeaDivers + 4.0, 360.0);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FF730_DeepSeaDivers);
-#endif
-#endif
