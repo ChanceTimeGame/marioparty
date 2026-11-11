@@ -726,81 +726,96 @@ f32 func_800FAFC8_BoxMountainMayhem(BMMPlayerWork* work, Vec* from, Vec* to, f32
     return a;
 }
 
-// ContBtn load goes to $v0 then andi into $a0; retail loads into $a0 (raw 5, masked 1);
 // tried temp r for both roles, u16 r, reusing n
-#ifdef NON_MATCHING
-void func_800FB1BC_BoxMountainMayhem(omObjData* obj) {
-    BMMPlayerWork* work;
-    BMMPlayerExt* ext;
-    Vec pos;
-    Vec coin;
-    Vec stack;
-    f32 dCoin;
-    f32 dStack;
-    u16 buttons;
-    f32 a;
-    s32 n;
-    s32 move;
-    s32 target;
-    s32 r;
-
-    work = BMM_PLAYER(obj);
-    ext = work->unk_E4;
-    target = 0;
-    buttons = 0;
-    move = 0;
-    pos.x = obj->trans.x;
-    pos.y = obj->trans.y;
-    pos.z = obj->trans.z;
-    n = func_800F8400_BoxMountainMayhem(&pos, &coin, &dCoin);
-    if (n != 0) {
-        if (dCoin < 22500.0f) {
-            target = 1;
-        } else if (n >= 4) {
-            target = 1;
-        }
+// decomp-permuter
+void func_800FB1BC_BoxMountainMayhem(omObjData *obj)
+{
+  BMMPlayerWork *work;
+  BMMPlayerExt *ext;
+  Vec pos;
+  Vec coin;
+  Vec stack;
+  f32 dCoin;
+  f32 dStack;
+  u16 buttons;
+  f32 a;
+  s32 n;
+  s32 move;
+  int new_var;
+  s32 target;
+  s32 r;
+  work = (BMMPlayerWork *) obj->unk_50;
+  ext = work->unk_E4;
+  target = 0;
+  buttons = 0;
+  move = 0;
+  pos.x = obj->trans.x;
+  pos.y = obj->trans.y;
+  pos.z = obj->trans.z;
+  n = func_800F8400_BoxMountainMayhem(&pos, &coin, &dCoin);
+  if (n != 0)
+  {
+    if (dCoin < 22500.0f)
+    {
+      target = 1;
     }
-    if (target == 0) {
-        if (func_800FA2FC_BoxMountainMayhem(&pos, &stack, &dStack) != 0) {
-            target = 3;
-            if (n != 0 && dCoin < dStack) {
-                target = 1;
-            }
-        } else if (n != 0) {
-            target = 1;
-        }
+    else
+      if (n >= 4)
+    {
+      target = 1;
     }
-    if (ext->unk_08 != target) {
-        r = func_800FBD2C_BoxMountainMayhem() & 0x1FF;
-        target &= -(r >= D_800FC010_BoxMountainMayhem[ext->unk_0C]);
+  }
+  if (target == 0)
+  {
+    if (func_800FA2FC_BoxMountainMayhem(&pos, &stack, &dStack) != 0)
+    {
+      target = 3;
+      if ((n != 0) && (dCoin < dStack))
+      {
+        target = 1;
+      }
     }
-    ext->unk_08 = target;
-    switch (target) {
+    else
+      if (n != 0)
+    {
+      target = 1;
+    }
+  }
+  if (ext->unk_08 != target)
+  {
+    r = func_800FBD2C_BoxMountainMayhem() & 0x1FF;
+    target &= -(r >= D_800FC010_BoxMountainMayhem[ext->unk_0C]);
+  }
+  ext->unk_08 = target;
+  switch (target)
+  {
     case 1:
-        a = func_800FAF98_BoxMountainMayhem(&pos, &coin);
-        move = 1;
-        break;
+      a = func_800FAF98_BoxMountainMayhem(&pos, &coin);
+      move = 1;
+      break;
+
     case 3:
-        a = func_800FAFC8_BoxMountainMayhem(work, &pos, &stack, dStack, &buttons);
-        move = 1;
-        break;
+      a = func_800FAFC8_BoxMountainMayhem(work, &pos, &stack, dStack, &buttons);
+      move = 1;
+      break;
+
     case 0:
-        break;
-    }
-    r = ContBtn[work->unk_56] & 0x1FFF;
-    buttons |= r;
-    buttons ^= ext->unk_06 & buttons & 0x4000;
-    ContBtnTrg[work->unk_56] = ContBtn[work->unk_56] = buttons;
-    ContBtnTrg[work->unk_56] = buttons & (buttons ^ ext->unk_06);
-    ext->unk_06 = buttons;
-    if (move) {
-        ContStkX[work->unk_56] = func_800AEFD0(a) * 80.0f;
-        ContStkY[work->unk_56] = -func_800AEAC0(a) * 80.0f;
-    }
+      break;
+
+  }
+
+  r = ContBtn[work->unk_56] & (new_var = 0x1FFF);
+  buttons |= r;
+  buttons ^= (ext->unk_06 & buttons) & 0x4000;
+  ContBtnTrg[work->unk_56] = (ContBtn[work->unk_56] = buttons);
+  ContBtnTrg[work->unk_56] = buttons & (buttons ^ ext->unk_06);
+  ext->unk_06 = buttons;
+  if (move)
+  {
+    ContStkX[work->unk_56] = func_800AEFD0(a) * 80.0f;
+    ContStkY[work->unk_56] = (-func_800AEAC0(a)) * 80.0f;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800FB1BC_BoxMountainMayhem);
-#endif
 
 void func_800FB440_BoxMountainMayhem(f32 zoom, f32 rotX, f32 rotY, f32 rotZ, f32 x, f32 y, f32 z) {
     func_800178A0(1);

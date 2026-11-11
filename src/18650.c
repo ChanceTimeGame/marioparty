@@ -487,24 +487,34 @@ void func_800186E4(omObjData* obj, s32 a, s32 b) {
     eb->flags = flags;
 }
 
-// register allocation of the parameters (masked 0)
-#ifdef NON_MATCHING
-void func_8001874C(omObjData* obj, s32 idx, s32 file, s32 flags, u16 speed) {
-    s16 mot = func_8001755C(file);
-    ActorWork* w;
-    MotionEntry* e;
-
-    if (mot >= 0) {
-        w = obj->unk_50;
-        obj->motion[(u16)idx] = mot;
-        e = &w->table[(u16)idx];
-        e->flags = flags;
-        e->speed = speed;
+// decomp-permuter
+void func_8001874C(omObjData *obj, s32 idx, s32 file, s32 flags, u16 speed)
+{
+  s16 mot = func_8001755C(file);
+  ActorWork *w;
+  s32 new_var;
+  MotionEntry *e;
+  new_var = idx;
+  if (mot >= 0)
+  {
+    if (obj)
+    {
+      w = obj->unk_50;
+      obj->motion[(u16) new_var] = mot;
+      e = &w->table[(u16) new_var];
+      e->flags = flags;
+      e->speed = speed;
     }
+    else
+    {
+      w = obj->unk_50;
+      obj->motion[(u16) new_var] = mot;
+      e = &w->table[(u16) new_var];
+      e->flags = flags;
+      e->speed = speed;
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/18650", func_8001874C);
-#endif
 
 // register allocation of the parameters (masked 0)
 #ifdef NON_MATCHING

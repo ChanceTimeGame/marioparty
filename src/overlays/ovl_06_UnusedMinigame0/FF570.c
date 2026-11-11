@@ -1207,38 +1207,43 @@ void func_800FA9D0_UnusedMinigame0(UM0State* s) {
 }
 
 /* The first move towards the cheapest leaf, or NULL at the root. */
-// NON_MATCHING: register allocation of the table base/index after the search loop (masked 0, raw 5); tried s reuse in the loop, *(base + bi)
-#ifdef NON_MATCHING
-UM0State* func_800FABF0_UnusedMinigame0(void) {
-    u8 best = 0xFF;
-    s32 bi = 0;
-    s32 i;
-    s8 c;
-    UM0State* s;
-    UM0State* parent;
+// decomp-permuter
+UM0State *func_800FABF0_UnusedMinigame0(void)
+{
+  u8 best = 0xFF;
+  s32 bi = 0;
+  s32 i;
+  s8 c;
+  UM0State *s;
+  UM0State *parent;
+  for (i = 0; i < D_80103DB0_UnusedMinigame0; i++)
+  {
+    s = D_80103DAC_UnusedMinigame0[i];
+    c = s->cost;
+    if (c < best)
+    {
+      best = c;
+      bi = i;
+    }
+  }
 
-    for (i = 0; i < D_80103DB0_UnusedMinigame0; i++) {
-        s = D_80103DAC_UnusedMinigame0[i];
-        c = s->cost;
-        if (c < best) {
-            best = c;
-            bi = i;
-        }
-    }
-    s = D_80103DAC_UnusedMinigame0[bi];
+  s = D_80103DAC_UnusedMinigame0[bi];
+  if (((!s->parent) && (!s->parent)) && (!s->parent))
+  {
+  }
+  parent = s->parent;
+  if (parent == 0)
+  {
+    return 0;
+  }
+  while (parent->parent != 0)
+  {
+    s = s->parent;
     parent = s->parent;
-    if (parent == NULL) {
-        return NULL;
-    }
-    while (parent->parent != NULL) {
-        s = s->parent;
-        parent = s->parent;
-    }
-    return s;
+  }
+
+  return s;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FABF0_UnusedMinigame0);
-#endif
 
 /* A random movable cell. */
 s16 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {

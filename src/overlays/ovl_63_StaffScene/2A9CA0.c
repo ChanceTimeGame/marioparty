@@ -655,54 +655,55 @@ void func_800F7684_StaffScene(StaffModel* m) {
     *ry = 0.0f;
     HuPrcSleep(2);
 }
-// register allocation only (masked 0): d and the folded 2*vy/60 constant swap $f2/$f0; tried d inline, no tt, tt*tt, 2*vy/60 via a local
-#ifdef NON_MATCHING
-void func_800F78F8_StaffScene(StaffModel* m) {
-    f32* rx;
-    s32 i;
-    f32 d;
-    Vec3f* p;
-    f32 tt;
-    f32* ry;
-    f32 vx;
-    f32 ax;
-    f32 vy;
-    f32 ay;
-    f32 vz;
-
-    HuPrcSleep(2);
-    p = &m->pos;
-    tt = 3600.0f;
-    d = D_800FD354_StaffScene.y - p->y;
-    vy = 5.0f;
-    d = 2.0f * d / tt;
-    ay = d - 2.0f * vy / 60.0f;
-    vz = (D_800FD354_StaffScene.z - p->z) / 60.0f;
-    vx = -12.0f;
-    ax = 0.4f;
-    ry = &m->rot.y;
-    rx = &m->rot.x;
-    for (i = 60; i != 0; i--) {
-        if (*rx < 0.0f) {
-            *rx += 4.0f;
-            if (*rx > 0.0f) {
-                *rx = 0.0f;
-            }
-        }
-        p->x = vx + p->x;
-        vx += ax;
-        p->y = vy + p->y;
-        vy += ay;
-        p->z = vz + p->z;
-        *ry = func_800B0CD8(0.0f - p->x, 500.0f - p->z);
-        HuPrcVSleep();
+// decomp-permuter
+void func_800F78F8_StaffScene(StaffModel *m)
+{
+  f32 *rx;
+  s32 i;
+  f32 d;
+  Vec3f *p;
+  f32 tt;
+  f32 *ry;
+  f32 vx;
+  f32 ax;
+  f32 vy;
+  f32 ay;
+  f32 vz;
+  HuPrcSleep(2);
+  p = &m->pos;
+  tt = 3600.0f;
+  d = D_800FD354_StaffScene.y - p->y;
+  vy = 5.0f;
+  d = (2.0f * d) / tt;
+  ay = d - ((2.0f * vy) / 60.0f);
+  vz = (D_800FD354_StaffScene.z - p->z) / 60.0f;
+  vx = -12.0f;
+  ax = 0.4f;
+  ry = &m->rot.y;
+  rx = &m->rot.x;
+  for (i = 60; i != 0; i--)
+  {
+    if ((*rx) < 0.0f)
+    {
+      *rx += 4.0f;
+      if ((*rx) > 0.0f)
+      {
+        *rx = 0.0f;
+      }
     }
-    *p = D_800FD354_StaffScene;
-    *ry = 180.0f;
+    p->x = vx + p->x;
+    vx += ax;
+    p->y = vy + p->y;
+    vy += ay;
+    p->z = vz + p->z;
+    d = p->z;
+    *ry = func_800B0CD8(0.0f - p->x, 500.0f - d);
+    HuPrcVSleep();
+  }
+
+  *p = D_800FD354_StaffScene;
+  *ry = 180.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F78F8_StaffScene);
-#endif
 void func_800F7AC0_StaffScene(void) {
     StaffCtl* ctl;
     StaffModel* m;
@@ -756,46 +757,45 @@ void func_800F7AC0_StaffScene(void) {
         HuPrcVSleep();
     }
 }
-// register allocation only (masked 0): d and the folded 2*vy/60 constant swap $f2/$f0; tried d inline, no tt, tt*tt, 2*vy/60 via a local
-#ifdef NON_MATCHING
-void func_800F7C48_StaffScene(StaffModel* m) {
-    s32 i;
-    f32 d;
-    Vec3f* p;
-    f32 tt;
-    f32* ry;
-    f32 vx;
-    f32 ax;
-    f32 vy;
-    f32 ay;
-    f32 vz;
+// decomp-permuter
+void func_800F7C48_StaffScene(StaffModel *m)
+{
+  s32 i;
+  f32 d;
+  Vec3f *p;
+  f32 tt;
+  f32 *ry;
+  f32 vx;
+  f32 ax;
+  f32 vy;
+  f32 ay;
+  f32 vz;
+  HuPrcSleep(2);
+  p = &m->pos;
+  tt = 3600.0f;
+  d = D_800FD360_StaffScene.y - p->y;
+  vy = 5.0f;
+  d = (2.0f * d) / tt;
+  ay = d - ((2.0f * vy) / 60.0f);
+  vz = (D_800FD360_StaffScene.z - p->z) / 60.0f;
+  vx = 12.0f;
+  ax = -0.4f;
+  ry = &m->rot.y;
+  for (i = 60; i != 0; i--)
+  {
+    p->x = vx + p->x;
+    vx += ax;
+    p->y = vy + p->y;
+    vy += ay;
+    p->z = vz + p->z;
+    d = func_800B0CD8(0.0f - p->x, 500.0f - p->z);
+    *ry = d;
+    HuPrcVSleep();
+  }
 
-    HuPrcSleep(2);
-    p = &m->pos;
-    tt = 3600.0f;
-    d = D_800FD360_StaffScene.y - p->y;
-    vy = 5.0f;
-    d = 2.0f * d / tt;
-    ay = d - 2.0f * vy / 60.0f;
-    vz = (D_800FD360_StaffScene.z - p->z) / 60.0f;
-    vx = 12.0f;
-    ax = -0.4f;
-    ry = &m->rot.y;
-    for (i = 60; i != 0; i--) {
-        p->x = vx + p->x;
-        vx += ax;
-        p->y = vy + p->y;
-        vy += ay;
-        p->z = vz + p->z;
-        *ry = func_800B0CD8(0.0f - p->x, 500.0f - p->z);
-        HuPrcVSleep();
-    }
-    *p = D_800FD360_StaffScene;
-    *ry = 0.0f;
+  *p = D_800FD360_StaffScene;
+  *ry = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_63_StaffScene/2A9CA0", func_800F7C48_StaffScene);
-#endif
 // register allocation only (masked 0): d and the folded 2*v/60 constants swap $f0/$f2; tried d accumulating the result, d declared last
 #ifdef NON_MATCHING
 void func_800F7DB4_StaffScene(StaffModel* m) {

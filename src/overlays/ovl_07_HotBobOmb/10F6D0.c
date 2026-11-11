@@ -144,29 +144,30 @@ void func_800F94AC_HotBobOmb(void) {
     D_800FA8D0_HotBobOmb = 0;
 }
 
-// register allocation, table load in v1 not v0 (masked 0, raw 2); tried early returns, else-if, ret reuse
-#ifdef NON_MATCHING
-s32 func_800F9610_HotBobOmb(s32 player) {
-    s32 n;
-    s32 temp;
-    s32 ret;
-
-    n = D_800FA8A0_HotBobOmb[player];
-    if (n <= 0 && D_800FA924_HotBobOmb <= 0) {
-        ret = 1;
-    } else {
-        temp = D_800FA8D0_HotBobOmb;
-        ret = 0;
-        if (temp == 0) {
-            temp = D_800FA3C0_HotBobOmb[D_800FA994_HotBobOmb][n];
-            ret = temp != 0;
-        }
+// decomp-permuter
+s32 func_800F9610_HotBobOmb(s32 player)
+{
+  s32 n;
+  s32 temp;
+  s32 ret;
+  n = D_800FA8A0_HotBobOmb[player];
+  if ((n <= 0) && (D_800FA924_HotBobOmb <= 0))
+  {
+    ret = 1;
+  }
+  else
+  {
+    ret = 0;
+    temp = D_800FA8D0_HotBobOmb;
+    if (temp == 0)
+    {
+      temp = (temp = D_800FA3C0_HotBobOmb[D_800FA994_HotBobOmb][n]);
+      ret = 0;
+      ret = temp != ret;
     }
-    return ret;
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10F6D0", func_800F9610_HotBobOmb);
-#endif
 
 void func_800F9690_HotBobOmb(void) {
     s32 i;

@@ -446,71 +446,63 @@ void func_800F7444_FaceLift(s16 player, FaceLiftWork* w) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F7444_FaceLift);
 #endif
-// register allocation: trg/btn get s3/s4 swapped (raw 6, masked 0; tried separate zero stores)
-#ifdef NON_MATCHING
-void func_800F7D58_FaceLift(s16 player, FaceLiftWork* w, Vec2f* stick, u16* trg, u16* btn) {
-    f32 dx;
-    f32 dy;
-    f32 d;
-
-    *trg = *btn = 0;
-    switch (w->cpuState) {
+// decomp-permuter
+void func_800F7D58_FaceLift(s16 player, FaceLiftWork *w, Vec2f *stick, u16 *trg, u16 *btn)
+{
+  f32 dx;
+  f32 dy;
+  f32 d;
+  *trg = (*btn = 0);
+  switch (w->cpuState)
+  {
     case 0:
-        if (w->cpuRounds != 0 && !(rand8() & 0xF)) {
-            func_800F6B88_FaceLift(w, D_800FC7C4_FaceLift[D_800FCA0E_FaceLift[player]] * 0.7f);
-            w->cpuTimer = ((rand8() & 0xFF) >> 4) + 5;
-            w->cpuState = 2;
-            break;
-        }
-        dx = w->pts[w->order[w->cpuIdx]].x - w->pos.x;
-        dy = w->pts[w->order[w->cpuIdx]].y - w->pos.y;
-        d = func_800B1750(dx * dx + dy * dy);
-        if (d < 4.0f) {
-            stick->x = dx;
-            stick->y = dy;
-            w->cpuState = 1;
-            *trg = 0x8000;
-        } else {
-            stick->x = (4.0f / d) * dx;
-            stick->y = (4.0f / d) * dy;
-        }
-        return;
-    case 1:
-        dx = w->cpuTarget[w->order[w->cpuIdx]].x - w->pos.x;
-        dy = w->cpuTarget[w->order[w->cpuIdx]].y - w->pos.y;
-        d = func_800B1750(dx * dx + dy * dy);
-        if (d <= 0.8f) {
-            stick->x = dx;
-            stick->y = dy;
-            if (++w->cpuIdx >= 6) {
-                w->cpuState = 3;
-                w->cpuRounds++;
-            } else {
-                w->cpuState = 2;
-            }
-            w->cpuTimer = ((rand8() & 0xFF) >> 3) + 10;
-        } else {
-            stick->x = (0.8f / d) * dx;
-            stick->y = (0.8f / d) * dy;
-        }
-        *btn = 0x8000;
-        return;
-    case 2:
-        if (--w->cpuTimer == 0) {
-            w->cpuState = 0;
-        }
-        break;
-    case 3:
-        func_800F6B88_FaceLift(w, D_800FC7C4_FaceLift[D_800FCA0E_FaceLift[player]] * 0.7f);
-        w->cpuTimer = ((rand8() & 0xFF) >> 3) + 30;
-        w->cpuState = 2;
-        break;
+      if ((w->cpuRounds != 0) && (!(rand8() & 0xF)))
+    {
+      func_800F6B88_FaceLift(w, D_800FC7C4_FaceLift[D_800FCA0E_FaceLift[player]] * 0.7f);
+      w->cpuTimer = ((rand8() & 0xFF) >> 4) + 5;
+      w->cpuState = 2;
+      break;
     }
-    stick->x = stick->y = 0.0f;
+      dx = w->pts[w->order[w->cpuIdx]].x - w->pos.x;
+      dy = w->pts[w->order[w->cpuIdx]].y - w->pos.y;
+      d = func_800B1750((dx * dx) + (dy * dy));
+      if (d < 4.0f)
+    {
+      stick->x = dx;
+      stick->y = dy;
+      w->cpuState = 1;
+      *trg = 0x8000;
+    }
+    else
+    {
+      stick->x = (4.0f / d) * dx;
+      stick->y = (4.0f / d) * dy;
+    }
+      return;
+
+    case 1:
+      dx = w->cpuTarget[w->order[w->cpuIdx]].x - w->pos.x;
+      dy = w->cpuTarget[w->order[w->cpuIdx]].y - w->pos.y;
+      d = func_800B1750((dx * dx) + (dy * dy));
+ do { if (d <= 0.8f) { stick->x = dx; stick->y = dy; if ((++w->cpuIdx) >= 6) { w->cpuState = 3; w->cpuRounds++; } else { w->cpuState = 2; } w->cpuTimer = ((rand8() & 0xFF) >> 3) + 10; } else { stick->x = (0.8f / d) * dx; stick->y = (0.8f / d) * dy; } *btn = 0x8000; return; } while (0);
+
+    case 2:
+      if ((--w->cpuTimer) == 0)
+    {
+      w->cpuState = 0;
+    }
+      break;
+
+    case 3:
+      func_800F6B88_FaceLift(w, D_800FC7C4_FaceLift[D_800FCA0E_FaceLift[player]] * 0.7f);
+      w->cpuTimer = ((rand8() & 0xFF) >> 3) + 30;
+      w->cpuState = 2;
+      break;
+
+  }
+
+  stick->x = (stick->y = 0.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F7D58_FaceLift);
-#endif
 void func_800F80A4_FaceLift(omObjData* obj, s32 player) {
     obj->model[0] = LoadFormFile(0x200001, 0x299);
     func_80026040(obj->model[0]);

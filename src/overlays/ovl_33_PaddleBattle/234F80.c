@@ -1196,40 +1196,35 @@ f32 func_800FAE48_PaddleBattle(f32 dist) {
 }
 
 /* The river's direction (unit vector) at (dist, lateral). */
-// float register allocation only (a in $f4, not $f2; masked 0, raw ~42); tried declaration orders, b before a
-#ifdef NON_MATCHING
-void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
-    Vec p;
-    Vec q;
-    Vec* l;
-    f32 t;
-    f32 a;
-    f32 b;
-    f32 inv;
-    s32 seg;
-
-    seg = func_800FABAC_PaddleBattle(dist, &t);
-    a = t - 1.0;
-    b = 1.0 - 2.0 * t;
-    l = &D_800FE210_PaddleBattle[seg];
-    p.x = a * l[0].x + b * l[1].x + t * l[2].x;
-    p.y = a * l[0].y + b * l[1].y + t * l[2].y;
-    p.z = a * l[0].z + b * l[1].z + t * l[2].z;
-    l = &D_800FE600_PaddleBattle[seg];
-    q.x = a * l[0].x + b * l[1].x + t * l[2].x;
-    q.y = a * l[0].y + b * l[1].y + t * l[2].y;
-    q.z = a * l[0].z + b * l[1].z + t * l[2].z;
-    p.x = (q.x - p.x) * lateral + p.x;
-    p.y = (q.y - p.y) * lateral + p.y;
-    p.z = (q.z - p.z) * lateral + p.z;
-    inv = 1.0 / sqrtf(p.x * p.x + p.y * p.y + p.z * p.z);
-    out->x = inv * p.x;
-    out->y = inv * p.y;
-    out->z = inv * p.z;
+// decomp-permuter
+void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec *out)
+{
+  Vec p;
+  Vec q;
+  Vec *l;
+  f32 t;
+  f32 a;
+  f32 b;
+  s32 seg;
+  seg = func_800FABAC_PaddleBattle(dist, &t);
+  a = t - 1.0;
+  b = 1.0 - (2.0 * t);
+  l = &D_800FE210_PaddleBattle[seg];
+  p.x = ((a * l[0].x) + (b * l[1].x)) + (t * l[2].x);
+  p.y = ((a * l[0].y) + (b * l[1].y)) + (t * l[2].y);
+  p.z = ((a * l[0].z) + (b * l[1].z)) + (t * l[2].z);
+  l = &D_800FE600_PaddleBattle[seg];
+  q.x = ((a * l[0].x) + (b * l[1].x)) + (t * l[2].x);
+  q.y = ((a * l[0].y) + (b * l[1].y)) + (t * l[2].y);
+  q.z = ((a * l[0].z) + (b * l[1].z)) + (t * l[2].z);
+  p.x = ((q.x - p.x) * lateral) + p.x;
+  p.y = ((q.y - p.y) * lateral) + p.y;
+  p.z = ((q.z - p.z) * lateral) + p.z;
+  a = 1.0 / sqrtf(((p.x * p.x) + (p.y * p.y)) + (p.z * p.z));
+  out->x = a * p.x;
+  out->y = a * p.y;
+  out->z = a * p.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FAFEC_PaddleBattle);
-#endif
 
 /* The raft's tilt from three float points around it (each eased toward the ground under it). */
 // tail differs: retail keeps &p[2] in s2 across the calls, negates y before the sqrt and lays the identity
@@ -1358,30 +1353,30 @@ f32 func_800FB74C_PaddleBattle(f32 target, f32 cur, f32 rate) {
 }
 
 /* World `pos` to screen coordinates (x, y from the centre) and a scale in z, for camera `cam`. */
-// register allocation (masked 0, raw 8): sin/cos temporaries swap $f20/$f22; c + D_800F3FA8 * 16 operand order
-#ifdef NON_MATCHING
-void func_800FB868_PaddleBattle(s16 cam, Vec* pos, f32* out) {
-    Vec v;
-    Matrix4f m;
-    unk_Struct00* c;
-    f32 d;
-
-    c = &D_800C3110[cam];
-    HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y,
-                c->unk18.z);
-    func_800FBA44_PaddleBattle(m, pos->x, pos->y, pos->z, &v.x);
-    d = func_800AEAC0(c->unk_40 * 0.5) / func_800AEFD0(c->unk_40 * 0.5) * v.z;
-    if (d < 0.0f) {
-        d = -d;
-    }
-    /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 (no pointers before it) */
-    out[0] = (&c->unk58)[D_800F3FA8 * 8] / 4.0 * v.x / d * 0.75;
-    out[1] = (&c->unk5A)[D_800F3FA8 * 8] / 4.0 * -v.y / d;
-    out[2] = 400.0 / d;
+// decomp-permuter
+void func_800FB868_PaddleBattle(s16 cam, Vec *pos, f32 *out)
+{
+  Vec v;
+  int new_var;
+  s16 *new_var3;
+  Matrix4f m;
+  unk_Struct00 *c;
+  s16 *new_var2;
+  f32 d;
+  c = &D_800C3110[cam];
+  HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, (&c->unk18)->y, c->unk18.z);
+  func_800FBA44_PaddleBattle(m, pos->x, pos->y, pos->z, &v.x);
+  d = v.z * (func_800AEAC0(c->unk_40 * 0.5) / func_800AEFD0(c->unk_40 * 0.5));
+  if (d < 0.0f)
+  {
+    d = -d;
+  }
+  new_var2 = &c->unk58;
+  new_var3 = &c->unk5A;
+  out[0] = (((new_var2[D_800F3FA8 * (new_var = 8)] / 4.0) * v.x) / d) * 0.75;
+  out[1] = (((double) (new_var3[D_800F3FA8 * new_var] / 4.0)) * (-v.y)) / d;
+  out[2] = 400.0 / d;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB868_PaddleBattle);
-#endif
 
 void func_800FBA44_PaddleBattle(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
     *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
