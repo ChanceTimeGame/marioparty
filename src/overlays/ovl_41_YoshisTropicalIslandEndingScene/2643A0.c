@@ -222,7 +222,8 @@ void func_800FB514_YoshisTropicalIslandEndingScene(omObjData* obj) {
     }
 }
 
-// register allocation: FPRs of the ring/stone angle, x and radius (retail computes angle and x in place); opcode-identical, masked 74 is mostly that plus .bss address shift
+// register allocation (masked 0, raw 58): the ring/stone loops now match with their own locals; the FPRs of
+// speed, scale and the 0.05 constant differ from the ring descent on (tried speed reused as scale)
 #ifdef NON_MATCHING
 void func_800FB648_YoshisTropicalIslandEndingScene(void) {
     Object* stones[7];
@@ -238,15 +239,19 @@ void func_800FB648_YoshisTropicalIslandEndingScene(void) {
     s32 i;
     s32 j;
     s32 t;
+    f32 sa;
+    f32 sx;
+    f32 ra;
+    f32 rx;
 
     func_8004FA90(D_80110440_YoshisTropicalIslandEndingScene, 4.0f, 4.0f, 4.0f);
     for (i = 0; i < count; i++) {
         D_80110448_YoshisTropicalIslandEndingScene[8 + i] = MBModelCreate(0x25, NULL);
-        angle = (360 / count) * i * M_DTOR;
-        x = sinf(angle) * radius + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].x;
-        func_800A0D00(&D_80110448_YoshisTropicalIslandEndingScene[8 + i]->coords, x,
+        ra = (360 / count) * i * M_DTOR;
+        rx = sinf(ra) * radius + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].x;
+        func_800A0D00(&D_80110448_YoshisTropicalIslandEndingScene[8 + i]->coords, rx,
                       D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].y,
-                      cosf(angle) * radius + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].z);
+                      cosf(ra) * radius + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].z);
         func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[8 + i]->xScale,
                       D_8010DD1C_YoshisTropicalIslandEndingScene[BOARD], D_8010DD1C_YoshisTropicalIslandEndingScene[BOARD],
                       D_8010DD1C_YoshisTropicalIslandEndingScene[BOARD]);
@@ -263,10 +268,10 @@ void func_800FB648_YoshisTropicalIslandEndingScene(void) {
     ring->work[3] = 0;
     for (i = 0; i < 7; i++) {
         stones[i] = MBModelCreate(0x75, NULL);
-        angle = (i * 51 + 30) * M_DTOR;
-        x = sinf(angle) * 270.0f + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].x;
-        func_800A0D00(&stones[i]->coords, x, D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].y - 20.0f,
-                      cosf(angle) * 270.0f + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].z);
+        sa = (i * 51 + 30) * M_DTOR;
+        sx = sinf(sa) * 270.0f + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].x;
+        func_800A0D00(&stones[i]->coords, sx, D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].y - 20.0f,
+                      cosf(sa) * 270.0f + D_8010DC9C_YoshisTropicalIslandEndingScene[BOARD].z);
         func_80021240(*stones[i]->unk_3C->unk_40);
         func_800211BC(*stones[i]->unk_3C->unk_40, 0xFF);
     }
