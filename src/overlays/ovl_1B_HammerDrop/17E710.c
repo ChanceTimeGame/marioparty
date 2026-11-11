@@ -972,9 +972,17 @@ void func_800F9228_HammerDrop(void) {
     func_800F95E8_HammerDrop(item);
 }
 
-// Logic-equivalent item construction; retail copies the two data tables to packed stack locals.
-#ifdef NON_MATCHING
+typedef struct HammerDropFileTable {
+    s32 v[3];
+} HammerDropFileTable;
+
+typedef struct HammerDropKindTable {
+    u16 v[3];
+} HammerDropKindTable;
+
 void func_800F9350_HammerDrop(void) {
+    HammerDropFileTable files = *(HammerDropFileTable*) D_800FB634_HammerDrop;
+    HammerDropKindTable kinds = *(HammerDropKindTable*) D_800FB640_HammerDrop;
     HammerDropItemWork* work;
     HammerDropItemState* item;
     omObjData* obj;
@@ -985,19 +993,17 @@ void func_800F9350_HammerDrop(void) {
     D_800EE984 = 0;
     for (i = 0; i < 6; i++) {
         obj = omAddObj(12, 4, 0, -1, func_800F9794_HammerDrop);
-        work = func_80023684(sizeof(HammerDropItemWork), 0x7918);
-        obj->unk_50 = work;
-        item = func_80023684(sizeof(HammerDropItemState), 0x7918);
-        work->item = item;
+        work = obj->unk_50 = func_80023684(sizeof(HammerDropItemWork), 0x7918);
+        item = work->item = func_80023684(sizeof(HammerDropItemState), 0x7918);
         D_800EDE70[D_800EE984++] = obj;
         type = i % 3;
         if (type < 2) {
-            func_800091BC(obj, D_800FB634_HammerDrop[type], 0xA89, 8);
+            func_800091BC(obj, files.v[type], 0xA89, 8);
             func_80009340(obj, 3, 0x2A, 0x68D, 8);
             func_8001E2F8(work->unk_24, 0xF0);
             func_8001E360(work->unk_24, 0xFF, 0xFF, 0xBE);
         } else {
-            obj->model[0] = LoadFormFile(D_800FB634_HammerDrop[type], 0x69D);
+            obj->model[0] = LoadFormFile(files.v[type], 0x69D);
         }
         if (i == 0) {
             obj->model[1] = LoadFormFile(6, 0x69D);
@@ -1009,7 +1015,7 @@ void func_800F9350_HammerDrop(void) {
         omSetTra(obj, 1000.0f, 5000.0f, 0.0f);
         work->unk_48 = 30.0f;
         work->unk_34 = 30.0f;
-        work->unk_52 = (u8) D_800FB640_HammerDrop[type];
+        work->unk_52 = (u8) kinds.v[type];
         work->unk_50 = 0;
         work->unk_54 = 1;
         if (type < 2) {
@@ -1024,13 +1030,9 @@ void func_800F9350_HammerDrop(void) {
         item->unk_4C = i;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9350_HammerDrop);
-#endif
 
-// Logic-equivalent item reset; retail first copies the packed kind table to the stack.
-#ifdef NON_MATCHING
 void func_800F95E8_HammerDrop(omObjData* arg0) {
+    HammerDropKindTable kinds = *(HammerDropKindTable*) D_800FB648_HammerDrop;
     HammerDropItemWork* work = HAMMER_ITEM_WORK(arg0);
     HammerDropItemState* item = work->item;
     HammerDropTargetState* targetItem;
@@ -1047,7 +1049,7 @@ void func_800F95E8_HammerDrop(omObjData* arg0) {
     work->unk_40 = 5.0f;
     work->unk_48 = 30.0f;
     work->unk_34 = 30.0f;
-    work->unk_52 = (u8) D_800FB648_HammerDrop[item->unk_38];
+    work->unk_52 = (u8) kinds.v[item->unk_38];
     item->unk_34 = 4.9f;
     item->unk_30 = 50.0f;
     item->unk_2C = 50.0f;
@@ -1060,12 +1062,10 @@ void func_800F95E8_HammerDrop(omObjData* arg0) {
     flags = &item->unk_44;
     func_800F9E74_HammerDrop(flags, 1, 1);
     func_800F9E74_HammerDrop(flags, 2, 1);
-    targetItem = (HammerDropTargetState*) HAMMER_ITEM_WORK(D_800FB990_HammerDrop)->item;
+    work = HAMMER_ITEM_WORK(D_800FB990_HammerDrop);
+    targetItem = (HammerDropTargetState*) work->item;
     targetItem->itemIndex = item->unk_4C;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F95E8_HammerDrop);
-#endif
 
 // Logic-equivalent falling-item physics and pickup animation; scheduling differs.
 #ifdef NON_MATCHING
