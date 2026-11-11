@@ -726,6 +726,8 @@ void func_800F8680_DeepSeaDivers(omObjData* obj) {
     dw->unk44 = player;
     D_80100C72_DeepSeaDivers[1]++;
 }
+// register allocation and local shapes (masked 69, 1315/1316): retail keeps 16 in s0 for the
+// unk5C/unk_AE stores, chains the n zero stores and passes the hit flag straight in a3 (M1f)
 #ifdef NON_MATCHING
 void func_800F88E0_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* pl;
@@ -774,6 +776,7 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
         D_80100478_DeepSeaDivers[w->unkC].bottom.x = obj->trans.x;
         D_80100478_DeepSeaDivers[w->unkC].bottom.y = obj->trans.y;
         D_80100478_DeepSeaDivers[w->unkC].bottom.z = obj->trans.z;
+        return;
     }
     cur = pl->unk_3C;
     port = pl->unk_56;
@@ -809,8 +812,7 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
                 func_80060F04(w->unk44, 5, 0, 5);
                 pl->unk_AE = 16;
             }
-        }
-        if (w->unk5C != 0) {
+        } else if (w->unk5C != 0) {
             w->unk5C--;
         } else {
             w->unk24 = w->unk24 - 0.1;
@@ -839,14 +841,12 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
             }
         }
     } else {
-        sy = 0;
         if (!(GwPlayer[w->unk44].flags & 1)) {
             func_80009C90(obj, ContStkX[port], ContStkY[port]);
-            sy = 0;
         }
+        sy = 0;
         sx = 0;
-        pl->unk_40 = 0.0f;
-        w->unk24 = 0.0f;
+        w->unk24 = pl->unk_40 = 0.0f;
     }
     if (pl->unk_40 != w->unk24) {
         if (w->unk24 < pl->unk_40) {
@@ -923,7 +923,10 @@ void func_800F88E0_DeepSeaDivers(omObjData* obj) {
     pl->unk_3C = cur;
     q = (s32)(cur / 90.0);
     t = (cur - q * 90.0) / 90.0;
-    k = (q + 1 < 4) ? q + 1 : 0;
+    k = q + 1;
+    if (k >= 4) {
+        k = 0;
+    }
     w->unk28 = t * (D_800FF974_DeepSeaDivers[k][0] - D_800FF974_DeepSeaDivers[q][0]) + D_800FF974_DeepSeaDivers[q][0];
     w->unk28 = w->unk28 * (pl->unk_40 / 2.0);
     w->unk2C = t * (D_800FF974_DeepSeaDivers[k][1] - D_800FF974_DeepSeaDivers[q][1]) + D_800FF974_DeepSeaDivers[q][1];
