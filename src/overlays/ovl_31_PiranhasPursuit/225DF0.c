@@ -936,38 +936,40 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800F
 #endif
 
 /* A splash where the runner lands in the water; close to the plant it makes it lunge. */
-// NON_MATCHING: retail loads the plant pointer and struct address before PlaySound
-#ifdef NON_MATCHING
 void func_800FD4BC_PiranhasPursuit(f32 x, f32 y) {
     f32 dx;
     f32 px;
+    f32 reach;
+    PPPlant* plant;
+    omObjData* o;
 
     dx = x - D_801012D0_PiranhasPursuit;
     PlaySound(0x347);
+    plant = &D_80101150_PiranhasPursuit;
+    o = D_80101108_PiranhasPursuit;
     if (D_80101110_PiranhasPursuit->work[0] == 0) {
         D_80101110_PiranhasPursuit->work[0] = 15;
         D_80101140_PiranhasPursuit[0] = dx;
         D_80101144_PiranhasPursuit = y;
         D_80101148_PiranhasPursuit = 20.0f;
-        px = D_80101108_PiranhasPursuit->trans.x - D_801012D0_PiranhasPursuit;
-        if ((dx <= px + (f32)(3.0 - D_80101108_PiranhasPursuit->scale.x) * 200.0) & (px < dx)) {
-            if (D_8010114C_PiranhasPursuit == 0.0) {
-                D_8010114C_PiranhasPursuit = 1.0f;
-                if (D_80101150_PiranhasPursuit.unk1C <= 0.0) {
-                    D_80101150_PiranhasPursuit.unk1C = 400.0f;
+        px = o->trans.x;
+        px -= D_801012D0_PiranhasPursuit;
+        reach = 3.0 - o->scale.x;
+        if ((px + reach * 200.0 >= dx) & (px < dx)) {
+            if (D_80101140_PiranhasPursuit[3] == 0.0) {
+                D_80101140_PiranhasPursuit[3] = 1.0f;
+                if (plant->unk1C <= 0.0) {
+                    plant->unk1C = 400.0f;
                 } else {
-                    D_80101150_PiranhasPursuit.unk1C = D_80101150_PiranhasPursuit.unk1C + 400.0;
+                    plant->unk1C = plant->unk1C + 400.0;
                 }
-                if (D_80101150_PiranhasPursuit.unk1C > 600.0) {
-                    D_80101150_PiranhasPursuit.unk1C = 600.0f;
+                if (plant->unk1C > 600.0) {
+                    plant->unk1C = 600.0f;
                 }
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FD4BC_PiranhasPursuit);
-#endif
 
 void func_800FD674_PiranhasPursuit(void) {
     u16 i;
@@ -983,10 +985,11 @@ void func_800FD6EC_PiranhasPursuit(void) {
     D_80101108_PiranhasPursuit = omAddObj(2, 8, 0, -1, func_800FD728_PiranhasPursuit);
 }
 
-// NON_MATCHING: retail addresses the plant fields by their splat labels
-#ifdef NON_MATCHING
 void func_800FD728_PiranhasPursuit(omObjData* obj) {
+    PPPlant* pl;
+
     obj->func_ptr = func_800FD9D0_PiranhasPursuit;
+    pl = &D_80101150_PiranhasPursuit;
     obj->model[0] = LoadFormFile(0x45000A, 0x9D);
     obj->model[1] = LoadFormFile(0x45000B, 0x9D);
     obj->model[2] = LoadFormFile(0x45000C, 0x9D);
@@ -995,34 +998,31 @@ void func_800FD728_PiranhasPursuit(omObjData* obj) {
     obj->model[5] = LoadFormFile(0x45000F, 0x9D);
     obj->model[6] = LoadFormFile(0x450010, 0x9D);
     obj->model[7] = LoadFormFile(6, 0x99);
-    func_800FA508_PiranhasPursuit(obj->model[0], 0, &D_80101150_PiranhasPursuit, 0);
-    func_800FA508_PiranhasPursuit(obj->model[1], 1, &D_80101150_PiranhasPursuit, -1);
-    func_800FA508_PiranhasPursuit(obj->model[2], 2, &D_80101150_PiranhasPursuit, 0x6E);
-    func_800FA508_PiranhasPursuit(obj->model[3], 3, &D_80101150_PiranhasPursuit, -1);
-    func_800FA508_PiranhasPursuit(obj->model[4], 4, &D_80101150_PiranhasPursuit, -1);
-    func_800FA508_PiranhasPursuit(obj->model[5], 5, &D_80101150_PiranhasPursuit, 0);
-    func_800FA508_PiranhasPursuit(obj->model[6], 6, &D_80101150_PiranhasPursuit, -1);
+    func_800FA508_PiranhasPursuit(obj->model[0], 0, pl, 0);
+    func_800FA508_PiranhasPursuit(obj->model[1], 1, pl, -1);
+    func_800FA508_PiranhasPursuit(obj->model[2], 2, pl, 0x6E);
+    func_800FA508_PiranhasPursuit(obj->model[3], 3, pl, -1);
+    func_800FA508_PiranhasPursuit(obj->model[4], 4, pl, -1);
+    func_800FA508_PiranhasPursuit(obj->model[5], 5, pl, 0);
+    func_800FA508_PiranhasPursuit(obj->model[6], 6, pl, -1);
     func_800FEF78_PiranhasPursuit(obj, 0, 1);
     D_800F2B7C[obj->model[0]].unk_4C = 0.0f;
-    D_80101150_PiranhasPursuit.state = 0;
+    pl->state = 0;
     D_801012C4_PiranhasPursuit = func_8002040C(obj->model[4], 2, "pa_tst6-item_fook");
     func_800FA4CC_PiranhasPursuit(obj);
     obj->scale.x = obj->scale.y = obj->scale.z = 0.5f;
     obj->trans.x = -16700.0f;
     obj->trans.y = -80.0f;
     obj->rot.y = 89.0f;
-    D_80101150_PiranhasPursuit.timer = 0;
-    D_80101150_PiranhasPursuit.unk10 = 0;
-    D_80101150_PiranhasPursuit.unk22 = 0;
-    D_80101150_PiranhasPursuit.unk2E = 0;
-    D_80101150_PiranhasPursuit.unk24 = D_80101150_PiranhasPursuit.unk28 = 0.5f;
-    D_80101150_PiranhasPursuit.unk2C = 0;
-    D_80101150_PiranhasPursuit.unk14 = obj->trans.x;
-    D_80101150_PiranhasPursuit.unk18 = D_80101150_PiranhasPursuit.unk1C = 0.0f;
+    pl->timer = 0;
+    pl->unk10 = 0;
+    pl->unk22 = 0;
+    pl->unk2E = 0;
+    pl->unk24 = pl->unk28 = 0.5f;
+    pl->unk2C = 0;
+    pl->unk14 = obj->trans.x;
+    pl->unk18 = pl->unk1C = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FD728_PiranhasPursuit);
-#endif
 
 // NON_MATCHING: retail addresses the plant fields by their splat labels; register allocation
 #ifdef NON_MATCHING
@@ -1371,13 +1371,11 @@ void func_800FEF78_PiranhasPursuit(omObjData* obj, s16 anim, s16 fwd) {
 }
 
 /* The plant jumps over the piece ahead of it; at the goal it stops. */
-// NON_MATCHING: register allocation
-#ifdef NON_MATCHING
 void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
     PPPlant* pl = &D_80101150_PiranhasPursuit;
     PPPiece* p;
     s16 i;
-    s32 last;
+    s16 last;
 
     i = func_800FC4D0_PiranhasPursuit(obj);
     last = i == D_80101134_PiranhasPursuit - 1;
@@ -1391,25 +1389,25 @@ void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
                     if (last == 1) {
                         D_801012E8_PiranhasPursuit = 0;
                         if (obj->scale.y < 1.0) {
-                            D_80101150_PiranhasPursuit.unk10 = D_80101150_PiranhasPursuit.unk10 * 1.2;
+                            pl->unk10 = pl->unk10 * 1.2;
                         }
                     }
-                    if (D_80101150_PiranhasPursuit.unk2E == 0) {
+                    if (pl->unk2E == 0) {
                         func_800FEF78_PiranhasPursuit(obj, 1, 0);
                     }
                     obj->trans.y = 0.0f;
-                    D_80101150_PiranhasPursuit.state = 2;
+                    pl->state = 2;
                     return;
                 }
                 break;
             case 3:
                 if (obj->trans.y <= 0.0 && p->pos.x - 120.0 < obj->trans.x) {
-                    D_80101150_PiranhasPursuit.unk10 = 40.0f;
-                    if (D_80101150_PiranhasPursuit.unk2E == 0) {
+                    pl->unk10 = 40.0f;
+                    if (pl->unk2E == 0) {
                         func_800FEF78_PiranhasPursuit(obj, 1, 0);
                     }
                     obj->trans.y = 0.0f;
-                    D_80101150_PiranhasPursuit.state = 2;
+                    pl->state = 2;
                     return;
                 }
                 break;
@@ -1418,7 +1416,7 @@ void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
                     D_801012CA_PiranhasPursuit = 1;
                     D_801012EA_PiranhasPursuit = 1;
                     func_800FEF78_PiranhasPursuit(obj, 2, 1);
-                    D_80101150_PiranhasPursuit.state = 3;
+                    pl->state = 3;
                     D_800F2B7C[obj->model[0]].unk_48 = 24.0f;
                     PlaySound(0x34D);
                     func_80017C0C(D_8010110C_PiranhasPursuit, 7, obj->trans.x, 500.0f, obj->trans.z, 0.0f, 60.0f);
@@ -1427,9 +1425,6 @@ void func_800FF0C0_PiranhasPursuit(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FF0C0_PiranhasPursuit);
-#endif
 
 /* The eaten runner bounces off a rock, stump or tree it falls on. */
 s16 func_800FF35C_PiranhasPursuit(omObjData* obj) {
@@ -1462,37 +1457,37 @@ void func_800FF450_PiranhasPursuit(void) {
 }
 
 /* While the plant snaps (motion 4) it catches the runner if it is in reach. */
-// NON_MATCHING: load order of the plant fields, stack copies of x/y
+// NON_MATCHING: retail loads D_800F2B7C before plant->model[3] (masked 4; tried (D_800F2B7C + i)->unk_48)
 #ifdef NON_MATCHING
 void func_800FF470_PiranhasPursuit(omObjData* runner, omObjData* plant) {
-    Vec pos;
+    Vec2f d;
+    Vec2f r;
+    Vec2f p;
     f32 frame;
-    f32 d;
-    f64 k;
     s16 se;
+    PPPlant* pp = &D_80101150_PiranhasPursuit;
 
-    if (((runner != NULL) & (plant != NULL)) && D_80101150_PiranhasPursuit.state == 4) {
+    if (((runner != NULL) & (plant != NULL)) && pp->state == 4) {
         frame = D_800F2B7C[plant->model[3]].unk_48;
-        if ((frame >= 15.0f) & (frame <= 17.0f)) {
-            k = 200.0;
-        } else if ((frame >= 63.0f) & (frame <= 65.0f)) {
-            k = 200.0;
+        if (((frame >= 15.0f) & (frame <= 17.0f)) || ((frame >= 63.0f) & (frame <= 65.0f))) {
+            p.x = plant->trans.x + pp->unk28 * 200.0;
         } else if ((frame >= 40.0f) & (frame <= 42.0f)) {
-            k = 250.0;
+            p.x = plant->trans.x + pp->unk28 * 250.0;
         } else {
             return;
         }
-        pos.x = plant->trans.x + D_80101150_PiranhasPursuit.unk28 * k;
         PlaySound(0x34F);
-        pos.y = plant->trans.y + 50.0;
-        d = fabsf(pos.y - (f32)(runner->trans.y + 50.0));
-        if (D_8010110C_PiranhasPursuit->trans.x < pos.x) {
-            if (d < D_80101150_PiranhasPursuit.unk28 * 100.0) {
-                if (D_80101150_PiranhasPursuit.unk28 <= 0.6) {
+        r.x = D_8010110C_PiranhasPursuit->trans.x;
+        r.y = runner->trans.y + 50.0;
+        p.y = plant->trans.y + 50.0;
+        d.y = fabsf(p.y - r.y);
+        if (r.x < p.x) {
+            if (d.y < pp->unk28 * 100.0) {
+                if (pp->unk28 <= 0.6) {
                     se = 0x349;
                 } else {
                     se = 0x34B;
-                    if (D_80101150_PiranhasPursuit.unk28 <= 1.3) {
+                    if (pp->unk28 <= 1.3) {
                         se = 0x34A;
                     }
                 }
@@ -1517,64 +1512,62 @@ const PPScaleSteps D_80100C00_PiranhasPursuit = {
 };
 
 /* After a splash near it the plant grows (and speeds up) in a wobble. */
-// NON_MATCHING: retail addresses the plant fields by their splat labels
-#ifdef NON_MATCHING
 void func_800FF730_PiranhasPursuit(omObjData* obj) {
     PPScaleSteps tbl = D_80100C00_PiranhasPursuit;
     f32 t;
     f32 a;
     f32 b;
-    f32 s;
-    f32 v;
+    PPPlant* pl = &D_80101150_PiranhasPursuit;
 
     if (D_8010114C_PiranhasPursuit != 0.0) {
         if (D_8010114C_PiranhasPursuit == 1.0) {
-            if ((u16)D_80101150_PiranhasPursuit.unk2C < 2) {
+            if ((u16)pl->unk2C < 2) {
                 func_800FEF78_PiranhasPursuit(obj, 6, 0);
             }
-            if (D_80101150_PiranhasPursuit.unk28 < 1.5) {
-                D_80101150_PiranhasPursuit.unk2E = 1;
-                D_80101150_PiranhasPursuit.unk24 = D_80101150_PiranhasPursuit.unk28 + 0.2;
-                D_8010114C_PiranhasPursuit += 1.0f;
+            if (pl->unk28 < 1.5) {
+                pl->unk2E = 1;
+                pl->unk24 = pl->unk28 + 0.2;
+                D_80101140_PiranhasPursuit[3] += 1.0f;
                 ++D_8010040A_PiranhasPursuit;
-                s = 24.1f;
                 if (D_801012DC_PiranhasPursuit < 24.1f) {
-                    v = func_800AEAC0(D_8010040A_PiranhasPursuit * 18);
-                    s = v * v * 4.0f + 20.1f;
+                    t = func_800AEAC0(D_8010040A_PiranhasPursuit * 18);
+                    t = t * t;
+                    D_801012DC_PiranhasPursuit = t * 4.0f + 20.1f;
+                } else {
+                    D_801012DC_PiranhasPursuit = 24.1f;
                 }
-                D_801012DC_PiranhasPursuit = s;
                 if (D_8010040A_PiranhasPursuit >= 5) {
                     D_8010040A_PiranhasPursuit = 0;
                 }
             } else {
-                D_80101150_PiranhasPursuit.unk2E = 1;
-                D_80101150_PiranhasPursuit.unk24 = D_80101150_PiranhasPursuit.unk28;
-                D_8010114C_PiranhasPursuit += 1.0f;
+                pl->unk2E = 1;
+                pl->unk24 = pl->unk28;
+                D_80101140_PiranhasPursuit[3] += 1.0f;
                 ++D_8010040A_PiranhasPursuit;
                 if (D_801012DC_PiranhasPursuit < 25.6f) {
-                    v = func_800AEAC0(D_8010040A_PiranhasPursuit * 45);
-                    D_801012DC_PiranhasPursuit = v * v * 1.5f + 24.1f;
+                    t = func_800AEAC0(D_8010040A_PiranhasPursuit * 45);
+                    t = t * t;
+                    D_801012DC_PiranhasPursuit = t * 1.5f + 24.1f;
                     return;
                 }
                 D_801012DC_PiranhasPursuit = 25.6f;
             }
         } else {
-            t = ++D_8010040E_PiranhasPursuit * 0.2;
+            t = (f32)++D_8010040E_PiranhasPursuit * 0.2;
             if (D_8010040C_PiranhasPursuit & 1) {
                 t = 1.0 - t;
             }
-            a = D_80101150_PiranhasPursuit.unk28 + tbl.v[D_8010040C_PiranhasPursuit][0];
-            b = D_80101150_PiranhasPursuit.unk28 + tbl.v[D_8010040C_PiranhasPursuit][1];
+            a = pl->unk28 + tbl.v[D_8010040C_PiranhasPursuit][0];
+            b = pl->unk28 + tbl.v[D_8010040C_PiranhasPursuit][1];
             if (D_8010040E_PiranhasPursuit >= 5) {
                 D_8010040E_PiranhasPursuit = 0;
                 if (++D_8010040C_PiranhasPursuit >= 6) {
-                    D_80101150_PiranhasPursuit.unk28 = D_80101150_PiranhasPursuit.unk24;
+                    a = pl->unk28 = pl->unk24;
                     t = 0.0f;
                     D_8010114C_PiranhasPursuit = 0.0f;
                     D_8010040C_PiranhasPursuit = 0;
-                    D_80101150_PiranhasPursuit.unk2E = 0;
-                    a = D_80101150_PiranhasPursuit.unk24;
-                    if (D_80101150_PiranhasPursuit.state == 1) {
+                    pl->unk2E = 0;
+                    if (pl->state == 1) {
                         func_800FEF78_PiranhasPursuit(obj, 0, 1);
                     }
                 }
@@ -1583,29 +1576,23 @@ void func_800FF730_PiranhasPursuit(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FF730_PiranhasPursuit);
-#endif
 
 /* The plant's lunge at a splash, and back. */
-// NON_MATCHING: retail addresses the plant fields by their splat labels
-#ifdef NON_MATCHING
 void func_800FFB28_PiranhasPursuit(omObjData* obj) {
-    if (D_80101150_PiranhasPursuit.unk1C > 0.0) {
-        if (D_80101150_PiranhasPursuit.unk18 < D_80101150_PiranhasPursuit.unk1C) {
-            D_80101150_PiranhasPursuit.unk18 = D_80101150_PiranhasPursuit.unk18 + 40.0 / 3.0;
+    PPPlant* p = &D_80101150_PiranhasPursuit;
+
+    if (p->unk1C > 0.0) {
+        if (p->unk18 < p->unk1C) {
+            p->unk18 = p->unk18 + 40.0 / 3.0;
         } else {
-            D_80101150_PiranhasPursuit.unk1C = 0;
+            p->unk1C = 0;
         }
-    } else if (D_80101150_PiranhasPursuit.unk18 > 0.0) {
-        D_80101150_PiranhasPursuit.unk18 = D_80101150_PiranhasPursuit.unk18 - 40.0 / 3.0;
+    } else if (p->unk18 > 0.0) {
+        p->unk18 = p->unk18 - 40.0 / 3.0;
     } else {
-        D_80101150_PiranhasPursuit.unk18 = 0.0f;
+        p->unk18 = 0.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FFB28_PiranhasPursuit);
-#endif
 
 u16 func_800FFBD8_PiranhasPursuit(s32 file) {
     void* f;

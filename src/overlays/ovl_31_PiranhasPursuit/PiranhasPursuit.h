@@ -336,7 +336,7 @@ PPPlayer* func_800F9CDC_PiranhasPursuit(omObjData* obj);
 void func_800F9D08_PiranhasPursuit(void);
 u32 func_800F9D40_PiranhasPursuit(void);
 void func_800F9D78_PiranhasPursuit(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz);
-void func_800F9E00_PiranhasPursuit(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, u16 frames);
+void func_800F9E00_PiranhasPursuit(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, s16 frames);
 void func_800F9E84_PiranhasPursuit(void);
 void func_800F9EE8_PiranhasPursuit(void);
 void func_800F9F4C_PiranhasPursuit(omObjData* obj); /* obj unused */

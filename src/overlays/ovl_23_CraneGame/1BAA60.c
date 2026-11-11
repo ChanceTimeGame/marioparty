@@ -152,22 +152,15 @@ void func_800FD7B4_CraneGame(unk2C0C0StructA0* verts, CGColFace* out, unk2C0C0St
     }
 }
 
-// retail steps the output pointer by 4 before the z store (masked 3)
-#ifdef NON_MATCHING
-void func_800FDBF8_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    out->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    out->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    out->z = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+void func_800FDBF8_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FDBF8_CraneGame);
-#endif
 
 /* Moves pos by (dx, dy, dz), stopped at the first collision face of any registered model other than
    `skip`. Returns 1 when something was hit. */
-// retail reloads D_80100A58 for the second component (masked 16)
-#ifdef NON_MATCHING
-s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+s32 func_800FDC94_CraneGame(f32* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     Vec to;
     Vec a;
     Vec b;
@@ -178,9 +171,9 @@ s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     s32 ret;
 
     D_80100A58_CraneGame = 1.1f;
-    to.x = dx + pos->x;
-    to.y = dy + pos->y;
-    to.z = dz + pos->z;
+    to.x = dx + pos[0];
+    to.y = dy + pos[1];
+    to.z = dz + pos[2];
     for (i = 0; i < D_80100A50_CraneGame; i++) {
         if (D_80100750_CraneGame[i].model == skip) {
             continue;
@@ -191,8 +184,8 @@ s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
         D_80100A54_CraneGame = D_80100750_CraneGame[i].verts;
         g = D_80100750_CraneGame[i].groups;
         for (j = 0; j < D_80100750_CraneGame[i].count; j++, g++) {
-            func_800FDBF8_CraneGame(g->mtx, pos->x, pos->y, pos->z, &a);
-            func_800FDBF8_CraneGame(g->mtx, to.x, to.y, to.z, &b);
+            func_800FDBF8_CraneGame(g->mtx, pos[0], pos[1], pos[2], &a.x);
+            func_800FDBF8_CraneGame(g->mtx, to.x, to.y, to.z, &b.x);
             b.x -= a.x;
             b.y -= a.y;
             b.z -= a.z;
@@ -207,14 +200,11 @@ s32 func_800FDC94_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     } else {
         ret = 1;
     }
-    pos->x = dx * D_80100A58_CraneGame + pos->x;
-    pos->y = dy * D_80100A58_CraneGame + pos->y;
-    pos->z = dz * D_80100A58_CraneGame + pos->z;
+    pos[0] = dx * D_80100A58_CraneGame + pos[0];
+    pos[1] = dy * D_80100A58_CraneGame + pos[1];
+    pos[2] = dz * D_80100A58_CraneGame + pos[2];
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FDC94_CraneGame);
-#endif
 
 /* Whether the segment p + t * d (t in 0..1) passes within r of the origin. */
 s32 func_800FDF54_CraneGame(Vec* p, Vec* d, f32 r) {
@@ -350,16 +340,11 @@ f32 func_800FE518_CraneGame(f32 x, f32 z) {
     return a;
 }
 
-// retail steps the output pointer by 4 before the y/z stores (masked 4)
-#ifdef NON_MATCHING
-void func_800FE598_CraneGame(Vec* v, Vec* out) {
-    out->x = func_800FE518_CraneGame(sqrtf(v->x * v->x + v->z * v->z), -v->y);
-    out->y = func_800FE518_CraneGame(v->z, v->x);
-    out->z = 0.0f;
+void func_800FE598_CraneGame(Vec* v, f32* o) {
+    *o++ = func_800FE518_CraneGame(sqrtf(v->x * v->x + v->z * v->z), -v->y);
+    *o++ = func_800FE518_CraneGame(v->z, v->x);
+    *o = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1BAA60", func_800FE598_CraneGame);
-#endif
 
 void func_800FE620_CraneGame(void) {
     D_80100A60_CraneGame = 0;
@@ -383,7 +368,7 @@ void func_800FE658_CraneGame(void) {
     D_80100A84_CraneGame = D_80100AAC_CraneGame = CZoom;
     guTranslateF(m, Center.x, Center.y, Center.z);
     MtxRotate(m, CRot.x, CRot.y, CRot.z);
-    func_800FDBF8_CraneGame(m, 0.0f, 0.0f, CZoom, &v);
+    func_800FDBF8_CraneGame(m, 0.0f, 0.0f, CZoom, &v.x);
     D_80100A88_CraneGame[0] = D_80100AB0_CraneGame[0] = v.x;
     D_80100A88_CraneGame[1] = D_80100AB0_CraneGame[1] = v.y;
     D_80100A88_CraneGame[2] = D_80100AB0_CraneGame[2] = v.z;
@@ -457,7 +442,7 @@ void func_800FE874_CraneGame(void) {
     d.x = eye.x - at.x;
     d.y = eye.y - at.y;
     d.z = eye.z - at.z;
-    func_800FE598_CraneGame(&d, (Vec*)&CRot);
+    func_800FE598_CraneGame(&d, &CRot.x);
     Center.x = at.x;
     Center.y = at.y;
     Center.z = at.z;
@@ -557,7 +542,7 @@ void func_800FEB08_CraneGame(void) {
             t = (f32)(func_800AEAC0(D_800C3110->unk_40 * 0.5) / func_800AEFD0(D_800C3110->unk_40 * 0.5));
             for (i = 0; i < D_80100A60_CraneGame; i++) {
                 func_800FDBF8_CraneGame(m, D_80100AC0_CraneGame[i][0] - at[0], D_80100AC0_CraneGame[i][1] - at[1],
-                                        D_80100AC0_CraneGame[i][2] - at[2], &v);
+                                        D_80100AC0_CraneGame[i][2] - at[2], &v.x);
                 d = v.x;
                 if (d < 0.0f) {
                     d = -d;
@@ -596,7 +581,7 @@ void func_800FEB08_CraneGame(void) {
         v.x = eye[0] - at[0];
         v.y = eye[1] - at[1];
         v.z = eye[2] - at[2];
-        func_800FE598_CraneGame(&v, &rot);
+        func_800FE598_CraneGame(&v, &rot.x);
         if (func_800AEAC0(-rot.x) * far + at[1] < 100.0) {
             d = at[1] - 100.0;
             rot.x = func_800B0CD8(d, sqrtf(far * far - d * d));
