@@ -395,11 +395,9 @@ void func_800F78BC_TreasureDivers(omObjData* obj) {
 
 s16 func_800FA084_TreasureDivers(omObjData* obj);
 
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F78D8_TreasureDivers(omObjData* obj) {
-    Matrix4f m;
     Vec v;
+    Matrix4f m;
     TDPlayerWork* pw;
     TDWork* w;
     TDWork* t;
@@ -407,8 +405,6 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
     f32 ang;
     f32 spd;
     f32 target;
-    f32 d;
-    f32 frac;
     f32 f;
     s32 stick;
     s16 sx;
@@ -450,7 +446,9 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
     spd = pw->unk_40;
     func_80017A60(obj);
     switch (w->unk8) {
-        default:
+        case 0:
+        case 1:
+        case 2:
             w->unk18 = w->pos.x;
             w->unk1C = w->pos.y;
             sy = 0;
@@ -478,11 +476,10 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
                             snd = 0x178;
                         }
                         func_80060618(snd, w->unk40);
-                        w->unk58 = 16;
                     } else {
                         w->unk48--;
-                        w->unk58 = 16;
                     }
+                    w->unk58 = 16;
                     if (pw->unk_AE == 0) {
                         func_80060F04(w->unk40, 5, 0, 5);
                         pw->unk_AE = 16;
@@ -504,7 +501,7 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
                     MtxRotate(m, -(w->unk24 + s50->unk_44.x - 90.0), w->unk28 + s50->unk_44.y, 0.0f);
                     MtxTranslate(m, 0.0f, 3.0f, 12.0f);
                     w->unk5A = func_800FB3A8_TreasureDivers(m[3][0], m[3][1], 8.0f, 8.0f);
-                    if (!(w->unk5A & 0x8000)) {
+                    if (w->unk5A >= 0) {
                         w->unk8 = 1;
                         t = func_800FA614_TreasureDivers(D_800FED08_TreasureDivers[w->unk5A]);
                         t->unk8 = 1;
@@ -533,14 +530,19 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
             }
             if (w->unk4C != 0) {
                 func_800184BC(obj, 1);
-            } else if (w->unk8 == 0) {
-                if (pw->unk_40 < 0.2) {
-                    func_800184BC(obj, 4);
-                } else {
-                    func_800184BC(obj, 0);
+            } else {
+                switch (w->unk8) {
+                    case 0:
+                        if (pw->unk_40 < 0.2) {
+                            func_800184BC(obj, 4);
+                        } else {
+                            func_800184BC(obj, 0);
+                        }
+                        break;
+                    case 1:
+                        func_800184BC(obj, 0);
+                        break;
                 }
-            } else if (w->unk8 == 1) {
-                func_800184BC(obj, 0);
             }
             if (w->unk2 & 8) {
                 func_80028498(obj->model[0], D_800F2B7C[obj->motion[5]].unk_08, 0);
@@ -556,11 +558,9 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
                 target -= 360.0;
             }
             if (target != ang) {
-                d = target - ang;
-                if ((d < -180.0f && d < 0.0f) || (d < 180.0f && d > 0.0f)) {
+                if ((target - ang < -180.0f && target - ang < 0.0f) || (target - ang < 180.0f && target - ang > 0.0f)) {
                     ang += 10.0f;
-                    d = target - ang;
-                    if ((d > -180.0f && d < 0.0f) || (d > 180.0f && d > 0.0f)) {
+                    if ((target - ang > -180.0f && target - ang < 0.0f) || (target - ang > 180.0f && target - ang > 0.0f)) {
                         ang = target;
                     }
                     if (ang > 360.0) {
@@ -568,8 +568,7 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
                     }
                 } else {
                     ang -= 10.0f;
-                    d = target - ang;
-                    if ((d < -180.0f && d < 0.0f) || (d < 180.0f && d > 0.0f)) {
+                    if ((target - ang < -180.0f && target - ang < 0.0f) || (target - ang < 180.0f && target - ang > 0.0f)) {
                         ang = target;
                     }
                     if (ang < 0.0) {
@@ -579,16 +578,16 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
             }
             pw->unk_3C = ang;
             q = ang / 90.0;
-            frac = (ang - q * 90.0) / 90.0;
+            f = (ang - q * 90.0) / 90.0;
             q1 = q + 1;
             if (q1 >= 4) {
                 q1 = 0;
             }
-            w->unk24 = (frac * (D_800FE3C4_TreasureDivers[q1][0] - D_800FE3C4_TreasureDivers[q][0]) +
-                        D_800FE3C4_TreasureDivers[q][0]) *
+            w->unk24 = (D_800FE3C4_TreasureDivers[q][0] +
+                        f * (D_800FE3C4_TreasureDivers[q1][0] - D_800FE3C4_TreasureDivers[q][0])) *
                        (spd / 2.0);
-            w->unk28 = frac * (D_800FE3C4_TreasureDivers[q1][1] - D_800FE3C4_TreasureDivers[q][1]) +
-                       D_800FE3C4_TreasureDivers[q][1];
+            w->unk28 = D_800FE3C4_TreasureDivers[q][1] +
+                       f * (D_800FE3C4_TreasureDivers[q1][1] - D_800FE3C4_TreasureDivers[q][1]);
             obj->rot.x = w->unk24;
             obj->rot.y = w->unk28;
             obj->rot.z = 0.0f;
@@ -606,7 +605,7 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
             func_800FABFC_TreasureDivers(&w->pos.x, &w->pos.y, 12);
             if (D_800FE6F6_TreasureDivers == 0 && (s8)w->unk0 < 0) {
                 r = func_800FB528_TreasureDivers(w);
-                if (!(r & 0x8000)) {
+                if (r >= 0) {
                     w->unk0 &= 0xFF3F;
                     if (w->unk8 != 1) {
                         w->unk54 = w->unk8;
@@ -655,8 +654,8 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
             } else {
                 w->pos.y -= -0.2;
                 if ((s8)w->unk0 < 0 && w->unk5A >= 0) {
-                    w->pos.y +=
-                        (f32)func_800FA614_TreasureDivers(D_800FED08_TreasureDivers[w->unk5A])->unk4E / 96.0;
+                    t = func_800FA614_TreasureDivers(D_800FED08_TreasureDivers[w->unk5A]);
+                    w->pos.y += (f32)t->unk4E / 96.0;
                 }
                 if (D_800FE6F6_TreasureDivers == 0) {
                     if (w->unk4A-- == 0) {
@@ -770,9 +769,6 @@ void func_800F78D8_TreasureDivers(omObjData* obj) {
     }
     func_80017DB0(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/EE9A0", func_800F78D8_TreasureDivers);
-#endif
 
 void func_800F8B98_TreasureDivers(omObjData* obj) {
     Vec v;
