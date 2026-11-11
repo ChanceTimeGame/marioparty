@@ -449,14 +449,14 @@ void func_800F86A8_PaddleBattle(s16 model, f32 speed) {
 }
 
 /* A rider: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 24 lines)
+// register allocation (masked 0, raw 14): player/p swap s1/s4, seat counter a0/v1; tried declaration order
 #ifdef NON_MATCHING
 void func_800F86D0_PaddleBattle(omObjData* obj) {
     s32 motA[5] = { 0xF, 0x38, 0x39, 0x3A, 0x3B };
     s32 motB[5] = { 0x10, 0x3C, 0x3D, 0x3E, 0x3F };
     PBMgWork* w;
     PBPlayer* p;
-    u8 player;
+    s32 player;
     s32 chr;
     s32 dir;
     s32 seat;
@@ -464,8 +464,7 @@ void func_800F86D0_PaddleBattle(omObjData* obj) {
     s32 r;
 
     obj->func_ptr = func_800F8B0C_PaddleBattle;
-    obj->work[0] = D_800FFB32_PaddleBattle++;
-    player = obj->work[0];
+    player = obj->work[0] = D_800FFB32_PaddleBattle++;
     obj->unk_50 = func_80023684(sizeof(PBMgWork), 0x7918);
     func_8009B770(obj->unk_50, 0, sizeof(PBMgWork));
     w = obj->unk_50;
@@ -487,8 +486,7 @@ void func_800F86D0_PaddleBattle(omObjData* obj) {
         }
     }
     RAFT.seat[seat] = player;
-    p->seat = seat;
-    obj->work[1] = seat;
+    obj->work[1] = p->seat = seat;
     obj->work[2] = 15;
     obj->work[3] = 0;
     func_800187D0(obj, 0, dir | 0x7C, 1, 0);
@@ -742,8 +740,6 @@ void func_800F94B8_PaddleBattle(omObjData* obj) {
 }
 
 /* A paddle: follows its rider. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 8 lines)
-#ifdef NON_MATCHING
 void func_800F9620_PaddleBattle(omObjData* obj) {
     PBPlayer* p;
     omObjData* o;
@@ -779,9 +775,7 @@ void func_800F9620_PaddleBattle(omObjData* obj) {
     obj->trans.x = o->trans.x;
     obj->trans.y = o->trans.y;
     obj->trans.z = o->trans.z;
-    m->unk7C[3][2] = 0.0f;
-    m->unk7C[3][1] = 0.0f;
-    m->unk7C[3][0] = 0.0f;
+    m->unk7C[3][0] = m->unk7C[3][1] = m->unk7C[3][2] = 0.0f;
     if (obj->work[2] != 0) {
         obj->trans.y += 2.0 * func_800AEAC0(obj->work[2] / 18.0 * 180.0) * 100.0;
     }
@@ -790,9 +784,6 @@ void func_800F9620_PaddleBattle(omObjData* obj) {
     }
     func_80017DB0(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F9620_PaddleBattle);
-#endif
 
 /* A bystander on the bank: setup. */
 void func_800F98AC_PaddleBattle(omObjData* obj) {
