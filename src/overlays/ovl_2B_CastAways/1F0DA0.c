@@ -331,15 +331,12 @@ void func_800F7308_CastAways(omObjData* arg0) {
         D_800FBA70_CastAways, 1);
 }
 
-// scheduling: the result store and one index multiply are ordered differently (masked 6)
-#ifdef NON_MATCHING
 void func_800F73AC_CastAways(omObjData* arg0, s32 arg1) {
     CastAwaysItemSet* set;
-    unk_800ECDE0* sprite;
     s16 id;
     s32 i;
 
-    arg0->unk_50 = set = func_80023684(sizeof(CastAwaysItemSet), 0x7918);
+    set = arg0->unk_50 = func_80023684(sizeof(CastAwaysItemSet), 0x7918);
     set->id = arg1;
     set->interval = D_800FB960_CastAways[(u16)arg1].interval;
     set->count = D_800FB960_CastAways[(u16)arg1].count;
@@ -352,9 +349,8 @@ void func_800F73AC_CastAways(omObjData* arg0, s32 arg1) {
     set->angle = 0;
     for (i = 0; i < set->count; i++) {
         id = func_8001E00C((void*)-1, 0x68D, 8);
-        sprite = D_800ECDE0 + id;
-        sprite->unk_02 = D_800FBB04_CastAways[0];
-        func_80025930(sprite->unk_00, 0x40000000, 0x40000000);
+        D_800ECDE0[id].unk_02 = D_800FBB04_CastAways[0];
+        func_80025930(D_800ECDE0[id].unk_00, 0x40000000, 0x40000000);
         set->models[0][i] = D_800ECDE0[id].unk_00;
         set->spriteIds[i] = id;
         set->slots[0][i] = 0;
@@ -366,9 +362,6 @@ void func_800F73AC_CastAways(omObjData* arg0, s32 arg1) {
         func_80025EB4(set->models[2][i], 1, 1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800F73AC_CastAways);
-#endif
 s32 func_800F75BC_CastAways(CastAwaysItemSet* arg0, s32 arg1) {
     s32 slotIndex;
     s32 pad[1]; // Original function has an otherwise-unused 8-byte stack frame.
@@ -812,11 +805,10 @@ void func_800F8B00_CastAways(omObjData* arg0) {
     func_800F8194_CastAways(arg0, 3);
 }
 
-// register allocation and branch layout
+// NON_MATCHING: register allocation (arg0 copy, port re-masked with andi) and one delay-slot fill (masked ~30)
 #ifdef NON_MATCHING
 void func_800F8B1C_CastAways(omObjData* arg0) {
-    s8 stick[2];
-    s8 button;
+    s8 stick[3]; /* x, y, button */
     CastAwaysPlayerWork* work;
     CastAwaysRodWork* rod;
     s32 event;
@@ -825,7 +817,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
     s16 power;
     f32 frame;
 
-    button = 0;
+    stick[2] = 0;
     if (D_800FBB7C_CastAways != 1) {
         return;
     }
@@ -835,15 +827,18 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
     event = arg0->unk_10;
     if (event != 0) {
         arg0->unk_10 = 0;
-        if (event == D_800FBB7C_CastAways) {
+        switch (event) {
+        case 1:
             work->state = 0x10;
             work->motionIdx = 7;
             work->flags &= ~1;
-        } else if (event == 2) {
+            break;
+        case 2:
             work->state = 0x10;
             work->flags &= ~1;
             work->motionIdx = 6;
             work->catches++;
+            break;
         }
     }
     if (work->state == 0x10) {
@@ -882,18 +877,16 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
         stick[0] = ContStkX[port];
         stick[1] = ContStkY[port];
         r = func_80009E4C(work->playerNo, 15, ContStkX[port], ContStkY[port]);
-        if (r < 0) {
-            r = -r;
-        }
+        r = r < 0 ? -r : r;
         if (r == 2) {
-            button = 1;
+            stick[2] = 1;
             work->unk_148 = D_800F377A[work->playerNo];
         } else if (r == 0 && rod->state == 2 && work->state == 8 && (work->flags & 2)) {
             func_8006071C(work->sound);
             work->flags &= ~2;
         }
     } else {
-        func_800F6A24_CastAways(arg0, &stick[0], &stick[1], &button);
+        func_800F6A24_CastAways(arg0, &stick[0], &stick[1], &stick[2]);
     }
     power = func_800FB404_CastAways(stick[0], stick[1]);
     if (power != 0) {
@@ -968,7 +961,7 @@ void func_800F8B1C_CastAways(omObjData* arg0) {
             }
         }
     }
-    if (button == 1) {
+    if (stick[2] == 1) {
         func_8005DC18(work->rodObj, 2);
         if (rod->state == 2 && work->state == 8) {
             func_800FB668_CastAways(arg0, arg0->model[0], work->animDataB, 0.0f, 1.0f, rod->state, 5);
@@ -1554,14 +1547,14 @@ s32 func_800FACEC_CastAways(CastAwaysPlayerWork* arg0) {
 
 extern f32 D_800FBA24_CastAways[];
 
-// retail shares one clamp block between the two direction tests (masked 29)
+// NON_MATCHING: retail shares the bc1f after the two direction compares (the dir > 0 arm jumps to it); ours
+// branches from each arm (4 instructions longer)
 #ifdef NON_MATCHING
 void func_800FAD2C_CastAways(omObjData* arg0) {
     CastAwaysPlayerWork* work;
     CastAwaysLureWork* lure;
     s16 prev;
     s16 type;
-    s16 dir;
     f32 frame;
     f32 target;
 
@@ -1591,22 +1584,12 @@ void func_800FAD2C_CastAways(omObjData* arg0) {
             work->fishType = type;
         }
         lure->frame = (f32)work->unk_14C + lure->frame;
-        dir = work->unk_14C;
-        frame = func_80025D18(arg0->model[3]) + (f32)dir;
-        if (dir > 0) {
-            target = D_800FBA24_CastAways[work->fishType];
-            if (target <= lure->frame) {
-                lure->frame = target;
-                work->unk_14C = 0;
-                work->unk_14E = 1;
-            }
-        } else {
-            target = D_800FBA24_CastAways[work->fishType];
-            if (lure->frame <= target) {
-                lure->frame = target;
-                work->unk_14C = 0;
-                work->unk_14E = 1;
-            }
+        frame = func_80025D18(arg0->model[3]) + (f32)work->unk_14C;
+        if (work->unk_14C > 0 ? lure->frame >= (target = D_800FBA24_CastAways[work->fishType])
+                              : lure->frame <= (target = D_800FBA24_CastAways[work->fishType])) {
+            lure->frame = target;
+            work->unk_14C = 0;
+            work->unk_14E = 1;
         }
         func_80025CA8(arg0->model[3], frame);
     }
