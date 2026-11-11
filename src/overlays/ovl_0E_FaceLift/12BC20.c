@@ -910,9 +910,6 @@ void func_800F9988_FaceLift(Gfx** gfx) {
     gDPSetColorImage((*gfx)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, 0x003D0800);
     gSPDisplayList((*gfx)++, D_800FC7E8_FaceLift);
 }
-// scheduling: retail loads 5.6f before the D_800F2B7C[model] address, so the j delay slot
-// differs (one nop; masked 10)
-#ifdef NON_MATCHING
 void func_800F99E8_FaceLift(Vec3f* a, Vec3f* b, s16 model, s16 side) {
     f32 k = D_800FC9F0_FaceLift[side];
     f32 x = a->x;
@@ -930,11 +927,9 @@ void func_800F99E8_FaceLift(Vec3f* a, Vec3f* b, s16 model, s16 side) {
     } else {
         dy = (a->y - D_800FC4B0_FaceLift[4].y) / 2.0f;
     }
-    func_8009EA40(D_800F2B7C[model].unk7C, dx, dy + 5.6f, 27.5f);
+    dy += 5.6f;
+    func_8009EA40(D_800F2B7C[model].unk7C, dx, dy, 27.5f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800F99E8_FaceLift);
-#endif
 void func_800F9AD4_FaceLift(omObjData* arg0) {
     s16 temp = InitSprite(0x20000B);
     

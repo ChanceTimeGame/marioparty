@@ -969,15 +969,12 @@ void func_800F9F04_UnusedMinigame0(omObjData* obj) {
     D_80103DA0_UnusedMinigame0++;
 }
 
-// register allocation (masked 0, raw 6): case 1's double r temp gets $f20 where retail uses $f2
-#ifdef NON_MATCHING
 void func_800FA024_UnusedMinigame0(omObjData* obj) {
     UM0ItemWork* iw = obj->unk_50;
     omObjData* pl = D_800F3FB0[0];
     f32 dx;
     f32 dy;
     f32 dz;
-    f32 r;
     s16 light;
 
     if (obj->work[3] == 0) {
@@ -1016,9 +1013,9 @@ void func_800FA024_UnusedMinigame0(omObjData* obj) {
             }
             break;
         case 1:
-            r = (f32)obj->work[1] / 32.0 * iw->unk_34;
-            obj->trans.x = func_800AEFD0(iw->unk_3C) * r + pl->trans.x;
-            obj->trans.z = func_800AEAC0(iw->unk_3C) * r + pl->trans.z;
+            dz = (f32)obj->work[1] / 32.0 * iw->unk_34;
+            obj->trans.x = func_800AEFD0(iw->unk_3C) * dz + pl->trans.x;
+            obj->trans.z = func_800AEAC0(iw->unk_3C) * dz + pl->trans.z;
             obj->trans.y = iw->unk_38 + func_800AEAC0((f32)(0x20 - obj->work[1]) * 4.21875) * 10.0 * 10.0;
             iw->unk_3C += 22.5;
             if (--obj->work[1] == 0) {
@@ -1037,9 +1034,6 @@ void func_800FA024_UnusedMinigame0(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA024_UnusedMinigame0);
-#endif
 
 /* The CPU's plan: (5 - difficulty / 2) random moves, then a search for the treasure's way out. */
 void func_800FA4A4_UnusedMinigame0(void) {
