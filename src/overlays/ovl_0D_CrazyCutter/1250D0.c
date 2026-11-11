@@ -608,8 +608,6 @@ void func_800F8144_CrazyCutter(omObjData* obj) {
         }
     }
 }
-// float temporaries and register allocation (masked 90)
-#ifdef NON_MATCHING
 void func_800F8598_CrazyCutter(omObjData* obj) {
     CrazyCutterPlayer* st = obj->unk_50;
     Vec3f pos;
@@ -624,7 +622,6 @@ void func_800F8598_CrazyCutter(omObjData* obj) {
     s8 port;
     s8 stickX;
     s8 stickY;
-    f32 fx;
     f32 fy;
     f32 angle;
     f32 mag;
@@ -715,16 +712,17 @@ void func_800F8598_CrazyCutter(omObjData* obj) {
             stickX = ContStkX[port];
             stickY = ContStkY[port];
         }
-        fx = stickX;
+        mag = stickX;
         fy = stickY;
-        angle = func_800B0CD8(fy, fx) + 90.0f;
+        angle = func_800B0CD8(fy, mag) + 90.0f;
         if (angle < 0.0f) {
             angle += 360.0f;
         }
-        mag = fabsf(fx * func_800AEAC0(angle)) + fabsf(fy * func_800AEFD0(angle));
+        mag = fabsf(mag * func_800AEAC0(angle));
+        mag += fabsf(fy * func_800AEFD0(angle));
     } else if (D_800FD4B0_CrazyCutter != 0) {
-        mag = 40.0f;
         angle = func_800F9530_CrazyCutter(st);
+        mag = 40.0f;
     } else {
         angle = 0.0f;
         mag = 0.0f;
@@ -759,9 +757,6 @@ void func_800F8598_CrazyCutter(omObjData* obj) {
         st->z -= dz;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F8598_CrazyCutter);
-#endif
 // loop shape: retail has an unused 56-byte frame and the bound 10 in a register tested before the
 // loop (a local array or variable bound in the source); masked 14, not attempted further
 #ifdef NON_MATCHING
