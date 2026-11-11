@@ -2187,29 +2187,31 @@ void func_800FC394_SlotCarDerby(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FC394_SlotCarDerby);
 #endif
-// retail extracts the g/b fields before re-reading *p for alpha, and reads *p twice (masked 7; tried s32/u32 c, channel locals)
-#ifdef NON_MATCHING
 /* Scales a sprite palette's RGBA5551 colours by r/g/b (/256), keeping alpha. */
 void func_800FCCA0_SlotCarDerby(s16 anim, s32 r, s32 g, s32 b) {
     unk65770Anim* a = func_80067310(anim);
     u16* p = a->unkC;
+    u32 c;
+    u16 cg;
+    u16 cb;
+    u16 ca;
+    s32 nr;
+    s32 ng;
+    s32 nb;
     s32 i;
 
-    for (i = 0; i < a->unk1A; i++, p++) {
-        u16 c = *p;
-        s32 cr;
-        s32 cg;
-        s32 cb;
-
-        cr = ((c >> 11) * r) >> 8;
-        cg = (((c >> 6) & 0x1F) * g) >> 8;
-        cb = (((c >> 1) & 0x1F) * b) >> 8;
-        *p = (*p & 1) | ((cr << 11) | (cg << 6) | (cb << 1));
+    for (i = 0; i < a->unk1A; i++) {
+        c = *p;
+        cg = (c >> 6) & 0x1F;
+        cb = (c >> 1) & 0x1F;
+        ca = *p & 1;
+        nr = ((s32)(c >> 11) * r) >> 8;
+        ng = (cg * g) >> 8;
+        nb = (cb * b) >> 8;
+        *p = ca | ((nr << 11) | (ng << 6) | (nb << 1));
+        p++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800FCCA0_SlotCarDerby);
-#endif
 void func_800FCD6C_SlotCarDerby(omObjData* obj) {
     SCDFx* fx;
     unk65770Anim* anim;
