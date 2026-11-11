@@ -1227,9 +1227,7 @@ void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec *out)
 }
 
 /* The raft's tilt from three float points around it (each eased toward the ground under it). */
-// tail differs: retail keeps &p[2] in s2 across the calls, negates y before the sqrt and lays the identity
-// fallback out last (masked 33, raw 70; the loop matches). Tried q = &p[2] for the tail (worse).
-#ifdef NON_MATCHING
+/* Retail returns 1 even when it falls back to the identity. */
 s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
     Vec p[3];
     Vec* q;
@@ -1237,6 +1235,7 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
     Vec* t;
     f32 len;
     f32 inv;
+    f32 angle;
     s32 i;
 
     for (i = 0; i < 3; i++) {
@@ -1255,6 +1254,7 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
         q->y = s[0].y = s[0].y + (t->y - s[0].y) * 0.1;
         q->z = s[0].z = s[0].z + (t->z - s[0].z) * 0.1;
     }
+    q = &p[2];
     p[0].x -= p[2].x;
     p[0].y -= p[2].y;
     p[0].z -= p[2].z;
@@ -1264,19 +1264,17 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
     p[2].x = p[0].y * p[1].z - p[0].z * p[1].y;
     p[2].y = p[0].z * p[1].x - p[0].x * p[1].z;
     p[2].z = p[0].x * p[1].y - p[0].y * p[1].x;
-    len = sqrtf(p[2].x * p[2].x + p[2].z * p[2].z);
     p[2].y = -p[2].y;
+    len = sqrtf(p[2].x * p[2].x + p[2].z * p[2].z);
     if (len >= 0.1) {
+        angle = func_800B0CD8(len, q->y);
         inv = 1.0 / len;
-        guRotateF(out, func_800B0CD8(len, p[2].y), -p[2].z * inv, 0.0f, inv * p[2].x);
-        return 1;
+        guRotateF(out, angle, -q->z * inv, 0.0f, inv * q->x);
+    } else {
+        guMtxIdentF(out);
     }
-    guMtxIdentF(out);
-    return 0;
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB1E8_PaddleBattle);
-#endif
 
 /* Pushes `lateral` away from a rock within 400 units of `pos`. */
 f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
