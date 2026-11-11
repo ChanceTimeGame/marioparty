@@ -355,7 +355,7 @@ void func_800F7074_DeepSeaDivers(omObjData* obj) {
         func_800790C0();
     }
 }
-// register allocation: retail keeps sprite in s3 (the loop counter's register); tried reusing i, decl order (masked 3)
+// register allocation: retail keeps sprite in s3 (the loop counter's register); tried reusing i, decl order (masked 3); M1g: s32/u16 sprite, reusing m (no change)
 #ifdef NON_MATCHING
 void func_800F70F4_DeepSeaDivers(omObjData* obj) {
     s16 sprite;
@@ -390,40 +390,33 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F70
 void func_800F72D0_DeepSeaDivers(omObjData* obj) {
     func_800FF730_DeepSeaDivers(obj);
 }
-// scheduling: retail places the sra of k*16 after the D_801003F8 load (masked 2)
-#ifdef NON_MATCHING
 void func_800F72EC_DeepSeaDivers(void) {
-    Vtx* v;
     s16 i;
     s16 k;
     s16 y;
 
     for (i = 0; i < 21; i++) {
         k = i * 5;
-        v = &D_801003F8_DeepSeaDivers[k];
-        v[0].v.ob[0] = -1900;
-        v[1].v.ob[0] = -950;
-        v[2].v.ob[0] = 0;
-        v[3].v.ob[0] = 950;
-        v[4].v.ob[0] = 1900;
-        v[0].v.ob[2] = v[1].v.ob[2] = v[2].v.ob[2] = v[3].v.ob[2] = v[4].v.ob[2] = -2000;
+        D_801003F8_DeepSeaDivers[k].v.ob[0] = -1900;
+        D_801003F8_DeepSeaDivers[k + 1].v.ob[0] = -950;
+        D_801003F8_DeepSeaDivers[k + 2].v.ob[0] = 0;
+        D_801003F8_DeepSeaDivers[k + 3].v.ob[0] = 950;
+        D_801003F8_DeepSeaDivers[k + 4].v.ob[0] = 1900;
+        D_801003F8_DeepSeaDivers[k].v.ob[2] = D_801003F8_DeepSeaDivers[k + 1].v.ob[2] = D_801003F8_DeepSeaDivers[k + 2].v.ob[2] = D_801003F8_DeepSeaDivers[k + 3].v.ob[2] = D_801003F8_DeepSeaDivers[k + 4].v.ob[2] = -2000;
         y = (140.0 - i * 20) * 5.0;
-        v[0].v.ob[1] = v[1].v.ob[1] = v[2].v.ob[1] = v[3].v.ob[1] = v[4].v.ob[1] = y;
-        v[0].v.tc[0] = 0;
-        v[1].v.tc[0] = 0xA00;
-        v[2].v.tc[0] = 0x1400;
-        v[3].v.tc[0] = 0x1E00;
-        v[4].v.tc[0] = 0x2800;
-        v[0].v.tc[1] = v[1].v.tc[1] = v[2].v.tc[1] = v[3].v.tc[1] = v[4].v.tc[1] = i * 0x300;
-        v[0].v.cn[0] = v[1].v.cn[0] = v[2].v.cn[0] = v[3].v.cn[0] = v[0].v.cn[0] = 0;
+        D_801003F8_DeepSeaDivers[k].v.ob[1] = D_801003F8_DeepSeaDivers[k + 1].v.ob[1] = D_801003F8_DeepSeaDivers[k + 2].v.ob[1] = D_801003F8_DeepSeaDivers[k + 3].v.ob[1] = D_801003F8_DeepSeaDivers[k + 4].v.ob[1] = y;
+        D_801003F8_DeepSeaDivers[k].v.tc[0] = 0;
+        D_801003F8_DeepSeaDivers[k + 1].v.tc[0] = 0xA00;
+        D_801003F8_DeepSeaDivers[k + 2].v.tc[0] = 0x1400;
+        D_801003F8_DeepSeaDivers[k + 3].v.tc[0] = 0x1E00;
+        D_801003F8_DeepSeaDivers[k + 4].v.tc[0] = 0x2800;
+        D_801003F8_DeepSeaDivers[k].v.tc[1] = D_801003F8_DeepSeaDivers[k + 1].v.tc[1] = D_801003F8_DeepSeaDivers[k + 2].v.tc[1] = D_801003F8_DeepSeaDivers[k + 3].v.tc[1] = D_801003F8_DeepSeaDivers[k + 4].v.tc[1] = i * 0x300;
+        D_801003F8_DeepSeaDivers[k].v.cn[0] = D_801003F8_DeepSeaDivers[k + 1].v.cn[0] = D_801003F8_DeepSeaDivers[k + 2].v.cn[0] = D_801003F8_DeepSeaDivers[k + 3].v.cn[0] = D_801003F8_DeepSeaDivers[k].v.cn[0] = 0;
         D_801003F8_DeepSeaDivers[k].v.cn[1] = D_801003F8_DeepSeaDivers[k + 1].v.cn[1] = D_801003F8_DeepSeaDivers[k + 2].v.cn[1] = D_801003F8_DeepSeaDivers[k + 3].v.cn[1] = D_801003F8_DeepSeaDivers[k].v.cn[1] = 0;
         D_801003F8_DeepSeaDivers[k].v.cn[2] = D_801003F8_DeepSeaDivers[k + 1].v.cn[2] = D_801003F8_DeepSeaDivers[k + 2].v.cn[2] = D_801003F8_DeepSeaDivers[k + 3].v.cn[2] = D_801003F8_DeepSeaDivers[k + 4].v.cn[2] = 0;
         D_801003F8_DeepSeaDivers[k].v.cn[3] = D_801003F8_DeepSeaDivers[k + 1].v.cn[3] = D_801003F8_DeepSeaDivers[k + 2].v.cn[3] = D_801003F8_DeepSeaDivers[k + 3].v.cn[3] = D_801003F8_DeepSeaDivers[k + 4].v.cn[3] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F72EC_DeepSeaDivers);
-#endif
 // one instruction short and loop-temporary registers differ (masked 4); not finished in M1c
 #ifdef NON_MATCHING
 void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
