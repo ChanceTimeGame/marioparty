@@ -222,7 +222,7 @@ void func_800FB514_YoshisTropicalIslandEndingScene(omObjData* obj) {
     }
 }
 
-// EF50 model loop: 2.0f hoisted to an FPR, branch layout of the 0xD test (masked 24); calls, constants and strides identical
+// register allocation: FPRs of the ring/stone angle, x and radius (retail computes angle and x in place); opcode-identical, masked 74 is mostly that plus .bss address shift
 #ifdef NON_MATCHING
 void func_800FB648_YoshisTropicalIslandEndingScene(void) {
     Object* stones[7];
@@ -528,21 +528,16 @@ void func_800FB648_YoshisTropicalIslandEndingScene(void) {
                           &GwPlayer[GwCommon.boardWork[i]].player_obj->unk_18);
         }
     }
-    for (i = 0; D_8010EF50_YoshisTropicalIslandEndingScene[i] != -1; ) {
-        const s32* id = &D_8010EF50_YoshisTropicalIslandEndingScene[i];
-        Object** m = &D_80110448_YoshisTropicalIslandEndingScene[i];
-
-        *m = MBModelCreate(*id, NULL);
-        func_800A0D00(&(*m)->coords, D_8010EF70_YoshisTropicalIslandEndingScene[i].x,
+    for (i = 0; D_8010EF50_YoshisTropicalIslandEndingScene[i] != -1; i++) {
+        D_80110448_YoshisTropicalIslandEndingScene[i] = MBModelCreate(D_8010EF50_YoshisTropicalIslandEndingScene[i], NULL);
+        func_800A0D00(&D_80110448_YoshisTropicalIslandEndingScene[i]->coords, D_8010EF70_YoshisTropicalIslandEndingScene[i].x,
                       D_8010EF70_YoshisTropicalIslandEndingScene[i].y, D_8010EF70_YoshisTropicalIslandEndingScene[i].z);
-        func_8004CCD0(&(*m)->coords, (Vec3f*)&D_8010EFC4_YoshisTropicalIslandEndingScene[3], &(*m)->unk_18);
-        func_80025B34(*(*m)->unk_3C->unk_40);
-        if (*id == 0xD) {
-            func_800A0D00((Vec3f*)&(*m)->xScale, 2.0f, 2.0f, 2.0f);
-            i++;
-            MBModelDispOff(*m);
-        } else {
-            i++;
+        func_8004CCD0(&D_80110448_YoshisTropicalIslandEndingScene[i]->coords, (Vec3f*)&D_8010EFC4_YoshisTropicalIslandEndingScene[3],
+                      &D_80110448_YoshisTropicalIslandEndingScene[i]->unk_18);
+        func_80025B34(*D_80110448_YoshisTropicalIslandEndingScene[i]->unk_3C->unk_40);
+        if (D_8010EF50_YoshisTropicalIslandEndingScene[i] == 0xD) {
+            func_800A0D00((Vec3f*)&D_80110448_YoshisTropicalIslandEndingScene[i]->xScale, 2.0f, 2.0f, 2.0f);
+            MBModelDispOff(D_80110448_YoshisTropicalIslandEndingScene[i]);
         }
     }
     func_8004F140(*D_80110448_YoshisTropicalIslandEndingScene[4]->unk_3C->unk_40);

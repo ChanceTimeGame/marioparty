@@ -200,7 +200,7 @@ s8 func_800F77EC_TugOWar(omObjData* rope) {
     } else {
         D_800FDB14_TugOWar = 1;
     }
-    if (D_800FDAE0_TugOWar[0] == 1) {
+    if (D_800FDAE0_TugOWar == 1) {
         D_800FDB14_TugOWar = 1;
     }
     for (i = 0; i < 4; i++) {
@@ -483,7 +483,7 @@ void func_800F851C_TugOWar(omObjData* obj) {
                 D_800FDB5C_TugOWar = 0.0f;
             }
         }
-        D_800FDAE0_TugOWar[0] = 1;
+        D_800FDAE0_TugOWar = 1;
         D_800FDB16_TugOWar = 0;
         if (D_800FDAE2_TugOWar == 1 && D_800FDBE6_TugOWar == D_800FDAE2_TugOWar) {
             if (p[0]->x < -290.0f) {
@@ -512,7 +512,7 @@ void func_800F851C_TugOWar(omObjData* obj) {
             } else if (D_800FDB40_TugOWar == 0) {
                 func_80025BB8(D_800F3FB0[0]->model[0], D_800F3FB0[0]->motion[14]);
                 func_80025EB4(D_800F3FB0[0]->model[0], 2, 2);
-                D_800FDAE0_TugOWar[0] = 1;
+                D_800FDAE0_TugOWar = 1;
                 D_800FDB16_TugOWar = 0;
                 D_800FDB40_TugOWar = 1;
             }
@@ -619,7 +619,7 @@ void func_800F8DA0_TugOWar(omObjData* obj) {
             }
         }
         if (D_800FDB6C_TugOWar++ >= 6) {
-            D_800FDAE0_TugOWar[0] = 1;
+            D_800FDAE0_TugOWar = 1;
             D_800FDB16_TugOWar = 1;
             if (D_800FDAE2_TugOWar == 1 && D_800FDBE6_TugOWar == D_800FDAE2_TugOWar) {
                 if (D_800FDB70_TugOWar < 90.0f) {
@@ -639,7 +639,7 @@ void func_800F8DA0_TugOWar(omObjData* obj) {
                 } else {
                     t = func_80025D18(D_800F3FB0[1]->model[0]);
                     if (func_80025D40(D_800F3FB0[1]->model[0]) <= t) {
-                        D_800FDAE0_TugOWar[0] = 1;
+                        D_800FDAE0_TugOWar = 1;
                         D_800FDB16_TugOWar = 1;
                     }
                 }
@@ -678,11 +678,11 @@ void func_800F95D4_TugOWar(omObjData* arg0) {
     }
     switch (D_800FDB94_TugOWar) {
     case 0:
-        D_800FDAE0_TugOWar[1] = 1;
+        D_800FDAE1_TugOWar = 1;
         func_800F851C_TugOWar(arg0);
         break;
     case 1:
-        D_800FDAE0_TugOWar[1] = 1;
+        D_800FDAE1_TugOWar = 1;
         func_800F8DA0_TugOWar(arg0);
         break;
     }

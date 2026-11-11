@@ -128,7 +128,8 @@ void func_800FD758_TugOWar(omObjData*);
 void func_800FDA4C_TugOWar(void);
 
 /* .data */
-extern s8 D_800FDAE0_TugOWar[2]; /* [0] the game is over, [1] the result is being shown */
+extern s8 D_800FDAE0_TugOWar; /* the game is over */
+extern s8 D_800FDAE1_TugOWar; /* the result is being shown */
 extern s8 D_800FDAE2_TugOWar;
 extern s32 D_800FDAE4_TugOWar;
 extern s32 D_800FDB10_TugOWar;
