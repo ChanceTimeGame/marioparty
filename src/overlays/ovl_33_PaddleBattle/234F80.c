@@ -168,10 +168,12 @@ void func_800F7380_PaddleBattle(void) {
 }
 
 /* The raft: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 79 lines)
+// masked 12: retail stores the first RAFT fields by absolute address while &RAFT is already held in s1 (GCC CSEs them through r); s0/s1 swapped
 #ifdef NON_MATCHING
 void func_800F74F4_PaddleBattle(omObjData* obj) {
+    PBRaft* r = &RAFT;
     Vec dir;
+    Vec* p;
     s32 i;
 
     obj->func_ptr = func_800F76B8_PaddleBattle;
@@ -181,17 +183,15 @@ void func_800F74F4_PaddleBattle(omObjData* obj) {
     RAFT.lateral = 0.5f;
     RAFT.turn = 0.0f;
     RAFT.state = 1;
-    for (i = 0; i < 6; i++) {
-        D_800FF360_PaddleBattle[i].z = 0.0f;
-        D_800FF360_PaddleBattle[i].y = 0.0f;
-        D_800FF360_PaddleBattle[i].x = 0.0f;
+    for (p = D_800FF360_PaddleBattle, i = 0; i < 6; i++, p++) {
+        p->x = p->y = p->z = 0.0f;
     }
-    func_800FAC70_PaddleBattle(RAFT.dist, RAFT.lateral, &obj->trans);
-    RAFT.y = obj->trans.y;
-    func_800FAFEC_PaddleBattle(RAFT.dist, 0.5f, &dir);
-    RAFT.rotY = func_800B0CD8(dir.x, dir.z) + RAFT.turn * 30.0;
+    func_800FAC70_PaddleBattle(r->dist, r->lateral, &obj->trans);
+    r->y = obj->trans.y;
+    func_800FAFEC_PaddleBattle(r->dist, 0.5f, &dir);
+    r->rotY = func_800B0CD8(dir.x, dir.z) + r->turn * 30.0;
     D_800FFB38_PaddleBattle = -1;
-    Center.x = obj->trans.x + (RAFT.lateral - 0.5) * 100.0;
+    Center.x = obj->trans.x + (r->lateral - 0.5) * 100.0;
     Center.y = obj->trans.y + 300.0;
     Center.z = obj->trans.z;
     CRot.x = -30.0f;
@@ -1134,7 +1134,7 @@ void func_800FA5EC_PaddleBattle(omObjData* obj) {
                 func_80066DC4(D_800FFB50_PaddleBattle, i, c->pos.x, c->pos.y);
                 sc = c->scale;
             } else {
-                func_800FB868_PaddleBattle(0, &c->pos, &scr);
+                func_800FB868_PaddleBattle(0, &c->pos, &scr.x);
                 func_80066DC4(D_800FFB50_PaddleBattle, i, scr.x + 160.0f, scr.y + 120.0f);
                 sc = scr.z * c->scale;
             }
@@ -1384,13 +1384,12 @@ f32 func_800FB74C_PaddleBattle(f32 target, f32 cur, f32 rate) {
 }
 
 /* World `pos` to screen coordinates (x, y from the centre) and a scale in z, for camera `cam`. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 68 lines)
+// register allocation (masked 0, raw 8): sin/cos temporaries swap $f20/$f22; c + D_800F3FA8 * 16 operand order
 #ifdef NON_MATCHING
-void func_800FB868_PaddleBattle(s16 cam, Vec* pos, Vec* out) {
-    Matrix4f m;
+void func_800FB868_PaddleBattle(s16 cam, Vec* pos, f32* out) {
     Vec v;
+    Matrix4f m;
     unk_Struct00* c;
-    s16* vscale;
     f32 d;
 
     c = &D_800C3110[cam];
@@ -1402,10 +1401,9 @@ void func_800FB868_PaddleBattle(s16 cam, Vec* pos, Vec* out) {
         d = -d;
     }
     /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 (no pointers before it) */
-    vscale = (s16*)((u8*)c + D_800F3FA8 * 0x10 + 0x58);
-    out->x = vscale[0] / 4.0 * v.x / d * 0.75;
-    out->y = vscale[1] / 4.0 * -v.y / d;
-    out->z = 400.0 / d;
+    out[0] = (&c->unk58)[D_800F3FA8 * 8] / 4.0 * v.x / d * 0.75;
+    out[1] = (&c->unk5A)[D_800F3FA8 * 8] / 4.0 * -v.y / d;
+    out[2] = 400.0 / d;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB868_PaddleBattle);
@@ -1520,7 +1518,7 @@ void func_800FBEE8_PaddleBattle(omObjData* obj) {
     p.x = Center.x + func_800AEAC0(CRot.y + 180.0) * 40.0 * 100.0;
     p.y = Center.y - 200.0 + -500.0;
     p.z = Center.z + func_800AEFD0(CRot.y + 180.0) * 40.0 * 100.0;
-    func_800FB868_PaddleBattle(0, &p, &p);
+    func_800FB868_PaddleBattle(0, &p, &p.x);
     func_80066DC4(D_800FFB60_PaddleBattle, 0, 0xA0, p.y + 112.0f - 16.0f);
     if (D_800FFB62_PaddleBattle != 0 && --D_800FFB62_PaddleBattle == 0) {
         func_80067480(D_800FFB60_PaddleBattle, 0, 0x8000);

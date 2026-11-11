@@ -244,7 +244,7 @@ s16 func_800FB1E8_PaddleBattle(Vec*, Vec*, f32, Matrix4f);
 f32 func_800FB554_PaddleBattle(f32, f32, Vec*);
 s16 func_800FB704_PaddleBattle(s32);
 f32 func_800FB74C_PaddleBattle(f32, f32, f32);
-void func_800FB868_PaddleBattle(s16, Vec*, Vec*);
+void func_800FB868_PaddleBattle(s16, Vec*, f32*);
 void func_800FBA44_PaddleBattle(Matrix4f, f32, f32, f32, f32*);
 void func_800FBAE0_PaddleBattle(void);
 void func_800FBBD8_PaddleBattle(void);
