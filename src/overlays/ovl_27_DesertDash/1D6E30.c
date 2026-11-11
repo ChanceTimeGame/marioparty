@@ -227,11 +227,10 @@ void func_800FA460_DesertDash(omObjData* obj) {
     D_800FC620_DesertDash[(u16)w].unk14 = 1.0f;
 }
 
-// masked 4: the final call loads obj->model[0] before the trans.z / 16.0 divide, retail after it (s16 t fixed the index copy)
-#ifdef NON_MATCHING
 void func_800FA724_DesertDash(omObjData* obj) {
     s16 t;
     s16 i;
+    f64 z;
 
     t = obj->work[1];
     obj->trans.z = D_800FC658_DesertDash[t];
@@ -252,13 +251,12 @@ void func_800FA724_DesertDash(omObjData* obj) {
         func_800258EC(obj->model[4], 4, 0);
         func_80025798(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z + 2100.0f);
     }
-    func_80027C1C(obj->model[0], 0.0f, obj->trans.z / 16.0, 0x40, 0x40);
+    z = obj->trans.z / 16.0;
+    func_80027C1C(obj->model[0], 0.0f, z, 0x40, 0x40);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_DesertDash/1D6E30", func_800FA724_DesertDash);
-#endif
 
 // masked 2: GCC regroups i * 800 - 200 + rand as i * 800 + (rand - 200); retail adds (i * 800 - 200) + rand
+// (M1g: tried rand + (i * 800 - 200) (masked 4), an s32 local for i * 800 - 200 (masked 28))
 #ifdef NON_MATCHING
 /* The desert scenery: 16 random cacti/rocks (D_800FC4F8) and the obstacles. */
 void func_800FA9E0_DesertDash(omObjData* obj) {
