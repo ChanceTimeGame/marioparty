@@ -299,7 +299,7 @@ void func_800F7218_BombsAway(void) {
 }
 
 
-// register allocation and one mul.s/lui scheduling swap (masked 7)
+// register allocation: loop counter a1/a2 swap (masked 0, raw 26; tried local order, max() in a local)
 #ifdef NON_MATCHING
 void func_800F723C_BombsAway(void) {
     s32 i;
@@ -350,8 +350,8 @@ void func_800F723C_BombsAway(void) {
             }
         }
         angle = (((rand8() << 8) | rand8()) * 45) >> 13;
-        x = func_800AEFD0(angle) * dist + D_80100360_BombsAway.x;
-        z = func_800AEAC0(angle) * dist + D_80100360_BombsAway.z;
+        x = D_80100360_BombsAway.x + func_800AEFD0(angle) * dist;
+        z = D_80100360_BombsAway.z + func_800AEAC0(angle) * dist;
         func_800FE948_BombsAway(x, z, 0.4f, 1);
         left = D_80100314_BombsAway;
         D_80100318_BombsAway = D_800FFA70_BombsAway[~left >> 31 & left] /* max(left, 0) */;
@@ -362,6 +362,7 @@ void func_800F723C_BombsAway(void) {
                 D_80100698_BombsAway[i].unk_04 = x;
                 D_80100698_BombsAway[i].unk_08 = z;
                 if (newest < D_80100698_BombsAway[i].unk_00) {
+                    newest = D_80100698_BombsAway[i].unk_00;
                     newestIdx = i;
                 }
                 break;
@@ -1041,8 +1042,6 @@ void func_800F9824_BombsAway(omObjData* obj) {
     /* Retail passed the area kind as a float 0.0 (mfc1 a1): a prototype with an f32 second argument. */
     ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(obj, 0.0f, -2000.0f, -2000.0f, 2000.0f, 2000.0f);
 }
-// register allocation: the sine and 1.0f swap f20/f22 (masked 0)
-#ifdef NON_MATCHING
 void func_800F997C_BombsAway(omObjData* obj) {
     Matrix4f m;
     f32 p0[3];
@@ -1054,6 +1053,8 @@ void func_800F997C_BombsAway(omObjData* obj) {
     f32 sz;
     f32 a;
     f32 k;
+    f32 k2;
+    f32 k3;
     f32 t;
     f32 v;
     s32 i;
@@ -1150,13 +1151,13 @@ void func_800F997C_BombsAway(omObjData* obj) {
     func_8009E060(s->unk_50, a, k, 0.0f, func_800AEAC0(s->unk_04));
     s->unk_50[3][3] = 1.0f;
     a = s->unk_10 * 8.0;
-    k = func_800AEFD0(s->unk_0C);
-    func_8009E060(m, a, k, 0.0f, func_800AEAC0(s->unk_0C));
+    k2 = func_800AEFD0(s->unk_0C);
+    func_8009E060(m, a, k2, 0.0f, func_800AEAC0(s->unk_0C));
     m[3][3] = 1.0f;
     func_800AC0B0(m, s->unk_50, s->unk_50);
     a = func_800AEAC0(s->unk_18) * 20.0;
-    k = func_800AEFD0(s->unk_14);
-    func_8009E060(m, a * s->unk_1C, k, 0.0f, func_800AEAC0(s->unk_14));
+    k3 = func_800AEFD0(s->unk_14);
+    func_8009E060(m, a * s->unk_1C, k3, 0.0f, func_800AEAC0(s->unk_14));
     m[3][3] = 1.0f;
     func_800AC0B0(m, s->unk_50, m);
     func_8009EA40(s->unk_50, obj->trans.x, obj->trans.y, obj->trans.z);
@@ -1191,9 +1192,6 @@ void func_800F997C_BombsAway(omObjData* obj) {
     s->unk_124.y = s->unk_110[1] * s->unk_120;
     s->unk_124.z = s->unk_110[2] * s->unk_120;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_BombsAway/1AA2A0", func_800F997C_BombsAway);
-#endif
 f32 func_800FA47C_BombsAway(Vec* pos) {
     return func_800FC0EC_BombsAway(pos->x - D_80100328_BombsAway.unk_38.x, pos->z - D_80100328_BombsAway.unk_38.z);
 }
