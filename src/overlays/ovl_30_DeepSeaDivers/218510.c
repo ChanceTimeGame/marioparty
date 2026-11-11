@@ -1241,7 +1241,6 @@ void func_800F9DD8_DeepSeaDivers(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F9DD8_DeepSeaDivers);
 #endif
-#ifdef NON_MATCHING
 void func_800FA62C_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
@@ -1261,14 +1260,10 @@ void func_800FA62C_DeepSeaDivers(s16 idx) {
             func_800FD870_DeepSeaDivers(idx);
         }
         func_8006752C(D_80100C80_DeepSeaDivers[idx].sprite, 0, D_80100C80_DeepSeaDivers[idx].unk1E << 5);
-    }
-    if (--D_80100C80_DeepSeaDivers[idx].unk20 == 0 || D_80100C80_DeepSeaDivers[idx].y >= 465.0) {
+    } else if (--D_80100C80_DeepSeaDivers[idx].unk20 == 0 || D_80100C80_DeepSeaDivers[idx].y >= 465.0) {
         D_80100C80_DeepSeaDivers[idx].unk1E = 8;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FA62C_DeepSeaDivers);
-#endif
 void func_800FA9A4_DeepSeaDivers(s16 idx) {
     if (D_80100C80_DeepSeaDivers[idx].flags >= 0) {
         D_80100C80_DeepSeaDivers[idx].flags |= 0x8000;
@@ -2043,6 +2038,7 @@ void func_800FD870_DeepSeaDivers(s16 idx) {
         func_800674BC(D_80100C80_DeepSeaDivers[idx].sprite, 0, 0x8000);
     }
 }
+// code identical; as C, .rodata differs: retail pads after jtbl_801002A0 to 16 bytes before the next doubles (12 zero bytes in the .s)
 #ifdef NON_MATCHING
 void func_800FD8C8_DeepSeaDivers(void) {
     Vec3f p;
