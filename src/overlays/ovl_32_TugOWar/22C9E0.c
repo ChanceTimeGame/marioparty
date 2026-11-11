@@ -2,7 +2,8 @@
 #include "TugOWar.h"
 
 /* .data (0x800FDAE0..0x800FDB00) */
-s8 D_800FDAE0_TugOWar[2] = { 0, 0 };
+s8 D_800FDAE0_TugOWar = 0;
+s8 D_800FDAE1_TugOWar = 0;
 s8 D_800FDAE2_TugOWar = 0; /* result jingle started */
 s32 D_800FDAE4_TugOWar = 929; /* time left, frames */
 s32 D_800FDAE8_TugOWar = 0;
@@ -104,12 +105,17 @@ void func_800F65E0_TugOWar(void) {
 }
 
 /* The game flow: instructions, the timer, the result and the exit. */
-// logic-equivalent; branch layout of the result cases differs (masked 34)
+// the fade ternary is if-converted (sltu/negu/andi); retail branches on lb v0 (masked 3)
 #ifdef NON_MATCHING
 void func_800F69C0_TugOWar(omObjData* obj) {
+    TWPlayerWork* w[4];
+    TWPull* p[4];
     s16 i;
 
-    /* retail first copies each player's work and pull pointers to the stack, unused */
+    for (i = 0; i < 4; i++) {
+        w[i] = D_800F3FB0[i]->unk_50;
+        p[i] = w[i]->unk_E4;
+    }
     func_80009468();
     switch (D_800ED430) {
     case 0:
@@ -126,15 +132,15 @@ void func_800F69C0_TugOWar(omObjData* obj) {
         }
         break;
     case 1:
-        if (D_800FDAE0_TugOWar[0] != 1) {
-            if (D_800FDAE0_TugOWar[1] != 1) {
+        if (D_800FDAE0_TugOWar != 1) {
+            if (D_800FDAE1_TugOWar != 1) {
                 func_80079078(D_800FDAE4_TugOWar / 30);
                 if (--D_800FDAE4_TugOWar == 0) {
-                    D_800FDAE0_TugOWar[0] = 1;
+                    D_800FDAE0_TugOWar = 1;
                     D_800FDB16_TugOWar = 2;
                 }
             }
-            if (D_800FDAE0_TugOWar[0] != 1) {
+            if (D_800FDAE0_TugOWar != 1) {
                 break;
             }
         }
@@ -149,17 +155,18 @@ void func_800F69C0_TugOWar(omObjData* obj) {
         }
         if (D_800FDAE8_TugOWar++ >= 13) {
             func_8006073C();
-            if (D_800FDB16_TugOWar == 2) {
+            switch (D_800FDB16_TugOWar) {
+            case 2:
                 if (_CheckFlag(0x2B) == 0) {
                     GMesCreate(0x11);
                     D_800FDAFC_TugOWar = 90.0f;
-                } else {
-                    GMesCreate(2);
-                    D_800FDAFC_TugOWar = 105.0f;
+                    break;
                 }
-            } else if (D_800FDB16_TugOWar >= 0 && D_800FDB16_TugOWar < 2) {
+            case 0:
+            case 1:
                 GMesCreate(2);
                 D_800FDAFC_TugOWar = 105.0f;
+                break;
             }
             func_800790C0();
             D_800FDAF6_TugOWar = 1;
@@ -214,19 +221,18 @@ void func_800F69C0_TugOWar(omObjData* obj) {
                 }
                 if (D_800FDAF1_TugOWar == 1 && GMesWait() == 0) {
                     if (D_800FDAEF_TugOWar == 0) {
-                        if (D_800FDB16_TugOWar != D_800FDAF1_TugOWar) {
-                            switch (D_800FDB16_TugOWar) {
-                            case 0:
-                                GMesCreate(4, GwPlayer[D_800FDFAE_TugOWar[0]].character);
-                                break;
-                            case 2:
-                                GMesCreate(0x10);
-                                break;
-                            }
-                        } else {
+                        switch (D_800FDB16_TugOWar) {
+                        case 0:
+                            GMesCreate(4, GwPlayer[D_800FDFAE_TugOWar[0]].character);
+                            break;
+                        case 1:
                             GMesCreate(0x13, GwPlayer[D_800FDFAE_TugOWar[1]].character,
                                        GwPlayer[D_800FDFAE_TugOWar[2]].character,
                                        GwPlayer[D_800FDFAE_TugOWar[3]].character);
+                            break;
+                        case 2:
+                            GMesCreate(0x10);
+                            break;
                         }
                         D_800FDAEF_TugOWar = 1;
                     }
@@ -243,7 +249,7 @@ void func_800F69C0_TugOWar(omObjData* obj) {
                 D_800FDAEC_TugOWar = 1;
             }
         } else if (D_800FDAF0_TugOWar == 0) {
-            if (D_800FDAFC_TugOWar < D_800FDAF8_TugOWar) {
+            if (D_800FDAF8_TugOWar > D_800FDAFC_TugOWar) {
                 func_800726AC(D_800FDFB3_TugOWar != 0 ? 3 : 0, 0x14);
                 func_800601D4(0x28);
                 D_800FDAF0_TugOWar = 1;
