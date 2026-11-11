@@ -227,7 +227,7 @@ void func_800370D4(s16);
 f32 func_80025D18(s16);
 f32 func_80025D40(s16);
 CastAwaysAnimData* func_800202E8(s16, s16);
-s16 func_80009E4C(s16, s16, s8, s8);
+s32 func_80009E4C(s16, s16, s8, s8);
 void func_80060F04(s16, s32, s32, s32);
 s16 func_800FABE4_CastAways(u16);
 s32 func_800F75BC_CastAways(CastAwaysItemSet*, s32);

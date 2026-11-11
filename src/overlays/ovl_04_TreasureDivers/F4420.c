@@ -5,30 +5,26 @@ void func_800FC060_TreasureDivers(s32 i) {
     D_800FF188_TreasureDivers[i].active = 0;
 }
 
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800FC074_TreasureDivers(s32 i) {
     TDBoat* b = D_800FF188_TreasureDivers;
 
     b[i].active = 1;
     if (i == 0) {
-        b[0].pos.x = -300.0f;
-        b[0].pos.y = 600.0f;
-        b[0].pos.z = -200.0f;
-        b[0].vx = 10.0f;
+        b->pos.x = -300.0f;
+        b->pos.y = 600.0f;
+        b->pos.z = -200.0f;
+        b->vx = 10.0f;
     } else if (i == 1) {
-        b[1].pos.x = 300.0f;
-        b[1].pos.y = 800.0f;
-        b[1].pos.z = -200.0f;
-        b[1].vx = -10.0f;
+        b = &D_800FF188_TreasureDivers[1];
+        b->pos.x = 300.0f;
+        b->pos.y = 800.0f;
+        b->pos.z = -200.0f;
+        b->vx = -10.0f;
     }
     D_800FF188_TreasureDivers[i].rot.x = 0;
     D_800FF188_TreasureDivers[i].rot.y = 0;
     D_800FF188_TreasureDivers[i].rot.z = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F4420", func_800FC074_TreasureDivers);
-#endif
 
 void func_800FC144_TreasureDivers(omObjData* obj) {
     func_800FC074_TreasureDivers(0);
@@ -45,8 +41,6 @@ void func_800FC144_TreasureDivers(omObjData* obj) {
 }
 
 /* The two boats on the surface. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800FC1CC_TreasureDivers(omObjData* obj) {
     Vec v;
     Vec s;
@@ -67,7 +61,9 @@ void func_800FC1CC_TreasureDivers(omObjData* obj) {
             } else if (D_800FF188_TreasureDivers[0].pos.x < -200.0f) {
                 D_800FF188_TreasureDivers[0].vx += 1.0f;
             }
-        } else if (D_800FF188_TreasureDivers[0].pos.x > 2200.0f || D_800FF188_TreasureDivers[0].pos.x < -400.0f) {
+        } else if (D_800FF188_TreasureDivers[0].pos.x > 2200.0f) {
+            D_800FF188_TreasureDivers[0].vx = 0.0f;
+        } else if (D_800FF188_TreasureDivers[0].pos.x < -400.0f) {
             D_800FF188_TreasureDivers[0].vx = 0.0f;
         }
         if (D_800FF188_TreasureDivers[1].active == 1) {
@@ -76,7 +72,9 @@ void func_800FC1CC_TreasureDivers(omObjData* obj) {
             } else if (D_800FF188_TreasureDivers[1].pos.x < -1100.0f) {
                 D_800FF188_TreasureDivers[1].vx += 1.0f;
             }
-        } else if (D_800FF188_TreasureDivers[1].pos.x > 2200.0f || D_800FF188_TreasureDivers[1].pos.x < -400.0f) {
+        } else if (D_800FF188_TreasureDivers[1].pos.x > 2200.0f) {
+            D_800FF188_TreasureDivers[1].vx = 0.0f;
+        } else if (D_800FF188_TreasureDivers[1].pos.x < -400.0f) {
             D_800FF188_TreasureDivers[1].vx = 0.0f;
         }
         if (D_800FF188_TreasureDivers[0].vx > 10.0f) {
@@ -116,9 +114,6 @@ void func_800FC1CC_TreasureDivers(omObjData* obj) {
         D_800FF188_TreasureDivers[1].scr.y = s.y;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F4420", func_800FC1CC_TreasureDivers);
-#endif
 
 void func_800FC6AC_TreasureDivers(void) {
     D_800FF188_TreasureDivers[2].active = 0;
@@ -145,8 +140,6 @@ void func_800FC70C_TreasureDivers(omObjData* obj) {
 }
 
 /* The treasure boat (Koopa's). */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800FC770_TreasureDivers(omObjData* obj) {
     Vec v;
     Vec s;
@@ -171,9 +164,10 @@ void func_800FC770_TreasureDivers(omObjData* obj) {
                 }
             }
             D_800FE434_TreasureDivers += func_800FCA70_TreasureDivers(target, D_800FE434_TreasureDivers, 12);
-        } else if (D_800FF188_TreasureDivers[2].pos.x > 1600.0f || D_800FF188_TreasureDivers[2].pos.x < -1600.0f) {
-            D_800FF188_TreasureDivers[2].rot.y = 0.0f;
-            D_800FF188_TreasureDivers[2].vx = 0.0f;
+        } else if (D_800FF188_TreasureDivers[2].pos.x > 1600.0f) {
+            D_800FF188_TreasureDivers[2].vx = D_800FF188_TreasureDivers[2].rot.y = 0.0f;
+        } else if (D_800FF188_TreasureDivers[2].pos.x < -1600.0f) {
+            D_800FF188_TreasureDivers[2].vx = D_800FF188_TreasureDivers[2].rot.y = 0.0f;
         }
         D_800FF188_TreasureDivers[2].pos.x += D_800FF188_TreasureDivers[2].vx;
         if (D_800FF188_TreasureDivers[2].rot.y >= 360.0f) {
@@ -198,9 +192,6 @@ void func_800FC770_TreasureDivers(omObjData* obj) {
         D_800FF188_TreasureDivers[2].scr.y = s.y;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F4420", func_800FC770_TreasureDivers);
-#endif
 
 /* A step of `step` degrees from cur towards target the short way round, or 0 when within step. */
 s32 func_800FCA70_TreasureDivers(s32 target, s32 cur, s32 step) {
@@ -528,7 +519,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F4420", func_800FD9
 #endif
 
 /* Waves model m's vertices (the sea surface) and scrolls its texture. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING: p[1] is CSE'd into a0 for the p[1] & 1 test where retail reloads it (masked 2)
 #ifdef NON_MATCHING
 void func_800FDEB4_TreasureDivers(s16 m) {
     unk2C0C0StructC0* c;
@@ -536,8 +527,6 @@ void func_800FDEB4_TreasureDivers(s16 m) {
     unk2C0C0StructE0* dst;
     u8* p;
     f32 s;
-    f32 x;
-    f32 y;
     s16 i;
     s16 n;
 
@@ -557,31 +546,27 @@ void func_800FDEB4_TreasureDivers(s16 m) {
     src = c->unk_04;
     dst = c->unk_08[D_800F37F0];
     n = c->unk_72;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; src++, dst++, i++, p += 2) {
         *dst = *src;
-        if (!(p[0] == 0 || p[0] == 10) && !(p[1] == 0 || p[1] == 5)) {
-            if (p[1] & 1) {
-                if (!((p[0] >> 1) & 1)) {
-                    x = src->unk_00 - s * D_800FE77C_TreasureDivers[p[1]];
-                } else {
-                    x = src->unk_00 + s * D_800FE77C_TreasureDivers[p[1]];
-                }
-            } else if ((p[0] >> 1) & 1) {
-                x = src->unk_00 - s * D_800FE77C_TreasureDivers[p[1]];
-            } else {
-                x = src->unk_00 + s * D_800FE77C_TreasureDivers[p[1]];
-            }
-            dst->unk_00 = x;
-            if (p[0] & 1) {
-                y = src->unk_02 - s * D_800FE794_TreasureDivers[p[0]];
-            } else {
-                y = src->unk_02 + s * D_800FE794_TreasureDivers[p[0]];
-            }
-            dst->unk_02 = y;
+        if (p[0] == 0 || p[0] == 10 || p[1] == 0 || p[1] == 5) {
+            continue;
         }
-        src++;
-        dst++;
-        p += 2;
+        if (p[1] & 1) {
+            if (!((p[0] >> 1) & 1)) {
+                dst->unk_00 = src->unk_00 - s * D_800FE77C_TreasureDivers[p[1]];
+            } else {
+                dst->unk_00 = src->unk_00 + s * D_800FE77C_TreasureDivers[p[1]];
+            }
+        } else if ((p[0] >> 1) & 1) {
+            dst->unk_00 = src->unk_00 - s * D_800FE77C_TreasureDivers[p[1]];
+        } else {
+            dst->unk_00 = src->unk_00 + s * D_800FE77C_TreasureDivers[p[1]];
+        }
+        if (p[0] & 1) {
+            dst->unk_02 = src->unk_02 - s * D_800FE794_TreasureDivers[p[0]];
+        } else {
+            dst->unk_02 = src->unk_02 + s * D_800FE794_TreasureDivers[p[0]];
+        }
     }
     if (D_800FE464_TreasureDivers > 32.0) {
         D_800FE464_TreasureDivers -= 32.0;

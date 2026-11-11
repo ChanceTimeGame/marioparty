@@ -50,13 +50,10 @@ void func_800F66F8_CoinBlockBash(omObjData* obj) {
 }
 
 
-// NON_MATCHING: register allocation: wait in a1 vs v1 (masked 0)
-#ifdef NON_MATCHING
 void func_800F6770_CoinBlockBash(omObjData* obj) {
     s32 i;
     s32 mask;
     s16 msg;
-    s32 wait;
 
     if (func_8005FD5C() + D_800F64F8 != 0) {
         func_800F8014_CoinBlockBash();
@@ -130,11 +127,11 @@ void func_800F6770_CoinBlockBash(omObjData* obj) {
         break;
     case 3:
         if (D_801024F8_CoinBlockBash != 0) {
-            wait = GMesWait() != 0 ? 0x3C : 0;
+            mask = GMesWait() != 0 ? 0x3C : 0;
         } else {
-            wait = D_801024F0_CoinBlockBash.time != 0 ? 0x69 : 0x78;
+            mask = D_801024F0_CoinBlockBash.time != 0 ? 0x69 : 0x78;
         }
-        if (D_801024F0_CoinBlockBash.timer >= wait) {
+        if (D_801024F0_CoinBlockBash.timer >= mask) {
             if (D_801024F8_CoinBlockBash == 0) {
                 func_800601D4(0x28);
             }
@@ -159,9 +156,6 @@ void func_800F6770_CoinBlockBash(omObjData* obj) {
         omOvlReturnEx(1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F6770_CoinBlockBash);
-#endif
 void func_800F6C20_CoinBlockBash(omObjData* obj) {
     if (func_80072718() == 0) {
         func_800F6C54_CoinBlockBash();
@@ -420,7 +414,7 @@ void func_800F78E8_CoinBlockBash(void) {
     func_8009B770(D_80102870_CoinBlockBash, 0, sizeof(D_80102870_CoinBlockBash));
     D_801031E4_CoinBlockBash = -1;
 }
-// NON_MATCHING: GCC hoists 360.0 out of the loop (one more saved FPR); otherwise identical
+// NON_MATCHING: GCC hoists 360.0 out of the loop (one more saved FPR); otherwise identical (`-= 360.0` changes nothing)
 #ifdef NON_MATCHING
 void func_800F7A5C_CoinBlockBash(void) {
     Vec pos;
@@ -694,8 +688,6 @@ void func_800F81E0_CoinBlockBash(omObjData* obj, s16 type, Vec* pos, Vec* rot, s
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F81E0_CoinBlockBash);
 #endif
-// NON_MATCHING: and-operand order of the clamp (masked 0)
-#ifdef NON_MATCHING
 void func_800F8CD0_CoinBlockBash(void) {
     s16* blk = (s16*)&D_80102538_CoinBlockBash;
     s32 i;
@@ -708,13 +700,12 @@ void func_800F8CD0_CoinBlockBash(void) {
     D_8010254C_CoinBlockBash = 0.0f;
     D_80102550_CoinBlockBash = 0.0f;
     i = D_801025AC_CoinBlockBash;
-    i = (~i >> 31) & i;
+    if (i < 0) {
+        i = 0;
+    }
     func_800FBF70_CoinBlockBash(D_801025B0_CoinBlockBash[i].obj);
     func_800F7048_CoinBlockBash(D_801025B0_CoinBlockBash[i].obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F8CD0_CoinBlockBash);
-#endif
 // NON_MATCHING: float register allocation only (masked 0)
 #ifdef NON_MATCHING
 void func_800F8D98_CoinBlockBash(void) {
@@ -1023,7 +1014,8 @@ s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out) {
     }
     return res;
 }
-// NON_MATCHING: delay-slot fill: hit = 0 lands in the active test's slot (one instruction short)
+// NON_MATCHING: delay-slot fill: hit = 0 lands in the active test's slot where retail has beqzl + i++ (one instruction short;
+// a continue, and hit = 0 in the for header, change nothing)
 #ifdef NON_MATCHING
 void func_800F9FE4_CoinBlockBash(void) {
     CBBDrop* d;
@@ -2245,27 +2237,32 @@ s32 func_800FE294_CoinBlockBash(Vec* pos, Vec* vel, Vec* out, Vec* n, s32 unused
     }
     return r;
 }
-// NON_MATCHING: register allocation and instruction order (as ovl_33 func_800FB868)
+// NON_MATCHING: retail reloads D_800F3FA8 and recomputes the viewport address for unk5A after the out->x store (masked 8)
 #ifdef NON_MATCHING
 void func_800FE470_CoinBlockBash(s16 cam, Vec* pos, Vec* out) {
-    Matrix4f m;
     Vec v;
+    Matrix4f mtx;
+    f32 (*m)[4];
     unk_Struct00* c;
-    s16* vscale;
+    unk_Struct00* vp;
+    f32 t;
     f32 d;
 
     c = &D_800C3110[cam];
+    m = mtx;
     HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y,
                 c->unk18.z);
     func_800FDD50_CoinBlockBash(m, pos->x, pos->y, pos->z, &v);
-    d = func_800AEAC0(c->unk_40 * 0.5) / func_800AEFD0(c->unk_40 * 0.5) * v.z;
+    t = func_800AEAC0(c->unk_40 * 0.5);
+    t /= func_800AEFD0(c->unk_40 * 0.5);
+    d = t * v.z;
     if (d < 0.0f) {
         d = -d;
     }
-    /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 (no pointers before it) */
-    vscale = (s16*)((u8*)c + D_800F3FA8 * 0x10 + 0x58);
-    out->x = vscale[0] / 4.0 * v.x / d * 0.75;
-    out->y = vscale[1] / 4.0 * -v.y / d;
+    /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 */
+    vp = (unk_Struct00*)((u8*)c + D_800F3FA8 * 16);
+    out->x = vp->unk58 / 4.0 * v.x / d * 0.75;
+    out->y = vp->unk5A / 4.0 * -v.y / d;
     out->z = 400.0 / d;
 }
 #else
