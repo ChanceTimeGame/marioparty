@@ -102,10 +102,14 @@ void func_800F65E0_PressStartScreen(void) {
     }
 }
 
-// register allocation and scheduling; retail keeps i*2 as a second induction variable (masked 16)
+// register allocation (masked 2, raw 12): f0/f2 swapped on y/z, and the else arm of rot computes
+// &D_800F8060[i] before the product in retail (tried pointer-arith form)
 #ifdef NON_MATCHING
 void func_800F69C8_PressStartScreen(omObjData* arg0) {
     f32 rot;
+    f32 x;
+    f32 y;
+    f32 z;
     s32 i;
 
     func_80025798(arg0->model[1], arg0->trans.x, arg0->trans.y, arg0->trans.z);
@@ -124,10 +128,10 @@ void func_800F69C8_PressStartScreen(omObjData* arg0) {
             D_800F80B0_PressStartScreen = 15;
         }
         for (i = 0; i < 10; i++) {
-            func_80025798(arg0->model[i + 3],
-                          (D_800F7FE8_PressStartScreen[i].x - arg0->trans.x) * (f32)(15 - D_800F80B0_PressStartScreen) / 15.0f + arg0->trans.x,
-                          (D_800F7FE8_PressStartScreen[i].y - arg0->trans.y) * (f32)(15 - D_800F80B0_PressStartScreen) / 15.0f + arg0->trans.y,
-                          (D_800F7FE8_PressStartScreen[i].z - arg0->trans.z) * (f32)(15 - D_800F80B0_PressStartScreen) / 15.0f + arg0->trans.z);
+            x = (D_800F7FE8_PressStartScreen[i].x - arg0->trans.x) * (f32)(15 - D_800F80B0_PressStartScreen) / 15.0f + arg0->trans.x;
+            y = (D_800F7FE8_PressStartScreen[i].y - arg0->trans.y) * (f32)(15 - D_800F80B0_PressStartScreen) / 15.0f + arg0->trans.y;
+            z = (D_800F7FE8_PressStartScreen[i].z - arg0->trans.z) * (f32)(15 - D_800F80B0_PressStartScreen) / 15.0f + arg0->trans.z;
+            func_80025798(arg0->model[i + 3], x, y, z);
             if (D_800F8060_PressStartScreen[i] > 0.0f) {
                 rot = D_800F8060_PressStartScreen[i] - D_800F80B0_PressStartScreen * 0.5f;
             } else {
