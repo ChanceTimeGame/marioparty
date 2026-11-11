@@ -86,12 +86,14 @@ void func_800F6ADC_HammerDrop(void) {
     func_800FB050_HammerDrop();
 }
 
-// Logic-equivalent player construction; retail copies three position tables to the stack.
+// cpu_difficulty switch layout: retail does not cross-jump the flags==0 store with case 3 and
+// merges cases 1/2 (masked 23; tried all case orders)
 #ifdef NON_MATCHING
 void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
     unkGlobalStruct_00* work;
     HammerDropPlayerState* state;
     s32 characterBase;
+    s32 characterSub;
     HammerDropF32x4 posX = *(HammerDropF32x4*) D_800FB5C8_HammerDrop;
     HammerDropF32x4 posZ = *(HammerDropF32x4*) D_800FB5D8_HammerDrop;
     HammerDropF32x4 yaw = *(HammerDropF32x4*) D_800FB5E8_HammerDrop;
@@ -99,11 +101,10 @@ void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
     D_800FB994_HammerDrop = GwPlayer[arg1].character;
     D_800FB6B0_HammerDrop[arg1] = 0;
     characterBase = D_800C59AC[D_800FB994_HammerDrop].unk_00;
-    func_8000979C(arg0, characterBase,
-        D_800C59AC[D_800FB994_HammerDrop].unk_04, arg1, 0x699, 0x699);
+    characterSub = D_800C59AC[D_800FB994_HammerDrop].unk_04;
+    func_8000979C(arg0, characterBase, characterSub, arg1, 0x699, 0x699);
     work = arg0->unk_50;
-    state = func_80023684(sizeof(HammerDropPlayerState), 0x7918);
-    work->unk_E4 = (unk_Struct01*) state;
+    state = (HammerDropPlayerState*) (work->unk_E4 = func_80023684(sizeof(HammerDropPlayerState), 0x7918));
     state->unk_44 = work->unk_56;
     arg0->model[3] = LoadFormFile(0x19, 0x68D);
     arg0->model[4] = LoadFormFile(0x1A, 0x68D);
@@ -1434,8 +1435,6 @@ void func_800FA2E0_HammerDrop(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA2E0_HammerDrop);
 #endif
 
-// Logic-equivalent per-screen display-list construction using host-width-safe GBI macros.
-#ifdef NON_MATCHING
 void func_800FAA30_HammerDrop(void) {
     Gfx* gfx;
     s32 screen;
@@ -1447,14 +1446,14 @@ void func_800FAA30_HammerDrop(void) {
         gDPPipeSync(gfx++);
         gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x552230);
         gSPClearGeometryMode(gfx++, G_LIGHTING);
-        gDPSetTexturePersp(gfx++, G_TP_PERSP);
+        gDPSetTextureFilter(gfx++, G_TF_BILERP);
         gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 0xB2, 0xB2, 0xB2, 0xA0);
-        gDPSetCombineLERP(gfx++, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0,
-            TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0);
+        gDPSetCombineLERP(gfx++, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
+            TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE);
         gDPSetTextureLUT(gfx++, G_TT_RGBA16);
-        gDPLoadTLUT_pal256(gfx++, D_800FB910_HammerDrop->unk_2C->unk_24);
+        gDPLoadTLUT_pal16(gfx++, 0, D_800FB910_HammerDrop->unk_2C->unk_24);
         gDPLoadTextureBlock_4b(gfx++, D_800FB910_HammerDrop->unk_24,
             D_800FB910_HammerDrop->unk_18,
             D_800FB910_HammerDrop->unk_1A, D_800FB910_HammerDrop->unk_1B, 0,
@@ -1471,9 +1470,6 @@ void func_800FAA30_HammerDrop(void) {
         gSPEndDisplayList(gfx++);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FAA30_HammerDrop);
-#endif
 
 // Logic-equivalent animated mesh update; loop/register allocation differs.
 #ifdef NON_MATCHING
