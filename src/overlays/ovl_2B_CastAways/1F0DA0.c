@@ -1327,8 +1327,6 @@ void func_800FA198_CastAways(void) {
     }
     D_800FBA08_CastAways--;
 }
-// register allocation and block order
-#ifdef NON_MATCHING
 void func_800FA410_CastAways(void) {
     omObjData** players;
     omObjData** fish;
@@ -1341,6 +1339,7 @@ void func_800FA410_CastAways(void) {
     s16 slot;
     s16 id;
     u16 winners;
+    unk_800ECDE0* spr;
 
     players = func_8005DB44(4);
     switch (D_800FBB8C_CastAways) {
@@ -1375,15 +1374,15 @@ void func_800FA410_CastAways(void) {
                     fish[j]->model[0] = set->models[0][slot];
                     func_800258EC(fish[j]->model[0], 4, 0);
                     id = set->spriteIds[slot];
-                    obj = fish[j];
-                    omSetTra(obj, obj->trans.x, obj->trans.y - 30.0f, obj->trans.z - -150.0f);
+                    omSetTra(fish[j], fish[j]->trans.x, fish[j]->trans.y - 30.0f, fish[j]->trans.z - -150.0f);
                     omSetSca(fish[j], 8.0f, 8.0f, 8.0f);
                     break;
                 }
                 /* Retail reuses the previous id for any other type (none exist). */
-                D_800ECDE0[id].unk_02 = D_800FBB40_CastAways;
-                D_800ECDE0[id].unk_08 = 0;
-                D_800ECDE0[id].unk_04 = 0;
+                spr = &D_800ECDE0[id];
+                spr->unk_02 = D_800FBB40_CastAways;
+                spr->unk_08 = 0;
+                spr->unk_04 = 0;
                 func_8001E268(id, 6, 6);
                 func_8001E268(id, 1, 0);
                 func_8001E360(id, 0xFF, 0xFF, 0xBE);
@@ -1417,25 +1416,29 @@ void func_800FA410_CastAways(void) {
         break;
     case 1:
         for (i = 0; i < 4; i++) {
-            players[i]->rot.y -= 12.0f;
-            if (players[i]->rot.y < 0.0f) {
+            if ((players[i]->rot.y -= 12.0f) < 0.0f) {
                 players[i]->rot.y = 0.0f;
             }
         }
         if (players[0]->rot.y == 0.0f) {
-            D_800FBB8C_CastAways = (D_800FBB56_CastAways != 0) ? 7 : 2;
+            if (D_800FBB56_CastAways != 0) {
+                D_800FBB8C_CastAways = 7;
+            } else {
+                D_800FBB8C_CastAways = 2;
+            }
             for (i = 0; i < 4; i++) {
                 func_80025C20(players[i]->model[0], players[i]->motion[0xE], 0, 0xF, 2);
             }
         }
         break;
     case 2:
-        winners = 0;
         if (GMesStatAllGet() & 2) {
+            winners = 0;
             for (i = 0; i < 4; i++) {
-                if (((CastAwaysPlayerWork*)players[i]->unk_50)->catches != 0) {
-                    winners++;
+                work = players[i]->unk_50;
+                if (work->catches != 0) {
                     func_80025BB8(players[i]->model[0], players[i]->motion[0xC]);
+                    winners++;
                 } else {
                     func_80025BB8(players[i]->model[0], players[i]->motion[0xD]);
                 }
@@ -1501,9 +1504,6 @@ void func_800FA410_CastAways(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_CastAways/1F0DA0", func_800FA410_CastAways);
-#endif
 // decomp-permuter
 s16 func_800FABE4_CastAways(u16 arg0)
 {
