@@ -1010,18 +1010,17 @@ void func_800F8BA0_GameModeOverworld(OverworldCamKey* path, f32 speed) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_GameModeOverworld/2BB5F0", func_800F8BA0_GameModeOverworld);
 #endif
-// loop layout and scheduling (masked 56)
+// register allocation (masked 6): retail keeps d in f2 (mov.s) and swaps idx/b (s5/s6); tried local order
 #ifdef NON_MATCHING
 void func_800F907C_GameModeOverworld(void) {
     Vec2f* pts;
-    Vec2f* tgt;
     f32 x, z, sx, sz, dx, dz, d;
     f32 px, pz;
     f32 lastX, lastZ;
     f32 a, b;
+    u16 shadow;
     f32 ang;
     s16 bird;
-    u16 shadow;
     s16 idx;
 
     idx = 0;
@@ -1041,14 +1040,13 @@ void func_800F907C_GameModeOverworld(void) {
     lastX = 0.0f;
     b = rand8();
     while (1) {
-        tgt = &pts[idx + 1];
-        dx = tgt->x - x;
-        dz = tgt->y - z;
-        d = func_800B1750(dx * dx + dz * dz);
-        sx = dx / d * 3.0f;
-        sz = dz / d * 3.0f;
-        x += sx;
+        sx = pts[idx + 1].x - x;
+        sz = pts[idx + 1].y - z;
+        d = func_800B1750(sx * sx + sz * sz);
+        sx = sx / d * 3.0f;
+        sz = sz / d * 3.0f;
         while (1) {
+            x += sx;
             z += sz;
             px = x + func_800AEAC0(a) * 20.0f;
             pz = z + func_800AEFD0(a) * 20.0f;
@@ -1068,7 +1066,6 @@ void func_800F907C_GameModeOverworld(void) {
             a += 5.0f;
             b += 10.0f;
             HuPrcVSleep();
-            x += sx;
         }
         idx++;
         if (pts[idx + 1].x == 0.0f && pts[idx + 1].y == 0.0f) {
@@ -1079,7 +1076,8 @@ void func_800F907C_GameModeOverworld(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_GameModeOverworld/2BB5F0", func_800F907C_GameModeOverworld);
 #endif
-// loop layout and scheduling (masked 40)
+// register allocation (masked 2): retail frame 8 bytes larger (144) and its s-registers rotated;
+// tried the inner distance without casts, dx/dz shared with ux/uz (152)
 #ifdef NON_MATCHING
 void func_800F9474_GameModeOverworld(void) {
     Vec2f* pts;
@@ -1089,8 +1087,8 @@ void func_800F9474_GameModeOverworld(void) {
     f32 phase, step, amp;
     f32 ang;
     s16 fish;
-    u16 pos;
-    u16 dir;
+    s16 pos;
+    s16 dir;
 
     lastZ = 0.0f;
     pts = HuPrcCurrentGet()->user_data;
@@ -1110,11 +1108,11 @@ void func_800F9474_GameModeOverworld(void) {
         rand8();
         tgt = &pts[(s16)pos + (s16)dir];
         rand8();
-        dx = tgt->x - x;
-        dz = tgt->y - z;
-        d = func_800B1750(dx * dx + dz * dz);
-        ux = dx / d;
-        uz = dz / d;
+        ux = tgt->x - x;
+        uz = tgt->y - z;
+        d = func_800B1750(ux * ux + uz * uz);
+        ux = ux / d;
+        uz = uz / d;
         while (1) {
             x += ux * (func_800AEAC0(phase) * amp + 10.0f);
             z += uz * (func_800AEAC0(phase) * amp + 10.0f);

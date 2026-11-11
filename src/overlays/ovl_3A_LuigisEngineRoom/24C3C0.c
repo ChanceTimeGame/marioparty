@@ -1275,7 +1275,8 @@ void func_800F855C_LuigisEngineRoom(void) {
     MBModelKill(D_800FA050_LuigisEngineRoom);
 }
 
-// register allocation around the random velocity stores (masked 4; tried if/else and a second r for vel.z)
+// register allocation around the random velocity stores (masked 4: retail recomputes the vel.y offset in v0
+// and copies it to s0 for vel.z; tried if/else, a second r for vel.z, a pointer-form vel.y store)
 #ifdef NON_MATCHING
 void func_800F857C_LuigisEngineRoom(Vec3f* pos) {
     s32 i;
