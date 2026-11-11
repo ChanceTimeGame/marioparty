@@ -219,7 +219,7 @@ void func_800FC930_MarioBandstand(f32, f32, f32, f32, f32, f32, f32);
 u32 func_800FC9D8_MarioBandstand(u32);
 u32 func_800FCAAC_MarioBandstand(void);
 #ifndef MB_1D3040
-s16 func_800FCAD4_MarioBandstand(omObjData*, s32, s32, s32, u16, s16);
+s16 func_800FCAD4_MarioBandstand(omObjData*, s32, u16, u8, u16, s16);
 #endif
 
 /* ---------------------------------------------------------------------------------------------

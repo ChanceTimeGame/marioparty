@@ -148,13 +148,11 @@ void func_800FD59C_HandcarHavoc(omObjData *obj, u16 seat, Vec *out)
 }
 
 /* The two wheel spots of one side (D_800FF404). */
-// stack addressing of the copy array (masked 8): retail addresses tmp[k].x from the m base (s0 + 96) and y/z from fresh sp+116/120; tried f32 tmp[2][3], separate copy statements
-#ifdef NON_MATCHING
 void func_800FD888_HandcarHavoc(omObjData* obj, u16 side, Vec* out) {
     Matrix4f m;
     f32 v[4];
     f32 t[4];
-    Vec tmp[2];
+    f32 tmp[6];
     HHCar* w;
     f32 rx;
     f32 ry;
@@ -206,20 +204,14 @@ void func_800FD888_HandcarHavoc(omObjData* obj, u16 side, Vec* out) {
                 v[j] += t[i] * m[i][j];
             }
         }
-        out[k].x = obj->trans.x + v[0];
-        tmp[k].x = out[k].x;
-        out[k].y = obj->trans.y + v[1];
-        tmp[k].y = out[k].y;
-        out[k].z = obj->trans.z + v[2];
-        tmp[k].z = out[k].z;
+        tmp[k * 3 + 0] = out[k].x = obj->trans.x + v[0];
+        tmp[k * 3 + 1] = out[k].y = obj->trans.y + v[1];
+        tmp[k * 3 + 2] = out[k].z = obj->trans.z + v[2];
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/216140", func_800FD888_HandcarHavoc);
-#endif
 
 /* Pumps the levers by the car's speed and pump power. */
-// register allocation (masked 9): retail loads model[1] with lhu and sign-extends at each use, and loads obj->model after the fabs; tried s16, u16 + (s16) index
+// register allocation (masked 9): retail loads model[1] with lhu and sign-extends at each use, and loads obj->model after the fabs; tried s16, u16 + (s16) index; M1g: no local (masked 17), (u16) load cast (folds to lh)
 #ifdef NON_MATCHING
 void func_800FDBC8_HandcarHavoc(omObjData* obj) {
     HHCar* w;

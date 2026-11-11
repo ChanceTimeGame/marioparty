@@ -7,7 +7,7 @@
 
 /* Converts a sprite frame's image into a one-byte-per-pixel mask (0xFF where opaque). */
 // register allocation, and buf + off + x recomputed per store in case 8 (raw 20, masked 6; tried
-// &pal[c], a dst temp, (buf + off)[x])
+// &pal[c], a dst temp, (buf + off)[x]; M1g: pal + c (no change), dst temp after c (13), ternary store (17))
 #ifdef NON_MATCHING
 u8* func_800FC4F0_CrazyCutter(s16 grpIdx, s16 idx, s32* width, s32* height) {
     unk65770Obj* spr;

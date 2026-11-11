@@ -355,7 +355,7 @@ void func_800F7074_DeepSeaDivers(omObjData* obj) {
         func_800790C0();
     }
 }
-// register allocation: retail keeps sprite in s3 (the loop counter's register); tried reusing i, decl order (masked 3)
+// register allocation: retail keeps sprite in s3 (the loop counter's register); tried reusing i, decl order (masked 3); M1g: s32/u16 sprite, reusing m (no change)
 #ifdef NON_MATCHING
 void func_800F70F4_DeepSeaDivers(omObjData* obj) {
     s16 sprite;
@@ -390,47 +390,38 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F70
 void func_800F72D0_DeepSeaDivers(omObjData* obj) {
     func_800FF730_DeepSeaDivers(obj);
 }
-// scheduling: retail places the sra of k*16 after the D_801003F8 load (masked 2)
-#ifdef NON_MATCHING
 void func_800F72EC_DeepSeaDivers(void) {
-    Vtx* v;
     s16 i;
     s16 k;
     s16 y;
 
     for (i = 0; i < 21; i++) {
         k = i * 5;
-        v = &D_801003F8_DeepSeaDivers[k];
-        v[0].v.ob[0] = -1900;
-        v[1].v.ob[0] = -950;
-        v[2].v.ob[0] = 0;
-        v[3].v.ob[0] = 950;
-        v[4].v.ob[0] = 1900;
-        v[0].v.ob[2] = v[1].v.ob[2] = v[2].v.ob[2] = v[3].v.ob[2] = v[4].v.ob[2] = -2000;
+        D_801003F8_DeepSeaDivers[k].v.ob[0] = -1900;
+        D_801003F8_DeepSeaDivers[k + 1].v.ob[0] = -950;
+        D_801003F8_DeepSeaDivers[k + 2].v.ob[0] = 0;
+        D_801003F8_DeepSeaDivers[k + 3].v.ob[0] = 950;
+        D_801003F8_DeepSeaDivers[k + 4].v.ob[0] = 1900;
+        D_801003F8_DeepSeaDivers[k].v.ob[2] = D_801003F8_DeepSeaDivers[k + 1].v.ob[2] = D_801003F8_DeepSeaDivers[k + 2].v.ob[2] = D_801003F8_DeepSeaDivers[k + 3].v.ob[2] = D_801003F8_DeepSeaDivers[k + 4].v.ob[2] = -2000;
         y = (140.0 - i * 20) * 5.0;
-        v[0].v.ob[1] = v[1].v.ob[1] = v[2].v.ob[1] = v[3].v.ob[1] = v[4].v.ob[1] = y;
-        v[0].v.tc[0] = 0;
-        v[1].v.tc[0] = 0xA00;
-        v[2].v.tc[0] = 0x1400;
-        v[3].v.tc[0] = 0x1E00;
-        v[4].v.tc[0] = 0x2800;
-        v[0].v.tc[1] = v[1].v.tc[1] = v[2].v.tc[1] = v[3].v.tc[1] = v[4].v.tc[1] = i * 0x300;
-        v[0].v.cn[0] = v[1].v.cn[0] = v[2].v.cn[0] = v[3].v.cn[0] = v[0].v.cn[0] = 0;
+        D_801003F8_DeepSeaDivers[k].v.ob[1] = D_801003F8_DeepSeaDivers[k + 1].v.ob[1] = D_801003F8_DeepSeaDivers[k + 2].v.ob[1] = D_801003F8_DeepSeaDivers[k + 3].v.ob[1] = D_801003F8_DeepSeaDivers[k + 4].v.ob[1] = y;
+        D_801003F8_DeepSeaDivers[k].v.tc[0] = 0;
+        D_801003F8_DeepSeaDivers[k + 1].v.tc[0] = 0xA00;
+        D_801003F8_DeepSeaDivers[k + 2].v.tc[0] = 0x1400;
+        D_801003F8_DeepSeaDivers[k + 3].v.tc[0] = 0x1E00;
+        D_801003F8_DeepSeaDivers[k + 4].v.tc[0] = 0x2800;
+        D_801003F8_DeepSeaDivers[k].v.tc[1] = D_801003F8_DeepSeaDivers[k + 1].v.tc[1] = D_801003F8_DeepSeaDivers[k + 2].v.tc[1] = D_801003F8_DeepSeaDivers[k + 3].v.tc[1] = D_801003F8_DeepSeaDivers[k + 4].v.tc[1] = i * 0x300;
+        D_801003F8_DeepSeaDivers[k].v.cn[0] = D_801003F8_DeepSeaDivers[k + 1].v.cn[0] = D_801003F8_DeepSeaDivers[k + 2].v.cn[0] = D_801003F8_DeepSeaDivers[k + 3].v.cn[0] = D_801003F8_DeepSeaDivers[k].v.cn[0] = 0;
         D_801003F8_DeepSeaDivers[k].v.cn[1] = D_801003F8_DeepSeaDivers[k + 1].v.cn[1] = D_801003F8_DeepSeaDivers[k + 2].v.cn[1] = D_801003F8_DeepSeaDivers[k + 3].v.cn[1] = D_801003F8_DeepSeaDivers[k].v.cn[1] = 0;
         D_801003F8_DeepSeaDivers[k].v.cn[2] = D_801003F8_DeepSeaDivers[k + 1].v.cn[2] = D_801003F8_DeepSeaDivers[k + 2].v.cn[2] = D_801003F8_DeepSeaDivers[k + 3].v.cn[2] = D_801003F8_DeepSeaDivers[k + 4].v.cn[2] = 0;
         D_801003F8_DeepSeaDivers[k].v.cn[3] = D_801003F8_DeepSeaDivers[k + 1].v.cn[3] = D_801003F8_DeepSeaDivers[k + 2].v.cn[3] = D_801003F8_DeepSeaDivers[k + 3].v.cn[3] = D_801003F8_DeepSeaDivers[k + 4].v.cn[3] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F72EC_DeepSeaDivers);
-#endif
-// one instruction short and loop-temporary registers differ (masked 4); not finished in M1c
-#ifdef NON_MATCHING
 void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
     unk65770Anim* a = func_80067310(sprite);
     s16 i;
     s16 cur;
-    s16 next;
+    s16 prev;
 
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_1CYCLE);
@@ -449,22 +440,19 @@ void func_800F7470_DeepSeaDivers(Gfx* gfx, s16 sprite) {
     for (i = 0; i < 20; i++) {
         gDPLoadTextureTile(gfx++, a->unk8, G_IM_FMT_CI, G_IM_SIZ_8b, 160, 0, 0, i * 12, 159, i * 12 + 11, 0,
                            G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-        next = cur + 5;
-        if (next >= 30) {
-            next = 0;
+        prev = cur;
+        cur += 5;
+        if (cur >= 30) {
+            cur = 0;
         }
-        gSPVertex(gfx++, &D_801003F8_DeepSeaDivers[(i + 1) * 5], 5, next);
-        gSP2Triangles(gfx++, cur, next, cur + 1, 0, cur + 1, next, next + 1, 0);
-        gSP2Triangles(gfx++, cur + 1, next + 1, cur + 2, 0, cur + 2, next + 1, next + 2, 0);
-        gSP2Triangles(gfx++, cur + 2, next + 2, cur + 3, 0, cur + 3, next + 2, next + 3, 0);
-        gSP2Triangles(gfx++, cur + 3, next + 3, cur + 4, 0, cur + 4, next + 3, next + 4, 0);
-        cur = next;
+        gSPVertex(gfx++, &D_801003F8_DeepSeaDivers[(i + 1) * 5], 5, cur);
+        gSP2Triangles(gfx++, prev, cur, prev + 1, 0, prev + 1, cur, cur + 1, 0);
+        gSP2Triangles(gfx++, prev + 1, cur + 1, prev + 2, 0, prev + 2, cur + 1, cur + 2, 0);
+        gSP2Triangles(gfx++, prev + 2, cur + 2, prev + 3, 0, prev + 3, cur + 2, cur + 3, 0);
+        gSP2Triangles(gfx++, prev + 3, cur + 3, prev + 4, 0, prev + 4, cur + 3, cur + 4, 0);
     }
     gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7470_DeepSeaDivers);
-#endif
 void func_800F791C_DeepSeaDivers(omObjData* obj) {
     obj->model[0] = LoadFormFile(0x16000E, 0x299);
     func_800FEA00_DeepSeaDivers(obj);
@@ -1806,29 +1794,31 @@ s16 func_800FC644_DeepSeaDivers(f32* x, f32* y, s16 r, u16 flag, f32* outx, f32*
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FC644_DeepSeaDivers);
 #endif
-// retail indexes with (s16)i but tests (u16)i < 9, and adds index + pts (masked 32). Tried: s16 i, if-form k, b before a, quotient temp
+// register allocation (masked 18; M1g: s16 i with (u16) test, s16 j indexed as (s8)j, s16 found
+// declared first, from 37); retail adds index + pts (tried k + pts: no change), copies j to a2
+// each pass. Tried earlier: if-form k, b before a, quotient temp
 #ifdef NON_MATCHING
 f32 func_800FCAE8_DeepSeaDivers(f32 x, f32 y) {
+    s16 found = 0;
     Vec* pts;
     Vec* a;
     Vec* b;
     f32 best = -9999.0f;
     f32 h;
-    s32 found = 0;
-    u16 i;
-    s8 j;
+    s16 i;
+    s16 j;
     s8 k;
 
-    for (i = 0; i < 9; i++) {
+    for (i = 0; (u16)i < 9; i++) {
         pts = D_800FFC80_DeepSeaDivers[i];
         for (j = 0; j < D_800FFCA4_DeepSeaDivers[i]; j++) {
             k = j + 1;
             if (k >= D_800FFCA4_DeepSeaDivers[i]) {
                 k = 0;
             }
-            if ((pts[j].x * 5.0 <= x && x < pts[k].x * 5.0) || (x < pts[j].x * 5.0 && pts[k].x * 5.0 <= x)) {
+            if ((pts[(s8)j].x * 5.0 <= x && x < pts[k].x * 5.0) || (x < pts[(s8)j].x * 5.0 && pts[k].x * 5.0 <= x)) {
                 b = &pts[k];
-                a = &pts[j];
+                a = &pts[(s8)j];
                 if (b->x - a->x != 0.0) {
                     h = (x - a->x * 5.0) / (b->x - a->x * 5.0);
                     h = a->y * 5.0 + h * (b->y - a->y) * 5.0;
