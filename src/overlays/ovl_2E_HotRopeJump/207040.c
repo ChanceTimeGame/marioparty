@@ -26,8 +26,9 @@ u16 D_800FE4E0_HotRopeJump[4] = { 0, 0, 0, 0 };
 u16 D_800FE4E8_HotRopeJump = 0;
 s16 D_800FE4EC_HotRopeJump[10] = { 0, 0x3000, 0x2000, 0, 0, 0, 0, 0, 0, 0 };
 
-// NON_MATCHING: the shuffle loop: retail reuses the hoisted -1 (s1) for the tbl[r] store; tried
-// do/while retry loops (masked 28, D_800FE464's base hoisted) (masked 17)
+// NON_MATCHING: the shuffle loop: retail reuses the hoisted -1 (s1) for the tbl[r] store (masked 7); tried
+// do/while retry loops (masked 28, D_800FE464's base hoisted), one do/while with an if body (22), for + inner
+// while (18), while(1) with continue (14), pure goto (15) (M1g)
 #ifdef NON_MATCHING
 void func_800F65E0_HotRopeJump(void) {
     s32* tbl;
@@ -1427,7 +1428,10 @@ void func_800FB690_HotRopeJump(s16 id) {
 }
 
 /* The floor grid's draw callback: lights each vertex by the rope lights, then draws it. */
-// NON_MATCHING: register allocation and block layout
+int abs(int);
+
+// NON_MATCHING: masked 2, raw 29: retail hoists the 0x80000000 (float->u8) constant before the vertex count
+// and allocates the light walk differently; abs() and f -= fixed the shape (masked 35 -> 2, M1g)
 #ifdef NON_MATCHING
 void func_800FB6B4_HotRopeJump(Gfx** gfxp) {
     HRJLight* list[33];
@@ -1444,6 +1448,7 @@ void func_800FB6B4_HotRopeJump(Gfx** gfxp) {
     f32 sum;
     f32 f;
     f32 inner;
+    s32 count;
 
     n = 0;
     for (i = 0; i < 32; i++) {
@@ -1455,7 +1460,8 @@ void func_800FB6B4_HotRopeJump(Gfx** gfxp) {
     list[n] = NULL;
     m = D_800F2B7C[D_801007BA_HotRopeJump].unk_6C;
     v = m->unk_08[D_800F37F0];
-    for (i = 0; i < 0x300; i++, v++) {
+    count = 0x300;
+    for (i = 0; i < count; i++, v++) {
         sum = 0.0f;
         l = list[0];
         lp = &list[1];
@@ -1466,22 +1472,16 @@ void func_800FB6B4_HotRopeJump(Gfx** gfxp) {
                     dx = -dx;
                 }
                 r = dx * 0.75 + l->radius;
-                dx = v->unk_00 - l->x;
-                if (dx < 0) {
-                    dx = -dx;
-                }
+                dx = abs(v->unk_00 - l->x);
                 if (dx < r) {
-                    dz = (f32)(v->unk_04 - l->z) * l->aspect;
-                    if (dz < 0) {
-                        dz = -dz;
-                    }
+                    dz = abs((s32)((f32)(v->unk_04 - l->z) * l->aspect));
                     if (dz < r) {
                         d2 = dx * dx + dz * dz;
                         if (d2 < r * r) {
                             inner = l->radius - r * 2;
                             f = 1.0f;
                             if (inner <= 0.0f || inner * inner < (f32)d2) {
-                                f = 1.0f - (sqrtf(d2) - inner) / ((f32)r - inner);
+                                f -= (sqrtf(d2) - inner) / ((f32)r - inner);
                             }
                             sum += f;
                         }
