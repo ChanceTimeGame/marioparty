@@ -513,7 +513,8 @@ s32 func_800F78E0_UnknownBooStealScene(s32 win, s32 mode, u8* options) {
     return i;
 }
 
-// delay-slot fill: one redundant move a0,s5 before func_80055994 (masked 1, one extra instruction)
+// delay-slot fill: one redundant move a0,s5 before func_80055994 (masked 1, one extra instruction); tried the
+// func_800503B0 argument in a local (gets s2) and in a fresh local (a1 in the beqz delay slot)
 #ifdef NON_MATCHING
 void func_800F7B54_UnknownBooStealScene(s32 mode, s32 victim) {
     s32 coinIds[26];
