@@ -83,6 +83,7 @@ void func_800F918C_BoxMountainMayhem(omObjData* obj) {
 }
 
 // register allocation (masked 10): retail keeps an unused constant 2 in fp through the model loop and swaps cell/n; tried chained n store, 1 + k
+// (M1g: model[i + 1], ext arrays by i, k from 1: all masked 19-21)
 #ifdef NON_MATCHING
 void func_800F935C_BoxMountainMayhem(omObjData* obj) {
     BMMStageWork* work;
@@ -339,7 +340,8 @@ void func_800F9C20_BoxMountainMayhem(omObjData* stack, s32 x, s32 level, s32 z, 
 }
 
 // retail keeps the 0 return value in s2, ours rematerialises 0 (masked 13); a second `ret = 0`
-// after the hit gives masked 8 plus one extra move; tried moving the initial set
+// after the hit gives masked 8 plus one extra move; tried moving the initial set, early `return ret`
+// instead of goto end (masked 14, M1g)
 #ifdef NON_MATCHING
 s32 func_800FA058_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;

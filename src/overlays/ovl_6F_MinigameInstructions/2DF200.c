@@ -966,6 +966,7 @@ void func_800FDEA4_MinigameInstructions(Ovl6FPlayerWork* work) {
 }
 
 // the -30.0f spin clamp is hoisted out of the loop into a saved register here; retail reloads it (masked 55, registers only)
+// (M1g: retail's 30.0f is hoisted to $f28 and -30.0f reloaded at the second if's label; ours 569 vs 565 instructions)
 #ifdef NON_MATCHING
 void func_800FE0E8_MinigameInstructions(Ovl6FPlayerWork* work) {
     f32 height;
@@ -2082,6 +2083,7 @@ void func_80101A90_MinigameInstructions(Ovl6FPlayerWork* work) {
     work->unk_B8++;
 }
 // retail rematerialises the -180.0f for CZoom - unk_14 after func_80025830; here unk_14 is reloaded (masked 2)
+// (M1g: CZoom - -180.0f and a local z = -180.0f both keep the constant in $f20 across the call, masked 8)
 #ifdef NON_MATCHING
 void func_80102048_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;

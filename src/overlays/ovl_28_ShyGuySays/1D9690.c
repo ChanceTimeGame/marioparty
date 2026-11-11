@@ -2080,15 +2080,12 @@ void func_800FBE60_ShyGuySays(omObjData* arg0) {
     arg0->trans.y = func_800AEAC0(var_f12) * 24.0 + 100.0;
 }
 
-// register allocation (a3/t0, v0/v1) and one sll scheduled after the lui in case 4 (masked 3)
-#ifdef NON_MATCHING
 void func_800FCA8C_ShyGuySays(omObjData* arg0, u16 arg1) {
     s16 m0 = arg0->model[0];
     s16 m3 = arg0->model[3];
     s16 m4 = arg0->model[4];
     unk_ovl_2D_struct* e;
     unk_ovl_2D_struct* e4;
-    unkStructShyGuySays_03* p;
 
     if (D_800FDC28_ShyGuySays[2] == 1) {
         e = &D_800F2B7C[m0];
@@ -2115,8 +2112,8 @@ void func_800FCA8C_ShyGuySays(omObjData* arg0, u16 arg1) {
                 D_800FDC28_ShyGuySays[3] = D_800FDC38_ShyGuySays[1].unk_02 * 0.5;
                 D_800FDC28_ShyGuySays[0] = 1;
                 D_800FDC28_ShyGuySays[1] = 2;
-                p = &D_800FDC38_ShyGuySays[1];
-                goto anim;
+                func_80025C20(m0, D_800FDC38_ShyGuySays[1].unk_00, D_800FDC38_ShyGuySays[1].unk_02 * 0.5,
+                              D_800FDC38_ShyGuySays[1].unk_02 * 0.5, 0);
             } else if (D_800FDC28_ShyGuySays[0] & 2) {
                 D_800FDC28_ShyGuySays[0] = 1;
                 func_800F79E4_ShyGuySays(m0, &D_800FDC38_ShyGuySays[0], -1);
@@ -2134,9 +2131,8 @@ void func_800FCA8C_ShyGuySays(omObjData* arg0, u16 arg1) {
                     D_800FDC28_ShyGuySays[3] = D_800FDC38_ShyGuySays[0].unk_02 * 0.5;
                     D_800FDC28_ShyGuySays[1] = 1;
                     D_800FDC28_ShyGuySays[0] = 2;
-                    p = &D_800FDC38_ShyGuySays[0];
-                anim:
-                    func_80025C20(m0, p->unk_00, p->unk_02 * 0.5, p->unk_02 * 0.5, 0);
+                    func_80025C20(m0, D_800FDC38_ShyGuySays[0].unk_00, D_800FDC38_ShyGuySays[0].unk_02 * 0.5,
+                                  D_800FDC38_ShyGuySays[0].unk_02 * 0.5, 0);
                 }
             } else if (D_800FDC28_ShyGuySays[1] & 2) {
                 D_800FDC28_ShyGuySays[1] = 1;
@@ -2202,9 +2198,6 @@ void func_800FCA8C_ShyGuySays(omObjData* arg0, u16 arg1) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800FCA8C_ShyGuySays);
-#endif
 
 s16 func_800FD124_ShyGuySays(omObjData* arg0) {
     unk_ovl_2D_struct* a = &D_800F2B7C[arg0->model[0]];

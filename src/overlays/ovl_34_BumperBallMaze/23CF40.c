@@ -455,9 +455,6 @@ void func_800F6C7C_BumperBallMaze(omObjData* object) {
 /* "ＡＢＣ" (Shift-JIS) */
 const u8 D_800FAD28_BumperBallMaze[] = { 0x82, 0x60, 0x82, 0x61, 0x82, 0x62, 0x00, 0x00 };
 
-// masked 38, one real difference: the turn-step clamp keeps step apart from the 30.0f compare (mov.s
-// f12,f2; retail uses f2 as step). Tried a ternary operand, step preassigned (two compare forms).
-#ifdef NON_MATCHING
 void func_800F7240_BumperBallMaze(omObjData* object) {
     BumperBallMazeFloorProbe probe;
     BumperBallMazeBallWork* work;
@@ -492,14 +489,7 @@ void func_800F7240_BumperBallMaze(omObjData* object) {
         if (diff < 180.0f) {
             work->unk_0C = (diff > 30.0f) ? work->unk_0C + 30.0f : diff + work->unk_0C;
         } else {
-            f32 step;
-
-            if (360.0f - diff > 30.0f) {
-                step = 30.0f;
-            } else {
-                step = 360.0f - diff;
-            }
-            work->unk_0C = work->unk_0C - step;
+            work->unk_0C = (360.0f - diff > 30.0f) ? work->unk_0C - 30.0f : work->unk_0C - (360.0f - diff);
         }
         if (work->unk_0C < 0.0f) {
             work->unk_0C += 360.0f;
@@ -603,9 +593,6 @@ void func_800F7240_BumperBallMaze(omObjData* object) {
     func_80025798(object->model[1], object->trans.x, 125.0f, object->trans.z);
     work->unk_10 = work->unk_0C;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_BumperBallMaze/23CF40", func_800F7240_BumperBallMaze);
-#endif
 
 void func_800F7BB8_BumperBallMaze(omObjData* object) {
     BumperBallMazeBallWork* work = object->unk_50;
