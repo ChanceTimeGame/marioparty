@@ -86,12 +86,14 @@ void func_800F6ADC_HammerDrop(void) {
     func_800FB050_HammerDrop();
 }
 
-// Logic-equivalent player construction; retail copies three position tables to the stack.
+// cpu_difficulty switch layout: retail does not cross-jump the flags==0 store with case 3 and
+// merges cases 1/2 (masked 23; tried all case orders)
 #ifdef NON_MATCHING
 void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
     unkGlobalStruct_00* work;
     HammerDropPlayerState* state;
     s32 characterBase;
+    s32 characterSub;
     HammerDropF32x4 posX = *(HammerDropF32x4*) D_800FB5C8_HammerDrop;
     HammerDropF32x4 posZ = *(HammerDropF32x4*) D_800FB5D8_HammerDrop;
     HammerDropF32x4 yaw = *(HammerDropF32x4*) D_800FB5E8_HammerDrop;
@@ -99,11 +101,10 @@ void func_800F6AF8_HammerDrop(omObjData* arg0, s32 arg1) {
     D_800FB994_HammerDrop = GwPlayer[arg1].character;
     D_800FB6B0_HammerDrop[arg1] = 0;
     characterBase = D_800C59AC[D_800FB994_HammerDrop].unk_00;
-    func_8000979C(arg0, characterBase,
-        D_800C59AC[D_800FB994_HammerDrop].unk_04, arg1, 0x699, 0x699);
+    characterSub = D_800C59AC[D_800FB994_HammerDrop].unk_04;
+    func_8000979C(arg0, characterBase, characterSub, arg1, 0x699, 0x699);
     work = arg0->unk_50;
-    state = func_80023684(sizeof(HammerDropPlayerState), 0x7918);
-    work->unk_E4 = (unk_Struct01*) state;
+    state = (HammerDropPlayerState*) (work->unk_E4 = func_80023684(sizeof(HammerDropPlayerState), 0x7918));
     state->unk_44 = work->unk_56;
     arg0->model[3] = LoadFormFile(0x19, 0x68D);
     arg0->model[4] = LoadFormFile(0x1A, 0x68D);
@@ -724,8 +725,8 @@ void func_800F84A0_HammerDrop(omObjData* arg0) {
     }
 }
 
-// Logic-equivalent hammer construction; local angle wrapping differs.
-#ifdef NON_MATCHING
+#define HAMMER_WRAP360(x) ((x) >= 360.0f ? (x) - 360.0f : (x) < 0.0f ? (x) + 360.0f : (x))
+
 void func_800F8508_HammerDrop(void) {
     omObjData* obj;
     HammerDropItemWork* work;
@@ -734,8 +735,7 @@ void func_800F8508_HammerDrop(void) {
 
     obj = omAddObj(5, 3, 3, -1, func_800F896C_HammerDrop);
     D_800FB990_HammerDrop = obj;
-    work = func_80023684(sizeof(HammerDropItemWork), 0x7918);
-    obj->unk_50 = work;
+    obj->unk_50 = func_80023684(sizeof(HammerDropItemWork), 0x7918);
     obj->model[0] = LoadFormFile(0x2E0002, 0x699);
     obj->model[1] = LoadFormFile(0x2E0000, 0x699);
     obj->model[2] = LoadFormFile(6, 0x699);
@@ -748,8 +748,8 @@ void func_800F8508_HammerDrop(void) {
     obj->scale.x = 1.0f;
     obj->scale.y = 1.0f;
     obj->scale.z = 1.0f;
-    state = func_80023684(sizeof(HammerDropTargetState), 0x7918);
-    work->item = (HammerDropItemState*) state;
+    work = HAMMER_ITEM_WORK(obj);
+    work->item = func_80023684(sizeof(HammerDropTargetState), 0x7918);
     work->unk_48 = 40.0f;
     work->unk_34 = 40.0f;
     work->unk_38 = 1000.0f;
@@ -757,27 +757,18 @@ void func_800F8508_HammerDrop(void) {
     work->unk_58 = 0.8f;
     work->unk_4C = 0.5f;
     work->unk_40 = 0.0f;
+    state = (HammerDropTargetState*) work->item;
     state->unk_08 = 12.0f;
-    angle = obj->rot.y + 180.0f;
-    if (angle >= 360.0f) {
-        angle -= 360.0f;
-    } else if (angle < 0.0f) {
-        angle += 360.0f;
-    }
-    state->unk_04 = angle;
+    state->unk_04 = HAMMER_WRAP360(obj->rot.y + 180.0f);
     state->unk_0C = 0;
     state->unk_10 = 1.0f;
-    state->unk_14 = ((rand8() & 0xFF) * 2) % 350;
+    angle = ((rand8() & 0xFF) * 2) % 350;
+    state->unk_14 = angle;
     state->unk_18 = 0;
     state->unk_1C = 5.0f;
-    angle = (f32) (((rand8() & 0xFF) * 2) % 360) + obj->rot.y;
-    if (angle >= 360.0f) {
-        angle -= 360.0f;
-    } else if (angle < 0.0f) {
-        angle += 360.0f;
-    }
-    state->unk_20 = angle;
-    state->unk_28 = angle + 180.0f;
+    angle = ((rand8() & 0xFF) * 2) % 360;
+    state->unk_20 = HAMMER_WRAP360(angle + obj->rot.y);
+    state->unk_28 = state->unk_20 + 180.0f;
     state->unk_24 = 0;
     omSetTra(obj, obj->trans.x, obj->trans.y, obj->trans.z);
     func_80025798(obj->model[1], obj->trans.x - 50.0f, obj->trans.y + 50.0f,
@@ -796,16 +787,13 @@ void func_800F8508_HammerDrop(void) {
     state->unk_30 = -60.0f;
     func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 2, 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F8508_HammerDrop);
-#endif
 
-// Logic-equivalent hammer movement/strike state machine; angle-wrap scheduling differs.
+// register allocation only: arg0 and state swap s0/s1 (masked 0, raw 16; tried separate state
+// assignment and local order)
 #ifdef NON_MATCHING
 void func_800F896C_HammerDrop(omObjData* arg0) {
     HammerDropTargetState* state = (HammerDropTargetState*) HAMMER_ITEM_WORK(arg0)->item;
     HammerDropItemState* item;
-    f32 angle;
     f32 animationTime;
     f32 scale;
     s32 speed;
@@ -839,34 +827,16 @@ void func_800F896C_HammerDrop(omObjData* arg0) {
         goto update_shadow;
     }
     if (D_800ED430 == 1) {
-        angle = arg0->rot.y + state->unk_08;
-        if (angle >= 360.0f) {
-            angle -= 360.0f;
-        } else if (angle < 0.0f) {
-            angle += 360.0f;
-        }
-        arg0->rot.y = angle;
-        if (angle == state->unk_04) {
-            angle += 180.0f;
-            if (angle >= 360.0f) {
-                angle -= 360.0f;
-            } else if (angle < 0.0f) {
-                angle += 360.0f;
-            }
-            state->unk_04 = angle;
+        arg0->rot.y = HAMMER_WRAP360(arg0->rot.y + state->unk_08);
+        if (arg0->rot.y == state->unk_04) {
+            state->unk_04 = HAMMER_WRAP360(arg0->rot.y + 180.0f);
             state->unk_08 = 12.0f;
             if (rand8() & 1) {
                 state->unk_08 = -12.0f;
             }
         }
     }
-    angle = state->unk_24 + state->unk_1C;
-    if (angle >= 360.0f) {
-        angle -= 360.0f;
-    } else if (angle < 0.0f) {
-        angle += 360.0f;
-    }
-    state->unk_24 = angle;
+    state->unk_24 = HAMMER_WRAP360(state->unk_24 + state->unk_1C);
     speed = (s32) state->unk_1C;
     if (speed < 0) {
         speed = -speed;
@@ -874,16 +844,10 @@ void func_800F896C_HammerDrop(omObjData* arg0) {
     state->unk_28 -= speed;
     if (state->unk_28 <= 0.0f) {
         randomAngle = ((((rand8() & 0xFF) % 72) & 0xFF) * 5) & 0xFF;
-        angle = (f32) randomAngle;
-        if (angle >= 360.0f) {
-            angle -= 360.0f;
-        } else if (angle < 0.0f) {
-            angle += 360.0f;
-        }
-        state->unk_20 = angle;
-        state->unk_28 = angle + 180.0f;
+        state->unk_20 = HAMMER_WRAP360((f32) randomAngle);
+        state->unk_28 = state->unk_20 + 180.0f;
         state->unk_1C = 5.0f;
-        if (state->unk_20 < state->unk_24) {
+        if (state->unk_24 > state->unk_20) {
             state->unk_1C = -5.0f;
         }
     }
@@ -931,11 +895,11 @@ void func_800F896C_HammerDrop(omObjData* arg0) {
         }
     }
 update_shadow:
-    scale = 0.0f;
     if (arg0->trans.y < 2330.0f) {
-        scale = (2330.0f - arg0->trans.y) / 915.0f;
+        func_80025830(arg0->model[2], scale = (2330.0f - arg0->trans.y) / 915.0f, scale, scale);
+    } else {
+        func_80025830(arg0->model[2], 0.0f, 0.0f, 0.0f);
     }
-    func_80025830(arg0->model[2], scale, scale, scale);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F896C_HammerDrop);
@@ -972,9 +936,17 @@ void func_800F9228_HammerDrop(void) {
     func_800F95E8_HammerDrop(item);
 }
 
-// Logic-equivalent item construction; retail copies the two data tables to packed stack locals.
-#ifdef NON_MATCHING
+typedef struct HammerDropFileTable {
+    s32 v[3];
+} HammerDropFileTable;
+
+typedef struct HammerDropKindTable {
+    u16 v[3];
+} HammerDropKindTable;
+
 void func_800F9350_HammerDrop(void) {
+    HammerDropFileTable files = *(HammerDropFileTable*) D_800FB634_HammerDrop;
+    HammerDropKindTable kinds = *(HammerDropKindTable*) D_800FB640_HammerDrop;
     HammerDropItemWork* work;
     HammerDropItemState* item;
     omObjData* obj;
@@ -985,19 +957,17 @@ void func_800F9350_HammerDrop(void) {
     D_800EE984 = 0;
     for (i = 0; i < 6; i++) {
         obj = omAddObj(12, 4, 0, -1, func_800F9794_HammerDrop);
-        work = func_80023684(sizeof(HammerDropItemWork), 0x7918);
-        obj->unk_50 = work;
-        item = func_80023684(sizeof(HammerDropItemState), 0x7918);
-        work->item = item;
+        work = obj->unk_50 = func_80023684(sizeof(HammerDropItemWork), 0x7918);
+        item = work->item = func_80023684(sizeof(HammerDropItemState), 0x7918);
         D_800EDE70[D_800EE984++] = obj;
         type = i % 3;
         if (type < 2) {
-            func_800091BC(obj, D_800FB634_HammerDrop[type], 0xA89, 8);
+            func_800091BC(obj, files.v[type], 0xA89, 8);
             func_80009340(obj, 3, 0x2A, 0x68D, 8);
             func_8001E2F8(work->unk_24, 0xF0);
             func_8001E360(work->unk_24, 0xFF, 0xFF, 0xBE);
         } else {
-            obj->model[0] = LoadFormFile(D_800FB634_HammerDrop[type], 0x69D);
+            obj->model[0] = LoadFormFile(files.v[type], 0x69D);
         }
         if (i == 0) {
             obj->model[1] = LoadFormFile(6, 0x69D);
@@ -1009,7 +979,7 @@ void func_800F9350_HammerDrop(void) {
         omSetTra(obj, 1000.0f, 5000.0f, 0.0f);
         work->unk_48 = 30.0f;
         work->unk_34 = 30.0f;
-        work->unk_52 = (u8) D_800FB640_HammerDrop[type];
+        work->unk_52 = (u8) kinds.v[type];
         work->unk_50 = 0;
         work->unk_54 = 1;
         if (type < 2) {
@@ -1024,13 +994,9 @@ void func_800F9350_HammerDrop(void) {
         item->unk_4C = i;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9350_HammerDrop);
-#endif
 
-// Logic-equivalent item reset; retail first copies the packed kind table to the stack.
-#ifdef NON_MATCHING
 void func_800F95E8_HammerDrop(omObjData* arg0) {
+    HammerDropKindTable kinds = *(HammerDropKindTable*) D_800FB648_HammerDrop;
     HammerDropItemWork* work = HAMMER_ITEM_WORK(arg0);
     HammerDropItemState* item = work->item;
     HammerDropTargetState* targetItem;
@@ -1047,7 +1013,7 @@ void func_800F95E8_HammerDrop(omObjData* arg0) {
     work->unk_40 = 5.0f;
     work->unk_48 = 30.0f;
     work->unk_34 = 30.0f;
-    work->unk_52 = (u8) D_800FB648_HammerDrop[item->unk_38];
+    work->unk_52 = (u8) kinds.v[item->unk_38];
     item->unk_34 = 4.9f;
     item->unk_30 = 50.0f;
     item->unk_2C = 50.0f;
@@ -1060,21 +1026,15 @@ void func_800F95E8_HammerDrop(omObjData* arg0) {
     flags = &item->unk_44;
     func_800F9E74_HammerDrop(flags, 1, 1);
     func_800F9E74_HammerDrop(flags, 2, 1);
-    targetItem = (HammerDropTargetState*) HAMMER_ITEM_WORK(D_800FB990_HammerDrop)->item;
+    work = HAMMER_ITEM_WORK(D_800FB990_HammerDrop);
+    targetItem = (HammerDropTargetState*) work->item;
     targetItem->itemIndex = item->unk_4C;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F95E8_HammerDrop);
-#endif
 
-// Logic-equivalent falling-item physics and pickup animation; scheduling differs.
-#ifdef NON_MATCHING
 void func_800F9794_HammerDrop(omObjData* arg0) {
     HammerDropItemWork* work = HAMMER_ITEM_WORK(arg0);
     HammerDropItemState* item = work->item;
     f32 distance;
-    f32 angle;
-    s32 fell;
 
     if (func_800F9E68_HammerDrop(item->unk_44, 1) == 0) {
         return;
@@ -1082,24 +1042,18 @@ void func_800F9794_HammerDrop(omObjData* arg0) {
     omSetTra(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
     omSetRot(arg0, arg0->rot.x, arg0->rot.y, arg0->rot.z);
     if (func_800F9E68_HammerDrop(item->unk_44, 2) != 0) {
-        arg0->trans.x = (func_800AEAC0(D_800FB990_HammerDrop->rot.y - 45.0f) * 100.0f) +
-            D_800FB990_HammerDrop->trans.x;
+        arg0->trans.x = D_800FB990_HammerDrop->trans.x +
+            (func_800AEAC0(D_800FB990_HammerDrop->rot.y - 45.0f) * 100.0f);
         arg0->trans.y = D_800FB990_HammerDrop->trans.y + 50.0f +
             (func_800AEAC0((f32) item->unk_50 * 4.0f) * 100.0f);
-        arg0->trans.z = (func_800AEFD0(D_800FB990_HammerDrop->rot.y - 30.0f) * 100.0f) +
-            D_800FB990_HammerDrop->trans.z;
+        arg0->trans.z = D_800FB990_HammerDrop->trans.z +
+            (func_800AEFD0(D_800FB990_HammerDrop->rot.y - 30.0f) * 100.0f);
         func_80025798(arg0->model[1], arg0->trans.x, 0.0f, arg0->trans.z);
         item->unk_50++;
         return;
     }
     if (item->unk_38 == 2) {
-        angle = arg0->rot.x + 30.0f;
-        if (angle >= 360.0f) {
-            angle -= 360.0f;
-        } else if (angle < 0.0f) {
-            angle += 360.0f;
-        }
-        arg0->rot.x = angle;
+        arg0->rot.x = HAMMER_WRAP360(arg0->rot.x + 30.0f);
         arg0->rot.y = work->unk_3C;
     }
     item->unk_40 = 0;
@@ -1112,10 +1066,13 @@ void func_800F9794_HammerDrop(omObjData* arg0) {
         if (arg0->trans.y < item->unk_3C) {
             arg0->trans.y = item->unk_3C;
             if (item->unk_48 < 3) {
-                if (item->unk_38 == 0) {
-                    PlaySound(0x108);
-                } else if (item->unk_38 == 1) {
-                    PlaySound(0x10A);
+                switch (item->unk_38) {
+                    case 0:
+                        PlaySound(0x108);
+                        break;
+                    case 1:
+                        PlaySound(0x10A);
+                        break;
                 }
             }
             if (item->unk_38 != 2) {
@@ -1139,21 +1096,16 @@ void func_800F9794_HammerDrop(omObjData* arg0) {
         func_800258EC(arg0->model[1], 4, 4);
     }
     arg0->trans.z += func_800AEFD0(work->unk_3C) * work->unk_40;
-    fell = arg0->trans.y <= -1600.0f;
-    if (fell || (work->unk_54 == 0)) {
+    if (arg0->trans.y <= -1600.0f || work->unk_54 == 0) {
         func_800F9E74_HammerDrop(&item->unk_44, 1, 0);
-        fell = arg0->trans.y <= -1600.0f;
     }
-    if (fell && (D_800ED430 == 1)) {
+    if (arg0->trans.y <= -1600.0f && D_800ED430 == 1) {
         PlaySound(0x293);
         if (item->unk_38 != 2) {
             D_800FB98C_HammerDrop++;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9794_HammerDrop);
-#endif
 
 s32 func_800F9C1C_HammerDrop(omObjData* arg0, omObjData* arg1) {
     unkGlobalStruct_00* temp_s0;
@@ -1483,8 +1435,6 @@ void func_800FA2E0_HammerDrop(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FA2E0_HammerDrop);
 #endif
 
-// Logic-equivalent per-screen display-list construction using host-width-safe GBI macros.
-#ifdef NON_MATCHING
 void func_800FAA30_HammerDrop(void) {
     Gfx* gfx;
     s32 screen;
@@ -1496,14 +1446,14 @@ void func_800FAA30_HammerDrop(void) {
         gDPPipeSync(gfx++);
         gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x552230);
         gSPClearGeometryMode(gfx++, G_LIGHTING);
-        gDPSetTexturePersp(gfx++, G_TP_PERSP);
+        gDPSetTextureFilter(gfx++, G_TF_BILERP);
         gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 0xB2, 0xB2, 0xB2, 0xA0);
-        gDPSetCombineLERP(gfx++, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0,
-            TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0);
+        gDPSetCombineLERP(gfx++, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
+            TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE);
         gDPSetTextureLUT(gfx++, G_TT_RGBA16);
-        gDPLoadTLUT_pal256(gfx++, D_800FB910_HammerDrop->unk_2C->unk_24);
+        gDPLoadTLUT_pal16(gfx++, 0, D_800FB910_HammerDrop->unk_2C->unk_24);
         gDPLoadTextureBlock_4b(gfx++, D_800FB910_HammerDrop->unk_24,
             D_800FB910_HammerDrop->unk_18,
             D_800FB910_HammerDrop->unk_1A, D_800FB910_HammerDrop->unk_1B, 0,
@@ -1520,9 +1470,6 @@ void func_800FAA30_HammerDrop(void) {
         gSPEndDisplayList(gfx++);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800FAA30_HammerDrop);
-#endif
 
 // Logic-equivalent animated mesh update; loop/register allocation differs.
 #ifdef NON_MATCHING

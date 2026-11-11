@@ -182,8 +182,6 @@ void func_800FABD0_TreasureDivers(void) {
 }
 
 /* Pushes a circle of radius r at (*x, *y) out of the sea-floor outline. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 s32 func_800FABFC_TreasureDivers(f32* x, f32* y, s16 r) {
     TDVec2 hit[256];
     s16 n;
@@ -194,12 +192,7 @@ s32 func_800FABFC_TreasureDivers(f32* x, f32* y, s16 r) {
     f32 cy;
     f32 dx;
     f32 dy;
-    f32 ex;
-    f32 ey;
-    f32 a;
-    f32 b;
     f32 disc;
-    f32 s;
     f32 t1;
     f32 t2;
     f32 sx;
@@ -215,30 +208,31 @@ s32 func_800FABFC_TreasureDivers(f32* x, f32* y, s16 r) {
     n = 0;
     cx = *x;
     cy = *y;
-    prev = D_800FE778_TreasureDivers[0];
-    for (i = 1; i < D_800FE772_TreasureDivers;) {
+    i = 0;
+    prev = D_800FE778_TreasureDivers[i++];
+    for (; i < D_800FE772_TreasureDivers;) {
         cur = D_800FE778_TreasureDivers[i++];
         if ((prev >= 0) & (cur >= 0)) {
-            dx = D_800FE774_TreasureDivers[cur].x - D_800FE774_TreasureDivers[prev].x;
-            dy = D_800FE774_TreasureDivers[cur].y - D_800FE774_TreasureDivers[prev].y;
-            ex = D_800FE774_TreasureDivers[prev].x - cx;
-            ey = D_800FE774_TreasureDivers[prev].y - cy;
-            a = dx * dx + dy * dy;
-            b = 2.0f * (dx * ex + dy * ey);
-            c = -(r * r) + ex * ex + ey * ey;
-            disc = b * b - a * 4.0 * c;
+            sx = D_800FE774_TreasureDivers[cur].x - D_800FE774_TreasureDivers[prev].x;
+            sy = D_800FE774_TreasureDivers[cur].y - D_800FE774_TreasureDivers[prev].y;
+            dx = D_800FE774_TreasureDivers[prev].x - cx;
+            dy = D_800FE774_TreasureDivers[prev].y - cy;
+            nx = sx * sx + sy * sy;
+            ny = 2.0f * (sx * dx + sy * dy);
+            c = -(r * r) + dx * dx + dy * dy;
+            disc = ny * ny - nx * 4.0 * c;
             if (disc > 0.0f) {
-                s = sqrtf(disc);
-                t1 = (-b - s) / (2.0f * a);
-                t2 = (-b + s) / (2.0f * a);
+                disc = sqrtf(disc);
+                t1 = (-ny - disc) / (2.0f * nx);
+                t2 = (-ny + disc) / (2.0f * nx);
                 if (t1 >= 0.0 && t1 <= 1.0) {
-                    hit[n].x = D_800FE774_TreasureDivers[prev].x + t1 * dx;
-                    hit[n].y = D_800FE774_TreasureDivers[prev].y + t1 * dy;
+                    hit[n].x = D_800FE774_TreasureDivers[prev].x + t1 * sx;
+                    hit[n].y = D_800FE774_TreasureDivers[prev].y + t1 * sy;
                     n++;
                 }
                 if (t2 >= 0.0 && t2 <= 1.0) {
-                    hit[n].x = D_800FE774_TreasureDivers[prev].x + t2 * dx;
-                    hit[n].y = D_800FE774_TreasureDivers[prev].y + t2 * dy;
+                    hit[n].x = D_800FE774_TreasureDivers[prev].x + t2 * sx;
+                    hit[n].y = D_800FE774_TreasureDivers[prev].y + t2 * sy;
                     n++;
                 }
             }
@@ -282,15 +276,6 @@ s32 func_800FABFC_TreasureDivers(f32* x, f32* y, s16 r) {
     }
     return 0;
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", D_800FE690_TreasureDivers);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", D_800FE694_TreasureDivers);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", D_800FE698_TreasureDivers);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_TreasureDivers/F2800", func_800FABFC_TreasureDivers);
-#endif
 
 
 
