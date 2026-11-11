@@ -2017,7 +2017,8 @@ void func_800FC2AC_CoinBlockBash(omObjData* obj) {
     }
 }
 // NON_MATCHING: scheduling of the character-scale load and the t - a subtractions (masked 10);
-// retail addresses GwPlayer[i].character as sym+reg (lui at); tried &GwPlayer[i]->, (GwPlayer + i)-> (M1c)
+// retail addresses GwPlayer[i].character as sym+reg (lui at); tried &GwPlayer[i]->, (GwPlayer + i)-> (M1c). M1g: GCC emits
+// `lbu $2,GwPlayer+4($N)` either way; as uses $at only when N is the destination, so the lui at form is register allocation
 #ifdef NON_MATCHING
 s32 func_800FD8CC_CoinBlockBash(omObjData* obj, CBBPlayer* p, s16 big) {
     f32 scl[6] = { 1.0f, 1.0f, 1.0f, 0.8f, 0.9f, 0.7f };

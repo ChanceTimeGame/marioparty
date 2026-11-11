@@ -274,7 +274,8 @@ void func_800F71B8_SkateBoardSkamper(omObjData* obj) {
 }
 
 /* Ripples on the course model's vertex colours and heights around (+-1000, z). */
-// register allocation (masked 25): retail hoists 28.0f into a saved register, this C hoists 255.0f
+// register allocation (masked 25): retail hoists 28.0f into a saved register, this C hoists 255.0f (M1g: loop.c
+// moves a constant when threshold * savings * lifetime >= the loop insn count, so this is a borderline count, as in 3C420 func_8003BB48)
 #ifdef NON_MATCHING
 void func_800F7758_SkateBoardSkamper(omObjData* obj) {
     unk2C0C0StructC0* m = D_800F2B7C[obj->model[0]].unk_6C;
