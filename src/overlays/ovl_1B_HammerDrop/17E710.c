@@ -787,12 +787,12 @@ void func_800F8508_HammerDrop(void) {
     func_800F9E74_HammerDrop(&D_800FB6C0_HammerDrop, 2, 1);
 }
 
-// Logic-equivalent hammer movement/strike state machine; angle-wrap scheduling differs.
+// register allocation only: arg0 and state swap s0/s1 (masked 0, raw 16; tried separate state
+// assignment and local order)
 #ifdef NON_MATCHING
 void func_800F896C_HammerDrop(omObjData* arg0) {
     HammerDropTargetState* state = (HammerDropTargetState*) HAMMER_ITEM_WORK(arg0)->item;
     HammerDropItemState* item;
-    f32 angle;
     f32 animationTime;
     f32 scale;
     s32 speed;
@@ -826,34 +826,16 @@ void func_800F896C_HammerDrop(omObjData* arg0) {
         goto update_shadow;
     }
     if (D_800ED430 == 1) {
-        angle = arg0->rot.y + state->unk_08;
-        if (angle >= 360.0f) {
-            angle -= 360.0f;
-        } else if (angle < 0.0f) {
-            angle += 360.0f;
-        }
-        arg0->rot.y = angle;
-        if (angle == state->unk_04) {
-            angle += 180.0f;
-            if (angle >= 360.0f) {
-                angle -= 360.0f;
-            } else if (angle < 0.0f) {
-                angle += 360.0f;
-            }
-            state->unk_04 = angle;
+        arg0->rot.y = HAMMER_WRAP360(arg0->rot.y + state->unk_08);
+        if (arg0->rot.y == state->unk_04) {
+            state->unk_04 = HAMMER_WRAP360(arg0->rot.y + 180.0f);
             state->unk_08 = 12.0f;
             if (rand8() & 1) {
                 state->unk_08 = -12.0f;
             }
         }
     }
-    angle = state->unk_24 + state->unk_1C;
-    if (angle >= 360.0f) {
-        angle -= 360.0f;
-    } else if (angle < 0.0f) {
-        angle += 360.0f;
-    }
-    state->unk_24 = angle;
+    state->unk_24 = HAMMER_WRAP360(state->unk_24 + state->unk_1C);
     speed = (s32) state->unk_1C;
     if (speed < 0) {
         speed = -speed;
@@ -861,16 +843,10 @@ void func_800F896C_HammerDrop(omObjData* arg0) {
     state->unk_28 -= speed;
     if (state->unk_28 <= 0.0f) {
         randomAngle = ((((rand8() & 0xFF) % 72) & 0xFF) * 5) & 0xFF;
-        angle = (f32) randomAngle;
-        if (angle >= 360.0f) {
-            angle -= 360.0f;
-        } else if (angle < 0.0f) {
-            angle += 360.0f;
-        }
-        state->unk_20 = angle;
-        state->unk_28 = angle + 180.0f;
+        state->unk_20 = HAMMER_WRAP360((f32) randomAngle);
+        state->unk_28 = state->unk_20 + 180.0f;
         state->unk_1C = 5.0f;
-        if (state->unk_20 < state->unk_24) {
+        if (state->unk_24 > state->unk_20) {
             state->unk_1C = -5.0f;
         }
     }
@@ -918,11 +894,11 @@ void func_800F896C_HammerDrop(omObjData* arg0) {
         }
     }
 update_shadow:
-    scale = 0.0f;
     if (arg0->trans.y < 2330.0f) {
-        scale = (2330.0f - arg0->trans.y) / 915.0f;
+        func_80025830(arg0->model[2], scale = (2330.0f - arg0->trans.y) / 915.0f, scale, scale);
+    } else {
+        func_80025830(arg0->model[2], 0.0f, 0.0f, 0.0f);
     }
-    func_80025830(arg0->model[2], scale, scale, scale);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F896C_HammerDrop);
@@ -1054,14 +1030,10 @@ void func_800F95E8_HammerDrop(omObjData* arg0) {
     targetItem->itemIndex = item->unk_4C;
 }
 
-// Logic-equivalent falling-item physics and pickup animation; scheduling differs.
-#ifdef NON_MATCHING
 void func_800F9794_HammerDrop(omObjData* arg0) {
     HammerDropItemWork* work = HAMMER_ITEM_WORK(arg0);
     HammerDropItemState* item = work->item;
     f32 distance;
-    f32 angle;
-    s32 fell;
 
     if (func_800F9E68_HammerDrop(item->unk_44, 1) == 0) {
         return;
@@ -1069,24 +1041,18 @@ void func_800F9794_HammerDrop(omObjData* arg0) {
     omSetTra(arg0, arg0->trans.x, arg0->trans.y, arg0->trans.z);
     omSetRot(arg0, arg0->rot.x, arg0->rot.y, arg0->rot.z);
     if (func_800F9E68_HammerDrop(item->unk_44, 2) != 0) {
-        arg0->trans.x = (func_800AEAC0(D_800FB990_HammerDrop->rot.y - 45.0f) * 100.0f) +
-            D_800FB990_HammerDrop->trans.x;
+        arg0->trans.x = D_800FB990_HammerDrop->trans.x +
+            (func_800AEAC0(D_800FB990_HammerDrop->rot.y - 45.0f) * 100.0f);
         arg0->trans.y = D_800FB990_HammerDrop->trans.y + 50.0f +
             (func_800AEAC0((f32) item->unk_50 * 4.0f) * 100.0f);
-        arg0->trans.z = (func_800AEFD0(D_800FB990_HammerDrop->rot.y - 30.0f) * 100.0f) +
-            D_800FB990_HammerDrop->trans.z;
+        arg0->trans.z = D_800FB990_HammerDrop->trans.z +
+            (func_800AEFD0(D_800FB990_HammerDrop->rot.y - 30.0f) * 100.0f);
         func_80025798(arg0->model[1], arg0->trans.x, 0.0f, arg0->trans.z);
         item->unk_50++;
         return;
     }
     if (item->unk_38 == 2) {
-        angle = arg0->rot.x + 30.0f;
-        if (angle >= 360.0f) {
-            angle -= 360.0f;
-        } else if (angle < 0.0f) {
-            angle += 360.0f;
-        }
-        arg0->rot.x = angle;
+        arg0->rot.x = HAMMER_WRAP360(arg0->rot.x + 30.0f);
         arg0->rot.y = work->unk_3C;
     }
     item->unk_40 = 0;
@@ -1099,10 +1065,13 @@ void func_800F9794_HammerDrop(omObjData* arg0) {
         if (arg0->trans.y < item->unk_3C) {
             arg0->trans.y = item->unk_3C;
             if (item->unk_48 < 3) {
-                if (item->unk_38 == 0) {
-                    PlaySound(0x108);
-                } else if (item->unk_38 == 1) {
-                    PlaySound(0x10A);
+                switch (item->unk_38) {
+                    case 0:
+                        PlaySound(0x108);
+                        break;
+                    case 1:
+                        PlaySound(0x10A);
+                        break;
                 }
             }
             if (item->unk_38 != 2) {
@@ -1126,21 +1095,16 @@ void func_800F9794_HammerDrop(omObjData* arg0) {
         func_800258EC(arg0->model[1], 4, 4);
     }
     arg0->trans.z += func_800AEFD0(work->unk_3C) * work->unk_40;
-    fell = arg0->trans.y <= -1600.0f;
-    if (fell || (work->unk_54 == 0)) {
+    if (arg0->trans.y <= -1600.0f || work->unk_54 == 0) {
         func_800F9E74_HammerDrop(&item->unk_44, 1, 0);
-        fell = arg0->trans.y <= -1600.0f;
     }
-    if (fell && (D_800ED430 == 1)) {
+    if (arg0->trans.y <= -1600.0f && D_800ED430 == 1) {
         PlaySound(0x293);
         if (item->unk_38 != 2) {
             D_800FB98C_HammerDrop++;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9794_HammerDrop);
-#endif
 
 s32 func_800F9C1C_HammerDrop(omObjData* arg0, omObjData* arg1) {
     unkGlobalStruct_00* temp_s0;
