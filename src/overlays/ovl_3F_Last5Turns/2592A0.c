@@ -52,9 +52,9 @@ void func_800F65E0_Last5Turns(void) {
     SetFadeInTypeAndTime(1, 16);
 }
 
-// register allocation: retail keeps the second window id in s6 behind an extra move (masked 0 besides
-// the resulting 1-instruction shift; raw 45, masked 23 from the shift); M1e tried win = Create; win0 = win,
-// win = win0 = Create (sign-extends win)
+// register allocation (masked 0, raw 10): win = Create; win1 = win; win0 = win gives retail's extra move
+// (M1g), but win lands in s1 (retail s0, sharing win0's register) and the last window in s1 (retail s6, with
+// win1); a fresh temporary, win1 for the last window and HideTextWindow(win0) (spills) tried
 #ifdef NON_MATCHING
 void func_800F66AC_Last5Turns(void) {
     s32 score[4];
@@ -64,6 +64,7 @@ void func_800F66AC_Last5Turns(void) {
     s32 j;
     s32 n;
     s32 win;
+    s32 win1;
     s32 pick;
     s16 win0;
 
@@ -115,7 +116,9 @@ void func_800F66AC_Last5Turns(void) {
         }
     }
 
-    win0 = win = CreateTextWindow(30, 40, 13, 4);
+    win = CreateTextWindow(30, 40, 13, 4);
+    win1 = win;
+    win0 = win;
     LoadStringIntoWindow(win0, (void*)7, -1, -1);
     func_8006E070(win0, 0);
     ShowTextWindow(win0);
@@ -123,11 +126,11 @@ void func_800F66AC_Last5Turns(void) {
     WaitForTextConfirmation(win0);
     func_8006EB40(win0);
     for (i = 0; i < 4; i++) {
-        func_8006DA5C(win, D_800C5230[GwPlayer[order[i]].character], i);
+        func_8006DA5C(win1, D_800C5230[GwPlayer[order[i]].character], i);
         func_80054834(order[i], i + 0x1C);
     }
     for (i = 0; i < 4; i++) {
-        func_8006DA5C(win, D_800F7164_Last5Turns[rank[order[i]]], i + 4);
+        func_8006DA5C(win1, D_800F7164_Last5Turns[rank[order[i]]], i + 4);
     }
     switch (rand8() % 7) {
     case 1:
@@ -147,44 +150,44 @@ void func_800F66AC_Last5Turns(void) {
         pick = order[0];
         break;
     }
-    func_8006DA5C(win, D_800C5230[GwPlayer[pick].character], 8);
+    func_8006DA5C(win1, D_800C5230[GwPlayer[pick].character], 8);
     for (i = 0; i < 4; i++) {
         func_80054868(D_800F7174_Last5Turns[order[i]]);
-        func_8006DA5C(win, D_800C5230[GwPlayer[order[i]].character], 0);
-        func_8006DA5C(win, D_800F7164_Last5Turns[rank[order[i]]], 2);
+        func_8006DA5C(win1, D_800C5230[GwPlayer[order[i]].character], 0);
+        func_8006DA5C(win1, D_800F7164_Last5Turns[rank[order[i]]], 2);
         switch (rank[order[i]]) {
         case 0:
-            func_8006DA5C(win, D_800F71C0_Last5Turns, 1);
+            func_8006DA5C(win1, D_800F71C0_Last5Turns, 1);
             break;
         case 1:
         case 2:
-            func_8006DA5C(win, D_800F71C4_Last5Turns, 1);
+            func_8006DA5C(win1, D_800F71C4_Last5Turns, 1);
             break;
         case 3:
-            func_8006DA5C(win, D_800F71C8_Last5Turns, 1);
+            func_8006DA5C(win1, D_800F71C8_Last5Turns, 1);
             break;
         }
-        LoadStringIntoWindow(win, (void*)8, 4, i * 14 + 4);
-        func_8006E070(win, 0);
+        LoadStringIntoWindow(win1, (void*)8, 4, i * 14 + 4);
+        func_8006E070(win1, 0);
         HuPrcSleep(20);
         if (i == 3) {
             HuPrcSleep(10);
         }
-        WaitForTextConfirmation(win);
+        WaitForTextConfirmation(win1);
     }
-    func_8006EB40(win);
-    LoadStringIntoWindow(win, (void*)5, -1, -1);
-    func_8006E070(win, 0);
-    WaitForTextConfirmation(win);
+    func_8006EB40(win1);
+    LoadStringIntoWindow(win1, (void*)5, -1, -1);
+    func_8006E070(win1, 0);
+    WaitForTextConfirmation(win1);
     for (i = 0; i < 4; i++) {
         if (i != pick) {
             func_80054868(D_800F7184_Last5Turns[i]);
         }
     }
-    LoadStringIntoWindow(win, (void*)6, 4, 18);
-    func_8006E070(win, 0);
-    WaitForTextConfirmation(win);
-    HideTextWindow(win);
+    LoadStringIntoWindow(win1, (void*)6, 4, 18);
+    func_8006E070(win1, 0);
+    WaitForTextConfirmation(win1);
+    HideTextWindow(win1);
     func_80054868(D_800F7184_Last5Turns[pick]);
 
     func_8004F4D4(D_800F71F4_Last5Turns, 1, 2);
