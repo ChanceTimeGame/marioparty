@@ -259,6 +259,8 @@ build/src/overlays/ovl_14_CoinBlockBlitz/14E940.c.o: CFLAGS = -G0 -mips3 -mgp32 
 # ovl_03 E8F60.c (nop before mult, func_800F7164) and EB0E0.c (func_800F8D1C, func_800FA90C) have the mul fix on
 build/src/overlays/ovl_03_BuriedTreasure/E8F60.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_03_BuriedTreasure/EB0E0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_07 10CF70.c (func_800F7E84_HotBobOmb: nop before mult at a loop head) has the mul fix on
+build/src/overlays/ovl_07_HotBobOmb/10CF70.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_41 262590.c (func_800F8FE8: nop between back-to-back mul.s) has the mul fix on
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/262590.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_17_BoxMountainMayhem/166D50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
