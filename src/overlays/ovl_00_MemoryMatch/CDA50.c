@@ -267,7 +267,7 @@ void func_800F7350_MemoryMatch(void) {
     omOvlReturnEx(1);
 }
 
-// case 1 reloads D_800FE30E before the <8 test (masked 4)
+// register allocation in the three flag compares: v0/v1 swapped (masked 0, raw 9); tried ternary flag, 20 < x
 #ifdef NON_MATCHING
 void func_800F73A4_MemoryMatch(omObjData* arg0) {
     s16 sounds1[6] = { 0x451, 0x452, 0x453, 0x454, 0x455, 0x456 };
@@ -314,10 +314,8 @@ void func_800F73A4_MemoryMatch(omObjData* arg0) {
         }
         if (flag) {
             if (D_800FE30E_MemoryMatch < 2) {
-                goto music;
-            }
-            if (D_800FE30E_MemoryMatch < 8) {
-            music:
+                func_80060128(0x33);
+            } else if (D_800FE30E_MemoryMatch < 8) {
                 func_80060128(0x33);
             } else {
                 func_80060128(0x34);

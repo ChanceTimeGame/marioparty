@@ -46,7 +46,8 @@ u8 D_800FD328_BowlOver = 0;
 u8 D_800FD329_BowlOver = 0;
 u8 D_800FD32A_BowlOver = 1;
 u8 D_800FD32B_BowlOver = 0; /* unreferenced */
-u16 D_800FD32C_BowlOver[2] = { 0, 0 };
+u16 D_800FD32C_BowlOver = 0;
+u16 D_800FD32E_BowlOver = 0;
 s32 D_800FD330_BowlOver = 0;
 f32 D_800FD334_BowlOver = -1.0f;
 u8 D_800FD338_BowlOver[4] = { 0, 0, 0, 0 };
@@ -153,14 +154,14 @@ void func_800F65E0_BowlOver(void) {
     D_800FDC5E_BowlOver = 2;
 }
 
-// scheduling and register allocation
-#ifdef NON_MATCHING
 s8 func_800F6A2C_BowlOver(void) {
     BowlProbe probe;
     s16 i;
-    f32 x;
+    s8 ret;
 
+    ret = 0;
     if (D_800FD2DC_BowlOver[0] == 1) {
+        ret = 1;
         if (D_800FD2E1_BowlOver == 0) {
             func_800F9A80_BowlOver(0, 1900.0f, 348.5f, 0.0f, 0.0f, D_800FD878_BowlOver->trans.x, -180.0f,
                                    D_800FD878_BowlOver->trans.z - 1438.0f);
@@ -197,80 +198,76 @@ s8 func_800F6A2C_BowlOver(void) {
             }
             PlaySound(0x25B);
         }
-        if (D_800FD2E0_BowlOver != 0) {
-            return 0;
-        }
-        D_800FD2EA_BowlOver++;
-        if ((s16)D_800FD2EA_BowlOver < 0x21) {
-            if (D_800FD2EA_BowlOver & 2) {
-                func_800258EC(D_800FD878_BowlOver->model[0], 4, 0);
-                func_800258EC(D_800FD878_BowlOver->model[2], 4, 4);
-            } else {
-                func_800258EC(D_800FD878_BowlOver->model[0], 4, 4);
-                func_800258EC(D_800FD878_BowlOver->model[2], 4, 0);
-            }
-            if ((s16)D_800FD2EA_BowlOver == 0x19) {
-                func_80025798(D_800FD878_BowlOver->model[4], D_800FD878_BowlOver->trans.x,
-                              D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
-                func_80025830(D_800FD878_BowlOver->model[4], 5.0f, 5.0f, 5.0f);
-                func_800258EC(D_800FD878_BowlOver->model[4], 4, 0);
-            }
-        }
-        if ((s16)D_800FD2EA_BowlOver == 0x21) {
-            func_800258EC(D_800FD878_BowlOver->model[0], 4, 4);
-            func_800258EC(D_800FD878_BowlOver->model[2], 4, 4);
-            func_800258EC(D_800FD878_BowlOver->model[3], 4, 4);
-            func_800258EC(D_800FD878_BowlOver->model[4], 4, 4);
-            func_800258EC(D_800FD878_BowlOver->model[5], 4, 0);
-            D_800FD878_BowlOver->trans.y = 0.0f;
-            func_80025798(D_800FD878_BowlOver->model[5], D_800FD878_BowlOver->trans.x,
-                          D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
-            PlaySound(0x264);
-        }
-        if ((s16)D_800FD2EA_BowlOver == 0x3F) {
-            func_800258EC(D_800FD878_BowlOver->model[5], 4, 4);
-            func_800258EC(D_800FD878_BowlOver->model[6], 4, 0);
-            func_80025798(D_800FD878_BowlOver->model[6], D_800FD878_BowlOver->trans.x,
-                          D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
-        }
-        if ((s16)D_800FD2EA_BowlOver >= 0x40) {
-            D_800FD2E4_BowlOver += 4.0f;
-            if (D_800FD830_BowlOver == 0) {
-                D_800FD878_BowlOver->rot.y = 90.0f;
-                x = D_800FD878_BowlOver->trans.x + D_800FD2E4_BowlOver;
-            } else {
-                D_800FD878_BowlOver->rot.y = 270.0f;
-                x = D_800FD878_BowlOver->trans.x - D_800FD2E4_BowlOver;
-            }
-            D_800FD878_BowlOver->trans.x = x;
-            if (BOWL_ABS(D_800FD878_BowlOver->trans.x) > 835.0f) {
-                D_800FD878_BowlOver->rot.y = 180.0f;
-                if (D_800FD830_BowlOver == 0) {
-                    D_800FD878_BowlOver->trans.x = 835.0f;
+        if (D_800FD2E0_BowlOver == 0) {
+            D_800FD2EA_BowlOver++;
+            if ((s16)D_800FD2EA_BowlOver < 0x21) {
+                if (D_800FD2EA_BowlOver & 2) {
+                    func_800258EC(D_800FD878_BowlOver->model[0], 4, 0);
+                    func_800258EC(D_800FD878_BowlOver->model[2], 4, 4);
                 } else {
-                    D_800FD878_BowlOver->trans.x = -835.0f;
+                    func_800258EC(D_800FD878_BowlOver->model[0], 4, 4);
+                    func_800258EC(D_800FD878_BowlOver->model[2], 4, 0);
                 }
-                D_800FD878_BowlOver->trans.z += D_800FD2E4_BowlOver;
+                if ((s16)D_800FD2EA_BowlOver == 0x19) {
+                    func_80025798(D_800FD878_BowlOver->model[4], D_800FD878_BowlOver->trans.x,
+                                  D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
+                    func_80025830(D_800FD878_BowlOver->model[4], 5.0f, 5.0f, 5.0f);
+                    func_800258EC(D_800FD878_BowlOver->model[4], 4, 0);
+                }
             }
-            func_800257E4(D_800FD878_BowlOver->model[6], D_800FD878_BowlOver->rot.x, D_800FD878_BowlOver->rot.y,
-                          D_800FD878_BowlOver->rot.z);
-            func_80025798(D_800FD878_BowlOver->model[6], D_800FD878_BowlOver->trans.x,
-                          D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
-            if ((s16)D_800FD2E8_BowlOver++ >= 0x4A) {
+            if ((s16)D_800FD2EA_BowlOver == 0x21) {
                 func_800258EC(D_800FD878_BowlOver->model[0], 4, 4);
-                func_800258EC(D_800FD878_BowlOver->model[1], 4, 4);
-                func_800258EC(D_800FD878_BowlOver->model[6], 4, 4);
-                D_800FD2E0_BowlOver = 1;
+                func_800258EC(D_800FD878_BowlOver->model[2], 4, 4);
+                func_800258EC(D_800FD878_BowlOver->model[3], 4, 4);
+                func_800258EC(D_800FD878_BowlOver->model[4], 4, 4);
+                func_800258EC(D_800FD878_BowlOver->model[5], 4, 0);
+                D_800FD878_BowlOver->trans.y = 0.0f;
+                func_80025798(D_800FD878_BowlOver->model[5], D_800FD878_BowlOver->trans.x,
+                              D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
+                PlaySound(0x264);
             }
+            if ((s16)D_800FD2EA_BowlOver == 0x3F) {
+                func_800258EC(D_800FD878_BowlOver->model[5], 4, 4);
+                func_800258EC(D_800FD878_BowlOver->model[6], 4, 0);
+                func_80025798(D_800FD878_BowlOver->model[6], D_800FD878_BowlOver->trans.x,
+                              D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
+            }
+            if ((s16)D_800FD2EA_BowlOver >= 0x40) {
+                D_800FD2E4_BowlOver += 4.0f;
+                if (D_800FD830_BowlOver == 0) {
+                    D_800FD878_BowlOver->rot.y = 90.0f;
+                    D_800FD878_BowlOver->trans.x += D_800FD2E4_BowlOver;
+                } else {
+                    D_800FD878_BowlOver->rot.y = 270.0f;
+                    D_800FD878_BowlOver->trans.x -= D_800FD2E4_BowlOver;
+                }
+                if (BOWL_ABS(D_800FD878_BowlOver->trans.x) > 835.0f) {
+                    D_800FD878_BowlOver->rot.y = 180.0f;
+                    if (D_800FD830_BowlOver == 0) {
+                        D_800FD878_BowlOver->trans.x = 835.0f;
+                    } else {
+                        D_800FD878_BowlOver->trans.x = -835.0f;
+                    }
+                    D_800FD878_BowlOver->trans.z += D_800FD2E4_BowlOver;
+                }
+                func_800257E4(D_800FD878_BowlOver->model[6], D_800FD878_BowlOver->rot.x, D_800FD878_BowlOver->rot.y,
+                              D_800FD878_BowlOver->rot.z);
+                func_80025798(D_800FD878_BowlOver->model[6], D_800FD878_BowlOver->trans.x,
+                              D_800FD878_BowlOver->trans.y, D_800FD878_BowlOver->trans.z);
+                if ((s16)D_800FD2E8_BowlOver++ >= 0x4A) {
+                    func_800258EC(D_800FD878_BowlOver->model[0], 4, 4);
+                    func_800258EC(D_800FD878_BowlOver->model[1], 4, 4);
+                    func_800258EC(D_800FD878_BowlOver->model[6], 4, 4);
+                    D_800FD2E0_BowlOver = 1;
+                }
+            }
+            func_800F9B78_BowlOver(D_800FD878_BowlOver);
+            return ret;
         }
-        func_800F9B78_BowlOver(D_800FD878_BowlOver);
-        return 1;
+        ret = 0;
     }
-    return 0;
+    return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F6A2C_BowlOver);
-#endif
 
 // block layout and register allocation
 #ifdef NON_MATCHING
@@ -590,7 +587,8 @@ void func_800F7E20_BowlOver(omObjData* obj) {
     }
 }
 
-// switch shapes and register allocation
+// scheduling: one sll of the port index lands after the ContBtnTrg base (masked 2); tried trg = ContBtnTrg + i,
+// no trg local, an s8 port local
 #ifdef NON_MATCHING
 void func_800F8274_BowlOver(omObjData* obj) {
     BowlPlayerWork* w;
@@ -605,7 +603,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
     port = w->unk_56;
     btn = 0;
     if (GwPlayer[w->unk_58].flags & 1) {
-        if (D_800FD32C_BowlOver[0] == 0) {
+        if (D_800FD32C_BowlOver == 0) {
             switch (GwPlayer[w->unk_58].cpu_difficulty) {
                 case 0:
                     D_800FD834_BowlOver = -10.0f;
@@ -650,8 +648,12 @@ void func_800F8274_BowlOver(omObjData* obj) {
                 case 1:
                     D_800FD83E_BowlOver -= guRandom() % 10;
                     break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
-            D_800FD32C_BowlOver[0] = 1;
+            D_800FD32C_BowlOver = 1;
         }
         sum = 0.0f;
         for (i = 0; i < 3; i++) {
@@ -664,6 +666,8 @@ void func_800F8274_BowlOver(omObjData* obj) {
                     D_800FD334_BowlOver = 0.0f;
                     break;
                 case 1:
+                    D_800FD334_BowlOver = -50.0f;
+                    break;
                 case 2:
                     D_800FD334_BowlOver = -50.0f;
                     break;
@@ -714,7 +718,6 @@ void func_800F8274_BowlOver(omObjData* obj) {
         if (D_800FD840_BowlOver < D_800FD330_BowlOver) {
             switch (D_800FD3D0_BowlOver) {
                 case 0:
-                case 2:
                     if (D_800FD878_BowlOver->trans.x < avg) {
                         D_800FD334_BowlOver = D_800FD834_BowlOver + 40.0f;
                     } else {
@@ -728,6 +731,13 @@ void func_800F8274_BowlOver(omObjData* obj) {
                         D_800FD334_BowlOver = -16.0f - D_800FD834_BowlOver;
                     }
                     break;
+                case 2:
+                    if (D_800FD878_BowlOver->trans.x < avg) {
+                        D_800FD334_BowlOver = D_800FD834_BowlOver + 40.0f;
+                    } else {
+                        D_800FD334_BowlOver = -40.0f - D_800FD834_BowlOver;
+                    }
+                    break;
             }
         }
         if (ContBtn[(s8)port] & 0x1000) {
@@ -736,8 +746,8 @@ void func_800F8274_BowlOver(omObjData* obj) {
         trg = &ContBtnTrg[(s8)port];
         ContBtn[(s8)port] = btn;
         *trg = btn;
-        *trg = btn & (btn ^ D_800FD32C_BowlOver[1]);
-        D_800FD32C_BowlOver[1] = btn;
+        *trg = btn & (btn ^ D_800FD32E_BowlOver);
+        D_800FD32E_BowlOver = btn;
         if (D_800FD334_BowlOver == -1.0f) {
             ContStkX[(s8)port] = 0;
             ContStkY[(s8)port] = 0;
