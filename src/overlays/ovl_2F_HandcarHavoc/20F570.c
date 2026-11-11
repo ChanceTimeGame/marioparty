@@ -2005,8 +2005,6 @@ void func_800FCFB4_HandcarHavoc(omObjData* obj) {
 }
 
 /* m'ss"cc */
-// register allocation (masked 0, raw 14): rest gets its own register, sec % 10 goes straight to a1; tried declaration order
-#ifdef NON_MATCHING
 void func_800FCFFC_HandcarHavoc(u16 time, u16* digit) {
     u16 rest;
     u16 sec;
@@ -2018,12 +2016,12 @@ void func_800FCFFC_HandcarHavoc(u16 time, u16* digit) {
     sec = rest / 60;
     func_80018E50(*digit, sec / 10, 0);
     digit++;
-    func_80018E50(*digit, sec % 10, 0);
+    cs = sec % 10;
+    func_80018E50(*digit, cs, 0);
     digit += 2;
-    cs = (u16)(rest % 60) * 1.6666666f;
+    rest %= 60;
+    cs = rest * 1.6666666f;
     func_80018E50(digit[0], cs / 10, 0);
-    func_80018E50(digit[1], cs % 10, 0);
+    cs %= 10;
+    func_80018E50(digit[1], cs, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FCFFC_HandcarHavoc);
-#endif
