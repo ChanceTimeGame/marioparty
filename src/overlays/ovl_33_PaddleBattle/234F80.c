@@ -717,11 +717,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F8B0
 #endif
 
 /* A paddle: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 7 lines)
-#ifdef NON_MATCHING
 void func_800F94B8_PaddleBattle(omObjData* obj) {
     PBMgWork* w;
-    s32 mot;
 
     obj->func_ptr = func_800F9620_PaddleBattle;
     obj->unk_50 = func_80023684(sizeof(PBMgWork), 0x7918);
@@ -735,18 +732,14 @@ void func_800F94B8_PaddleBattle(omObjData* obj) {
     obj->work[2] = 0;
     if (obj->work[1] == 0) {
         obj->model[0] = LoadFormFile(0x470009, 0x99);
-        mot = 0x47000A;
+        func_800187D0(obj, 0, 0x47000A, 1, 0);
     } else {
         obj->model[0] = LoadFormFile(0x47000B, 0x99);
-        mot = 0x47000C;
+        func_800187D0(obj, 0, 0x47000C, 1, 0);
     }
-    func_800187D0(obj, 0, mot, 1, 0);
     func_800184BC(obj, 0);
     D_800FEA50_PaddleBattle++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F94B8_PaddleBattle);
-#endif
 
 /* A paddle: follows its rider. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 8 lines)
@@ -1317,12 +1310,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB1E
 #endif
 
 /* Pushes `lateral` away from a rock within 400 units of `pos`. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 30 lines)
-#ifdef NON_MATCHING
 f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
     f32 dz;
     f32 dx;
     f32 r;
+    f32 rad = 400.0f;
     s32 i;
 
     if (D_800FFB3C_PaddleBattle < 0) {
@@ -1332,18 +1324,18 @@ f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
     }
     for (i = 0; i < 4; i++) {
         dz = D_800FEA80_PaddleBattle[i].z - pos->z;
-        if (PB_ABS(dz) < 400.0f) {
+        if (PB_ABS(dz) < rad) {
             break;
         }
     }
     if (i < 4) {
         dx = D_800FEA80_PaddleBattle[i].x - pos->x;
-        if (dz * dz + dx * dx < 400.0f * 400.0f) {
-            r = sqrtf(400.0f * 400.0f - dz * dz);
-            if (!(dx < 0.0f)) {
-                r = r - dx;
-            } else {
+        if (dz * dz + dx * dx < rad * rad) {
+            r = sqrtf(rad * rad - dz * dz);
+            if (dx < 0.0f) {
                 r = r + dx;
+            } else {
+                r = r - dx;
             }
             if (dx < 0.0) {
                 r = -r;
@@ -1358,9 +1350,6 @@ f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
     }
     return lateral;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB554_PaddleBattle);
-#endif
 
 s16 func_800FB704_PaddleBattle(s32 file) {
     void* data;
