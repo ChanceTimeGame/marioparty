@@ -215,37 +215,35 @@ void func_800F6F68_PlatformPeril(void) {
     CZoom = D_800FDD74_PlatformPeril[0].zoom;
 }
 
-// register allocation and D_800FE250 reloads (masked 98 incl. address shift; logic-equivalent)
-#ifdef NON_MATCHING
 /* Builds the course after `out`: random pieces, their items and the tile map. */
 void func_800F7070_PlatformPeril(PPPlatform* out) {
+    u8* map = D_800FE5B0_PlatformPeril[0];
     s32 n = 0;
     s32 order[6];
     s32 kinds[3];
     s32 i;
     s32 k;
-    s32 t;
     s32 piece;
-    u8 j;
     f32 z;
 
     *(PPOrder6*)order = *(PPOrder6*)D_800FDFB8_PlatformPeril;
     *(PPKinds3*)kinds = *(PPKinds3*)D_800FDFD0_PlatformPeril;
     for (i = 0; i < 6; i++) {
-        j = rand8() % 6;
-        t = order[i];
-        order[i] = order[j];
-        order[j] = t;
+        piece = (u8)(rand8() % 6);
+        k = order[i];
+        order[i] = order[piece];
+        order[piece] = k;
     }
     for (i = 0; i < 3; i++) {
-        j = rand8() % 3;
-        t = kinds[i];
-        kinds[i] = kinds[j];
-        kinds[j] = t;
+        piece = (u8)(rand8() % 3);
+        k = kinds[i];
+        kinds[i] = kinds[piece];
+        kinds[piece] = k;
     }
     D_800FE250_PlatformPeril = 0;
+    i = 0;
     z = 0.0f;
-    for (i = 0; i < (((rand8() << 8) | rand8()) & 1) + 15; i++) {
+    for (; i < (((rand8() << 8) | rand8()) & 1) + 15; i++) {
         if (i >= 4) {
             piece = ((rand8() << 8) | rand8()) % 10 + 3;
         } else {
@@ -255,9 +253,8 @@ void func_800F7070_PlatformPeril(PPPlatform* out) {
         z -= out[i].pos.z;
         out[i].pos.z = z;
         if (piece >= 3 && D_800FD6D8_PlatformPeril[piece].ofs.x != 0.0f) {
-            for (k = 0; k < 3;) {
+            for (k = 0; k < 3; k++) {
                 if (D_800FE250_PlatformPeril < 3) {
-                    k++;
                     if (order[k] == i) {
                         D_800FD8F4_PlatformPeril[D_800FE250_PlatformPeril].pos.x =
                             -D_800FD6D8_PlatformPeril[piece].ofs.x * (f32)(((rand8() << 8) | rand8()) % 4 + 5) * 0.1f;
@@ -269,28 +266,24 @@ void func_800F7070_PlatformPeril(PPPlatform* out) {
                         D_800FE250_PlatformPeril++;
                         break;
                     }
-                } else {
-                    k++;
                 }
             }
         }
         for (k = 0; k < D_800FCDB4_PlatformPeril[piece].count; k++) {
-            D_800FE5B0_PlatformPeril[0][n++] = D_800FCDB4_PlatformPeril[piece].tiles[k];
+            map[n++] = D_800FCDB4_PlatformPeril[piece].tiles[k];
         }
     }
+    piece = 0;
     D_800FD8F4_PlatformPeril[D_800FE250_PlatformPeril].type = 0;
     out[i] = D_800FD6D8_PlatformPeril[0];
     z -= out[i].pos.z;
     out[i].pos.z = z;
     D_800FE2CC_PlatformPeril = z + 1500.0f;
-    for (k = 0; k < D_800FCDB4_PlatformPeril[0].count; k++) {
-        D_800FE5B0_PlatformPeril[0][n++] = D_800FCDB4_PlatformPeril[0].tiles[k];
+    for (k = 0; k < D_800FCDB4_PlatformPeril[piece].count; k++) {
+        map[n++] = D_800FCDB4_PlatformPeril[piece].tiles[k];
     }
     out[i + 1].type = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F7070_PlatformPeril);
-#endif
 
 void func_800F76E4_PlatformPeril(void) {
     s32 i;
