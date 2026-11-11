@@ -514,7 +514,7 @@ s32 func_800F7B98_MushroomBank(s32 arg0) {
    rows of four), A takes it (or puts back one already taken), B closes the vault. Retail starts
    and cancels the teller's animation with D_800F8BA4's model and D_800F8BA0's motions (both load
    the same model file). */
-// cursor-search loops rotated and registers differ (masked 105); logic checked against the asm
+// up/down row searches: retail jumps to the bottom loop test, ours copies it to the top; registers differ (masked 52; tried for/while/block-local row)
 #ifdef NON_MATCHING
 void func_800F7BC0_MushroomBank(void) {
     Vec3f pos;
@@ -528,7 +528,6 @@ void func_800F7BC0_MushroomBank(void) {
     s32 tag;
     s32 sel;
     s32 prev;
-    s32 row;
     s32 i;
     u32 btn;
     f32 a;
@@ -583,36 +582,34 @@ void func_800F7BC0_MushroomBank(void) {
     while (!((btn = func_80059CB8()) & 0x4000)) {
         if (btn & 0x100) {
             i = sel;
-            do {
+            while (1) {
                 sel++;
-                if ((sel == 4) | (sel == 8)) {
+                if ((sel == 4) | (sel == 8) || sel == 12) {
                     sel = i;
                     break;
                 }
-                if (sel == 12) {
-                    sel = i;
+                if (func_800F7B98_MushroomBank(sel) != 0) {
                     break;
                 }
-            } while (func_800F7B98_MushroomBank(sel) == 0);
+            }
         }
         if (btn & 0x200) {
             i = sel;
-            do {
+            while (1) {
                 sel--;
-                if ((sel == 7) | (sel == 3)) {
+                if ((sel == 7) | (sel == 3) || sel == -1) {
                     sel = i;
                     break;
                 }
-                if (sel == -1) {
-                    sel = i;
+                if (func_800F7B98_MushroomBank(sel) != 0) {
                     break;
                 }
-            } while (func_800F7B98_MushroomBank(sel) == 0);
+            }
         }
         if ((btn >> 10) & 1 & (sel < 8)) {
             i = sel;
             for (sel = i + 4; sel < 12; sel += 4) {
-                row = sel;
+                s32 row = sel;
                 do {
                     if (func_800F7B98_MushroomBank(sel) != 0) {
                         break;
@@ -635,7 +632,7 @@ void func_800F7BC0_MushroomBank(void) {
         if ((btn >> 11) & 1 & (sel >= 4)) {
             i = sel;
             for (sel = i - 4; sel >= 0; sel -= 4) {
-                row = sel;
+                s32 row = sel;
                 do {
                     if (func_800F7B98_MushroomBank(sel) != 0) {
                         break;
