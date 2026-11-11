@@ -2162,49 +2162,50 @@ void func_800FDE04_DeepSeaDivers(s16 idx, f32 speed, Vec* top) {
     r->top.y = top->y;
     r->top.z = top->z;
 }
-#ifdef NON_MATCHING
 void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
     DSDRopeNode* first;
     DSDRopeNode* last;
-    f32 dx;
-    f32 dy;
-    f32 dz;
+    f32 d;
     f32 dist;
     f32 cur;
     f32 slack;
-    f32 len;
-    f32 want;
     f32 t;
 
     r->bottom.x = bottom->x;
     r->bottom.y = bottom->y;
     r->bottom.z = bottom->z;
-    dx = r->top.x - r->bottom.x;
-    dy = r->top.y - r->bottom.y;
-    dz = r->top.z - r->bottom.z;
-    dist = sqrtf(dx * dx + dy * dy + dz * dz);
+    d = r->top.x - r->bottom.x;
+    dist = d * d;
+    d = r->top.y - r->bottom.y;
+    dist += d * d;
+    d = r->top.z - r->bottom.z;
+    dist += d * d;
+    dist = sqrtf(dist);
     first = r->nodes;
-    dx = r->top.x - first->pos.x;
-    dy = r->top.y - first->pos.y;
-    dz = r->top.z - first->pos.z;
-    cur = sqrtf(dx * dx + dy * dy + dz * dz);
-    last = &first[r->n];
+    last = &r->nodes[r->n];
+    d = r->top.x - first->pos.x;
+    cur = d * d;
+    d = r->top.y - first->pos.y;
+    cur += d * d;
+    d = r->top.z - first->pos.z;
+    cur += d * d;
+    cur = sqrtf(cur);
     slack = dist - cur;
     if (slack < 0.0) {
         slack = 0.0f;
     }
-    len = r->unk8 - r->unkC;
-    if (len < 200.0) {
-        len = 200.0f;
+    d = r->unk8 - r->unkC;
+    if (d < 200.0) {
+        d = 200.0f;
     }
-    r->unk8 = len;
-    if (len < dist) {
-        r->unk8 = want = slack + len;
+    r->unk8 = d;
+    if (d < dist) {
+        cur = r->unk8 = slack + d;
     } else {
-        want = dist;
+        cur = dist;
     }
-    if (r->unkC != 0.0f && r->unk8 < dist + 10.0) {
+    if (r->unkC != 0.0f && dist + 10.0 > r->unk8) {
         r->unk10 -= 0.05;
         if (r->unk10 < 0.0) {
             r->unk10 = 0.0f;
@@ -2215,7 +2216,7 @@ void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
             r->unk10 = 1.0f;
         }
     }
-    t = 1.0 / dist * want;
+    t = 1.0 / dist * cur;
     first->pos.x = r->bottom.x = (r->bottom.x - r->top.x) * t + r->top.x;
     first->pos.y = r->bottom.y = (r->bottom.y - r->top.y) * t + r->top.y;
     first->pos.z = r->bottom.z = (r->bottom.z - r->top.z) * t + r->top.z;
@@ -2226,9 +2227,6 @@ void func_800FDE44_DeepSeaDivers(s16 idx, Vec* bottom, Vec* out) {
     out->y = first->pos.y;
     out->z = first->pos.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800FDE44_DeepSeaDivers);
-#endif
 void func_800FE170_DeepSeaDivers(s16 idx, Vec* top, Vec* bottom) {
     DSDRope* r = &D_80100610_DeepSeaDivers[idx];
     DSDRopeNode* first = r->nodes;
