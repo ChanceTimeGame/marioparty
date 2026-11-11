@@ -198,7 +198,9 @@ void func_800F7458_MarioBandstand(void) {
     }
 }
 
-// register allocation (raw 54, masked 30): retail keeps one more saved register for the model values
+// NON_MATCHING: masked 7 (raw 15): retail copies the model ids of model[6]/[7] through a second saved
+// register and picks other CSE bases for the light stores (a chained `model = light = m = f()` there
+// was worse). M1g: separate stores per model (was chained, masked 25), light set after the 0x14000E load
 #ifdef NON_MATCHING
 void func_800F74C8_MarioBandstand(omObjData* obj) {
     s32 i;
@@ -211,22 +213,36 @@ void func_800F74C8_MarioBandstand(omObjData* obj) {
         obj->model[i] = -1;
     }
     obj->model[0] = func_800174C0(0x3A0000, 0x299);
-    obj->model[1] = D_800FD2A8_MarioBandstand[3][0] = m = func_800174C0(0x3A0001, 0x299);
+    m = func_800174C0(0x3A0001, 0x299);
+    D_800FD2A8_MarioBandstand[3][0] = m;
+    obj->model[1] = m;
     func_80025798(m, 0.0f, 580.0f, 360.0f);
-    obj->model[2] = D_800FD2A8_MarioBandstand[2][0] = m = func_800174C0(0x3A0006, 0x299);
+    m = func_800174C0(0x3A0006, 0x299);
+    D_800FD2A8_MarioBandstand[2][0] = m;
+    obj->model[2] = m;
     func_80025798(m, -600.0f, 0.0f, 380.0f);
-    obj->model[3] = D_800FD2A8_MarioBandstand[2][1] = m = func_80023FC8(m);
+    m = func_80023FC8(m);
+    D_800FD2A8_MarioBandstand[2][1] = m;
+    obj->model[3] = m;
     func_80025798(m, 600.0f, 0.0f, 380.0f);
+    m = func_800174C0(0x14000E, 0x699);
     light = D_800FD2A8_MarioBandstand;
-    obj->model[4] = light[0][0] = m = func_800174C0(0x14000E, 0x699);
-    obj->model[5] = light[0][1] = m2 = func_800174C0(0x14000F, 0x699);
+    D_800FD2A8_MarioBandstand[0][0] = m;
+    obj->model[4] = m;
+    m2 = func_800174C0(0x14000F, 0x699);
+    D_800FD2A8_MarioBandstand[0][1] = m2;
+    obj->model[5] = m2;
     func_80026040(m);
     func_800258EC(m2, 4, 4);
     func_80026174(m, m2, D_800FD2A0_MarioBandstand);
     func_800257E4(m, 0.0f, 180.0f, 0.0f);
     func_80025798(m, -500.0f, 0.0f, 330.0f);
-    obj->model[6] = light[1][0] = m = func_80023FC8(D_800FD2A8_MarioBandstand[0][0]);
-    obj->model[7] = light[1][1] = m2 = func_80023FC8(D_800FD2A8_MarioBandstand[0][1]);
+    m = func_80023FC8(D_800FD2A8_MarioBandstand[0][0]);
+    light[1][0] = m;
+    obj->model[6] = m;
+    m2 = func_80023FC8(D_800FD2A8_MarioBandstand[0][1]);
+    light[1][1] = m2;
+    obj->model[7] = m2;
     func_80026040(m);
     func_800258EC(m2, 4, 4);
     func_80026174(m, m2, D_800FD2A0_MarioBandstand);
