@@ -1113,6 +1113,7 @@ void func_800FA5B4_FaceLift(s16 model, s16 part, Vec3f* p) {
 }
 // scheduling: *verts loaded after g->unk_08[D_800F37F0] (masked 4); an integer-address form
 // ((u32)base + *verts * 16) matches but truncates pointers on 64-bit hosts
+// M1g: *verts + base and (u8*)-offset pointer forms are canonicalised to the same RTL (masked 4)
 #ifdef NON_MATCHING
 void func_800FA7D0_FaceLift(s16 model, s16 part, Vec3f* p) {
     unk_ovl_2D_struct* m;
@@ -1262,8 +1263,6 @@ void func_800FB1B4_FaceLift(omObjData* obj) {
     w->timer = obj->work[1] * 5;
     obj->func_ptr = func_800FB29C_FaceLift;
 }
-// non-short-circuit test shape and register allocation
-#ifdef NON_MATCHING
 void func_800FB29C_FaceLift(omObjData* obj) {
     FaceLiftStar* w;
     f32 x;
@@ -1281,6 +1280,7 @@ void func_800FB29C_FaceLift(omObjData* obj) {
     w = obj->unk_50;
     if (w->timer != 0) {
         w->timer--;
+        return;
     }
     m = D_800ECDE0[w->id].unk_00;
     n = w->count++;
@@ -1293,7 +1293,6 @@ void func_800FB29C_FaceLift(omObjData* obj) {
     w->z = z = func_800AEFD0(w->angle) * 100.0f;
     w->angle += 3.0f;
     dy = func_800AEFD0(2.0f * w->angle) * 5.0f;
-    r = 224;
     if (w->h > 0.0f) {
         r = 224.0f - w->h * 10.0f;
         g = 224.0f - w->h * 10.0f;
@@ -1301,21 +1300,20 @@ void func_800FB29C_FaceLift(omObjData* obj) {
         w->y -= w->h;
         w->h -= 1.0f;
     } else {
+        r = 224;
         g = 224;
         b = 192;
     }
     func_80025798(m, x, dy + w->y, z);
     k = obj->work[1];
     on = k != 0;
-    if (!(on & (k != 9))) {
-        light = on ? 3 : 2;
-        func_800234B8(light, r, g, b);
-        func_80023504(light, x, dy + w->y, z);
+    if (on && k != 9) {
+        return;
     }
+    light = on ? 3 : 2;
+    func_800234B8(light, r, g, b);
+    func_80023504(light, x, dy + w->y, z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_FaceLift/12BC20", func_800FB29C_FaceLift);
-#endif
 void func_800FB608_FaceLift(omObjData* obj) {
     FaceLiftFxWork* w;
     void* data;

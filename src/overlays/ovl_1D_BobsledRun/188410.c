@@ -801,6 +801,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800F78F4_
 /* Bumping into the other sled: returns 0 (retail never returns 2). */
 // branch-likely delay slot of the bump test: retail copies mov.s $f12 into a bc1tl slot (one instruction
 // short, masked 5); tried nested if, !(a && b) (M1c)
+// M1g: call duplicated per arm with a shared hit: label (masked 7)
 #ifdef NON_MATCHING
 s32 func_800F9138_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
     BRWork* work;
