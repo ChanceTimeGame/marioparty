@@ -554,6 +554,7 @@ void func_800F7D1C_MusicalMushroom(omObjData* obj) {
     }
 }
 // register allocation and scheduling of the D_800FB5C8 index: r in a0, table base before the index math (masked 4); tried base + r, [r - 2], inline field reads
+// M1g: switch (r) { case 0: case 1: break; default: } gives the same code; r in v1 blocks the base hoist
 #ifdef NON_MATCHING
 void func_800F83BC_MusicalMushroom(omObjData* obj) {
     Vec3f v;

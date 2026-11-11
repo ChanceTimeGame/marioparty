@@ -770,7 +770,8 @@ s32 func_80051AE0(s32 arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/51200", func_80051AE0);
 #endif
-// retail holds the return value 1 in s2 across the loop; this returns it with li (masked 5)
+// retail holds the return value 1 in s2 across the loop; this returns it with li (masked 5).
+// M1g: return 1 inside while (1), ret = 1; break, and an s32 ret = 1 local all fold to li (masked 6)
 #ifdef NON_MATCHING
 s32 func_80052614(s32 arg0) {
     s32 id = func_80045D84(8, 0xBC, 0);

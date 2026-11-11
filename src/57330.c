@@ -380,7 +380,8 @@ void func_80056F40(void) {
     }
 }
 
-// register allocation: ret lives in a0 instead of v0 (masked 3)
+// register allocation: ret lives in a0 instead of v0 (masked 3); M1g: early returns, else-if
+// returns and nested ifs with a block-local ret all worse (masked 8)
 #ifdef NON_MATCHING
 s32 func_80056FA8(void) {
     GW_SYSTEM* gs = &GwSystem;
@@ -964,7 +965,9 @@ void func_800582E4(void) {
     HuPrcVSleep();
 }
 
-// CSE keeps i * 2 across PlayerIsCPU and re-tests i == cur before the second button test (masked 11)
+// CSE keeps i * 2 across PlayerIsCPU and re-tests i == cur before the second button test (masked 11).
+// M1g: nesting the i == cur test (or i != cur / D_800EE320 == 0 continues) makes CSE merge the two
+// D_800EE320 and ContDStkTrg[port] loads that retail reloads (masked 20)
 #ifdef NON_MATCHING
 void func_8005835C(void) {
     Vec2f sp10;
