@@ -398,14 +398,15 @@ void func_800F750C_LimboDance(s16 id, s16 delay) {
     }
 }
 
-// register allocation (masked 12): GCC hoists &D_800FF1C8 for the delay store into s3 (retail stores via %lo(D+2)); tried --, -= 1, a separate decrement
-#ifdef NON_MATCHING
 void func_800F756C_LimboDance(void) {
     s16 i;
+    s16 delay;
 
     for (i = 0; i < 10; i++) {
         if (D_800FF1C8_LimboDance[i].id != -1) {
-            if ((D_800FF1C8_LimboDance[i].delay = D_800FF1C8_LimboDance[i].delay - 1) <= 0) {
+            delay = D_800FF1C8_LimboDance[i].delay - 1;
+            D_800FF1C8_LimboDance[i].delay = delay;
+            if (delay <= 0) {
                 PlaySound(D_800FF1C8_LimboDance[i].id);
                 D_800FF1C8_LimboDance[i].id = -1;
                 D_800FF1C8_LimboDance[i].delay = 0;
@@ -413,9 +414,6 @@ void func_800F756C_LimboDance(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F756C_LimboDance);
-#endif
 
 /* Random number below n (0: the whole low half of the seed). */
 u16 func_800F7628_LimboDance(u16 n) {

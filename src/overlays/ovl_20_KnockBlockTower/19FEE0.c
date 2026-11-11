@@ -91,28 +91,30 @@ void func_800F69F8_KnockBlockTower(omObjData* obj) {
 
 /* Builds the tower: 5 or 6 blocks, two of them (type 1) bombs. */
 // list-head stores: retail addresses D_800FB650[0]'s type/next by symbol, GCC reuses the base register;
-// loop computes n + 1 at the loop head (masked 18; tried n = D for the obj store, n = n->next)
+// rand/divisor registers swapped in the % (masked 13; tried n = D for the obj store, n = n->next, a next temp)
 #ifdef NON_MATCHING
 void func_800F6A10_KnockBlockTower(void) {
     KBTNode* n;
+    KBTNode* next;
     s32 i;
     s32 count;
     s32 first;
     s32 second;
 
     count = (rand8() & 1) + 5;
-    D_800FB650_KnockBlockTower[0].obj = NULL;
+    n = D_800FB650_KnockBlockTower;
+    n->obj = NULL;
     D_800FB650_KnockBlockTower[0].type = -1;
     D_800FB650_KnockBlockTower[0].next = &D_800FB650_KnockBlockTower[1];
     n = D_800FB650_KnockBlockTower[0].next;
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++, n = next) {
+        next = n + 1;
         n->type = 0;
         n->state = 0;
         n->vel = 0.0f;
         n->accel = 2.0f;
         n->angle = 0.0f;
-        n->next = n + 1;
-        n = n + 1;
+        n->next = next;
     }
     n->obj = NULL;
     n->type = -1;
@@ -950,7 +952,8 @@ void func_800F8FE8_KnockBlockTower(omObjData* obj) {
 }
 
 /* The goal: falls with the tower; touching it wins. */
-// scheduling: retail fills the delay slot after the last 1000.0f test with a nop, not func_8009EA40's a1 (masked ~3)
+// list walk: retail hoists the state == 2 constant out of the loop, GCC keeps it inside; delay slot after the
+// last 1000.0f test is a nop, not func_8009EA40's a1 (masked 33; tried a combined while test, split breaks)
 #ifdef NON_MATCHING
 void func_800F9020_KnockBlockTower(omObjData* obj) {
     Vec3f vec;
