@@ -1439,13 +1439,12 @@ void func_800FA5B4_BashNCash(omObjData* obj) {
 }
 
 /* The cash player's object. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FAAE4_BashNCash(omObjData* obj) {
-    void (*cpu[2])(omObjData*);
     Vec3f v_s;
-    Vec3f* v = &v_s;
-    u8 i;
+    void (*cpu[2])(omObjData*);
+    Vec3f* v;
+    s32 i;
+    BashCash* cash;
     BashPlayerWork* w;
     BashInput* in;
     omObjData* other;
@@ -1458,12 +1457,14 @@ void func_800FAAE4_BashNCash(omObjData* obj) {
     cpu[1] = func_800F7458_BashNCash;
     i = obj->work[0];
     w = obj->unk_50;
+    cash = &D_800FE690_BashNCash;
     in = &D_800FE6A8_BashNCash[i];
+    v = &v_s;
     in->saveBtn = ContBtn[GwPlayer[i].port];
     in->saveTrg = ContBtnTrg[GwPlayer[i].port];
     in->saveStkX = ContStkX[GwPlayer[i].port];
     in->saveStkY = ContStkY[GwPlayer[i].port];
-    func_800FD748_BashNCash(i, D_800FE690_BashNCash.coins + GwPlayer[i].coins_mg);
+    func_800FD748_BashNCash(i, D_800FE698_BashNCash + GwPlayer[i].coins_mg);
     if (w->unk_9C >= 61 && obj->work[3] == 0) {
         obj->work[3] = 1;
         func_80060540(0x24F, w->unk_58);
@@ -1471,18 +1472,18 @@ void func_800FAAE4_BashNCash(omObjData* obj) {
     if (!(w->unk_50 & 3)) {
         obj->work[3] = 0;
     }
-    if (D_800FE690_BashNCash.unk_06 != 0) {
-        D_800FE690_BashNCash.unk_06--;
+    if (cash->unk_06 != 0) {
+        cash->unk_06--;
     }
     cpu[0](obj);
-    if (D_800FE690_BashNCash.unk_04 != 0) {
+    if (cash->unk_04 != 0) {
         if ((u8)func_800F73F0_BashNCash(i)) {
-            D_800FE690_BashNCash.unk_04--;
+            cash->unk_04--;
         }
         ContBtnTrg[GwPlayer[obj->work[0]].port] &= 0x7FFF;
     }
-    if ((ContBtnTrg[GwPlayer[obj->work[0]].port] & 0x8000) && D_800FE690_BashNCash.unk_04 == 0 && !(w->unk_50 & 6)) {
-        D_800FE690_BashNCash.unk_04 = 30;
+    if ((ContBtnTrg[GwPlayer[obj->work[0]].port] & 0x8000) && cash->unk_04 == 0 && !(w->unk_50 & 6)) {
+        cash->unk_04 = 30;
     }
     func_80025830(obj->model[1], 1.0f, 1.0f, 1.0f);
     if (D_800FE62A_BashNCash != 0) {
@@ -1547,9 +1548,6 @@ void func_800FAAE4_BashNCash(omObjData* obj) {
     func_80025830(obj->model[1], 2.0f * D_800F2B7C[obj->model[1]].unk_3C, 1.0f,
                   2.0f * D_800F2B7C[obj->model[1]].unk_3C);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FAAE4_BashNCash);
-#endif
 
 /* Camera shake. */
 void func_800FB0D8_BashNCash(omObjData* obj) {
@@ -1583,8 +1581,6 @@ void func_800FB1D4_BashNCash(void) {
 }
 
 /* Opening camera: around the cash player, then up to the game view; the cash player jumps. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FB240_BashNCash(omObjData* obj) {
     omObjData* cash;
     BashPlayerWork* w;
@@ -1654,10 +1650,10 @@ void func_800FB240_BashNCash(omObjData* obj) {
         D_800FE588_BashNCash.z = (-0.5409745f - D_800FE55C_BashNCash.z) / 30.0f + D_800FE588_BashNCash.z;
         break;
     case 4:
-        D_800FE6A8_BashNCash[0].saveBtn = ContBtn[GwPlayer[D_800FE610_BashNCash].port];
-        D_800FE6A8_BashNCash[0].saveTrg = ContBtnTrg[GwPlayer[D_800FE610_BashNCash].port];
-        D_800FE6A8_BashNCash[0].saveStkX = ContStkX[GwPlayer[D_800FE610_BashNCash].port];
-        D_800FE6A8_BashNCash[0].saveStkY = ContStkY[GwPlayer[D_800FE610_BashNCash].port];
+        D_800FE6A8_BashNCash->saveBtn = ContBtn[GwPlayer[D_800FE610_BashNCash].port];
+        D_800FE6A8_BashNCash->saveTrg = ContBtnTrg[GwPlayer[D_800FE610_BashNCash].port];
+        D_800FE6A8_BashNCash->saveStkX = ContStkX[GwPlayer[D_800FE610_BashNCash].port];
+        D_800FE6A8_BashNCash->saveStkY = ContStkY[GwPlayer[D_800FE610_BashNCash].port];
         ContBtn[GwPlayer[D_800FE610_BashNCash].port] = 0;
         ContBtnTrg[GwPlayer[D_800FE610_BashNCash].port] = 0;
         ContStkX[GwPlayer[D_800FE610_BashNCash].port] = 0;
@@ -1668,10 +1664,10 @@ void func_800FB240_BashNCash(omObjData* obj) {
         func_80005A28(cash);
         func_8000942C();
         func_80009468();
-        ContBtn[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash[0].saveBtn;
-        ContBtnTrg[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash[0].saveTrg;
-        ContStkX[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash[0].saveStkX;
-        ContStkY[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash[0].saveStkY;
+        ContBtn[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash->saveBtn;
+        ContBtnTrg[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash->saveTrg;
+        ContStkX[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash->saveStkX;
+        ContStkY[GwPlayer[D_800FE610_BashNCash].port] = D_800FE6A8_BashNCash->saveStkY;
         obj->work[0] = 5;
         break;
     case 5:
@@ -1684,9 +1680,6 @@ void func_800FB240_BashNCash(omObjData* obj) {
     }
     D_800FE5AC_BashNCash = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FB240_BashNCash);
-#endif
 
 void func_800FB928_BashNCash(omObjData* obj) {
     obj->work[0] = 0;

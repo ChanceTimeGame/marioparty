@@ -454,7 +454,7 @@ void func_80054834(s32 arg0, s32 arg1) {
     func_80054758(arg0, D_800C54D8[arg1][0], D_800C54D8[arg1][1]);
 }
 
-// loop-invariant motion: retail hoists arg0 - 10, GCC here hoists the switch range check (masked 44)
+// loop-invariant motion: retail hoists arg0 - 10, GCC here hoists the switch range check (masked 44; logic and data accesses equal; tried operand order, an arg0 - 10 local, an unsigned range test)
 #ifdef NON_MATCHING
 s32 func_80054868(s32 arg0) {
     u8 order[5];

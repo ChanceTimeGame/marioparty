@@ -267,7 +267,7 @@ u32 func_800FB6FC_UnusedMinigame0(void);
 s32 func_800FB734_UnusedMinigame0(omObjData* obj);
 s16 func_800FB810_UnusedMinigame0(f32 x, f32 z, s32 mask);
 s16 func_800FB904_UnusedMinigame0(s16* x, s16* z);
-s32 func_800FBAA0_UnusedMinigame0(s16 x, s16 z);
+s16 func_800FBAA0_UnusedMinigame0(s16 x, s16 z);
 void func_800FBB18_UnusedMinigame0(f32 x, f32 z);
 void func_800FBFE4_UnusedMinigame0(omObjData* obj);
 void func_800FC29C_UnusedMinigame0(f32* x, f32* z, f32 dist, UM0Vec2* pts, s16 n);
