@@ -353,7 +353,7 @@ void func_80015C10(s16 id) {
     }
 }
 
-// one unfilled delay slot on the newline path's jump (masked 2)
+// one unfilled delay slot on the newline path's jump (masked 2); M1g: continue after str++ (no change), str++ before the check (cross-jumped, 33)
 #ifdef NON_MATCHING
 void func_80015F90(u8* str) {
     Win* w = &D_800F3B88[D_800F33E8];

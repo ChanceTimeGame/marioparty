@@ -127,7 +127,7 @@ s32 func_800F66D0_GoombaCoinStealPeachBoard(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_GoombaCoinStealPeachBoard/2872A0", func_800F66D0_GoombaCoinStealPeachBoard);
 #endif
 
-// loop invariant motion: GCC hoists the -1 button value into s7 (retail loads it at the store); 169 vs 167 instructions, masked 18
+// loop invariant motion: GCC hoists the -1 button value into s7 (retail loads it at the store); 169 vs 167 instructions, masked 18; M1g: inverted flags test (masked 47), i != D first (masked 34)
 #ifdef NON_MATCHING
 s32 func_800F68B8_GoombaCoinStealPeachBoard(s32 win) {
     s16 buttons[4];
