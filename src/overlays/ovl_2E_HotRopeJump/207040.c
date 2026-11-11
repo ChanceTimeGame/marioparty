@@ -921,7 +921,7 @@ void func_800F8FF4_HotRopeJump(s16 id) {
     HRJFx* fx = &D_80103298[id];
 
     fx->dl = (Gfx*)-1;
-    fx->unk_04 = NULL;
+    fx->model = NULL;
     fx->unk_08 = 0;
     fx->flags = 0;
     fx->sprite = 0;
@@ -1080,8 +1080,6 @@ void func_800F9080_HotRopeJump(void) {
 
 /* Draws the billboards: each one's matrix (facing the camera unless unk_08) and display list, into
    the billboard model's list for this frame. */
-// NON_MATCHING: scheduling of the view-matrix copy and the fx->unk_04 load (raw 10, masked 6); tried operand order, &D_800C3110->unk_138 + i * 2, i * 128
-#ifdef NON_MATCHING
 void func_800FA2F4_HotRopeJump(void) {
     Mtx view;
     Matrix4f m;
@@ -1091,12 +1089,14 @@ void func_800FA2F4_HotRopeJump(void) {
     Mtx* mtx;
     HRJFx* fx;
     s32 i;
+    u8* cams;
 
     func_800F9080_HotRopeJump();
     D_800F2B7C[D_801004D4_HotRopeJump].unk_6C->unk_00[0] = D_801004C8_HotRopeJump[D_80100324_HotRopeJump];
     gfx = D_801004C8_HotRopeJump[D_80100324_HotRopeJump];
     mtx = D_800FEB10_HotRopeJump[D_80100324_HotRopeJump];
-    view = ((unk_Struct00*)((u8*)D_800C3110 + (D_800F3FA8 << 7)))->unk_138;
+    cams = (u8*)D_800C3110;
+    view = ((unk_Struct00*)(cams + (D_800F3FA8 << 7)))->unk_138;
     gSPClearGeometryMode(gfx++, G_CULL_BACK | G_LIGHTING);
     gSPSetGeometryMode(gfx++, G_ZBUFFER);
     for (i = 0; i < D_801004C4_HotRopeJump; i++) {
@@ -1115,7 +1115,7 @@ void func_800FA2F4_HotRopeJump(void) {
                 MtxReset(m, m2);
                 MtxMult(bb, m2, m);
             } else {
-                gSPSegment(gfx++, 1, osVirtualToPhysical(fx->unk_04[D_800F37F0 + 2]));
+                gSPSegment(gfx++, 1, osVirtualToPhysical(fx->model->unk_08[D_800F37F0]));
             }
             func_800A0A20(m, mtx);
             gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -1125,9 +1125,6 @@ void func_800FA2F4_HotRopeJump(void) {
     gSPMatrix(gfx++, osVirtualToPhysical(&view), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HotRopeJump/207040", func_800FA2F4_HotRopeJump);
-#endif
 
 void func_800FA60C_HotRopeJump(void) {
     s32 i;

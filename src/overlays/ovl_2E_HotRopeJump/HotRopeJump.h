@@ -14,7 +14,7 @@
    shift every later field on the host: use names, never offsets. */
 typedef struct HRJFx {
     /* 0x00 */ Gfx* dl;      /* (Gfx*)-1 = free, NULL = nothing this frame */
-    /* 0x04 */ void** unk_04; /* used when unk_08 != 0 ([2 + frame] is a segment); nothing sets it */
+    /* 0x04 */ struct unk2C0C0StructC0* model; /* used when unk_08 != 0 (its per-frame segment list); nothing sets it */
     /* 0x08 */ s8 unk_08;
     /* 0x09 */ char unk_09;
     /* 0x0A */ u16 sprite;   /* D_800EC700 index */
