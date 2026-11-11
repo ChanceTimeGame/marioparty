@@ -194,22 +194,20 @@ void func_80017C0C(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b) {
     }
 }
 
-// flip held in a copy register and the motion pointer preloaded only in retail (masked 11)
-#ifdef NON_MATCHING
 void func_80017D1C(omObjData* obj) {
     ActorWork* w = obj->unk_50;
     s16* motion = obj->motion;
-    s32 flip = (w->req.flags & 1) * 2;
+    s16 flip = (w->req.flags & 1) ? 2 : 0;
+    s16 mot;
 
     if (w->table[22].flags & 4) {
-        func_80028498(obj->model[0], motion[22] & 0x3FFF, flip);
+        mot = motion[22] & 0x3FFF;
+        func_80028498(obj->model[0], mot, flip);
     } else {
-        func_80028498(obj->model[0], func_80025E48(obj->motion[22] & 0x3FFF), flip);
+        mot = func_80025E48(obj->motion[22] & 0x3FFF);
+        func_80028498(obj->model[0], mot, flip);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/18650", func_80017D1C);
-#endif
 
 void func_80017DB0(omObjData* obj) {
     u16 mdl = obj->model[0];
