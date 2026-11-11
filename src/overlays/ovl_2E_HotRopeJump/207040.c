@@ -1237,7 +1237,8 @@ void func_800FA9DC_HotRopeJump(omObjData* obj) {
 
 /* World position -> screen position (x, y) and depth (z), through camera cam's view matrix. */
 // NON_MATCHING: register allocation: sz and the 0.01744 constant swap f22/f24 (masked 0); out is
-// written as f32[] so the store does not let GCC keep D_800F3FA8 cached
+// written as f32[] so the store does not let GCC keep D_800F3FA8 cached; M1h: func_80066DF4's separate dist
+// local and declaration order leave the same swap
 #ifdef NON_MATCHING
 void func_800FAB34_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
     Mtx mtx;
