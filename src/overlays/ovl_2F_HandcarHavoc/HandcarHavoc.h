@@ -178,11 +178,6 @@ typedef struct HHCameraView {
     /* 0x14 */ f32 near;
 } HHCameraView; /* size = 0x18 */
 
-typedef struct HHCount {
-    u16 timer;
-    u16 delay;
-} HHCount;
-
 /* obj->work[0..3] tested as one big-endian word (retail: lw + and 0x06000000 = work[0] & 6). */
 #define HH_DONE(obj) (*(u32*)(obj)->work & 0x06000000)
 
@@ -316,7 +311,8 @@ extern f32 D_800FF5B0_HandcarHavoc[2];
 extern f32 D_800FF5B8_HandcarHavoc[2];
 extern f32 D_800FF5C0_HandcarHavoc[2];
 extern f32 D_800FF5C8_HandcarHavoc;
-extern HHCount D_800FF5CC_HandcarHavoc;
+extern u16 D_800FF5CC_HandcarHavoc; /* end timer */
+extern u16 D_800FF5CE_HandcarHavoc; /* message delay */
 extern s16 D_800FF5D0_HandcarHavoc;      /* _CheckFlag(0x2B): story/board mode */
 extern s16 D_800FF5D2_HandcarHavoc;
 extern s16 D_800FF5D4_HandcarHavoc;

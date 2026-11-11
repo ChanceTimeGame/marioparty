@@ -414,7 +414,7 @@ void func_800F7EC8_HandcarHavoc(omObjData* arg0) {
 }
 
 /* Builds a team's car and its two riders. */
-// NON_MATCHING: 0.0f stored with swc1 in retail; register allocation
+// register allocation (masked 27): layer reloaded through t0 from its stack slot, &w->front[seat] operand order; tried chained zero/rot stores, (s16) sprite
 #ifdef NON_MATCHING
 void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
     Vec pos;
@@ -451,9 +451,7 @@ void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
     w->chips[1][0] = 0;
     w->chips[1][1] = 0;
     w->brake = 0;
-    w->skidTimer = 0.0f;
-    w->tipTimer = 0.0f;
-    w->unk94 = 0.0f;
+    w->unk94 = w->tipTimer = w->skidTimer = 0.0f;
     w->cpuStickTime[1] = 0;
     w->cpuStickTime[0] = 0;
     w->cpuStick[1] = 0;
@@ -534,7 +532,7 @@ void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
             }
             func_80025BB8(obj->model[3 + seat], obj->motion[1 + seat]);
             func_80025EB4(obj->model[3 + seat], 1, 1);
-            w->face[seat] = func_80019060(InitSprite(D_800FF3A0_HandcarHavoc[chr]), 0, 1);
+            w->face[seat] = func_80019060((s16)InitSprite(D_800FF3A0_HandcarHavoc[chr]), 0, 1);
             ShowBasicSprite(w->face[seat]);
             w->seat[seat] = D_800FF3C8_HandcarHavoc[GwPlayer[i].character];
             if (seat == 0) {
@@ -568,9 +566,9 @@ void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
     }
     D_800FF614_HandcarHavoc -= w->dist[0];
     func_800FC338_HandcarHavoc(obj, &rot, &pos);
-    w->rot.x = w->prevRot.x = rot.x;
-    w->rot.y = w->prevRot.y = rot.y;
-    w->rot.z = w->prevRot.z = rot.z;
+    w->prevRot.x = w->rot.x = rot.x;
+    w->prevRot.y = w->rot.y = rot.y;
+    w->prevRot.z = w->rot.z = rot.z;
     omSetTra(obj, pos.x, pos.y, pos.z);
     func_800F93DC_HandcarHavoc(obj);
     w->prevSlope.x = w->slope.x;
@@ -587,13 +585,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F7F0
 #endif
 
 /* The race: both riders' input pumps, leans and brakes the car. */
-// NON_MATCHING: retail shares the clamp stores of the speed/lean tails (cross-jumped)
-#ifdef NON_MATCHING
 void func_800F8730_HandcarHavoc(omObjData* obj) {
     Vec rot;
     Vec pos;
     HHPad pad[2];
     HHCar* w;
+    f32 friction;
     u16 team;
     s16 i;
     u16 port;
@@ -626,13 +623,14 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
             }
             w->leanIn += func_800F9774_HandcarHavoc(pad[i].stkX);
         }
+        friction = 0.2f;
         if (w->speed < 0.0f) {
-            w->speed += 0.2f;
+            w->speed += friction;
             if (w->speed > 0.0f) {
                 w->speed = 0.0f;
             }
         } else {
-            w->speed -= 0.2f;
+            w->speed -= friction;
             if (w->speed < 0.0f) {
                 w->speed = 0.0f;
             }
@@ -688,13 +686,12 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
     if (w->rot.z >= 360.0f) {
         w->rot.z -= 360.0f;
     }
-    if (w->leanIn < w->lean) {
+    if (w->lean > w->leanIn) {
         w->lean -= 2.0f;
         if (w->lean < w->leanIn) {
             w->lean = w->leanIn;
         }
-    }
-    if (w->lean < w->leanIn) {
+    } else if (w->lean < w->leanIn) {
         w->lean += 2.0f;
         if (w->leanIn < w->lean) {
             w->lean = w->leanIn;
@@ -705,10 +702,10 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
     func_800F93DC_HandcarHavoc(obj);
     func_800FCBA4_HandcarHavoc(obj);
     func_800FDBC8_HandcarHavoc(obj);
-    if (!(w->pump >= 0.1f)) {
-        w->pump = 0.0f;
-    } else {
+    if (w->pump >= 0.1f) {
         w->pump -= 0.06f;
+    } else {
+        w->pump = 0.0f;
     }
     for (i = 0; i < 3; i++) {
         (&w->prevSlope.x)[i] = (&w->slope.x)[i];
@@ -717,9 +714,6 @@ void func_800F8730_HandcarHavoc(omObjData* obj) {
     D_800FF5D8_HandcarHavoc[team] = obj->trans.y + -1500.0f;
     func_800FF0AC_HandcarHavoc(w);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F8730_HandcarHavoc);
-#endif
 
 /* Tilt from the lean and the bend; tipping and skidding. */
 void func_800F8E00_HandcarHavoc(omObjData* obj) {
@@ -936,8 +930,6 @@ f32 func_800F9774_HandcarHavoc(s8 arg0) {
 }
 
 /* Tipping over: the car rolls onto its side, then the riders are thrown. */
-// NON_MATCHING: retail shares the lean clamp store (cross-jumped)
-#ifdef NON_MATCHING
 void func_800F9844_HandcarHavoc(omObjData* obj) {
     Vec rot;
     Vec pos;
@@ -982,13 +974,12 @@ void func_800F9844_HandcarHavoc(omObjData* obj) {
     if (w->rot.z >= 360.0f) {
         w->rot.z -= 360.0f;
     }
-    if (w->leanIn < w->lean) {
+    if (w->lean > w->leanIn) {
         w->lean -= 2.0f;
         if (w->lean < w->leanIn) {
             w->lean = w->leanIn;
         }
-    }
-    if (w->lean < w->leanIn) {
+    } else if (w->lean < w->leanIn) {
         w->lean += 2.0f;
         if (w->leanIn < w->lean) {
             w->lean = w->leanIn;
@@ -1004,13 +995,8 @@ void func_800F9844_HandcarHavoc(omObjData* obj) {
     D_800FF5D8_HandcarHavoc[w->team] = obj->trans.y + -1500.0f;
     obj->work[0] |= 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9844_HandcarHavoc);
-#endif
 
 /* Throws both riders off the side the car fell to. */
-// NON_MATCHING: retail stores the fall yaw once in a shared tail
-#ifdef NON_MATCHING
 void func_800F9B54_HandcarHavoc(omObjData* obj) {
     Vec pos;
     HHCar* w;
@@ -1025,8 +1011,7 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
         f = rider->unk_50 = func_80023684(sizeof(HHFall), 0x7918);
         if (obj->work[0] & 0x20) {
             f->yaw = w->rot.y - 90.0f;
-        }
-        if (obj->work[0] & 0x40) {
+        } else if (obj->work[0] & 0x40) {
             f->yaw = w->rot.y + 90.0f;
         }
         if (f->yaw < 0.0f) {
@@ -1042,8 +1027,7 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
         omSetTra(rider, pos.x, pos.y, pos.z);
         omSetRot(rider, 0.0f, ry, 0.0f);
         func_80025BB8(rider->model[0], rider->motion[0]);
-        f->angle = 10.0f;
-        f->v0 = 10.0f;
+        f->v0 = f->angle = 10.0f;
         f->t = 0.0f;
         f->g = 2.5f;
         f->side = 40.0f;
@@ -1062,9 +1046,6 @@ void func_800F9B54_HandcarHavoc(omObjData* obj) {
     func_800FB5DC_HandcarHavoc(obj);
     D_80101CA0_HandcarHavoc++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800F9B54_HandcarHavoc);
-#endif
 
 /* The fallen car slides off and sinks; decides the race when both have fallen. */
 // NON_MATCHING: only residue is retail's VR4300 mul-fix nop between the mul.s of fallG*t*t (as in
@@ -1175,8 +1156,6 @@ void func_800FA318_HandcarHavoc(omObjData* obj) {
 }
 
 /* Braking to a stop at the end. */
-// NON_MATCHING: retail shares the lean clamp store (cross-jumped)
-#ifdef NON_MATCHING
 void func_800FA3B8_HandcarHavoc(omObjData* obj) {
     Vec pos;
     Vec rot;
@@ -1223,13 +1202,12 @@ void func_800FA3B8_HandcarHavoc(omObjData* obj) {
     if (w->rot.z >= 360.0f) {
         w->rot.z -= 360.0f;
     }
-    if (w->leanIn < w->lean) {
+    if (w->lean > w->leanIn) {
         w->lean -= 2.0f;
         if (w->lean < w->leanIn) {
             w->lean = w->leanIn;
         }
-    }
-    if (w->lean < w->leanIn) {
+    } else if (w->lean < w->leanIn) {
         w->lean += 2.0f;
         if (w->leanIn < w->lean) {
             w->lean = w->leanIn;
@@ -1259,37 +1237,33 @@ void func_800FA3B8_HandcarHavoc(omObjData* obj) {
             func_8006071C(w->snd);
             w->sndOn = 0;
         }
-        if (D_800FF5D0_HandcarHavoc != 0) {
+        if (D_800FF5D0_HandcarHavoc == 0) {
+            if (w->team == D_80101C90_HandcarHavoc) {
+                for (i = 0; i < 2; i++) {
+                    func_80025C20(obj->model[3 + i], func_80025E48(obj->motion[9 + i]), 0, 20, 0);
+                    func_80025EB4(obj->model[3 + i], 3, 2);
+                }
+                obj->func_ptr = func_800FA8C0_HandcarHavoc;
+            } else {
+                obj->func_ptr = NULL;
+            }
+        } else {
             obj->func_ptr = NULL;
             if ((u16)(D_80101CAA_HandcarHavoc - 8) >= 2 && D_80101CAA_HandcarHavoc != 6) {
                 D_80101CAA_HandcarHavoc = 2;
             }
-        } else {
-            if (w->team != D_80101C90_HandcarHavoc) {
-                obj->func_ptr = NULL;
-                return;
-            }
-            for (i = 0; i < 2; i++) {
-                func_80025C20(obj->model[3 + i], func_80025E48(obj->motion[9 + i]), 0, 20, 0);
-                func_80025EB4(obj->model[3 + i], 3, 2);
-            }
-            obj->func_ptr = func_800FA8C0_HandcarHavoc;
         }
     } else if (w->team == D_80101C90_HandcarHavoc && fabs(w->speed) > 60.0) {
         func_800FCA58_HandcarHavoc(obj, 0);
         func_800FCA58_HandcarHavoc(obj, 1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FA3B8_HandcarHavoc);
-#endif
 
 /* The winners turn round and jump off the car. */
-// NON_MATCHING: data addressed through a section base register
-#ifdef NON_MATCHING
 void func_800FA8C0_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     f32 a;
+    f32 y;
     s32 i;
 
     w = obj->unk_50;
@@ -1324,11 +1298,11 @@ void func_800FA8C0_HandcarHavoc(omObjData* obj) {
         case 1:
             D_800FF5C8_HandcarHavoc += 1.0f;
             for (i = 0; i < 2; i++) {
+                y = func_800AEAC0(70.0f) * D_800FF5C0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc -
+                    D_800FF5C8_HandcarHavoc * 2.5f * D_800FF5C8_HandcarHavoc;
                 func_80025798(obj->model[3 + i],
-                              D_800FF5B0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc + D_800FF598_HandcarHavoc[i].x,
-                              func_800AEAC0(70.0f) * D_800FF5C0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc -
-                                  D_800FF5C8_HandcarHavoc * 2.5f * D_800FF5C8_HandcarHavoc +
-                                  D_800FF598_HandcarHavoc[i].y,
+                              D_800FF598_HandcarHavoc[i].x + D_800FF5B0_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc,
+                              y + D_800FF598_HandcarHavoc[i].y,
                               D_800FF5B8_HandcarHavoc[i] * D_800FF5C8_HandcarHavoc + D_800FF598_HandcarHavoc[i].z);
             }
             if (D_800FF5C8_HandcarHavoc >= 15.0f) {
@@ -1358,9 +1332,6 @@ void func_800FA8C0_HandcarHavoc(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FA8C0_HandcarHavoc);
-#endif
 
 void func_800FAE64_HandcarHavoc(omObjData* obj) {
     s32 i;
@@ -1389,8 +1360,6 @@ void func_800FAF80_HandcarHavoc(omObjData* arg0) {
 }
 
 /* A team's camera: behind the car. */
-// NON_MATCHING: one reload of the camera yaw
-#ifdef NON_MATCHING
 void func_800FAF9C_HandcarHavoc(omObjData* obj, u16 team) {
     HHCam* c;
     HHCar* w;
@@ -1400,14 +1369,11 @@ void func_800FAF9C_HandcarHavoc(omObjData* obj, u16 team) {
     w = D_800FF618_HandcarHavoc[team]->unk_50;
     CRotM[team].x = c->rx = w->rot.x + w->rot.z - 25.0f;
     CRotM[team].y = c->ry = w->rot.y;
-    CenterM[team].x = D_800FF618_HandcarHavoc[team]->trans.x - func_800AEAC0(c->ry) * 300.0f;
+    CenterM[team].x = D_800FF618_HandcarHavoc[team]->trans.x - func_800AEAC0(CRotM[team].y) * 300.0f;
     CenterM[team].y = D_800FF618_HandcarHavoc[team]->trans.y;
     CenterM[team].z = D_800FF618_HandcarHavoc[team]->trans.z - func_800AEFD0(CRotM[team].y) * 300.0f;
     obj->func_ptr = func_800FB0EC_HandcarHavoc;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FAF9C_HandcarHavoc);
-#endif
 
 /* Follows the car: pitch from the slope, yaw from the track. */
 void func_800FB0EC_HandcarHavoc(omObjData* obj) {
@@ -1542,21 +1508,18 @@ void func_800FB81C_HandcarHavoc(omObjData* obj) {
     }
 }
 
-// NON_MATCHING: retail computes the camera index once
-#ifdef NON_MATCHING
 void func_800FB994_HandcarHavoc(omObjData* obj) {
     HHCam* c;
+    s32 cam;
 
     c = obj->unk_50;
-    CenterM[c->cam].x = func_800AEAC0(CRotM[c->cam].y - 90.0f) * 20.0f + CenterM[c->cam].x;
-    CenterM[c->cam].z = func_800AEFD0(CRotM[c->cam].y - 90.0f) * 20.0f + CenterM[c->cam].z;
+    cam = c->cam;
+    CenterM[cam].x = func_800AEAC0(CRotM[cam].y - 90.0f) * 20.0f + CenterM[cam].x;
+    CenterM[cam].z = func_800AEFD0(CRotM[cam].y - 90.0f) * 20.0f + CenterM[cam].z;
     if (--c->timer == 0) {
         obj->func_ptr = NULL;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FB994_HandcarHavoc);
-#endif
 
 /* Intro: instructions, then "Start". */
 void func_800FBA80_HandcarHavoc(omObjData* obj) {
@@ -1587,10 +1550,9 @@ void func_800FBA80_HandcarHavoc(omObjData* obj) {
 }
 
 /* The end: messages, coins, the record, leaving. */
-// NON_MATCHING: register allocation; the winners array spills
-#ifdef NON_MATCHING
 void func_800FBB78_HandcarHavoc(omObjData* obj) {
     s32 pl[2];
+    HHCar* winner;
     HHCar* loser;
     s32 i;
     s32 snd;
@@ -1609,8 +1571,9 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
             break;
         case 2:
             if (GMesStatAllGet() == 0 || (GMesStatAllGet() & 2)) {
+                winner = D_800FF618_HandcarHavoc[D_80101C90_HandcarHavoc]->unk_50;
                 for (i = 0; i < 2; i++) {
-                    pl[i] = (u16)((HHCar*)D_800FF618_HandcarHavoc[D_80101C90_HandcarHavoc]->unk_50)->player[i];
+                    pl[i] = (u16)winner->player[i];
                 }
                 GwPlayer[pl[0]].coins_mg += 10;
                 GwPlayer[pl[1]].coins_mg += 10;
@@ -1626,12 +1589,12 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
                             GwPlayer[(u16)loser->player[i]].coins_mg -= 10;
                         }
                     }
-                    D_800FF5CC_HandcarHavoc.timer = 105;
+                    D_800FF5CC_HandcarHavoc = 105;
                     if ((u16)D_80101CA8_HandcarHavoc == 1) {
-                        D_800FF5CC_HandcarHavoc.delay = 30;
+                        D_800FF5CE_HandcarHavoc = 30;
                         snd = 0x37;
                     } else {
-                        D_800FF5CC_HandcarHavoc.delay = 0;
+                        D_800FF5CE_HandcarHavoc = 0;
                         snd = 0x36;
                     }
                     func_80060128(snd);
@@ -1648,11 +1611,11 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
             }
             break;
         case 4:
-            if (D_800FF5CC_HandcarHavoc.delay != 0 && --D_800FF5CC_HandcarHavoc.delay == 0) {
+            if (D_800FF5CE_HandcarHavoc != 0 && --D_800FF5CE_HandcarHavoc == 0) {
                 GMesCreate(12);
-                D_800FF5CC_HandcarHavoc.timer = 120;
+                D_800FF5CC_HandcarHavoc = 120;
             }
-            if (--D_800FF5CC_HandcarHavoc.timer == 0) {
+            if (--D_800FF5CC_HandcarHavoc == 0) {
                 D_80101CAA_HandcarHavoc = 5;
                 func_800726AC(0, 20);
             }
@@ -1665,7 +1628,7 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
         case 6:
             if (D_800FF5D0_HandcarHavoc == 0) {
                 GMesCreate(17);
-                D_800FF5CC_HandcarHavoc.timer = 90;
+                D_800FF5CC_HandcarHavoc = 90;
                 D_80101CAA_HandcarHavoc = 3;
                 break;
             }
@@ -1675,7 +1638,7 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
         case 7:
             if (D_800FF5D0_HandcarHavoc == 0) {
                 GMesCreate(16);
-                D_800FF5CC_HandcarHavoc.timer = 120;
+                D_800FF5CC_HandcarHavoc = 120;
                 D_80101CAA_HandcarHavoc = 3;
                 break;
             }
@@ -1691,9 +1654,6 @@ void func_800FBB78_HandcarHavoc(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FBB78_HandcarHavoc);
-#endif
 
 void func_800FBF5C_HandcarHavoc(omObjData* obj) {
     if ((u16)D_800FF400_HandcarHavoc != 0 || D_800F5144 != 0) {
@@ -2058,21 +2018,24 @@ void func_800FCFB4_HandcarHavoc(omObjData* obj) {
 }
 
 /* m'ss"cc */
-// NON_MATCHING: retail walks the digit array with pointer increments
+// register allocation (masked 0, raw 14): rest gets its own register, sec % 10 goes straight to a1; tried declaration order
 #ifdef NON_MATCHING
 void func_800FCFFC_HandcarHavoc(u16 time, u16* digit) {
     u16 rest;
     u16 sec;
     u16 cs;
 
-    func_80018E50(digit[0], time / 3600, 0);
+    func_80018E50(*digit, time / 3600, 0);
+    digit += 2;
     rest = time % 3600;
     sec = rest / 60;
-    func_80018E50(digit[2], sec / 10, 0);
-    func_80018E50(digit[3], sec % 10, 0);
+    func_80018E50(*digit, sec / 10, 0);
+    digit++;
+    func_80018E50(*digit, sec % 10, 0);
+    digit += 2;
     cs = (u16)(rest % 60) * 1.6666666f;
-    func_80018E50(digit[5], cs / 10, 0);
-    func_80018E50(digit[6], cs % 10, 0);
+    func_80018E50(digit[0], cs / 10, 0);
+    func_80018E50(digit[1], cs % 10, 0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_HandcarHavoc/20F570", func_800FCFFC_HandcarHavoc);

@@ -220,15 +220,13 @@ void func_800FB04C_LimboDance(f32 x) {
 }
 
 /* Follows the camera: scrolls the sea, recycles scenery, lights the dancer from the torches. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800FB058_LimboDance(omObjData* obj) {
     LDScenery* s;
     Gfx* gfx;
     f32 scroll;
     f32 dx;
+    f32 dy;
     f32 dz;
-    f32 d2;
     f32 d;
     f32 l;
     s32 i;
@@ -262,30 +260,28 @@ void func_800FB058_LimboDance(omObjData* obj) {
     for (i = 0; i < 3; i++) {
         s = &D_800FF220_LimboDance[i];
         dx = s->pos.x - D_800FE9B4_LimboDance;
+        dy = 100.0f;
         dz = s->pos.z;
-        d2 = dx * dx + 10000.0f + dz * dz;
-        l = 255.0f / d2 * 100.0 * 100.0 * 12.0;
+        d = dx * dx + dy * dy + dz * dz;
+        l = 255.0f / d * 100.0 * 100.0 * 12.0;
         if (l >= 255.0f) {
             l = 255.0f;
         }
-        d = func_800B1750(d2);
+        d = func_800B1750(d);
         D_800EE9A0.def[i + 2].col[0] = l;
         /* retail writes def[2]'s blue for every torch */
-        D_800EE9A0.def[2].col[2] = D_800EE9A0.def[i + 2].col[1] = l * 0.375;
+        D_800EE9A0.def[i + 2].col[1] = D_800EE9A0.def[2].col[2] = l * 0.375;
         D_800EE9A0.def[i + 2].dir[0] = dx / d * 120.0f;
-        D_800EE9A0.def[i + 2].dir[1] = 100.0f / d * 120.0f;
+        D_800EE9A0.def[i + 2].dir[1] = dy / d * 120.0f;
         D_800EE9A0.def[i + 2].dir[2] = dz / d * 120.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E4480", func_800FB058_LimboDance);
-#endif
 
 /* Appends the sea strip's display list: the sprite's first frame drawn as 320-wide texture
    rectangles, scrolled by scroll texels. */
 // NON_MATCHING: register allocation / scheduling
 #ifdef NON_MATCHING
-void func_800FB504_LimboDance(s16 sprite, Gfx** pgfx, f32 scroll) {
+void func_800FB504_LimboDance(s32 sprite, Gfx** pgfx, f32 scroll) {
     Gfx* gfx;
     unk65770Anim* anim;
     unk65770AnimC* frame;
@@ -436,11 +432,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E4480", func_800FBAF0_
 #endif
 
 /* Sways a torch flame's vertices for this frame (amp: the gust strength). */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800FC4FC_LimboDance(s32 id, f32 amp, f32 angle) {
     LDBillboard* b = &D_80103298[id];
-    f64 k;
+    s32 alpha;
 
     if (amp > 8.0) {
         b->unk_10[D_800F37F0][0].v.ob[0] =
@@ -450,23 +444,21 @@ void func_800FC4FC_LimboDance(s32 id, f32 amp, f32 angle) {
         b->unk_10[D_800F37F0][1].v.ob[0] =
             D_800FEA28_LimboDance[1].v.ob[0] + func_800AEAC0(angle) * amp * 1.25;
         b->unk_10[D_800F37F0][1].v.ob[1] = D_800FEA28_LimboDance[1].v.ob[1] + func_800AEFD0(angle) * amp * 1.75;
-        b->unk_10[D_800F37F0][5].v.ob[0] = D_800FEA28_LimboDance[5].v.ob[0] + func_800AEAC0(angle) * amp * (k = 0.175);
+        b->unk_10[D_800F37F0][5].v.ob[0] = D_800FEA28_LimboDance[5].v.ob[0] + func_800AEAC0(angle) * amp * 0.175;
+        b->unk_10[D_800F37F0][6].v.ob[0] = D_800FEA28_LimboDance[6].v.ob[0] + func_800AEAC0(angle) * amp * 0.175;
     } else {
         b->unk_10[D_800F37F0][0].v.ob[0] = D_800FEA28_LimboDance[0].v.ob[0] + func_800AEAC0(angle) * amp;
         b->unk_10[D_800F37F0][0].v.ob[1] =
             D_800FEA28_LimboDance[0].v.ob[1] + func_800AEFD0(360.0f - angle) * -amp * 2.5;
         b->unk_10[D_800F37F0][1].v.ob[0] = D_800FEA28_LimboDance[1].v.ob[0] + func_800AEAC0(-angle) * amp;
         b->unk_10[D_800F37F0][1].v.ob[1] = D_800FEA28_LimboDance[1].v.ob[1] + func_800AEFD0(angle) * amp * 2.5;
-        b->unk_10[D_800F37F0][5].v.ob[0] = D_800FEA28_LimboDance[5].v.ob[0] + func_800AEAC0(angle) * amp * (k = 0.075);
+        b->unk_10[D_800F37F0][5].v.ob[0] = D_800FEA28_LimboDance[5].v.ob[0] + func_800AEAC0(angle) * amp * 0.075;
+        b->unk_10[D_800F37F0][6].v.ob[0] = D_800FEA28_LimboDance[6].v.ob[0] + func_800AEAC0(angle) * amp * 0.075;
     }
-    b->unk_10[D_800F37F0][6].v.ob[0] = D_800FEA28_LimboDance[6].v.ob[0] + func_800AEAC0(angle) * amp * k;
     b->unk_10[D_800F37F0][4].v.ob[0] = D_800FEA28_LimboDance[4].v.ob[0] + func_800AEAC0(angle) * amp * 0.2;
-    b->unk_10[D_800F37F0][4].v.cn[3] =
-        D_800FEA28_LimboDance[4].v.cn[3] + (s32)(-func_800AEAC0(2.0f * angle) * 55.0f);
+    alpha = -func_800AEAC0(2.0f * angle) * 55.0f;
+    b->unk_10[D_800F37F0][4].v.cn[3] = D_800FEA28_LimboDance[4].v.cn[3] + alpha;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E4480", func_800FC4FC_LimboDance);
-#endif
 
 
 /* Takes a free billboard for sprite and builds its display list (ovl_25's func_800FE2F0). */

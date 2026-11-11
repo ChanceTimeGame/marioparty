@@ -5,7 +5,7 @@ f32 func_8009C240(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ) {
     return (aX * bX) + (aY * bY) + (aZ * bZ);
 }
 
-// register allocation: retail copies each result through $f2 before storing (masked 18).
+// register allocation (-O0, masked 9): retail copies each normalised component through $f2 (mov.s) before storing; tried x = x * len and an f32 cast
 // Hudson's copy of guLookAtF: eye - at in single precision (the SDK uses at - eye and -1.0).
 #ifdef NON_MATCHING
 void HuGuLookAtF(Matrix4f matrix, f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt, f32 xUp, f32 yUp, f32 zUp) {
@@ -50,9 +50,7 @@ void HuGuLookAtF(Matrix4f matrix, f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt
     matrix[1][1] = yUp;
     matrix[2][1] = zUp;
     matrix[3][1] = -(xEye * xUp + yEye * yUp + zEye * zUp);
-    matrix[2][3] = 0.0f;
-    matrix[1][3] = 0.0f;
-    matrix[0][3] = 0.0f;
+    matrix[0][3] = matrix[1][3] = matrix[2][3] = 0.0f;
     matrix[3][3] = 1.0f;
 }
 #else

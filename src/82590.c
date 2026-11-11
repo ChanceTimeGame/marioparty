@@ -24,6 +24,7 @@ s32 func_80081990(LEOCmdRead* cmd, u32 lba, OSMesgQueue* mq) {
 INCLUDE_ASM("asm/nonmatchings/82590", func_80081990);
 #endif
 
+// IDO-compiled (masked 20, logic checked): KMC GCC cannot reproduce it
 #ifdef NON_MATCHING
 s32 func_800819F0(LEOCmdRead* cmd, s32 direction, u32 lba, void* vaddr, u32 nlbas, OSMesgQueue* mq) {
     if (D_800C63D0 == 0) {

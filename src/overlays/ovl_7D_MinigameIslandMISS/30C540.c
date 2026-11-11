@@ -801,7 +801,7 @@ void func_800F8768_MinigameIslandMISS(void) {
     D_800F9123_MinigameIslandMISS = 1;
 }
 
-// register allocation, retail reloads vals[i] in the second sign test (masked 5)
+// control flow/CSE (masked 3): retail reloads vals[i] (address recomputed) in the second sign test; tried plain vals[i] (masked 13) and an inverted || test
 #ifdef NON_MATCHING
 void func_800F8898_MinigameIslandMISS(void) {
     s16 vals[2];
@@ -825,8 +825,8 @@ void func_800F8898_MinigameIslandMISS(void) {
             nd[i] = 2;
         }
     }
-    for (i = 0, k = 2; i < 2; i++, k = 2) {
-        for (j = 0; j < 3; j++, k++) {
+    for (i = 0; i < 2; i++) {
+        for (k = 2, j = 0; j < 3; j++, k++) {
             func_800672DC(D_800F92B0_MinigameIslandMISS[i], k, digits[i][j], 0);
             if (i == 0) {
                 if (vals[0] == 0) {
