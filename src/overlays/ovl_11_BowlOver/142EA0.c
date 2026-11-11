@@ -150,47 +150,55 @@ void func_800FAAF8_BowlOver(u8 mdl, f32 x, f32 y, f32 z)
   func_80025798(mdl, x, 5.0f, z);
 }
 
-// float register allocation (masked 0, raw 10): x/vz swap f6/f8; tried declaration order, branch order (M1c)
-#ifdef NON_MATCHING
-void func_800FABA0_BowlOver(omObjData* obj, f32* dx, f32* dz) {
-    f32 vx;
-    f32 vz;
-    f32 x;
-    f32 z;
-    f32 lim;
-
-    vx = *dx;
-    vz = *dz;
-    x = vx + obj->trans.x;
-    z = vz + obj->trans.z;
-    if (z < D_800FD5BC_BowlOver[0]) {
-        vz = 0.0f;
-        obj->trans.z = D_800FD5BC_BowlOver[0];
-    } else if (D_800FD5D4_BowlOver - 50.0f < z) {
-        vz = 0.0f;
-        obj->trans.z = D_800FD5D4_BowlOver - 50.0f;
+// decomp-permuter
+void func_800FABA0_BowlOver(omObjData *obj, f32 *dx, f32 *dz)
+{
+  f32 vx;
+  float new_var;
+  f32 vz;
+  f32 x;
+  f32 z;
+  f32 lim;
+  x = *dz;
+  vx = *dx;
+  vz = x;
+  x = vx + obj->trans.x;
+  z = vz + obj->trans.z;
+  if (z < D_800FD5BC_BowlOver[0])
+  {
+    vz = 0.0f;
+    obj->trans.z = D_800FD5BC_BowlOver[0];
+  }
+  else
+    if ((D_800FD5D4_BowlOver - 50.0f) < z)
+  {
+    new_var = D_800FD5D4_BowlOver - 50.0f;
+    vz = 0.0f;
+    obj->trans.z = new_var;
+  }
+  z = vz + obj->trans.z;
+  lim = z - D_800FD5D4_BowlOver;
+  if (x < 0.0f)
+  {
+    lim = lim / 2.0f;
+    if (x <= lim)
+    {
+      vx = 0.0f;
+      obj->trans.x = lim;
     }
-    z = vz + obj->trans.z;
-    lim = z - D_800FD5D4_BowlOver;
-    if (x < 0.0f) {
-        lim = lim / 2.0f;
-        if (x <= lim) {
-            vx = 0.0f;
-            obj->trans.x = lim;
-        }
-    } else {
-        lim = -lim / 2.0f;
-        if (lim <= x) {
-            vx = 0.0f;
-            obj->trans.x = lim;
-        }
+  }
+  else
+  {
+    lim = (-lim) / 2.0f;
+    if (lim <= x)
+    {
+      vx = 0.0f;
+      obj->trans.x = lim;
     }
-    *dx = vx;
-    *dz = vz;
+  }
+  *dx = vx;
+  *dz = vz;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FABA0_BowlOver);
-#endif
 
 void func_800FAC94_BowlOver(omObjData* obj, f32 dx, f32 dz) {
     omObjData* other;

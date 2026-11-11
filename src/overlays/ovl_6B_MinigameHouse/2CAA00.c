@@ -2095,55 +2095,68 @@ void func_800FC110_MinigameHouse(void) {
         break;
     }
 }
-// register allocation s6/v1 for the table pointer (masked 0, raw 2); tried D[row], D[0] + row * 4, &D[0][row * 4]
 // (all compute the index first)
-#ifdef NON_MATCHING
-void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s32 row, s32 mode) {
-    s32 team;
-    s32 i;
-    s32 n;
-    s16 x;
-    u8* tbl;
-
-    if (mode != 0) {
-        team = 0;
-        tbl = D_8010026C_MinigameHouse[0];
-        tbl += row * 4;
-        do {
-            i = 0;
-            n = 0;
-            x = team * 0x61 + 0xB7;
-            for (; i < 4; i++) {
-                if (tbl[i] == team) {
-                    SetBasicSpritePos(sprs[i], x, (n - team) * 40 + 0x78);
-                    func_80066DC4(font->unk_14[ids[i]], 0, x, (n - team) * 40 + 0x88);
-                    n++;
-                }
-            }
-            team++;
-        } while (team < 2);
-        return;
-    }
+// decomp-permuter
+void func_800FC204_MinigameHouse(unkCommonStruct0 *font, s16 *ids, u16 *sprs, s32 row, s32 mode)
+{
+  s32 team;
+  s32 i;
+  s32 n;
+  s16 x;
+  int new_var;
+  u8 *new_var3;
+  u8 *tbl;
+  u8 *new_var2;
+  if (mode != 0)
+  {
     team = 0;
-    tbl = D_80100260_MinigameHouse[0];
+    tbl = D_8010026C_MinigameHouse[0];
     tbl += row * 4;
-    do {
-        i = 0;
-        n = 0;
-        x = team * 0x61 + 0xB7;
-        for (; i < 4; i++) {
-            if (tbl[i] == team) {
-                SetBasicSpritePos(sprs[i], x, n * 40 + 0x60);
-                func_80066DC4(font->unk_14[ids[i]], 0, x, n * 40 + 0x70);
-                n++;
-            }
+    do
+    {
+      i = 0;
+      n = 0;
+      new_var3 = tbl;
+      x = (team * 0x61) + 0xB7;
+      for (; i < 4; i++)
+      {
+        if (new_var3[i] == team)
+        {
+          SetBasicSpritePos(sprs[i], x, ((n - team) * 40) + 0x78);
+          func_80066DC4(font->unk_14[ids[i]], 0, x, ((n - team) * 40) + 0x88);
+          n++;
         }
-        team++;
-    } while (team < 2);
+      }
+
+      team++;
+    }
+    while (team < 2);
+    return;
+  }
+  team = 0;
+  tbl = D_80100260_MinigameHouse[0];
+  tbl += row * 4;
+  new_var = 2;
+  do
+  {
+    i = 0;
+    n = 0;
+    x = (team * 0x61) + 0xB7;
+    new_var2 = tbl;
+    for (; i < 4; i++)
+    {
+      if (new_var2[i] == team)
+      {
+        SetBasicSpritePos(sprs[i], x, (n * 40) + 0x60);
+        func_80066DC4(font->unk_14[ids[i]], 0, x, (n * 40) + 0x70);
+        n++;
+      }
+    }
+
+    team++;
+  }
+  while (team < new_var);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC204_MinigameHouse);
-#endif
 // register allocation of the arrow sprite s16 extension (raw 2, masked 0); tried split assignment
 #ifdef NON_MATCHING
 s32 func_800FC410_MinigameHouse(void) {

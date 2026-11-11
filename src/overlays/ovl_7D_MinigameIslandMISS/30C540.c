@@ -542,36 +542,39 @@ void func_800F795C_MinigameIslandMISS(void) {
     }
 }
 
-// register allocation: retail copies the 127 into a second register (masked 2)
-#ifdef NON_MATCHING
-void func_800F7C7C_MinigameIslandMISS(void) {
-    f32 vol;
-    s32 max = 127;
-    s32 lim;
-
-    vol = 0.0f;
+// decomp-permuter
+void func_800F7C7C_MinigameIslandMISS(void)
+{
+  f32 vol;
+  s32 max = 127;
+  short lim;
+  vol = 0.0f;
+  while (1)
+  {
+    if (D_800F9125_MinigameIslandMISS == 0)
+    {
+      func_80060214(vol);
+    }
+    vol += 4.233333f;
     lim = max;
-    while (1) {
-        if (D_800F9125_MinigameIslandMISS == 0) {
-            func_80060214(vol);
-        }
-        vol += 4.233333f;
-        if (lim <= vol) {
-            break;
-        }
-        HuPrcVSleep();
+    if (lim <= vol)
+    {
+      break;
     }
-    vol = max;
-    if (D_800F9125_MinigameIslandMISS == 0) {
-        func_80060214(vol);
-    }
-    while (1) {
-        HuPrcVSleep();
-    }
+    HuPrcVSleep();
+  }
+
+  vol = max;
+  if (D_800F9125_MinigameIslandMISS == 0)
+  {
+    func_80060214(vol);
+  }
+  while (1)
+  {
+    HuPrcVSleep();
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7D_MinigameIslandMISS/30C540", func_800F7C7C_MinigameIslandMISS);
-#endif
 
 void func_800F7D64_MinigameIslandMISS(void) {
     u16 coins;
