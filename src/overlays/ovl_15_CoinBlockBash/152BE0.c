@@ -1014,9 +1014,6 @@ s32 func_800F9CF0_CoinBlockBash(CBBPlayer* p, Vec* pos, Vec* vel, Vec* out) {
     }
     return res;
 }
-// NON_MATCHING: delay-slot fill: hit = 0 lands in the active test's slot where retail has beqzl + i++ (one instruction short;
-// a continue, and hit = 0 in the for header, change nothing)
-#ifdef NON_MATCHING
 void func_800F9FE4_CoinBlockBash(void) {
     CBBDrop* d;
     CBBPlayer* p;
@@ -1068,7 +1065,7 @@ void func_800F9FE4_CoinBlockBash(void) {
     }
     if (D_8010253C_CoinBlockBash < 0 && D_801024F0_CoinBlockBash.state == 1) {
         p = D_801025B0_CoinBlockBash;
-        for (j = 0; j < D_801031FC_CoinBlockBash; j++, p++) {
+        for (i = 0; i < D_801031FC_CoinBlockBash; i++, p++) {
             if ((p->flags & 4) && !(p->flags & 0x10)) {
                 o = p->obj;
                 dx = D_80102538_CoinBlockBash.unk_10.x - o->trans.x;
@@ -1082,9 +1079,6 @@ void func_800F9FE4_CoinBlockBash(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_CoinBlockBash/152BE0", func_800F9FE4_CoinBlockBash);
-#endif
 s32 func_800FA388_CoinBlockBash(CBBPlayer* self, Vec* pos, Vec* rot, Vec* off, f32 r) {
     Vec hit;
     Vec p;
