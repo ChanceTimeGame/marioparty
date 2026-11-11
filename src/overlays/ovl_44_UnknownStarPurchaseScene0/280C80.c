@@ -143,6 +143,7 @@ void func_800F68A0_UnknownStarPurchaseScene0(void) {
 }
 
 // register allocation: retail keeps the result window in s0 and the raw ids in s1, swapped here (masked 9)
+// M1g: s16 win (masked 35), win before/after win2 in the declarations (9), win folded into s16 menu (16, raw 23)
 #ifdef NON_MATCHING
 void func_800F6C44_UnknownStarPurchaseScene0(void) {
     s32 choice;

@@ -787,8 +787,8 @@ void func_800FDF58_LimboDance(void) {
 }
 
 /* Builds this frame's billboard display list (ovl_25's func_800FFD18). */
-// load order (masked 18): retail loads D_800C3110 before D_800F3FA8, b->unk_1C before D_800F37F0,
-// and &Center after the first mul.s, as in the ovl_25 twin; tried [] vs + forms and a Vtx** unk_1C.
+// scheduling (masked 2 plus data offsets): as the ovl_25 twin, retail loads b->unk_1C after the G_MOVEWORD
+// store and before D_800F37F0; the twin's cam/vp locals and Center.x-first eye.x fixed the rest (M1g, was 18).
 #ifdef NON_MATCHING
 void func_800FE3CC_LimboDance(void) {
     Mtx view;
@@ -800,6 +800,8 @@ void func_800FE3CC_LimboDance(void) {
     Vec at;
     Vec up;
     LDBillboard* b;
+    unk_Struct00* cam;
+    unk_Struct00* vp;
     Gfx* gfx;
     Mtx* mtx;
     f32 rx;
@@ -810,10 +812,12 @@ void func_800FE3CC_LimboDance(void) {
     *D_800F2B7C[D_800FF218_LimboDance].unk_6C->unk_00 = D_800FF200_LimboDance[D_800FE9B0_LimboDance];
     gfx = D_800FF200_LimboDance[D_800FE9B0_LimboDance];
     mtx = D_800FF20C_LimboDance[D_800FE9B0_LimboDance];
-    proj = *(&D_800C3110->unk_138 + D_800F3FA8 * 2); /* the viewport's projection pair */
+    cam = D_800C3110;
+    vp = (unk_Struct00*)((u8*)cam + D_800F3FA8 * 128);
+    proj = vp->unk_138; /* the viewport's projection pair */
     rx = CRot.x;
     ry = CRot.y;
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;

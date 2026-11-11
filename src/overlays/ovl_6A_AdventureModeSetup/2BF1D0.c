@@ -3013,6 +3013,7 @@ void func_800FF064_AdventureModeSetup() {
 
 // retail loads &GwSystem/&D_801025A0 into a1/a0 just before the tail; here GCC hoists them to the function start (masked 20);
 // assigning them after the second loop makes GCC CSE &GwSystem into the playType store instead (M1c)
+// M1g: assigning sys/sel after the playType store folds sel[-1] into an absolute store (masked 38); either order before it, masked 36
 #ifdef NON_MATCHING
 void func_800FF0A0_AdventureModeSetup(void) {
     s32 saved[4];
