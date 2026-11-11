@@ -792,7 +792,7 @@ void func_800F924C_UnusedMinigame0(omObjData* obj) {
 }
 
 /* Opens (state 1) and closes (state 2) the entrance lift (slot 0) and the gates (slots 1..4). */
-// NON_MATCHING: switch compare tree and register allocation
+// NON_MATCHING: masked 36: GCC hoists the constant 3 into s7 (retail reloads it), shifting registers; tried ternary order
 #ifdef NON_MATCHING
 void func_800F95C0_UnusedMinigame0(omObjData* obj) {
     s16 i;
@@ -812,6 +812,8 @@ void func_800F95C0_UnusedMinigame0(omObjData* obj) {
             }
         }
         switch (D_80103D8C_UnusedMinigame0[i]) {
+            case 0:
+                break;
             case 1:
                 if (i == 0) {
                     v = D_800F2B7C[m].unk_28;

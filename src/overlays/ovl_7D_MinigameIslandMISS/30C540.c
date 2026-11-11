@@ -110,8 +110,7 @@ extern s32 D_800F926C_MinigameIslandMISS;
 extern s32 D_800F9270_MinigameIslandMISS;
 extern s32 D_800F9278_MinigameIslandMISS;
 extern s32 D_800F927C_MinigameIslandMISS;
-extern s32 D_800F9284_MinigameIslandMISS[2];
-extern s32 D_800F928C_MinigameIslandMISS;
+extern s32 D_800F9284_MinigameIslandMISS[3];
 extern s32 D_800F9290_MinigameIslandMISS[2];
 extern s32 D_800F9298_MinigameIslandMISS[2][3];
 extern s32 D_800F92B0_MinigameIslandMISS[3]; /* [2] is splat's D_800F92B8 */
@@ -155,7 +154,8 @@ void func_800F6708_MinigameIslandMISS(void) {
     }
 }
 
-// file id select is if-converted differently; retail reloads vals[i] in the sign test (masked 39)
+// masked 32: the file id select has its arms swapped (tried if/else both ways, a split chain); retail
+// reloads vals[i] in the sign test after `!= 0`; s7/s8 swap
 #ifdef NON_MATCHING
 void func_800F67A4_MinigameIslandMISS(void) {
     s16 nd[2];
@@ -241,10 +241,10 @@ void func_800F67A4_MinigameIslandMISS(void) {
         k = 0;
         group = func_80064EF4(6, 5);
         D_800F92B0_MinigameIslandMISS[i] = group;
-        if (i != 0 && vals[i] >= 0) {
-            id = 0xD0004;
-        } else {
+        if (i == 0 || vals[i] < 0) {
             id = 0xC0016;
+        } else {
+            id = 0xD0004;
         }
         file = DataRead(id);
         D_800F9284_MinigameIslandMISS[i] = func_800678A4(file);
@@ -326,13 +326,13 @@ void func_800F67A4_MinigameIslandMISS(void) {
     group = func_80064EF4(6, 5);
     D_800F92B0_MinigameIslandMISS[2] = group;
     file = DataRead(0xD0004);
-    D_800F928C_MinigameIslandMISS = func_800678A4(file);
+    D_800F9284_MinigameIslandMISS[2] = func_800678A4(file);
     DataClose(file);
-    func_80067208(group, 0, D_800F928C_MinigameIslandMISS, 0);
+    func_80067208(group, 0, D_800F9284_MinigameIslandMISS[2], 0);
     func_80067598(group, 0, -1);
     func_800674BC(group, 0, 0x8000);
     func_80066DC4(group, 0, D_800F9144_MinigameIslandMISS[0][0], D_800F9144_MinigameIslandMISS[0][1]);
-    func_80067208(group, 1, D_800F928C_MinigameIslandMISS, 0);
+    func_80067208(group, 1, D_800F9284_MinigameIslandMISS[2], 0);
     func_800672B0(group, 1, 1);
     func_80067384(group, 1, 0xF);
     func_800674BC(group, 1, 0x9000);
