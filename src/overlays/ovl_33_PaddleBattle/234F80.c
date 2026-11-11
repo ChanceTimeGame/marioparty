@@ -1752,23 +1752,23 @@ void func_800FD51C_PaddleBattle(s16 model) {
     D_800FFEF0_PaddleBattle++;
 }
 
-// register allocation (masked 0, raw 19); tried size/i reuse for the malloc sizes and g/g30 order
+// register allocation (masked 0, raw 12: g/g30 get s1/s2 swapped); i reused for both malloc sizes; tried g/g30 declaration order
 #ifdef NON_MATCHING
 void func_800FD570_PaddleBattle(PBCol* e, s16 model) {
     unk2C0C0StructC0* m;
     unk2C0C0Struct30* g30;
     PBColGroup* g;
-    s32 size;
     s32 i;
 
     m = D_800F2B7C[model].unk_6C;
     e->model = model;
     e->unk2 = 4;
-    size = m->unk_6E * sizeof(unk2C0C0StructA0);
-    e->verts = HuMemDirectMalloc(size);
-    func_80023A38(m->unk_78, e->verts, size);
+    i = m->unk_6E * sizeof(unk2C0C0StructA0);
+    e->verts = HuMemDirectMalloc(i);
+    func_80023A38(m->unk_78, e->verts, i);
     e->count = (u8)m->unk_6A;
-    e->groups = HuMemDirectMalloc(e->count * sizeof(PBColGroup));
+    i = e->count;
+    e->groups = HuMemDirectMalloc(i * sizeof(PBColGroup));
     for (i = 0; i < m->unk_6A; i++) {
         g30 = &m->unk_80[i];
         g = &e->groups[i];
