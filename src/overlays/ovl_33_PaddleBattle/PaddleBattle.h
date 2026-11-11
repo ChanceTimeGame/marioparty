@@ -261,7 +261,7 @@ void func_800FD424_PaddleBattle(void);
 void func_800FD51C_PaddleBattle(s16);
 void func_800FD570_PaddleBattle(PBCol*, s16);
 s16 func_800FD714_PaddleBattle(unk2C0C0StructA0*, PBColFace*, unk2C0C0Struct20*, s16);
-s32 func_800FDBB8_PaddleBattle(Vec*, f32, f32, f32, s16);
+s32 func_800FDBB8_PaddleBattle(f32*, f32, f32, f32, s16);
 void func_800FDE08_PaddleBattle(PBColFace*, s16, Vec*, Vec*);
 
 /* ---------------------------------------------------------------------------------------------

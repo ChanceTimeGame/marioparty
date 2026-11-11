@@ -398,7 +398,7 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
     a.x = obj->trans.x;
     a.y = obj->trans.y + 300.0;
     a.z = obj->trans.z;
-    if (func_800FDBB8_PaddleBattle(&a, 0.0f, -1000.0f, 0.0f, -1) != 0) {
+    if (func_800FDBB8_PaddleBattle(&a.x, 0.0f, -1000.0f, 0.0f, -1) != 0) {
         r->y = a.y;
     }
     obj->trans.y += (r->y - obj->trans.y) * 0.2;
@@ -1277,7 +1277,7 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
         q->y = pos->y + 300.0;
         s = &st[i * 2];
         t = &s[1];
-        if (func_800FDBB8_PaddleBattle(q, 0.0f, -1000.0f, 0.0f, -1) != 0) {
+        if (func_800FDBB8_PaddleBattle(&q->x, 0.0f, -1000.0f, 0.0f, -1) != 0) {
             s[1].x = q->x;
             s[1].y = q->y;
             s[1].z = q->z;
@@ -1887,9 +1887,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD71
 
 /* Moves pos by (dx, dy, dz), stopped at the first collision face of any registered model other than
    `skip`. Returns 1 when something was hit. */
-// logic-equivalent; the unused vector, register allocation (normalised diff 22 lines)
-#ifdef NON_MATCHING
-s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+s32 func_800FDBB8_PaddleBattle(f32* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+    Vec end;
     Vec p;
     Vec d;
     unk_ovl_2D_struct* m;
@@ -1899,7 +1898,9 @@ s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     s16 ret;
 
     D_800FFEF8_PaddleBattle = 1.1f;
-    /* retail also computes pos + d into an unused vector here */
+    end.x = dx + pos[0]; /* unused */
+    end.y = dy + pos[1];
+    end.z = dz + pos[2];
     d.x = dx;
     d.y = dy;
     d.z = dz;
@@ -1908,9 +1909,9 @@ s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
             continue;
         }
         m = &D_800F2B7C[D_800FFBF0_PaddleBattle[i].model];
-        p.x = pos->x - m->unk_24;
-        p.y = pos->y - m->unk_28;
-        p.z = pos->z - m->unk_2C;
+        p.x = pos[0] - m->unk_24;
+        p.y = pos[1] - m->unk_28;
+        p.z = pos[2] - m->unk_2C;
         D_800FFEF4_PaddleBattle = D_800FFBF0_PaddleBattle[i].verts;
         g = D_800FFBF0_PaddleBattle[i].groups;
         for (j = 0; j < D_800FFBF0_PaddleBattle[i].count; j++, g++) {
@@ -1923,14 +1924,11 @@ s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     } else {
         ret = 1;
     }
-    pos->x = dx * D_800FFEF8_PaddleBattle + pos->x;
-    pos->y = dy * D_800FFEF8_PaddleBattle + pos->y;
-    pos->z = dz * D_800FFEF8_PaddleBattle + pos->z;
+    pos[0] = dx * D_800FFEF8_PaddleBattle + pos[0];
+    pos[1] = dy * D_800FFEF8_PaddleBattle + pos[1];
+    pos[2] = dz * D_800FFEF8_PaddleBattle + pos[2];
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FDBB8_PaddleBattle);
-#endif
 
 /* Intersects the segment p + t * d with the faces and keeps the nearest t in D_800FFEF8. */
 // register allocation: j/prev swap t0/a3 and n is extended late (masked 39, raw 77); j = 0 before the loop and
