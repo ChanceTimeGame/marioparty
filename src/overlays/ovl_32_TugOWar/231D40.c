@@ -29,7 +29,7 @@ s8 D_800FDC27_TugOWar = 0;
 s32 D_800FDC28_TugOWar = 0;
 
 /* A bird crossing the sky (models idx + 2 and its shadow idx + 5), every 211 frames. */
-// scheduling of the model-pointer load (masked 4); tried idx + base, base then mp[idx + n]
+// scheduling of the model-pointer load (masked 4); tried idx + base, base then mp[idx + n]; M1g: no mp, model[idx + n] inline (masked 15)
 #ifdef NON_MATCHING
 void func_800FB940_TugOWar(omObjData* obj, u8 idx) {
     s16* mp;
