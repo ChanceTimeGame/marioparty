@@ -1017,7 +1017,9 @@ s32 func_8006EB90(TextWindow* tw) {
     }
     return 1;
 }
-// GCC proves the glyph width/height non-negative and uses srl/ori where retail uses signed ops (masked 41)
+// GCC proves the glyph width w non-negative (combine nonzero_bits) and uses srl where retail divides signed
+// (masked 48). Retail's w must be maybe-uninitialised to flow: splitting the second w test into
+// `if (G) w = tbl; if (!G || w >= 9) w = 8;` restores the signed w / 2 but adds a reload (M1h)
 #ifdef NON_MATCHING
 void func_8006EEB8(s16 arg0, u8 arg1, u8 arg2, s16 arg3, s16 arg4) {
     TextWindow* tw = &D_800ED4B0[arg0];
