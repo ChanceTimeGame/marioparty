@@ -17,7 +17,7 @@ s32 D_800FE3D8_BashNCash = 120;
 u32 D_800FE3DC_BashNCash = 929; /* frames left */
 s32 D_800FE3E0_BashNCash = 0;
 s32 D_800FE3E4_BashNCash = 0;
-s32 D_800FE3E8_BashNCash = 0;
+u32 D_800FE3E8_BashNCash = 0;
 s32 D_800FE3EC_BashNCash = 0;
 u32 D_800FE3F0_BashNCash = 0;
 s32 D_800FE3F4_BashNCash = 0;
@@ -136,7 +136,7 @@ void func_800F6B80_BashNCash(omObjData* obj) {
 }
 
 /* Picks the cash player (the one in group 0) and shuffles the other three's start positions. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// register allocation: the first loop counter is a0 in retail, v1 here (masked 0; separate counter variable tried)
 #ifdef NON_MATCHING
 void func_800F6BCC_BashNCash(void) {
     s32 i;
@@ -152,8 +152,7 @@ void func_800F6BCC_BashNCash(void) {
     if (i >= 4) {
         i = 0;
     }
-    D_800FE690_BashNCash.order[0] = i;
-    D_800FE610_BashNCash = (u16)i;
+    D_800FE610_BashNCash = D_800FE690_BashNCash.order[0] = i;
     for (k = 1; k < 4; k++) {
         n = rand8() % (4 - k);
         for (j = 0; j < 4; j++) {
@@ -1156,9 +1155,10 @@ s32 func_800F9BAC_BashNCash(void)
 }
 
 /* The cash player was hit: knock out a 5-coin (or 1-coin) piece. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// scheduling: retail loads cash->work[0] before &D_800FE690 (masked 2; pool assigned after w, index local tried)
 #ifdef NON_MATCHING
 void func_800F9BDC_BashNCash(omObjData* cash, omObjData* hitter) {
+    BashCash* pool = &D_800FE690_BashNCash;
     BashPlayerWork* w;
     s32 coins;
 
@@ -1169,12 +1169,12 @@ void func_800F9BDC_BashNCash(omObjData* cash, omObjData* hitter) {
     }
     if (coins >= 5) {
         if (func_800F99A8_BashNCash(cash, hitter, 6)) {
-            if (D_800FE690_BashNCash.coins >= 5) {
-                D_800FE690_BashNCash.coins -= 5;
+            if (pool->coins >= 5) {
+                pool->coins -= 5;
             } else {
-                s32 rest = 5 - D_800FE690_BashNCash.coins;
+                s32 rest = 5 - pool->coins;
 
-                D_800FE690_BashNCash.coins = 0;
+                pool->coins = 0;
                 GwPlayer[w->unk_58].coins_mg -= rest;
             }
             if (coins == 5) {
@@ -1182,12 +1182,12 @@ void func_800F9BDC_BashNCash(omObjData* cash, omObjData* hitter) {
             }
         }
     } else if (func_800F99A8_BashNCash(cash, hitter, 3)) {
-        if (D_800FE690_BashNCash.coins != 0) {
-            D_800FE690_BashNCash.coins--;
+        if (pool->coins != 0) {
+            pool->coins--;
         } else {
             GwPlayer[w->unk_58].coins_mg--;
         }
-        if (coins - 1 == 0) {
+        if (--coins == 0) {
             D_800FE628_BashNCash = 1;
         }
     }
@@ -1205,33 +1205,35 @@ void func_800F9D60_BashNCash(omObjData* obj) {
 }
 
 /* A hammer player's swing: moves it and checks for a hit on the cash player. */
-// register allocation; retail keeps 0.0f in $f20 (stores swc1, not sw zero)
+// retail loads unk_04 twice around the post-increment (masked 14; t local, cast and 12U forms give one load)
 #ifdef NON_MATCHING
 void func_800F9DD0_BashNCash(omObjData* obj) {
     Vec3f v_s;
-    Vec3f* v = &v_s;
+    Vec3f* v;
     omObjData* cash;
     BashPlayerWork* w;
+    f32 zero;
+    BashCash* pool = &D_800FE690_BashNCash;
 
     if (func_80017A60(obj) == 0 && obj->work[1] != 0) {
-        cash = D_800FE690_BashNCash.obj;
+        v = &v_s;
+        cash = pool->obj;
         w = obj->unk_50;
-        D_800F5254 = 0.0f;
-        D_800ED6B8 = 0.0f;
+        zero = 0.0f;
+        D_800F5254 = zero;
+        D_800ED6B8 = zero;
         func_80002C48(obj, w->unk_3C, obj->trans.x, obj->trans.y, obj->trans.z);
         obj->trans.x = func_800AEAC0(w->unk_3C) * w->unk_40 + D_800ED6B8 + obj->trans.x;
         obj->trans.z = func_800AEFD0(w->unk_3C) * w->unk_40 + D_800F5254 + obj->trans.z;
-        D_800FE710_BashNCash[obj->work[0]].unk_04++;
-        if (D_800FE710_BashNCash[obj->work[0]].unk_04 >= 12 && D_800FE710_BashNCash[obj->work[0]].unk_04 < 23 &&
-            D_800FE690_BashNCash.unk_06 == 0) {
-            v->x = 0.0f;
-            v->y = 0.0f;
-            v->z = 0.0f;
+        if (D_800FE710_BashNCash[obj->work[0]].unk_04++ - 12U < 11 && pool->unk_06 == 0) {
+            v->x = zero;
+            v->y = zero;
+            v->z = zero;
             if (func_800F6FD0_BashNCash(obj, cash, v)) {
                 cash->work[1] = 1;
                 func_80018450(cash, 2);
                 func_800F9BDC_BashNCash(cash, obj);
-                D_800FE690_BashNCash.unk_06 = 60;
+                pool->unk_06 = 60;
                 func_800F9D60_BashNCash(cash);
             }
         }
@@ -1285,11 +1287,10 @@ void func_800FA094_BashNCash(void) {
 }
 
 /* A stunned hammer player spins. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FA120_BashNCash(omObjData* obj) {
     BashPlayerWork* w = obj->unk_50;
     BashInput* in;
+    u8 i;
 
     if (D_800FE710_BashNCash[obj->work[0]].unk_0A >= 46) {
         D_800FE710_BashNCash[obj->work[0]].unk_10 &= ~1;
@@ -1297,19 +1298,17 @@ void func_800FA120_BashNCash(omObjData* obj) {
     }
     w->unk_3C += 16.0f;
     D_800FE710_BashNCash[obj->work[0]].unk_0A++;
-    in = &D_800FE6A8_BashNCash[obj->work[0]];
+    i = obj->work[0];
+    in = &D_800FE6A8_BashNCash[i];
     in->stickX = 0;
     in->stickY = 0;
     in->btn = 0;
     in->trg = 0;
-    ContBtn[GwPlayer[obj->work[0]].port] = in->btn;
-    ContBtnTrg[GwPlayer[obj->work[0]].port] = in->trg;
-    ContStkX[GwPlayer[obj->work[0]].port] = in->stickX;
-    ContStkY[GwPlayer[obj->work[0]].port] = -in->stickY;
+    ContBtn[GwPlayer[i].port] = in->btn;
+    ContBtnTrg[GwPlayer[i].port] = in->trg;
+    ContStkX[GwPlayer[i].port] = in->stickX;
+    ContStkY[GwPlayer[i].port] = -in->stickY;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FA120_BashNCash);
-#endif
 
 /* A thrown hammer flies and falls. */
 void func_800FA26C_BashNCash(omObjData* obj) {
@@ -1909,11 +1908,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FBCC8_B
 #endif
 
 /* The game's control object. */
-// register allocation and a shared base register for this unit's .data
+// register allocation: retail keeps w in s1 and diff with the constant 1 in s0 (masked 0, raw 30)
 #ifdef NON_MATCHING
 void func_800FC240_BashNCash(void) {
     BashPlayerWork* w;
+    BashPlayerWork* w2;
     s32 diff;
+    s32 wait;
     s32 i;
 
     func_800F6EE0_BashNCash();
@@ -1958,7 +1959,7 @@ void func_800FC240_BashNCash(void) {
                     break;
                 }
             }
-            if (i >= D_800F2BC0 || --D_800FE3E4_BashNCash == 0) {
+            if (i >= D_800F2BC0 || D_800FE3E4_BashNCash-- == 0) {
                 func_80009438();
             }
         }
@@ -1985,11 +1986,11 @@ void func_800FC240_BashNCash(void) {
         }
         if (GMesStatAllGet() == 0) {
             D_800FE62C_BashNCash = 3;
-            w = D_800F3FB0[D_800FE610_BashNCash]->unk_50;
+            w2 = D_800F3FB0[D_800FE610_BashNCash]->unk_50;
             if (_CheckFlag(0x2B) == 0) {
-                w->unk_3C = 0.0f;
-                func_8009ECB0(D_800F2B7C[D_800F3FB0[D_800FE610_BashNCash]->model[0]].unk7C, w->unk_3C, w->unk_3C,
-                              w->unk_3C);
+                w2->unk_3C = 0.0f;
+                func_8009ECB0(D_800F2B7C[D_800F3FB0[D_800FE610_BashNCash]->model[0]].unk7C, w2->unk_3C, w2->unk_3C,
+                              w2->unk_3C);
                 if (D_800FE3EC_BashNCash != 0) {
                     func_800184BC(D_800F3FB0[D_800FE610_BashNCash], 0xD);
                     func_80060128(0x35);
@@ -2019,14 +2020,14 @@ void func_800FC240_BashNCash(void) {
         case 1:
             if (_CheckFlag(0x2B) == 0) {
                 if (D_800FE3EC_BashNCash != 0) {
-                    diff = D_800FE3F0_BashNCash++ < 90;
+                    wait = D_800FE3F0_BashNCash++ < 90;
                 } else {
-                    diff = D_800FE3F0_BashNCash++ < 77;
+                    wait = D_800FE3F0_BashNCash++ < 77;
                 }
             } else {
-                diff = D_800FE3F0_BashNCash++ < 20;
+                wait = D_800FE3F0_BashNCash++ < 20;
             }
-            if (!diff && (_CheckFlag(0x2B) == 0 || GMesWait() != 1)) {
+            if (!wait && (_CheckFlag(0x2B) == 0 || GMesWait() != 1)) {
                 func_800726AC(0, 0x14);
                 D_800FE3E8_BashNCash = 2;
             }
@@ -2188,8 +2189,6 @@ s32 func_800FCE84_BashNCash(void) {
 }
 
 /* The cash player's object setup. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FCE8C_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3f* pos, u16 chr) {
     char* heads[6] = {
         "atama_2", "Luigi1-atama_2", "C002_000b-bmerge10_1", "c003_000-head_1", "Luigi1-atama_1", "c005_000-bmerge1",
@@ -2230,9 +2229,9 @@ void func_800FCE8C_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
         w->unk_DC = func_800FCE84_BashNCash;
     }
     D_800B8964 = 1.6f;
-    k = chr + 1;
     D_800B89A4[player][0] = 0x24C;
     D_800B89A4[player][1] = 0x24C;
+    k = chr + 1;
     D_800B89A4[player][2] = k + 0x120;
     D_800B89A4[player][3] = 0x251;
     D_800B89A4[player][4] = k + 0x12E;
@@ -2253,21 +2252,11 @@ void func_800FCE8C_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
     obj->model[0xA] = LoadFormFile(dir | 0x9E, 0xA9D);
     func_80020EA0(obj->model[0xA], heads[chr], obj->model[0], "21_kimoti_1b-atama_3");
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE480_BashNCash);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE4E4_BashNCash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FCE8C_BashNCash);
-#endif
 
 /* A hammer player's object setup. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FD2B0_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3f* pos) {
     BashPlayerWork* w;
     Vec3f v;
-    s32 mot;
 
     func_8000979C(obj, dir, file, player, 0xA99, 0xA99);
     obj->model[3] = LoadFormFile(0x19, 0xA8D);
@@ -2279,12 +2268,11 @@ void func_800FD2B0_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
     func_8001874C(obj, 2, dir | 3, 1, 0);
     if (rand8() & 1) {
         func_800187D0(obj, 0xD, dir | 0xF, 1, 0x78);
-        mot = dir | 0x10;
+        func_800187D0(obj, 0xE, dir | 0x10, 1, 0x78);
     } else {
         func_800187D0(obj, 0xD, dir | 0x38, 1, 0x78);
-        mot = dir | 0x3C;
+        func_800187D0(obj, 0xE, dir | 0x3C, 1, 0x78);
     }
-    func_800187D0(obj, 0xE, mot, 1, 0x78);
     func_800090C4(obj, 0, 2);
     obj->work[0] = player;
     func_800F6F6C_BashNCash(obj);
@@ -2332,9 +2320,6 @@ void func_800FD2B0_BashNCash(omObjData* obj, s32 dir, s32 file, u16 player, Vec3
     D_800FE600_BashNCash[D_800FE3F8_BashNCash++] = obj;
     obj->work[1] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FD2B0_BashNCash);
-#endif
 
 void func_800FD748_BashNCash(s32 player, s32 coins) {
     if (coins < 0) {
@@ -2373,15 +2358,16 @@ void func_800FD830_BashNCash(void) {
 }
 
 /* Coin counters: three digits, leading zeros hidden. */
-// the early-return test and register allocation
-#ifdef NON_MATCHING
 void func_800FD8E8_BashNCash(omObjData* obj) {
     s32 i;
     s32 coins;
     s32 d;
-    s16 x;
+    s32 x;
 
-    if (obj->work[1] == 0 || obj->work[1] != 1) {
+    if (obj->work[1] == 0) {
+        return;
+    }
+    if (obj->work[1] != 1) {
         return;
     }
     for (i = 0; i < 4; i++) {
@@ -2414,26 +2400,20 @@ void func_800FD8E8_BashNCash(omObjData* obj) {
         SetBasicSpritePos(D_800FE5D8_BashNCash[i][0], D_800FE3FC_BashNCash[i][0] + x, D_800FE3FC_BashNCash[i][1]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FD8E8_BashNCash);
-#endif
 
-// s16 index conversions and register allocation
-#ifdef NON_MATCHING
 void func_800FDBB4_BashNCash(omObjData* obj) {
     s16 face[4][2] = { { 56, 24 }, { 264, 24 }, { 56, 202 }, { 264, 202 } };
     s16 coin[4][2] = { { 39, 38 }, { 247, 38 }, { 39, 216 }, { 247, 216 } };
-    s32 i;
-    s32 spr;
+    s16 i;
+    s16 spr;
 
     for (i = 0; i < 4; i++) {
-        D_800FE5F0_BashNCash[i] = func_80019060(InitSprite(GwPlayer[(s16)i].character + 0x6E), 0, 1);
-        SetBasicSpritePos(D_800FE5F0_BashNCash[i], face[(s16)i][0], face[(s16)i][1]);
+        spr = InitSprite(GwPlayer[i].character + 0x6E);
+        SetBasicSpritePos(D_800FE5F0_BashNCash[i] = func_80019060(spr, 0, 1), face[i][0], face[i][1]);
     }
     spr = InitSprite(0x74);
     for (i = 0; i < 4; i++) {
-        D_800FE5F8_BashNCash[i] = func_80019060(spr, 0, 1);
-        SetBasicSpritePos(D_800FE5F8_BashNCash[i], coin[i][0], coin[i][1]);
+        SetBasicSpritePos(D_800FE5F8_BashNCash[i] = func_80019060(spr, 0, 1), coin[i][0], coin[i][1]);
     }
     spr = InitSprite(0x87);
     for (i = 0; i < 4; i++) {
@@ -2449,13 +2429,6 @@ void func_800FDBB4_BashNCash(omObjData* obj) {
     obj->func_ptr = func_800FD8E8_BashNCash;
     func_800FD830_BashNCash();
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE520_BashNCash);
-
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE530_BashNCash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FDBB4_BashNCash);
-#endif
 
 /* The next start position of a hammer player (skipping the cash player's slot 0). */
 u16 func_800FDED0_BashNCash(void) {

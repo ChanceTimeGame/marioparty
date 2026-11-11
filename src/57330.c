@@ -369,19 +369,16 @@ void func_80056E6C(void) {
     }
 }
 
-// GCC keeps &GwSystem+0x1C in a register; retail addresses each field as a constant (masked 24)
-#ifdef NON_MATCHING
 void func_80056F40(void) {
-    if (++GwSystem.curPlayerIndex >= 4) {
-        GwSystem.curPlayerIndex = 0;
-        if (++GwSystem.currentTurn >= 99) {
-            GwSystem.currentTurn = 99;
+    GW_SYSTEM* gs = &GwSystem;
+
+    if (++gs->curPlayerIndex >= 4) {
+        gs->curPlayerIndex = 0;
+        if (++gs->currentTurn >= 99) {
+            gs->currentTurn = 99;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/57330", func_80056F40);
-#endif
 
 // register allocation: ret lives in a0 instead of v0 (masked 3)
 #ifdef NON_MATCHING

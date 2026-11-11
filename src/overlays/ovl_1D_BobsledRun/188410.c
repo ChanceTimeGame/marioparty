@@ -1291,7 +1291,7 @@ void func_800FA890_BobsledRun(omObjData* obj) {
     func_80025930(obj->model[0], 0x600, 0x600);
 }
 
-// register allocation
+// register allocation: spr / x / (s16)spr in s0/s1/s2 in retail, s2/s0/s1 here (masked 0; declaration order, for loop tried)
 #ifdef NON_MATCHING
 void func_800FA96C_BobsledRun(omObjData* obj) {
     s16 x;
@@ -1543,7 +1543,7 @@ void func_800FB1C4_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team) {
 }
 
 /* The back rider of team (sits on the sled; func_800FEC80). */
-// register allocation
+// register allocation: retail gives flags s2 and obj s6 (masked 0, raw 39; declaration order tried)
 #ifdef NON_MATCHING
 void func_800FB594_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 player, u16 team) {
     BRWork* work;
@@ -1719,35 +1719,27 @@ void func_800FBB5C_BobsledRun(omObjData* obj) {
     SetBasicSpritePos(D_800FF2A8_BobsledRun[1].sprite, 0x20, 0x5E);
 }
 
-// argument evaluation order (a2 before a1)
-#ifdef NON_MATCHING
 void func_800FBCB8_BobsledRun(omObjData* obj) {
     s8 p = D_800FF2A8_BobsledRun[0].player[1];
+    s32 file = D_800C59AC[GwPlayer[p].character].unk_04;
+    s32 dir = D_800C59AC[GwPlayer[p].character].unk_00;
 
-    func_800FB594_BobsledRun(obj, D_800C59AC[GwPlayer[p].character].unk_00, D_800C59AC[GwPlayer[p].character].unk_04, p,
-                             0);
+    func_800FB594_BobsledRun(obj, dir, file, p, 0);
     func_800184BC(obj, 0);
     func_80018D84(D_800FF2A8_BobsledRun[0].sprite2, 9);
     SetBasicSpritePos(D_800FF2A8_BobsledRun[0].sprite2, 0x16, 0x5A);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FBCB8_BobsledRun);
-#endif
 
-// argument evaluation order (a2 before a1)
-#ifdef NON_MATCHING
 void func_800FBD5C_BobsledRun(omObjData* obj) {
     s8 p = D_800FF2A8_BobsledRun[1].player[1];
+    s32 file = D_800C59AC[GwPlayer[p].character].unk_04;
+    s32 dir = D_800C59AC[GwPlayer[p].character].unk_00;
 
-    func_800FB594_BobsledRun(obj, D_800C59AC[GwPlayer[p].character].unk_00, D_800C59AC[GwPlayer[p].character].unk_04, p,
-                             1);
+    func_800FB594_BobsledRun(obj, dir, file, p, 1);
     func_800184BC(obj, 0);
     func_80018D84(D_800FF2A8_BobsledRun[1].sprite2, 7);
     SetBasicSpritePos(D_800FF2A8_BobsledRun[1].sprite2, 0x16, 0x5E);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FBD5C_BobsledRun);
-#endif
 
 /* Tilt the sled (rot.x / rot.z) towards the ground normal. */
 void func_800FBE04_BobsledRun(omObjData* obj, Vec3f* normal) {
@@ -1848,8 +1840,6 @@ void func_800FBF88_BobsledRun(Mat4 m, Vec3f* pos, Vec3f* axis, f32 angle) {
 }
 
 /* omOutViewMulti with each camera rolled by D_800FF340[i]. */
-// the 350.0f near-plane constant is hoisted out of the loop
-#ifdef NON_MATCHING
 void func_800FC180_BobsledRun(omObjData* obj) {
     Vec3f pos;
     Vec3f target;
@@ -1866,9 +1856,10 @@ void func_800FC180_BobsledRun(omObjData* obj) {
     one = 1.0f;
     zero = 0.0f;
     for (i = 0; i < obj->work[0]; i++) {
-        near = 350.0f;
         if (BR_WORK(D_800F3FB0[i])->unk_53 == 5) {
             near = 700.0f;
+        } else {
+            near = 350.0f;
         }
         rx = CRotM[i].x;
         ry = CRotM[i].y;
@@ -1897,17 +1888,10 @@ void func_800FC180_BobsledRun(omObjData* obj) {
         func_8001D57C(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC180_BobsledRun);
-#endif
 
 /* Boost pads (ground 6) and the catch-up bonus for the team behind. */
-// the other team's index is multiplied with sll/addu in retail (negu/andi here)
-#ifdef NON_MATCHING
 void func_800FC4D0_BobsledRun(BRWork* work) {
     f32 bonus;
-    f32 me;
-    f32 other;
     s32 team;
     s32 o;
     f32 f;
@@ -1919,9 +1903,8 @@ void func_800FC4D0_BobsledRun(BRWork* work) {
     }
     team = work->unk_58;
     o = team == 0;
-    me = D_800FF2A8_BobsledRun[team].progress;
-    other = D_800FF2A8_BobsledRun[o].progress;
-    if (me < other && other - me > 0.001f) {
+    if (D_800FF2A8_BobsledRun[team].progress < D_800FF2A8_BobsledRun[o].progress &&
+        D_800FF2A8_BobsledRun[o].progress - D_800FF2A8_BobsledRun[team].progress > 0.001f) {
         bonus = 5.0f;
     }
     if (D_800FF2A8_BobsledRun[work->unk_58].boost != 0) {
@@ -1955,16 +1938,10 @@ void func_800FC4D0_BobsledRun(BRWork* work) {
     }
     D_800FF2A8_BobsledRun[work->unk_58].unk32 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC4D0_BobsledRun);
-#endif
 
 /* Race state from the ground under the sled: 1 start ramp, 5 crash zone, else racing / goal. */
-// register allocation
-#ifdef NON_MATCHING
 void func_800FC7DC_BobsledRun(omObjData* obj) {
     BRWork* work;
-    s8 r;
 
     work = obj->unk_50;
     if (work->unk_53 == 1) {
@@ -1977,11 +1954,11 @@ void func_800FC7DC_BobsledRun(omObjData* obj) {
     }
     if (D_800FF2A8_BobsledRun[work->unk_58].timer > 40) {
         D_800FF2A8_BobsledRun[work->unk_58].state = 3;
-        r = -2;
         if (D_800FF2A1_BobsledRun == -1) {
-            r = work->unk_58;
+            D_800FF2A1_BobsledRun = work->unk_58;
+        } else {
+            D_800FF2A1_BobsledRun = -2;
         }
-        D_800FF2A1_BobsledRun = r;
         PlaySound(0x2A0);
         func_80060618(0x45F, D_800FF2A8_BobsledRun[work->unk_58].player[0]);
         func_80060618(0x45F, D_800FF2A8_BobsledRun[work->unk_58].player[1]);
@@ -1989,9 +1966,6 @@ void func_800FC7DC_BobsledRun(omObjData* obj) {
     }
     D_800FF2A8_BobsledRun[work->unk_58].state = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC7DC_BobsledRun);
-#endif
 
 /* Teams from the players' groups. */
 void func_800FC918_BobsledRun(void) {
@@ -2104,32 +2078,28 @@ void func_800FCB44_BobsledRun(void) {
 }
 
 /* Turn by turn, glancing off walls the sled faces into. */
-// register allocation
-#ifdef NON_MATCHING
 void func_800FCCE8_BobsledRun(omObjData* obj, Vec3f* normal, f32 turn) {
     BRWork* work;
     s32 team;
     f32 a;
     f32 s;
-    f32 dot;
 
     work = obj->unk_50;
     team = work->unk_58;
     work->unk_3C = turn + work->unk_3C;
     a = work->unk_3C - 90.0f;
     s = func_800AEAC0(a);
-    dot = func_8000A72C(normal->x, normal->z, s, func_800AEFD0(a));
-    if (dot > 0.7f) {
-        work->unk_3C = work->unk_3C - (turn + 1.0f);
-    } else if (dot < -0.7f) {
-        work->unk_3C = (f32)(fabs(turn) + 1.0) + work->unk_3C;
+    a = func_8000A72C(normal->x, normal->z, s, func_800AEFD0(a));
+    if (a > 0.7f) {
+        turn += 1.0f;
+        work->unk_3C = work->unk_3C - turn;
+    } else if (a < -0.7f) {
+        turn = fabs(turn) + 1.0;
+        work->unk_3C = turn + work->unk_3C;
     }
     work->unk_3C = func_80029518(work->unk_3C);
-    D_800FF2A8_BobsledRun[team].unk08 = dot;
+    D_800FF2A8_BobsledRun[team].unk08 = a;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FCCE8_BobsledRun);
-#endif
 
 /* Time display m:ss"cc (frames at 60 per second). */
 void func_800FCE2C_BobsledRun(s16 idx, s16 time) {
@@ -2215,16 +2185,12 @@ s16 func_800FD1BC_BobsledRun(s32 x, s32 y) {
     return g;
 }
 
-// register allocation; the group id is stored before its copy
-#ifdef NON_MATCHING
-void func_800FD36C_BobsledRun(s32 x, s32 y) {
-    s32 g;
+s16 func_800FD36C_BobsledRun(s32 x, s32 y) {
+    s16 g;
     s32 px;
     s16 i;
 
-    /* retail's func_80064EF4 returned a full int (no extension before the store) */
-    g = ((s32(*)(s32, s32))func_80064EF4)(7, 5);
-    D_800FFAE4_BobsledRun[1] = g;
+    g = D_800FFAE4_BobsledRun[1] = func_80064EF4(7, 5);
     func_80067208(g, 0, D_800FFAE2_BobsledRun, 0);
     func_80067480(g, 0, 0xFFFF);
     func_800674BC(g, 0, 0x8000);
@@ -2245,10 +2211,8 @@ void func_800FD36C_BobsledRun(s32 x, s32 y) {
         func_80067598(g, i, 0);
     }
     func_80067480(g, 2, 0x8000);
+    return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FD36C_BobsledRun);
-#endif
 
 /* The bobsled's process: CPU riders write the shared controls, the tunnels swap in the dark
    models, then func_800F78F4 runs; the riders' real inputs are restored afterwards. */

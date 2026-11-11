@@ -435,37 +435,23 @@ void func_80038864(unk388E0Struct80* arg0) {
     arg0->unk_20 = NULL;
     func_80023888(arg0->unk_24);
 }
-// if (a >= 0x80) c++ is if-converted to srl/addu, src pointer folded into offsets (masked 10)
-#ifdef NON_MATCHING
 void func_80038888(u8* arg0, unk2C0C0StructC0* arg1, unk388E0Struct80* arg2) {
-    u8* src;
+    u16* tbl;
     s16 count;
     s16 i;
-    u32 c;
-    u16* dst;
-    u16* tbl;
-    u8* col;
+    s32 c;
 
-    src = arg0 + 0xA;
-    count = (src[0] << 8) + src[1];
+    arg0 += 0xA;
+    count = (arg0[0] << 8) + arg0[1];
     arg2->unk_24 = func_80023684(count * 2, 15000);
     arg2->unk_1A = count;
-    src += 2;
+    arg0 += 2;
     tbl = arg2->unk_24;
     for (i = 0; i < count; i++) {
-        dst = &tbl[i];
-        col = &src[i * 4];
-        c = ((col[0] & 0xF8) << 8) + ((col[1] & 0xF8) << 3) + ((col[2] & 0xF8) >> 2);
-        if (col[3] >= 0x80) {
-            *dst = c + 1;
-        } else {
-            *dst = c;
-        }
+        tbl[i] = (c = ((arg0[i * 4 + 0] & 0xF8) << 8) + ((arg0[i * 4 + 1] & 0xF8) << 3) + ((arg0[i * 4 + 2] & 0xF8) >> 2),
+                  (arg0[i * 4 + 3] >= 0x80) ? c + 1 : c);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/388E0", func_80038888);
-#endif
 
 void func_8003897C(unk2C0C0Struct70* arg0) {
     s16 i;
