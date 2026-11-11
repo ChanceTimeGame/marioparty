@@ -258,6 +258,8 @@ build/src/overlays/ovl_03_BuriedTreasure/EB0E0.c.o: CFLAGS = -G0 -mips3 -mgp32 -
 # ovl_41 262590.c (func_800F8FE8: nop between back-to-back mul.s) has the mul fix on
 build/src/overlays/ovl_41_YoshisTropicalIslandEndingScene/262590.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 build/src/overlays/ovl_17_BoxMountainMayhem/166D50.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# ovl_7A 3014C0.c (func_800F7A50: nop between back-to-back mul.s) has the mul fix on
+build/src/overlays/ovl_7A_DebugRandomPlay/3014C0.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_29 1E4480.c (func_800FB058: nop between back-to-back mul.d) has the mul fix on
 build/src/overlays/ovl_29_LimboDance/1E4480.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # ovl_2F 20F570.c (func_800FA8C0: nop between back-to-back mul.s) has the mul fix on, assembled with blank lines stripped
