@@ -199,7 +199,7 @@ void func_80017BB0(omObjData*);
 void func_80017C0C(omObjData*, u8, f32, f32, f32, f32, f32);
 s32 func_800185A4(omObjData*, u16);
 void func_80023A38(void*, void*, s32);
-s16 func_80024198(u32, Gfx*, s32); /* src/24740.c */
+s32 func_80024198(u32, Gfx*, s32); /* src/24740.c (s16; retail reads the result unextended) */
 s16 func_80024464(s16, s8);
 void func_80027E48(s16, f32, f32, u16, u16, char*, u8);
 void func_8006035C(s16, s8);
@@ -252,7 +252,7 @@ void func_800FBC00_PaddleBattle(omObjData*);
 void func_800FBEE8_PaddleBattle(omObjData*);
 void func_800FC39C_PaddleBattle(omObjData*);
 void func_800FC784_PaddleBattle(omObjData*);
-s16 func_800FCC04_PaddleBattle(Vtx*, unk65770Anim*);
+s32 func_800FCC04_PaddleBattle(Vtx*, unk65770Anim*);
 void func_800FD0B0_PaddleBattle(omObjData*);
 void func_800FD29C_PaddleBattle(omObjData*);
 void func_800FD3A8_PaddleBattle(omObjData*);
