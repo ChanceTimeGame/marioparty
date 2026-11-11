@@ -587,7 +587,7 @@ void func_800F8210_RunningOfTheBulb(omObjData* arg0) {
 }
 
 
-// port read lb vs retail lbu+sign-extend, register allocation
+// masked 4: retail materialises &ContBtnTrg before the index shift, and keeps the distance divisor in f4
 #ifdef NON_MATCHING
 void func_800F82F4_RunningOfTheBulb(omObjData* arg0) {
     RotbPlayerWork* work;
@@ -600,12 +600,9 @@ void func_800F82F4_RunningOfTheBulb(omObjData* arg0) {
     f32 off;
     f32 height;
     f32 angle;
-    f32 dx;
-    f32 dy;
-    f32 dz;
     f32 d;
     f32 sy;
-    s32 port;
+    s16 port;
     s16 i;
     u8 stkX;
     u8 stkY;
@@ -631,7 +628,8 @@ void func_800F82F4_RunningOfTheBulb(omObjData* arg0) {
             ContStkY[(u16)port] = -func_800AEFD0(angle) * 80.0f;
         } else if (!(ext->unk_00 & 0x80)) {
             ext->unk_00 |= 0x80;
-            ContBtnTrg[(u16)port] = ContBtn[(u16)port] = ContStkX[(u16)port] = ContStkY[(u16)port] = 0;
+            ContStkX[(u16)port] = ContStkY[(u16)port] = 0;
+            ContBtnTrg[(u16)port] = ContBtn[(u16)port] = 0;
         }
         func_80005A28(arg0);
     } else {
@@ -685,10 +683,10 @@ void func_800F82F4_RunningOfTheBulb(omObjData* arg0) {
                     }
                 }
             }
-            dx = D_800FE478_RunningOfTheBulb->trans.x - arg0->trans.x;
-            dy = (D_800FE478_RunningOfTheBulb->trans.y + 300.0f) - arg0->trans.y;
-            dz = (D_800FE478_RunningOfTheBulb->trans.z + 100.0f) - arg0->trans.z;
-            d = func_800B1750(dx * dx + dy * dy + dz * dz) / 10.0f;
+            d = func_800B1750((D_800FE478_RunningOfTheBulb->trans.x - arg0->trans.x) * (D_800FE478_RunningOfTheBulb->trans.x - arg0->trans.x)
+                              + ((D_800FE478_RunningOfTheBulb->trans.y + 300.0f) - arg0->trans.y) * ((D_800FE478_RunningOfTheBulb->trans.y + 300.0f) - arg0->trans.y)
+                              + ((D_800FE478_RunningOfTheBulb->trans.z + 100.0f) - arg0->trans.z) * ((D_800FE478_RunningOfTheBulb->trans.z + 100.0f) - arg0->trans.z))
+                / 10.0f;
             ext->unk_5C = (D_800FE478_RunningOfTheBulb->trans.x - arg0->trans.x) / d;
             ext->unk_60 = ((D_800FE478_RunningOfTheBulb->trans.y + 300.0f) - arg0->trans.y) / d;
             ext->unk_64 = ((D_800FE478_RunningOfTheBulb->trans.z + 100.0f) - arg0->trans.z) / d;
@@ -698,7 +696,8 @@ void func_800F82F4_RunningOfTheBulb(omObjData* arg0) {
         if (ext->unk_00 & 4) {
             func_800FBF74_RunningOfTheBulb(arg0);
         } else if (GwPlayer[work->unk_58].flags & 1) {
-            ContBtnTrg[(u16)port] = ContBtn[(u16)port] = ContStkX[(u16)port] = ContStkY[(u16)port] = 0;
+            ContStkX[(u16)port] = ContStkY[(u16)port] = 0;
+            ContBtnTrg[(u16)port] = ContBtn[(u16)port] = 0;
             func_800FC0F4_RunningOfTheBulb(arg0);
         }
         if (work->unk_53 >= 0) {
