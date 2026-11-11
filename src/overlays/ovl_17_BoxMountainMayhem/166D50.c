@@ -387,6 +387,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_80
 #endif
 
 // NON_MATCHING: retail sign-extends the new shadow model into s0 (one register for both sprite roles) (masked 6; tried s32 sprite, split statements, reversed chain)
+// (ours keeps the first role in a separate join temp in v1 and drops the extension)
 #ifdef NON_MATCHING
 void func_800F80A0_BoxMountainMayhem(omObjData* obj) {
     BMMBodyWork* work;
@@ -722,7 +723,8 @@ f32 func_800F8548_BoxMountainMayhem(omObjData* obj, Vec* pos, f32 r, s32* hitOut
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/166D50", func_800F8548_BoxMountainMayhem);
 #endif
 
-// NON_MATCHING: GCC if-converts the (hit & 6) test on k to sltu where retail branches and reloads hit (masked 26; tried k = 0 then if, k++, an s16 k)
+// NON_MATCHING: GCC if-converts the (hit & 6) test on k to sltu where retail branches and reloads hit (masked 26; tried k = 0 then if, k++, an s16 k;
+// M1g: k = 0 before the outer if, a ternary, the arms reversed)
 #ifdef NON_MATCHING
 void func_800F8C94_BoxMountainMayhem(omObjData* obj) {
     BMMBodyWork* work;

@@ -50,7 +50,8 @@ s32 InitSprite(s32 arg0) {
     return temp_s0;
 }
 
-// Scales each RGBA5551 palette entry's colour channels. Register allocation differs (masked 5).
+// Scales each RGBA5551 palette entry's colour channels. Register allocation differs (masked 5:
+// retail converts g into a0 then copies it to a1; M1g tried MP3's c/cg/cb form (masked 21), b inline)
 #ifdef NON_MATCHING
 void func_8001897C(s16 arg0, f32 r, f32 g, f32 b) {
     SpritePalette* pal = D_800EC700[arg0];
