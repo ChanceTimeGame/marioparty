@@ -313,7 +313,8 @@ void func_800F6F2C_MinigameIslandStart(void) {
 #define STEP D_800F92F4_MinigameIslandStart
 #define BOB D_800F92E4_MinigameIslandStart
 
-// block layout (A/B handler and message tails placed differently) and s8 vs s7 register use (masked ~30)
+// block layout and s8 vs s7 register use (masked 207). Retail places the first loop's A/B PlaySound handlers after the
+// second loop, next to setup; moving them there (goto) fixes the call order but lets CSE keep BTN across the tests
 #ifdef NON_MATCHING
 /* character select cursor: returns 1 when a character was confirmed, 0 when cancelled */
 s32 func_800F6FB8_MinigameIslandStart(void) {
