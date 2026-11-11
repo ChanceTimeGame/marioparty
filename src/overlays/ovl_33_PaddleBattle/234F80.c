@@ -810,8 +810,6 @@ void func_800F98AC_PaddleBattle(omObjData* obj) {
 }
 
 /* A bystander: walks along its bank beside the raft and shoves it back when it bumps. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 91 lines)
-#ifdef NON_MATCHING
 void func_800F9A00_PaddleBattle(omObjData* obj) {
     Vec dir;
     Vec d;
@@ -825,6 +823,7 @@ void func_800F9A00_PaddleBattle(omObjData* obj) {
     f32 s;
     f32 a;
     f32 ang;
+    f32 e;
 
     raft = RAFT.obj;
     hit = 0;
@@ -835,16 +834,13 @@ void func_800F9A00_PaddleBattle(omObjData* obj) {
     limit = 50.0f;
     dist = RAFT.dist;
     if (obj->work[3] != 0) {
-        a = D_800FE9FC_PaddleBattle.range[obj->work[3] - 1].end;
-        if (dist < a) {
-            dist = a;
+        e = D_800FE9FC_PaddleBattle.range[obj->work[3] - 1].end;
+        if (dist < e) {
+            dist = e;
             limit = 40.0f;
         }
     }
-    k = 0.0f;
-    if (obj->work[0] != 0) {
-        k = 1.0f;
-    }
+    k = obj->work[0] != 0 ? 1.0f : 0.0f;
     func_800FAC70_PaddleBattle(dist, k, &pos);
     func_800FAFEC_PaddleBattle(dist, k, &dir);
     if (obj->work[0] != 0) {
@@ -924,16 +920,13 @@ void func_800F9A00_PaddleBattle(omObjData* obj) {
         }
         break;
     case 4:
-        d.x = 1.0f;
-        if (obj->work[0] != 0) {
-            d.x = -1.0f;
-        }
+        d.x = obj->work[0] != 0 ? -1.0f : 1.0f;
         d.y = 0.0f;
         d.z = 0.0f;
-        a = func_800B0CD8(d.x, d.y);
-        obj->trans.x += func_800AEAC0(a) * 0.15 * 100.0;
-        obj->trans.z += func_800AEFD0(a) * 0.15 * 100.0;
-        ang = a + 90.0;
+        ang = func_800B0CD8(d.x, d.y);
+        obj->trans.x += func_800AEAC0(ang) * 0.15 * 100.0;
+        obj->trans.z += func_800AEFD0(ang) * 0.15 * 100.0;
+        ang += 90.0;
         if (--obj->work[2] == 0) {
             func_800258EC(obj->model[0], 4, 4);
             obj->work[1] = 1;
@@ -943,9 +936,6 @@ void func_800F9A00_PaddleBattle(omObjData* obj) {
     obj->rot.y = func_800FB74C_PaddleBattle(ang, obj->rot.y, 0.2f);
     func_80017DB0(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F9A00_PaddleBattle);
-#endif
 
 /* Coin sprites. */
 void func_800FA108_PaddleBattle(void) {
@@ -1031,8 +1021,6 @@ void func_800FA308_PaddleBattle(s16 type, Vec* pos, s16 player) {
     }
 }
 
-// logic-equivalent; register allocation and instruction order differ (normalised diff 175 lines)
-#ifdef NON_MATCHING
 void func_800FA5EC_PaddleBattle(omObjData* obj) {
     Vec scr;
     PBCoin* c;
@@ -1041,18 +1029,18 @@ void func_800FA5EC_PaddleBattle(omObjData* obj) {
     f32 n;
     f32 rx;
     f32 rz;
-    f32 d;
-    f32 sc;
+    f32 g;
 
     D_800FFB30_PaddleBattle = 1;
-    for (i = 0, c = D_800FF3B0_PaddleBattle; i < 32; i++, c++) {
+    for (c = D_800FF3B0_PaddleBattle, i = 0; i < 32; i++, c++) {
         if (!(c->flags & 0x80)) {
             continue;
         }
         o = D_800FFFA0_PaddleBattle[c->player].obj;
         switch (c->type) {
         case 0:
-            c->vel.y += -3.0f;
+            g = -3.0f;
+            c->vel.y += g;
             if (c->life == 1) {
                 c->flags |= 1;
                 if (c->bounces != 0) {
@@ -1073,21 +1061,21 @@ void func_800FA5EC_PaddleBattle(omObjData* obj) {
                     c->life = n;
                     c->vel.x = (rx + o->trans.x - c->pos.x) / n;
                     c->vel.z = (rz + o->trans.z - c->pos.z) / n;
-                    c->vel.y = (o->trans.y - c->pos.y) / n - (-3.0f * n) * 0.5;
+                    c->vel.y = (o->trans.y - c->pos.y) / n - (g * n) * 0.5;
                 } else {
                     PlaySound(0xFC);
                     func_800FA308_PaddleBattle(1, &c->pos, c->player);
                 }
             }
-            d = o->trans.x - c->ref.x;
+            rx = o->trans.x - c->ref.x;
             c->ref.x = o->trans.x;
-            c->pos.x = d + c->pos.x;
-            d = o->trans.y - c->ref.y;
+            c->pos.x = rx + c->pos.x;
+            rx = o->trans.y - c->ref.y;
             c->ref.y = o->trans.y;
-            c->pos.y = d + c->pos.y;
-            d = o->trans.z - c->ref.z;
+            c->pos.y = rx + c->pos.y;
+            rx = o->trans.z - c->ref.z;
             c->ref.z = o->trans.z;
-            c->pos.z = d + c->pos.z;
+            c->pos.z = rx + c->pos.z;
             if ((s16)++c->anim >= 7) {
                 c->anim = 0;
             }
@@ -1100,15 +1088,15 @@ void func_800FA5EC_PaddleBattle(omObjData* obj) {
             break;
         case 1:
             c->frame++;
-            d = o->trans.x - c->ref.x;
+            rx = o->trans.x - c->ref.x;
             c->ref.x = o->trans.x;
-            c->pos.x = d + c->pos.x;
-            d = o->trans.y - c->ref.y;
+            c->pos.x = rx + c->pos.x;
+            rx = o->trans.y - c->ref.y;
             c->ref.y = o->trans.y;
-            c->pos.y = d + c->pos.y;
-            d = o->trans.z - c->ref.z;
+            c->pos.y = rx + c->pos.y;
+            rx = o->trans.z - c->ref.z;
             c->ref.z = o->trans.z;
-            c->pos.z = d + c->pos.z;
+            c->pos.z = rx + c->pos.z;
             break;
         }
         c->pos.x += c->vel.x;
@@ -1118,29 +1106,24 @@ void func_800FA5EC_PaddleBattle(omObjData* obj) {
             c->flags = 0;
         }
     }
-    for (i = 0, c = D_800FF3B0_PaddleBattle; i < 32; i++, c++) {
+    for (c = D_800FF3B0_PaddleBattle, i = 0; i < 32; i++, c++) {
         if (c->flags & 1) {
             func_80067480(D_800FFB50_PaddleBattle, i, 0x8000);
             if (c->flags & 2) {
                 func_80066DC4(D_800FFB50_PaddleBattle, i, c->pos.x, c->pos.y);
-                sc = c->scale;
+                func_80067354(D_800FFB50_PaddleBattle, i, c->scale, c->scale);
             } else {
                 func_800FB868_PaddleBattle(0, &c->pos, &scr.x);
                 func_80066DC4(D_800FFB50_PaddleBattle, i, scr.x + 160.0f, scr.y + 120.0f);
-                sc = scr.z * c->scale;
+                rx = scr.z * c->scale;
+                func_80067354(D_800FFB50_PaddleBattle, i, rx, rx);
             }
-            func_80067354(D_800FFB50_PaddleBattle, i, sc, sc);
             func_800671DC(D_800FFB50_PaddleBattle, i, c->frame);
         } else {
             func_800674BC(D_800FFB50_PaddleBattle, i, 0x8000);
         }
     }
 }
-#else
-const s32 D_800FF0D0_PaddleBattle __attribute__((section(".rodata"))) = 0x40590000; /* 100.0 (f64), high word */
-const s32 D_800FF0D4_PaddleBattle __attribute__((section(".rodata"))) = 0;
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FA5EC_PaddleBattle);
-#endif
 
 /* The river: banks D_800FE210 (left) and D_800FE600 (right) are quadratic B-splines over
    `dist` 0..2000; `lateral` 0..1 goes from one bank to the other. */
