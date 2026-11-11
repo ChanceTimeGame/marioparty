@@ -924,7 +924,9 @@ void func_800F87E4_SlotCarDerby(SCDCar* car, f32 ahead) {
     }
     car->unk_44 = d * 0.3;
 }
-// float register allocation; GCC shares the braking subtraction (masked 50)
+// float register allocation (masked 15): the braking arm's sub.d lands in f4 (retail f0, sharing the
+// cvt.s.d tail) and the pitch d = f / 0.8 path uses f2/f0 swapped. Tried d = cur; d -= x, folded
+// constants, one-expression arms
 #ifdef NON_MATCHING
 void func_800F88CC_SlotCarDerby(omObjData* obj, f32 throttle) {
     Vec a;
@@ -959,11 +961,10 @@ void func_800F88CC_SlotCarDerby(omObjData* obj, f32 throttle) {
         }
     } else if (target < cur) {
         if (car->unk_60 != 0) {
-            d = cur - (f32)(20 - car->unk_60) / 10.0 * 0.42;
+            speed = cur - (f32)(20 - car->unk_60) / 10.0 * 0.42;
         } else {
-            d = car->unk_50 - 0.42;
+            speed = car->unk_50 - 0.42;
         }
-        speed = d;
         if (speed < target) {
             speed = target;
         }
@@ -1440,7 +1441,9 @@ void func_800FA32C_SlotCarDerby(s32 x, s32 y, s32 z, s32 weight) {
     v.z = z * 0.01;
     func_800FA2C0_SlotCarDerby(&v.x, weight * 0.01);
 }
-// register allocation: ease not in f26, so 1.0 is hoisted out of the zoom loop (masked 14)
+// register allocation (masked 12): retail keeps ease in f26 from the start (as if live across the
+// if-branch calls), so 1.0 is not hoisted into f26; min/max loop pointers in other registers.
+// Tried up[] = 0.0f directly, a chained d, increment orders
 #ifdef NON_MATCHING
 void func_800FA3B4_SlotCarDerby(Vec* look) {
     f32 max[3];
@@ -1477,7 +1480,7 @@ void func_800FA3B4_SlotCarDerby(Vec* look) {
         for (i = 0; i < D_80102318_SlotCarDerby; i++) {
             pmax = max;
             pmin = min;
-            for (j = 0, p = &D_80102320_SlotCarDerby[i].pos.x; j < 3; j++, pmax++, pmin++) {
+            for (j = 0, p = &D_80102320_SlotCarDerby[i].pos.x; j < 3; pmax++, j++, pmin++) {
                 if (p[j] > *pmax) {
                     *pmax = p[j];
                 }
