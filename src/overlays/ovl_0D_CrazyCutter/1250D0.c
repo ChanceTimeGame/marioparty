@@ -274,7 +274,7 @@ void func_800F7180_CrazyCutter(omObjData* arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800F7180_CrazyCutter);
 #endif
 
-// register pressure: spills/reloads and loop layout (masked 224)
+// register pressure: retail keeps obj/player on the stack and reloads them, CSE of GwPlayer[player] (masked 151)
 #ifdef NON_MATCHING
 void func_800F731C_CrazyCutter(omObjData* obj, s32 player) {
     s32 px[30];
@@ -369,8 +369,8 @@ void func_800F731C_CrazyCutter(omObjData* obj, s32 player) {
     if (D_800FD480_CrazyCutter == 1) {
         st->startX -= 15.0f;
     }
-    dir = D_800FCD20_CrazyCutter[GwPlayer[player].character] << 16;
-    *obj->model = LoadFormFile(dir | D_800FCD38_CrazyCutter[GwPlayer[player].character], 0x699);
+    dir = D_800FCD20_CrazyCutter[(s8)GwPlayer[player].character] << 16;
+    *obj->model = LoadFormFile(dir | D_800FCD38_CrazyCutter[(s8)GwPlayer[player].character], 0x699);
     omSetTra(obj, D_800FCCF0_CrazyCutter[player] + st->x, st->y, D_800FCD00_CrazyCutter[player] + st->z + -4.0f);
     omSetRot(obj, st->rotX, st->rotY, st->rotZ);
     func_80025798(*obj->model, st->x, st->y, st->z);
@@ -511,16 +511,16 @@ void func_800F731C_CrazyCutter(omObjData* obj, s32 player) {
     D_800FD130_CrazyCutter -= 2;
     px[count] = D_800FD130_CrazyCutter[0];
     py[count] = D_800FD130_CrazyCutter[0];
-    if (!(rand8() & 1)) {
+    if (rand8() & 1) {
+        for (i = 0; i < count; i++) {
+            st->pathX[i] = px[i];
+            st->pathY[i] = py[i];
+        }
+    } else {
         n = count - 1;
         for (i = 0; i < n; i++) {
             st->pathX[i] = px[count - i - 2];
             st->pathY[i] = py[count - i - 2];
-        }
-    } else {
-        for (i = 0; i < count; i++) {
-            st->pathX[i] = px[i];
-            st->pathY[i] = py[i];
         }
     }
     st->pathX[count - 1] = px[count - 1];

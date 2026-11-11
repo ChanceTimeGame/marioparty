@@ -1,9 +1,9 @@
 #include "MushroomMixup.h"
 
-u8 D_800FC700_MushroomMixup = 0;
-u8 D_800FC701_MushroomMixup = 0;
-u8 D_800FC702_MushroomMixup = 0;
-u8 D_800FC703_MushroomMixup = 0;
+s8 D_800FC700_MushroomMixup = 0;
+s8 D_800FC701_MushroomMixup = 0;
+s8 D_800FC702_MushroomMixup = 0;
+s8 D_800FC703_MushroomMixup = 0;
 s16 D_800FC704_MushroomMixup = 0;
 s16 D_800FC706_MushroomMixup = 0;
 s16 D_800FC708_MushroomMixup = 0;
@@ -260,8 +260,6 @@ loop_1:
 }
 
 
-// phase flags read as u8 (retail s8: lb), register allocation; same states, calls and stores
-#ifdef NON_MATCHING
 void func_800F75B0_MushroomMixup(omObjData* arg0) {
     u16 model;
     u16 i;
@@ -325,7 +323,7 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
             D_800FC9B8_MushroomMixup = 50.0f;
         }
         for (i = 0; i < 7; i++) {
-            D_800FC9C0_MushroomMixup[i].speed = -5.0f - D_800FC9B8_MushroomMixup;
+            (D_800FC9C0_MushroomMixup + i)->speed = -5.0f - D_800FC9B8_MushroomMixup;
         }
         D_800FC700_MushroomMixup++;
     }
@@ -363,7 +361,8 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
         D_800FC701_MushroomMixup = 0;
         D_800FC708_MushroomMixup++;
         D_800FC700_MushroomMixup++;
-    } else if (D_800FC700_MushroomMixup == 2) {
+    }
+    if (D_800FC700_MushroomMixup == 2) {
         if (!func_800F7574_MushroomMixup()) {
             return;
         }
@@ -418,7 +417,7 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
             D_800FC9B8_MushroomMixup = 50.0f;
         }
         for (i = 0; i < 7; i++) {
-            D_800FC9C0_MushroomMixup[i].speed = -5.0f - D_800FC9B8_MushroomMixup;
+            (D_800FC9C0_MushroomMixup + i)->speed = -5.0f - D_800FC9B8_MushroomMixup;
         }
         D_800FC700_MushroomMixup++;
     }
@@ -460,9 +459,6 @@ void func_800F75B0_MushroomMixup(omObjData* arg0) {
         D_800FC700_MushroomMixup = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F75B0_MushroomMixup);
-#endif
 
 // register allocation (masked 0, raw 9): both "D_800FC98C |= 1 << work[0]" build the bit in v0, retail in v1
 #ifdef NON_MATCHING
@@ -713,7 +709,7 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F88AC_MushroomMixup);
 #endif
 
-// retail reaches d through a register and copies floats as words; register allocation
+// retail reaches d through a register, spills p to the stack (sh/lhu) and saves two more s-registers; register allocation (masked 148)
 /* The CPU: writes the pad state its player object reads this frame. */
 #ifdef NON_MATCHING
 void func_800F8A58_MushroomMixup(omObjData* arg0) {

@@ -215,37 +215,35 @@ void func_800F6F68_PlatformPeril(void) {
     CZoom = D_800FDD74_PlatformPeril[0].zoom;
 }
 
-// register allocation and D_800FE250 reloads (masked 98 incl. address shift; logic-equivalent)
-#ifdef NON_MATCHING
 /* Builds the course after `out`: random pieces, their items and the tile map. */
 void func_800F7070_PlatformPeril(PPPlatform* out) {
+    u8* map = D_800FE5B0_PlatformPeril[0];
     s32 n = 0;
     s32 order[6];
     s32 kinds[3];
     s32 i;
     s32 k;
-    s32 t;
     s32 piece;
-    u8 j;
     f32 z;
 
     *(PPOrder6*)order = *(PPOrder6*)D_800FDFB8_PlatformPeril;
     *(PPKinds3*)kinds = *(PPKinds3*)D_800FDFD0_PlatformPeril;
     for (i = 0; i < 6; i++) {
-        j = rand8() % 6;
-        t = order[i];
-        order[i] = order[j];
-        order[j] = t;
+        piece = (u8)(rand8() % 6);
+        k = order[i];
+        order[i] = order[piece];
+        order[piece] = k;
     }
     for (i = 0; i < 3; i++) {
-        j = rand8() % 3;
-        t = kinds[i];
-        kinds[i] = kinds[j];
-        kinds[j] = t;
+        piece = (u8)(rand8() % 3);
+        k = kinds[i];
+        kinds[i] = kinds[piece];
+        kinds[piece] = k;
     }
     D_800FE250_PlatformPeril = 0;
+    i = 0;
     z = 0.0f;
-    for (i = 0; i < (((rand8() << 8) | rand8()) & 1) + 15; i++) {
+    for (; i < (((rand8() << 8) | rand8()) & 1) + 15; i++) {
         if (i >= 4) {
             piece = ((rand8() << 8) | rand8()) % 10 + 3;
         } else {
@@ -255,9 +253,8 @@ void func_800F7070_PlatformPeril(PPPlatform* out) {
         z -= out[i].pos.z;
         out[i].pos.z = z;
         if (piece >= 3 && D_800FD6D8_PlatformPeril[piece].ofs.x != 0.0f) {
-            for (k = 0; k < 3;) {
+            for (k = 0; k < 3; k++) {
                 if (D_800FE250_PlatformPeril < 3) {
-                    k++;
                     if (order[k] == i) {
                         D_800FD8F4_PlatformPeril[D_800FE250_PlatformPeril].pos.x =
                             -D_800FD6D8_PlatformPeril[piece].ofs.x * (f32)(((rand8() << 8) | rand8()) % 4 + 5) * 0.1f;
@@ -269,28 +266,24 @@ void func_800F7070_PlatformPeril(PPPlatform* out) {
                         D_800FE250_PlatformPeril++;
                         break;
                     }
-                } else {
-                    k++;
                 }
             }
         }
         for (k = 0; k < D_800FCDB4_PlatformPeril[piece].count; k++) {
-            D_800FE5B0_PlatformPeril[0][n++] = D_800FCDB4_PlatformPeril[piece].tiles[k];
+            map[n++] = D_800FCDB4_PlatformPeril[piece].tiles[k];
         }
     }
+    piece = 0;
     D_800FD8F4_PlatformPeril[D_800FE250_PlatformPeril].type = 0;
     out[i] = D_800FD6D8_PlatformPeril[0];
     z -= out[i].pos.z;
     out[i].pos.z = z;
     D_800FE2CC_PlatformPeril = z + 1500.0f;
-    for (k = 0; k < D_800FCDB4_PlatformPeril[0].count; k++) {
-        D_800FE5B0_PlatformPeril[0][n++] = D_800FCDB4_PlatformPeril[0].tiles[k];
+    for (k = 0; k < D_800FCDB4_PlatformPeril[piece].count; k++) {
+        map[n++] = D_800FCDB4_PlatformPeril[piece].tiles[k];
     }
     out[i + 1].type = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F7070_PlatformPeril);
-#endif
 
 void func_800F76E4_PlatformPeril(void) {
     s32 i;
@@ -319,8 +312,6 @@ void func_800F76E4_PlatformPeril(void) {
 /* Item kinds, shuffled by func_800F7070. */
 const s32 D_800FDFD0_PlatformPeril[4] __attribute__((section(".rodata"))) = { 5, 1, 1, 0 };
 
-// register allocation in the scenery switch (masked ~20)
-#ifdef NON_MATCHING
 /* Platform / scenery object set-up (D_800FD2A0[D_800FE1D0]). */
 void func_800F7868_PlatformPeril(omObjData* obj) {
     PPPlatWork* w;
@@ -352,10 +343,6 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
         obj->model[0] = func_800174C0(0x2A0000, 0x99);
         obj->model[1] = -1;
         break;
-    case 3:
-        obj->model[0] = func_800174C0(0x2A0001, 0x99);
-        obj->model[1] = -1;
-        break;
     case 4:
         obj->model[0] = func_800174C0(0x2A0000, 0x99);
         obj->model[1] = func_800174C0(0x2A0004, 0x99);
@@ -364,6 +351,10 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
         func_80025798(obj->model[1], obj->trans.x + D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].ofs.x,
                       obj->trans.y + D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].ofs.y,
                       obj->trans.z + D_800FD2A0_PlatformPeril[D_800FE1D0_PlatformPeril].ofs.z);
+        break;
+    case 3:
+        obj->model[0] = func_800174C0(0x2A0001, 0x99);
+        obj->model[1] = -1;
         break;
     case 10:
         obj->model[0] = func_800174C0(0x2A0001, 0x99);
@@ -386,22 +377,26 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
         case 0:
             obj->model[0] = func_800174C0(0x2A0005, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 401 - 500;
-            y = ((rand8() << 8) | rand8()) % 401 - 1000;
+            y = ((rand8() << 8) | rand8()) % 401;
+            y -= 1000;
             break;
         case 1:
             obj->model[0] = func_800174C0(0x2A0006, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 901 - 1000;
-            y = ((rand8() << 8) | rand8()) % 501 - 1500;
+            y = ((rand8() << 8) | rand8()) % 501;
+            y -= 1500;
             break;
         case 2:
             obj->model[0] = func_800174C0(0x2A0007, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 1901 - 2000;
-            y = ((rand8() << 8) | rand8()) % 501 - 2000;
+            y = ((rand8() << 8) | rand8()) % 501;
+            y -= 2000;
             break;
         default:
             obj->model[0] = func_800174C0(0x2A0008, 0x99);
             obj->trans.x = ((rand8() << 8) | rand8()) % 2901 - 3000;
-            y = ((rand8() << 8) | rand8()) % 1001 - 3000;
+            y = ((rand8() << 8) | rand8()) % 1001;
+            y -= 3000;
             break;
         }
         obj->trans.y = y;
@@ -413,9 +408,6 @@ void func_800F7868_PlatformPeril(omObjData* obj) {
     }
     D_800FE1D0_PlatformPeril++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F7868_PlatformPeril);
-#endif
 
 /* Scenery: scrolls towards the camera and wraps. */
 void func_800F815C_PlatformPeril(omObjData* obj) {
@@ -434,12 +426,9 @@ void func_800F815C_PlatformPeril(omObjData* obj) {
 void func_800F8218_PlatformPeril(omObjData* obj) {
 }
 
-// float register choice (masked 4)
-#ifdef NON_MATCHING
 /* Falling platform: shakes (state 1), falls (2, 3), parks (4). */
 void func_800F8220_PlatformPeril(omObjData* obj) {
     PPPlatWork* w = obj->unk_50;
-    f32 rz;
 
     switch (D_800FD2A0_PlatformPeril[w->index].state) {
     case 1:
@@ -450,11 +439,11 @@ void func_800F8220_PlatformPeril(omObjData* obj) {
         }
         obj->rot.x = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
         obj->rot.y = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
-        obj->rot.z = rz = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
+        obj->rot.z = (f32)((((rand8() << 8) | rand8()) % 31 - 15) * obj->work[0]) / 1200.0f;
         if (obj->model[1] != -1) {
             func_80025798(obj->model[1], obj->trans.x + D_800FD2A0_PlatformPeril[w->index].ofs.x + obj->rot.x * 5.0f,
                           obj->trans.y + D_800FD2A0_PlatformPeril[w->index].ofs.y + obj->rot.y * 10.0f,
-                          obj->trans.z + D_800FD2A0_PlatformPeril[w->index].ofs.z + rz * 5.0f);
+                          obj->trans.z + D_800FD2A0_PlatformPeril[w->index].ofs.z + obj->rot.z * 5.0f);
         }
         if (obj->work[0]++ >= 0x33) {
             D_800FD2A0_PlatformPeril[w->index].state = 2;
@@ -507,9 +496,6 @@ void func_800F8220_PlatformPeril(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F8220_PlatformPeril);
-#endif
 
 /* Start platform: drops once the race is on. */
 void func_800F87A0_PlatformPeril(omObjData* obj) {
@@ -760,14 +746,13 @@ void func_800F96F0_PlatformPeril(omObjData* obj) {
 #define PP_BOX(xl, xr, zl, zr) \
     ((xl) - 0.0f < obj->trans.x && obj->trans.x < (xr) + 0.0f && (zl) - 20.0f < obj->trans.z && obj->trans.z < (zr) + 20.0f)
 
-// GCC cross-jumps the case 10 slope tail into case 4's, plus register allocation (masked 224 incl. that 46-instruction merge; logic-equivalent)
-#ifdef NON_MATCHING
 /* Player main: camera follow, platform collision, goal steps, falling. */
 void func_800F979C_PlatformPeril(omObjData* obj) {
     s32 pl = obj->work[0];
-    s32 idx = PP_PWORK(obj)->unk_58;
-    s32 port = PP_PWORK(obj)->unk_56;
-    s32 hit;
+    unkGlobalStruct_00* pw = PP_PWORK(obj);
+    s32 hit = -1;
+    s32 idx = pw->unk_58;
+    s32 port = pw->unk_56;
     s32 i;
     s32 j;
     f32 cx;
@@ -778,8 +763,6 @@ void func_800F979C_PlatformPeril(omObjData* obj) {
     f32 xr;
     f32 zl;
     f32 zr;
-    f32 w;
-    f32 dx;
     f32 a;
     f32 b;
     f32 sx;
@@ -789,12 +772,13 @@ void func_800F979C_PlatformPeril(omObjData* obj) {
         return;
     }
     D_800FDD2C_PlatformPeril[pl] = GwPlayer[pl].coins_mg;
-    if (obj->trans.z < D_800FCDA0_PlatformPeril) {
+    if (D_800FCDA0_PlatformPeril > obj->trans.z) {
         D_800FCDA0_PlatformPeril = obj->trans.z;
         Center.z = obj->trans.z + 100.0f;
     }
+    i = 0;
     hit = -1;
-    for (i = 0; D_800FD2A0_PlatformPeril[i].type != 0; i++) {
+    for (; D_800FD2A0_PlatformPeril[i].type != 0; i++) {
         if (D_800FD2A0_PlatformPeril[i].type != 18 && D_800FD2A0_PlatformPeril[i].state >= 3) {
             continue;
         }
@@ -819,10 +803,8 @@ void func_800F979C_PlatformPeril(omObjData* obj) {
                 zr = cz + s * 170.0f;
                 if (xl < obj->trans.x && obj->trans.x < xr && zl < obj->trans.z && obj->trans.z < zr &&
                     0.0f <= obj->trans.y && obj->trans.y < 150.0f) {
-                    w = xr - xl;
-                    dx = obj->trans.x - xl;
-                    a = (zl - zr) / w * dx + zr - obj->trans.z;
-                    b = (zr - zl) / w * dx + zl - obj->trans.z;
+                    a = (zl - zr) / (xr - xl) * (obj->trans.x - xl) + zr - obj->trans.z;
+                    b = (zr - zl) / (xr - xl) * (obj->trans.x - xl) + zl - obj->trans.z;
                     if (a > 0.0f) {
                         if (b > 0.0f) {
                             obj->trans.z = zl;
@@ -857,20 +839,18 @@ void func_800F979C_PlatformPeril(omObjData* obj) {
                 zr = cz + s * 220.0f;
                 if (xl < obj->trans.x && obj->trans.x < xr && zl < obj->trans.z && obj->trans.z < zr &&
                     0.0f <= obj->trans.y && obj->trans.y < 150.0f) {
-                    w = xr - xl;
-                    dx = obj->trans.x - xl;
-                    a = (zl - zr) / w * dx + zr - obj->trans.z;
-                    b = (zr - zl) / w * dx + zl - obj->trans.z;
+                    a = (zl - zr) / (xr - xl) * (obj->trans.x - xl) + zr - obj->trans.z;
+                    b = (zr - zl) / (xr - xl) * (obj->trans.x - xl) + zl - obj->trans.z;
                     if (a > 0.0f) {
-                        if (!(b > 0.0f)) {
-                            obj->trans.x = xl;
-                        } else {
+                        if (0.0f < b) {
                             obj->trans.z = zl;
+                        } else {
+                            obj->trans.x = xl;
                         }
-                    } else if (!(b > 0.0f)) {
-                        obj->trans.z = zr;
-                    } else {
+                    } else if (0.0f < b) {
                         obj->trans.x = xr;
+                    } else {
+                        obj->trans.z = zr;
                     }
                 }
             }
@@ -972,9 +952,6 @@ void func_800F979C_PlatformPeril(omObjData* obj) {
         D_800FE1B0_PlatformPeril[idx].state = 3;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16C6A0", func_800F979C_PlatformPeril);
-#endif
 
 // decomp-permuter
 void func_800FAAE0_PlatformPeril(f32 t, PPCamKey *k, PPCamKey *out)
@@ -1002,3 +979,6 @@ void func_800FAAE0_PlatformPeril(f32 t, PPCamKey *k, PPCamKey *out)
   out->center.y = ((a * k[0].center.y) + (b * k[1].center.y)) + (c * k[2].center.y);
   out->center.z = ((a * k[0].center.z) + (b * k[1].center.z)) + (c * k[2].center.z);
 }
+
+/* Unreferenced words after func_800F979C's jump table. */
+const s32 D_800FE0B4_PlatformPeril[3] __attribute__((section(".rodata"))) = { 0, 0, 0 };
