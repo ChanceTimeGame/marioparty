@@ -377,12 +377,6 @@ void func_800F6BC4_DebugRandomPlay(u16 arg0) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7A_DebugRandomPlay/3014C0", func_800F6BC4_DebugRandomPlay);
 #endif
 
-/* func_800F6DA0's team-letter templates (named so its INCLUDE_ASM build finds them) */
-const u8 D_800F8F64_DebugRandomPlay[4] __attribute__((section(".rodata"))) = { 12, 0, 8, 13 };
-const u8 D_800F8F68_DebugRandomPlay[4] __attribute__((section(".rodata"))) = { 18, 20, 1, 25 };
-
-// scheduling of the sprite x (masked 2)
-#ifdef NON_MATCHING
 void func_800F6DA0_DebugRandomPlay(u16 arg0) {
     u16 sum = 0;
     u8 team0[4] = { 12, 0, 8, 13 };
@@ -407,15 +401,12 @@ void func_800F6DA0_DebugRandomPlay(u16 arg0) {
         ShowBasicSprite(D_800F8F98_DebugRandomPlay[arg0][i]);
         func_80018E50(D_800F8F98_DebugRandomPlay[arg0][i], *text++, 0);
         func_80018E98(D_800F8F98_DebugRandomPlay[arg0][i], 1);
-        SetBasicSpritePos(D_800F8F98_DebugRandomPlay[arg0][i], (i * 16 + 0x48) + D_800F88F0_DebugRandomPlay[arg0], D_800F8900_DebugRandomPlay[arg0] + 8);
+        SetBasicSpritePos(D_800F8F98_DebugRandomPlay[arg0][i], D_800F88F0_DebugRandomPlay[arg0] + (s16)(i * 16 + 0x48), D_800F8900_DebugRandomPlay[arg0] + 8);
     }
     if (GwPlayer[arg0].group == 1) {
         func_80018C90(D_800F8F98_DebugRandomPlay[arg0][3]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7A_DebugRandomPlay/3014C0", func_800F6DA0_DebugRandomPlay);
-#endif
 
 void func_800F6FA0_DebugRandomPlay(omObjData* arg0) {
     s32 i;
@@ -640,11 +631,8 @@ void func_800F783C_DebugRandomPlay(void) {
     }
 }
 
-// register allocation: retail keeps &n in a saved register (masked ~5)
-#ifdef NON_MATCHING
 void func_800F7A50_DebugRandomPlay(void) {
     f32 n[3];
-    f32* np;
     Vtx* v;
     Vtx* p;
     f32 x;
@@ -667,20 +655,20 @@ void func_800F7A50_DebugRandomPlay(void) {
         }
     }
     D_800F9220_DebugRandomPlay += 1.0f;
-    np = n;
     for (row = 0; row < 14; row++) {
         for (col = 0; col < 14; col++) {
-            p = &v[col + row * 15];
-            func_800295FC(p, &v[col + (row * 15 + 1)], &v[col + (row + 1) * 15], (Vec3f*)np);
+            s32 base = row * 15;
+            s32 right = base + 1;
+            s32 below = (row + 1) * 15;
+
+            p = &v[col + base];
+            func_800295FC(p, &v[col + right], &v[col + below], (Vec3f*)n);
             for (k = 0; k < 3; k++) {
-                p->n.n[k] = np[k] * 127.0f;
+                p->n.n[k] = n[k] * 127.0f;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7A_DebugRandomPlay/3014C0", func_800F7A50_DebugRandomPlay);
-#endif
 
 void func_800F7CA0_DebugRandomPlay(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     func_800178A0(1);

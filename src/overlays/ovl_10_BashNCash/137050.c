@@ -375,7 +375,8 @@ s32 func_800F73F0_BashNCash(u16 player) {
 }
 
 /* CPU for the cash player (difficulty: easy). */
-// register allocation and scheduling (nmcmp: calls and stores equal)
+// register allocation (masked 8, raw 21): GCC reuses the zero in v1 from the state test for n's entry test,
+// and a float temp in BASH_ABS; M1e tried n init before k, a switch on state
 #ifdef NON_MATCHING
 void func_800F7458_BashNCash(omObjData* obj) {
     f32 angle[3];
@@ -411,8 +412,8 @@ void func_800F7458_BashNCash(omObjData* obj) {
             ContStkY[GwPlayer[i].port] = 0;
             if (in->state == 0) {
                 k = 0;
-                for (n = 0; n < D_800F2BC0;) {
-                    other = D_800FE710_BashNCash[n++].obj;
+                for (n = 0; n < D_800F2BC0; n++) {
+                    other = D_800FE710_BashNCash[n].obj;
                     if (other != NULL) {
                         v->x = other->trans.x;
                         v->y = 0.0f;
@@ -420,13 +421,13 @@ void func_800F7458_BashNCash(omObjData* obj) {
                         angle[k++] = func_80029518(func_800B0CD8(v->x, v->z));
                     }
                 }
-                if (angle[1] < angle[0]) {
+                if (angle[0] > angle[1]) {
                     func_800F7108_BashNCash(&angle[0], &angle[1]);
                 }
-                if (angle[2] < angle[1]) {
+                if (angle[1] > angle[2]) {
                     func_800F7108_BashNCash(&angle[1], &angle[2]);
                 }
-                if (angle[1] < angle[0]) {
+                if (angle[0] > angle[1]) {
                     func_800F7108_BashNCash(&angle[0], &angle[1]);
                 }
                 dir = func_800F7240_BashNCash(angle);
@@ -485,8 +486,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F7458_B
 #endif
 
 /* CPU for the cash player (difficulty: normal and hard). */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800F7A54_BashNCash(omObjData* obj) {
     struct {
         u16 idx[4];
@@ -506,12 +505,14 @@ void func_800F7A54_BashNCash(omObjData* obj) {
     u16 n;
     u16 j;
     u16 k;
+    BashCash* cash;
 
     if (D_800ED430 == 1) {
         w = obj->unk_50;
         i = obj->work[0];
         in = &D_800FE6A8_BashNCash[i];
         v = &v_s;
+        cash = &D_800FE690_BashNCash;
         if (in->flags & 1) {
             in->stickY = 0;
             in->stickX = 0;
@@ -522,8 +523,7 @@ void func_800F7A54_BashNCash(omObjData* obj) {
             switch (in->state) {
             case 0:
                 k = 0;
-                n = 0;
-                for (j = 0; j < D_800F2BC0; j++, k++) {
+                for (j = 0, n = 0; j < D_800F2BC0; j++, k++) {
                     other = D_800FE710_BashNCash[j].obj;
                     if (other != NULL) {
                         func_800A0D00(v, other->trans.x, 0.0f, other->trans.z);
@@ -569,7 +569,7 @@ void func_800F7A54_BashNCash(omObjData* obj) {
                     }
                     break;
                 case 3:
-                    if (D_800FE690_BashNCash.unk_04 == 0) {
+                    if (cash->unk_04 == 0) {
                         func_800A0D00(v, -obj->trans.x, 0.0f, -obj->trans.z);
                         dir = func_80029518(func_800B0CD8(v->x, v->z));
                         D_800FE540_BashNCash = dir;
@@ -579,6 +579,7 @@ void func_800F7A54_BashNCash(omObjData* obj) {
                         in->state = 2;
                         break;
                     }
+                case 0:
                 default:
                     dir = w->unk_3C;
                     break;
@@ -621,9 +622,6 @@ void func_800F7A54_BashNCash(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800F7A54_BashNCash);
-#endif
 
 /* CPU for a hammer player (easy). */
 void func_800F8240_BashNCash(omObjData* obj) {
@@ -1359,15 +1357,12 @@ void func_800FA440_BashNCash(omObjData* obj) {
 }
 
 /* A hammer player's object. */
-// register allocation and scheduling (nmcmp: calls and stores equal)
-#ifdef NON_MATCHING
 void func_800FA5B4_BashNCash(omObjData* obj) {
     void (*cpu[3])(omObjData*) = { func_800F8FD4_BashNCash, func_800F875C_BashNCash, func_800F8240_BashNCash };
     BashPlayerWork* w;
-    u8 i;
+    s32 i;
     BashPlayer* pl;
     BashInput* in;
-    s32 anim;
 
     w = obj->unk_50;
     i = obj->work[0];
@@ -1422,18 +1417,17 @@ void func_800FA5B4_BashNCash(omObjData* obj) {
                 func_8009ECB0(D_800F2B7C[obj->model[0]].unk7C, w->unk_3C, w->unk_3C, w->unk_3C);
                 if (_CheckFlag(0x45) != 0) {
                     if (GwPlayer[PLAYER_WORK(D_800F3FB0[D_800FE610_BashNCash])->unk_58].coins_mg < 0) {
-                        anim = 0xD;
+                        func_800184BC(obj, 0xD);
                     } else {
-                        anim = 0xE;
+                        func_800184BC(obj, 0xE);
                     }
                 } else {
                     if (GwPlayer[i].coins_mg != 0) {
-                        anim = 0xD;
+                        func_800184BC(obj, 0xD);
                     } else {
-                        anim = 0xE;
+                        func_800184BC(obj, 0xE);
                     }
                 }
-                func_800184BC(obj, anim);
             }
         }
     }
@@ -1443,11 +1437,6 @@ void func_800FA5B4_BashNCash(omObjData* obj) {
     ContStkX[GwPlayer[i].port] = in->saveStkX;
     ContStkY[GwPlayer[i].port] = in->saveStkY;
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", D_800FE458_BashNCash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_BashNCash/137050", func_800FA5B4_BashNCash);
-#endif
 
 /* The cash player's object. */
 // register allocation and scheduling (nmcmp: calls and stores equal)
