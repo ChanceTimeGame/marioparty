@@ -1383,7 +1383,8 @@ void func_801083DC_MinigameInstructions(Ovl6FPlayerWork* work) {
     }
     D_800F2B7C[work->unk_4E].unk_12 = work->unk_B6;
 }
-// register allocation, D_8010EF10 base CSE and one threaded branch (masked 37)
+// register allocation, D_8010EF10 base CSE and one threaded branch (masked 37); retail keeps &D_8010EF10[0][1]
+// in s3 and the [chr][1] address in s1 (tried: {model, anim} struct = no change, a [chr][1] pointer local = masked 39)
 #ifdef NON_MATCHING
 void func_80108624_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f in;
@@ -2373,8 +2374,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2E8220", func
 #define OVL6F_F50C(g) ((&D_8010F50C_MinigameInstructions[0].unk_00)[(g) * 2])
 #define OVL6F_F50E(g) ((&D_8010F50C_MinigameInstructions[0].unk_02)[(g) * 2])
 
-// register allocation: v0/v1 swapped around the D_8010F514 store (masked 0, raw 6)
-#ifdef NON_MATCHING
 void func_8010C3A4_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;
@@ -2407,11 +2406,9 @@ void func_8010C3A4_MinigameInstructions(Ovl6FPlayerWork* work) {
     func_80025798(work->unk_4E, out.x, out.y, -180.0f);
     if (work->unk_38 > work->unk_B6) {
         s32 g = work->unk_3E;
-        f32* speed = D_8010F514_MinigameInstructions;
 
-        speed = g + speed;
-        *speed = 0.0f;
-        func_80025CA8(OVL6F_F50E(work->unk_3E), *speed);
+        D_8010F514_MinigameInstructions[g] = 0.0f;
+        func_80025CA8(OVL6F_F50E(work->unk_3E), D_8010F514_MinigameInstructions[g]);
         rot = 90;
         do {
             func_800257E4(work->unk_4E, 0.0f, rot, 0.0f);
@@ -2467,9 +2464,6 @@ void func_8010C3A4_MinigameInstructions(Ovl6FPlayerWork* work) {
     }
     work->unk_BC = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_MinigameInstructions/2E8220", func_8010C3A4_MinigameInstructions);
-#endif
 void func_8010C8CC_MinigameInstructions(Ovl6FPlayerWork* work) {
     Vec2f pos;
     Vec3f out;

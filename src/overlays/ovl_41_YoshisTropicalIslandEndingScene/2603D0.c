@@ -159,7 +159,7 @@ void func_800F6D40_YoshisTropicalIslandEndingScene(void) {
     func_8004A140();
 }
 
-// float register allocation: z/dx in f2/f4 vs f4/f6 (masked 5)
+// float register allocation: z/dx in f2/f4 vs f4/f6 (masked 0, raw 14; declaration order tried)
 #ifdef NON_MATCHING
 void func_800F717C_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     Object* model;
@@ -205,16 +205,18 @@ void func_800F72C4_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
 }
 
-// GCC shares one base register for MODEL[3]/MODEL[11]; retail reloads each (count 105 vs 117)
+// GCC CSEs &MODEL[3] into s0 and loads MODEL[11] from it; retail reloads each (count 108 vs 117, masked 18;
+// tried: no locals (masked 24), angle scaled after the loads)
 #ifdef NON_MATCHING
 void func_800F7384_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     f32 angle;
     Object* dst;
     Object* src;
 
-    angle = func_8003D2B0(&MODEL[3]->unk_18) * (M_PI / 180.0);
+    angle = func_8003D2B0(&MODEL[3]->unk_18);
     dst = MODEL[11];
     src = MODEL[3];
+    angle = angle * (M_PI / 180.0);
     dst->coords.x = (sinf(angle) * 30.0f) + src->coords.x;
     MODEL[11]->coords.y = MODEL[3]->coords.y;
     dst = MODEL[11];
@@ -222,8 +224,7 @@ void func_800F7384_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     dst->coords.z = (cosf(angle) * 30.0f) + src->coords.z;
     MODEL[11]->unk_18.x = MODEL[3]->unk_18.x;
     MODEL[11]->unk_18.z = MODEL[3]->unk_18.z;
-    dst = MODEL[11];
-    dst->unk_30 = (2.0f * sinf(arg0->rot.y * (M_PI / 180.0))) + 2.0f;
+    MODEL[11]->unk_30 = (2.0f * sinf(arg0->rot.y * (M_PI / 180.0))) + 2.0f;
     arg0->rot.y += 10.0f;
 }
 #else
