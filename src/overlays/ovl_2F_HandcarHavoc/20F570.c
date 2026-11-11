@@ -414,7 +414,7 @@ void func_800F7EC8_HandcarHavoc(omObjData* arg0) {
 }
 
 /* Builds a team's car and its two riders. */
-// NON_MATCHING: 0.0f stored with swc1 in retail; register allocation
+// register allocation (masked 27): layer reloaded through t0 from its stack slot, &w->front[seat] operand order; tried chained zero/rot stores, (s16) sprite
 #ifdef NON_MATCHING
 void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
     Vec pos;
@@ -451,9 +451,7 @@ void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
     w->chips[1][0] = 0;
     w->chips[1][1] = 0;
     w->brake = 0;
-    w->skidTimer = 0.0f;
-    w->tipTimer = 0.0f;
-    w->unk94 = 0.0f;
+    w->unk94 = w->tipTimer = w->skidTimer = 0.0f;
     w->cpuStickTime[1] = 0;
     w->cpuStickTime[0] = 0;
     w->cpuStick[1] = 0;
@@ -534,7 +532,7 @@ void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
             }
             func_80025BB8(obj->model[3 + seat], obj->motion[1 + seat]);
             func_80025EB4(obj->model[3 + seat], 1, 1);
-            w->face[seat] = func_80019060(InitSprite(D_800FF3A0_HandcarHavoc[chr]), 0, 1);
+            w->face[seat] = func_80019060((s16)InitSprite(D_800FF3A0_HandcarHavoc[chr]), 0, 1);
             ShowBasicSprite(w->face[seat]);
             w->seat[seat] = D_800FF3C8_HandcarHavoc[GwPlayer[i].character];
             if (seat == 0) {
@@ -568,9 +566,9 @@ void func_800F7F04_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
     }
     D_800FF614_HandcarHavoc -= w->dist[0];
     func_800FC338_HandcarHavoc(obj, &rot, &pos);
-    w->rot.x = w->prevRot.x = rot.x;
-    w->rot.y = w->prevRot.y = rot.y;
-    w->rot.z = w->prevRot.z = rot.z;
+    w->prevRot.x = w->rot.x = rot.x;
+    w->prevRot.y = w->rot.y = rot.y;
+    w->prevRot.z = w->rot.z = rot.z;
     omSetTra(obj, pos.x, pos.y, pos.z);
     func_800F93DC_HandcarHavoc(obj);
     w->prevSlope.x = w->slope.x;
