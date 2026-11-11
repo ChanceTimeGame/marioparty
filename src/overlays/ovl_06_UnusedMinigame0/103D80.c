@@ -255,7 +255,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 /* Whether board cell (x, z) is empty (0 off the board). */
 // NON_MATCHING: register allocation, retail keeps raw x and a sign-extended z live (masked 4, raw 11); tried early-return/ret-local shapes, a flag local; s32 params break the prototype
 #ifdef NON_MATCHING
-s32 func_800FBAA0_UnusedMinigame0(s16 x, s16 z) {
+s16 func_800FBAA0_UnusedMinigame0(s16 x, s16 z) {
     if (((u16)x >= 8) | (z < 0)) {
         return 0;
     }
@@ -270,8 +270,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800F
 
 /* Builds the collision outline of the occupied cells around (x, z): each cell's square, with the
    edges that face an empty neighbour. */
-// NON_MATCHING: retail reloads the outline pointer after the first store and folds the bounds test differently
-#ifdef NON_MATCHING
 void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
     s16 cx;
     s16 cz;
@@ -281,9 +279,7 @@ void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
     s16 z1;
     s16 i;
     s16 j;
-    s8 n;
-    s16 px;
-    s16 pz;
+    s16 n;
 
     n = 0;
     D_80104248_UnusedMinigame0 = D_80103E28_UnusedMinigame0;
@@ -314,19 +310,18 @@ void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
         }
         for (j = z0; j <= z1; j++) {
             for (i = x0; i <= x1; i++) {
-                pz = (j - 3) * 10;
                 if (D_80108B88_UnusedMinigame0[i][j] != NULL) {
-                    (*D_80104248_UnusedMinigame0)[0] = px = (i - 4) * 10;
-                    (*D_80104248_UnusedMinigame0)[1] = pz;
+                    (*D_80104248_UnusedMinigame0)[0] = (i - 4) * 10;
+                    (*D_80104248_UnusedMinigame0)[1] = (j - 3) * 10;
                     D_80104248_UnusedMinigame0++;
-                    (*D_80104248_UnusedMinigame0)[0] = px + 10;
-                    (*D_80104248_UnusedMinigame0)[1] = pz;
+                    (*D_80104248_UnusedMinigame0)[0] = (i - 4) * 10 + 10;
+                    (*D_80104248_UnusedMinigame0)[1] = (j - 3) * 10;
                     D_80104248_UnusedMinigame0++;
-                    (*D_80104248_UnusedMinigame0)[0] = px + 10;
-                    (*D_80104248_UnusedMinigame0)[1] = pz + 10;
+                    (*D_80104248_UnusedMinigame0)[0] = (i - 4) * 10 + 10;
+                    (*D_80104248_UnusedMinigame0)[1] = (j - 3) * 10 + 10;
                     D_80104248_UnusedMinigame0++;
-                    (*D_80104248_UnusedMinigame0)[0] = px;
-                    (*D_80104248_UnusedMinigame0)[1] = pz + 10;
+                    (*D_80104248_UnusedMinigame0)[0] = (i - 4) * 10;
+                    (*D_80104248_UnusedMinigame0)[1] = (j - 3) * 10 + 10;
                     D_80104248_UnusedMinigame0++;
                     if (func_800FBAA0_UnusedMinigame0(i, j - 1)) {
                         *D_8010424C_UnusedMinigame0++ = n;
@@ -359,9 +354,6 @@ void func_800FBB18_UnusedMinigame0(f32 x, f32 z) {
         D_80103E20_UnusedMinigame0 = n;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800FBB18_UnusedMinigame0);
-#endif
 
 /* Builds the outlines of the movable pieces (D_801098B4 slots 1, 2, 4) from their model nodes. */
 void func_800FBFE4_UnusedMinigame0(omObjData* obj) {
