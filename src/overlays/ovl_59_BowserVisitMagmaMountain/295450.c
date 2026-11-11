@@ -45,8 +45,6 @@ void func_800F65E0_BowserVisitMagmaMountain(void) {
     SetFadeInTypeAndTime(1, 16);
 }
 
-// register allocation (masked 2)
-#ifdef NON_MATCHING
 void func_800F66BC_BowserVisitMagmaMountain(void) {
     s32 windowID;
     s32 var_s0;
@@ -78,9 +76,9 @@ void func_800F66BC_BowserVisitMagmaMountain(void) {
     HuPrcSleep(3);
     func_8004F9F4(D_800F6FD8_BowserVisitMagmaMountain, D_800F6FD4_BowserVisitMagmaMountain->coords.x + 20.0f, D_800F6FD4_BowserVisitMagmaMountain->coords.y - 22.0f, D_800F6FD4_BowserVisitMagmaMountain->coords.z + 50.0f, 1);
     HuPrcSleep(3);
-    var_s0 = 0;
     func_8004F9F4(D_800F6FD8_BowserVisitMagmaMountain, D_800F6FD4_BowserVisitMagmaMountain->coords.x - 20.0f, D_800F6FD4_BowserVisitMagmaMountain->coords.y - 22.0f, D_800F6FD4_BowserVisitMagmaMountain->coords.z + 50.0f, 1);
     HuPrcSleep(4);
+    var_s0 = 0;
 
     do {
         switch (var_s0) {
@@ -133,9 +131,6 @@ void func_800F66BC_BowserVisitMagmaMountain(void) {
     }
 }
 
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_59_BowserVisitMagmaMountain/295450", func_800F66BC_BowserVisitMagmaMountain);
-#endif
 
 void func_800F6BA4_BowserVisitMagmaMountain(void) {
     if (func_80072718() == 0) {
