@@ -2268,16 +2268,18 @@ s16 func_800FE2C0_DeepSeaDivers(s16 idx) {
     }
     return model;
 }
+// float register allocation (masked 1, raw 45: s (sag, then slack) in f10 not f22, t/ang swapped, one bnezl); tried
+// merging sag into s, u8 col, k reused as the colour temp
 #ifdef NON_MATCHING
 void func_800FE378_DeepSeaDivers(Gfx** gfx) {
     DSDRope* r;
     DSDRopeNode* first;
     DSDRopeNode* last;
     Vtx* v;
+    unk2C0C0StructC0* m;
     f32 p[9];
     Vec mid;
     Vec d;
-    f32 sag;
     f32 len;
     f32 s;
     f32 t;
@@ -2287,7 +2289,7 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
     f32 c;
     f32 ang;
     f32 amp;
-    s32 col;
+    u8 col;
     s32 i;
     s32 k;
 
@@ -2300,21 +2302,23 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
         r = &D_80100610_DeepSeaDivers[i];
         if (!(r->active & 0x80)) {
             r->active |= 0x80;
+            return;
         }
         gSPDisplayList((*gfx)++, osVirtualToPhysical(D_800FFDD0_DeepSeaDivers));
         func_8001D658(0, gfx);
         gSPDisplayList((*gfx)++, osVirtualToPhysical(D_800FFE10_DeepSeaDivers));
+        m = D_800F2B7C[D_800ED728].unk_6C;
         first = r->nodes;
-        last = &first[r->n];
-        v = (Vtx*)D_800F2B7C[D_800ED728].unk_6C->unk_08[D_800F37F0];
+        last = &r->nodes[r->n];
+        v = (Vtx*)m->unk_08[D_800F37F0];
         d.x = last->pos.x - first->pos.x;
         d.y = last->pos.y - first->pos.y;
         d.z = last->pos.z - first->pos.z;
-        sag = (-func_800AEAC0(func_800B0CD8(d.y, sqrtf(d.x * d.x + d.z * d.z))) + 1.0) * 0.5;
-        mid.x = sag * d.x + first->pos.x;
-        mid.y = sag * d.y + first->pos.y;
+        s = (-func_800AEAC0(func_800B0CD8(d.y, sqrtf(d.x * d.x + d.z * d.z))) + 1.0) * 0.5;
+        mid.x = s * d.x + first->pos.x;
+        mid.y = s * d.y + first->pos.y;
+        mid.z = s * d.z + first->pos.z;
         len = sqrtf(d.x * d.x + d.y * d.y + d.z * d.z);
-        mid.z = sag * d.z + first->pos.z;
         s = r->unk8 - len;
         if (s < 0.0) {
             s = 0.0f;
@@ -2347,17 +2351,11 @@ void func_800FE378_DeepSeaDivers(Gfx** gfx) {
             }
             col = 0xFF;
             if (v->v.ob[1] < 1250) {
-                if (func_800AEAC0(ang) < 0.0f) {
-                    s = -func_800AEAC0(ang);
-                } else {
-                    s = func_800AEAC0(ang);
+                k = (1.0 - ((func_800AEAC0(ang) < 0.0f) ? -func_800AEAC0(ang) : func_800AEAC0(ang))) * 127.0;
+                if (k < 72) {
+                    k = k * 0.25 + 24.0;
                 }
-                col = (1.0 - s) * 127.0;
-                if (col < 72) {
-                    col = (s32)(col * 0.25 + 24.0) - 128;
-                } else {
-                    col = col - 128;
-                }
+                col = k - 128;
             }
             v->v.cn[0] = v->v.cn[1] = col;
             v->v.cn[3] = 0xFF;
