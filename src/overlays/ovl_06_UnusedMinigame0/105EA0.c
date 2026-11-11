@@ -307,18 +307,15 @@ void func_800FCF10_UnusedMinigame0(s16 arg0) {
     func_800258EC(UM0_MODEL(2), 4, 4);
     func_800258EC(UM0_MODEL_DROP, 4, 4);
 }
-// register allocation: retail recomputes &D_8010A040[i] where GCC reuses it
-#ifdef NON_MATCHING
 void func_800FCFB4_UnusedMinigame0(s32 arg0) {
     UM0Tile* t;
-    UM0Tile* p;
-    UM0Tile** slot;
     s32 k;
     s32 col;
     s32 row;
     s32 i;
     s32 j;
     void* buf;
+    void* gfx;
 
     col = 0;
     row = 0;
@@ -332,24 +329,24 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
     for (i = 0; i < 48; i++) {
         t = &D_8010A040_UnusedMinigame0[i];
         if (i < 40) {
-            p = D_8010A040_UnusedMinigame0 + i;
-            do {
+            while (1) {
                 col = func_80102568_UnusedMinigame0(8);
                 row = func_80102568_UnusedMinigame0(6);
-                slot = &D_80108B88_UnusedMinigame0[col][row];
-            } while (*slot != NULL);
-            *slot = p;
+                if (D_80108B88_UnusedMinigame0[col][row] == NULL) {
+                    D_80108B88_UnusedMinigame0[col][row] = &D_8010A040_UnusedMinigame0[i];
+                    break;
+                }
+            }
         } else if (i == 47) {
             col = 0;
             row = 5;
         } else {
-            p = &D_8010A040_UnusedMinigame0[i];
             for (j = 0; j < 6; j++) {
                 for (k = 0; k < 8; k++) {
                     if (D_80108B88_UnusedMinigame0[k][j] == NULL) {
                         col = k;
                         row = j;
-                        D_80108B88_UnusedMinigame0[k][j] = p;
+                        D_80108B88_UnusedMinigame0[k][j] = &D_8010A040_UnusedMinigame0[i];
                         j = 8;
                         k = 8;
                     }
@@ -382,9 +379,9 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
         }
     }
     for (i = 0; i < 3; i++) {
-        buf = HuMemDirectMalloc(960 * sizeof(Gfx));
-        D_801098A8_UnusedMinigame0[i] = buf;
-        D_80109CC0_UnusedMinigame0[i] = func_80024198(0x19, buf, 4);
+        gfx = HuMemDirectMalloc(960 * sizeof(Gfx));
+        D_801098A8_UnusedMinigame0[i] = gfx;
+        D_80109CC0_UnusedMinigame0[i] = func_80024198(0x19, gfx, 4);
     }
     func_800FEBF0_UnusedMinigame0(0);
     func_80025830(UM0_MODEL(0), 2.5f, 2.5f, 2.5f);
@@ -404,9 +401,6 @@ void func_800FCFB4_UnusedMinigame0(s32 arg0) {
         D_8010AD60_UnusedMinigame0[i].unk_08 = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/105EA0", func_800FCFB4_UnusedMinigame0);
-#endif
 
 void func_800FD430_UnusedMinigame0(void) {
     s32 i;
@@ -1493,7 +1487,8 @@ void func_801025B8_UnusedMinigame0(u8 (*out)[6]) {
         }
     }
 }
-// register allocation (masked 0)
+// register allocation in the shift loops (masked 0, raw 18; tried direct indexing, local order,
+// a second cell pointer)
 #ifdef NON_MATCHING
 s32 func_80102634_UnusedMinigame0(u8 (*grid)[6], s32 col, s32 row) {
     UM0Cell* c;

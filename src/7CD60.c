@@ -148,7 +148,8 @@ static inline s16 decodeHuff(BitStream* buf, Tree* tree) {
     return pos;
 }
 
-// register choice v0/v1 for the masked run length, so reorg fills two delay slots differently (masked 9)
+// register choice v0/v1 for the masked run length, so reorg fills two delay slots differently (masked 9;
+// tried u8 temp, n -= run + 1, reusing code as the temp)
 #ifdef NON_MATCHING
 void func_8007C434(void) {
     s32 n;

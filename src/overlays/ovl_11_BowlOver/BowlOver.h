@@ -173,7 +173,7 @@ extern s8 D_800FD3B8_BowlOver[8];
 extern s8 D_800FD3C0_BowlOver[8];
 extern s8 D_800FD3C8_BowlOver;
 extern u32 D_800FD3CC_BowlOver; /* random seed */
-extern u8 D_800FD3D0_BowlOver[4]; /* [0]: alley (0-2) */
+extern u8 D_800FD3D0_BowlOver; /* alley (0-2) */
 extern s32 D_800FD3D4_BowlOver[3]; /* alley model per alley */
 
 /* ---------------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ extern s32 D_800FD3D4_BowlOver[3]; /* alley model per alley */
    --------------------------------------------------------------------------------------------- */
 
 extern f32 D_800FD3E0_BowlOver[3][16][2]; /* alley lights (x, z) per alley */
-extern u16 D_800FD560_BowlOver[2];         /* pins knocked (sound pitch) */
+extern s16 D_800FD560_BowlOver;            /* pins knocked (sound pitch) */
 extern Vec3f D_800FD564_BowlOver[6];       /* pin positions */
 extern s16 D_800FD5AC_BowlOver[8];         /* coins per player */
 extern f32 D_800FD5BC_BowlOver[6];
@@ -286,7 +286,7 @@ void func_800FAE2C_BowlOver(omObjData* obj);
 void func_800FB230_BowlOver(omObjData* obj);
 void func_800FB650_BowlOver(omObjData* obj, BowlJump* jump, u8* sx, u8* sy);
 void func_800FBB30_BowlOver(omObjData* obj);
-void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 slot, u16 pin);
+void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin);
 void func_800FC9E0_BowlOver(omObjData* obj);
 void func_800FCD54_BowlOver(omObjData* obj, u16 slot, s8 pin);
 void func_800FCFA0_BowlOver(void);

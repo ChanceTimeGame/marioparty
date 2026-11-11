@@ -75,7 +75,7 @@ s8 D_800FD3C9_BowlOver = 0; /* unreferenced */
 s8 D_800FD3CA_BowlOver = 0; /* unreferenced */
 s8 D_800FD3CB_BowlOver = 0; /* unreferenced */
 u32 D_800FD3CC_BowlOver = 0;
-u8 D_800FD3D0_BowlOver[4] = { 0, 0, 0, 0 };
+u8 D_800FD3D0_BowlOver = 0;
 s32 D_800FD3D4_BowlOver[3] = { 0x230003, 0x230004, 0x230005 };
 
 /* ---------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ void func_800F65E0_BowlOver(void) {
     D_800ED440 = 0;
     func_800FA4A4_BowlOver();
     func_800FA4A4_BowlOver();
-    D_800FD3D0_BowlOver[0] = func_800FA4A4_BowlOver() % 3;
+    D_800FD3D0_BowlOver = func_800FA4A4_BowlOver() % 3;
     D_800FD878_BowlOver = omAddObj(0xF, 8, 0, -1, func_800F91D0_BowlOver);
     func_800090B8(D_800ED440);
     obj = omAddObj(0xA, 0x23, 0, -1, func_800FA5A0_BowlOver);
@@ -475,7 +475,7 @@ void func_800F7C24_BowlOver(omObjData* obj) {
     chr = GwPlayer[D_800FDC5A_BowlOver[0]].character;
     dir = D_800C59AC[chr].unk_00;
     file = D_800C59AC[chr].unk_08;
-    switch (D_800FD3D0_BowlOver[0]) {
+    switch (D_800FD3D0_BowlOver) {
         case 0:
             x = 35.0f;
             break;
@@ -543,14 +543,14 @@ void func_800F7E20_BowlOver(omObjData* obj) {
             }
             if (ContStkX[(s8)port] > 50) {
                 obj->trans.x += 5.0f;
-                lim = D_800FD310_BowlOver[D_800FD3D0_BowlOver[0]][1];
+                lim = D_800FD310_BowlOver[D_800FD3D0_BowlOver][1];
                 if (lim < obj->trans.x) {
                     obj->trans.x = lim;
                 }
                 D_800FD30C_BowlOver[0] = 1;
             } else if (ContStkX[(s8)port] < -50) {
                 obj->trans.x -= 5.0f;
-                lim = D_800FD310_BowlOver[D_800FD3D0_BowlOver[0]][0];
+                lim = D_800FD310_BowlOver[D_800FD3D0_BowlOver][0];
                 if (obj->trans.x < lim) {
                     obj->trans.x = lim;
                 }
@@ -625,7 +625,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
                     D_800FD834_BowlOver = 5.0f;
                     break;
             }
-            switch (D_800FD3D0_BowlOver[0]) {
+            switch (D_800FD3D0_BowlOver) {
                 case 0:
                     D_800FD838_BowlOver = 0x5A;
                     D_800FD83A_BowlOver = 0x64;
@@ -664,7 +664,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
         }
         avg = sum / 3.0f;
         if (D_800FD330_BowlOver == D_800FD838_BowlOver) {
-            switch (D_800FD3D0_BowlOver[0]) {
+            switch (D_800FD3D0_BowlOver) {
                 case 0:
                     D_800FD334_BowlOver = 0.0f;
                     break;
@@ -681,7 +681,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
             btn = 0x8000;
         }
         if (D_800FD83E_BowlOver < D_800FD330_BowlOver && D_800FD330_BowlOver < D_800FD83E_BowlOver + 10) {
-            switch (D_800FD3D0_BowlOver[0]) {
+            switch (D_800FD3D0_BowlOver) {
                 case 0:
                     D_800FD334_BowlOver = -5.0f;
                     break;
@@ -693,7 +693,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
                     break;
             }
         }
-        switch (D_800FD3D0_BowlOver[0]) {
+        switch (D_800FD3D0_BowlOver) {
             case 0:
                 if (D_800FD330_BowlOver == 0x11A) {
                     D_800FD334_BowlOver = 0.0f;
@@ -717,7 +717,7 @@ void func_800F8274_BowlOver(omObjData* obj) {
                 break;
         }
         if (D_800FD840_BowlOver < D_800FD330_BowlOver) {
-            switch (D_800FD3D0_BowlOver[0]) {
+            switch (D_800FD3D0_BowlOver) {
                 case 0:
                 case 2:
                     if (D_800FD878_BowlOver->trans.x < avg) {

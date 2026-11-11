@@ -27,7 +27,7 @@ f32 D_800FD3E0_BowlOver[3][16][2] = {
         { -150.3f, -181.0f }, { -10.08f, -209.7f }, { -104.8f, -40.0f }, { 36.9f, -40.0f },
     },
 };
-u16 D_800FD560_BowlOver[2] = { 0, 0 };
+s16 D_800FD560_BowlOver = 0;
 Vec3f D_800FD564_BowlOver[6] = {
     { 0.0f, 0.0f, -4750.0f },    { -100.0f, 0.0f, -4950.0f }, { 100.0f, 0.0f, -4950.0f },
     { -200.0f, 0.0f, -5150.0f }, { 0.0f, 0.0f, -5150.0f },    { 200.0f, 0.0f, -5150.0f },
@@ -59,13 +59,11 @@ void func_800FA4D0_BowlOver(omObjData* obj) {
     }
 }
 
-// register allocation
-#ifdef NON_MATCHING
 void func_800FA5A0_BowlOver(omObjData* obj) {
     BowlFloorWork* w;
     s16 i;
 
-    obj->model[0] = func_800174C0(D_800FD3D4_BowlOver[D_800FD3D0_BowlOver[0]], 0x99);
+    obj->model[0] = func_800174C0(D_800FD3D4_BowlOver[D_800FD3D0_BowlOver], 0x99);
     obj->model[1] = func_800174C0(0x230000, 0x99);
     obj->model[2] = func_800174C0(0x230001, 0x99);
     obj->model[3] = func_800174C0(0x230002, 0x99);
@@ -73,14 +71,14 @@ void func_800FA5A0_BowlOver(omObjData* obj) {
         obj->model[i + 4] = func_80023FC8(obj->model[3]);
     }
     for (i = 0; i < 16; i++) {
-        func_80025798(obj->model[i + 3], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][0] * 5.0f, 5.0f,
-                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][1] * 5.0f);
+        func_80025798(obj->model[i + 3], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][0] * 5.0f, 5.0f,
+                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][1] * 5.0f);
         func_80025F10(obj->model[i + 3], 1);
-        func_80025798(obj->model[i + 19], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][0] * 5.0f, 5.0f,
-                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver[0]][i][1] * 5.0f);
+        func_80025798(obj->model[i + 19], D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][0] * 5.0f, 5.0f,
+                      D_800FD3E0_BowlOver[D_800FD3D0_BowlOver][i][1] * 5.0f);
         func_80025F10(obj->model[i + 19], 2);
     }
-    if (D_800FD3D0_BowlOver[0] != 2) {
+    if (D_800FD3D0_BowlOver != 2) {
         for (i = 0; i < 2; i++) {
             func_80025F10(obj->model[i + 17], 0);
             func_80025F10(obj->model[i + 33], 0);
@@ -95,12 +93,10 @@ void func_800FA5A0_BowlOver(omObjData* obj) {
     func_8009B770(w, 0, sizeof(BowlFloorWork));
     w->unk_04 = 1;
     w->unk_05 = 0;
-    func_80009028(obj, 0, -250.0f, -5000.0f, 250.0f, 500.0f);
+    /* retail passed an f32 0.0f (func_80009028 stores the bits into a float field) */
+    ((void (*)(omObjData*, f32, f32, f32, f32, f32))func_80009028)(obj, 0.0f, -250.0f, -5000.0f, 250.0f, 500.0f);
     obj->func_ptr = func_800FA4D0_BowlOver;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FA5A0_BowlOver);
-#endif
 
 void func_800FA8D0_BowlOver(void) {
     s32 i;
@@ -229,31 +225,33 @@ void func_800FAC94_BowlOver(omObjData* obj, f32 dx, f32 dz) {
     }
 }
 
-// register allocation and float temporaries
-#ifdef NON_MATCHING
 void func_800FAE2C_BowlOver(omObjData* obj) {
     BowlPin* pin;
     BowlPin* hit;
     omObjData* other;
+    Vec3f v;
     Vec3f top;
     Vec3f d;
     f32 a;
     f32 dir;
-    f32 r;
+    f32 tilt;
     s16 i;
-    s16 snd;
+    s32 snd;
 
     pin = &D_800FD880_BowlOver[PIN_IDX(obj)];
     if (pin->unk_0E != 1) {
         return;
     }
+    tilt = pin->unk_00;
     dir = 360.0f - pin->unk_04;
-    a = pin->unk_00 * 0.017453289f;
-    top.y = cosf(a) * 130.0f;
-    r = sinf(a) * 130.0f;
+    a = tilt * 0.017453289f;
+    v.x = 0.0f;
+    v.y = cosf(a) * 130.0f;
+    v.z = sinf(a) * 130.0f;
     a = dir * 0.017453289f;
-    top.x = sinf(a) * r;
-    top.z = cosf(a) * r;
+    top.x = sinf(a) * v.z;
+    top.y = v.y;
+    top.z = cosf(a) * v.z;
     top.x += obj->trans.x;
     top.y += obj->trans.y;
     top.z += obj->trans.z;
@@ -278,15 +276,19 @@ void func_800FAE2C_BowlOver(omObjData* obj) {
             hit->unk_0F = 0;
             hit->unk_08 = 90.0f;
             pin->unk_08 = 90.0f;
-            snd = 0x25D;
-            if (D_800FD560_BowlOver[0] != 0) {
+            switch (D_800FD560_BowlOver) {
+            case 0:
+                snd = 0x25D;
+                break;
+            case 1:
                 snd = 0x25E;
-                if (D_800FD560_BowlOver[0] != 1) {
-                    snd = 0x25F;
-                }
+                break;
+            default:
+                snd = 0x25F;
+                break;
             }
             PlaySound(snd);
-            D_800FD560_BowlOver[0]++;
+            D_800FD560_BowlOver++;
             if (D_800FD860_BowlOver[0] == obj) {
                 func_80060F04(D_800FDC5A_BowlOver[1], 0x14, 0, 0x14);
             }
@@ -306,11 +308,9 @@ void func_800FAE2C_BowlOver(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FAE2C_BowlOver);
-#endif
 
-// register allocation and float temporaries
+// float register allocation only (masked 0, raw 12): retail keeps the double angle in f20 and the
+// sqrt result in f4
 #ifdef NON_MATCHING
 void func_800FB230_BowlOver(omObjData* obj) {
     BowlPin* pin;
@@ -321,6 +321,7 @@ void func_800FB230_BowlOver(omObjData* obj) {
     f32 dz;
     f32 a;
     s16 snd;
+    s32 turns;
 
     pin = &D_800FD880_BowlOver[PIN_IDX(obj)];
     if (D_800ED430 != 1) {
@@ -339,16 +340,19 @@ void func_800FB230_BowlOver(omObjData* obj) {
                 pin->unk_0E = 1;
                 pin->unk_0F = 0;
                 pin->unk_08 = 90.0f;
-                if (D_800FD560_BowlOver[0] != 0) {
-                    snd = 0x25E;
-                    if (D_800FD560_BowlOver[0] != 1) {
-                        snd = 0x25F;
-                    }
-                } else {
+                switch (D_800FD560_BowlOver) {
+                case 0:
                     snd = 0x25D;
+                    break;
+                case 1:
+                    snd = 0x25E;
+                    break;
+                default:
+                    snd = 0x25F;
+                    break;
                 }
                 PlaySound(snd);
-                D_800FD560_BowlOver[0]++;
+                D_800FD560_BowlOver++;
                 if (D_800FD860_BowlOver[0] == obj) {
                     func_80060F04(D_800FDC5A_BowlOver[1], 0x14, 0, 0x14);
                 }
@@ -368,11 +372,15 @@ void func_800FB230_BowlOver(omObjData* obj) {
             }
         }
     } else {
-        a = pin->unk_04 + obj->rot.y;
+        a = pin->unk_04;
+        a += obj->rot.y;
+        turns = a / 360.0f;
+        a -= turns * 360.0;
+        a = 360.0f - a;
         pos.x = 0.0f;
         pos.y = 30.0f;
         pos.z = 0.0f;
-        a = (360.0f - (f32)(a - (s32)(a / 360.0f) * 360.0)) * 0.017453289f;
+        a *= 0.017453289f;
         axis.x = cosf(a);
         axis.y = 0.0f;
         axis.z = -sinf(a);
@@ -684,12 +692,14 @@ void func_800FBB30_BowlOver(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FBB30_BowlOver);
 #endif
 
-// register allocation
+// register allocation only (masked 0, raw 12): retail keeps guRandom() >> 4 in a0 for the % 300
 #ifdef NON_MATCHING
-void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 slot, u16 pin) {
+void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin) {
     BowlPlayerWork* w;
     s16 i;
     u16 img;
+    u32 r;
+    u32 id;
 
     obj->unk_50 = func_80023684(sizeof(BowlPlayerWork), 0x7918);
     func_8009B770(obj->unk_50, 0, sizeof(BowlPlayerWork));
@@ -697,8 +707,9 @@ void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 s
     w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
     w->unk_56 = GwPlayer[(u16)player].port;
     w->unk_58 = player;
+    id = (u32)dir >> 16;
     for (i = 0; i < 6; i++) {
-        if (D_800FD5D8_BowlOver[i].unk_00 == (u32)dir >> 16) {
+        if (D_800FD5D8_BowlOver[i].unk_00 == id) {
             break;
         }
     }
@@ -714,7 +725,8 @@ void func_800FC598_BowlOver(omObjData* obj, s32 dir, s32 file, s32 player, u16 s
         img = ReadImgPackand(0x21, 0x289, 8);
         obj->model[i + 7] = D_800ECDE0[img].unk_00;
         func_80025930(obj->model[i + 7], 0x70000000, 0x70000000);
-        func_80039970(D_800ECDE0[img].unk_02, ((u32)guRandom() >> 4) % 300 / 100);
+        r = ((u32)guRandom() >> 4) % 300 / 100;
+        func_80039970(D_800ECDE0[img].unk_02, r);
         func_80025830(obj->model[i + 7], 2.0f, 2.0f, 2.0f);
         func_800258EC(obj->model[i + 7], 4, 4);
         obj->model[i + 12] = func_80023FC8(obj->model[1]);
@@ -844,8 +856,6 @@ void func_800FCFA0_BowlOver(void) {
     }
 }
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800FD07C_BowlOver(omObjData* obj) {
     s32 p;
     u8 chr;
@@ -859,12 +869,7 @@ void func_800FD07C_BowlOver(omObjData* obj) {
     D_800FD5AC_BowlOver[p] = GwPlayer[p].coins;
     func_800FC598_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[1], D_800FD850_BowlOver[0], 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FD07C_BowlOver);
-#endif
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800FD118_BowlOver(omObjData* obj) {
     s32 p;
     u8 chr;
@@ -878,12 +883,7 @@ void func_800FD118_BowlOver(omObjData* obj) {
     D_800FD5AC_BowlOver[p] = GwPlayer[p].coins;
     func_800FC598_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[2], D_800FD850_BowlOver[1], 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FD118_BowlOver);
-#endif
 
-// argument conversion of the player index (lbu/sll/sra/andi)
-#ifdef NON_MATCHING
 void func_800FD1B8_BowlOver(omObjData* obj) {
     s32 p;
     u8 chr;
@@ -897,9 +897,6 @@ void func_800FD1B8_BowlOver(omObjData* obj) {
     D_800FD5AC_BowlOver[p] = GwPlayer[p].coins;
     func_800FC598_BowlOver(obj, dir, file, D_800FDC5A_BowlOver[3], D_800FD850_BowlOver[2], 2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/142EA0", func_800FD1B8_BowlOver);
-#endif
 
 void func_800FD258_BowlOver(omObjData* obj) {
     func_800FCD54_BowlOver(obj, D_800FD850_BowlOver[3], 3);
