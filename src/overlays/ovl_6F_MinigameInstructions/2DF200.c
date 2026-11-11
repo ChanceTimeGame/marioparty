@@ -966,6 +966,7 @@ void func_800FDEA4_MinigameInstructions(Ovl6FPlayerWork* work) {
 }
 
 // the -30.0f spin clamp is hoisted out of the loop into a saved register here; retail reloads it (masked 55, registers only)
+// (M1g: retail's 30.0f is hoisted to $f28 and -30.0f reloaded at the second if's label; ours 569 vs 565 instructions)
 #ifdef NON_MATCHING
 void func_800FE0E8_MinigameInstructions(Ovl6FPlayerWork* work) {
     f32 height;

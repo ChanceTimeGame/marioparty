@@ -590,7 +590,8 @@ void func_800F7EE8_CoinBlockBlitz(omObjData* obj) {
     }
 }
 
-// register allocation: retail reloads a0 = obj before func_800F7604 (masked 7)
+// register allocation: retail reloads a0 = obj before func_800F7604 (masked 7); retail's second call
+// does not take the lbu into its delay slot (M1g: no source form found)
 #ifdef NON_MATCHING
 void func_800F81F0_CoinBlockBlitz(omObjData* obj) {
     unkCoinBlockBlitzStruct1* cpu;
