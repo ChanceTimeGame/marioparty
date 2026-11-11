@@ -175,7 +175,8 @@ extern u32 D_80100260_PiranhasPursuit; /* random seed; retail also reads its low
 extern s32 D_801003E8_PiranhasPursuit;
 extern f32 D_801003EC_PiranhasPursuit;
 extern f32 D_801003F0_PiranhasPursuit;
-extern s16 D_801003F4_PiranhasPursuit[2];
+extern s16 D_801003F4_PiranhasPursuit;
+extern s16 D_801003F6_PiranhasPursuit;
 extern f32 D_801003F8_PiranhasPursuit;
 extern u16 D_801003FC_PiranhasPursuit;
 extern f32 D_80100400_PiranhasPursuit;

@@ -735,8 +735,6 @@ void func_800F82C4_UnknownResultsScreen(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F82C4_UnknownResultsScreen);
 #endif
 
-// scheduling of the sprite counter init (masked 2)
-#ifdef NON_MATCHING
 void func_800F8B44_UnknownResultsScreen(void) {
     s16 left[4];
     s16 nd[4];
@@ -758,7 +756,8 @@ void func_800F8B44_UnknownResultsScreen(void) {
             nd[i] = 2;
         }
     }
-    for (i = 0, n = 2; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
+        n = 2;
         for (j = 0; j < 3; j++) {
             func_800672DC(D_800FA518_UnknownResultsScreen[i], n, digits[i][j], 0);
             if (left[i] == 0) {
@@ -784,12 +783,8 @@ void func_800F8B44_UnknownResultsScreen(void) {
             func_800672DC(D_800FA518_UnknownResultsScreen[i], n, 12, 0);
             func_80066DC4(D_800FA518_UnknownResultsScreen[i], n, D_800FA084_UnknownResultsScreen[nd[i]][2 - nd[i]] - 4, 2);
         }
-        n = 2;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F8B44_UnknownResultsScreen);
-#endif
 
 /* A player's rank or place changed with the minigame coins. */
 #define MOVED(i)                                                                                         \
