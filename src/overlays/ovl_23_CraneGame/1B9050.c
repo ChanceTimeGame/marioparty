@@ -422,14 +422,12 @@ void func_800FC800_CraneGame(unk2C0C0Struct30* g, unk2C0C0StructA0* verts, s16 n
 /* Sorts the faces far to near by how shared their vertices are. Retail indexes the use counts with
    a quad's first vertex word, bit 15 included (a read 64 KB before the counts); the host masks that
    bit so the read stays inside the block. */
-// post-decrement of the sort key folded into the add (masked 20)
-#ifdef NON_MATCHING
 void func_800FC9B0_CraneGame(void) {
     CGShadowOrder* q;
     CGShadowOrder* best;
     CGShadowOrder* r;
     s16* f;
-    s32 key;
+    s16 key;
     s32 i;
     s32 j;
     s32 n;
@@ -449,7 +447,7 @@ void func_800FC9B0_CraneGame(void) {
             for (j = 0; j < n; j++, f++) {
                 sum += D_801006FC_CraneGame[*f];
             }
-            q->key = key-- + (sum * 100) / n;
+            q->key = (sum * 100) / n + key--;
         }
         q = D_80100704_CraneGame;
         for (i = 0; i < D_80100702_CraneGame - 1; i++, q++) {
@@ -469,12 +467,10 @@ void func_800FC9B0_CraneGame(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1B9050", func_800FC9B0_CraneGame);
-#endif
 
 /* Emits the faces in draw order as gSP1Triangle/gSP1Quadrangle batches of at most 29 vertices. */
-// register allocation; &D_80100708 is hoisted into a register, retail rebuilds it per use and has an 8-byte larger frame (masked 41; tried an indexed search loop)
+// register allocation; &D_80100708 is hoisted into a register, retail rebuilds it per use and has an 8-byte larger frame
+// (masked 25; tried an indexed search loop, s16 i/n/k/quad)
 #ifdef NON_MATCHING
 void func_800FCB78_CraneGame(Gfx** gfx, unk2C0C0StructC0* m) {
     u8 (*start)[4];
@@ -565,7 +561,8 @@ Gfx* func_800FCD7C_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n) {
     return gfx;
 }
 
-// float register allocation, 1.2 constant hoisting (masked 8)
+// float register allocation (masked 1, raw 3): retail reuses the compare's (double)s for sc on the
+// fall-through path and converts again in the s = 0 arm; tried s = 0 / 0.0, i = 0 after the test, 1.0 + s
 #ifdef NON_MATCHING
 Gfx* func_800FCF78_CraneGame(Gfx* gfx, Mtx* mtx) {
     Matrix4f m1;
@@ -574,7 +571,6 @@ Gfx* func_800FCF78_CraneGame(Gfx* gfx, Mtx* mtx) {
     Vtx* src;
     f32 s;
     f64 sc;
-    f64 a;
     s32 i;
 
     if (D_80100568_CraneGame == 0) {
@@ -595,12 +591,11 @@ Gfx* func_800FCF78_CraneGame(Gfx* gfx, Mtx* mtx) {
         s = 0.0f;
     }
     sc = s + 1.0;
-    a = 176.0 - s * 176.0f * 0.7;
     do {
         v->v.ob[0] = src->v.ob[0] * sc * 1.2;
         v->v.ob[1] = src->v.ob[1] * 1.2;
         v->v.ob[2] = src->v.ob[2] * sc * 1.2;
-        v->v.cn[3] = a;
+        v->v.cn[3] = 176.0 - s * 176.0f * 0.7;
         v->v.tc[0] = src->v.tc[0];
         v->v.tc[1] = src->v.tc[1];
         v->v.cn[0] = v->v.cn[1] = v->v.cn[2] = 0;
