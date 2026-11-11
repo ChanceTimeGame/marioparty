@@ -967,7 +967,9 @@ void func_800F960C_RunningOfTheBulb(omObjData* arg0) {
 void func_800F9648_RunningOfTheBulb(omObjData* arg0) {
 }
 
-// retail reloads the player pointer and flags and shares one n++ with a hoisted 2 (raw 18, masked 11); tried continue, one || test (hoists the 2 but CSEs the reloads) (M1c)
+// retail reloads the player pointer and flags and shares one n++ with a hoisted 2 (raw 18, masked 11); tried continue, one || test (hoists the 2 but CSEs the reloads) (M1c);
+// M1g: the reloads need the else label alive at CSE; `if (A) { inc: n++; } else if (B && C && D) goto inc;` gets masked 8
+// (only the n++ block placed before the else), goto-into-else forms lose the label
 #ifdef NON_MATCHING
 u16 func_800F9650_RunningOfTheBulb(void) {
     RotbPlayerWork* work;
