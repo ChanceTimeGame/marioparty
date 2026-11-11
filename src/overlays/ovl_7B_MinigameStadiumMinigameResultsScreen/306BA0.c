@@ -14,8 +14,6 @@ f32 D_800FB108_MinigameStadiumMinigameResultsScreen = 10.0f; /* its step */
 f32 D_800FB10C_MinigameStadiumMinigameResultsScreen = 100.0f; /* its height */
 
 /* One player: model, coin counter and the minigame coins' digits. */
-// block layout: the else-if path reloads flags (retail) / reuses them (C) (masked 33)
-#ifdef NON_MATCHING
 void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
     PlayerRes* all[4];
     Process* proc;
@@ -33,7 +31,7 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
     func_800F9A0C_MinigameStadiumMinigameResultsScreen(res);
     HuPrcSleep(2);
     func_800F9B34_MinigameStadiumMinigameResultsScreen(res);
-    func_800F9BF0_MinigameStadiumMinigameResultsScreen();
+    func_800F9BF0_MinigameStadiumMinigameResultsScreen(res);
     func_800F9C94_MinigameStadiumMinigameResultsScreen(res, col);
     func_80025798(res->model, res->pos.x, res->pos.y, res->pos.z);
     func_80025798(res->model2, D_800FB0E0[res->index], 0.0f, 0.0f);
@@ -64,15 +62,15 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
                 }
             }
         }
-    } else if ((res->flags & 2) && res->flags == 2) {
-        do {
+    } else if (res->flags & 2) {
+        while (res->flags == 2) {
             HuPrcVSleep();
             func_800F9F94_MinigameStadiumMinigameResultsScreen(res);
             func_800FA1C0_MinigameStadiumMinigameResultsScreen(res, col);
             if ((col->flags & 0x400) && !(res->flags & 0x40)) {
                 break;
             }
-        } while (res->flags == 2);
+        }
     }
     res->flags |= 0x80;
     if (res->unk_7A == 0) {
@@ -91,7 +89,8 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
         func_800FAD74_MinigameStadiumMinigameResultsScreen(res);
     }
     for (i = 0; i < 4; i++) {
-        all[i] = main->player[i]->user_data;
+        proc = main->player[i];
+        all[i] = proc->user_data;
     }
     if ((all[0]->flags & 0x800) && (all[1]->flags & 0x800) && (all[2]->flags & 0x800) && (all[3]->flags & 0x800)) {
         D_800FB2A4_MinigameStadiumMinigameResultsScreen = 1;
@@ -100,9 +99,6 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7B_MinigameStadiumMinigameResultsScreen/306BA0", func_800F9310_MinigameStadiumMinigameResultsScreen);
-#endif
 
 // scheduling: the index shift of &D_800FB0F0[c] comes before the table base (raw 2, masked 2);
 // `D_800FB0F0 + c` tried
@@ -221,7 +217,7 @@ void func_800F9B34_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     res->rank += n;
 }
 
-void func_800F9BF0_MinigameStadiumMinigameResultsScreen(void) {
+void func_800F9BF0_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     PlayerRes* all[4];
     ResMain* main;
     Process* prc;
