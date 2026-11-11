@@ -399,7 +399,7 @@ void func_800FDD58_BombsAway(void) {
         }
     }
 }
-// register allocation at entry: the kind test and the life argument, one nop (masked 3)
+// register allocation at entry: retail tests kind from a0 and loads life into a1 (masked 0, raw 4; the nop needed the unit's mul fix, now on)
 #ifdef NON_MATCHING
 s16 func_800FDE38_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 scale, s16 life, f32 alpha) {
     u16 i;
@@ -693,8 +693,8 @@ void func_800FED18_BombsAway(void) {
     }
     D_80100784_BombsAway = 0xFF;
 }
-// retail computes a dead (z + 2250) / 150 that GCC deletes here, and keeps 0.0f in f22 across the loop
-// (301 vs 286 instructions; calls, stores and the remaining code are identical) GCC deletes the dead f = (z + 2250) / 150 retail keeps, and retail hoists 0.0f into f22 (masked 39; moving f, a zero local tried)
+// retail keeps a dead f = (z + 2250) / 150 that GCC deletes here, and hoists 0.0f into f22 across the loop
+// (301 vs 287 instructions, masked 34; calls, stores and the remaining code are identical; moving f, a zero local tried)
 #ifdef NON_MATCHING
 void func_800FEE2C_BombsAway(void) {
     BaShell* s;
