@@ -1543,7 +1543,7 @@ void func_800FB1C4_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team) {
 }
 
 /* The back rider of team (sits on the sled; func_800FEC80). */
-// register allocation
+// register allocation: retail gives flags s2 and obj s6 (masked 0, raw 39; declaration order tried)
 #ifdef NON_MATCHING
 void func_800FB594_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 player, u16 team) {
     BRWork* work;
@@ -1894,12 +1894,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC180_
 #endif
 
 /* Boost pads (ground 6) and the catch-up bonus for the team behind. */
-// the other team's index is multiplied with sll/addu in retail (negu/andi here)
-#ifdef NON_MATCHING
 void func_800FC4D0_BobsledRun(BRWork* work) {
     f32 bonus;
-    f32 me;
-    f32 other;
     s32 team;
     s32 o;
     f32 f;
@@ -1911,9 +1907,8 @@ void func_800FC4D0_BobsledRun(BRWork* work) {
     }
     team = work->unk_58;
     o = team == 0;
-    me = D_800FF2A8_BobsledRun[team].progress;
-    other = D_800FF2A8_BobsledRun[o].progress;
-    if (me < other && other - me > 0.001f) {
+    if (D_800FF2A8_BobsledRun[team].progress < D_800FF2A8_BobsledRun[o].progress &&
+        D_800FF2A8_BobsledRun[o].progress - D_800FF2A8_BobsledRun[team].progress > 0.001f) {
         bonus = 5.0f;
     }
     if (D_800FF2A8_BobsledRun[work->unk_58].boost != 0) {
@@ -1947,9 +1942,6 @@ void func_800FC4D0_BobsledRun(BRWork* work) {
     }
     D_800FF2A8_BobsledRun[work->unk_58].unk32 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_BobsledRun/188410", func_800FC4D0_BobsledRun);
-#endif
 
 /* Race state from the ground under the sled: 1 start ramp, 5 crash zone, else racing / goal. */
 void func_800FC7DC_BobsledRun(omObjData* obj) {
