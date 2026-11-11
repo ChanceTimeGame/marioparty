@@ -1045,12 +1045,10 @@ void func_800F922C_LimboDance(void) {
 }
 
 /* The bars: two courses (5 or 12 bars, heights 20..50), and the goal. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F929C_LimboDance(omObjData* obj) {
     LDBar* b;
     f32 x;
-    s32 n;
+    s16 n;
     u16 i;
 
     n = 0;
@@ -1109,9 +1107,6 @@ void func_800F929C_LimboDance(omObjData* obj) {
     obj->trans.y = D_800FF068_LimboDance[0].y0;
     obj->trans.z = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F929C_LimboDance);
-#endif
 
 /* Bar i at x, height (cm): its posts' heights come from the dancer's character. */
 void func_800F97B8_LimboDance(s16 i, s16* models, s16* src, f32 x, u16 height) {
