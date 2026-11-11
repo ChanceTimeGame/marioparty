@@ -1,5 +1,7 @@
 #include "PiranhasPursuit.h"
 
+int abs(int);
+
 u32 D_80100260_PiranhasPursuit = 0x19971204;
 s32 D_80100264_PiranhasPursuit = 0;
 Gfx D_80100268_PiranhasPursuit[] = {
@@ -65,7 +67,8 @@ Gfx D_80100398_PiranhasPursuit[] = {
 s32 D_801003E8_PiranhasPursuit = 0;
 f32 D_801003EC_PiranhasPursuit = 0.0f;
 f32 D_801003F0_PiranhasPursuit = 0.72f;
-s16 D_801003F4_PiranhasPursuit[2] = { 0, 0 };
+s16 D_801003F4_PiranhasPursuit = 0;
+s16 D_801003F6_PiranhasPursuit = 0;
 f32 D_801003F8_PiranhasPursuit = 0.0f;
 u16 D_801003FC_PiranhasPursuit = 0;
 f32 D_80100400_PiranhasPursuit = 0.0f;
@@ -367,14 +370,14 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
                 off = Center.x - -16000.0f;
                 break;
             case 1:
-                if (D_801003F4_PiranhasPursuit[0] < D_801012E4_PiranhasPursuit) {
-                    t = (f32)(D_801003F4_PiranhasPursuit[0] + 1) / (f32)D_801012E4_PiranhasPursuit;
+                if (D_801003F4_PiranhasPursuit < D_801012E4_PiranhasPursuit) {
+                    t = (f32)(D_801003F4_PiranhasPursuit + 1) / (f32)D_801012E4_PiranhasPursuit;
                     y = (s16)(-50.0f + t * (-5.0f - -50.0f)) + func_800AEAC0(t * 180.0) * 8.0;
-                    D_801003F4_PiranhasPursuit[0]++;
+                    D_801003F4_PiranhasPursuit++;
                 } else {
                     D_801012E6_PiranhasPursuit++;
                     y = -5;
-                    D_801003F4_PiranhasPursuit[0] = 0;
+                    D_801003F4_PiranhasPursuit = 0;
                 }
                 off = Center.x - D_801012D4_PiranhasPursuit;
                 break;
@@ -393,18 +396,18 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
                 } else {
                     off = Center.x - D_801012D4_PiranhasPursuit;
                 }
-                D_801003F4_PiranhasPursuit[0] = 0;
+                D_801003F4_PiranhasPursuit = 0;
                 break;
             default:
                 D_801012D4_PiranhasPursuit = D_8010112C_PiranhasPursuit[D_80101134_PiranhasPursuit].pos.x;
                 n = D_801012E4_PiranhasPursuit - 2;
-                if (D_801003F4_PiranhasPursuit[0] < n) {
-                    t = (f32)D_801003F4_PiranhasPursuit[0] / (f32)n;
+                if (D_801003F4_PiranhasPursuit < n) {
+                    t = (f32)D_801003F4_PiranhasPursuit / (f32)n;
                     if (t > 1.0) {
                         t = 1.0f;
                     }
                     y = -5.0f + t * (-40.0f - -5.0f);
-                    D_801003F4_PiranhasPursuit[0]++;
+                    D_801003F4_PiranhasPursuit++;
                 } else {
                     y = -40;
                 }
@@ -570,49 +573,37 @@ void func_800FBB98_PiranhasPursuit(s16* models, PPPiece* p, f32 x, s16 type, s16
 
 /* Every frame: the logs bob on the waves, the trees fall when the runner comes near, and
    the far pieces are hidden. */
-// NON_MATCHING: register allocation and loop shape
-#ifdef NON_MATCHING
 void func_800FBE00_PiranhasPursuit(s16* models) {
     s16 tbl[8] = { 85, 90, 85, 90, 85, 90, 87, 90 };
-    f32 sx;
-    f32 sy;
+    f32 sc[2]; /* x and y sway */
     f32 ang;
     unk2C0C0StructC0* c;
     unk2C0C0StructE0* src;
     unk2C0C0StructE0* dst;
     u16 n;
     u16 i;
-    s16 d;
     PPPiece* p;
 
     if (D_801003F8_PiranhasPursuit > 0.0 && func_8005FD5C() + D_800F64F8 == 0) {
-        if ((D_801003F4_PiranhasPursuit[1] += 5) >= 361) {
-            D_801003F4_PiranhasPursuit[1] -= 360;
+        if ((D_801003F6_PiranhasPursuit += 5) >= 361) {
+            D_801003F6_PiranhasPursuit -= 360;
             D_801003F8_PiranhasPursuit = D_801003F8_PiranhasPursuit - 5.0;
         }
     }
-    ang = func_800AEAC0(D_801003F4_PiranhasPursuit[1]) * D_801003F8_PiranhasPursuit;
+    ang = func_800AEAC0(D_801003F6_PiranhasPursuit) * D_801003F8_PiranhasPursuit;
     c = D_800F2B7C[models[3]].unk_6C;
     src = c->unk_04;
     dst = c->unk_08[D_800F37F0];
     n = c->unk_72;
-    sx = func_800AEAC0(ang) * (f32)D_8010113C_PiranhasPursuit;
-    sy = func_800AEFD0(ang) * (f32)D_8010113C_PiranhasPursuit;
-    for (i = 0; i < n; i++, dst++, src++) {
-        d = src->unk_02;
-        if (d < 0) {
-            d = -d;
-        }
-        dst->unk_00 = func_800AEAC0(ang) * (f32)d + (f32)src->unk_00;
-        d = src->unk_02;
-        if (d < 0) {
-            d = -d;
-        }
-        dst->unk_02 = -(func_800AEFD0(ang) * (f32)d);
+    sc[0] = func_800AEAC0(ang) * (f32)D_8010113C_PiranhasPursuit;
+    sc[1] = func_800AEFD0(ang) * (f32)D_8010113C_PiranhasPursuit;
+    for (i = 0; i < n; dst++, i++, src++) {
+        dst->unk_00 = func_800AEAC0(ang) * (f32)abs(src->unk_02) + (f32)src->unk_00;
+        dst->unk_02 = -(func_800AEFD0(ang) * (f32)abs(src->unk_02));
     }
     if (func_8005FD5C() + D_800F64F8 == 0) {
         p = D_8010112C_PiranhasPursuit;
-        for (i = 0; i < 25; i++, p++) {
+        for (i = 0; i < 25; p++, i++) {
             if (p->unk2 == 0) {
                 continue;
             }
@@ -621,7 +612,8 @@ void func_800FBE00_PiranhasPursuit(s16* models) {
             } else {
                 func_800258EC(models[5 + i], 4, 0);
             }
-            if (p->unk2 == 2) {
+            switch (p->unk2) {
+            case 2:
                 if (D_8010110C_PiranhasPursuit != NULL && p->pos.x - 500.0 < D_8010110C_PiranhasPursuit->trans.x) {
                     if (p->unk8 == 0) {
                         if (p->rot.x == 0.0) {
@@ -644,31 +636,28 @@ void func_800FBE00_PiranhasPursuit(s16* models) {
                         func_800257E4(models[5 + i], p->rot.x, p->rot.y, p->rot.z);
                     }
                 }
-            } else if (p->unk2 == 4) {
-                p->unk34 = p->pos.x + sx * p->scale.x * 1.2;
-                p->unk38 = p->pos.y - sy * p->scale.y * 1.2;
-                p->unk8 = D_801003F4_PiranhasPursuit[1];
+                break;
+            case 4:
+                p->unk34 = p->pos.x + sc[0] * p->scale.x * 1.2;
+                p->unk38 = p->pos.y - sc[1] * p->scale.y * 1.2;
+                p->unk8 = D_801003F6_PiranhasPursuit;
                 if (p->unk0 == 2) {
                     D_801003F8_PiranhasPursuit = 40.0f;
-                    D_801003F4_PiranhasPursuit[1] = 0;
+                    D_801003F6_PiranhasPursuit = 0;
                     p->unk0 = 3;
                 } else if (p->unk0 == 3) {
-                    if (p->pos.x + 1200.0 < D_801012D0_PiranhasPursuit &&
+                    if (D_801012D0_PiranhasPursuit > p->pos.x + 1200.0 &&
                         D_801012D0_PiranhasPursuit < p->pos.x + 1400.0) {
                         p->unk0 = 4;
                         D_801003F8_PiranhasPursuit = 0.0f;
-                        D_801003F4_PiranhasPursuit[1] = 0;
+                        D_801003F6_PiranhasPursuit = 0;
                     }
                 }
+                break;
             }
         }
     }
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", D_801008A4_PiranhasPursuit);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FBE00_PiranhasPursuit);
-#endif
 
 /* The nearest active piece to (x, y), never past the goal. */
 PPPiece* func_800FC3F4_PiranhasPursuit(f32 x, f32 y) {
