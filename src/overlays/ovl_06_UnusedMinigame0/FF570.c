@@ -279,39 +279,32 @@ void func_800F6EC0_UnusedMinigame0(omObjData* obj) {
 }
 
 /* cur turned by step towards target (degrees, the short way); target once within step. */
-// NON_MATCHING: GCC folds the three fmod-normalise tests differently (one compare fewer); same branches
-#ifdef NON_MATCHING
 f32 func_800F7320_UnusedMinigame0(f32 cur, f32 target, f32 step) {
-    f32 v;
-
     if (cur == target) {
         return cur;
     }
     if ((func_8009B618(cur - target, 360.0) < 0.0 ? func_8009B618(cur - target, 360.0) + 360.0
                                                   : func_8009B618(cur - target, 360.0)) <= 180.0) {
-        v = cur - step;
-        if (v < 0.0) {
-            v += 360.0;
+        cur -= step;
+        if (cur < 0.0) {
+            cur += 360.0;
         }
-        if ((func_8009B618(v - target, 360.0) < 0.0 ? func_8009B618(v - target, 360.0) + 360.0
-                                                    : func_8009B618(v - target, 360.0)) > 180.0) {
-            return target;
+        if ((func_8009B618(cur - target, 360.0) < 0.0 ? func_8009B618(cur - target, 360.0) + 360.0
+                                                      : func_8009B618(cur - target, 360.0)) > 180.0) {
+            cur = target;
         }
-        return v;
+    } else {
+        cur += step;
+        if (cur >= 360.0) {
+            cur -= 360.0;
+        }
+        if ((func_8009B618(cur - target, 360.0) < 0.0 ? func_8009B618(cur - target, 360.0) + 360.0
+                                                      : func_8009B618(cur - target, 360.0)) <= 180.0) {
+            cur = target;
+        }
     }
-    v = cur + step;
-    if (v >= 360.0) {
-        v -= 360.0;
-    }
-    if ((func_8009B618(v - target, 360.0) < 0.0 ? func_8009B618(v - target, 360.0) + 360.0
-                                                : func_8009B618(v - target, 360.0)) <= 180.0) {
-        return target;
-    }
-    return v;
+    return cur;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800F7320_UnusedMinigame0);
-#endif
 
 /* Hides the player's shadows and starts the end camera parts shared by the three endings. */
 #define UM0_HIDE_SHADOWS()                                                  \
@@ -976,7 +969,7 @@ void func_800F9F04_UnusedMinigame0(omObjData* obj) {
     D_80103DA0_UnusedMinigame0++;
 }
 
-// NON_MATCHING: register allocation; GCC drops some double conversions
+// register allocation (masked 0, raw 6): case 1's double r temp gets $f20 where retail uses $f2
 #ifdef NON_MATCHING
 void func_800FA024_UnusedMinigame0(omObjData* obj) {
     UM0ItemWork* iw = obj->unk_50;
@@ -1049,8 +1042,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA
 #endif
 
 /* The CPU's plan: (5 - difficulty / 2) random moves, then a search for the treasure's way out. */
-// NON_MATCHING: register allocation; move bytes stored through the DB9 label
-#ifdef NON_MATCHING
 void func_800FA4A4_UnusedMinigame0(void) {
     u8 board[8][6];
     s16 x;
@@ -1087,9 +1078,6 @@ void func_800FA4A4_UnusedMinigame0(void) {
     HuMemDirectFree(D_80103DA4_UnusedMinigame0);
     HuMemDirectFree(D_80103DAC_UnusedMinigame0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA4A4_UnusedMinigame0);
-#endif
 
 /* Copies a board, clearing the visited bits. */
 void func_800FA678_UnusedMinigame0(u8 src[8][6], u8 dst[8][6]) {
@@ -1104,14 +1092,15 @@ void func_800FA678_UnusedMinigame0(u8 src[8][6], u8 dst[8][6]) {
 }
 
 /* The direction of a neighbour of (x, z) that holds val, or -1. */
-// NON_MATCHING: branch layout of the neighbour test
-#ifdef NON_MATCHING
 s16 func_800FA6F8_UnusedMinigame0(u8 board[8][6], s16 x, s16 z, u8 val) {
-    s16 d;
+    s32 d;
     u32 nx;
     u32 nz;
 
-    if (val != 0 && !(val & 0x80)) {
+    if (val != 0) {
+        if (val & 0x80) {
+            return -1;
+        }
         for (d = 0; d < 4; d++) {
             nx = x + D_80102BE4_UnusedMinigame0[d][0];
             if (nx < 8) {
@@ -1124,32 +1113,32 @@ s16 func_800FA6F8_UnusedMinigame0(u8 board[8][6], s16 x, s16 z, u8 val) {
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA6F8_UnusedMinigame0);
-#endif
 
 /* Walks the piece at (x, z) (marking it) and returns a random other cell of it in (x, z). */
-// NON_MATCHING: branch layout of the stack pop
-#ifdef NON_MATCHING
 void func_800FA7A8_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     u8 stack[48][2];
     u8 cells[48][2];
     u8 val = board[*x][*z];
     s16 n = 0;
-    s16 sp = 1;
+    s16 sp;
     u16 cx;
     u16 cz;
     s16 d;
-    u8* c;
 
     stack[0][0] = *x;
     stack[0][1] = *z;
+    sp = 1;
     cx = *x;
     cz = *z;
     do {
         board[(s16)cx][(s16)cz] |= 0x80;
         d = func_800FA6F8_UnusedMinigame0(board, cx, cz, val);
-        if (d >= 0) {
+        if (d < 0) {
+            if (--sp >= 0) {
+                cx = stack[sp][0];
+                cz = stack[sp][1];
+            }
+        } else {
             cx += D_80102BE4_UnusedMinigame0[d][0];
             cz += D_80102BE4_UnusedMinigame0[d][1];
             stack[sp][0] = cx;
@@ -1158,18 +1147,12 @@ void func_800FA7A8_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
             cells[n][0] = cx;
             cells[n][1] = cz;
             n++;
-        } else if (--sp >= 0) {
-            cx = stack[sp][0];
-            cz = stack[sp][1];
         }
     } while (sp >= 0);
-    c = cells[(s32)(func_800FB6FC_UnusedMinigame0() * n) >> 16];
-    *x = c[0];
-    *z = c[1];
+    d = (s32)(func_800FB6FC_UnusedMinigame0() * n) >> 16;
+    *x = cells[d][0];
+    *z = cells[d][1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA7A8_UnusedMinigame0);
-#endif
 
 void func_800FA968_UnusedMinigame0(u8 board[8][6]) {
     UM0State* s;
@@ -1258,7 +1241,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/FF570", func_800FA
 #endif
 
 /* A random movable cell. */
-s32 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
+s16 func_800FACA0_UnusedMinigame0(u8 board[8][6], s16* x, s16* z) {
     u8 cand[48][2];
     s16 n = 0;
     s16 i;

@@ -168,10 +168,12 @@ void func_800F7380_PaddleBattle(void) {
 }
 
 /* The raft: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 79 lines)
+// masked 12: retail stores the first RAFT fields by absolute address while &RAFT is already held in s1 (GCC CSEs them through r); s0/s1 swapped
 #ifdef NON_MATCHING
 void func_800F74F4_PaddleBattle(omObjData* obj) {
+    PBRaft* r = &RAFT;
     Vec dir;
+    Vec* p;
     s32 i;
 
     obj->func_ptr = func_800F76B8_PaddleBattle;
@@ -181,17 +183,15 @@ void func_800F74F4_PaddleBattle(omObjData* obj) {
     RAFT.lateral = 0.5f;
     RAFT.turn = 0.0f;
     RAFT.state = 1;
-    for (i = 0; i < 6; i++) {
-        D_800FF360_PaddleBattle[i].z = 0.0f;
-        D_800FF360_PaddleBattle[i].y = 0.0f;
-        D_800FF360_PaddleBattle[i].x = 0.0f;
+    for (p = D_800FF360_PaddleBattle, i = 0; i < 6; i++, p++) {
+        p->x = p->y = p->z = 0.0f;
     }
-    func_800FAC70_PaddleBattle(RAFT.dist, RAFT.lateral, &obj->trans);
-    RAFT.y = obj->trans.y;
-    func_800FAFEC_PaddleBattle(RAFT.dist, 0.5f, &dir);
-    RAFT.rotY = func_800B0CD8(dir.x, dir.z) + RAFT.turn * 30.0;
+    func_800FAC70_PaddleBattle(r->dist, r->lateral, &obj->trans);
+    r->y = obj->trans.y;
+    func_800FAFEC_PaddleBattle(r->dist, 0.5f, &dir);
+    r->rotY = func_800B0CD8(dir.x, dir.z) + r->turn * 30.0;
     D_800FFB38_PaddleBattle = -1;
-    Center.x = obj->trans.x + (RAFT.lateral - 0.5) * 100.0;
+    Center.x = obj->trans.x + (r->lateral - 0.5) * 100.0;
     Center.y = obj->trans.y + 300.0;
     Center.z = obj->trans.z;
     CRot.x = -30.0f;
@@ -398,7 +398,7 @@ void func_800F76B8_PaddleBattle(omObjData* obj) {
     a.x = obj->trans.x;
     a.y = obj->trans.y + 300.0;
     a.z = obj->trans.z;
-    if (func_800FDBB8_PaddleBattle(&a, 0.0f, -1000.0f, 0.0f, -1) != 0) {
+    if (func_800FDBB8_PaddleBattle(&a.x, 0.0f, -1000.0f, 0.0f, -1) != 0) {
         r->y = a.y;
     }
     obj->trans.y += (r->y - obj->trans.y) * 0.2;
@@ -449,14 +449,14 @@ void func_800F86A8_PaddleBattle(s16 model, f32 speed) {
 }
 
 /* A rider: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 24 lines)
+// register allocation (masked 0, raw 14): player/p swap s1/s4, seat counter a0/v1; tried declaration order
 #ifdef NON_MATCHING
 void func_800F86D0_PaddleBattle(omObjData* obj) {
     s32 motA[5] = { 0xF, 0x38, 0x39, 0x3A, 0x3B };
     s32 motB[5] = { 0x10, 0x3C, 0x3D, 0x3E, 0x3F };
     PBMgWork* w;
     PBPlayer* p;
-    u8 player;
+    s32 player;
     s32 chr;
     s32 dir;
     s32 seat;
@@ -464,8 +464,7 @@ void func_800F86D0_PaddleBattle(omObjData* obj) {
     s32 r;
 
     obj->func_ptr = func_800F8B0C_PaddleBattle;
-    obj->work[0] = D_800FFB32_PaddleBattle++;
-    player = obj->work[0];
+    player = obj->work[0] = D_800FFB32_PaddleBattle++;
     obj->unk_50 = func_80023684(sizeof(PBMgWork), 0x7918);
     func_8009B770(obj->unk_50, 0, sizeof(PBMgWork));
     w = obj->unk_50;
@@ -487,8 +486,7 @@ void func_800F86D0_PaddleBattle(omObjData* obj) {
         }
     }
     RAFT.seat[seat] = player;
-    p->seat = seat;
-    obj->work[1] = seat;
+    obj->work[1] = p->seat = seat;
     obj->work[2] = 15;
     obj->work[3] = 0;
     func_800187D0(obj, 0, dir | 0x7C, 1, 0);
@@ -717,11 +715,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F8B0
 #endif
 
 /* A paddle: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 7 lines)
-#ifdef NON_MATCHING
 void func_800F94B8_PaddleBattle(omObjData* obj) {
     PBMgWork* w;
-    s32 mot;
 
     obj->func_ptr = func_800F9620_PaddleBattle;
     obj->unk_50 = func_80023684(sizeof(PBMgWork), 0x7918);
@@ -735,22 +730,16 @@ void func_800F94B8_PaddleBattle(omObjData* obj) {
     obj->work[2] = 0;
     if (obj->work[1] == 0) {
         obj->model[0] = LoadFormFile(0x470009, 0x99);
-        mot = 0x47000A;
+        func_800187D0(obj, 0, 0x47000A, 1, 0);
     } else {
         obj->model[0] = LoadFormFile(0x47000B, 0x99);
-        mot = 0x47000C;
+        func_800187D0(obj, 0, 0x47000C, 1, 0);
     }
-    func_800187D0(obj, 0, mot, 1, 0);
     func_800184BC(obj, 0);
     D_800FEA50_PaddleBattle++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F94B8_PaddleBattle);
-#endif
 
 /* A paddle: follows its rider. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 8 lines)
-#ifdef NON_MATCHING
 void func_800F9620_PaddleBattle(omObjData* obj) {
     PBPlayer* p;
     omObjData* o;
@@ -786,9 +775,7 @@ void func_800F9620_PaddleBattle(omObjData* obj) {
     obj->trans.x = o->trans.x;
     obj->trans.y = o->trans.y;
     obj->trans.z = o->trans.z;
-    m->unk7C[3][2] = 0.0f;
-    m->unk7C[3][1] = 0.0f;
-    m->unk7C[3][0] = 0.0f;
+    m->unk7C[3][0] = m->unk7C[3][1] = m->unk7C[3][2] = 0.0f;
     if (obj->work[2] != 0) {
         obj->trans.y += 2.0 * func_800AEAC0(obj->work[2] / 18.0 * 180.0) * 100.0;
     }
@@ -797,9 +784,6 @@ void func_800F9620_PaddleBattle(omObjData* obj) {
     }
     func_80017DB0(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800F9620_PaddleBattle);
-#endif
 
 /* A bystander on the bank: setup. */
 void func_800F98AC_PaddleBattle(omObjData* obj) {
@@ -1141,7 +1125,7 @@ void func_800FA5EC_PaddleBattle(omObjData* obj) {
                 func_80066DC4(D_800FFB50_PaddleBattle, i, c->pos.x, c->pos.y);
                 sc = c->scale;
             } else {
-                func_800FB868_PaddleBattle(0, &c->pos, &scr);
+                func_800FB868_PaddleBattle(0, &c->pos, &scr.x);
                 func_80066DC4(D_800FFB50_PaddleBattle, i, scr.x + 160.0f, scr.y + 120.0f);
                 sc = scr.z * c->scale;
             }
@@ -1160,25 +1144,21 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FA5E
 
 /* The river: banks D_800FE210 (left) and D_800FE600 (right) are quadratic B-splines over
    `dist` 0..2000; `lateral` 0..1 goes from one bank to the other. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 26 lines)
-#ifdef NON_MATCHING
 s16 func_800FABAC_PaddleBattle(f32 dist, f32* frac) {
+    s16* n = &D_800FE9F8_PaddleBattle;
     f32 f;
-    s32 seg;
+    s16 seg;
 
-    f = dist * (f32)(D_800FE9F8_PaddleBattle - 2) / 2000.0;
+    f = dist * (f32)(*n - 2) / 2000.0;
     seg = func_8009B6F0(f);
-    f = f - (f32)(s16)seg;
-    if ((s16)seg >= D_800FE9F8_PaddleBattle - 2) {
-        seg = D_800FE9F8_PaddleBattle - 3;
+    f = f - (f32)seg;
+    if (seg >= *n - 2) {
+        seg = *n - 3;
         f = 1.0f;
     }
     *frac = f;
     return seg;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FABAC_PaddleBattle);
-#endif
 
 /* The river point at (dist, lateral). */
 void func_800FAC70_PaddleBattle(f32 dist, f32 lateral, Vec* out) {
@@ -1288,7 +1268,7 @@ s16 func_800FB1E8_PaddleBattle(Vec* st, Vec* pos, f32 rotY, Matrix4f out) {
         q->y = pos->y + 300.0;
         s = &st[i * 2];
         t = &s[1];
-        if (func_800FDBB8_PaddleBattle(q, 0.0f, -1000.0f, 0.0f, -1) != 0) {
+        if (func_800FDBB8_PaddleBattle(&q->x, 0.0f, -1000.0f, 0.0f, -1) != 0) {
             s[1].x = q->x;
             s[1].y = q->y;
             s[1].z = q->z;
@@ -1321,12 +1301,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB1E
 #endif
 
 /* Pushes `lateral` away from a rock within 400 units of `pos`. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 30 lines)
-#ifdef NON_MATCHING
 f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
     f32 dz;
     f32 dx;
     f32 r;
+    f32 rad = 400.0f;
     s32 i;
 
     if (D_800FFB3C_PaddleBattle < 0) {
@@ -1336,18 +1315,18 @@ f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
     }
     for (i = 0; i < 4; i++) {
         dz = D_800FEA80_PaddleBattle[i].z - pos->z;
-        if (PB_ABS(dz) < 400.0f) {
+        if (PB_ABS(dz) < rad) {
             break;
         }
     }
     if (i < 4) {
         dx = D_800FEA80_PaddleBattle[i].x - pos->x;
-        if (dz * dz + dx * dx < 400.0f * 400.0f) {
-            r = sqrtf(400.0f * 400.0f - dz * dz);
-            if (!(dx < 0.0f)) {
-                r = r - dx;
-            } else {
+        if (dz * dz + dx * dx < rad * rad) {
+            r = sqrtf(rad * rad - dz * dz);
+            if (dx < 0.0f) {
                 r = r + dx;
+            } else {
+                r = r - dx;
             }
             if (dx < 0.0) {
                 r = -r;
@@ -1362,9 +1341,6 @@ f32 func_800FB554_PaddleBattle(f32 dist, f32 lateral, Vec* pos) {
     }
     return lateral;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB554_PaddleBattle);
-#endif
 
 s16 func_800FB704_PaddleBattle(s32 file) {
     void* data;
@@ -1399,43 +1375,36 @@ f32 func_800FB74C_PaddleBattle(f32 target, f32 cur, f32 rate) {
 }
 
 /* World `pos` to screen coordinates (x, y from the centre) and a scale in z, for camera `cam`. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 68 lines)
+// register allocation (masked 0, raw 8): sin/cos temporaries swap $f20/$f22; c + D_800F3FA8 * 16 operand order
 #ifdef NON_MATCHING
-void func_800FB868_PaddleBattle(s16 cam, Vec* pos, Vec* out) {
-    Matrix4f m;
+void func_800FB868_PaddleBattle(s16 cam, Vec* pos, f32* out) {
     Vec v;
+    Matrix4f m;
     unk_Struct00* c;
-    s16* vscale;
     f32 d;
 
     c = &D_800C3110[cam];
     HuGuLookAtF(m, c->pos.x, c->pos.y, c->pos.z, c->unkC.x, c->unkC.y, c->unkC.z, c->unk18.x, c->unk18.y,
                 c->unk18.z);
-    func_800FBA44_PaddleBattle(m, pos->x, pos->y, pos->z, &v);
+    func_800FBA44_PaddleBattle(m, pos->x, pos->y, pos->z, &v.x);
     d = func_800AEAC0(c->unk_40 * 0.5) / func_800AEFD0(c->unk_40 * 0.5) * v.z;
     if (d < 0.0f) {
         d = -d;
     }
     /* the screen's viewport scale: an s16 pair every 0x10 bytes from unk58 (no pointers before it) */
-    vscale = (s16*)((u8*)c + D_800F3FA8 * 0x10 + 0x58);
-    out->x = vscale[0] / 4.0 * v.x / d * 0.75;
-    out->y = vscale[1] / 4.0 * -v.y / d;
-    out->z = 400.0 / d;
+    out[0] = (&c->unk58)[D_800F3FA8 * 8] / 4.0 * v.x / d * 0.75;
+    out[1] = (&c->unk5A)[D_800F3FA8 * 8] / 4.0 * -v.y / d;
+    out[2] = 400.0 / d;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FB868_PaddleBattle);
 #endif
 
-// logic-equivalent; retail steps the output pointer by 4 before the z store (normalised diff 1 lines)
-#ifdef NON_MATCHING
-void func_800FBA44_PaddleBattle(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    out->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    out->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    out->z = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+void func_800FBA44_PaddleBattle(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FBA44_PaddleBattle);
-#endif
 
 /* Scenery: the river models, the water, the light rings. */
 void func_800FBAE0_PaddleBattle(void) {
@@ -1540,7 +1509,7 @@ void func_800FBEE8_PaddleBattle(omObjData* obj) {
     p.x = Center.x + func_800AEAC0(CRot.y + 180.0) * 40.0 * 100.0;
     p.y = Center.y - 200.0 + -500.0;
     p.z = Center.z + func_800AEFD0(CRot.y + 180.0) * 40.0 * 100.0;
-    func_800FB868_PaddleBattle(0, &p, &p);
+    func_800FB868_PaddleBattle(0, &p, &p.x);
     func_80066DC4(D_800FFB60_PaddleBattle, 0, 0xA0, p.y + 112.0f - 16.0f);
     if (D_800FFB62_PaddleBattle != 0 && --D_800FFB62_PaddleBattle == 0) {
         func_80067480(D_800FFB60_PaddleBattle, 0, 0x8000);
@@ -1566,16 +1535,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FBEE
 #endif
 
 /* A light ring over the river: setup. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 39 lines)
-#ifdef NON_MATCHING
 void func_800FC39C_PaddleBattle(omObjData* obj) {
     PBRingWork* w;
-    s32 v;
 
     obj->model[0] = func_800174C0(0x120007, 0xDD);
     func_80026040(obj->model[0]);
-    w = func_80023684(sizeof(PBRingWork), 0x7918);
-    obj->unk_50 = w;
+    w = obj->unk_50 = func_80023684(sizeof(PBRingWork), 0x7918);
     func_8009B770(w, 0, sizeof(PBRingWork));
     w->idx = (u8)D_800FFBEA_PaddleBattle;
     obj->func_ptr = func_800FC784_PaddleBattle;
@@ -1584,7 +1549,7 @@ void func_800FC39C_PaddleBattle(omObjData* obj) {
     obj->trans.x = Center.x;
     obj->trans.y = Center.y + 800.0;
     obj->trans.z = Center.z;
-    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, Center.z);
+    func_80025798(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
     obj->scale.z = 0.5f;
     obj->scale.x = 0.5f;
     obj->scale.y = 0.5f;
@@ -1592,21 +1557,13 @@ void func_800FC39C_PaddleBattle(omObjData* obj) {
     w->scale = (f32)(PB_RAND16() * 80 / 65536) * 0.01 + 0.4;
     w->unk18 = (PB_RAND16() * 300 / 65536 + 100) * 0.002;
     w->unk1C = (PB_RAND16() * 300 / 65536 + 100) * 0.002;
-    v = D_800FFBEA_PaddleBattle * 16;
-    if (D_800FFBEA_PaddleBattle >= 4) {
-        v = PB_RAND16() * 63 / 65536;
-    }
-    obj->work[3] = v;
+    obj->work[3] = (D_800FFBEA_PaddleBattle < 4) ? D_800FFBEA_PaddleBattle * 16 : PB_RAND16() * 63 / 65536;
     obj->work[1] = 0;
     obj->work[0] = (u8)D_800FFBEA_PaddleBattle;
     func_80039C48("sin_dmy_DEF", D_800FFB68_PaddleBattle[D_800FFBEA_PaddleBattle]);
-    D_800FFBA8_PaddleBattle[D_800FFBEA_PaddleBattle] = 0.0f;
-    D_800FFB88_PaddleBattle[D_800FFBEA_PaddleBattle] = 0.0f;
+    D_800FFB88_PaddleBattle[D_800FFBEA_PaddleBattle] = D_800FFBA8_PaddleBattle[D_800FFBEA_PaddleBattle] = 0.0f;
     D_800FFBEA_PaddleBattle++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FC39C_PaddleBattle);
-#endif
 
 /* A light ring: appears over the bank the raft drifts toward, every 64 frames. */
 // logic-equivalent; register allocation and instruction order differ (normalised diff 22 lines)
@@ -1755,31 +1712,29 @@ void func_800FD0B0_PaddleBattle(omObjData* obj) {
 }
 
 /* The waterfalls: next texture frame. */
-// logic-equivalent; retail writes the list at fixed offsets (normalised diff 52 lines)
-#ifdef NON_MATCHING
 void func_800FD29C_PaddleBattle(omObjData* obj) {
     unk2C0C0StructC0* m;
     unk65770Anim* anim;
     Gfx* gfx;
+    Gfx** list;
 
-    if (++obj->work[1] >= 7) {
+    obj->work[1]++;
+    if (obj->work[1] >= 7) {
         obj->work[1] = 0;
     }
     if (obj->model[0] != 0) {
         m = D_800F2B7C[obj->model[0]].unk_6C;
         anim = func_80067310(D_800FFB64_PaddleBattle);
-        gfx = m->unk_00[D_800F37F0 + 1];
-        m->unk_00[0] = gfx;
-        gDPPipeSync(gfx++);
-        gSPSegment(gfx++, 2, osVirtualToPhysical(anim->unk0[obj->work[1]].unk0));
-        gSPDisplayList(gfx++, osVirtualToPhysical(m->unk_00[4]));
-        gDPPipeSync(gfx++);
-        gSPEndDisplayList(gfx++);
+        list = m->unk_00;
+        gfx = list[D_800F37F0 + 1];
+        list[0] = gfx;
+        gDPPipeSync(&gfx[0]);
+        gSPSegment(&gfx[1], 2, osVirtualToPhysical(anim->unk0[obj->work[1]].unk0));
+        gSPDisplayList(&gfx[2], osVirtualToPhysical(m->unk_00[4]));
+        gDPPipeSync(&gfx[3]);
+        gSPEndDisplayList(&gfx[4]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD29C_PaddleBattle);
-#endif
 
 void func_800FD3A8_PaddleBattle(omObjData* obj) {
     s32 i;
@@ -1911,9 +1866,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD71
 
 /* Moves pos by (dx, dy, dz), stopped at the first collision face of any registered model other than
    `skip`. Returns 1 when something was hit. */
-// logic-equivalent; the unused vector, register allocation (normalised diff 22 lines)
-#ifdef NON_MATCHING
-s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+s32 func_800FDBB8_PaddleBattle(f32* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+    Vec end;
     Vec p;
     Vec d;
     unk_ovl_2D_struct* m;
@@ -1923,7 +1877,9 @@ s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     s16 ret;
 
     D_800FFEF8_PaddleBattle = 1.1f;
-    /* retail also computes pos + d into an unused vector here */
+    end.x = dx + pos[0]; /* unused */
+    end.y = dy + pos[1];
+    end.z = dz + pos[2];
     d.x = dx;
     d.y = dy;
     d.z = dz;
@@ -1932,9 +1888,9 @@ s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
             continue;
         }
         m = &D_800F2B7C[D_800FFBF0_PaddleBattle[i].model];
-        p.x = pos->x - m->unk_24;
-        p.y = pos->y - m->unk_28;
-        p.z = pos->z - m->unk_2C;
+        p.x = pos[0] - m->unk_24;
+        p.y = pos[1] - m->unk_28;
+        p.z = pos[2] - m->unk_2C;
         D_800FFEF4_PaddleBattle = D_800FFBF0_PaddleBattle[i].verts;
         g = D_800FFBF0_PaddleBattle[i].groups;
         for (j = 0; j < D_800FFBF0_PaddleBattle[i].count; j++, g++) {
@@ -1947,14 +1903,11 @@ s32 func_800FDBB8_PaddleBattle(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
     } else {
         ret = 1;
     }
-    pos->x = dx * D_800FFEF8_PaddleBattle + pos->x;
-    pos->y = dy * D_800FFEF8_PaddleBattle + pos->y;
-    pos->z = dz * D_800FFEF8_PaddleBattle + pos->z;
+    pos[0] = dx * D_800FFEF8_PaddleBattle + pos[0];
+    pos[1] = dy * D_800FFEF8_PaddleBattle + pos[1];
+    pos[2] = dz * D_800FFEF8_PaddleBattle + pos[2];
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FDBB8_PaddleBattle);
-#endif
 
 /* Intersects the segment p + t * d with the faces and keeps the nearest t in D_800FFEF8. */
 // register allocation: j/prev swap t0/a3 and n is extended late (masked 39, raw 77); j = 0 before the loop and

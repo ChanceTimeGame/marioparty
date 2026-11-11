@@ -244,8 +244,8 @@ s16 func_800FB1E8_PaddleBattle(Vec*, Vec*, f32, Matrix4f);
 f32 func_800FB554_PaddleBattle(f32, f32, Vec*);
 s16 func_800FB704_PaddleBattle(s32);
 f32 func_800FB74C_PaddleBattle(f32, f32, f32);
-void func_800FB868_PaddleBattle(s16, Vec*, Vec*);
-void func_800FBA44_PaddleBattle(Matrix4f, f32, f32, f32, Vec*);
+void func_800FB868_PaddleBattle(s16, Vec*, f32*);
+void func_800FBA44_PaddleBattle(Matrix4f, f32, f32, f32, f32*);
 void func_800FBAE0_PaddleBattle(void);
 void func_800FBBD8_PaddleBattle(void);
 void func_800FBC00_PaddleBattle(omObjData*);
@@ -261,7 +261,7 @@ void func_800FD424_PaddleBattle(void);
 void func_800FD51C_PaddleBattle(s16);
 void func_800FD570_PaddleBattle(PBCol*, s16);
 s16 func_800FD714_PaddleBattle(unk2C0C0StructA0*, PBColFace*, unk2C0C0Struct20*, s16);
-s32 func_800FDBB8_PaddleBattle(Vec*, f32, f32, f32, s16);
+s32 func_800FDBB8_PaddleBattle(f32*, f32, f32, f32, s16);
 void func_800FDE08_PaddleBattle(PBColFace*, s16, Vec*, Vec*);
 
 /* ---------------------------------------------------------------------------------------------

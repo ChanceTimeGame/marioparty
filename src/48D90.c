@@ -605,7 +605,7 @@ void func_80049904(void) {
     }
 }
 
-// i++ after the i == 4 test folds to li 5; base not hoisted; register allocation (masked 28)
+// i++ after the i == 4 test folds to li 5 (tried a goto layout); case 3 GwPlayer[arg0] not shared with case 5 (extra arg0*3 temp, s6); swap load order (5 extra instructions)
 #ifdef NON_MATCHING
 void func_800499CC(s32 arg0) {
     unk48D90Box* box;
@@ -613,15 +613,16 @@ void func_800499CC(s32 arg0) {
     omObjData* obj;
     s32 i;
     s32 j;
-    s32 k;
     s32 a;
     s32 b;
     u8 t;
+    unk48D90Rect* rects;
 
+    rects = D_800C4F14;
     i = 0;
     do {
         box = &D_800D66B8[i];
-        rect = D_800C4F14 + i;
+        rect = rects + i;
         box->x = rect->x;
         box->y = rect->y;
         box->w = rect->w;
@@ -654,12 +655,12 @@ void func_800499CC(s32 arg0) {
                     }
                     break;
                 case 5:
-                    for (k = 0; k < 4; k++) {
-                        if ((k == arg0) ? (GwPlayer[arg0].coins < 15) : (GwPlayer[k].coins < 5)) {
+                    for (a = 0; a < 4; a++) {
+                        if ((a == arg0) ? (GwPlayer[arg0].coins < 15) : (GwPlayer[a].coins < 5)) {
                             break;
                         }
                     }
-                    if (k != 4) {
+                    if (a != 4) {
                         goto retry;
                     }
                     break;
