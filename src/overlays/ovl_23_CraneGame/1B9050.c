@@ -533,21 +533,20 @@ void func_800FCB78_CraneGame(Gfx** gfx, unk2C0C0StructC0* m) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1B9050", func_800FCB78_CraneGame);
 #endif
 
-// register allocation; retail steps the vertex pointer by 2 before reading z (masked 11)
-#ifdef NON_MATCHING
 Gfx* func_800FCD7C_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n) {
     Vtx* v;
     s16* s;
-    unk2C0C0StructA0* p;
+    s16* q;
+    u8 (*t)[4];
     s32 i;
 
     v = D_801006F4_CraneGame + D_8010074C_CraneGame;
     s = D_80100708_CraneGame;
-    for (i = 0; i < D_8010074A_CraneGame; i++, v++, s++) {
-        p = &D_801006F0_CraneGame[*s];
-        v->v.ob[0] = p->unk_00;
-        v->v.ob[1] = p->unk_02;
-        v->v.ob[2] = p->unk_04;
+    for (i = 0; i < D_8010074A_CraneGame; v++, i++, s++) {
+        q = &D_801006F0_CraneGame[*s].unk_00;
+        v->v.ob[0] = *q++;
+        v->v.ob[1] = *q++;
+        v->v.ob[2] = *q++;
         v->v.tc[0] = v->v.tc[1] = 0;
         v->v.cn[0] = v->v.cn[1] = v->v.cn[2] = 0xFF;
         v->v.cn[3] = 0xA0;
@@ -555,18 +554,16 @@ Gfx* func_800FCD7C_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n) {
     gSPVertex(gfx++, (Vtx*)(0x01000000 | (D_8010074C_CraneGame * sizeof(Vtx))), D_8010074A_CraneGame, 0);
     D_8010074C_CraneGame += D_8010074A_CraneGame;
     D_8010074A_CraneGame = 0;
-    for (i = 0; i < n; i++, tri++) {
-        if ((*tri)[0] & 0x80) {
-            gSP1Quadrangle(gfx++, (*tri)[0] & 0x7F, (*tri)[1], (*tri)[2], (*tri)[3], 0);
+    t = tri;
+    for (i = 0; i < n; i++, t++) {
+        if ((*t)[0] & 0x80) {
+            gSP1Quadrangle(gfx++, (*t)[0] & 0x7F, (*t)[1], (*t)[2], (*t)[3], 0);
         } else {
-            gSP1Triangle(gfx++, (*tri)[0] & 0x7F, (*tri)[1], (*tri)[2], 0);
+            gSP1Triangle(gfx++, (*t)[0] & 0x7F, (*t)[1], (*t)[2], 0);
         }
     }
     return gfx;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CraneGame/1B9050", func_800FCD7C_CraneGame);
-#endif
 
 // float register allocation, 1.2 constant hoisting (masked 8)
 #ifdef NON_MATCHING

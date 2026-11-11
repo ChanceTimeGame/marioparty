@@ -90,7 +90,8 @@ void func_800F6748_TeeteringTowers(omObjData* obj) {
     }
 }
 
-// stack frame 8 bytes larger and one extra move in the coin clamp (register allocation, masked 2)
+// stack frame 8 bytes larger and one extra move in the coin clamp (register allocation, masked 2); the
+// -coins store alone causes it (tried -(s32), 0 - coins, swapped sum operands); lh D_800FA93A is (s16)D_800FA938
 #ifdef NON_MATCHING
 void func_800F6780_TeeteringTowers(omObjData* obj) {
     func_80009468();
