@@ -704,8 +704,9 @@ s16 func_800F84A8_MemoryMatch(s16 arg0) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800F84A8_MemoryMatch);
 #endif
-// retail reloads every global, keeps a 0x18 frame and a dead li a0,5 (a deleted call?) (masked 18;
-// pool-B accesses are those reloads only, same referents)
+// retail reloads every global, keeps a 0x18 frame and a dead li a0,5 (a deleted call?) (masked 24;
+// pool-B accesses are those reloads only, same referents). M1e: a call to a const-attributed
+// f(5) there gives the 0x18 frame but GCC drops it before allocation, so no reloads (masked 22).
 #ifdef NON_MATCHING
 void func_800F8654_MemoryMatch(omObjData* arg0) {
     omObjData* obj;
@@ -1222,11 +1223,8 @@ s16 func_800F9BC8_MemoryMatch(omObjData* arg0) {
     }
     return ret;
 }
-// register allocation (masked 0, raw 2)
-#ifdef NON_MATCHING
 void func_800F9C50_MemoryMatch(omObjData* arg0) {
     s16 tbl[4][4];
-    s16* row;
     unk_MemoryMatch_03* p;
     u16 i;
     u16 idx;
@@ -1305,11 +1303,11 @@ void func_800F9C50_MemoryMatch(omObjData* arg0) {
     func_8001874C(arg0, 0x21, dir | 0x68, 2, 0);
     func_8001874C(arg0, 0x22, dir | 0x69, 2, 0);
     func_8001874C(arg0, 0x23, dir | 0x2F, 1, 4);
-    row = &tbl[0][func_800F7AFC_MemoryMatch(2)];
-    func_8001874C(arg0, 0x24, dir | row[0], 1, (u16)row[4]);
+    i = func_800F7AFC_MemoryMatch(2);
+    func_8001874C(arg0, 0x24, dir | tbl[0][i], 1, (u16)tbl[1][i]);
     func_8001874C(arg0, 0x25, dir2, 2, 0);
-    row = &tbl[0][func_800F7AFC_MemoryMatch(2)];
-    func_8001874C(arg0, 0x26, dir | row[8], 1, (u16)row[12]);
+    i = func_800F7AFC_MemoryMatch(2);
+    func_8001874C(arg0, 0x26, dir | tbl[2][i], 1, (u16)tbl[3][i]);
     arg0->trans.x = arg0->trans.y = 0.0f;
     arg0->trans.z = 144.0f;
     func_800FAD18_MemoryMatch(arg0->work[0]);
@@ -1337,9 +1335,6 @@ void func_800F9C50_MemoryMatch(omObjData* arg0) {
     D_800FD884_MemoryMatch = 0;
     func_800184BC(arg0, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800F9C50_MemoryMatch);
-#endif
 void func_800FA1E4_MemoryMatch(omObjData* arg0) {
     unk_MemoryMatch_03* p = &(&D_800FE2C8_MemoryMatch)[arg0->work[0]];
 
@@ -1373,15 +1368,12 @@ void func_800FA1E4_MemoryMatch(omObjData* arg0) {
         func_8009EA40(D_800F2B7C[arg0->model[1]].unk7C, 0.0f, 0.0f, 0.0f);
     }
 }
-// rand(100) result vs unk_18 load order (masked 9)
-#ifdef NON_MATCHING
 void func_800FA400_MemoryMatch(omObjData* arg0) {
     unk_MemoryMatch_03* p = &(&D_800FE2C8_MemoryMatch)[arg0->work[0]];
     omObjData* obj;
     f32 dx, dz, dist, angle, sx, sy;
     s16 i;
     u8 w;
-    u16 r;
 
     ContBtnTrg[D_800FE310_MemoryMatch] = 0;
     ContBtn[D_800FE310_MemoryMatch] = 0;
@@ -1470,7 +1462,7 @@ void func_800FA400_MemoryMatch(omObjData* arg0) {
             if (i != 9 || obj->work[1] == 5) {
                 D_800FD888_MemoryMatch[D_800FD89A_MemoryMatch] = obj->work[1];
                 D_800FD89C_MemoryMatch = 0;
-            } else if ((r = func_800F7AFC_MemoryMatch(100), p->unk_18 * 10 < r)) {
+            } else if (func_800F7AFC_MemoryMatch(100) > p->unk_18 * 10) {
                 D_800FD888_MemoryMatch[D_800FD89A_MemoryMatch] = D_800FD89C_MemoryMatch = obj->work[1];
             }
             D_800FD89A_MemoryMatch = 9;
@@ -1478,9 +1470,6 @@ void func_800FA400_MemoryMatch(omObjData* arg0) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_00_MemoryMatch/CDA50", func_800FA400_MemoryMatch);
-#endif
 void func_800FAAC4_MemoryMatch(omObjData* arg0) {
     if (((unkGlobalStruct_00*) arg0->unk_50)->unk_5C & 0x6324) {
         func_80005A28(arg0);
