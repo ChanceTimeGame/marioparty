@@ -307,18 +307,21 @@ f32 func_800F7320_UnusedMinigame0(f32 cur, f32 target, f32 step) {
 }
 
 /* Hides the player's shadows and starts the end camera parts shared by the three endings. */
+#define UM0_HIDE_SHADOWS_K(k)                                               \
+    for (k = 0; k < 3; k++) {                                               \
+        D_800F2B7C[D_80109CC0_UnusedMinigame0[k]].unk_6C->unk_80->unk_14 |= 0x10000; \
+        D_800F2B7C[D_80109CC0_UnusedMinigame0[k]].unk_20 |= 0x80;           \
+    }
 #define UM0_HIDE_SHADOWS()                                                  \
     {                                                                       \
         s16 k;                                                              \
-        for (k = 0; k < 3; k++) {                                           \
-            D_800F2B7C[D_80109CC0_UnusedMinigame0[k]].unk_6C->unk_80->unk_14 |= 0x10000; \
-            D_800F2B7C[D_80109CC0_UnusedMinigame0[k]].unk_20 |= 0x80;       \
-        }                                                                   \
+        UM0_HIDE_SHADOWS_K(k);                                              \
     }
 
 /* The player: intro, walking (or the CPU's moves), pushing an exit gate, reaching the treasure. */
-// NON_MATCHING: masked 17: d/s/a FP registers, `edges` kept in s1, a +100/-100 p.x reload order; retail
-// tests the CPU arrival flags with a word load at w+0 (lw), written here as the unk2 halfword it reads
+// NON_MATCHING: masked 6 (M1h, from 17): register allocation (retail shares s1 among port, edges and the
+// counters), plus two load orders: obj->trans.x before the +100/-100 p.x reload (tried p.x = p.x - ...), and
+// 8 - unk56 before the unk2C load in the case-2 turn (tried --unk56 inline, the commuted add)
 #ifdef NON_MATCHING
 void func_800F75C0_UnusedMinigame0(omObjData* obj) {
     UM0MgWork* mg = obj->unk_50;
@@ -497,7 +500,7 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                     } else {
                         w->unk4A = 0;
                     }
-                } else if ((w->unk2 & 0xC) == 4) {
+                } else if ((w->unk2 & 4) && !(w->unk2 & 8)) {
                     if (!(mg->unk_5C & 0x20)) {
                         ContBtn[(s8)port] = ContBtnTrg[(s8)port] = 0x8000;
                     } else if (!(mg->unk_5C & 0x200) && obj->trans.y >= 200.0) {
@@ -571,7 +574,7 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
                         D_80103D96_UnusedMinigame0 = 1;
                         func_80025F60(obj->model[0], 0);
                         func_80025F60(obj->model[9], 0);
-                        UM0_HIDE_SHADOWS();
+                        UM0_HIDE_SHADOWS_K(e);
                         D_80103D86_UnusedMinigame0 = 1;
                     }
                 } else {
@@ -725,10 +728,12 @@ void func_800F75C0_UnusedMinigame0(omObjData* obj) {
     if (func_800FC564_UnusedMinigame0(&p.x, &p.y, w->unk4)) {
         w->unk2 |= 0x80;
     }
-    obj->trans.x = p.x * 10.0;
-    obj->trans.z = p.y * 10.0;
+    dx = p.x;
+    obj->trans.x = dx * 10.0;
+    dz = p.y;
+    obj->trans.z = dz * 10.0;
     if (obj->trans.y < 100.0) {
-        func_800FBB18_UnusedMinigame0(p.x, p.y);
+        func_800FBB18_UnusedMinigame0(dx, dz);
         if (func_800FC564_UnusedMinigame0(&p.x, &p.y, func_800AEAC0((100.0 - obj->trans.y) / 100.0 * 90.0) * w->unk4)) {
             w->unk2 |= 0x10;
         }

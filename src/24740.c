@@ -1077,7 +1077,8 @@ void func_80026B8C(s16 arg0, f32 arg1, f32 arg2, s32 arg3) {
         }
     }
 }
-// retail keeps an extra copy of arg4 in s2 (masked 16)
+// retail keeps an extra copy of arg4 in s2 (masked 18, 3 instructions short); M1h tried a copy local
+// (declared before/after model, used for the switch or for the 0x80 test): GCC propagates it away
 #ifdef NON_MATCHING
 void func_80026C6C(s16 arg0, f32 arg1, f32 arg2, char* arg3, s32 arg4) {
     unk2C0C0StructC0* model = D_800F2B7C[arg0].unk_6C;

@@ -575,17 +575,11 @@ f32 func_800F7AF8_ShyGuySays(f32 arg0, f32 arg1, f32 arg2) {
     }
     return -fabs(arg1 - arg0);
 }
-// register allocation: arg0/arg1 copies swap s2/s3 (masked 0, raw 5); a local element pointer fixes the
-// registers but not the folded 0x1C offset (tried p = &(&arg1->unk_1C)[arg2], inline and base forms)
-#ifdef NON_MATCHING
 void func_800F7B74_ShyGuySays(omObjData* arg0, unkStruct_ShyGuySays_01* arg1, u16 arg2, s32 arg3) {
     arg0->motion[arg2] = func_8001755C(arg3);
-    (&arg1->unk_1C)[arg2].unk_00 = func_80025E48(arg0->motion[arg2]);
-    (&arg1->unk_1C)[arg2].unk_02 = func_80025D40(arg0->motion[arg2]);
+    arg1->unk_1C[arg2].unk_00 = func_80025E48(arg0->motion[arg2]);
+    arg1->unk_1C[arg2].unk_02 = func_80025D40(arg0->motion[arg2]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_ShyGuySays/1D9690", func_800F7B74_ShyGuySays);
-#endif
 void func_800F7C0C_ShyGuySays(s16 arg0, s16 arg1, u16 arg2) {
     unk2C0C0StructC0* src;
     unk2C0C0StructC0* dst;
@@ -817,7 +811,7 @@ void func_800F82B0_ShyGuySays(omObjData* arg0) {
     func_800F7B74_ShyGuySays(arg0, p, 1, dir | 0x5D);
     func_800F7B74_ShyGuySays(arg0, p, 2, dir | 0x94);
     func_800F7B74_ShyGuySays(arg0, p, 3, dir | 0x80);
-    func_800F79E4_ShyGuySays(arg0->model[0], &p->unk_1C, -1);
+    func_800F79E4_ShyGuySays(arg0->model[0], &p->unk_1C[0], -1);
     D_800F2B7C[arg0->model[0]].unk_48 = 0.0f;
     arg0->work[1] = 1;
     arg0->trans.x = p->unk_84 = arg0->work[0] * 300.0 + -450.0;
@@ -1040,7 +1034,7 @@ void func_800F9118_ShyGuySays(omObjData* arg0, s16 arg1) {
                     func_800607C4(temp_v0, var_s3);
                 }
                 temp_s0->unk_10 = 2;
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C, 1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[0], 1);
             }
             break;
         case 2:
@@ -1050,38 +1044,38 @@ void func_800F9118_ShyGuySays(omObjData* arg0, s16 arg1) {
                     func_800607C4(temp_v0, var_s3);
                 }
                 temp_s0->unk_14 = 2;
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_20, 1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[1], 1);
             }
             break;
         case 6:
             if (temp_s0->unk_10 == 2 && temp_s0->unk_14 == 1) {
                 temp_s0->unk_10 = 1;
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C, -1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[0], -1);
             } else if (temp_s0->unk_10 == 1 && temp_s0->unk_14 == 2) {
                 temp_s0->unk_14 = 1;
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_20, -1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[1], -1);
             }
             break;
         case 10:
             if (temp_s0->unk_92 == 0 && temp_s1->unk_48 >= temp_s1->unk_50) {
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_24, 1);
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_20, -1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[2], 1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[1], -1);
                 temp_s1->unk_48 = 0.0f;
-                func_80025C20(arg0->model[0], temp_s0->unk_24.unk_00, 0, 0xA, 0);
+                func_80025C20(arg0->model[0], temp_s0->unk_1C[2].unk_00, 0, 0xA, 0);
                 temp_s0->unk_92++;
             } else if (temp_s1->unk_0C == -1 && temp_s1->unk_48 >= temp_s1->unk_50) {
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_24, 1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[2], 1);
             }
             break;
         case 11:
             if (temp_s0->unk_92 == 0 && temp_s1->unk_48 >= temp_s1->unk_50) {
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_28, 1);
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_20, -1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[3], 1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[1], -1);
                 temp_s1->unk_48 = 0.0f;
-                func_80025C20(arg0->model[0], temp_s0->unk_28.unk_00, 0, 0xA, 0);
+                func_80025C20(arg0->model[0], temp_s0->unk_1C[3].unk_00, 0, 0xA, 0);
                 temp_s0->unk_92++;
             } else if (temp_s1->unk_0C == -1 && temp_s1->unk_48 >= temp_s1->unk_50) {
-                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_28, 1);
+                func_800F79E4_ShyGuySays(arg0->model[0], &temp_s0->unk_1C[3], 1);
             }
             break;
     }
