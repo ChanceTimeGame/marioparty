@@ -64,7 +64,7 @@ s32 func_80019964(Vec3f* arg0, Vec3f* arg1, f32 arg2, Vec3f* arg3) {
     return var_v0;
 }
 
-// float register allocation; GCC reuses the 1.0f constant across blocks (masked 21)
+// float register allocation (280 vs 282, masked 21): retail's 1.0f pseudo gets no hard reg and is rematerialised in the first arm, ours keeps it in $f24, and t sits in $f12 there, $f22 here; M1h: separate calls instead of the gotos (masked 29), s/t/d/inv declaration orders (no change)
 #ifdef NON_MATCHING
 s32 func_80019A78(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4, Vec3f* arg5) {
     Vec3f sp10;
