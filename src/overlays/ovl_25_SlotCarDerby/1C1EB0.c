@@ -586,12 +586,9 @@ s32 D_80100F58_SlotCarDerby[6] = { 30, 2, 27, 2, 27, 2 };
 s32 D_80100F70_SlotCarDerby[6] = { 0, 0, 0, 0, 0, 0 };
 s16 D_80100F88_SlotCarDerby[4] = { 0, 0x3000, 0x2000, 0 };
 
-// register allocation of the D_800C59AC file-id load (masked 0)
-#ifdef NON_MATCHING
 void func_800F76E8_SlotCarDerby(omObjData* obj, s16 player) {
     SCDPlayerWork* work;
     unk2C0C0Struct50* head;
-    s32 file;
     u32 chr;
 
     obj->func_ptr = func_800F7A00_SlotCarDerby;
@@ -606,12 +603,11 @@ void func_800F76E8_SlotCarDerby(omObjData* obj, s16 player) {
         chr = 6;
     }
     if (chr < 6) {
-        file = D_800C59AC[chr].unk_00 | D_800C59AC[chr].unk_08;
+        obj->model[1] = LoadFormFile(D_800C59AC[chr].unk_00 | D_800C59AC[chr].unk_08, 0x6BD);
     } else {
         chr = 6;
-        file = 0x70000;
+        obj->model[1] = LoadFormFile(0x70000, 0x6BD);
     }
-    obj->model[1] = LoadFormFile(file, 0x6BD);
     obj->model[0] = LoadFormFile(D_80100CD8_SlotCarDerby[chr] | 0x390000, 0x6B9);
     func_800343C8(D_800F2B7C[obj->model[1]].unk_08);
     head = func_80026A0C(obj->model[0], "head");
@@ -633,9 +629,6 @@ void func_800F76E8_SlotCarDerby(omObjData* obj, s16 player) {
     func_800F7084_SlotCarDerby(obj);
     func_800F70C4_SlotCarDerby(obj)->unk_0A = chr;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_SlotCarDerby/1C1EB0", func_800F76E8_SlotCarDerby);
-#endif
 void func_800F7A00_SlotCarDerby(omObjData* obj) {
     SCDCar* car;
     s32 throttle;
