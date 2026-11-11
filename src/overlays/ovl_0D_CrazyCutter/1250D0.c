@@ -1285,16 +1285,13 @@ f32 func_800FAB0C_CrazyCutter(f32 x) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAB0C_CrazyCutter);
 #endif
-// float registers; dead pitch compares folded (masked 81)
-#ifdef NON_MATCHING
 f32 func_800FAC38_CrazyCutter(s16* from, s16* to, s32 mode) {
+    Vec3f delta;
     Vec3f fromV;
     Vec3f toV;
-    Vec3f delta;
     f32 horizontal;
     f32 pitch;
     f32 yaw;
-    f32 length;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -1302,20 +1299,21 @@ f32 func_800FAC38_CrazyCutter(s16* from, s16* to, s32 mode) {
     fromV.y = 0.0f;
     fromV.z = from[1];
     toV.x = to[0];
-    toV.y = 0;
+    toV.y = 0.0f;
     toV.z = to[1];
     delta.x = toV.x - fromV.x;
-    delta.y = toV.y - fromV.y;
+    delta.y = fromV.y;
     delta.z = toV.z - fromV.z;
     horizontal = sqrtf(delta.x * delta.x + delta.z * delta.z);
     nearPositive = horizontal <= 0.002f;
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
-        pitch = 180.0f;
-        yaw = 0.0f;
+        yaw = horizontal;
         if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
-            pitch = 0.0f;
+            pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         yaw = func_800FAB0C_CrazyCutter(delta.x / delta.z) * 57.29577951308232;
@@ -1323,35 +1321,24 @@ f32 func_800FAC38_CrazyCutter(s16* from, s16* to, s32 mode) {
             yaw -= 180.0f;
         }
         pitch = func_800FAB0C_CrazyCutter(delta.y / horizontal) * 57.29577951308232;
-        if (yaw >= 360.0f) {
-            yaw -= 360.0f;
-        } else if (yaw < 0.0f) {
-            yaw += 360.0f;
-        }
-        pitch += 90.0f;
-        if (pitch >= 360.0f) {
-            pitch -= 360.0f;
-        } else if (pitch < 0.0f) {
-            pitch += 360.0f;
-        }
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
-    length = sqrtf(delta.y * delta.y + horizontal * horizontal);
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    horizontal = sqrtf(delta.y * delta.y + horizontal * horizontal);
     if (mode == 0) {
         D_800FD140_CrazyCutter = yaw;
     } else {
-        D_800FD140_CrazyCutter = length;
+        D_800FD140_CrazyCutter = horizontal;
     }
     return D_800FD140_CrazyCutter;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAC38_CrazyCutter);
-#endif
 // Control flow: retail keeps the dead pitch <= 0.002f / >= -0.002f tests that GCC drops here (as
 // func_800F9E98_HammerDrop; 205 vs 189 instructions, masked 42; tried wrap ternaries and Vec order,
-// both kept, and yaw = 0 after the pitch test)
-#ifdef NON_MATCHING
 f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
     Vec3f delta;
     Vec3f fromV;
@@ -1359,7 +1346,6 @@ f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
-    f32 length;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -1377,10 +1363,11 @@ f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
-        pitch = 180.0f;
-        yaw = 0.0f;
+        yaw = horizontal;
         if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
-            pitch = 0.0f;
+            pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         yaw = func_800FAB0C_CrazyCutter(delta.x / delta.z) * 57.29577951308232;
@@ -1388,24 +1375,22 @@ f32 func_800FAF8C_CrazyCutter(Vec3f* from, Vec3f* to, s32 mode) {
             yaw -= 180.0f;
         }
         pitch = func_800FAB0C_CrazyCutter(delta.y / horizontal) * 57.29577951308232;
-        yaw = (yaw >= 360.0f) ? yaw - 360.0f : (yaw < 0.0f) ? yaw + 360.0f : yaw;
-        pitch = (pitch + 90.0f >= 360.0f) ? pitch + 90.0f - 360.0f
-              : (pitch + 90.0f < 0.0f)    ? pitch + 90.0f + 360.0f
-                                          : pitch + 90.0f;
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
-    length = sqrtf(delta.y * delta.y + horizontal * horizontal);
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    horizontal = sqrtf(delta.y * delta.y + horizontal * horizontal);
     if (mode == 0) {
         D_800FD144_CrazyCutter = yaw;
     } else {
-        D_800FD144_CrazyCutter = length;
+        D_800FD144_CrazyCutter = horizontal;
     }
     return D_800FD144_CrazyCutter;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_CrazyCutter/1250D0", func_800FAF8C_CrazyCutter);
-#endif
 void func_800FB2B8_CrazyCutter(s32 sprite, s32 player) {
     s32 x;
     s32 y;

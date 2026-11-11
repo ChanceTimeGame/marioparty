@@ -339,7 +339,8 @@ void func_800F9C20_BoxMountainMayhem(omObjData* stack, s32 x, s32 level, s32 z, 
 }
 
 // retail keeps the 0 return value in s2, ours rematerialises 0 (masked 13); a second `ret = 0`
-// after the hit gives masked 8 plus one extra move; tried moving the initial set
+// after the hit gives masked 8 plus one extra move; tried moving the initial set, early `return ret`
+// instead of goto end (masked 14, M1g)
 #ifdef NON_MATCHING
 s32 func_800FA058_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
