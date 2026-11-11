@@ -112,15 +112,11 @@ void func_800F8FE8_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
 }
 
-// argument register order in one func_8004CCD0 call (masked 1)
-#ifdef NON_MATCHING
 void func_800F9210_YoshisTropicalIslandEndingScene(s32 arg0) {
     s32 ids[6] = { 0x25, 12, 12, 7, 11, 8 };
     s32* lists[6] = { NULL, D_8010E29C_YoshisTropicalIslandEndingScene, D_8010E29C_YoshisTropicalIslandEndingScene, D_8010DD6C_YoshisTropicalIslandEndingScene, NULL, D_8010DD5C_YoshisTropicalIslandEndingScene };
     s32 i;
     Object* model;
-    Vec3f* from;
-    Vec3f* to;
 
     for (i = 0; i < 4; i++) {
         if (GwCommon.boardWork[3] != i) {
@@ -138,14 +134,11 @@ void func_800F9210_YoshisTropicalIslandEndingScene(s32 arg0) {
         if (i != 0) {
             if (arg0 == 0) {
                 model = GwPlayer[GwCommon.boardWork[i]].player_obj;
-                to = &GwPlayer[GwCommon.boardWork[0]].player_obj->coords;
-                from = &model->coords;
+                func_8004CCD0(&model->coords, &GwPlayer[GwCommon.boardWork[0]].player_obj->coords, &model->unk_18);
             } else {
                 model = GwPlayer[GwCommon.boardWork[i]].player_obj;
-                from = &model->coords;
-                to = &D_800F32A0->coords;
+                func_8004CCD0(&model->coords, &D_800F32A0->coords, &model->unk_18);
             }
-            func_8004CCD0(from, to, &model->unk_18);
         }
     }
     for (i = 0; i < 6; i++) {
@@ -154,15 +147,10 @@ void func_800F9210_YoshisTropicalIslandEndingScene(s32 arg0) {
         MODEL[i]->coords.y = POS[(i + 3) * 3 + arg0].y;
         MODEL[i]->coords.z = POS[(i + 3) * 3 + arg0].z;
         if (arg0 == 0) {
-            model = MODEL[i];
-            to = &GwPlayer[GwCommon.boardWork[0]].player_obj->coords;
-            from = &model->coords;
+            func_8004CCD0(&MODEL[i]->coords, &GwPlayer[GwCommon.boardWork[0]].player_obj->coords, &MODEL[i]->unk_18);
         } else {
-            model = MODEL[i];
-            from = &model->coords;
-            to = &D_800F32A0->coords;
+            func_8004CCD0(&MODEL[i]->coords, &D_800F32A0->coords, &MODEL[i]->unk_18);
         }
-        func_8004CCD0(from, to, &model->unk_18);
         if (ids[i] != 8) {
             func_80025B34(*MODEL[i]->unk_3C->unk_40);
         }
@@ -180,13 +168,6 @@ void func_800F9210_YoshisTropicalIslandEndingScene(s32 arg0) {
     OBJ[0]->work[3] = 0;
     D_80110400_YoshisTropicalIslandEndingScene[0] = func_80042728(MODEL[0], 1);
 }
-#else
-const s32 D_8010EF00_YoshisTropicalIslandEndingScene[6] __attribute__((section(".rodata"))) = { 0x25, 12, 12, 7, 11, 8 };
-s32* const D_8010EF18_YoshisTropicalIslandEndingScene[6] __attribute__((section(".rodata"))) = {
-    NULL, D_8010E29C_YoshisTropicalIslandEndingScene, D_8010E29C_YoshisTropicalIslandEndingScene, D_8010DD6C_YoshisTropicalIslandEndingScene, NULL, D_8010DD5C_YoshisTropicalIslandEndingScene,
-};
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_YoshisTropicalIslandEndingScene/262590", func_800F9210_YoshisTropicalIslandEndingScene);
-#endif
 
 void func_800F96E4_YoshisTropicalIslandEndingScene(void) {
     s32 i;
