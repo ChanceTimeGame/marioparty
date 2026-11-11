@@ -220,18 +220,14 @@ void func_800F70D0_PiranhasPursuit(omObjData* obj) {
     D_80100D20_PiranhasPursuit = 0;
 }
 
-// NON_MATCHING: retail selects the float x in a GPR (bnezl)
-#ifdef NON_MATCHING
 void func_800F7158_PiranhasPursuit(omObjData* obj) {
-    f32 x;
-
     func_800F9CBC_PiranhasPursuit(obj, &D_80100D40_PiranhasPursuit);
     if (GwPlayer[1].group != 0) {
-        x = -100.0f;
-        if (D_8010020C_PiranhasPursuit != 0) {
-            x = 0.0f;
+        if (D_8010020C_PiranhasPursuit == 0) {
+            func_800093FC(obj, -100.0f, 650.0f, 0.0f);
+        } else {
+            func_800093FC(obj, 0.0f, 650.0f, 0.0f);
         }
-        func_800093FC(obj, x, 650.0f, 0.0f);
         func_800F782C_PiranhasPursuit(obj, 1);
     } else {
         func_800093FC(obj, -16000.0f, 0.0f, 0.0f);
@@ -239,23 +235,15 @@ void func_800F7158_PiranhasPursuit(omObjData* obj) {
     }
     D_80100D80_PiranhasPursuit = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/222320", func_800F7158_PiranhasPursuit);
-#endif
 
-// NON_MATCHING: retail selects the float x in a GPR
-#ifdef NON_MATCHING
 void func_800F71F0_PiranhasPursuit(omObjData* obj) {
-    f32 x;
-
     func_800F9CBC_PiranhasPursuit(obj, &D_80100DA0_PiranhasPursuit);
     if (GwPlayer[2].group != 0) {
         if (D_8010020C_PiranhasPursuit == 3) {
-            x = 100.0f;
+            func_800093FC(obj, 100.0f, 650.0f, 0.0f);
         } else {
-            x = 0.0f;
+            func_800093FC(obj, 0.0f, 650.0f, 0.0f);
         }
-        func_800093FC(obj, x, 650.0f, 0.0f);
         func_800F782C_PiranhasPursuit(obj, 2);
     } else {
         func_800093FC(obj, -16000.0f, 0.0f, 0.0f);
@@ -263,9 +251,6 @@ void func_800F71F0_PiranhasPursuit(omObjData* obj) {
     }
     D_80100DE0_PiranhasPursuit = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/222320", func_800F71F0_PiranhasPursuit);
-#endif
 
 void func_800F7298_PiranhasPursuit(omObjData* obj) {
     func_800F9CBC_PiranhasPursuit(obj, &D_80100E00_PiranhasPursuit);

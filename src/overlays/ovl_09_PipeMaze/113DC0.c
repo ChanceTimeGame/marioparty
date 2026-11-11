@@ -267,7 +267,7 @@ void func_800F7194_PipeMaze(omObjData* arg0) {
     }
     D_800F9B74_PipeMaze = omAddObj(5, 0, 0, -1, func_800F9590_PipeMaze);
 }
-// stk==0 test: retail re-tests stk<0 / stk<=0 after D_800F997A=1, GCC threads it to one jump (1 insn short; logic-equivalent)
+// stk==0 test: retail re-tests stk<0 / stk<=0 after D_800F997A=1, GCC threads it to one jump (1 insn short, masked 49; logic-equivalent; tried &&, stk == 0)
 #ifdef NON_MATCHING
 void func_800F7368_PipeMaze(omObjData* arg0) {
     s16 stk;
@@ -560,7 +560,7 @@ void func_800F80CC_PipeMaze(omObjData* arg0) {
     func_80017DB0(arg0);
     D_800F9902_PipeMaze++;
 }
-// scheduling: D_800F2B7C load hoisted above the model*0xC0 multiply (masked 4)
+// scheduling: D_800F2B7C load hoisted above the model*0xC0 multiply (masked 4; tried a (s16) index, pointer + index)
 #ifdef NON_MATCHING
 void func_800F8414_PipeMaze(omObjData* arg0) {
     s32 n;

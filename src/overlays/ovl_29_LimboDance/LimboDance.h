@@ -119,7 +119,7 @@ extern s16 D_800FE994_LimboDance;
 extern s16 D_800FE996_LimboDance;
 extern u16 D_800FE998_LimboDance;
 extern u16 D_800FE99A_LimboDance;
-extern s16 D_800FE99C_LimboDance;
+extern u16 D_800FE99C_LimboDance;
 extern u16 D_800FE99E_LimboDance;
 extern s16 D_800FE9A0_LimboDance;
 extern s16 D_800FE9A2_LimboDance;

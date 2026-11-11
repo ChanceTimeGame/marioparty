@@ -15,7 +15,7 @@ s16 D_800FE994_LimboDance = 0;
 s16 D_800FE996_LimboDance = 0;
 u16 D_800FE998_LimboDance = 0;
 u16 D_800FE99A_LimboDance = 0;
-s16 D_800FE99C_LimboDance = 3;
+u16 D_800FE99C_LimboDance = 3;
 u16 D_800FE99E_LimboDance = 0;
 s16 D_800FE9A0_LimboDance = 0;
 s16 D_800FE9A2_LimboDance = 1;
@@ -398,14 +398,15 @@ void func_800F750C_LimboDance(s16 id, s16 delay) {
     }
 }
 
-// register allocation (masked 12): GCC hoists &D_800FF1C8 for the delay store into s3 (retail stores via %lo(D+2)); tried --, -= 1, a separate decrement
-#ifdef NON_MATCHING
 void func_800F756C_LimboDance(void) {
     s16 i;
+    s16 delay;
 
     for (i = 0; i < 10; i++) {
         if (D_800FF1C8_LimboDance[i].id != -1) {
-            if ((D_800FF1C8_LimboDance[i].delay = D_800FF1C8_LimboDance[i].delay - 1) <= 0) {
+            delay = D_800FF1C8_LimboDance[i].delay - 1;
+            D_800FF1C8_LimboDance[i].delay = delay;
+            if (delay <= 0) {
                 PlaySound(D_800FF1C8_LimboDance[i].id);
                 D_800FF1C8_LimboDance[i].id = -1;
                 D_800FF1C8_LimboDance[i].delay = 0;
@@ -413,9 +414,6 @@ void func_800F756C_LimboDance(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F756C_LimboDance);
-#endif
 
 /* Random number below n (0: the whole low half of the seed). */
 u16 func_800F7628_LimboDance(u16 n) {
@@ -588,7 +586,8 @@ void func_800F7B08_LimboDance(omObjData* obj) {
 }
 
 /* The dancer: lean back with A (CPU: func_800F8CA0), step under the bars, fall on a miss. */
-// NON_MATCHING: register allocation / scheduling
+// NON_MATCHING: one nop short: retail has a nop between the case 3 ldc1 and the shared k * c mul.d tail of
+// switch (r), so every later address is off by 4 (masked 92 = only that nop; tried a default case)
 #ifdef NON_MATCHING
 void func_800F7E40_LimboDance(omObjData* obj) {
     LDPlayer* p;
@@ -638,8 +637,7 @@ void func_800F7E40_LimboDance(omObjData* obj) {
             break;
         }
         if (D_800FE998_LimboDance != 0 && D_800FF1BC_LimboDance == 0) {
-            p->vel = 0.0f;
-            obj->trans.y = 0.0f;
+            obj->trans.y = p->vel = 0.0f;
             p->lean += 20.0;
         } else if (D_800FEFFC_LimboDance == 0 && D_800FF1BE_LimboDance == 0) {
             if (p->lean > 5.0) {
@@ -674,8 +672,40 @@ void func_800F7E40_LimboDance(omObjData* obj) {
             if (D_800FE99E_LimboDance >= 10) {
                 D_800FE99E_LimboDance = 0;
             }
-            switch (D_800FE99C_LimboDance) {
-            case 0:
+            if (D_800FE99C_LimboDance != 0) {
+                switch (D_800FE99C_LimboDance) {
+                case 1:
+                    func_800F78DC_LimboDance(obj->model[0], &p->mot[1], 1);
+                    func_80025C20(obj->model[0], p->mot[4].id, 0, 5, 0);
+                    D_800FE99C_LimboDance++;
+                    break;
+                case 2:
+                    if (m->unk_0C == -1) {
+                        func_800F78DC_LimboDance(obj->model[0], &p->mot[4], 1);
+                        D_800FE99C_LimboDance++;
+                    }
+                    break;
+                case 3:
+                    if (hit != 0) {
+                        func_800F78DC_LimboDance(obj->model[0], &p->mot[4], 1);
+                        func_80025C20(obj->model[0], p->mot[1].id, 0, 5, 0);
+                        D_800FE99C_LimboDance++;
+                    }
+                    if (m->unk_48 >= m->unk_50) {
+                        m->unk_48 = 0.0f;
+                    }
+                    break;
+                case 4:
+                    if (m->unk_0C == -1) {
+                        D_800FE99C_LimboDance++;
+                    }
+                    break;
+                case 5:
+                    D_800FE99C_LimboDance = 0;
+                    D_800FE99A_LimboDance = 1;
+                    break;
+                }
+            } else {
                 if (D_800FE99A_LimboDance == 1 || m->unk_0C == -1) {
                     func_800F78DC_LimboDance(obj->model[0], &p->mot[1], 1);
                     func_80025C20(obj->model[0], p->mot[0].id, 0, 0x37, 0);
@@ -686,41 +716,10 @@ void func_800F7E40_LimboDance(omObjData* obj) {
                     m->unk_0C = -1;
                     D_800FE99C_LimboDance = 1;
                 }
-                break;
-            case 1:
-                func_800F78DC_LimboDance(obj->model[0], &p->mot[1], 1);
-                func_80025C20(obj->model[0], p->mot[4].id, 0, 5, 0);
-                D_800FE99C_LimboDance++;
-                break;
-            case 2:
-                if (m->unk_0C == -1) {
-                    func_800F78DC_LimboDance(obj->model[0], &p->mot[4], 1);
-                    D_800FE99C_LimboDance++;
-                }
-                break;
-            case 3:
-                if (hit != 0) {
-                    func_800F78DC_LimboDance(obj->model[0], &p->mot[4], 1);
-                    func_80025C20(obj->model[0], p->mot[1].id, 0, 5, 0);
-                    D_800FE99C_LimboDance++;
-                }
-                if (m->unk_50 <= m->unk_48) {
-                    m->unk_48 = 0.0f;
-                }
-                break;
-            case 4:
-                if (m->unk_0C == -1) {
-                    D_800FE99C_LimboDance++;
-                }
-                break;
-            case 5:
-                D_800FE99C_LimboDance = 0;
-                D_800FE99A_LimboDance = 1;
-                break;
             }
         } else if (p->lean < 60.0f) {
             m->unk_0C = -1;
-            if (D_800FE99A_LimboDance == 0 || m->unk_50 <= m->unk_48) {
+            if (D_800FE99A_LimboDance == 0 || m->unk_48 >= m->unk_50) {
                 func_80060540(0x307, 0);
                 func_800F78DC_LimboDance(obj->model[0], &p->mot[3], 1);
             }
@@ -735,28 +734,18 @@ void func_800F7E40_LimboDance(omObjData* obj) {
         obj->trans.y += p->vel;
         if (obj->trans.y > 0.0f) {
             p->vel -= 4.0;
-            if (D_800FEFFC_LimboDance == 0) {
-                obj->trans.y = 0.0f;
-                p->vel = 0.0f;
-            } else {
+            if (D_800FEFFC_LimboDance != 0) {
                 obj->trans.x += 20.0;
                 if (func_800F9CFC_LimboDance(obj->trans.x) != 0) {
                     D_800FF1BC_LimboDance = 1;
                 }
+            } else {
+                obj->trans.y = 0.0f;
+                p->vel = 0.0f;
             }
         }
         if (obj->trans.y == 0.0f) {
-            if (D_800FF1BC_LimboDance != 0) {
-                if (m->unk_0C == -1) {
-                    func_800F78DC_LimboDance(obj->model[0], &p->mot[1], 1);
-                    func_80025C20(obj->model[0], p->mot[0].id, 0, 0x37, 0);
-                }
-                m->unk_12 = p->lean;
-                D_800FEFF8_LimboDance = 0;
-                D_800FEFF6_LimboDance = 7;
-                func_800601D4(0x28);
-                p->vel = 20.0f;
-            } else {
+            if (D_800FF1BC_LimboDance == 0) {
                 hit = 0;
                 if (p->lean > 0.0f) {
                     for (i = 0; i < 10; i++) {
@@ -771,6 +760,16 @@ void func_800F7E40_LimboDance(omObjData* obj) {
                 if (p->lean <= 0.0f) {
                     p->lean = 0.0f;
                 }
+            } else {
+                if (m->unk_0C == -1) {
+                    func_800F78DC_LimboDance(obj->model[0], &p->mot[1], 1);
+                    func_80025C20(obj->model[0], p->mot[0].id, 0, 0x37, 0);
+                }
+                m->unk_12 = p->lean;
+                D_800FEFF8_LimboDance = 0;
+                D_800FEFF6_LimboDance = 7;
+                func_800601D4(0x28);
+                p->vel = 20.0f;
             }
         } else if (obj->trans.y < 0.0f) {
             obj->trans.y = 0.0f;
@@ -803,7 +802,7 @@ void func_800F7E40_LimboDance(omObjData* obj) {
         break;
     case 4:
     anim_loop:
-        if (m->unk_50 <= m->unk_48) {
+        if (m->unk_48 >= m->unk_50) {
             m->unk_48 = 0.0f;
         }
         break;
@@ -1047,12 +1046,10 @@ void func_800F922C_LimboDance(void) {
 }
 
 /* The bars: two courses (5 or 12 bars, heights 20..50), and the goal. */
-// NON_MATCHING: register allocation / scheduling
-#ifdef NON_MATCHING
 void func_800F929C_LimboDance(omObjData* obj) {
     LDBar* b;
     f32 x;
-    s32 n;
+    s16 n;
     u16 i;
 
     n = 0;
@@ -1111,9 +1108,6 @@ void func_800F929C_LimboDance(omObjData* obj) {
     obj->trans.y = D_800FF068_LimboDance[0].y0;
     obj->trans.z = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E0A30", func_800F929C_LimboDance);
-#endif
 
 /* Bar i at x, height (cm): its posts' heights come from the dancer's character. */
 void func_800F97B8_LimboDance(s16 i, s16* models, s16* src, f32 x, u16 height) {
