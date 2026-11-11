@@ -509,14 +509,14 @@ void func_800F7968_DeepSeaDivers(omObjData* obj) {
     dw->unk44 = player;
     D_80100C72_DeepSeaDivers[0]++;
 }
-#ifdef NON_MATCHING
 void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
+    f32 spd = 0.0f;
     f32 dirs[4][2] = { { 64.0f, 0.0f }, { 0.0f, 64.0f }, { -64.0f, 0.0f }, { 0.0f, -64.0f } };
     DSDPlayerWork* pl;
     DSDWork* w;
     omObjData* diver;
     DSDWork* dw;
-    f32 spd = 0.0f;
+    s16 mdl;
     f32 ang;
     s16 sx;
     s16 sy;
@@ -620,15 +620,15 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
                     }
                     w->unk4A = 5;
                 }
-                if (w->unk4A != 0) {
-                    w->unk48 = q;
-                } else {
+                if (w->unk4A == 0) {
                     if (q == 1 && w->unk10 > -10.0) {
                         w->unk10 = w->unk10 - 2.0;
                     }
                     if (q == 3 && w->unk10 < 10.0) {
                         w->unk10 = w->unk10 + 2.0;
                     }
+                    w->unk48 = q;
+                } else {
                     w->unk48 = q;
                 }
             } else {
@@ -643,11 +643,12 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
                 }
             }
             if (w->unk4C == 0) {
-                spd = 10.0f;
                 D_800F2B7C[obj->model[0]].unk_4C = 1.0f;
+                spd = 10.0f;
             } else {
-                D_800F2B7C[obj->model[0]].unk_4C = 0.0f;
-                spd = D_800F2B7C[obj->model[0]].unk_4C;
+                mdl = obj->model[0];
+                D_800F2B7C[mdl].unk_4C = 0.0f;
+                spd = D_800F2B7C[mdl].unk_4C;
             }
             if (pressed == 0 && w->unk10 != 0.0) {
                 if (w->unk10 > 0.0) {
@@ -690,10 +691,6 @@ void func_800F7C9C_DeepSeaDivers(omObjData* obj) {
         func_800FBAC8_DeepSeaDivers(obj->trans.x, obj->trans.y + 200.0, obj->trans.z, 0.0f);
     }
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", D_800FFEC0_DeepSeaDivers);
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_DeepSeaDivers/218510", func_800F7C9C_DeepSeaDivers);
-#endif
 void func_800F8680_DeepSeaDivers(omObjData* obj) {
     DSDPlayerWork* w;
     DSDWork* dw;
