@@ -86,7 +86,7 @@ void func_800F7C04_PedalPower(omObjData* arg0) {
 
 #define PP_SOUND_OFF() (func_8005FD5C() + D_800F64F8)
 
-// register allocation of the light colour at the end (masked 2)
+// register allocation of the light colour at the end (masked 0, raw 7: divide result in v1/s0)
 #ifdef NON_MATCHING
 void func_800F7DD4_PedalPower(omObjData* arg0) {
     unk_ovl_2D_struct* s1;
@@ -97,7 +97,7 @@ void func_800F7DD4_PedalPower(omObjData* arg0) {
     s32 i;
     s32 j;
     u8 c;
-    s32 c2;
+    u8 c2;
     f32 zero;
 
     s1 = &D_800F2B7C[(s16)D_800F9EF8_PedalPower];
@@ -189,8 +189,7 @@ void func_800F7DD4_PedalPower(omObjData* arg0) {
             func_80060440(D_800F9EF4_PedalPower, 600);
             break;
         }
-        zero = 0.0f; /* retail: assigned in the last argument, evaluated first by GCC */
-        func_80023504(3, zero, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero);
+        func_80023504(3, 0.0f, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero = 0.0f);
         func_80025EB4(D_800F9EF6_PedalPower, 2, 2);
         func_80025EB4(D_800F9EF8_PedalPower, 2, 2);
         omSetStatBit(arg0, 0x20);
@@ -211,8 +210,7 @@ void func_800F7DD4_PedalPower(omObjData* arg0) {
             if ((D_800F9E24_PedalPower & 3) == 0 && D_800FA738_PedalPower > 0) {
                 D_800FA738_PedalPower--;
             }
-            zero = 0.0f; /* retail: assigned in the last argument, evaluated first by GCC */
-            func_80023504(3, zero, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero);
+            func_80023504(3, 0.0f, D_800FA738_PedalPower * 138.0f / 70.0f + -18.0f, zero = 0.0f);
             func_80060758(0x22C);
             func_80025EB4(D_800F9EF6_PedalPower, 2, 1);
             func_80025EB4(D_800F9EF8_PedalPower, 2, 1);
@@ -248,8 +246,10 @@ void func_800F7DD4_PedalPower(omObjData* arg0) {
     c = (D_800FA738_PedalPower * 255) / 70;
     func_800234B8(2, c, c, c);
     func_800234B8(3, c, c, c);
-    c2 = (c >> 1) + 16;
-    if ((c >> 1) >= 0xF0) {
+    c >>= 1;
+    if (c < 0xF0) {
+        c2 = c + 16;
+    } else {
         c2 = 0x80;
     }
     func_800234B8(0, c2, c2, c2);
