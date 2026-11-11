@@ -646,7 +646,8 @@ void func_800F7A00_SlotCarDerby(omObjData* obj) {
         func_80017DB0(obj);
     }
 }
-// register allocation; the CPU speed-step random term is computed before lvl (masked 2)
+// register allocation (masked 0, raw 115): retail puts car/throttle/diff (shared with go) in s1/s2/s3,
+// ours diff/car/throttle. Tried declaration orders, go merged into diff
 #ifdef NON_MATCHING
 s32 func_800F7A7C_SlotCarDerby(omObjData* obj) {
     SCDCar* car;
@@ -721,7 +722,7 @@ s32 func_800F7A7C_SlotCarDerby(omObjData* obj) {
                     throttle = 0;
                     car->unk_6E = 0;
                 }
-                step = 4500 / (car->unk_72 + 1) - ((((rand8() << 8) | rand8()) * 100 * lvl) >> 16) - car->unk_6A * 0.5;
+                step = 4500 / (car->unk_72 + 1) - ((((rand8() << 8) | rand8()) * (100 * lvl)) >> 16) - car->unk_6A * 0.5;
             }
             car->unk_6C = throttle;
         }
