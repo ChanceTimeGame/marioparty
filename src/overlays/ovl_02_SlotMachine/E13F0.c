@@ -119,7 +119,7 @@ SlotWork* func_800F7734_SlotMachine(omObjData* unused, omObjData* obj) {
 #define SLOT_8001E1D0(a, b) ((s32 (*)(s16, s32))func_8001E1D0)(a, b)
 
 // the i == 0 image index skips the u16 mask in retail (ours shares it), plus register allocation
-// (masked 1, raw 15; tried s32/u16 idx and img)
+// (masked 1, raw 15; tried s32/u16 idx and img, and the coin call written in both arms (M1g))
 #ifdef NON_MATCHING
 void func_800F7750_SlotMachine(omObjData* obj) {
     omObjData* player;

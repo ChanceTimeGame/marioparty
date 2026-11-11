@@ -252,12 +252,10 @@ void func_800F6DD0_HotBobOmb(omObjData* obj, s32 player) {
     obj->func_ptr = func_800F724C_HotBobOmb;
 }
 
-// D_800F2B7C base loaded before the model index *192 in the frame-count argument (masked 4, raw 6);
-// tried (p + i)->, &p[i]->, a float subtract
-#ifdef NON_MATCHING
 void func_800F724C_HotBobOmb(omObjData* obj) {
     s32 idx;
     HbPlayer* p;
+    unk_ovl_2D_struct* m;
 
     idx = ((HbSeat*)obj->unk_50)->idx;
     p = &D_800FA8F0_HotBobOmb[idx];
@@ -306,7 +304,8 @@ void func_800F724C_HotBobOmb(omObjData* obj) {
             D_800FA17C_HotBobOmb = D_800FA180_HotBobOmb[idx];
             func_8001249C((s16)D_800FA174_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
             func_8001249C((s16)D_800FA178_HotBobOmb, (u8)D_800FA17C_HotBobOmb);
-            func_80025CA8(obj->model[0], D_800ED554[D_800F2B7C[obj->model[0]].unk_08].unk_02 - 1);
+            m = &D_800F2B7C[obj->model[0]];
+            func_80025CA8(obj->model[0], D_800ED554[m->unk_08].unk_02 - 1);
             func_80025EB4(obj->model[0], 4, 4);
         }
     } else if (D_800FA9BC_HotBobOmb <= 0 && D_800FA99C_HotBobOmb == D_800FA998_HotBobOmb && D_800F9D40_HotBobOmb == 3) {
@@ -338,9 +337,6 @@ void func_800F724C_HotBobOmb(omObjData* obj) {
     func_800257E4(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
     func_80025798(obj->model[1], obj->trans.x, 1.0f, obj->trans.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_HotBobOmb/10CF70", func_800F724C_HotBobOmb);
-#endif
 
 void func_800F77B8_HotBobOmb(omObjData* obj, s32 unused) {
     unk_ovl_2D_struct* m;

@@ -213,7 +213,8 @@ s32 D_800FA4B4_DebugMinigameMenu = 1;
 /* 0x800FA4B8: two unreferenced zero words (0, 0) pad .data */
 
 
-// one redundant andi 0xff on the rand8 result (u8 truncation retail keeps; raw 1); tried (u8) casts, % 8
+// one redundant andi 0xff on the rand8 result (u8 truncation retail keeps; raw 1); tried (u8) casts, % 8,
+// u8/s32 locals for the masked value (M1g)
 #ifdef NON_MATCHING
 void func_800F65E0_DebugMinigameMenu(void) {
     omObjData* obj;
@@ -453,7 +454,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_83_DebugMinigameMenu/317980", func_80
 #endif
 
 // menu page (masked 31, mostly shifted offsets): retail passes x = 0x40 through a register (andi at
-// the call) and loads the colour pair after the skip test; tried an s32 x local (hoisted)
+// the call) and loads the colour pair after the skip test; tried an s32 x local (hoisted), and one shared
+// call fed by x/y/fg/bg set in both arms (M1g, masked 35)
 #ifdef NON_MATCHING
 void func_800F75CC_DebugMinigameMenu(omObjData* arg0) {
     DebugMgEntry* e;

@@ -308,7 +308,8 @@ void func_800F6724_UnknownResultsScreen(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_7C_UnknownResultsScreen/308A50", func_800F6724_UnknownResultsScreen);
 #endif
 
-// register allocation of the loop counters, and j*16+24 added after the table read (masked 2)
+// register allocation of the loop counters, and j*16+24 added after the table read (masked 2); M1g tried
+// (j * 16 + 24) parenthesised or first, and an x local (all masked 8)
 #ifdef NON_MATCHING
 void func_800F7310_UnknownResultsScreen(void) {
     s16 coins[4];
@@ -373,7 +374,8 @@ void func_800F7614_UnknownResultsScreen(void) {
     func_80070ED4();
 }
 
-// scheduling of one register copy (masked 2)
+// scheduling of one register copy (masked 2): retail hoists the autoSkip copy after li s0,1 / ContBtn;
+// M1g tried the copy inside the loop (copy-propagated away, masked 13)
 #ifdef NON_MATCHING
 void func_800F7754_UnknownResultsScreen(void) {
     s16 i;
