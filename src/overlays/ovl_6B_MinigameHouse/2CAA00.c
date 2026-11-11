@@ -558,7 +558,8 @@ void func_800F7218_MinigameHouse(s16 arg0) {
     func_8007F54C(data, D_80100610_MinigameHouse, 0xA0, D_80100590_MinigameHouse);
     DataClose(data);
 }
-// loop-invariant hoisting as in ovl_6F's twin func_800F94E8: retail hoists 32.0f/255 only to the inner loop and keeps 2^31 inline (masked 62)
+// loop-invariant hoisting as in ovl_6F func_800F94E8 (masked 40): retail hoists 32.0f only to the
+// inner loop and copies w; tried n.n[] = -1 / n.a (kept), a goto outer loop (hoists nothing)
 #ifdef NON_MATCHING
 void func_800F7274_MinigameHouse(s16 model, s16 idx) {
     Gfx* gfx;
@@ -651,12 +652,12 @@ void func_800F7274_MinigameHouse(s16 model, s16 idx) {
             if (maxY < y) {
                 maxY = y;
             }
-            vtx->v.cn[0] = vtx->v.cn[1] = vtx->v.cn[2] = -1;
+            vtx->n.n[0] = vtx->n.n[1] = vtx->n.n[2] = -1;
             x = w * ((x - baseX) / rangeX);
             y = h * ((-y - baseY) / rangeY);
             vtx->v.tc[0] = x * 32.0f;
             vtx->v.tc[1] = y * 32.0f;
-            vtx->v.cn[3] = 0xFF;
+            vtx->n.a = 0xFF;
             vtx++;
         }
         sLo = ((minX - baseX) / rangeX) * w;
@@ -1776,7 +1777,7 @@ void func_800FB238_MinigameHouse(void) {
     func_80025EB4(D_8010060C_MinigameHouse->model[1], 5, 0);
     func_8005A258(D_80100614_MinigameHouse->model[0]);
 }
-// register allocation s1/s2 (masked 0)
+// scheduling: retail loads the price-table base before mg * 2 (raw 5, masked 2); tried operand orders
 #ifdef NON_MATCHING
 void func_800FB2DC_MinigameHouse(void) {
     char buf[0x68];
@@ -1863,7 +1864,7 @@ again:
             func_80070D90(D_80100634_MinigameHouse);
             func_800F6970_MinigameHouse(2);
             D_8010055C_MinigameHouse = func_80059C28();
-            sprintf(num, D_801002BC_MinigameHouse, *(price = D_80100100_MinigameHouse - 1, price += mg));
+            sprintf(num, D_801002BC_MinigameHouse, *(price = &D_80100100_MinigameHouse[mg - 1]));
             func_8006DA5C(D_8010055C_MinigameHouse, num, 0);
             func_80025C20(D_80100614_MinigameHouse->model[0], D_80100614_MinigameHouse->motion[1], 0, 10, 2);
             if (func_80059CE8((void*)0x41, D_8010055C_MinigameHouse) != 0) {
@@ -2141,7 +2142,7 @@ void func_800FC204_MinigameHouse(unkCommonStruct0* font, s16* ids, u16* sprs, s3
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_MinigameHouse/2CAA00", func_800FC204_MinigameHouse);
 #endif
-// register allocation of the arrow sprite's s16 extension (masked 1)
+// register allocation of the arrow sprite s16 extension (raw 2, masked 0); tried split assignment
 #ifdef NON_MATCHING
 s32 func_800FC410_MinigameHouse(void) {
     unkCommonStruct0 font;
@@ -2256,10 +2257,9 @@ s32 func_800FC410_MinigameHouse(void) {
             func_8006752C(font.unk_14[ids[j]], 2, (s16)(0xFF - t));
             func_80018CF8(sprs[j], (s16)(0xFF - t));
         }
-        j = 0xFF - t;
-        func_80018CF8((u16)arrow, (s16)j);
+        func_80018CF8((u16)arrow, (s16)(0xFF - t));
         D_80100618_MinigameHouse->rot.z = (t * 90.0f) / 256.0f + 180.0f;
-        func_8006752C(w->unk_44, 8, j / 2);
+        func_8006752C(w->unk_44, 8, (0xFF - t) / 2);
         HuPrcVSleep();
     }
     D_80100618_MinigameHouse->rot.z = 270.0f;

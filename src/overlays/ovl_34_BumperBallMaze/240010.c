@@ -109,7 +109,8 @@ void func_800F9974_BumperBallMaze(s32 arg0) {
     omOvlReturnEx(1);
 }
 
-// Logic-equivalent water mesh and buffer setup; loop scheduling and register allocation differ.
+// Logic-equivalent water mesh and buffer setup (masked 88): retail computes right as (row * 30) * 4
+// apart from left and keeps left in a register; tried direct indexing of both / of right only.
 #ifdef NON_MATCHING
 void func_800F9990_BumperBallMaze(void) {
     BumperBallMazeAnglePair* left;
