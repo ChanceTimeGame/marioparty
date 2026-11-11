@@ -182,17 +182,17 @@ void func_800F96A4_BoxMountainMayhem(u8 x, u8 z, u8 depth) {
     D_800FC138_BoxMountainMayhem[z][x][0] = n;
 }
 
-// register allocation (masked 2): the cell copy adds m after D+1 (retail) vs before; tried [m + 1] and &[z][x][1]
+// register allocation (masked 2, raw 7): the cell copy sums x*5 + z*20 then adds D+1 before t (retail);
+// ours sums z first and adds t first. Tried [t + 1], [1 + t], *(&[z][x][1] + t), split i++
 #ifdef NON_MATCHING
 void func_800F9840_BoxMountainMayhem(void) {
     u16 kinds[30];
     void* data;
-    u16 t;
+    s32 t;
     s32 r;
     s32 flag;
     s32 n;
     s32 i;
-    s32 m;
     s32 x;
     s32 z;
 
@@ -235,8 +235,8 @@ void func_800F9840_BoxMountainMayhem(void) {
     i = 0;
     for (z = 0; z < 4; z++) {
         for (x = 0; x < 4; x++) {
-            for (m = 0; m < D_800FC138_BoxMountainMayhem[z][x][0]; m++) {
-                (D_800FC138_BoxMountainMayhem[z][x] + 1)[m] = kinds[i++];
+            for (t = 0; t < D_800FC138_BoxMountainMayhem[z][x][0]; t++) {
+                (D_800FC138_BoxMountainMayhem[z][x] + 1)[t] = kinds[i++];
             }
         }
     }
@@ -462,8 +462,6 @@ void func_800FA3F0_BoxMountainMayhem(void) {
     }
 }
 
-// register allocation (masked 7): retail loads D_800C59AC[chr].unk_04 before the stack args and keeps v in a2; tried s32 chr, dir assigned in the call, an inline ternary
-#ifdef NON_MATCHING
 void func_800FA498_BoxMountainMayhem(omObjData* obj) {
     BMMPlayerWork* work;
     BMMPlayerExt* ext;
@@ -480,7 +478,8 @@ void func_800FA498_BoxMountainMayhem(omObjData* obj) {
     player = D_800FC1C0_BoxMountainMayhem;
     chr = GwPlayer[player].character;
     dir = D_800C59AC[chr].unk_00;
-    func_8000979C(obj, dir, D_800C59AC[chr].unk_04, player, 0x699, 0x689);
+    v = D_800C59AC[chr].unk_04;
+    func_8000979C(obj, dir, v, player, 0x699, 0x689);
     work = obj->unk_50;
     if (D_800FC1C2_BoxMountainMayhem[0] < 0) {
         D_800FC1C2_BoxMountainMayhem[0] = LoadFormFile(0x19, 0x68D);
@@ -575,9 +574,6 @@ void func_800FA498_BoxMountainMayhem(omObjData* obj) {
     obj->func_ptr = func_800FAD84_BoxMountainMayhem;
     D_800FC1C0_BoxMountainMayhem++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_BoxMountainMayhem/168CA0", func_800FA498_BoxMountainMayhem);
-#endif
 
 s16 func_800FAB1C_BoxMountainMayhem(s16 model, s32 mask) {
     unk_ovl_2D_struct* m = &D_800F2B7C[model];
