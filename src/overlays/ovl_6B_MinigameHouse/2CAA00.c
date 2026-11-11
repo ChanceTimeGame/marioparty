@@ -912,7 +912,9 @@ void func_800F8540_MinigameHouse(s16 arg0) {
     func_800672DC(D_80100630_MinigameHouse, 6, hund, 0);
     func_800672B0(D_80100630_MinigameHouse, 6, 1);
 }
-// first C draft (masked 345, pad port now cached; FIELDS/calls checked equal by n64nmcmp): retail ladders the result message with jumps, and allocates floats differently; call/constant sequence checked against the asm
+// masked 294 (was 345): the result ladder now calls LoadStringIntoWindow per arm (retail cross-jumps
+// the tails) and both windows come from D010; left: retail computes x % 30 before x / 30 without CSE
+// for both time strings (tried a separate t = rec % 30), float allocation, and where x/y take s16
 #ifdef NON_MATCHING
 void func_800F8860_MinigameHouse(void) {
     Vec3f rotv;
@@ -951,12 +953,11 @@ void func_800F8860_MinigameHouse(void) {
     f32 radius;
     f32 px;
     f32 pz;
-    s32 msg;
     u8 port;
 
     snd = -1;
     func_800F6970_MinigameHouse(6);
-    win = func_8006D010(0xC8, 0x4C, 0x60, 0x5A, 0, 0);
+    win = D010(0xC8, 0x4C, 0x60, 0x5A, 0, 0);
     func_8006E070(win, 0);
     rec = func_800594FC(4);
     sprintf(buf, "0\\%02d[%02d", rec / 30, ((rec % 30) * 100) / 30);
@@ -1212,7 +1213,7 @@ void func_800F8860_MinigameHouse(void) {
     }
     SetBasicSpriteSize(a, 1.0f, 1.0f);
     SetBasicSpriteSize((u16)b, 1.0f, 1.0f);
-    w2 = func_8006D010(0x4E, 0x32, 0xA2, 0x30, 0, 0);
+    w2 = D010(0x4E, 0x32, 0xA2, 0x30, 0, 0);
     func_8006E070(w2, 0);
     func_8006E2B8(w2, 0xA0, 0xA0, 0xA0);
     tw = func_8006DD60(w2);
@@ -1240,30 +1241,29 @@ void func_800F8860_MinigameHouse(void) {
         HuPrcVSleep();
     }
     func_8006EB40(w2);
-    if (turns < 8) {
-        msg = 0x77;
+    if (turns < 0x8) {
+        LoadStringIntoWindow(w2, (void*)0x77, -1, -1);
     } else if (turns < 0x54) {
-        msg = 0x78;
+        LoadStringIntoWindow(w2, (void*)0x78, -1, -1);
     } else if (turns < 0x90) {
-        msg = 0x79;
+        LoadStringIntoWindow(w2, (void*)0x79, -1, -1);
     } else if (turns < 0xB4) {
-        msg = 0x7A;
+        LoadStringIntoWindow(w2, (void*)0x7A, -1, -1);
     } else if (turns < 0xC8) {
-        msg = 0x7B;
+        LoadStringIntoWindow(w2, (void*)0x7B, -1, -1);
     } else if (turns < 0xD8) {
-        msg = 0x7C;
+        LoadStringIntoWindow(w2, (void*)0x7C, -1, -1);
     } else if (turns < 0xE8) {
-        msg = 0x7D;
+        LoadStringIntoWindow(w2, (void*)0x7D, -1, -1);
     } else if (turns < 0xF4) {
-        msg = 0x7E;
+        LoadStringIntoWindow(w2, (void*)0x7E, -1, -1);
     } else if (turns < 0xFC) {
-        msg = 0x7F;
+        LoadStringIntoWindow(w2, (void*)0x7F, -1, -1);
     } else if (turns < 0x104) {
-        msg = 0x80;
+        LoadStringIntoWindow(w2, (void*)0x80, -1, -1);
     } else {
-        msg = 0x81;
+        LoadStringIntoWindow(w2, (void*)0x81, -1, -1);
     }
-    LoadStringIntoWindow(w2, (void*)(s32)msg, -1, -1);
     while (func_8006FCC0(w2) != 0) {
         HuPrcVSleep();
     }
