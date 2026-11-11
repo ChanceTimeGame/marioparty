@@ -587,9 +587,6 @@ void func_800F7E20_BowlOver(omObjData* obj) {
     }
 }
 
-// scheduling: one sll of the port index lands after the ContBtnTrg base (masked 2); tried trg = ContBtnTrg + i,
-// no trg local, an s8 port local
-#ifdef NON_MATCHING
 void func_800F8274_BowlOver(omObjData* obj) {
     BowlPlayerWork* w;
     u8 port;
@@ -597,7 +594,6 @@ void func_800F8274_BowlOver(omObjData* obj) {
     s16 i;
     f32 sum;
     f32 avg;
-    u16* trg;
 
     w = PLAYER_WORK(obj);
     port = w->unk_56;
@@ -743,10 +739,8 @@ void func_800F8274_BowlOver(omObjData* obj) {
         if (ContBtn[(s8)port] & 0x1000) {
             btn |= 0x1000;
         }
-        trg = &ContBtnTrg[(s8)port];
-        ContBtn[(s8)port] = btn;
-        *trg = btn;
-        *trg = btn & (btn ^ D_800FD32E_BowlOver);
+        ContBtnTrg[(s8)port] = ContBtn[(s8)port] = btn;
+        ContBtnTrg[(s8)port] = btn & (btn ^ D_800FD32E_BowlOver);
         D_800FD32E_BowlOver = btn;
         if (D_800FD334_BowlOver == -1.0f) {
             ContStkX[(s8)port] = 0;
@@ -759,9 +753,6 @@ void func_800F8274_BowlOver(omObjData* obj) {
     D_800FD330_BowlOver++;
     func_800F7E20_BowlOver(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_BowlOver/13EFB0", func_800F8274_BowlOver);
-#endif
 
 // argument register copy order
 // decomp-permuter
