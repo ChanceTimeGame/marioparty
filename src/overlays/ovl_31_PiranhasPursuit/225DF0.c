@@ -1005,7 +1005,8 @@ void func_800FD728_PiranhasPursuit(omObjData* obj) {
     pl->unk18 = pl->unk1C = 0.0f;
 }
 
-// NON_MATCHING: retail addresses the plant fields by their splat labels; register allocation
+// NON_MATCHING: the first three plant reads use retail's direct labels (GCC CSEs them through pl);
+// one -PP_RND() * 0.5 argument loads trans.x late; register allocation
 #ifdef NON_MATCHING
 void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
     unk_ovl_2D_struct* m;
@@ -1015,90 +1016,92 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
     f32* mtx;
     f32 frame;
     f32 t;
-    f32 spd;
-    s32 moving;
+    s16 moving;
     s32 lim;
     s16 i;
-    u16 idx;
+    PPPlant* pl = &D_80101150_PiranhasPursuit;
 
     obj->trans.x = D_80101150_PiranhasPursuit.unk14 + D_80101150_PiranhasPursuit.unk18;
     moving = 0;
     switch (D_80101150_PiranhasPursuit.state) {
         case 0:
             obj->trans.x = -16700.0f;
-            D_80101150_PiranhasPursuit.unk14 = -16700.0f;
-            if (D_80101150_PiranhasPursuit.timer < 10) {
-                D_80101150_PiranhasPursuit.timer++;
-            } else if (D_80101150_PiranhasPursuit.timer == 10) {
+            pl->unk14 = -16700.0f;
+            if (pl->timer < 10) {
+                pl->timer++;
+            } else if (pl->timer == 10) {
                 func_800FEF78_PiranhasPursuit(obj, 4, 1);
                 D_800F2B7C[obj->model[4]].unk_48 = 49.0f;
-                D_80101150_PiranhasPursuit.timer++;
-            } else if (D_80101150_PiranhasPursuit.timer < 20) {
+                pl->timer++;
+            } else if (pl->timer < 20) {
                 D_800F2B7C[obj->model[0]].unk_4C = 1.0f;
-                D_80101150_PiranhasPursuit.timer++;
-                if (++D_80101150_PiranhasPursuit.unk22 >= 5) {
-                    D_80101150_PiranhasPursuit.unk22 = 0;
+                pl->timer++;
+                if (pl->unk22++ >= 5) {
+                    pl->unk22 = 0;
                 }
-                obj->rot.y = func_800AEAC0((f32)D_80101150_PiranhasPursuit.unk22 * 18.0) * 60.0 + 89.0;
+                obj->rot.y = func_800AEAC0((f32)pl->unk22 * 18.0) * 60.0 + 89.0;
                 if (D_801012CC_PiranhasPursuit == 0) {
-                    if (D_80101150_PiranhasPursuit.timer == 12) {
+                    if (pl->timer == 12) {
                         func_800FFCD8_PiranhasPursuit(2, obj->trans.x - 30.0, -10.0f, obj->trans.z, 8);
                         func_800FFCD8_PiranhasPursuit(2, obj->trans.x - 24.0, -10.0f, obj->trans.z, 8);
                         PlaySound(0x359);
                     } else {
-                        func_800FFCD8_PiranhasPursuit(2, obj->trans.x - PP_RND(), -10.0f, obj->trans.z, 8);
-                        if (D_80101150_PiranhasPursuit.timer & 1) {
-                            func_800FFCD8_PiranhasPursuit(2, obj->trans.x - PP_RND(), -10.0f, obj->trans.z, 8);
+                        t = PP_RND();
+                        func_800FFCD8_PiranhasPursuit(2, obj->trans.x - t, -10.0f, obj->trans.z, 8);
+                        if (pl->timer & 1) {
+                            t = PP_RND();
+                            func_800FFCD8_PiranhasPursuit(2, obj->trans.x - t, -10.0f, obj->trans.z, 8);
                         }
-                        if (D_80101150_PiranhasPursuit.timer & 3) {
+                        if (pl->timer & 3) {
                             t = PP_RND();
                             func_800FFCD8_PiranhasPursuit(3, t + obj->trans.x, -PP_RND() * 0.5, obj->trans.z, 8);
                         }
                     }
                 }
-            } else if (D_80101150_PiranhasPursuit.timer == 20) {
+            } else if (pl->timer == 20) {
                 obj->trans.y = obj->trans.y + 1.6;
-                if (++D_80101150_PiranhasPursuit.unk22 >= 11) {
-                    D_80101150_PiranhasPursuit.unk22 = 0;
+                if (pl->unk22++ >= 11) {
+                    pl->unk22 = 0;
                 }
-                obj->rot.y = func_800AEAC0((f32)D_80101150_PiranhasPursuit.unk22 * 18.0) * 60.0 + 89.0;
-                m = &D_800F2B7C[obj->model[4]];
-                if (m->unk_48 >= 124.0) {
-                    m->unk_48 = 0.0f;
+                obj->rot.y = func_800AEAC0((f32)pl->unk22 * 18.0) * 60.0 + 89.0;
+                if (D_800F2B7C[obj->model[4]].unk_48 >= 124.0) {
+                    D_800F2B7C[obj->model[4]].unk_48 = 0.0f;
                     func_800FEF78_PiranhasPursuit(obj, 0, 1);
                     D_800F2B7C[obj->model[0]].unk_4C = 0.25f;
                     D_801012CC_PiranhasPursuit = 1;
                 }
                 if (obj->trans.y >= -30.0) {
                     obj->trans.y = -30.0f;
-                    D_80101150_PiranhasPursuit.unk22 = 0;
+                    pl->unk22 = 0;
                     D_800F2B7C[obj->model[0]].unk_4C = 1.0f;
-                    D_80101150_PiranhasPursuit.timer++;
+                    pl->timer++;
                 }
                 if (D_801012CC_PiranhasPursuit == 0) {
-                    func_800FFCD8_PiranhasPursuit(2, PP_RND() + obj->trans.x, -10.0f, obj->trans.z, 8);
-                    if (D_80101150_PiranhasPursuit.unk22 & 1) {
-                        func_800FFCD8_PiranhasPursuit(2, obj->trans.x - PP_RND(), -10.0f, obj->trans.z, 8);
+                    t = PP_RND();
+                    func_800FFCD8_PiranhasPursuit(2, t + obj->trans.x, -10.0f, obj->trans.z, 8);
+                    if (pl->unk22 & 1) {
+                        t = PP_RND();
+                        func_800FFCD8_PiranhasPursuit(2, obj->trans.x - t, -10.0f, obj->trans.z, 8);
                     }
-                    if (D_80101150_PiranhasPursuit.unk22 & 3) {
+                    if (pl->unk22 & 3) {
                         t = PP_RND();
                         func_800FFCD8_PiranhasPursuit(3, t + obj->trans.x, -PP_RND() * 0.5, obj->trans.z, 8);
                     }
                 }
             } else {
-                if (++D_80101150_PiranhasPursuit.timer == 22) {
-                    if (++D_80101150_PiranhasPursuit.unk22 < 10) {
+                if (++pl->timer == 22) {
+                    if (pl->unk22++ < 10) {
                         func_80017C0C(D_800F3FB0[0], 4, obj->trans.x - 80.0, obj->trans.y, obj->trans.z, 0.0f, 0.0f);
                     }
-                } else if (D_80101150_PiranhasPursuit.timer >= 29) {
-                    D_80101150_PiranhasPursuit.timer = 21;
+                } else if (pl->timer >= 29) {
+                    pl->timer = 21;
                 }
                 if (D_8010110C_PiranhasPursuit != NULL && D_801012E6_PiranhasPursuit == 2) {
                     obj->trans.y = -30.0f;
                     obj->rot.y = 89.0f;
-                    D_80101150_PiranhasPursuit.unk22 = 0;
-                    D_80101150_PiranhasPursuit.timer = 0;
-                    D_80101150_PiranhasPursuit.state = 1;
+                    pl->unk22 = 0;
+                    pl->timer = 0;
+                    pl->state = 1;
                     D_801012EA_PiranhasPursuit = 0;
                 }
             }
@@ -1106,17 +1109,17 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
         case 1:
             moving = 1;
             obj->trans.y = -30.0f;
-            D_80101150_PiranhasPursuit.timer++;
+            pl->timer++;
             lim = 30;
-            if (D_80101150_PiranhasPursuit.unk22 < 4) {
+            if (pl->unk22 < 4) {
                 lim = 60;
             }
-            if (D_80101150_PiranhasPursuit.timer >= lim) {
+            if (pl->timer >= lim) {
                 func_800FEF78_PiranhasPursuit(obj, 3, 0);
-                D_80101150_PiranhasPursuit.state = 4;
-                D_80101150_PiranhasPursuit.timer = 0;
-                if (++D_80101150_PiranhasPursuit.unk22 >= 4) {
-                    D_80101150_PiranhasPursuit.unk22 = 0;
+                pl->state = 4;
+                pl->timer = 0;
+                if (++pl->unk22 >= 4) {
+                    pl->unk22 = 0;
                 }
             }
             if (D_8010110C_PiranhasPursuit != NULL) {
@@ -1127,25 +1130,24 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
                 }
                 if (D_8010110C_PiranhasPursuit->trans.x < obj->trans.x + 100.0f) {
                     func_800FEF78_PiranhasPursuit(obj, 3, 0);
-                    D_80101150_PiranhasPursuit.state = 4;
-                    D_80101150_PiranhasPursuit.timer = 0;
-                    if (++D_80101150_PiranhasPursuit.unk22 >= 4) {
-                        D_80101150_PiranhasPursuit.unk22 = 0;
+                    pl->state = 4;
+                    pl->timer = 0;
+                    if (++pl->unk22 >= 4) {
+                        pl->unk22 = 0;
                     }
                 }
             }
             func_800FF0C0_PiranhasPursuit(obj);
             break;
         case 2:
-            D_80101150_PiranhasPursuit.timer++;
-            obj->trans.y += D_80101150_PiranhasPursuit.unk10;
-            D_80101150_PiranhasPursuit.unk10 = D_80101150_PiranhasPursuit.unk10 - 4.0;
+            pl->timer++;
+            obj->trans.y += pl->unk10;
+            pl->unk10 = pl->unk10 - 4.0;
             moving = 1;
             if (obj->trans.y < 0.0) {
-                D_80101150_PiranhasPursuit.unk10 = 0.0f;
-                obj->trans.y = 0.0f;
+                obj->trans.y = pl->unk10 = 0.0f;
                 func_800FEF78_PiranhasPursuit(obj, 0, 1);
-                D_80101150_PiranhasPursuit.state = 1;
+                pl->state = 1;
             }
             func_800FF0C0_PiranhasPursuit(obj);
             break;
@@ -1160,9 +1162,9 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
             obj->trans.y = -30.0f;
             m = &D_800F2B7C[obj->model[3]];
             moving = 1;
-            if (m->unk_50 <= m->unk_48) {
+            if (m->unk_48 >= m->unk_50) {
                 func_800FEF78_PiranhasPursuit(obj, 0, 1);
-                D_80101150_PiranhasPursuit.state = 1;
+                pl->state = 1;
             }
             tgt = D_8010110C_PiranhasPursuit;
             if (tgt != NULL) {
@@ -1172,10 +1174,10 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
                     PP_TURN(obj->rot.y, 89.0f, 20.0f);
                 }
             }
-            if (tgt != NULL && D_801012C8_PiranhasPursuit != 0) {
+            if (D_8010110C_PiranhasPursuit != NULL && D_801012C8_PiranhasPursuit != 0) {
                 func_800FEF78_PiranhasPursuit(obj, 4, 0);
                 D_800F2B7C[obj->model[4]].unk_48 = 24.0f;
-                D_80101150_PiranhasPursuit.state = 5;
+                pl->state = 5;
                 if (D_80100406_PiranhasPursuit == 0 && func_800184BC(D_8010110C_PiranhasPursuit, 0x23) != 0) {
                     D_80100406_PiranhasPursuit = 1;
                 }
@@ -1186,30 +1188,31 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
             break;
         case 5:
             pm = &D_800F2B7C[D_8010110C_PiranhasPursuit->model[0]];
+            m = &D_800F2B7C[obj->model[4]];
             tw = D_8010110C_PiranhasPursuit->unk_50;
-            frame = D_800F2B7C[obj->model[4]].unk_48;
-            obj->trans.y = -((obj->scale.y - 0.5) * 100.0 * 0.3);
+            frame = m->unk_48;
+            t = (obj->scale.y - 0.5) * 100.0 * 0.3;
+            obj->trans.y = -t;
             PP_TURN(obj->rot.y, 89.0f, 20.0f);
             if (D_80100406_PiranhasPursuit == 0 && func_800184BC(D_8010110C_PiranhasPursuit, 0x23) != 0) {
                 D_80100406_PiranhasPursuit = 1;
             }
             if (frame >= 246.0f) {
-                D_80101150_PiranhasPursuit.state = 6;
+                pl->state = 6;
                 func_800A2A50(pm->unk7C);
                 omSetTra(D_8010110C_PiranhasPursuit, obj->trans.x + obj->scale.x * 200.0,
                          obj->trans.y + obj->scale.y * 50.0, 0.0f);
                 omSetRot(D_8010110C_PiranhasPursuit, 0.0f, 90.0f, 300.0f);
                 func_800FA3F0_PiranhasPursuit(D_8010110C_PiranhasPursuit->model[0], D_8010110C_PiranhasPursuit);
-                D_80101150_PiranhasPursuit.unk22 = 0;
-                D_80101150_PiranhasPursuit.unk10 = -100.0f;
+                pl->unk22 = 0;
+                pl->unk10 = -100.0f;
             } else {
                 if ((frame >= 96.0f) & (frame <= 98.0f)) {
                     PlaySound(0x351);
                 }
                 func_800FA480_PiranhasPursuit(D_8010110C_PiranhasPursuit, obj);
                 omSetSca(D_8010110C_PiranhasPursuit, 1.0f, 1.0f, 1.0f);
-                idx = frame * 0.5;
-                func_8002C37C(pm->unk7C, D_801012C4_PiranhasPursuit->unk_08[idx]);
+                func_8002C37C(pm->unk7C, D_801012C4_PiranhasPursuit->unk_08[(u16)(frame * 0.5)]);
                 switch (GwPlayer[tw->unk_58].character) {
                     case 0:
                         MtxRotateX(pm->unk7C, -45.0f);
@@ -1243,7 +1246,8 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
             pm = &D_800F2B7C[D_8010110C_PiranhasPursuit->model[0]];
             m = &D_800F2B7C[obj->model[4]];
             tw = D_8010110C_PiranhasPursuit->unk_50;
-            if (!(m->unk_20 & 4) && (f32)D_80101150_PiranhasPursuit.anim[4][1] <= m->unk_48) {
+            frame = m->unk_48;
+            if (!(m->unk_20 & 4) && (f32)pl->anim[4][1] <= frame) {
                 func_800FEF78_PiranhasPursuit(obj, 5, 1);
             }
             if (D_80100406_PiranhasPursuit == 0 && func_800184BC(D_8010110C_PiranhasPursuit, 0x23) != 0) {
@@ -1255,8 +1259,8 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
             } else {
                 D_8010110C_PiranhasPursuit->trans.x = D_8010110C_PiranhasPursuit->trans.x + 10.0;
             }
-            D_8010110C_PiranhasPursuit->trans.y += D_80101150_PiranhasPursuit.unk10;
-            D_80101150_PiranhasPursuit.unk10 = D_80101150_PiranhasPursuit.unk10 - 10.0;
+            D_8010110C_PiranhasPursuit->trans.y += pl->unk10;
+            pl->unk10 = pl->unk10 - 10.0;
             mtx = pm->unk7C[0];
             func_800A2A50((void*)mtx);
             MtxRotateX((void*)mtx, -60.0f);
@@ -1270,25 +1274,25 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
                     D_80100408_PiranhasPursuit = 1;
                 }
                 D_800F2B7C[D_8010110C_PiranhasPursuit->model[8]].unk_48 = 3.0f;
-                switch (D_80101150_PiranhasPursuit.unk22) {
+                switch (pl->unk22) {
                     case 0:
-                        D_80101150_PiranhasPursuit.unk10 = 70.0f;
-                        D_80101150_PiranhasPursuit.unk22++;
+                        pl->unk10 = 70.0f;
+                        pl->unk22++;
                         break;
                     case 1:
-                        D_80101150_PiranhasPursuit.unk10 = 50.0f;
-                        D_80101150_PiranhasPursuit.unk22++;
+                        pl->unk10 = 50.0f;
+                        pl->unk22++;
                         break;
                     default:
                         func_800A2A50(pm->unk7C);
-                        D_80101150_PiranhasPursuit.state = 7;
-                        D_80101150_PiranhasPursuit.timer = 0;
+                        pl->state = 7;
+                        pl->timer = 0;
                         break;
                 }
             }
             if (func_800FF35C_PiranhasPursuit(D_8010110C_PiranhasPursuit) != 0) {
-                D_80101150_PiranhasPursuit.unk10 = 30.0f;
-                D_80101150_PiranhasPursuit.unk22 = 2;
+                pl->unk10 = 30.0f;
+                pl->unk22 = 2;
                 D_80100404_PiranhasPursuit = 1;
                 func_80017C0C(D_8010110C_PiranhasPursuit, 7, D_8010110C_PiranhasPursuit->trans.x,
                               D_8010110C_PiranhasPursuit->trans.y, D_8010110C_PiranhasPursuit->trans.z, 30.0f, 30.0f);
@@ -1311,13 +1315,13 @@ void func_800FD9D0_PiranhasPursuit(omObjData* obj) {
         if (D_801012E8_PiranhasPursuit != 0) {
             func_800FFB28_PiranhasPursuit(obj);
         }
-        spd = D_801012DC_PiranhasPursuit;
-        if (D_801012D8_PiranhasPursuit < spd) {
-            spd = D_801012D8_PiranhasPursuit + 0.25;
+        if (D_801012D8_PiranhasPursuit < D_801012DC_PiranhasPursuit) {
+            D_801012D8_PiranhasPursuit = D_801012D8_PiranhasPursuit + 0.25;
+        } else {
+            D_801012D8_PiranhasPursuit = D_801012DC_PiranhasPursuit;
         }
-        D_801012D8_PiranhasPursuit = spd;
-        D_80101150_PiranhasPursuit.unk14 = D_80101150_PiranhasPursuit.unk14 + D_801012D8_PiranhasPursuit;
-        D_801012D4_PiranhasPursuit = (obj->trans.x + 700.0) - D_80101150_PiranhasPursuit.unk18;
+        pl->unk14 = pl->unk14 + D_801012D8_PiranhasPursuit;
+        D_801012D4_PiranhasPursuit = (obj->trans.x + 700.0) - pl->unk18;
         D_801012E0_PiranhasPursuit = D_801012D8_PiranhasPursuit;
     } else {
         D_801012E0_PiranhasPursuit = 0.0f;
