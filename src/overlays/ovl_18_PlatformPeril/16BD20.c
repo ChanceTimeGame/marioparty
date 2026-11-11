@@ -45,8 +45,6 @@ void func_800F6720_PlatformPeril(omObjData* arg0) {
 }
 
 
-// register allocation (masked 0): retail keeps the winner index in s0 from its load
-#ifdef NON_MATCHING
 void func_800F6790_PlatformPeril(void) {
     s32 w;
     omObjData** players;
@@ -95,7 +93,9 @@ void func_800F6790_PlatformPeril(void) {
     case 6:
         func_800FC17C_PlatformPeril();
         if (D_800FCD90_PlatformPeril == 1) {
-            func_800FCB10_PlatformPeril(func_8005DB44(2)[D_800FE2C8_PlatformPeril]);
+            players = func_8005DB44(2);
+            w = D_800FE2C8_PlatformPeril;
+            func_800FCB10_PlatformPeril(players[w]);
             GwPlayer[D_800FE2C8_PlatformPeril].coins_mg += 10;
             D_800FE1A0_PlatformPeril = 0;
         } else if (D_800FCD90_PlatformPeril >= 2) {
@@ -165,9 +165,6 @@ void func_800F6790_PlatformPeril(void) {
     }
     D_800FCD90_PlatformPeril++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_PlatformPeril/16BD20", func_800F6790_PlatformPeril);
-#endif
 
 s32 func_800F6DF4_PlatformPeril(void) {
     if (func_800FC95C_PlatformPeril()) {
