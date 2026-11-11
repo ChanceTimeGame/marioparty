@@ -1113,7 +1113,8 @@ void func_800FFA64_UnusedMinigame0(void) {
     }
     gSPEndDisplayList(gfx++);
 }
-// register allocation and block order (state machine; logic checked against the asm)
+// register allocation and block order (masked 540; logic checked against the asm, stores per field equal): retail keeps 180.0f in s3 (ours 0.0f),
+// does not hoist D_8010AF60[i] / CSE the ob[2] load in the first loop, and cross-jumps the 4.0f spin store in state 3
 #ifdef NON_MATCHING
 s32 func_80100850_UnusedMinigame0(void) {
     s32* p;

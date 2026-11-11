@@ -352,7 +352,7 @@ s16 func_800F7500_MushroomShop(s16 item) {
    box (name 0x92) instead opens a box and gives a random unbought minigame. Retail points the
    camera globals at this frame's camPos/camRot while an item is selected; they are re-aimed
    (func_800F6778) before the next sleep after this returns. */
-// register choice of one temporary at the first call (masked 0, raw 2)
+// register choice of one temporary at the first call (masked 0, raw 2; tried the store inside the call argument, an explicit (s16) cast)
 #ifdef NON_MATCHING
 void func_800F76A0_MushroomShop(void) {
     char buf[8];
