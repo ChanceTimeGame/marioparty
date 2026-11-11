@@ -592,8 +592,6 @@ const u32 D_80103B54_UnusedMinigame0 __attribute__((section(".rodata"))) = 0;
 #endif
 
 /* Points camera 0 at Center from CRot / CZoom. */
-// NON_MATCHING: scheduling of the Center address load (masked 4, raw 8); a Vec* local for Center is worse
-#ifdef NON_MATCHING
 void func_800FCD68_UnusedMinigame0(void) {
     Vec eye;
     Vec at;
@@ -601,7 +599,7 @@ void func_800FCD68_UnusedMinigame0(void) {
     f32 rx = CRot.x;
     f32 ry = CRot.y;
 
-    eye.x = func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom + Center.x;
+    eye.x = Center.x + func_800AEAC0(ry) * func_800AEFD0(rx) * CZoom;
     eye.y = -func_800AEAC0(rx) * CZoom + Center.y;
     eye.z = func_800AEFD0(ry) * func_800AEFD0(rx) * CZoom + Center.z;
     at.x = Center.x;
@@ -619,6 +617,3 @@ void func_800FCD68_UnusedMinigame0(void) {
     func_8001D420(0, (Vec3f*)&eye, (Vec3f*)&at, (Vec3f*)&up);
     func_8001D57C(0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_UnusedMinigame0/103D80", func_800FCD68_UnusedMinigame0);
-#endif

@@ -2576,9 +2576,6 @@ void func_800FD85C_name_2A(s32* flags, s32 mask, s32 set) {
 }
 
 /* out = (distance, -, yaw) from `from` to `to`. */
-// retail keeps the dead pitch range compares (as ovl_1B/ovl_0D's twin; 17 instructions) and schedules
-// the 180.0f load after the compare (masked 24, raw 24); y/eps locals as MP2 RollCall's twin
-#ifdef NON_MATCHING
 void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromCopy;
@@ -2586,8 +2583,6 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
-    f32 y;
-    f32 eps;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -2605,12 +2600,11 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
-        y = delta.y;
-        eps = 0.0001f;
         yaw = horizontal;
-        pitch = 180.0f;
-        if (!(y > eps) && y < eps) {
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -2631,13 +2625,13 @@ void func_800FD880_name_2A(Vec* from, Vec* to, Vec* out) {
     }
     nearPositive = pitch <= 0.002f;
     nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
     horizontal = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
     out->z = yaw;
     out->x = horizontal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A/1E9440", func_800FD880_name_2A);
-#endif
 
 /* atan(x) by a continued fraction. */
 f32 func_800FDBF4_name_2A(f32 x) {

@@ -667,23 +667,24 @@ void func_800F8848_MushroomMixup(omObjData* arg0) {
     }
 }
 
-// register allocation (masked 0, raw 14): s0/s1/s2 hold other/arg0/dp in retail; declaration order does not move them; the idx local fixed the load order (M1g)
 /* A +-45 degree detour around the player the CPU is chasing (work unk_54). */
-#ifdef NON_MATCHING
 f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
     Vec3f d;
+    Vec3f* dp;
     omObjData* other;
     f32 a;
     f32 b;
     f32 off;
     f32 r;
-    Vec3f* dp;
+    s8 idx;
 
-    s8 idx = MM_PLAYER(arg0)->unk_54;
+    MMPlayerWork* work;
 
+    work = arg0->unk_50;
+    dp = &d;
     r = 0.0f;
-    if (idx != -1) {
-        dp = &d;
+    if (work->unk_54 != -1) {
+        idx = work->unk_54;
         other = D_800F3FB0[idx];
         func_800A0D00(dp, x, 0.0f, z);
         d.x -= arg0->trans.x;
@@ -707,9 +708,6 @@ f32 func_800F88AC_MushroomMixup(omObjData* arg0, f32 x, f32 z) {
     }
     return r;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_MushroomMixup/1784E0", func_800F88AC_MushroomMixup);
-#endif
 
 // retail reaches d through a register, spills p to the stack (sh/lhu) and saves two more s-registers; register allocation (masked 148)
 /* The CPU: writes the pad state its player object reads this frame. */

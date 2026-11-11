@@ -1182,8 +1182,6 @@ void func_800F9E74_HammerDrop(s32* arg0, s32 arg1, s32 arg2) {
 }
 
 // Spherical displacement conversion (MP2 CrazyCutters func_80107204's shape, with its dead pitch clamp).
-// Register allocation only (masked 0, raw 3): horizontal and yaw swap f22/f20; tried declaration order
-#ifdef NON_MATCHING
 void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromCopy;
@@ -1191,7 +1189,6 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
-    f32 length;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -1231,13 +1228,10 @@ void func_800F9E98_HammerDrop(Vec* from, Vec* to, Vec* out) {
     if (nearPositive & nearNegative) {
         pitch = 0.0f;
     }
-    length = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
+    horizontal = sqrtf((delta.y * delta.y) + (horizontal * horizontal));
     out->z = yaw;
-    out->x = length;
+    out->x = horizontal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_HammerDrop/17E710", func_800F9E98_HammerDrop);
-#endif
 
 // Logic-equivalent arctangent continued fraction; twin of func_800FAB0C_CrazyCutter: f0/f2 swapped
 // around the f64 constants (raw 12, masked 0; M1h tried direct returns, an f64 ret, a quotient temp)
@@ -1478,7 +1472,9 @@ void func_800FAA30_HammerDrop(void) {
 }
 
 // four nops after the func_800AEAC0 delay slots (VR4300 mul fix; retail has none) and column/v1 in s3/s4 swapped
-// (masked 42, most of it relocation offsets shifted by the four nops)
+// (masked 42, most of it relocation offsets shifted by the four nops). With the mul fix off only the s3/s4 swap
+// is left, and F9E98/FA1AC need it on: the wave code from func_800FA2E0 is likely its own TU, as BumperBalls'
+// 196300.c twin (func_800FC618) is; tried that twin's angle temporaries and declaration order (no change) (M1h)
 #ifdef NON_MATCHING
 void func_800FB050_HammerDrop(void) {
     Vtx* vertices;
