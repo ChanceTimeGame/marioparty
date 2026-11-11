@@ -880,15 +880,14 @@ void func_800F9E34_TugOWar(omObjData* obj, s32 dir, s32 file, u16 player, f32 x,
     obj->func_ptr = func_800F9A90_TugOWar;
 }
 
-// instruction order of the character lookup (masked 12)
-#ifdef NON_MATCHING
 void func_800FA1F4_TugOWar(omObjData* obj) {
-    func_800F9E34_TugOWar(obj, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[0]].character].unk_00, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[0]].character].unk_04, D_800FDFAE_TugOWar[0], -340.0f,
-                          400.0f, -80.0f);
+    s32 dir;
+    s32 file;
+
+    dir = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[0]].character].unk_00;
+    file = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[0]].character].unk_04;
+    func_800F9E34_TugOWar(obj, dir, file, D_800FDFAE_TugOWar[0], -340.0f, 400.0f, -80.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800FA1F4_TugOWar);
-#endif
 
 /* A team member's pull (player w->unk_58): as func_800F9A90_TugOWar, per player. */
 // logic-equivalent; the angle-wrap test is written once (retail: two branches) (masked 28)
@@ -1015,35 +1014,32 @@ void func_800FA700_TugOWar(omObjData* obj, s32 dir, s32 file, u16 player, f32 x,
     obj->func_ptr = func_800FA284_TugOWar;
 }
 
-// instruction order of the character lookup (masked 12)
-#ifdef NON_MATCHING
 void func_800FAA78_TugOWar(omObjData* obj) {
-    func_800FA700_TugOWar(obj, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[1]].character].unk_00, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[1]].character].unk_04, D_800FDFAE_TugOWar[1], 340.0f,
-                          400.0f, -80.0f);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800FAA78_TugOWar);
-#endif
+    s32 dir;
+    s32 file;
 
-// instruction order of the character lookup (masked 12)
-#ifdef NON_MATCHING
+    dir = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[1]].character].unk_00;
+    file = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[1]].character].unk_04;
+    func_800FA700_TugOWar(obj, dir, file, D_800FDFAE_TugOWar[1], 340.0f, 400.0f, -80.0f);
+}
+
 void func_800FAB08_TugOWar(omObjData* obj) {
-    func_800FA700_TugOWar(obj, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[2]].character].unk_00, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[2]].character].unk_04, D_800FDFAE_TugOWar[2], 430.0f,
-                          400.0f, -80.0f);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800FAB08_TugOWar);
-#endif
+    s32 dir;
+    s32 file;
 
-// instruction order of the character lookup (masked 12)
-#ifdef NON_MATCHING
-void func_800FAB98_TugOWar(omObjData* obj) {
-    func_800FA700_TugOWar(obj, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[3]].character].unk_00, D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[3]].character].unk_04, D_800FDFAE_TugOWar[3], 520.0f,
-                          400.0f, -80.0f);
+    dir = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[2]].character].unk_00;
+    file = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[2]].character].unk_04;
+    func_800FA700_TugOWar(obj, dir, file, D_800FDFAE_TugOWar[2], 430.0f, 400.0f, -80.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_TugOWar/22D5F0", func_800FAB98_TugOWar);
-#endif
+
+void func_800FAB98_TugOWar(omObjData* obj) {
+    s32 dir;
+    s32 file;
+
+    dir = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[3]].character].unk_00;
+    file = D_800C59AC[GwPlayer[D_800FDFAE_TugOWar[3]].character].unk_04;
+    func_800FA700_TugOWar(obj, dir, file, D_800FDFAE_TugOWar[3], 520.0f, 400.0f, -80.0f);
+}
 
 void func_800FAC28_TugOWar(void) {
     omSetStatBit(omAddObj(25, 40, 10, -1, func_800F9688_TugOWar), 0xA0);
