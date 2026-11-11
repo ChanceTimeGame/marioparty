@@ -342,7 +342,7 @@ void func_800FCD30_TightropeTreachery(omObjData* obj, f32 dx, f32 dz) {
 }
 
 /* A team member: steers with the stick, throws its bomb with A. */
-// float register allocation (masked 1)
+// float register allocation: mag in $f0 where retail has $f2 (raw 3, masked 0; reused diff, swapped compare tried)
 #ifdef NON_MATCHING
 void func_800FCEDC_TightropeTreachery(omObjData* obj) {
     TTTeamWork* t = TT_WORK(obj)->unk_E4;
@@ -410,11 +410,7 @@ void func_800FCEDC_TightropeTreachery(omObjData* obj) {
         dir = func_800B0CD8(sx, -sy);
         diff = dir - t->angle;
         if ((diff < 0.0f ? -diff : diff) >= 180.0f) {
-            if (diff <= 0.0f) {
-                diff += 360.0f;
-            } else {
-                diff -= 360.0f;
-            }
+            diff = (diff <= 0.0f) ? diff + 360.0f : diff - 360.0f;
         }
         if ((diff < 0.0f ? -diff : diff) < 20.0f) {
             t->angle = diff + t->angle;
@@ -499,8 +495,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19D510", func_8
 #endif
 
 /* A CPU team member: walks to a free spot around the walker, aims and throws. */
-// float register allocation: retail keeps one more value in a saved register (masked ~4)
-#ifdef NON_MATCHING
 void func_800FD70C_TightropeTreachery(omObjData* obj) {
     TTTeamWork* t = TT_WORK(obj)->unk_E4;
     s32 wait = 0;
@@ -534,10 +528,10 @@ void func_800FD70C_TightropeTreachery(omObjData* obj) {
             t->aimed = 0;
             t->hasSpot = 1;
         } else if (t->aimed == 0) {
-            tx = func_800AEAC0(D_800FE4D0_TightropeTreachery[t->spot].angle) * -885.0f;
-            tz = func_800AEFD0(D_800FE4D0_TightropeTreachery[t->spot].angle) * -885.0f;
-            tx += D_800F3FB0[0]->trans.x;
-            tz += D_800F3FB0[0]->trans.z;
+            dx = func_800AEAC0(D_800FE4D0_TightropeTreachery[t->spot].angle) * -885.0f;
+            dz = func_800AEFD0(D_800FE4D0_TightropeTreachery[t->spot].angle) * -885.0f;
+            tx = dx + D_800F3FB0[0]->trans.x;
+            tz = dz + D_800F3FB0[0]->trans.z;
             dx = tx - obj->trans.x;
             dz = tz - obj->trans.z;
             t->target = func_800B0CD8(dz, dx);
@@ -612,9 +606,6 @@ void func_800FD70C_TightropeTreachery(omObjData* obj) {
     }
     func_800FCEDC_TightropeTreachery(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19D510", func_800FD70C_TightropeTreachery);
-#endif
 
 /* A team member (MgWork-style work; its own state in D_800FE7C8_TightropeTreachery[idx]). */
 void func_800FDCE8_TightropeTreachery(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z, u16 idx) {
