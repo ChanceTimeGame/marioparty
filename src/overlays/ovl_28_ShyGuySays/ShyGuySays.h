@@ -19,10 +19,7 @@ typedef struct unkStruct_ShyGuySays_01 {
 /* 0x10 */ s32 unk_10;
 /* 0x14 */ s32 unk_14;
 /* 0x18 */ u32 unk_18;
-/* 0x1C */ unkStructShyGuySays_03 unk_1C;
-/* 0x20 */ unkStructShyGuySays_03 unk_20;
-/* 0x24 */ unkStructShyGuySays_03 unk_24;
-/* 0x28 */ unkStructShyGuySays_03 unk_28;
+/* 0x1C */ unkStructShyGuySays_03 unk_1C[4];
 /* 0x2C */ Vec3f unk_2C;
 /* 0x38 */ Vec3f unk_38;
 /* 0x44 */ Vec3f unk_44;
