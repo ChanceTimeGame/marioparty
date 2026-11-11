@@ -121,16 +121,16 @@ s32 func_800FAFA0_PlatformPeril(s32 pl) {
     return ret;
 }
 
-// masked 2: retail keeps neg.d + a shared add.d for "+ -(dir * 25.0)" where GCC folds it to sub.d; flags/dir swap s0/s1
+// register allocation (masked 0, raw 8): t gets $f2 where retail has $f0 (sum/off locals keep retail neg.d + add.d); tried t declared first
 #ifdef NON_MATCHING
 f32 func_800FB028_PlatformPeril(omObjData* obj, s32* jump) {
+    f64 t;
     s32 col;
     s32 row;
     s32 layer;
     s32 flags = 0;
-    s32 dir;
+    s32 dir = 1;
     s32 a;
-    f64 t;
 
     *jump = 1;
     func_800FBC38_PlatformPeril(obj->trans.x, obj->trans.y, obj->trans.z, &col, &row, &layer);
@@ -172,7 +172,10 @@ f32 func_800FB028_PlatformPeril(omObjData* obj, s32* jump) {
     } else if (((a < 0) & (dir < 0)) || ((a > 0) & (dir > 0))) {
         return (f32)a + 180.0 + (f32)dir * 25.0;
     } else if ((a < 0 && !(flags & 1)) || (a > 0 && !(flags & 4))) {
-        return (f32)a + 180.0 + -((f32)dir * 25.0);
+        f64 sum = (f32)a + 180.0;
+        f64 off = -((f32)dir * 25.0);
+
+        return sum + off;
     } else if (D_800FE5B0_PlatformPeril[layer][col - dir] != 2) {
         return (f32)dir * 45.0f + 180.0 + a;
     }

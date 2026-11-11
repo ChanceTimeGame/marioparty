@@ -460,10 +460,8 @@ void func_800FC4FC_LimboDance(s32 id, f32 amp, f32 angle) {
 }
 
 
-/* Takes a free billboard for sprite and builds its display list (ovl_25's func_800FE2F0). */
-// register allocation (masked 13): the vertex pointer is t1 in retail, t0 here, and one DL store schedules
-// differently; M1g fixed two render modes to retail's 0x5049D8/0x553078 (ovl_25's twin really uses 0x4049D8/0x443078)
-#ifdef NON_MATCHING
+/* Takes a free billboard for sprite and builds its display list (ovl_25's func_800FE2F0; retail uses
+   render modes 0x5049D8/0x553078 here where ovl_25's twin uses 0x4049D8/0x443078). */
 s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     LDBillboard* b;
     unk65770Anim* anim;
@@ -524,10 +522,10 @@ s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     }
     gSPVertex(gfx++, 0x01000000, 4, 0);
     gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
-    gSPEndDisplayList(gfx++);
     nh = -h;
     x = -frame->unk8;
     y = frame->unkA;
+    gSPEndDisplayList(gfx++);
     v->v.ob[0] = x;
     v->v.ob[1] = y;
     v->v.ob[2] = 0;
@@ -595,9 +593,6 @@ s16 func_800FC9A0_LimboDance(s16 sprite, u8 flags) {
     HuMemDirectFree(dl);
     return id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_LimboDance/1E4480", func_800FC9A0_LimboDance);
-#endif
 
 void func_800FDBEC_LimboDance(s16 id, s16 frame) {
     LDBillboard* b;
