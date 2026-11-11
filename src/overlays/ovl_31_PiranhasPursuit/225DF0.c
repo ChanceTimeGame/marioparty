@@ -330,8 +330,6 @@ void func_800FA878_PiranhasPursuit(omObjData* obj) {
     func_800FA4CC_PiranhasPursuit(obj);
 }
 
-// NON_MATCHING: retail loads obj->model[0] after computing func_80027C1C's float argument (masked 4; trans.x numerator tried)
-#ifdef NON_MATCHING
 void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     PPPiece* p;
     f32 off;
@@ -350,7 +348,8 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
     y2 = -40.0f;
     off = 0.0f;
     obj->trans.x = D_801012D0_PiranhasPursuit;
-    func_80027C1C(obj->model[0], D_801012D0_PiranhasPursuit / (obj->scale.x * 24.0), 0.0f, 64, 64);
+    t = D_801012D0_PiranhasPursuit / (obj->scale.x * 24.0);
+    func_80027C1C(obj->model[0], t, 0.0f, 64, 64);
     p = D_80101124_PiranhasPursuit;
     for (i = 0; i < 14; i++, p++) {
         if (p->pos.x < obj->trans.x - 1500.0f) {
@@ -429,9 +428,6 @@ void func_800FAEE8_PiranhasPursuit(omObjData* obj) {
         func_80066DC4(D_80101128_PiranhasPursuit[1], 0, bx + 320.0f, y);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_PiranhasPursuit/225DF0", func_800FAEE8_PiranhasPursuit);
-#endif
 
 void func_800FB590_PiranhasPursuit(void) {
     HuMemDirectFree(D_80101124_PiranhasPursuit);
