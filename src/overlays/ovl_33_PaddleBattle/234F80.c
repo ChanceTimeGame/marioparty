@@ -1784,7 +1784,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_PaddleBattle/234F80", func_800FD57
 
 /* Builds the faces' planes; keeps only those that are not vertical (|ny| >= 0.1). Returns how
    many were kept. */
-// logic-equivalent; register allocation and instruction order differ (normalised diff 62 lines)
+// logic-equivalent; retail keeps inv in a stack slot (frame 120 vs 112) and reloads it for each product (masked 38);
+// the axis compares follow CraneGame's twin func_800FD7B4 (was masked 103); tried inv * n operand order (M1h)
 #ifdef NON_MATCHING
 s16 func_800FD714_PaddleBattle(unk2C0C0StructA0* verts, PBColFace* out, unk2C0C0Struct20* f, s16 n) {
     Vec p;
@@ -1820,10 +1821,10 @@ s16 func_800FD714_PaddleBattle(unk2C0C0StructA0* verts, PBColFace* out, unk2C0C0
         out->ny = out->ny * inv;
         out->nz = out->nz * inv;
         out->d = -(p.x * out->nx + p.y * out->ny + p.z * out->nz);
-        if (PB_ABS(out->ny) <= PB_ABS(out->nx)) {
-            out->axis = (PB_ABS(out->nz) <= PB_ABS(out->nx)) ? 0 : 2;
+        if (PB_ABS(out->nx) >= PB_ABS(out->ny)) {
+            out->axis = (PB_ABS(out->nx) >= PB_ABS(out->nz)) ? 0 : 2;
         } else {
-            out->axis = (PB_ABS(out->nz) <= PB_ABS(out->ny)) ? 1 : 2;
+            out->axis = (PB_ABS(out->ny) >= PB_ABS(out->nz)) ? 1 : 2;
         }
         if (!(PB_ABS(out->ny) < 0.1)) {
             out++;
