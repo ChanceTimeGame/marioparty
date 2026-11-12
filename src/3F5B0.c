@@ -48,7 +48,6 @@ typedef struct DiceBlockWork {
     /* 0x1C */ s16 unk1C;
     /* 0x1E */ s16 unk1E;
     /* 0x20 */ s16 unk20;
-    /* 0x22 */ char pad22[2];
     /* 0x24 */ void* unk24;
     /* 0x28 */ void* unk28;
     /* 0x2C */ omObjData* unk2C;

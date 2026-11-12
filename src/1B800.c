@@ -841,11 +841,11 @@ void func_8001CEB4(void) {
     s16 j;
     s16 rows;
 
-    do { rows = 16; } while (0); // block found by decomp-permuter
     if (D_800EC6DE != 4) {
         return;
     }
     gSPDisplayList(D_800F37DC++, D_800C30C8);
+    rows = 16;
     for (y = 0; y < D_800F3960; y += 16) {
         if (y >= D_800F3960 - 16) {
             rows = D_800F3960 - y;
