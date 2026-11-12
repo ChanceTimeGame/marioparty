@@ -655,18 +655,15 @@ void func_800FDD5C_LimboDance(s16 id, u8 flags) {
 }
 
 // NON_MATCHING: register allocation / scheduling
-// decomp-permuter
 Vtx *func_800FDDA0_LimboDance(s16 id, s32 frame)
 {
-  LDBillboard *new_var2;
-  s16 new_var;
-  new_var = id;
-  if (new_var == (-1))
+  LDBillboard *b;
+  if (id == -1)
   {
     return 0;
   }
-  new_var2 = &(*(&D_80103298[new_var]));
-  return new_var2->unk_10[frame];
+  b = &D_80103298[id];
+  return b->unk_10[frame];
 }
 
 void func_800FDDEC_LimboDance(s16 id, u8 r, u8 g, u8 b, s32 a) {
