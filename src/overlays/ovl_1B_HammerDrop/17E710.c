@@ -645,29 +645,22 @@ void func_800F813C_HammerDrop(omObjData* arg0) {
     }
 }
 
-// decomp-permuter
-void func_800F82E0_HammerDrop(void)
-{
-  omObjData *obj;
-  s32 *timer;
-  obj = omAddObj(16, 0, 0, -1, func_800F8394_HammerDrop);
-  timer = (obj->unk_50 = func_80023684(sizeof(s32), 0x7918));
-  if ((D_800FB6C4_HammerDrop == 0) && (D_800FB988_HammerDrop == 0))
-  {
-    *timer = 60;
-    GMesCreate(14);
-    func_800601D4(40);
-  }
-  else
-    if (D_800FB98C_HammerDrop == 0)
-  {
-    *timer = 84;
-  }
-  else
-  {
-    *timer = 105;
-  }
-  D_800FB980_HammerDrop = -1;
+void func_800F82E0_HammerDrop(void) {
+    omObjData* obj;
+    s32* timer;
+
+    obj = omAddObj(16, 0, 0, -1, func_800F8394_HammerDrop);
+    timer = obj->unk_50 = func_80023684(sizeof(s32), 0x7918);
+    if (D_800FB6C4_HammerDrop == 0 && D_800FB988_HammerDrop == 0) {
+        *timer = 60;
+        GMesCreate(14);
+        func_800601D4(40);
+    } else if (D_800FB98C_HammerDrop == 0) {
+        *timer = 84;
+    } else {
+        *timer = 105;
+    }
+    D_800FB980_HammerDrop = -1;
 }
 
 // decomp-permuter
