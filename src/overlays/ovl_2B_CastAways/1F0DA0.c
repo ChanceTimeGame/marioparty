@@ -1525,7 +1525,6 @@ void func_800FA410_CastAways(void) {
         break;
     }
 }
-// decomp-permuter
 s16 func_800FABE4_CastAways(u16 arg0)
 {
   u16 r;

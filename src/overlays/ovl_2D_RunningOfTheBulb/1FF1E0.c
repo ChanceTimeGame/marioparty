@@ -1668,7 +1668,6 @@ void func_800FBAA4_RunningOfTheBulb(omObjData* arg0) {
     }
 }
 
-// decomp-permuter
 void func_800FBB5C_RunningOfTheBulb(omObjData *arg0)
 {
   RotbPlayerWork *work;
