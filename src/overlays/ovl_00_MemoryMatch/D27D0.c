@@ -352,80 +352,61 @@ void func_800FC8A0_MemoryMatch(s16 arg0, Vec3f* arg1, Vec3f* arg2) {
         }
     }
 }
-// decomp-permuter
-void func_800FC9E4_MemoryMatch(s16 arg0, Vec3f *arg1, Vec3f *arg2)
-{
-  unk2C0C0StructE0 *v;
-  unk2C0C0StructE0 *src;
-  s16 prev;
-  u8 new_var;
-  v = D_800F2B7C[arg0].unk_6C->unk_08[D_800F37F0];
-  prev = D_800F37F0 - 1;
-  if (prev < 0)
-  {
-    new_var = D_800F37DA;
-    prev = new_var - 1;
-  }
-  if ((func_8005FD5C() + D_800F64F8) != 0)
-  {
-    src = D_800F2B7C[arg0].unk_6C->unk_08[prev];
-    for (prev = 0; prev < D_800F2B7C[arg0].unk_6C->unk_72; prev++)
-    {
-      if (1)
-      {
-        v->unk_00 = src->unk_00;
-        v->unk_02 = src->unk_02;
-        v->unk_04 = src->unk_04;
-        v++;
-        src++;
-      }
-    }
+void func_800FC9E4_MemoryMatch(s16 arg0, Vec3f* arg1, Vec3f* arg2) {
+    unk2C0C0StructE0* v;
+    unk2C0C0StructE0* src;
+    s16 prev;
 
-  }
-  else
-  {
-    if (!(D_800FE1E2_MemoryMatch & 1))
-    {
-      src = D_800F2B7C[arg0].unk_6C->unk_08[prev] + 4;
-      for (prev = 0; prev < (D_800F2B7C[arg0].unk_6C->unk_72 - 4); prev++)
-      {
-        v->unk_00 = src->unk_00;
-        v->unk_02 = src->unk_02;
-        v->unk_04 = src->unk_04;
-        v++;
-        src++;
-      }
-
-      v->unk_00 = v[3].unk_00;
-      v->unk_02 = v[3].unk_02;
-      v->unk_04 = v[3].unk_04;
-      v++;
-      v->unk_00 = v[1].unk_00;
-      v->unk_02 = v[1].unk_02;
-      v->unk_04 = v[1].unk_04;
-      v++;
+    v = D_800F2B7C[arg0].unk_6C->unk_08[D_800F37F0];
+    prev = D_800F37F0 - 1;
+    if (prev < 0) {
+        prev = D_800F37DA - 1;
     }
-    else
-    {
-      src = D_800F2B7C[arg0].unk_6C->unk_08[prev];
-      for (prev = 0; prev < (D_800F2B7C[arg0].unk_6C->unk_72 - 2); prev++)
-      {
-        v->unk_00 = src->unk_00;
-        v->unk_02 = src->unk_02;
-        v->unk_04 = src->unk_04;
+    if (func_8005FD5C() + D_800F64F8 != 0) {
+        src = D_800F2B7C[arg0].unk_6C->unk_08[prev];
+        for (prev = 0; prev < D_800F2B7C[arg0].unk_6C->unk_72; prev++) {
+            v->unk_00 = src->unk_00;
+            v->unk_02 = src->unk_02;
+            v->unk_04 = src->unk_04;
+            v++;
+            src++;
+        }
+    } else {
+        if (!(D_800FE1E2_MemoryMatch & 1)) {
+            src = D_800F2B7C[arg0].unk_6C->unk_08[prev] + 4;
+            for (prev = 0; prev < D_800F2B7C[arg0].unk_6C->unk_72 - 4; prev++) {
+                v->unk_00 = src->unk_00;
+                v->unk_02 = src->unk_02;
+                v->unk_04 = src->unk_04;
+                v++;
+                src++;
+            }
+            v->unk_00 = v[3].unk_00;
+            v->unk_02 = v[3].unk_02;
+            v->unk_04 = v[3].unk_04;
+            v++;
+            v->unk_00 = v[1].unk_00;
+            v->unk_02 = v[1].unk_02;
+            v->unk_04 = v[1].unk_04;
+            v++;
+        } else {
+            src = D_800F2B7C[arg0].unk_6C->unk_08[prev];
+            for (prev = 0; prev < D_800F2B7C[arg0].unk_6C->unk_72 - 2; prev++) {
+                v->unk_00 = src->unk_00;
+                v->unk_02 = src->unk_02;
+                v->unk_04 = src->unk_04;
+                v++;
+                src++;
+            }
+        }
+        v->unk_00 = arg1->x;
+        v->unk_02 = arg1->y;
+        v->unk_04 = arg1->z;
         v++;
-        src++;
-      }
-
+        v->unk_00 = arg2->x;
+        v->unk_02 = arg2->y;
+        v->unk_04 = arg2->z;
     }
-    v->unk_00 = arg1->x;
-    v->unk_02 = arg1->y;
-    v->unk_04 = arg1->z;
-    v++;
-    v->unk_00 = arg2->x;
-    v->unk_02 = arg2->y;
-    v->unk_04 = arg2->z;
-  }
 }
 // register/schedule (masked 35): ++counter copy, obj index as j*16 + (unsigned)n*4, f22/f26 swap; tried u16 n, assign-in-test
 #ifdef NON_MATCHING
