@@ -170,7 +170,6 @@ void func_800F69F8_ShyGuySays(void) {
 }
 
 
-// decomp-permuter
 void func_800F6A38_ShyGuySays(omObjData *arg0)
 {
   s16 sp10[6] = {0x451, 0x452, 0x453, 0x454, 0x455, 0x456};

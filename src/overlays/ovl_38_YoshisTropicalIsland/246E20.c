@@ -849,12 +849,11 @@ void func_800F7BC8_YoshisTropicalIsland(void) {
     SetNextChainAndSpace(-1, 6, 1);
 }
 
-// decomp-permuter
 void func_800F7BEC_YoshisTropicalIsland(void)
 {
-  short win;
   s16 player;
-  s32 amount;
+  s16 win;
+  short coins;
   player = GetCurrentPlayerIndex();
   func_800405DC(player);
   SetPlayerAnimation(-1, -1, 2);
@@ -862,23 +861,21 @@ void func_800F7BEC_YoshisTropicalIsland(void)
   {
     win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
     LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
-    amount = 10;
+    coins = 10;
   }
   else
   {
     win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
     LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
-    amount = 20;
+    coins = 20;
   }
-  win = (s16) win;
   func_8006E070(win, 0);
   ShowTextWindow(win);
   PlaySound(0x432);
   func_8004DBD4(win, player);
   HideTextWindow(win);
-  win = amount;
-  func_80055960(player, win);
-  ShowPlayerCoinChange(player, win);
+  func_80055960(player, coins);
+  ShowPlayerCoinChange(player, coins);
   HuPrcSleep(30);
   func_8003FEFC(player);
 }

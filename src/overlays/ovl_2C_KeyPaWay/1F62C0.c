@@ -1370,7 +1370,7 @@ void func_800FAAF4_KeyPaWay(omObjData* obj, omObjData* target) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2C_KeyPaWay/1F62C0", func_800FAAF4_KeyPaWay);
 #endif
 void func_800FAF28_KeyPaWay(omObjData* obj) {
-    f32 dummy;
+    f32 overlap;
     KPWBodyWork* work = KPW_BODY(obj);
     KPWEnemyExt* ext = work->unk_68.enemy;
     f32 dx;
@@ -1428,7 +1428,7 @@ void func_800FAF28_KeyPaWay(omObjData* obj) {
     done = 0;
     angle = work->unk_3C;
     do {
-        switch (func_800FB498_KeyPaWay(obj, dx + obj->trans.x, dz + obj->trans.z, &dummy)) {
+        switch (func_800FB498_KeyPaWay(obj, dx + obj->trans.x, dz + obj->trans.z, &overlap)) {
         case 1:
         case 2:
             angle += 45.0f;

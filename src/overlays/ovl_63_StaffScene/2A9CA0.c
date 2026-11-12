@@ -655,7 +655,6 @@ void func_800F7684_StaffScene(StaffModel* m) {
     *ry = 0.0f;
     HuPrcSleep(2);
 }
-// decomp-permuter
 void func_800F78F8_StaffScene(StaffModel *m)
 {
   f32 *rx;
@@ -757,7 +756,6 @@ void func_800F7AC0_StaffScene(void) {
         HuPrcVSleep();
     }
 }
-// decomp-permuter
 void func_800F7C48_StaffScene(StaffModel *m)
 {
   s32 i;

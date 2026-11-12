@@ -431,20 +431,14 @@ void func_800FE5A4_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     }
     arg0->trans.x = t;
 }
-// decomp-permuter
 void func_800FE658_YoshisTropicalIslandEndingScene(omObjData *arg0)
 {
   s32 idx = arg0->work[0];
   f32 t = arg0->rot.x;
-  Object **new_var;
   f32 y;
-  Object **p;
   y = (func_800AEAC0(t * 360.0f) * 4.0f) * 5.0f;
-  new_var = D_80110448_YoshisTropicalIslandEndingScene;
-  p = new_var;
-  p += idx;
-  (*p)->coords.y = arg0->rot.z;
-  (*p)->unk_30 = (y + arg0->rot.y) - arg0->rot.z;
+  D_80110448_YoshisTropicalIslandEndingScene[idx]->coords.y = arg0->rot.z;
+  D_80110448_YoshisTropicalIslandEndingScene[idx]->unk_30 = (y + arg0->rot.y) - arg0->rot.z;
   t += 0.01f;
   if (t > 1.0f)
   {
@@ -484,25 +478,19 @@ omObjData* func_800FE86C_YoshisTropicalIslandEndingScene(s32 arg0) {
     omSetSca(obj, model->coords.x, model->coords.y, model->coords.z);
     return obj;
 }
-// decomp-permuter
 void func_800FE900_YoshisTropicalIslandEndingScene(omObjData *arg0)
 {
   s32 idx = arg0->work[0];
   f32 t = arg0->rot.x;
   f32 y;
-  f32 new_var;
-  Object **p;
   t += 5.0f;
   if (t < 360.0f)
   {
     t -= 360.0f;
   }
   y = func_800AEAC0(t) * 25.0f;
-  p = D_80110448_YoshisTropicalIslandEndingScene;
-  ;
-  (*(p + idx))->coords.y = arg0->rot.z;
-  new_var = y;
-  (*(p + idx))->unk_30 = (new_var + arg0->rot.y) - arg0->rot.z;
+  D_80110448_YoshisTropicalIslandEndingScene[idx]->coords.y = arg0->rot.z;
+  D_80110448_YoshisTropicalIslandEndingScene[idx]->unk_30 = (y + arg0->rot.y) - arg0->rot.z;
   arg0->rot.x = t;
 }
 omObjData* func_800FE9B8_YoshisTropicalIslandEndingScene(s32 arg0, f32 arg1, f32 arg2) {
@@ -522,24 +510,16 @@ void func_800FEA50_YoshisTropicalIslandEndingScene(omObjData* arg0) {
         arg0->func_ptr = &func_800FEAA0_YoshisTropicalIslandEndingScene;
     }
 }
-// decomp-permuter
 void func_800FEAA0_YoshisTropicalIslandEndingScene(omObjData *arg0)
 {
-  f32 new_var;
-  Object **new_var2;
   u8 idx = arg0->work[0];
   f32 t = arg0->trans.x;
-  new_var = t;
-  if (new_var > 1.0f)
+  if (t > 1.0f)
   {
-    Object **p;
     arg0->func_ptr = &func_800FEA50_YoshisTropicalIslandEndingScene;
     arg0->trans.x = (arg0->trans.y = (arg0->trans.z = (arg0->rot.x = (arg0->rot.y = (arg0->rot.z = 0.0f)))));
-    new_var2 = D_80110448_YoshisTropicalIslandEndingScene;
-    p = new_var2;
-    p += idx;
-    (*p)->unk_30 = ((*p)->unk_38 = -1.5f);
-    (*p)->unk_34 = 20.0f;
+    D_80110448_YoshisTropicalIslandEndingScene[idx]->unk_30 = (D_80110448_YoshisTropicalIslandEndingScene[idx]->unk_38 = -1.5f);
+    D_80110448_YoshisTropicalIslandEndingScene[idx]->unk_34 = 20.0f;
     t = 0.0f;
   }
   t += (rand8() & 0xFF) * 0.000039215687f;
@@ -585,20 +565,14 @@ void func_800FEC20_YoshisTropicalIslandEndingScene(omObjData* arg0) {
     func_80025830((s16)D_801102B8_YoshisTropicalIslandEndingScene[idx], scale->x, scale->y, scale->z);
     func_800257E4((s16)D_801102B8_YoshisTropicalIslandEndingScene[idx], 0.0f, 0.0f, 0.0f);
 }
-// decomp-permuter
 omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32 arg2)
 {
-  s32 *new_var;
-  s32 *m;
   u16 id;
   Unk266Model *tbl;
   omObjData *obj;
   Vec3f *pos;
   Vec3f *scale;
-  new_var = D_801102B8_YoshisTropicalIslandEndingScene;
-  m = new_var;
-  m += arg0;
-  id = *m;
+  id = D_801102B8_YoshisTropicalIslandEndingScene[arg0];
   tbl = D_8010E820_YoshisTropicalIslandEndingScene[arg1];
   obj = omAddObj(0x800, 0, 0, -1, &func_800FEC20_YoshisTropicalIslandEndingScene);
   obj->work[0] = arg0;
@@ -616,9 +590,9 @@ omObjData *func_800FEE24_YoshisTropicalIslandEndingScene(s32 arg0, s32 arg1, s32
   omSetTra(obj, 0.0f, 0.0f, 1.0f);
   omSetSca(obj, 0.0f, 0.0f, 1.0f);
   omSetRot(obj, 0.0f, 0.0f, 1.0f);
-  func_80025798((s16) (*m), pos->x, pos->y, pos->z);
-  func_80025830((s16) (*m), scale->x, scale->y, scale->z);
-  func_800257E4((s16) (*m), 0.0f, 0.0f, 0.0f);
+  func_80025798(D_801102B8_YoshisTropicalIslandEndingScene[arg0], pos->x, pos->y, pos->z);
+  func_80025830(D_801102B8_YoshisTropicalIslandEndingScene[arg0], scale->x, scale->y, scale->z);
+  func_800257E4(D_801102B8_YoshisTropicalIslandEndingScene[arg0], 0.0f, 0.0f, 0.0f);
   return obj;
 }
 // scheduling: both index shifts are emitted before their base `lui/addiu` (raw 4, masked 4);

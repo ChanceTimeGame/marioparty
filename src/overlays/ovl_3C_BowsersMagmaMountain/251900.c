@@ -1196,17 +1196,15 @@ void func_800F826C_BowsersMagmaMountain(void) {
     SetNextChainAndSpace(-1, 0, 1);
 }
 
-// decomp-permuter
 void func_800F8290_BowsersMagmaMountain(void)
 {
   s16 player;
   s16 win;
-  s32 coins;
-  s32 new_var;
+  short coins;
   player = GetCurrentPlayerIndex();
   func_800405DC(player);
   SetPlayerAnimation(-1, -1, 2);
-  if (0 == _CheckFlag(0x42))
+  if (_CheckFlag(0x42) == 0)
   {
     win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
     LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
@@ -1214,9 +1212,8 @@ void func_800F8290_BowsersMagmaMountain(void)
   }
   else
   {
-    new_var = 1;
     win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-    LoadStringIntoWindow(win, (void *) 0x23A, -new_var, -1);
+    LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
     coins = 20;
   }
   func_8006E070(win, 0);
@@ -1224,9 +1221,8 @@ void func_800F8290_BowsersMagmaMountain(void)
   PlaySound(0x432);
   func_8004DBD4(win, player);
   HideTextWindow(win);
-  new_var = coins;
-  func_80055960(player, new_var);
-  ShowPlayerCoinChange(player, new_var);
+  func_80055960(player, coins);
+  ShowPlayerCoinChange(player, coins);
   HuPrcSleep(30);
   func_8003FEFC(player);
 }

@@ -1196,7 +1196,6 @@ f32 func_800FAE48_PaddleBattle(f32 dist) {
 }
 
 /* The river's direction (unit vector) at (dist, lateral). */
-// decomp-permuter
 void func_800FAFEC_PaddleBattle(f32 dist, f32 lateral, Vec *out)
 {
   Vec p;

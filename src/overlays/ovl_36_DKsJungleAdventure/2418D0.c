@@ -1608,13 +1608,11 @@ void func_800F9428_DKsJungleAdventure(void) {
 void func_800F944C_DKsJungleAdventure(void) {
     SetNextChainAndSpace(-1, 0, 1);
 }
-// decomp-permuter
 void func_800F9470_DKsJungleAdventure(void)
 {
   s16 player;
   s16 win;
   short coins;
-  int new_var;
   player = GetCurrentPlayerIndex();
   func_800405DC(player);
   SetPlayerAnimation(-1, -1, 2);
@@ -1626,8 +1624,7 @@ void func_800F9470_DKsJungleAdventure(void)
   }
   else
   {
-    new_var = 0x41;
-    win = CreateTextWindow(new_var, 0x3C, 0x11, 3);
+    win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
     LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
     coins = 20;
   }

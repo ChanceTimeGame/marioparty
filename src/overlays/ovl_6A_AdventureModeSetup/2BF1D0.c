@@ -181,7 +181,6 @@ void func_800F6D08_AdventureModeSetup(omObjData* arg0) {
     } else if ((func_8005FD5C() + D_800F64F8) == 0) {
         D_801025E0_AdventureModeSetup += 3.0f;
     }
-    D_801025E0_AdventureModeSetup = D_801025E0_AdventureModeSetup;
 
     if (D_801025DA_AdventureModeSetup < D_801025E0_AdventureModeSetup) {
         D_801025E0_AdventureModeSetup -= D_801025DA_AdventureModeSetup;

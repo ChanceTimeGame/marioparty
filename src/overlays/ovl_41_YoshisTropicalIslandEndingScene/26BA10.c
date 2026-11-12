@@ -728,14 +728,12 @@ void func_80104C50_YoshisTropicalIslandEndingScene(Vec3f* pts, f32* times, f32 t
     out->z = func_80022D9C(v[2], v[3], t);
 }
 
-// decomp-permuter
 void func_80104D24_YoshisTropicalIslandEndingScene(s16 hmf, f32 len, f32 t, Vec3f *out)
 {
   Vec3f v[4];
   f32 times[4];
   unk2C0C0StructC0 *m = D_800F2B7C[hmf].unk_6C;
   unk2C0C0StructA0 *base = &m->unk_78[1];
-  unk2C0C0StructA0 *pts;
   s32 n = m->unk_6E;
   s32 segs = n - 3;
   f32 step = len / segs;
@@ -749,14 +747,13 @@ void func_80104D24_YoshisTropicalIslandEndingScene(s16 hmf, f32 len, f32 t, Vec3
   {
     seg = -1;
   }
-  pts = &base[seg];
-  func_800A0D00(&v[0], (&base[seg])[-1].unk_00, (&base[seg])[-1].unk_02, (&base[seg])[-1].unk_04);
+  func_800A0D00(&v[0], base[seg - 1].unk_00, base[seg - 1].unk_02, base[seg - 1].unk_04);
   times[0] = step * (seg - 1);
-  func_800A0D00(&v[1], (&base[seg])[0].unk_00, (&base[seg])[0].unk_02, (&base[seg])[0].unk_04);
+  func_800A0D00(&v[1], base[seg].unk_00, base[seg].unk_02, base[seg].unk_04);
   times[1] = step * seg;
-  func_800A0D00(&v[2], (&base[seg])[1].unk_00, (&base[seg])[1].unk_02, (&base[seg])[1].unk_04);
+  func_800A0D00(&v[2], base[seg + 1].unk_00, base[seg + 1].unk_02, base[seg + 1].unk_04);
   times[2] = step * (seg + 1);
-  func_800A0D00(&v[3], (&base[seg])[2].unk_00, (&base[seg])[2].unk_02, (&base[seg])[2].unk_04);
+  func_800A0D00(&v[3], base[seg + 2].unk_00, base[seg + 2].unk_02, base[seg + 2].unk_04);
   times[3] = step * (seg + 2);
   func_80104C50_YoshisTropicalIslandEndingScene(v, times, t, out);
 }
