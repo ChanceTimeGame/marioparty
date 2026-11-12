@@ -2,7 +2,7 @@
 #include "sdk_leo.h"
 
 // libultra 2.0I 64DD interrupt handling (leointerrupt.c) and osLeoDiskInit (leodiskinit.c).
-// Built with IDO 5.3 with libleo; __osLeoInterrupt does not match yet and stays asm. Differs from
+// Built with IDO 5.3 with libleo. Differs from
 // later libultra (decompals ultralib): a C2 transfer at the wrong sector returns at once, the
 // track-mode C2 check reports error 23, and osLeoDiskInit does not program the domain-2 timing
 // registers.
@@ -46,7 +46,6 @@ OSThread* __osPopThread(OSThread** queue);
 void func_80082450(void); // __osLeoAbnormalResume
 void func_80082504(void); // __osLeoResume
 
-#ifdef NON_MATCHING
 s32 __osLeoInterrupt(void) {
     u32 stat = 0;
     volatile u32 pi_stat;
@@ -93,13 +92,13 @@ s32 __osLeoInterrupt(void) {
             blockInfo->errStatus = 0;
             func_80082504();
             return 1;
+        } else {
+            blockInfo->dramAddr = (void*)((u32)blockInfo->dramAddr + blockInfo->sectorSize);
+            info->sectorNum++;
+            __osEPiRawStartDma(D_800E9884, OS_WRITE, LEO_SECTOR_BUFF, blockInfo->dramAddr, blockInfo->sectorSize);
+            return 1;
         }
-        blockInfo->dramAddr = (void*)((u32)blockInfo->dramAddr + blockInfo->sectorSize);
-        info->sectorNum++;
-        __osEPiRawStartDma(D_800E9884, OS_WRITE, LEO_SECTOR_BUFF, blockInfo->dramAddr, blockInfo->sectorSize);
-        return 1;
-    }
-    if (info->cmdType == LEO_CMD_TYPE_0) {
+    } else if (info->cmdType == LEO_CMD_TYPE_0) {
         if (info->transferMode == LEO_SECTOR_MODE) {
             if (info->sectorNum > (s32)blockInfo->C1ErrNum + 17) {
                 blockInfo->errStatus = 0;
@@ -115,7 +114,7 @@ s32 __osLeoInterrupt(void) {
             blockInfo->dramAddr = (void*)((u32)blockInfo->dramAddr + blockInfo->sectorSize);
         }
         bm_stat = LEO_IO_READ(LEO_BM_STATUS);
-        if (((bm_stat & LEO_BM_STATUS_C1SINGLE) && (bm_stat & LEO_BM_STATUS_C1DOUBLE)) ||
+        if (((bm_stat & LEO_BM_STATUS_C1DOUBLE) && (bm_stat & LEO_BM_STATUS_C1SINGLE)) ||
             (bm_stat & LEO_BM_STATUS_MICRO)) {
             if (blockInfo->C1ErrNum > 3) {
                 if ((info->transferMode != LEO_SECTOR_MODE) || (info->sectorNum > 0x52)) {
@@ -124,7 +123,8 @@ s32 __osLeoInterrupt(void) {
                     return 1;
                 }
             } else {
-                blockInfo->C1ErrSector[blockInfo->C1ErrNum] = info->sectorNum + 1;
+                int errNum = blockInfo->C1ErrNum;
+                blockInfo->C1ErrSector[errNum] = info->sectorNum + 1;
             }
             blockInfo->C1ErrNum++;
         }
@@ -172,21 +172,18 @@ s32 __osLeoInterrupt(void) {
             __osEPiRawStartDma(D_800E9884, OS_READ, LEO_SECTOR_BUFF, blockInfo->dramAddr, blockInfo->sectorSize);
             blockInfo->errStatus = 0;
             return 1;
-        }
-        if (info->sectorNum <= 0x54) {
+        } else if (info->sectorNum <= 0x54) {
             blockInfo->errStatus = 24;
             func_80082450();
             return 1;
         }
         return 1;
+    } else {
+        blockInfo->errStatus = 4;
+        func_80082450();
+        return 1;
     }
-    blockInfo->errStatus = 4;
-    func_80082450();
-    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/82AF0", __osLeoInterrupt);
-#endif
 
 void func_80082450(void) {
     __OSTranxInfo* info = &D_800E9884->transferInfo;
