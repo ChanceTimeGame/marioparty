@@ -616,24 +616,19 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_TightropeTreachery/19ACC0", func_8
 #endif
 
 /* Loads the rescuer's poses. */
-// decomp-permuter
-void func_800FBAB4_TightropeTreachery(void)
-{
-  u16 ids[] = {8, 9, 10, 11, 12, 13, 0xFFFF};
-  int new_var;
-  s32 i;
-  new_var = 0x350000;
-  for (i = 0; ids[i] != 0xFFFF; i++)
-  {
-    D_800FE6B0_TightropeTreachery[i] = func_800174F4(new_var | ids[i], 0x9D);
-  }
+void func_800FBAB4_TightropeTreachery(void) {
+    u16 ids[] = { 8, 9, 10, 11, 12, 13, 0xFFFF };
+    s32 dir;
+    s32 i;
 
-  for (i = 0; i < 4; i++)
-  {
-    D_800FE6C0_TightropeTreachery[i] = 0;
-    D_800FE6D0_TightropeTreachery[i] = 0;
-  }
-
+    dir = 0x350000;
+    for (i = 0; ids[i] != 0xFFFF; i++) {
+        D_800FE6B0_TightropeTreachery[i] = func_800174F4(dir | ids[i], 0x9D);
+    }
+    for (i = 0; i < 4; i++) {
+        D_800FE6C0_TightropeTreachery[i] = 0;
+        D_800FE6D0_TightropeTreachery[i] = 0;
+    }
 }
 
 void func_800FBBD0_TightropeTreachery(omObjData* obj) {
