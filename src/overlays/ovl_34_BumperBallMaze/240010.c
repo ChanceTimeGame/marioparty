@@ -5,7 +5,6 @@ extern omObjData* D_800FB1C8_BumperBallMaze;
 
 typedef struct BumperBallMazeCameraWork {
     u16 frames;
-    u16 pad_02;
     f32 zoomStep;
     Vec3f rotStep;
     Vec3f centerStep;

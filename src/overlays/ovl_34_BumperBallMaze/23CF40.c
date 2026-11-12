@@ -5,7 +5,6 @@ typedef struct BumperBallMazeBallWork {
     /* 0x00 */ u16 unk_00; /* state */
     /* 0x02 */ s16 character;
     /* 0x04 */ u16 player;
-    /* 0x06 */ char pad_06[2];
     /* 0x08 */ f32 unk_08;
     /* 0x0C */ f32 unk_0C;
     /* 0x10 */ f32 unk_10;
@@ -22,7 +21,6 @@ typedef struct BumperBallMazeBallWork {
     /* 0x3C */ u16 unk_3C;
     /* 0x3E */ u16 unk_3E;
     /* 0x40 */ u8 unk_40[2];
-    /* 0x42 */ char pad_42[2];
     /* 0x44 */ f32 unk_44;
 } BumperBallMazeBallWork; /* size = 0x48 */
 
@@ -53,7 +51,6 @@ typedef struct BumperBallMazeFloorProbe {
     /* 0x20 */ f32 centerHeight;
     /* 0x24 */ u16 attr[8];
     /* 0x34 */ u16 centerAttr;
-    /* 0x36 */ char pad_36[2];
     /* 0x38 */ Vec3f pos;
 } BumperBallMazeFloorProbe; /* size = 0x44 */
 
