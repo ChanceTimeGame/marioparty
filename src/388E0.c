@@ -235,7 +235,6 @@ unk2C0C0Struct70* func_80038194(unk2C0C0StructC0* arg0, u8* arg1) {
     return &D_800F37AC[i];
 }
 
-// decomp-permuter
 void func_80038254(u8 *arg0, unk2C0C0StructC0 *arg1, unk2C0C0Struct70 *arg2)
 {
   u16 bpp;
@@ -264,7 +263,7 @@ void func_80038254(u8 *arg0, unk2C0C0StructC0 *arg1, unk2C0C0Struct70 *arg2)
     switch (arg0[1])
     {
       case 8:
-        arg2->unk_19 = (short) 1;
+        arg2->unk_19 = 1;
         bpp = 2;
         break;
 
@@ -742,13 +741,11 @@ void func_800396B0(s16 arg0, s32 arg1)
   p->unk_06 = 0;
   p->unk_0B = 0x10;
 }
-// decomp-permuter
-u8 func_80039758(s16 arg0)
-{
-  unk388E0StructC8 *new_var;
-  unk388E0Struct40 *p = &D_800F3708[arg0];
-  new_var = &D_800F3F40[p->unk_00].unk_10[p->unk_04];
-  return (*new_var).unk_00;
+u8 func_80039758(s16 arg0) {
+    unk388E0Struct40* p = &D_800F3708[arg0];
+    unk388E0StructC8* q = &D_800F3F40[p->unk_00].unk_10[p->unk_04];
+
+    return q->unk_00;
 }
 void func_800397AC(u16 arg0) {
     unk388E0Struct40* p;

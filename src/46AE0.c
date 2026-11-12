@@ -82,7 +82,6 @@ s32 func_8004606C(void) {
     return 1;
 }
 
-// decomp-permuter
 void func_80046180(void)
 {
   GW_PLAYER *p0;
