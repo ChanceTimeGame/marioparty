@@ -64,6 +64,8 @@ OBJCOPY  := $(CROSS)objcopy
 STRIP    := $(CROSS)strip
 
 CC       := tools/gcc_2.7.2/$(DETECTED_OS)/gcc
+IDO_CC   := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
+ASM_PROC := $(PYTHON) tools/asm-processor/build.py
 CC_HOST  := gcc
 CPP      := cpp -P
 
@@ -488,6 +490,22 @@ $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2/$(DETECTED_OS) && $(CC) $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 	@$(STRIP) $@ -N dummy-symbol-name
+
+# ido: the libleo units, built by Nintendo with IDO 5.3 (`make -C tools` fetches it and asm-processor).
+# asm-processor puts each INCLUDE_ASM function into the IDO object; the .s copies it reads drop any
+# `.set` lines (its prelude sets noat/noreorder).
+IDO_UNITS := build/src/80BE0.c.o build/src/81F20.c.o build/src/82AF0.c.o build/src/83960.c.o
+IDO_CFLAGS := -O2 -G0 -mips2 -non_shared -Xcpluscomm
+build/src/81F20.c.o: IDO_RODATA_SIZE = 0x88
+$(IDO_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file (IDO): $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@) $(BUILD_DIR)/asmproc/asm/nonmatchings/$*
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d $<
+	$(V)if [ -d asm/nonmatchings/$* ]; then for f in asm/nonmatchings/$*/*.s; do sed '/^[[:space:]]*\.set /d' $$f > $(BUILD_DIR)/asmproc/$$f; done; fi
+	@rm -f $@
+	$(V)$(ASM_PROC) --asm-prelude include/asmproc_prelude.inc --base-dir $(BUILD_DIR)/asmproc $(IDO_CC) -- $(AS) $(ASFLAGS) -- -c $(IDO_CFLAGS) $(IDO_DEFS) $(CPPFLAGS) -o $@ $< 2>&1 | grep -v -e 'Warning' -e '^ *;$$' -e '^ *-*^$$' -e 'Info: macro invoked' -e 'Assembler messages' || true
+	@test -f $@
+	$(if $(IDO_RODATA_SIZE),$(V)$(PYTHON) tools/trim_section.py $@ .rodata $(IDO_RODATA_SIZE))
 
 # ovl_28 1D9690.c: blank-line strip as for 1130.c (func_800F9F60: mul.s right after func_800AEFD0's return).
 $(BUILD_DIR)/src/overlays/ovl_28_ShyGuySays/1D9690.c.o: $(BUILD_DIR)/src/%.c.o: src/%.c
