@@ -1,8 +1,6 @@
 #include "common.h"
 
-// 64DD driver (libleo) manager API. This unit was built with IDO, not KMC GCC: its
-// register allocation (t6, t7, ... temporaries, ra at 0x14(sp)) cannot be reproduced,
-// so every function is kept as C behind NON_MATCHING for the PC port.
+// libleo manager API, built with IDO 5.3.
 
 typedef struct LEOCmdHeader {
     /* 0x00 */ u8 command;
@@ -27,7 +25,7 @@ typedef struct LEOCmdRead {
 extern u32 __osDisableInt(void);
 extern void __osRestoreInt(u32);
 
-extern void D_80083E60(void*);
+void func_80083E60(void*);
 void func_8007FFE0(void*);
 void func_80081250(void);
 void func_800814D0(void);
@@ -49,15 +47,14 @@ extern OSMesg D_800E87C0;
 extern OSMesg D_800E87C4;
 extern OSMesg D_800E87C8[2];
 extern OSMesg D_800E87D0;
-extern u8 D_800E87E5;
+extern volatile u8 D_800E87E5;
 
-// IDO-compiled libleo (LeoCreateLeoManager)
-#ifdef NON_MATCHING
+// libleo (LeoCreateLeoManager)
 void func_8007FB70(OSPri comPri, OSPri intPri, OSMesg* cmdBuf, s32 cmdMsgCnt) {
-    OSPri myPri;
+    u32 savedMask;
     OSPri oldPri;
     OSPri curPri;
-    u32 savedMask;
+    OSPri myPri;
 
     if (intPri < comPri) {
         myPri = comPri;
@@ -78,7 +75,7 @@ void func_8007FB70(OSPri comPri, OSPri intPri, OSMesg* cmdBuf, s32 cmdMsgCnt) {
     osCreateMesgQueue(&D_800E8790, D_800E87C8, 2);
     osCreateMesgQueue(&D_800E87A8, &D_800E87D0, 1);
     osCreateMesgQueue(&D_800E7A70, &D_800E7A88, 1);
-    osCreateThread(&D_800E7BE8, 1, D_80083E60, NULL, D_800E8348, comPri);
+    osCreateThread(&D_800E7BE8, 1, func_80083E60, NULL, D_800E8348, comPri);
     osStartThread(&D_800E7BE8);
     osCreateThread(&D_800E7D98, 1, func_8007FFE0, NULL, &D_800E8748, intPri);
     osStartThread(&D_800E7D98);
@@ -89,12 +86,8 @@ void func_8007FB70(OSPri comPri, OSPri intPri, OSMesg* cmdBuf, s32 cmdMsgCnt) {
         osSetThreadPri(NULL, oldPri);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80770", func_8007FB70);
-#endif
 
-// IDO-compiled libleo (leoCommand)
-#ifdef NON_MATCHING
+// libleo (leoCommand)
 void func_8007FD44(LEOCmdRead* cmd) {
     if (D_800C63C0 != 0) {
         cmd->header.status = 2;
@@ -120,16 +113,15 @@ void func_8007FD44(LEOCmdRead* cmd) {
         case 5:
         case 6:
             cmd->rw_bytes = 0;
-            if (osSendMesg(&D_800E8748, cmd, OS_MESG_NOBLOCK) != 0) {
-                cmd->header.sense_code = 0x23;
-                cmd->header.status = 2;
-            }
-            break;
+            goto send;
         default:
             if ((u32)(cmd->header.command - 1) >= 14) {
                 cmd->header.sense_code = 0x1F;
                 cmd->header.status = 2;
-            } else if (osSendMesg(&D_800E8748, cmd, OS_MESG_NOBLOCK) != 0) {
+                break;
+            }
+        send:
+            if (osSendMesg(&D_800E8748, cmd, OS_MESG_NOBLOCK) != 0) {
                 cmd->header.sense_code = 0x23;
                 cmd->header.status = 2;
             }
@@ -137,12 +129,8 @@ void func_8007FD44(LEOCmdRead* cmd) {
     }
     osSendMesg(&D_800E87A8, NULL, OS_MESG_BLOCK);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80770", func_8007FD44);
-#endif
 
-// IDO-compiled libleo (LeoReset)
-#ifdef NON_MATCHING
+// libleo (LeoReset)
 void func_8007FEA4(void) {
     D_800C63C0 = 1;
     if (D_800C63C4 != 0) {
@@ -154,22 +142,14 @@ void func_8007FEA4(void) {
         osSendMesg(&D_800E8748, &D_800CBAF0, OS_MESG_BLOCK);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80770", func_8007FEA4);
-#endif
 
-// IDO-compiled libleo (LeoResetClear)
-#ifdef NON_MATCHING
+// libleo (LeoResetClear)
 s32 func_8007FF34(void) {
     func_80081250();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80770", func_8007FF34);
-#endif
 
-// IDO-compiled libleo (LeoTestUnitReady)
-#ifdef NON_MATCHING
+// libleo (LeoTestUnitReady)
 u8 func_8007FF58(void) {
     LEOCmdHeader cmd;
 
@@ -186,6 +166,3 @@ u8 func_8007FF58(void) {
     }
     return cmd.sense_code;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80770", func_8007FF58);
-#endif

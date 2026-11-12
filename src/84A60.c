@@ -86,7 +86,7 @@ typedef struct LEOCmdLBAConv {
 extern u32 D_800E87DC;
 extern u32 D_800E87E0;
 extern u8 D_800E87E4;            // non-zero once the system area has been read
-extern u8 D_800E87E5;
+extern volatile u8 D_800E87E5;
 extern s32 D_800EA170;           // current command code
 extern OSIoMesg D_800EA158;
 extern OSMesgQueue D_800E8748;   // command queue
