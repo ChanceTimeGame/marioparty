@@ -507,35 +507,33 @@ void func_800F74A0_PeachsBirthdayCake(void) {
     SetNextChainAndSpace(-1, 1, 1);
 }
 
-// decomp-permuter
 void func_800F74C4_PeachsBirthdayCake(void)
 {
   s16 player;
-  unsigned short win;
-  s32 coins;
+  s16 win;
+  short coins;
   player = GetCurrentPlayerIndex();
   func_800405DC(player);
   SetPlayerAnimation(-1, -1, 2);
   if (_CheckFlag(0x42) == 0)
   {
     win = CreateTextWindow(0x48, 0x3C, 0x10, 3);
-    LoadStringIntoWindow((s16) win, (void *) 0x239, -1, -1);
+    LoadStringIntoWindow(win, (void *) 0x239, -1, -1);
     coins = 10;
   }
   else
   {
     win = CreateTextWindow(0x41, 0x3C, 0x11, 3);
-    LoadStringIntoWindow((s16) win, (void *) 0x23A, -1, -1);
+    LoadStringIntoWindow(win, (void *) 0x23A, -1, -1);
     coins = 20;
   }
-  func_8006E070((s16) win, 0);
-  ShowTextWindow((s16) win);
+  func_8006E070(win, 0);
+  ShowTextWindow(win);
   PlaySound(0x432);
-  func_8004DBD4((s16) win, player);
-  HideTextWindow((s16) win);
-  win = coins;
-  func_80055960(player, win);
-  ShowPlayerCoinChange(player, win);
+  func_8004DBD4(win, player);
+  HideTextWindow(win);
+  func_80055960(player, coins);
+  ShowPlayerCoinChange(player, coins);
   HuPrcSleep(30);
   func_8003FEFC(player);
 }

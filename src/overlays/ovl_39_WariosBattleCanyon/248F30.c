@@ -1394,7 +1394,6 @@ void func_800F93FC_WariosBattleCanyon(void) {
     SetNextChainAndSpace(GetCurrentPlayerIndex(), 2, 1);
 }
 
-// decomp-permuter
 void func_800F942C_WariosBattleCanyon(void)
 {
   s16 player;
