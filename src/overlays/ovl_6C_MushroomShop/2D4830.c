@@ -352,8 +352,8 @@ s16 func_800F7500_MushroomShop(s16 item) {
    box (name 0x92) instead opens a box and gives a random unbought minigame. Retail points the
    camera globals at this frame's camPos/camRot while an item is selected; they are re-aimed
    (func_800F6778) before the next sleep after this returns. */
-// register choice of one temporary at the first call (masked 0, raw 2; tried the store inside the call argument, an explicit (s16) cast)
-#ifdef NON_MATCHING
+/* The empty statement stands in for something retail had here (likely a macro that compiles to
+   nothing); without it the first call takes another temporary register. */
 void func_800F76A0_MushroomShop(void) {
     char buf[8];
     Vec3f pos;
@@ -387,6 +387,8 @@ void func_800F76A0_MushroomShop(void) {
     msg = 0xA6;
     func_800F6778_MushroomShop(2);
     sprFile = InitSprite(0x85);
+    do {
+    } while (0);
     spr = func_80019060(sprFile, 1, 1);
     func_80018C90(spr);
     func_80018D84(spr, 0xFFFF);
@@ -736,6 +738,3 @@ top:
         func_80067704(sprFile);
         return;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6C_MushroomShop/2D4830", func_800F76A0_MushroomShop);
-#endif
