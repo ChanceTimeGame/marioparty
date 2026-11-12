@@ -1449,30 +1449,29 @@ void func_800FB548_CrazyCutter(s32 arg0) {
     }
 }
 
-// decomp-permuter
-void func_800FB640_CrazyCutter(omObjData *parent, s32 sprite, s32 sprite2, s32 player)
-{
-  CrazyCutterRing *ring;
-  func_800FB450_CrazyCutter(sprite);
-  parent = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
-  parent->unk_50 = (ring = func_80023684(sizeof(CrazyCutterRing), 0x7918));
-  ring->radius = 0;
-  ring->step = 1.0f;
-  ring->end = 80.0f;
-  ring->mask = D_800FD518_CrazyCutter;
-  ring->width = D_800FD520_CrazyCutter;
-  ring->player = player;
-  func_800FB548_CrazyCutter(sprite2);
-  parent = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
-  parent->unk_50 = (ring = func_80023684(sizeof(CrazyCutterRing), 0x7918));
-  ring->radius = 80.0f;
-  ring->step = -1.0f;
-  ring->end = 0;
-  ring->mask = D_800FD51C_CrazyCutter;
-  ring->width = D_800FD528_CrazyCutter;
-  ring->player = player;
-  ring->frame = 0;
-  D_800FD5CA_CrazyCutter = -1;
+void func_800FB640_CrazyCutter(omObjData* parent, s32 sprite, s32 sprite2, s32 player) {
+    CrazyCutterRing* ring;
+
+    func_800FB450_CrazyCutter(sprite);
+    parent = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
+    parent->unk_50 = ring = func_80023684(sizeof(CrazyCutterRing), 0x7918);
+    ring->radius = 0;
+    ring->step = 1.0f;
+    ring->end = 80.0f;
+    ring->mask = D_800FD518_CrazyCutter;
+    ring->width = D_800FD520_CrazyCutter;
+    ring->player = player;
+    func_800FB548_CrazyCutter(sprite2);
+    parent = omAddObj(13, 0, 0, -1, &func_800FB778_CrazyCutter);
+    parent->unk_50 = ring = func_80023684(sizeof(CrazyCutterRing), 0x7918);
+    ring->radius = 80.0f;
+    ring->step = -1.0f;
+    ring->end = 0;
+    ring->mask = D_800FD51C_CrazyCutter;
+    ring->width = D_800FD528_CrazyCutter;
+    ring->player = player;
+    ring->frame = 0;
+    D_800FD5CA_CrazyCutter = -1;
 }
 void func_800FB778_CrazyCutter(omObjData* obj) {
     CrazyCutterRing* ring = obj->unk_50;
@@ -1531,12 +1530,10 @@ s32 func_800FB944_CrazyCutter(CrazyCutterPlayer* st) {
     }
     return D_800FD148_CrazyCutter;
 }
-// decomp-permuter
-s16 func_800FBAFC_CrazyCutter(s32 idx)
-{
-  unkSpriteStruct *new_var;
-  new_var = &D_800ED60C[idx];
-  return D_800FD14C_CrazyCutter = (*new_var).unk_04;
+s16 func_800FBAFC_CrazyCutter(s32 idx) {
+    unkSpriteStruct* spr = &D_800ED60C[idx];
+
+    return D_800FD14C_CrazyCutter = spr->unk_04;
 }
 void func_800FBB2C_CrazyCutter(void) {
     omObjData* temp_s0;
