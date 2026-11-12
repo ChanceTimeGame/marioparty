@@ -179,6 +179,6 @@ u8 func_80085504(u8* rtc) {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/85B70", D_800CC2B0);
+INCLUDE_RODATA("asm/nonmatchings/85CA0", D_800CC2B0);
 
-INCLUDE_RODATA("asm/nonmatchings/85B70", D_800CC2B8);
+INCLUDE_RODATA("asm/nonmatchings/85CA0", D_800CC2B8);
