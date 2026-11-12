@@ -101,7 +101,6 @@ void func_800F9310_MinigameStadiumMinigameResultsScreen(void) {
 }
 
 // `D_800FB0F0 + c` tried
-// decomp-permuter
 void func_800F9654_MinigameStadiumMinigameResultsScreen(PlayerRes *res)
 {
   u8 c;
@@ -109,11 +108,10 @@ void func_800F9654_MinigameStadiumMinigameResultsScreen(PlayerRes *res)
   s32 mode;
   c = GwPlayer[res->index].character;
   mode = 0x2DD;
-  ;
-  res->model = LoadFormFile(((*(&D_800FB0F0_MinigameStadiumMinigameResultsScreen[c])) << 16) | 0x9F, mode);
+  res->model = LoadFormFile((D_800FB0F0_MinigameStadiumMinigameResultsScreen[c] << 16) | 0x9F, mode);
   res->mot[0] = func_80023FC8(res->model);
-  res->mot[1] = LoadFormFile(((*(&D_800FB0F0_MinigameStadiumMinigameResultsScreen[c])) << 16) | 0x74, mode);
-  res->mot[2] = LoadFormFile(((*(&D_800FB0F0_MinigameStadiumMinigameResultsScreen[c])) << 16) | 0xF, mode);
+  res->mot[1] = LoadFormFile((D_800FB0F0_MinigameStadiumMinigameResultsScreen[c] << 16) | 0x74, mode);
+  res->mot[2] = LoadFormFile((D_800FB0F0_MinigameStadiumMinigameResultsScreen[c] << 16) | 0xF, mode);
   if (c == 5)
   {
     res->mot[3] = LoadFormFile((D_800FB0F0_MinigameStadiumMinigameResultsScreen[5] << 16) | 0x3E, mode);
@@ -529,21 +527,20 @@ void func_800FA64C_MinigameStadiumMinigameResultsScreen(PlayerRes* res) {
     res->flags |= 0x400;
 }
 
-// decomp-permuter
 void func_800FAD74_MinigameStadiumMinigameResultsScreen(PlayerRes *unused)
 {
   Process *proc;
   PlayerRes *res;
   ResMain *main;
-  Process *new_var;
+  Process *player;
   s32 i;
   proc = HuPrcCurrentGet();
   res = proc->user_data;
   main = proc->relative->user_data;
   for (i = 0; i < 4; i++)
   {
-    new_var = main->player[i];
-    D_800FB260_MinigameStadiumMinigameResultsScreen[i] = new_var->user_data;
+    player = main->player[i];
+    D_800FB260_MinigameStadiumMinigameResultsScreen[i] = player->user_data;
   }
 
   if (res->flags & 0x400)
