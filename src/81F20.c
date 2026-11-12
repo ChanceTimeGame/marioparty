@@ -3,7 +3,6 @@
 // 64DD driver (libleo) microsequence loader (leoSet_mseq and its two tables) and the command
 // queue flush (MP2 990A0.c), built with IDO 5.3. Its rodata (CC770-CC7F8) follows 80BE0.c's jump
 // tables: IDO emits a file's const data before its jump tables, so this is a separate file.
-// func_80081320 does not match yet and stays asm.
 
 typedef struct LEOCmdHeader {
     /* 0x00 */ u8 command;
@@ -107,12 +106,11 @@ const u32 D_800CBBB0[16] = {
 const char D_800CBBF0[] = "B014A26";
 
 // IDO-compiled libleo (leoSet_mseq: load the read or write microsequence)
-#ifdef NON_MATCHING
 void func_80081320(u16 rwmode) {
-    u32* src;
-    u8 i;
-    u32 secm1;
+    const u32* src;
     u32 sec;
+    u32 secm1;
+    u8 i;
 
     D_800E87E0 &= ~0x40000000;
     osEPiWriteIo(D_800EA150, 0x05000518, D_800E87E0);
@@ -121,11 +119,13 @@ void func_80081320(u16 rwmode) {
     } else {
         src = D_800CBB70;
     }
-    for (i = 0; i < 16; i++) {
-        D_800E7AC0[i] = *src++;
+    for (i = 0; i < 16; i++, src++) {
+        D_800E7AC0[i] = *src;
     }
-    secm1 = D_800E87F0.sec_bytes - 1;
-    D_800E7AC0[4] |= secm1 << 8;
+    sec = secm1 = D_800E87F0.sec_bytes - 1;
+    secm1 += 7;
+    sec <<= 8;
+    D_800E7AC0[4] |= sec;
     osWritebackDCache(D_800E7AC0, sizeof(D_800E7AC0));
     D_800EA158.dramAddr = D_800E7AC0;
     D_800EA158.devAddr = 0x05000580;
@@ -133,8 +133,7 @@ void func_80081320(u16 rwmode) {
     D_800EA150->transferInfo.cmdType = OS_OTHERS;
     osEPiStartDma(D_800EA150, &D_800EA158, OS_WRITE);
     osRecvMesg(&D_800E8790, NULL, OS_MESG_BLOCK);
-    osEPiWriteIo(D_800EA150, 0x05000530, ((secm1 + 7) | 0x5900) << 16);
-    sec = secm1 << 8;
+    osEPiWriteIo(D_800EA150, 0x05000530, (secm1 | 0x5900) << 16);
     if (D_800E87E6 & 0x800) {
         sec += 0x100;
     }
@@ -142,9 +141,6 @@ void func_80081320(u16 rwmode) {
     D_800E87E0 |= 0x40000000;
     osEPiWriteIo(D_800EA150, 0x05000518, D_800E87E0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/81F20", func_80081320);
-#endif
 
 // IDO-compiled libleo (flush the command queue: every pending command is terminated)
 void func_800814D0(void) {
