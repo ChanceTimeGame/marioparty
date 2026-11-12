@@ -159,14 +159,11 @@ s8 func_800F6AC8_MinigameStadiumMinigameResultsScreen(void) {
     return ret;
 }
 
-// decomp-permuter
 s8 func_800F6B0C_MinigameStadiumMinigameResultsScreen(void)
 {
   s32 i;
   s32 best;
-  i = 0;
-  best = i;
-  for (i = i; i < 4; i++)
+  for (i = 0, best = 0; i < 4; i++)
   {
     if (GwPlayer[i].coins_mg > GwPlayer[best].coins_mg)
     {
@@ -410,7 +407,6 @@ void func_800F72B0_MinigameStadiumMinigameResultsScreen(ColWork* w, ColWork* col
 }
 
 /* rotate the column's coins one slot forward (coins lost) */
-// decomp-permuter
 void func_800F75C0_MinigameStadiumMinigameResultsScreen(ColWork *w, ColWork *col)
 {
   ColWork *c;
