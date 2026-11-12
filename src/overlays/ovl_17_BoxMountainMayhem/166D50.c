@@ -490,33 +490,28 @@ s32 func_800F8400_BoxMountainMayhem(Vec* from, Vec* out, f32* dist) {
     return count;
 }
 
-// decomp-permuter
-s32 func_800F84D0_BoxMountainMayhem(void)
-{
-  omObjData *obj;
-  s32 count;
-  s32 n;
-  s32 i;
-  if (_CheckFlag(0x2B) != 0)
-  {
-    n = 12;
-  }
-  else
-  {
-    n = 6;
-  }
-  count = n;
-  count = D_800FC288_BoxMountainMayhem < count;
-  for (i = 0; i < n; i++)
-  {
-    obj = D_800FC248_BoxMountainMayhem[i];
-    if (obj != 0)
-    {
-      count += ((BMMBodyWork *) obj->unk_50)->unk_54 != 0;
-    }
-  }
+s32 func_800F84D0_BoxMountainMayhem(void) {
+    omObjData* obj;
+    s32 count;
+    s32 n;
+    s32 i;
 
-  return count;
+    if (_CheckFlag(0x2B) != 0) {
+        n = 12;
+    } else {
+        n = 6;
+    }
+    count = 0;
+    if (D_800FC288_BoxMountainMayhem < n) {
+        count = 1;
+    }
+    for (i = 0; i < n; i++) {
+        obj = D_800FC248_BoxMountainMayhem[i];
+        if (obj != NULL && ((BMMBodyWork*)obj->unk_50)->unk_54 != 0) {
+            count++;
+        }
+    }
+    return count;
 }
 
 // NON_MATCHING: register allocation throughout, frame 8 bytes larger (masked 118; control flow and operations checked against the asm; tried a shared stack variable, precomputed stage bounds)

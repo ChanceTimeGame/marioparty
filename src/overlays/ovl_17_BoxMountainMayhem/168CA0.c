@@ -865,7 +865,6 @@ f32 func_800FB4E8_BoxMountainMayhem(f32 dist) {
     return res;
 }
 
-// decomp-permuter
 f32 func_800FB598_BoxMountainMayhem(void)
 {
   omObjData *p;
@@ -890,7 +889,7 @@ f32 func_800FB598_BoxMountainMayhem(void)
     }
     x = (750.0f - p->trans.x) / 150.0f;
     z = (p->trans.z + 750.0f) / 150.0f;
-    if ((x >= 4) | (z >= 4))
+    if (x >= 4 || z >= 4)
     {
       continue;
     }
@@ -925,7 +924,6 @@ f32 func_800FB598_BoxMountainMayhem(void)
   return 0.0f - best;
 }
 
-// decomp-permuter
 void func_800FB788_BoxMountainMayhem(void)
 {
   f32 a;
