@@ -5,7 +5,6 @@ extern u8 D_800D1720[1024]; // LZ window
 
 typedef struct DecodeStruct {
 /* 0x00 */ u16 chunk_len;
-/* 0x02 */ s16 pad;
 /* 0x04 */ u8 *src;
 /* 0x08 */ u8 *dest;
 /* 0x0C */ u32 len;

@@ -1042,11 +1042,11 @@ const char D_800CB59C[] = " CANCEL";
 void omDBGSystemKeyCheck(omObjData* obj) {
     s32 i;
     s32 j;
-    u8 pad;
+    u8 port;
     u8 close = 0;
 
     if (obj->work[0] & 1) {
-        pad = obj->work[1];
+        port = obj->work[1];
         if (!(obj->work[0] & 4)) {
             sprintf(pfStrBuf, "- PAUSE -");
             fontcolor = 4;
@@ -1072,21 +1072,21 @@ void omDBGSystemKeyCheck(omObjData* obj) {
             print8(D_800C5A24[obj->work[2]].x + 1, D_800C5A24[obj->work[2]].y + 1, pfStrBuf);
             fontcolor = 15;
             print8(D_800C5A24[obj->work[2]].x, D_800C5A24[obj->work[2]].y, pfStrBuf);
-            if (D_800EE324[pad] & 0x400) {
+            if (D_800EE324[port] & 0x400) {
                 PlaySound(0xF5);
                 do {
                     if (++obj->work[2] >= 6) {
                         obj->work[2] = 0;
                     }
                 } while (D_800C5A24[obj->work[2]].disabled == 1);
-            } else if (D_800EE324[pad] & 0x800) {
+            } else if (D_800EE324[port] & 0x800) {
                 PlaySound(0xF5);
                 do {
                     if ((s8)--obj->work[2] < 0) {
                         obj->work[2] = 5;
                     }
                 } while (D_800C5A24[obj->work[2]].disabled == 1);
-            } else if (D_800EE324[pad] & 8) {
+            } else if (D_800EE324[port] & 8) {
                 obj->work[0] ^= 8;
                 if (obj->work[0] & 8) {
                     saftyFrameFlashSet(1, 1, -1, 0x60, 0x80, 0xFF, 0, 0, 100);
@@ -1095,37 +1095,37 @@ void omDBGSystemKeyCheck(omObjData* obj) {
                     saftyFrameColor.r = saftyFrameColor.g = 0;
                     saftyFrameColor.b = 0x90;
                 }
-            } else if (D_800EE324[pad] & 4) {
+            } else if (D_800EE324[port] & 4) {
                 obj->work[0] ^= 0x20;
                 if (obj->work[0] & 0x20) {
                     saftyFrameColor.g = 0xFF;
                 } else {
                     saftyFrameColor.g = 0;
                 }
-            } else if (D_800EE324[pad] & 2) {
+            } else if (D_800EE324[port] & 2) {
                 obj->work[0] ^= 0x10;
                 if (obj->work[0] & 0x10) {
                     saftyFrameColor.r = 0xFF;
                 } else {
                     saftyFrameColor.r = 0;
                 }
-            } else if (D_800EE324[pad] & 1) {
+            } else if (D_800EE324[port] & 1) {
                 obj->work[0] ^= 0x40;
                 if (obj->work[0] & 0x40) {
                     saftyFrameColor.b = 0xFF;
                 } else {
                     saftyFrameColor.b = 0;
                 }
-            } else if (D_800EE324[pad] & 0x8000) {
-                D_800EE324[pad] = 0;
+            } else if (D_800EE324[port] & 0x8000) {
+                D_800EE324[port] = 0;
                 PlaySound(0xF6);
                 switch (obj->work[2]) {
                 case 0:
-                    D_800EE324[pad] |= 0x20;
+                    D_800EE324[port] |= 0x20;
                     break;
                 case 1:
                     D_800F5144 = 1;
-                    D_800EE324[pad] |= 0x20;
+                    D_800EE324[port] |= 0x20;
                     if (omDBGSysKeyObj->work[0] & 1) {
                         omDBGSysKeyObj->work[0] &= ~1;
                         func_80070ED4();
@@ -1158,7 +1158,7 @@ void omDBGSystemKeyCheck(omObjData* obj) {
                 }
             }
         }
-        if (D_800EE324[pad] & 0x20) {
+        if (D_800EE324[port] & 0x20) {
             close = 1;
             obj->work[0] &= ~4;
         }
