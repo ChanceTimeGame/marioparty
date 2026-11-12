@@ -2,9 +2,10 @@
 #include "sdk_leo.h"
 
 // libultra 2.0I 64DD interrupt handling (leointerrupt.c) and osLeoDiskInit (leodiskinit.c).
-// IDO-compiled with libleo: NON_MATCHING. Differs from later libultra (decompals ultralib): a C2
-// transfer at the wrong sector returns at once, the track-mode C2 check reports error 23, and
-// osLeoDiskInit does not program the domain-2 timing registers.
+// Built with IDO 5.3 with libleo; __osLeoInterrupt does not match yet and stays asm. Differs from
+// later libultra (decompals ultralib): a C2 transfer at the wrong sector returns at once, the
+// track-mode C2 check reports error 23, and osLeoDiskInit does not program the domain-2 timing
+// registers.
 
 #define LEO_STATUS 0x05000508
 #define LEO_BM_CTL 0x05000510
@@ -187,7 +188,6 @@ s32 __osLeoInterrupt(void) {
 INCLUDE_ASM("asm/nonmatchings/82AF0", __osLeoInterrupt);
 #endif
 
-#ifdef NON_MATCHING
 void func_80082450(void) {
     __OSTranxInfo* info = &D_800E9884->transferInfo;
     u32 pi_stat;
@@ -200,11 +200,7 @@ void func_80082450(void) {
     LEO_IO_WRITE(PI_STATUS_REG, PI_STATUS_CLR_INTR);
     __OSGlobalIntMask |= OS_IM_PI;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/82AF0", func_80082450);
-#endif
 
-#ifdef NON_MATCHING
 void func_80082504(void) {
     OSMesgQueue* mq = D_800F52C0;
     s32 last;
@@ -219,11 +215,7 @@ void func_80082504(void) {
         __osEnqueueThread(&__osRunQueue, __osPopThread(&mq->mtqueue));
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/82AF0", func_80082504);
-#endif
 
-#ifdef NON_MATCHING
 OSPiHandle* osLeoDiskInit(void) {
     u32 saveMask;
 
@@ -243,6 +235,3 @@ OSPiHandle* osLeoDiskInit(void) {
     __osRestoreInt(saveMask);
     return &D_800E9810;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/82AF0", osLeoDiskInit);
-#endif
