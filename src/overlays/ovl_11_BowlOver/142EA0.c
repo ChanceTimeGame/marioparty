@@ -140,14 +140,11 @@ void func_800FA8D0_BowlOver(void) {
     }
 }
 
-// decomp-permuter
-void func_800FAAF8_BowlOver(u8 mdl, f32 x, f32 y, f32 z)
-{
-  f32 s;
-  ;
-  s = 0.4f - (y * 0.0015f);
-  func_80025830(mdl, s * 2.5, 1.0f, (0.4f - (y * 0.0015f)) * 2.5);
-  func_80025798(mdl, x, 5.0f, z);
+void func_800FAAF8_BowlOver(u8 mdl, f32 x, f32 y, f32 z) {
+    f32 s = 0.4f - y * 0.0015f;
+
+    func_80025830(mdl, s * 2.5, 1.0f, s * 2.5);
+    func_80025798(mdl, x, 5.0f, z);
 }
 
 // decomp-permuter

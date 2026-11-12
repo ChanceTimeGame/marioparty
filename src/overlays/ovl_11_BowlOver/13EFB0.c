@@ -755,18 +755,17 @@ void func_800F8274_BowlOver(omObjData* obj) {
 }
 
 // argument register copy order
-// decomp-permuter
 void func_800F8964_BowlOver(omObjData *obj, s32 dir, s32 file, s32 player, f32 x, f32 y, f32 z)
 {
   BowlPlayerWork *w;
-  unsigned short new_var;
+  u16 pl;
   u32 chr;
-  new_var = player;
+  pl = player;
   obj->unk_50 = func_80023684(sizeof(BowlPlayerWork), 0x7918);
   func_8009B770(obj->unk_50, 0, sizeof(BowlPlayerWork));
   w = (BowlPlayerWork *) obj->unk_50;
   w->unk_D8 = func_80023684(obj->mtncnt * 4, 0x7918);
-  w->unk_56 = GwPlayer[(u16) new_var].port;
+  w->unk_56 = GwPlayer[(u16) pl].port;
   obj->model[0] = LoadFormFile(dir | file, 0x699);
   obj->model[1] = func_800174F4(6, 0x699);
   guRandom();
@@ -813,7 +812,7 @@ void func_800F8964_BowlOver(omObjData *obj, s32 dir, s32 file, s32 player, f32 x
 
   }
 
-  w->unk_58 = new_var;
+  w->unk_58 = pl;
   func_80025BB8(obj->model[0], obj->motion[2]);
   func_80025EB4(obj->model[0], 1, 1);
   D_800FD5AC_BowlOver[D_800FDC5A_BowlOver[0]] = GwPlayer[D_800FDC5A_BowlOver[0]].coins;
@@ -1074,18 +1073,11 @@ void func_800F9B00_BowlOver(omObjData* obj) {
     }
 }
 
-// decomp-permuter
-void func_800F9B78_BowlOver(omObjData *obj)
-{
-  f32 s;
-  omObjData *new_var2;
-  float new_var;
-  s = 0.4f - (obj->trans.y * 0.0015f);
-  ;
-  new_var = 1.0f;
-  func_80025830(obj->model[1], s * 2.5, new_var, s * 2.5);
-  new_var2 = obj;
-  func_80025798(obj->model[1], new_var2->trans.x, (float) 3.0f, obj->trans.z);
+void func_800F9B78_BowlOver(omObjData* obj) {
+    f32 s = 0.4f - obj->trans.y * 0.0015f;
+
+    func_80025830(obj->model[1], s * 2.5, 1.0f, s * 2.5);
+    func_80025798(obj->model[1], obj->trans.x, 3.0f, obj->trans.z);
 }
 
 void func_800F9C0C_BowlOver(omObjData* obj, f32 x, f32 y, f32 z) {
@@ -1117,20 +1109,21 @@ s32 func_800F9CF8_BowlOver(omObjData* obj, omObjData* ball) {
     w = PLAYER_WORK(obj);
     bw = BALL_WORK(ball);
 
-    if (bw->unk_50 & 0x40) {
-        if (!(((volatile BowlBallWork*)bw)->unk_50 & 0x20)) { /* retail reloads the flags */
-            f = w->unk_50;
-            if (f & 0x20) {
-                return 0;
-            }
-            w->unk_50 = f | 0x20;
-            bw->unk_50 |= 0x20;
-            w->unk_B8 = ball;
-            func_8002859C(ball->model[0], obj->model[0], "item_hook");
-            func_800258EC(ball->model[0], 0x4000, 0x4000);
-            w->unk_A4 = bw->unk_58;
-            return 1;
+    if (!(bw->unk_50 & 0x40)) {
+        return 0;
+    }
+    if (!(bw->unk_50 & 0x20)) {
+        f = w->unk_50;
+        if (f & 0x20) {
+            return 0;
         }
+        w->unk_50 = f | 0x20;
+        bw->unk_50 |= 0x20;
+        w->unk_B8 = ball;
+        func_8002859C(ball->model[0], obj->model[0], "item_hook");
+        func_800258EC(ball->model[0], 0x4000, 0x4000);
+        w->unk_A4 = bw->unk_58;
+        return 1;
     }
     return 0;
 }
