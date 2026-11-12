@@ -302,27 +302,24 @@ void func_800F711C_BashNCash(f32* dist, f32* angle) {
 
 /* The middle of the widest gap between three sorted angles. */
 // register allocation and scheduling (nmcmp: calls and stores equal)
-// decomp-permuter
-f32 func_800F7240_BashNCash(f32 *angle)
-{
-  f32 gap;
-  f32 start;
-  f32 new_var;
-  gap = angle[1] - angle[0];
-  start = angle[0];
-  new_var = angle[1];
-  if (gap < (angle[2] - new_var))
-  {
-    gap = angle[2] - new_var;
-    start = new_var;
-  }
-  new_var = angle[0];
-  if (gap < ((new_var + 360.0f) - angle[2]))
-  {
-    gap = (new_var + 360.0f) - angle[2];
-    start = angle[2];
-  }
-  return start + (gap / 2.0f);
+f32 func_800F7240_BashNCash(f32* angle) {
+    f32 gap;
+    f32 start;
+    f32 d;
+
+    gap = angle[1] - angle[0];
+    start = angle[0];
+    d = angle[2] - angle[1];
+    if (gap < d) {
+        gap = d;
+        start = angle[1];
+    }
+    d = angle[0] + 360.0f - angle[2];
+    if (gap < d) {
+        gap = d;
+        start = angle[2];
+    }
+    return start + gap / 2.0f;
 }
 
 /* The nearest coin in flight within 400 units, or NULL. */
@@ -1144,12 +1141,10 @@ u16 func_800F99A8_BashNCash(omObjData* cash, omObjData* hitter, s32 type) {
 }
 
 // register allocation and scheduling (nmcmp: calls and stores equal)
-// decomp-permuter
-s32 func_800F9BAC_BashNCash(void)
-{
-  s32 new_var;
-  new_var = D_800FE610_BashNCash;
-  return D_800FE698_BashNCash + GwPlayer[new_var].coins_mg;
+s32 func_800F9BAC_BashNCash(void) {
+    s32 player = D_800FE610_BashNCash;
+
+    return D_800FE698_BashNCash + GwPlayer[player].coins_mg;
 }
 
 /* The cash player was hit: knock out a 5-coin (or 1-coin) piece. */

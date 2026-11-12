@@ -146,27 +146,18 @@ void func_800F6BF8_KnockBlockTower(omObjData* obj) {
     }
 }
 
-// decomp-permuter
-void func_800F6C4C_KnockBlockTower(void)
-{
-  s32 i;
-  s32 t;
-  int new_var;
-  for (i = 0; i < 4; i++)
-  {
-    if (GwPlayer[i].group == 0)
-    {
-      break;
-      if (1)
-      {
-      }
-    }
-  }
+void func_800F6C4C_KnockBlockTower(void) {
+    s32 i;
 
-  new_var = -(t = i < 4);
-  i = i & new_var;
-  i = i & new_var;
-  D_800FB8EC_KnockBlockTower = i;
+    for (i = 0; i < 4; i++) {
+        if (GwPlayer[i].group == 0) {
+            break;
+        }
+    }
+    if (i >= 4) {
+        i = 0;
+    }
+    D_800FB8EC_KnockBlockTower = i;
 }
 
 void func_800F6C98_KnockBlockTower(void) {

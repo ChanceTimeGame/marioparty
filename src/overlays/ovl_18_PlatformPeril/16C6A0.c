@@ -953,31 +953,28 @@ void func_800F979C_PlatformPeril(omObjData* obj) {
     }
 }
 
-// decomp-permuter
-void func_800FAAE0_PlatformPeril(f32 t, PPCamKey *k, PPCamKey *out)
-{
-  f32 s = 1.0f - t;
-  f32 a = ((1.0f - t) * (1.0f - t)) / 2.0f;
-  f32 b = ((1.0f - t) * t) + 0.5f;
-  f32 c = (t * t) / 2.0f;
-  if (k[2].zoom < 0.0f)
-  {
-    out->zoom = ((a * k[0].zoom) + (b * k[1].zoom)) + (c * k[1].zoom);
-    out->rot.x = ((a * k[0].rot.x) + (b * k[1].rot.x)) + (c * k[1].rot.x);
-    out->rot.y = ((a * k[0].rot.y) + (b * k[1].rot.y)) + (c * k[1].rot.y);
-    out->rot.z = ((a * k[0].rot.z) + (b * k[1].rot.z)) + (c * k[1].rot.z);
-    out->center.x = ((a * k[0].center.x) + (b * k[1].center.x)) + (c * k[1].center.x);
-    out->center.y = ((a * k[0].center.y) + (b * k[1].center.y)) + (c * k[1].center.y);
-    out->center.z = ((a * k[0].center.z) + (b * k[1].center.z)) + (c * k[1].center.z);
-    return;
-  }
-  out->zoom = ((a * k[0].zoom) + (b * k[1].zoom)) + (c * k[2].zoom);
-  out->rot.x = ((a * k[0].rot.x) + (b * k[1].rot.x)) + (c * k[2].rot.x);
-  out->rot.y = ((a * k[0].rot.y) + (b * k[1].rot.y)) + (c * k[2].rot.y);
-  out->rot.z = ((a * k[0].rot.z) + (b * k[1].rot.z)) + (c * k[2].rot.z);
-  out->center.x = ((a * k[0].center.x) + (b * k[1].center.x)) + (c * k[2].center.x);
-  out->center.y = ((a * k[0].center.y) + (b * k[1].center.y)) + (c * k[2].center.y);
-  out->center.z = ((a * k[0].center.z) + (b * k[1].center.z)) + (c * k[2].center.z);
+void func_800FAAE0_PlatformPeril(f32 t, PPCamKey* k, PPCamKey* out) {
+    f32 a = (1.0f - t) * (1.0f - t) / 2.0f;
+    f32 b = (1.0f - t) * t + 0.5f;
+    f32 c = t * t / 2.0f;
+
+    if (k[2].zoom < 0.0f) {
+        out->zoom = a * k[0].zoom + b * k[1].zoom + c * k[1].zoom;
+        out->rot.x = a * k[0].rot.x + b * k[1].rot.x + c * k[1].rot.x;
+        out->rot.y = a * k[0].rot.y + b * k[1].rot.y + c * k[1].rot.y;
+        out->rot.z = a * k[0].rot.z + b * k[1].rot.z + c * k[1].rot.z;
+        out->center.x = a * k[0].center.x + b * k[1].center.x + c * k[1].center.x;
+        out->center.y = a * k[0].center.y + b * k[1].center.y + c * k[1].center.y;
+        out->center.z = a * k[0].center.z + b * k[1].center.z + c * k[1].center.z;
+        return;
+    }
+    out->zoom = a * k[0].zoom + b * k[1].zoom + c * k[2].zoom;
+    out->rot.x = a * k[0].rot.x + b * k[1].rot.x + c * k[2].rot.x;
+    out->rot.y = a * k[0].rot.y + b * k[1].rot.y + c * k[2].rot.y;
+    out->rot.z = a * k[0].rot.z + b * k[1].rot.z + c * k[2].rot.z;
+    out->center.x = a * k[0].center.x + b * k[1].center.x + c * k[2].center.x;
+    out->center.y = a * k[0].center.y + b * k[1].center.y + c * k[2].center.y;
+    out->center.z = a * k[0].center.z + b * k[1].center.z + c * k[2].center.z;
 }
 
 /* Unreferenced words after func_800F979C's jump table. */

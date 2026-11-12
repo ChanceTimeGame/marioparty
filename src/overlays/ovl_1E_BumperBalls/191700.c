@@ -1109,141 +1109,109 @@ u16 func_800F9EE0_BumperBalls(void) {
 }
 
 // separate work assignment and the unk_58 block order tried
-// decomp-permuter
-void func_800F9F30_BumperBalls(omObjData *object)
-{
-  u16 *table;
-  BumperBallsWork *work = object->unk_50;
-  u16 candidates[4];
-  s32 bias;
-  u16 count;
-  s32 i;
-  work->unk_46 = 0;
-  if (D_800FCD1E_BumperBalls != 0)
-  {
-    switch (GwPlayer[work->player].cpu_difficulty)
-    {
-      case 0:
-        table = D_800FCB88_BumperBalls;
-        bias = 5;
-        break;
+void func_800F9F30_BumperBalls(omObjData* object) {
+    u16* table;
+    BumperBallsWork* work = object->unk_50;
+    u16 candidates[4];
+    s32 bias;
+    u16 count;
+    s32 i;
 
-      case 1:
-        table = D_800FCB88_BumperBalls;
-        bias = 4;
-        break;
-
-      case 2:
-        table = D_800FCBA8_BumperBalls;
-        bias = 3;
-        break;
-
-      case 3:
-        table = D_800FCBA8_BumperBalls;
-        bias = 2;
-        break;
-
+    work->unk_46 = 0;
+    if (D_800FCD1E_BumperBalls != 0) {
+        switch (GwPlayer[work->player].cpu_difficulty) {
+            case 0:
+                table = D_800FCB88_BumperBalls;
+                bias = 5;
+                break;
+            case 1:
+                table = D_800FCB88_BumperBalls;
+                bias = 4;
+                break;
+            case 2:
+                table = D_800FCBA8_BumperBalls;
+                bias = 3;
+                break;
+            case 3:
+                table = D_800FCBA8_BumperBalls;
+                bias = 2;
+                break;
+            }
+    } else {
+        switch (GwPlayer[work->player].cpu_difficulty) {
+            case 0:
+                table = D_800FCB98_BumperBalls;
+                bias = 4;
+                break;
+            case 1:
+                table = D_800FCB98_BumperBalls;
+                bias = 3;
+                break;
+            case 2:
+                table = D_800FCBA8_BumperBalls;
+                bias = 2;
+                break;
+            case 3:
+                table = D_800FCBA8_BumperBalls;
+                bias = 2;
+                break;
+            }
     }
-
-  }
-  else
-  {
-    switch (GwPlayer[work->player].cpu_difficulty)
-    {
-      case 0:
-        table = D_800FCB98_BumperBalls;
-        bias = 4;
-        break;
-
-      case 1:
-        table = D_800FCB98_BumperBalls;
-        bias = 3;
-        break;
-
-      case 2:
+    if (work->unk_58 == 1) {
+        work->unk_58 = 0;
         table = D_800FCBA8_BumperBalls;
-        bias = 2;
-        break;
-
-      case 3:
-        table = D_800FCBA8_BumperBalls;
-        bias = 2;
-        break;
-
     }
-
-  }
-  if (work->unk_58 == 1)
-  {
-    work->unk_58 = 0;
-    table = D_800FCBA8_BumperBalls;
-  }
-  work->unk_42 = table[rand8() & 7];
-  while (1)
-  {
-    switch (work->unk_42)
-    {
-      case 1:
-        work->unk_48 = (((u8) (rand8() % 180)) + 180) >> 1;
-        work->unk_44 = bias;
-        work->unk_4A = 1;
-        work->unk_5A = 0;
-        return;
-
-      case 2:
-        if (work->unk_5A < 3)
-      {
-        count = (u8) (rand8() % 21);
-        work->unk_48 = (count + 20) >> 1;
-        work->unk_5A++;
-        return;
-      }
-        work->unk_42 = 1;
-        continue;
-
-      case 3:
-        count = 0;
-        work->unk_48 = (((u8) (rand8() % 180)) + 180) >> 1;
-        for (i = 0; i < 4; i++)
-      {
-        omObjData *other = D_800FCD2C_BumperBalls[i];
-        BumperBallsWork *otherWork;
-        if (object == other)
-        {
-          continue;
-        }
-        otherWork = other->unk_50;
-        if ((otherWork->unk_00 == 3) || (otherWork->unk_00 == 4))
-        {
-          continue;
-        }
-        if ((otherWork->unk_00 == 5) || (otherWork->unk_00 == 6))
-        {
-          continue;
-        }
-        candidates[count++] = i;
-      }
-
-        work->unk_5A = 0;
-        if (count == 0)
-      {
-        work->unk_42 = 2;
-        continue;
-      }
-        work->unk_54 = D_800FCD2C_BumperBalls[candidates[rand8() % count]];
-        work->unk_44 = bias;
-        work->unk_4A = 1;
-        return;
-
-      case 4:
-        work->unk_48 = (((u8) (rand8() % 180)) + 60) >> 1;
-        work->unk_5A = 0;
-        return;
-
+    work->unk_42 = table[rand8() & 7];
+    while (1) {
+        switch (work->unk_42) {
+            case 1:
+                work->unk_48 = ((u8)(rand8() % 180) + 180) >> 1;
+                work->unk_44 = bias;
+                work->unk_4A = 1;
+                work->unk_5A = 0;
+                return;
+            case 2:
+                if (work->unk_5A < 3) {
+                    count = (u8)(rand8() % 21);
+                    work->unk_48 = (count + 20) >> 1;
+                    work->unk_5A++;
+                    return;
+                }
+                work->unk_42 = 1;
+                continue;
+            case 3:
+                count = 0;
+                work->unk_48 = ((u8)(rand8() % 180) + 180) >> 1;
+                for (i = 0; i < 4; i++) {
+                    omObjData* other = D_800FCD2C_BumperBalls[i];
+                    BumperBallsWork* otherWork;
+                    if (object == other) {
+                        continue;
+                    }
+                    otherWork = other->unk_50;
+                    if (otherWork->unk_00 == 3 || otherWork->unk_00 == 4) {
+                        continue;
+                    }
+                    if (otherWork->unk_00 == 5 || otherWork->unk_00 == 6) {
+                        continue;
+                    }
+                    candidates[count++] = i;
+                }
+                work->unk_5A = 0;
+                if (count == 0) {
+                    work->unk_42 = 2;
+                    continue;
+                }
+                work->unk_54 = D_800FCD2C_BumperBalls[candidates[rand8() % count]];
+                work->unk_44 = bias;
+                work->unk_4A = 1;
+                return;
+            case 4:
+                work->unk_48 = ((u8)(rand8() % 180) + 60) >> 1;
+                work->unk_5A = 0;
+                return;
+            }
     }
-
-  }
-
 }
 
 u16 func_800FA36C_BumperBalls(omObjData* arg0) {

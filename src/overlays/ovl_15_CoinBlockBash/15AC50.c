@@ -557,28 +557,21 @@ void func_800FFED0_CoinBlockBash(u8 count) {
 }
 
 // NON_MATCHING: scheduling of the slot address
-// decomp-permuter
-s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags)
-{
-  CBBBill *fx;
-  s16 i;
-  for (i = 0; i < D_80103258_CoinBlockBash; i++)
-  {
-    if (D_80103298_CoinBlockBash[i].dl == ((Gfx *) (-1)))
-    {
-      break;
-    }
-  }
+s16 func_801000B8_CoinBlockBash(s16 sprite, u8 flags) {
+    s16 i;
 
-  if (i == D_80103258_CoinBlockBash)
-  {
-    return -1;
-  }
-  ;
-  (&D_80103298_CoinBlockBash[i])->dl = 0;
-  (&D_80103298_CoinBlockBash[i])->sprite = sprite;
-  (&D_80103298_CoinBlockBash[i])->flags = flags;
-  return i;
+    for (i = 0; i < D_80103258_CoinBlockBash; i++) {
+        if (D_80103298_CoinBlockBash[i].dl == (Gfx*)-1) {
+            break;
+        }
+    }
+    if (i == D_80103258_CoinBlockBash) {
+        return -1;
+    }
+    D_80103298_CoinBlockBash[i].dl = 0;
+    D_80103298_CoinBlockBash[i].sprite = sprite;
+    D_80103298_CoinBlockBash[i].flags = flags;
+    return i;
 }
 
 /* A billboard that draws model's display list (its per-frame segment 1) instead of a sprite. */

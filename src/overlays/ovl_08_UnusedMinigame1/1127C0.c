@@ -149,78 +149,57 @@ void func_800F84CC_UnusedMinigame1(void) {
 }
 
 /* The result: the machines that stopped closest to the mark (within 40) win 10 coins each. */
-// decomp-permuter
-void func_800F85A0_UnusedMinigame1(void)
-{
-  s32 dist[4];
-  s32 idx[4];
-  s32 chr[4];
-  UM1Machine *w;
-  s32 *dp;
-  s32 best;
-  s32 n;
-  s32 i;
-  s32 d;
-  best = 10000;
-  n = 0;
-  for (i = 0; i < 4; i++)
-  {
-    w = D_800F9498_UnusedMinigame1[i]->unk_50;
-    dp = &dist[i];
-    d = (*(&dist[i]) = 344.0f - w->unk10);
-    if (((u32) d) < 40)
-    {
-      if (d < best)
-      {
-        best = d;
-        idx[0] = i;
-        chr[0] = w->unk22;
-        n = 1;
-      }
-      else
-        if (dist[i] == best)
-      {
-        idx[n] = i;
-        chr[n] = w->unk22;
-        n++;
-      }
+void func_800F85A0_UnusedMinigame1(void) {
+    s32 dist[4];
+    s32 idx[4];
+    s32 chr[4];
+    UM1Machine* w;
+    s32 best;
+    s32 n;
+    s32 i;
+    s32 d;
+
+    best = 10000;
+    n = 0;
+    for (i = 0; i < 4; i++) {
+        w = D_800F9498_UnusedMinigame1[i]->unk_50;
+        d = dist[i] = 344.0f - w->unk10;
+        if (d >= 0 && d < 40) {
+            if (d < best) {
+                best = d;
+                idx[0] = i;
+                chr[0] = w->unk22;
+                n = 1;
+            } else if (dist[i] == best) {
+                idx[n] = i;
+                chr[n] = w->unk22;
+                n++;
+            }
+        }
     }
-  }
-
-  if (n != ((int) 0))
-  {
-    for (i = 0; i < n; i++)
-    {
-      GwPlayer[idx[i]].coins_mg += 10;
+    if (n != 0) {
+        for (i = 0; i < n; i++) {
+            GwPlayer[idx[i]].coins_mg += 10;
+        }
+        switch (n) {
+            case 1:
+                GMesCreate(4, chr[0]);
+                break;
+            case 2:
+                GMesCreate(0xF, chr[0], chr[1]);
+                break;
+            case 3:
+                GMesCreate(0x13, chr[0], chr[1], chr[2]);
+                break;
+            case 4:
+                GMesCreate(4, 6);
+                break;
+        }
+        func_80060128(0x32);
+    } else {
+        GMesCreate(0x11);
+        func_80060128(0x34);
     }
-
-    switch (n)
-    {
-      case 1:
-        GMesCreate(4, chr[0]);
-        break;
-
-      case 2:
-        GMesCreate(0xF, chr[0], chr[1]);
-        break;
-
-      case 3:
-        GMesCreate(0x13, chr[0], chr[1], chr[2]);
-        break;
-
-      case 4:
-        GMesCreate(4, 6);
-        break;
-
-    }
-
-    func_80060128(0x32);
-  }
-  else
-  {
-    GMesCreate(0x11);
-    func_80060128(0x34);
-  }
 }
 
 /* The result text above a machine and its baby's face. */

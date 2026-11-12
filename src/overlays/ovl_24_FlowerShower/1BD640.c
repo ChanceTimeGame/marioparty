@@ -660,8 +660,7 @@ void func_800F8280_FlowerShower(omObjData* arg0) {
     s32 controller;
     s32 saved_stick_x;
     s32 saved_stick_y;
-    volatile s32 pad[4]; /* retail reserves 16 otherwise-unused stack bytes */
-    u8 temp_v0;
+    s32 pad[4]; /* retail reserves 16 otherwise-unused stack bytes */
     u16* button_trg;
     u16 saved_button;
     u16 saved_button_trg;
@@ -669,10 +668,8 @@ void func_800F8280_FlowerShower(omObjData* arg0) {
 
     temp_s1 = arg0->unk_50;
     controller = temp_s1->unk_56;
-    temp_v0 = ((volatile u8*)ContStkX)[controller];
-    saved_stick_x = (s8)temp_v0;
-    temp_v0 = ((volatile u8*)ContStkY)[controller];
-    saved_stick_y = (s8)temp_v0;
+    saved_stick_x = ContStkX[controller];
+    saved_stick_y = ContStkY[controller];
     saved_button = ContBtn[controller];
     saved_button_trg = ContBtnTrg[controller];
     if (D_800FAD5C_FlowerShower < 90) {

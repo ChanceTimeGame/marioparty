@@ -237,7 +237,6 @@ void func_800F6A00_BoxMountainMayhem(void) {
     }
 }
 
-// decomp-permuter
 void func_800F6ECC_BoxMountainMayhem(void)
 {
   BMMPlayerWork *work;

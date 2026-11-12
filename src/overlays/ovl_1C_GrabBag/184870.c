@@ -391,42 +391,30 @@ void func_800F859C_GrabBag(omObjData* arg0) {
     func_80025798(arg0->model[0], arg0->trans.x, arg0->trans.y, arg0->trans.z);
     func_80025798(arg0->model[1], arg0->trans.x, 0.0f, arg0->trans.z);
 }
-// decomp-permuter
-void func_800F8984_GrabBag(void)
-{
-  s32 i;
-  s32 gained;
-  s32 even;
-  GrabBagPlayerWork *work;
-  i = 0;
-  gained = i;
-  even = i;
-  for (i = i; i < 4; i++)
-  {
-    work = (GrabBagPlayerWork *) D_800F3FB0[i]->unk_50;
-    if ((work->score - work->start_score) > 0)
-    {
-      gained++;
-    }
-    else
-    {
-      even += work->score == work->start_score;
-    }
-  }
+void func_800F8984_GrabBag(void) {
+    s32 i;
+    s32 gained;
+    s32 even;
+    GrabBagPlayerWork* work;
 
-  if (gained == 1)
-  {
-    D_800FB290_GrabBag = 0;
-  }
-  else
-    if (even == 4)
-  {
-    D_800FB290_GrabBag = 2;
-  }
-  else
-  {
-    D_800FB290_GrabBag = 1;
-  }
+    i = 0;
+    gained = 0;
+    even = 0;
+    for (; i < 4; i++) {
+        work = (GrabBagPlayerWork*)D_800F3FB0[i]->unk_50;
+        if (work->score - work->start_score > 0) {
+            gained++;
+        } else if (work->score == work->start_score) {
+            even++;
+        }
+    }
+    if (gained == 1) {
+        D_800FB290_GrabBag = 0;
+    } else if (even == 4) {
+        D_800FB290_GrabBag = 2;
+    } else {
+        D_800FB290_GrabBag = 1;
+    }
 }
 void func_800F8A18_GrabBag(omObjData* arg0) {
     GrabBagPlayerWork* work;

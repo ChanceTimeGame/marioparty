@@ -738,61 +738,51 @@ void func_800F8AC4_MusicalMushroom(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_MusicalMushroom/11C810", func_800F8AC4_MusicalMushroom);
 #endif
-// decomp-permuter
-s32 func_800F8D20_MusicalMushroom(s32 i)
-{
-  Vec3f v;
-  omObjData *pobj = D_800FB658_MusicalMushroom[i].obj;
-  Vec3f *p = &v;
-  s32 bell;
-  s32 j;
-  MMPlayerWork *work = pobj->unk_50;
-  if ((bell = D_800FB6A4_MusicalMushroom) == i)
-  {
-    if (pobj->work[2] == 0)
-    {
-      pobj->work[2] = 1;
-    }
-    for (j = 0; j < D_800F2BC0; j++)
-    {
-      if ((j != bell) && (D_800FB658_MusicalMushroom[j].obj->work[1] == 0))
-      {
-        break;
-      }
-    }
+s32 func_800F8D20_MusicalMushroom(s32 i) {
+    Vec3f v;
+    omObjData* pobj = D_800FB658_MusicalMushroom[i].obj;
+    Vec3f* p = &v;
+    s32 bell;
+    s32 j;
+    MMPlayerWork* work = pobj->unk_50;
 
-    if (j < D_800F2BC0)
-    {
-      work->unk_40 = 0.0f;
-      return 0;
+    bell = D_800FB6A4_MusicalMushroom;
+    if (bell == i) {
+        if (pobj->work[2] == 0) {
+            pobj->work[2] = 1;
+        }
+        for (j = 0; j < D_800F2BC0; j++) {
+            if (j != bell && D_800FB658_MusicalMushroom[j].obj->work[1] == 0) {
+                break;
+            }
+        }
+        if (j < D_800F2BC0) {
+            work->unk_40 = 0.0f;
+            return 0;
+        }
+        return (u8)func_800F8898_MusicalMushroom(i, bell) != 0;
     }
-    return ((u8) func_800F8898_MusicalMushroom(i, bell)) != 0;
-  }
-  if ((work->unk_53 == 1) && (work->unk_38 == 1000.0f))
-  {
-    func_800A0D00(p, pobj->trans.x, 0.0f, pobj->trans.z);
-    work->unk_3C = func_800B0CD8(p->x, p->z);
-    func_800184BC(pobj, 6);
-    work->unk_38 = -1.5f;
-    work->unk_40 = D_800B8980 * 1.5f;
-    return 0;
-  }
-  if (work->unk_53 == (-1))
-  {
-    return 0;
-  }
-  if (!((u8) func_800F8898_MusicalMushroom(i, bell)))
-  {
-    return 0;
-  }
-  if (!(func_80017A60(pobj) & 4))
-  {
+    if (work->unk_53 == 1 && work->unk_38 == 1000.0f) {
+        func_800A0D00(p, pobj->trans.x, 0.0f, pobj->trans.z);
+        work->unk_3C = func_800B0CD8(p->x, p->z);
+        func_800184BC(pobj, 6);
+        work->unk_38 = -1.5f;
+        work->unk_40 = D_800B8980 * 1.5f;
+        return 0;
+    }
+    if (work->unk_53 == -1) {
+        return 0;
+    }
+    if (!(u8)func_800F8898_MusicalMushroom(i, bell)) {
+        return 0;
+    }
+    if (!(func_80017A60(pobj) & 4)) {
+        return 1;
+    }
+    func_8006071C(work->unk_B3);
+    func_800184BC(pobj, 0);
+    func_80017DB0(pobj);
     return 1;
-  }
-  func_8006071C(work->unk_B3);
-  func_800184BC(pobj, 0);
-  func_80017DB0(pobj);
-  return 1;
 }
 
 void func_800F8EE0_MusicalMushroom(omObjData* obj) {
