@@ -86,7 +86,6 @@ s16 func_80013B00(void);
 // Logic rewritten from the asm 2026-10-03 (upstream C read the wrong slot and pad), then matched.
 // Consumes the oldest queued read: updates held/triggered/repeat buttons and the dead-zoned,
 // clamped sticks for every pad. Returns the queue count before this read (0 = nothing read).
-// decomp-permuter
 s16 func_80013B00(void)
 {
   s16 count;
