@@ -94,7 +94,6 @@ void func_80058E38(void) {
     func_800559F8();
 }
 
-// decomp-permuter
 void func_80058E64(omObjData *arg0)
 {
   unsigned short step;
@@ -138,7 +137,7 @@ void func_80058E64(omObjData *arg0)
     step = 16;
     if (ContDStk[port] & 0x200)
     {
-      cam.x -= 16.0f;
+      cam.x -= step;
       moved = 15;
     }
     if (ContDStk[port] & 0x100)
