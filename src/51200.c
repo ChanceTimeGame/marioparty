@@ -511,16 +511,14 @@ void func_800516C8(GW_PLAYER* arg0, s16 arg1) {
         arg0->flags |= 1;
     }
 }
-// decomp-permuter
 s32 func_80051778(GW_PLAYER *arg0, s16 arg1)
 {
-  s16 step = arg1;
   s32 tries;
   u32 port;
   if (PlayerIsCPU(arg0->player_index) != 0)
   {
     tries = 4;
-    port = (step > 0) ? (0) : (3);
+    port = (arg1 > 0) ? (0) : (3);
     do
     {
       if ((func_8005165C(port) == 0) && (func_800141FC(port) != 0))
