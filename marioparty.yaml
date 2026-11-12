@@ -161,7 +161,8 @@ segments:
       - [0x853E0, c]
       - [0x857D0, c]
       - [0x85890, c]
-      - [0x85B70, c] # leowrite.c and the RTC commands: own unit (D_800E87E6 not volatile there)
+      - [0x85B70, c] # leowrite.c: own unit (D_800E87E6 not volatile there)
+      - [0x85CA0, c] # leotimer.c
       - [0x861B0, hasm, lib/2.0I/gu/sqrtf]
       - [0x861C0, c, lib/2.0I/gu/cosf]
       - [0x86310, c, lib/2.0I/gu/lookat]
@@ -607,7 +608,7 @@ segments:
       - [0xCC9D0, .rodata, 83960]
       - [0xCCDF0, .rodata, 84A60]
       - [0xCCEA0, .rodata, 853E0]
-      - [0xCCEB0, .rodata, 85B70]
+      - [0xCCEB0, .rodata, 85CA0]
       - [0xCCED0, .rodata, lib/2.0I/gu/cosf]
       - [0xCCF30, .rodata, lib/2.0I/gu/lookat]
       - [0xCCF50, .rodata, lib/2.0I/gu/lookatref]
