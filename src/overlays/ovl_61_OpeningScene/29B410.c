@@ -1230,8 +1230,7 @@ void func_800F98F0_OpeningScene(void) {
 }
 void func_800FA990_OpeningScene(void) {
     OpeningModel models[16];
-    OpeningSprite sprites[26];
-    s32 pad[2]; /* retail reserves 0x140 bytes for sprites[] */
+    OpeningSprite sprites[20];
     Vec3f rot;
     s32 i;
 
@@ -1809,7 +1808,6 @@ void func_800FC77C_OpeningScene(Vec3f* arg0, f32* arg1, f32 arg2, Vec3f* arg3) {
     arg3->y = func_80022D9C(ys, ts, arg2);
     arg3->z = func_80022D9C(zs, ts, arg2);
 }
-// decomp-permuter
 void func_800FC850_OpeningScene(s16 arg0, f32 arg1, f32 arg2, Vec3f *arg3)
 {
   Vec3f pts[4];
@@ -1817,7 +1815,6 @@ void func_800FC850_OpeningScene(s16 arg0, f32 arg1, f32 arg2, Vec3f *arg3)
   f32 step;
   unk2C0C0StructC0 *model;
   unk2C0C0StructA0 *verts;
-  unk2C0C0StructA0 *p;
   s32 cnt;
   s32 n;
   s32 idx;
@@ -1836,14 +1833,13 @@ void func_800FC850_OpeningScene(s16 arg0, f32 arg1, f32 arg2, Vec3f *arg3)
   {
     idx = -1;
   }
-  ;
-  func_800A0D00(&pts[0], (&verts[idx])[-1].unk_00, (&verts[idx])[-1].unk_02, (&verts[idx])[-1].unk_04);
+  func_800A0D00(&pts[0], verts[idx - 1].unk_00, verts[idx - 1].unk_02, verts[idx - 1].unk_04);
   ts[0] = step * ((f32) (idx - 1));
-  func_800A0D00(&pts[1], (&verts[idx])[0].unk_00, (&verts[idx])[0].unk_02, (&verts[idx])[0].unk_04);
+  func_800A0D00(&pts[1], verts[idx].unk_00, verts[idx].unk_02, verts[idx].unk_04);
   ts[1] = step * ((f32) idx);
-  func_800A0D00(&pts[2], (&verts[idx])[1].unk_00, (&verts[idx])[1].unk_02, (&verts[idx])[1].unk_04);
+  func_800A0D00(&pts[2], verts[idx + 1].unk_00, verts[idx + 1].unk_02, verts[idx + 1].unk_04);
   ts[2] = step * ((f32) (idx + 1));
-  func_800A0D00(&pts[3], (&verts[idx])[2].unk_00, (&verts[idx])[2].unk_02, (&verts[idx])[2].unk_04);
+  func_800A0D00(&pts[3], verts[idx + 2].unk_00, verts[idx + 2].unk_02, verts[idx + 2].unk_04);
   ts[3] = step * ((f32) (idx + 2));
   func_800FC77C_OpeningScene(pts, ts, arg2, arg3);
 }

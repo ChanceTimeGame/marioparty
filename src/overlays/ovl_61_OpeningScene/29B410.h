@@ -57,7 +57,8 @@ typedef struct OpeningSprite {
     /* 0x02 */ s16 sprite;
     /* 0x04 */ f32 x;
     /* 0x08 */ f32 y;
-} OpeningSprite;
+    /* 0x0C */ char unk_0C[4];
+} OpeningSprite; /* sizeof 0x10 */
 
 extern s32 D_801102B8[16];
 /* Fixed scratch RAM above the overlay (0x801102B8...0x80110464); retail also names
