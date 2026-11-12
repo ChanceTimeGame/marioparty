@@ -269,12 +269,10 @@ void func_800FD428_BombsAway(void) {
     }
     DataClose(D_80100B6C_BombsAway);
 }
-// decomp-permuter
-void func_800FD4B8_BombsAway(f32 x, f32 y, f32 z, f32 scale)
-{
-  float new_var;
-  new_var = ((f32) ((z + 2250.0) / 1500.0)) * scale;
-  func_800FD364_BombsAway(x, y, z, new_var, 16.0f, 1.0f, 0);
+void func_800FD4B8_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
+    f32 s = (f32)((z + 2250.0) / 1500.0) * scale;
+
+    func_800FD364_BombsAway(x, y, z, s, 16.0f, 1.0f, 0);
 }
 void func_800FD530_BombsAway(void) {
     D_80100782_BombsAway = 1;

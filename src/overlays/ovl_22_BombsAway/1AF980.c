@@ -101,13 +101,13 @@ f32 func_800FC0EC_BombsAway(f32 x, f32 z) {
     }
     return a;
 }
-// decomp-permuter
-void func_800FC16C_BombsAway(Vec *v, Vec *out)
-{
-  f32 *o = (f32 *) out;
-  f32 *new_var;
-  f32 len = sqrtf((v->x * v->x) + (v->z * v->z));
- do { *o = func_800FC0EC_BombsAway(len, -v->y); len = v->z; new_var = ++o; *new_var = func_800FC0EC_BombsAway(len, v->x); o[1] = 0; } while (0);
+void func_800FC16C_BombsAway(Vec* v, Vec* out) {
+    f32* o = (f32*)out;
+    f32 len = sqrtf(v->x * v->x + v->z * v->z);
+
+    *o++ = func_800FC0EC_BombsAway(len, -v->y);
+    *o++ = func_800FC0EC_BombsAway(v->z, v->x);
+    *o = 0;
 }
 void func_800FC1F4_BombsAway(Matrix4f m, Vec* r) {
     f32 s;
