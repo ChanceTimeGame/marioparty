@@ -124,7 +124,6 @@ void func_800FA214_BoardIntro(void) {
     pos.x = obj->coords.x = D_800FD3CC_BoardIntro[D_801102B0].x;
     pos.y = obj->coords.y = D_800FD3CC_BoardIntro[D_801102B0].y;
     pos.z = obj->coords.z = D_800FD3CC_BoardIntro[D_801102B0].z;
-    (void)pos; /* retail keeps a copy it never reads */
     obj->coords.x += 1000.0f;
     obj->coords.y += 1000.0f;
     obj = D_800FCD70_BoardIntro = MBModelCreate(8, NULL);
