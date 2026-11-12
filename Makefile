@@ -494,7 +494,7 @@ $(BUILD_DIR)/src/%.c.o: src/%.c
 # ido: the libleo units, built by Nintendo with IDO 5.3 (`make -C tools` fetches it and asm-processor).
 # asm-processor puts each INCLUDE_ASM function into the IDO object; the .s copies it reads drop any
 # `.set` lines (its prelude sets noat/noreorder).
-IDO_UNITS := build/src/80770.c.o build/src/80BE0.c.o build/src/81F20.c.o build/src/82AF0.c.o build/src/83960.c.o
+IDO_UNITS := build/src/80770.c.o build/src/80BE0.c.o build/src/81F20.c.o build/src/82AF0.c.o build/src/83960.c.o build/src/84A60.c.o build/src/85250.c.o build/src/85340.c.o build/src/853E0.c.o build/src/857D0.c.o build/src/85890.c.o build/src/85B70.c.o
 IDO_CFLAGS := -O2 -G0 -mips2 -non_shared -Xcpluscomm
 build/src/81F20.c.o: IDO_RODATA_SIZE = 0x88
 $(IDO_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c

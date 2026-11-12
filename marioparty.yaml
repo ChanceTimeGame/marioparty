@@ -156,6 +156,12 @@ segments:
       - [0x83960, c] # libleo, after LeoBootGame's encrypted __LeoBootGame2 (0x835CC-0x83960)
       - [0x84A50, pad] # 0x10 zero bytes after 83960.c's (16-byte padded) .text
       - [0x84A60, c]
+      - [0x85250, c] # IDO pads each retail file's .text to 16 bytes: one unit per padded boundary
+      - [0x85340, c]
+      - [0x853E0, c]
+      - [0x857D0, c]
+      - [0x85890, c]
+      - [0x85B70, c] # leowrite.c and the RTC commands: own unit (D_800E87E6 not volatile there)
       - [0x861B0, hasm, lib/2.0I/gu/sqrtf]
       - [0x861C0, c, lib/2.0I/gu/cosf]
       - [0x86310, c, lib/2.0I/gu/lookat]
@@ -600,6 +606,8 @@ segments:
       - [0xCC998, rodata] # libleo 64DD lookup tables
       - [0xCC9D0, .rodata, 83960]
       - [0xCCDF0, .rodata, 84A60]
+      - [0xCCEA0, .rodata, 853E0]
+      - [0xCCEB0, .rodata, 85B70]
       - [0xCCED0, .rodata, lib/2.0I/gu/cosf]
       - [0xCCF30, .rodata, lib/2.0I/gu/lookat]
       - [0xCCF50, .rodata, lib/2.0I/gu/lookatref]
