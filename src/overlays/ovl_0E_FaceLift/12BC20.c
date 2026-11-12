@@ -792,35 +792,23 @@ void func_800F8FCC_FaceLift(omObjData* obj) {
     }
 }
 // float register allocation, one mov.s
-// decomp-permuter
-void func_800F9058_FaceLift(omObjData *obj)
-{
-  f32 s;
-  f32 t;
-  s = func_800AEAC0(obj->work[0] * 45.0f) * ((30.0f - obj->work[0]) / 30.0f);
-  if (s < 0.0f)
-  {
-    t = (-s) + 1.0f;
-  }
-  else
-  {
-    t = s + 1.0f;
-  }
-  s = t;
-  omSetSca(obj, t, s, s);
-  func_80025830(obj->model[1], s, t, t);
-  func_80025830(obj->model[2], s, t, s);
-  func_80025830(obj->model[3], s, s, s);
-  if (D_800F384E == 0)
-  {
-    obj->work[0]++;
-  }
-  if (obj->work[0] >= 31)
-  {
-    obj->work[0] = 0;
-    PlaySound(0x23C);
-    obj->func_ptr = func_800F91C0_FaceLift;
-  }
+void func_800F9058_FaceLift(omObjData* obj) {
+    f32 s;
+
+    s = func_800AEAC0(obj->work[0] * 45.0f) * ((30.0f - obj->work[0]) / 30.0f);
+    s = (s < 0.0f ? -s : s) + 1.0f;
+    omSetSca(obj, s, s, s);
+    func_80025830(obj->model[1], s, s, s);
+    func_80025830(obj->model[2], s, s, s);
+    func_80025830(obj->model[3], s, s, s);
+    if (D_800F384E == 0) {
+        obj->work[0]++;
+    }
+    if (obj->work[0] >= 31) {
+        obj->work[0] = 0;
+        PlaySound(0x23C);
+        obj->func_ptr = func_800F91C0_FaceLift;
+    }
 }
 void func_800F91C0_FaceLift(omObjData* obj) {
     f32 t;
