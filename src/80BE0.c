@@ -1,7 +1,7 @@
 #include "common.h"
 
 // 64DD driver (libleo) read/write thread and mechanism control (MP2 97D60.c), built with IDO 5.3
-// (-O2 -G0 -mips2). func_8007FFE0 and func_80080170 do not match yet and stay asm. Its rodata
+// (-O2 -G0 -mips2). func_80080170 does not match yet and stays asm. Its rodata
 // (CC700-CC770) is func_80081100's two jump tables.
 
 typedef struct LEOCmdHeader {
@@ -91,10 +91,8 @@ extern OSIoMesg D_800EA158;
 extern s32 D_800EA170;
 
 // IDO-compiled libleo (read/write command thread)
-#ifdef NON_MATCHING
 void func_8007FFE0(void* arg) {
     u32 blocks;
-    u32 n;
     u32 sense;
 
     osCreateMesgQueue(&D_800E7A98, &D_800E7A90, 1);
@@ -113,17 +111,12 @@ void func_8007FFE0(void* arg) {
                 break;
             }
             if (D_800E87E6 & 0x2000) {
-                n = 1;
                 D_800E87F0.rdwr_blocks = 1;
-            } else {
-                n = D_800E87F0.rdwr_blocks;
-                if (blocks < n) {
-                    n = blocks & 0xFF;
-                    D_800E87F0.rdwr_blocks = blocks;
-                }
+            } else if (blocks < D_800E87F0.rdwr_blocks) {
+                D_800E87F0.rdwr_blocks = blocks;
             }
-            blocks -= n;
-            D_800E87F0.lba += n;
+            blocks -= D_800E87F0.rdwr_blocks;
+            D_800E87F0.lba += D_800E87F0.rdwr_blocks;
             sense = func_80080170();
             if (sense != 0) {
                 break;
@@ -137,9 +130,6 @@ void func_8007FFE0(void* arg) {
         osSendMesg(&D_800E8778, (OSMesg)sense, OS_MESG_BLOCK);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_8007FFE0);
-#endif
 
 // IDO-compiled libleo (one sector transfer with C1/C2 error handling and retries)
 #ifdef NON_MATCHING
