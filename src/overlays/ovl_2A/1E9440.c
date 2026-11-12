@@ -1448,8 +1448,6 @@ void func_800FA124_name_2A(void) {
 }
 
 /* Keeps a player out of the hoop's post and the four corner posts. */
-// float register allocation (dx/dz in f22/f20, 0.0f reloaded)
-// decomp-permuter
 void func_800FA1CC_name_2A(omObjData *obj)
 {
   f32 dx;
@@ -1505,7 +1503,7 @@ void func_800FA1CC_name_2A(omObjData *obj)
     {
       obj->trans.x += 30.0f;
     }
-    if (dz)
+    if (dz >= 0.0f)
     {
       obj->trans.z += 30.0f;
     }
