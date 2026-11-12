@@ -23,3 +23,5 @@ __pycache__/
 .DS_Store
 .*.swp
 venv/
+tools/ido_recomp/
+tools/asm-processor/

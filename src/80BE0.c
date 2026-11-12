@@ -1,9 +1,8 @@
 #include "common.h"
 
-// 64DD driver (libleo) command thread and mechanism control. This unit was built with
-// IDO, not KMC GCC: its register allocation (t6, t7, ... temporaries, ra at 0x14(sp))
-// cannot be reproduced, so every function except the trivial leoChk_mecha_int is kept as
-// C behind NON_MATCHING for the PC port.
+// 64DD driver (libleo) read/write thread and mechanism control (MP2 97D60.c), built with IDO 5.3
+// (-O2 -G0 -mips2). func_8007FFE0 and func_80080170 do not match yet and stay asm. Its rodata
+// (CC700-CC770) is func_80081100's two jump tables.
 
 typedef struct LEOCmdHeader {
     /* 0x00 */ u8 command;
@@ -48,7 +47,7 @@ typedef struct LEORwInfo {
 } LEORwInfo; // sizeof 0x10
 
 u32 func_80080170(void);
-u8 func_8008076C(void);
+s32 func_8008076C(void);
 void func_800807D4(void);
 u8 func_800808BC(void);
 u8 func_800809D0(void);
@@ -82,7 +81,7 @@ extern LEOCmdRead* D_800E87D8;
 extern u32 D_800E87DC;
 extern u32 D_800E87E0;
 extern u8 D_800E87E4;
-extern u16 D_800E87E6;
+extern volatile u16 D_800E87E6;
 extern LEOTgtParam D_800E87F0;
 extern u8 D_800E9A00[0x3A0];
 extern u8 D_800E9DA0[0x3A0];
@@ -316,10 +315,9 @@ INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080170);
 #endif
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
-u8 func_8008076C(void) {
+s32 func_8008076C(void) {
+    u32 sense;
     u32 stat;
-    u8 sense;
 
     sense = func_80080E20(0x10001);
     if (sense == 0) {
@@ -330,12 +328,8 @@ u8 func_8008076C(void) {
     }
     return sense;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_8008076C);
-#endif
 
 // IDO-compiled libleo (buffer manager control register)
-#ifdef NON_MATCHING
 void func_800807D4(void) {
     osEPiWriteIo(D_800EA150, 0x05000510, D_800E87DC | 0x10000000);
     osEPiWriteIo(D_800EA150, 0x05000510, D_800E87DC);
@@ -352,15 +346,11 @@ void func_800807D4(void) {
     }
     osEPiWriteIo(D_800EA150, 0x05000510, D_800E87DC);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800807D4);
-#endif
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
 u8 func_800808BC(void) {
-    u32 stat;
     u32 bmStat;
+    u32 stat;
 
     osEPiReadIo(D_800EA150, 0x05000514, &bmStat);
     osEPiWriteIo(D_800EA150, 0x05000510, D_800E87DC | 0x10000000);
@@ -377,20 +367,17 @@ u8 func_800808BC(void) {
         }
         return 0x17;
     }
-    if (!(bmStat & 0x80000000)) {
-        osEPiReadIo(D_800EA150, 0x0500050C, &stat);
-        if ((stat & 0x60000000) == 0x60000000) {
-            return 0x19;
-        }
+    if (bmStat & 0x80000000) {
+        return 0x18;
+    }
+    osEPiReadIo(D_800EA150, 0x0500050C, &stat);
+    if ((stat & 0x60000000) == 0x60000000) {
+        return 0x19;
     }
     return 0x18;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800808BC);
-#endif
 
 // IDO-compiled libleo (leoAnalize_asic_status)
-#ifdef NON_MATCHING
 u8 func_800809D0(void) {
     u32 stat;
 
@@ -423,79 +410,67 @@ u8 func_800809D0(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800809D0);
-#endif
 
 // IDO-compiled libleo (leoChk_asic_ready)
-#ifdef NON_MATCHING
 u8 func_80080ADC(u32 asic_cmd) {
     u32 sense;
 
     sense = func_800809D0();
     switch (sense) {
-        case 0x15:
-            return 0;
         case 0x2F:
             if (asic_cmd == 0x80000) {
                 return 0;
             }
             // fallthrough
         case 0x2B:
-            if (D_800E7AB0 & 0x800000) {
-                return sense;
+            if (!(D_800E7AB0 & 0x800000)) {
+                if (asic_cmd == 0x90000) {
+                    return 0;
+                }
+                if (func_800810AC(0) != 0) {
+                    return 0x25;
+                }
+                osEPiWriteIo(D_800EA150, 0x05000508, 0x90000);
+                if (func_800810AC(1) != 0) {
+                    return 0x25;
+                }
             }
-            if (asic_cmd == 0x90000) {
-                return 0;
-            }
-            if (func_800810AC(0) != 0) {
-                return 0x25;
-            }
-            osEPiWriteIo(D_800EA150, 0x05000508, 0x90000);
-            if (func_800810AC(1) != 0) {
-                return 0x25;
-            }
-            return sense;
+            break;
         case 0x31:
             if (asic_cmd & 1) {
-                return sense;
+                break;
             }
+            // fallthrough
+        case 0x15:
             return 0;
-        default:
-            return sense;
     }
+    return sense;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080ADC);
-#endif
 
 // IDO-compiled libleo (leoChk_done_status)
-#ifdef NON_MATCHING
 u8 func_80080BC4(u32 asic_cmd) {
-    u32 sense;
     u32 data;
-    u8 sense2;
+    u32 sense;
 
     sense = func_800809D0();
     switch (sense) {
         case 0x2B:
         case 0x2F:
-            if (D_800E7AB0 & 0x800000) {
-                return sense;
+            if (!(D_800E7AB0 & 0x800000)) {
+                if (func_800810AC(0) != 0) {
+                    return 0x25;
+                }
+                osEPiWriteIo(D_800EA150, 0x05000508, 0x90000);
+                if (func_800810AC(1) != 0) {
+                    return 0x25;
+                }
             }
-            if (func_800810AC(0) != 0) {
-                return 0x25;
-            }
-            osEPiWriteIo(D_800EA150, 0x05000508, 0x90000);
-            if (func_800810AC(1) != 0) {
-                return 0x25;
-            }
-            return sense;
+            break;
         case 0x31:
             if (!(asic_cmd & 1)) {
                 return 0;
             }
-            return sense;
+            break;
         case 0x15:
             osEPiWriteIo(D_800EA150, 0x05000500, 0);
             if (func_800810AC(0) != 0) {
@@ -506,9 +481,9 @@ u8 func_80080BC4(u32 asic_cmd) {
                 return 0x25;
             }
             osEPiReadIo(D_800EA150, 0x05000500, &data);
-            sense2 = func_80080ADC(0xC0000);
-            if (sense2 != 0) {
-                return sense2;
+            sense = func_80080ADC(0xC0000);
+            if (sense != 0) {
+                return sense;
             }
             if (data & 0x10000) {
                 return 2;
@@ -526,16 +501,11 @@ u8 func_80080BC4(u32 asic_cmd) {
                 return 0xB;
             }
             return 0x29;
-        default:
-            return sense;
     }
+    return sense;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080BC4);
-#endif
 
 // IDO-compiled libleo (leoSend_asic_cmd_i)
-#ifdef NON_MATCHING
 u8 func_80080D78(u32 asic_cmd, u32 asic_data) {
     u8 sense;
 
@@ -552,14 +522,10 @@ u8 func_80080D78(u32 asic_cmd, u32 asic_data) {
     osEPiWriteIo(D_800EA150, 0x05000508, asic_cmd);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080D78);
-#endif
 
 // IDO-compiled libleo (leoWait_mecha_cmd_done)
-#ifdef NON_MATCHING
 u8 func_80080E20(u32 asic_cmd) {
-    u8 sense;
+    u32 sense;
 
     if (func_800810AC(1) != 0) {
         return 0x25;
@@ -570,14 +536,10 @@ u8 func_80080E20(u32 asic_cmd) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080E20);
-#endif
 
 // IDO-compiled libleo (leoSend_asic_cmd_w)
-#ifdef NON_MATCHING
 u8 func_80080E70(u32 asic_cmd, u32 asic_data) {
-    u8 sense;
+    u32 sense;
 
     sense = func_80080D78(asic_cmd, asic_data);
     if (sense != 0) {
@@ -585,14 +547,11 @@ u8 func_80080E70(u32 asic_cmd, u32 asic_data) {
     }
     return func_80080E20(asic_cmd);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080E70);
-#endif
 
 // IDO-compiled libleo (leoSend_asic_cmd_w_nochkDiskChange)
-#ifdef NON_MATCHING
 u8 func_80080EA8(u32 asic_cmd, u32 asic_data) {
     u8 sense;
+    u32 sense2;
 
     sense = func_80080ADC(asic_cmd);
     if (sense != 0x2F && sense != 0) {
@@ -608,45 +567,29 @@ u8 func_80080EA8(u32 asic_cmd, u32 asic_data) {
     if (func_800810AC(1) != 0) {
         return 0x25;
     }
-    sense = func_80080BC4(asic_cmd);
-    if (sense != 0x2F && sense != 0) {
-        return sense;
+    sense2 = func_80080BC4(asic_cmd);
+    if (sense2 != 0x2F && sense2 != 0) {
+        return sense2;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080EA8);
-#endif
 
 // IDO-compiled libleo (leoDetect_index_w)
-#ifdef NON_MATCHING
 u8 func_80080F94(void) {
     return func_80080E70(0xE0001, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080F94);
-#endif
 
 // IDO-compiled libleo (leoRecal_i)
-#ifdef NON_MATCHING
 u8 func_80080FBC(void) {
     return func_80080D78(0x30001, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080FBC);
-#endif
 
 // IDO-compiled libleo (leoRecal_w)
-#ifdef NON_MATCHING
 u8 func_80080FE4(void) {
     return func_80080E70(0x30001, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80080FE4);
-#endif
 
 // IDO-compiled libleo (leoSeek_i)
-#ifdef NON_MATCHING
 u8 func_8008100C(u16 rwmode) {
     u32 tgt_tk = ((D_800E87F0.head << 12) + D_800E87F0.cylinder) << 16;
 
@@ -656,12 +599,8 @@ u8 func_8008100C(u16 rwmode) {
         return func_80080D78(0x20001, tgt_tk);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_8008100C);
-#endif
 
 // IDO-compiled libleo (leoSeek_w)
-#ifdef NON_MATCHING
 u8 func_80081070(void) {
     u8 sense;
 
@@ -671,12 +610,8 @@ u8 func_80081070(void) {
     }
     return func_80080E20(0x10001);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081070);
-#endif
 
 // IDO-compiled libleo (leoRecv_event_mesg)
-#ifdef NON_MATCHING
 s32 func_800810AC(s32 control) {
     OSMesg msg;
 
@@ -686,12 +621,8 @@ s32 func_800810AC(s32 control) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800810AC);
-#endif
 
 // IDO-compiled libleo (leoChk_err_retry)
-#ifdef NON_MATCHING
 s32 func_80081100(u32 sense) {
     if (D_800EA170 == 0xC || D_800EA170 == 8) {
         switch (sense) {
@@ -727,12 +658,8 @@ s32 func_80081100(u32 sense) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081100);
-#endif
 
 // IDO-compiled libleo (leoChk_cur_drvmode)
-#ifdef NON_MATCHING
 u8 func_80081210(void) {
     u8 mode = 0;
 
@@ -747,18 +674,11 @@ u8 func_80081210(void) {
     }
     return mode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081210);
-#endif
 
 // IDO-compiled libleo (leoDrive_reset)
-#ifdef NON_MATCHING
 void func_80081250(void) {
     osEPiWriteIo(D_800EA150, 0x05000520, 0xAAAA0000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081250);
-#endif
 
 // leoChk_mecha_int: the only function here GCC emits identically
 u32 func_80081280(void) {
@@ -766,7 +686,6 @@ u32 func_80081280(void) {
 }
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
 u8 func_8008128C(void) {
     if (D_800E7AB4 & 2) {
         return 0x2B;
@@ -776,136 +695,23 @@ u8 func_8008128C(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_8008128C);
-#endif
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
 void func_800812C0(void) {
     D_800E7AB4 &= ~2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800812C0);
-#endif
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
 void func_800812DC(void) {
     D_800E7AB4 &= ~1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800812DC);
-#endif
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
 void func_800812F8(void) {
     D_800E7AB4 |= 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800812F8);
-#endif
 
 // IDO-compiled libleo
-#ifdef NON_MATCHING
 void func_80081310(void) {
     D_800E7AB4 = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081310);
-#endif
-
-// IDO-compiled libleo (leoSet_mseq: load the read or write microsequence)
-#ifdef NON_MATCHING
-void func_80081320(u16 rwmode) {
-    u32* src;
-    u8 i;
-    u32 secm1;
-    u32 sec;
-
-    D_800E87E0 &= ~0x40000000;
-    osEPiWriteIo(D_800EA150, 0x05000518, D_800E87E0);
-    if (rwmode == 1) {
-        src = D_800CBBB0;
-    } else {
-        src = D_800CBB70;
-    }
-    for (i = 0; i < 16; i++) {
-        D_800E7AC0[i] = *src++;
-    }
-    secm1 = D_800E87F0.sec_bytes - 1;
-    D_800E7AC0[4] |= secm1 << 8;
-    osWritebackDCache(D_800E7AC0, sizeof(D_800E7AC0));
-    D_800EA158.dramAddr = D_800E7AC0;
-    D_800EA158.devAddr = 0x05000580;
-    D_800EA158.size = sizeof(D_800E7AC0);
-    D_800EA150->transferInfo.cmdType = OS_OTHERS;
-    osEPiStartDma(D_800EA150, &D_800EA158, OS_WRITE);
-    osRecvMesg(&D_800E8790, NULL, OS_MESG_BLOCK);
-    osEPiWriteIo(D_800EA150, 0x05000530, ((secm1 + 7) | 0x5900) << 16);
-    sec = secm1 << 8;
-    if (D_800E87E6 & 0x800) {
-        sec += 0x100;
-    }
-    osEPiWriteIo(D_800EA150, 0x05000528, sec << 8);
-    D_800E87E0 |= 0x40000000;
-    osEPiWriteIo(D_800EA150, 0x05000518, D_800E87E0);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081320);
-#endif
-
-// IDO-compiled libleo (flush the command queue: every pending command is terminated)
-#ifdef NON_MATCHING
-void func_800814D0(void) {
-    LEOCmdHeader* cmd;
-
-    while (osRecvMesg(&D_800E8748, (OSMesg*)&cmd, OS_MESG_NOBLOCK) == 0) {
-        cmd->sense_code = 0x22;
-        cmd->status = 2;
-        if (cmd->control & 0x80) {
-            osSendMesg(cmd->post, (OSMesg)0x22, OS_MESG_BLOCK);
-        }
-    }
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_800814D0);
-#endif
-
-// IDO-compiled libleo
-#ifdef NON_MATCHING
-void func_80081578(void) {
-    u8 sense;
-
-    sense = func_800809D0();
-    switch (sense) {
-        case 3:
-        case 0x29:
-        case 0x2B:
-            D_800E87D8->header.sense_code = sense;
-            D_800E87D8->header.status = 2;
-            break;
-        default:
-            D_800E87D8->header.sense_code = 0;
-            D_800E87D8->header.status = 0;
-            break;
-    }
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/80BE0", func_80081578);
-#endif
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBB70);
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBBB0);
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBBF8);
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBC04);
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBC18);
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBCF8);
-
-INCLUDE_RODATA("asm/nonmatchings/80BE0", D_800CBD18);

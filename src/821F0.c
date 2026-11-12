@@ -71,3 +71,13 @@ u16 func_800817E4(u32 lba) {
 #else
 INCLUDE_ASM("asm/nonmatchings/821F0", func_800817E4);
 #endif
+
+INCLUDE_RODATA("asm/nonmatchings/821F0", D_800CBBF8);
+
+INCLUDE_RODATA("asm/nonmatchings/821F0", D_800CBC04);
+
+INCLUDE_RODATA("asm/nonmatchings/821F0", D_800CBC18);
+
+INCLUDE_RODATA("asm/nonmatchings/821F0", D_800CBCF8);
+
+INCLUDE_RODATA("asm/nonmatchings/821F0", D_800CBD18);

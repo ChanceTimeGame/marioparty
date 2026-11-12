@@ -143,6 +143,7 @@ segments:
       - [0x7CD60, c]
       - [0x80770, c]
       - [0x80BE0, c]
+      - [0x81F20, c]
       - [0x821F0, c]
       - [0x82440, c]
       - [0x82590, c]
@@ -592,6 +593,8 @@ segments:
       - [0xCC2C0, .rodata, 6D4E0]
       - [0xCC590, .rodata, 72D90]
       - [0xCC700, .rodata, 80BE0]
+      - [0xCC770, .rodata, 81F20]
+      - [0xCC7F8, .rodata, 821F0]
       - [0xCC998, .rodata, 83960] # libleo tables and jump tables of 83960.c
       - [0xCCED0, .rodata, lib/2.0I/gu/cosf]
       - [0xCCF30, .rodata, lib/2.0I/gu/lookat]
