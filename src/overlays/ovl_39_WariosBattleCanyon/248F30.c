@@ -1224,12 +1224,11 @@ void func_800F8CC8_WariosBattleCanyon(void) {
     SetBoardFeatureFlag(0x51);
 }
 
-// decomp-permuter
 void func_800F8D10_WariosBattleCanyon(void)
 {
-  short new_var;
-  new_var = rand8() & 3;
-  func_800F86A8_WariosBattleCanyon(new_var);
+  s16 target;
+  target = rand8() & 3;
+  func_800F86A8_WariosBattleCanyon(target);
   func_800559F8();
   EndProcess(0);
 }
