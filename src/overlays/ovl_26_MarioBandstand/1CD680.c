@@ -1432,15 +1432,11 @@ void func_800FA4F8_MarioBandstand(omObjData* obj) {
     }
 }
 
-// decomp-permuter
 void func_800FA790_MarioBandstand(s16 model, s16 motion, s16 mode, f32 speed)
 {
-  float new_var;
   unk_ovl_2D_struct *m = &D_800F2B7C[model];
-  m->unk_08 = (u16) D_800F2B7C[motion].unk_08;
-  new_var = 0.0f;
-  m->unk_48 = new_var;
-  m->unk_50 = new_var;
+  m->unk_08 = D_800F2B7C[motion].unk_08;
+  m->unk_50 = m->unk_48 = 0.0f;
   m->unk_0A = mode;
   m->unk_4C = speed;
 }
@@ -2289,11 +2285,9 @@ void func_800FC4E0_MarioBandstand(void) {
     func_80067354(g, 0, 1.0f, 1.0f);
 }
 
-// decomp-permuter
 void func_800FC744_MarioBandstand(omObjData *obj)
 {
   void *data;
-  unsigned long new_var;
   s32 i;
   s16 k;
   for (i = 0; i < obj->mdlcnt; i++)
@@ -2307,7 +2301,7 @@ void func_800FC744_MarioBandstand(omObjData *obj)
   }
 
   k = 0;
-  for (i = 0; i < (new_var = 5); i++)
+  for (i = 0; i < sizeof(D_800FD114_MarioBandstand) / sizeof(D_800FD114_MarioBandstand[0]); i++)
   {
     data = DataRead(D_800FD114_MarioBandstand[i]);
     D_800FD688_MarioBandstand[k] = func_800678A4(data);
